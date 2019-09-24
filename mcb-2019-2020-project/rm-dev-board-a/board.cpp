@@ -18,12 +18,12 @@ modm_abandon(const char *,
 			 const char *,
 			 uintptr_t)
 {
-	Board::Leds::setOutput();
+	Board::LEDS::setOutput();
 	for(int times=10; times>=0; times--)
 	{
-        Board::Leds::toggle();
+        Board::LEDS::toggle();
 		modm::delayMilliseconds(100);
-        Board::Leds::toggle();
+        Board::LEDS::toggle();
 		modm::delayMilliseconds(100);
 	}
 }

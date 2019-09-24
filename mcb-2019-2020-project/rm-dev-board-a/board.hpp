@@ -96,49 +96,45 @@ struct SystemClock
 
 
 // initialize a button built into mcb
-using Button = GpioInputB2;
+using BUTTON = GpioInputB2;
 
 // initialize 9 green LEDs and 1 red LED
-using Led1 = GpioOutputG1;
-using Led2 = GpioOutputG2;
-using Led3 = GpioOutputG3;
-using Led4 = GpioOutputG4;
-using Led5 = GpioOutputG5;
-using Led6 = GpioOutputG6;
-using Led7 = GpioOutputG7;
-using Led8 = GpioOutputG8;
-using Led9 = GpioOutputF14;
-using LedRed = GpioOutputE11;
+using LED1 = GpioOutputG1;
+using LED2 = GpioOutputG2;
+using LED3 = GpioOutputG3;
+using LED4 = GpioOutputG4;
+using LED5 = GpioOutputG5;
+using LED6 = GpioOutputG6;
+using LED7 = GpioOutputG7;
+using LED8 = GpioOutputG8;
+using LED9 = GpioOutputF14;
+using LED_RED = GpioOutputE11;
 
-using Leds = SoftwareGpioPort< Led1, Led2, Led3, Led4, Led5, Led6, Led7, Led8, Led9, LedRed >;
+using LEDS = SoftwareGpioPort< LED1, LED2, LED3, LED4, LED5, LED6, LED7, LED8, LED9, LED_RED >;
 
 // initialize 4 24V outputs
-using PowerOut1 = GpioOutputH2;
-using PowerOut2 = GpioOutputH3;
-using PowerOut3 = GpioOutputH4;
-using PowerOut4 = GpioOutputH5;
+using POWER_OUT1 = GpioOutputH2;
+using POWER_OUT2 = GpioOutputH3;
+using POWER_OUT3 = GpioOutputH4;
+using POWER_OUT4 = GpioOutputH5;
 
-using PowerOuts = SoftwareGpioPort< PowerOut1, PowerOut2, PowerOut3, PowerOut4 >;
+using POWER_OUTS = SoftwareGpioPort< POWER_OUT1, POWER_OUT2, POWER_OUT3, POWER_OUT4 >;
 
 // initilize 4 digital output pins
-using DigitalOut1 = GpioOutputA0;
-using DigitalOut2 = GpioOutputA1;
-using DigitalOut3 = GpioOutputA2;
-using DigitalOut4 = GpioOutputA3;
+using DIGITAL_OUT_PIN_S = GpioOutputA0;
+using DIGITAL_OUT_PIN_T = GpioOutputA1;
+using DIGITAL_OUT_PIN_U = GpioOutputA2;
+using DIGITAL_OUT_PIN_V = GpioOutputA3;
 
-using DigitalOutPins = SoftwareGpioPort< DigitalOut1, DigitalOut2, DigitalOut3, DigitalOut4 >;
+using DIGITAL_OUT_PINS = SoftwareGpioPort< DIGITAL_OUT_PIN_S, DIGITAL_OUT_PIN_T, DIGITAL_OUT_PIN_U, DIGITAL_OUT_PIN_V >;
 
 // initiazlize 4 digital input pins
-using DigitalIn1 = GpioInputI5;
-using DigitalIn2 = GpioInputI6;
-using DigitalIn3 = GpioInputI7;
-using DigitalIn4 = GpioInputI2;
+using DIGITAL_IN_PIN_W = GpioInputI5;
+using DIGITAL_IN_PIN_X = GpioInputI6;
+using DIGITAL_IN_PIN_Y = GpioInputI7;
+using DIGITAL_IN_PIN_Z = GpioInputI2;
 
-// initialize 4 PWM pins
-using pwmOut1 = GpioOutputD12;
-using pwmOut2 = GpioOutputD13;
-using pwmOut3 = GpioOutputD14;
-using pwmOut4 = GpioOutputD15;
+using DIGITAL_IN_PINS = SoftwareGpioPort< DIGITAL_IN_PIN_W, DIGITAL_IN_PIN_X, DIGITAL_IN_PIN_Y, DIGITAL_IN_PIN_Z >;
 
 // initialize 4 analog input pins
 // TODO
@@ -173,13 +169,9 @@ using VBus = GpioA9;			// VBUS_FS: USB_OTG_HS_VBUS
 inline void
 killAllGpioOutput()
 {
-	Leds::setOutput(modm::Gpio::High);
-	PowerOuts::setOutput(modm::Gpio::Low);
-	DigitalOutPins::setOutput(modm::Gpio::Low);
-	Timer4::configureOutputChannel(1, Timer4::OutputCompareMode::Pwm, 0); // this function controls pwm duty cycle (input / 65535), throws error if number is greater than overflow
-	Timer4::configureOutputChannel(2, Timer4::OutputCompareMode::Pwm, 0);
-	Timer4::configureOutputChannel(3, Timer4::OutputCompareMode::Pwm, 0);
-	Timer4::configureOutputChannel(4, Timer4::OutputCompareMode::Pwm, 0);
+	LEDS::setOutput(modm::Gpio::High);
+	POWER_OUTS::setOutput(modm::Gpio::Low);
+	DIGITAL_OUT_PINS::setOutput(modm::Gpio::Low);
 }
 
 inline void
@@ -190,60 +182,16 @@ initialize()
 	SysTickTimer::initialize<SystemClock>();
 
 	// init leds
-	Leds::setOutput(modm::Gpio::Low);
+	LEDS::setOutput(modm::Gpio::Low);
 	// init 24V output
-	PowerOuts::setOutput(modm::Gpio::High);
+	POWER_OUTS::setOutput(modm::Gpio::High);
 	// init digital out pins
-	DigitalOutPins::setOutput(modm::Gpio::Low);
+	DIGITAL_OUT_PINS::setOutput(modm::Gpio::Low);
 	// init digital in pins
-	DigitalIn1::setInput();
-	DigitalIn1::setInputTrigger(Gpio::InputTrigger::RisingEdge); // wrapper probably not necessary, manually change it if you want
-	DigitalIn1::enableExternalInterrupt();
-
-	DigitalIn2::setInput();
-	DigitalIn2::setInputTrigger(Gpio::InputTrigger::RisingEdge);
-	DigitalIn2::enableExternalInterrupt();
-
-	DigitalIn3::setInput();
-	DigitalIn3::setInputTrigger(Gpio::InputTrigger::RisingEdge);
-	DigitalIn3::enableExternalInterrupt();
-
-	DigitalIn4::setInput();
-	DigitalIn4::setInputTrigger(Gpio::InputTrigger::RisingEdge);
-	DigitalIn4::enableExternalInterrupt();
-
-	// init timer4, which interfaces with PWM output pins
-	Timer4::connect<pwmOut1::Ch1, pwmOut2::Ch2,
-					pwmOut3::Ch3, pwmOut4::Ch4>();
-	Timer4::enable();
-	Timer4::setMode(Timer4::Mode::UpCounter);
-	Timer4::setPrescaler(800); 	// 180 MHz / 1800 / 2^16 ~ 1.5 Hz
-	Timer4::setOverflow(65535);
-	Timer4::configureOutputChannel(1, Timer4::OutputCompareMode::Pwm, 0); // this function controls pwm duty cycle (input / 65535), throws error if number is greater than overflow
-	Timer4::configureOutputChannel(2, Timer4::OutputCompareMode::Pwm, 0);
-	Timer4::configureOutputChannel(3, Timer4::OutputCompareMode::Pwm, 0);
-	Timer4::configureOutputChannel(4, Timer4::OutputCompareMode::Pwm, 0);
-	Timer4::applyAndReset();
-	Timer4::start();
-
+	// interrupts disabled
+	DIGITAL_IN_PINS::setInput();
 	// init button on board
-	Button::setInput();
-	Button::setInputTrigger(Gpio::InputTrigger::RisingEdge);
-	Button::enableExternalInterrupt();
-//	Button::enableExternalInterruptVector(12);
-}
-
-// pin 1,2,3,4
-// duty is a fraction
-inline void
-pwmSetDutyCycle(int channel, float duty)
-{
-	if (duty < 0 || duty > 1.0f)
-	{
-		return;
-	}
-
-	Timer4::configureOutputChannel(channel, Timer4::OutputCompareMode::Pwm, duty * 65536 - 1); // this function controls pwm duty cycle (input / 65535), throws error if number is greater than overflow
+	BUTTON::setInput();
 }
 
 /*
