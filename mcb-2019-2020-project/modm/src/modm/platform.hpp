@@ -15,11 +15,6 @@
 
 #include <modm/architecture/utils.hpp>
 
-#include "platform\can\can_1.hpp"
-#include "platform\can\can_2.hpp"
-#include "platform\can\can_bit_timings.hpp"
-#include "platform\can\can_filter.hpp"
-#include "platform\can\error_code.hpp"
 #include "platform\clock\common.hpp"
 #include "platform\clock\rcc.hpp"
 #include "platform\clock\systick_timer.hpp"
@@ -177,12 +172,4 @@
 #include "platform\gpio\set.hpp"
 #include "platform\gpio\software_port.hpp"
 #include "platform\gpio\unused.hpp"
-#include "platform\timer\advanced_base.hpp"
-#include "platform\timer\basic_base.hpp"
-#include "platform\timer\general_purpose_base.hpp"
-#include "platform\timer\timer_4.hpp"
-#include "platform\uart\uart_2.hpp"
-#include "platform\uart\uart_base.hpp"
-#include "platform\uart\uart_baudrate.hpp"
-#include "platform\uart\uart_hal_2.hpp"
 #endif // MODM_PLATFORM_HPP

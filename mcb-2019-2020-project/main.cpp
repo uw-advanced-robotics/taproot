@@ -3,6 +3,7 @@
 int main()
 {
     Board::initialize();
+
     while (1)
     {
         Board::LEDS::toggle();
