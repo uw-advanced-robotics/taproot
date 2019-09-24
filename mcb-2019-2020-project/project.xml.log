@@ -10,367 +10,331 @@
     <module>modm:architecture</module>
     <source>..\modm\src\modm\architecture\architecture.hpp</source>
     <destination>modm\src\modm\architecture.hpp</destination>
-    <time>3.988 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture</module>
     <source>..\modm\src\modm\architecture\detect.hpp</source>
     <destination>modm\src\modm\architecture\detect.hpp</destination>
-    <time>3.989 ms</time>
+    <time>1.029 ms</time>
   </operation>
   <operation>
     <module>modm:architecture</module>
     <source>..\modm\src\modm\architecture\interface.hpp.in</source>
     <destination>modm\src\modm\architecture\interface.hpp</destination>
-    <time>7.978 ms</time>
+    <time>1.995 ms</time>
   </operation>
   <operation>
     <module>modm:architecture</module>
     <source>..\modm\src\modm\architecture\interface\peripheral.hpp</source>
     <destination>modm\src\modm\architecture\interface\peripheral.hpp</destination>
-    <time>4.987 ms</time>
+    <time>0.999 ms</time>
   </operation>
   <operation>
     <module>modm:architecture</module>
     <source>..\modm\src\modm\architecture\utils.hpp</source>
     <destination>modm\src\modm\architecture\utils.hpp</destination>
-    <time>1.995 ms</time>
+    <time>1.960 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:accessor</module>
     <source>..\modm\src\modm\architecture\interface\accessor.hpp</source>
     <destination>modm\src\modm\architecture\interface\accessor.hpp</destination>
-    <time>5.028 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:accessor</module>
     <source>..\modm\src\modm\architecture\interface\accessor_flash.hpp</source>
     <destination>modm\src\modm\architecture\interface\accessor_flash.hpp</destination>
-    <time>2.016 ms</time>
+    <time>1.995 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:accessor</module>
     <source>..\modm\src\modm\architecture\interface\accessor_ram.hpp</source>
     <destination>modm\src\modm\architecture\interface\accessor_ram.hpp</destination>
-    <time>5.024 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:assert</module>
     <source>..\modm\src\modm\architecture\interface\assert.h</source>
     <destination>modm\src\modm\architecture\interface\assert.h</destination>
-    <time>5.144 ms</time>
+    <time>3.988 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:assert</module>
     <source>..\modm\src\modm\architecture\interface\assert.hpp</source>
     <destination>modm\src\modm\architecture\interface\assert.hpp</destination>
-    <time>2.992 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic.hpp</source>
     <destination>modm\src\modm\architecture\driver\atomic.hpp</destination>
-    <time>1.995 ms</time>
+    <time>2.992 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic\container.hpp</source>
     <destination>modm\src\modm\architecture\driver\atomic\container.hpp</destination>
-    <time>5.981 ms</time>
+    <time>1.021 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic\flag.cpp</source>
     <destination>modm\src\modm\architecture\driver\atomic\flag.cpp</destination>
-    <time>3.958 ms</time>
+    <time>0.973 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic\flag.hpp</source>
     <destination>modm\src\modm\architecture\driver\atomic\flag.hpp</destination>
-    <time>4.986 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic\queue.hpp</source>
     <destination>modm\src\modm\architecture\driver\atomic\queue.hpp</destination>
-    <time>5.019 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\driver\atomic\queue_impl.hpp</source>
     <destination>modm\src\modm\architecture\driver\atomic\queue_impl.hpp</destination>
-    <time>4.113 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:atomic</module>
     <source>..\modm\src\modm\architecture\interface\atomic_lock.hpp</source>
     <destination>modm\src\modm\architecture\interface\atomic_lock.hpp</destination>
-    <time>5.020 ms</time>
-  </operation>
-  <operation>
-    <module>modm:architecture:can</module>
-    <source>..\modm\src\modm\architecture\interface\can.cpp</source>
-    <destination>modm\src\modm\architecture\interface\can.cpp</destination>
-    <time>4.966 ms</time>
-  </operation>
-  <operation>
-    <module>modm:architecture:can</module>
-    <source>..\modm\src\modm\architecture\interface\can.hpp</source>
-    <destination>modm\src\modm\architecture\interface\can.hpp</destination>
-    <time>5.021 ms</time>
-  </operation>
-  <operation>
-    <module>modm:architecture:can</module>
-    <source>..\modm\src\modm\architecture\interface\can_message.cpp</source>
-    <destination>modm\src\modm\architecture\interface\can_message.cpp</destination>
-    <time>4.971 ms</time>
-  </operation>
-  <operation>
-    <module>modm:architecture:can</module>
-    <source>..\modm\src\modm\architecture\interface\can_message.hpp</source>
-    <destination>modm\src\modm\architecture\interface\can_message.hpp</destination>
-    <time>4.989 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:clock</module>
     <source>..\modm\src\modm\architecture\interface\clock.hpp</source>
     <destination>modm\src\modm\architecture\interface\clock.hpp</destination>
-    <time>4.987 ms</time>
+    <time>2.015 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:delay</module>
     <source>..\modm\src\modm\architecture\interface\delay.hpp</source>
     <destination>modm\src\modm\architecture\interface\delay.hpp</destination>
-    <time>2.027 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:gpio</module>
     <source>..\modm\src\modm\architecture\interface\gpio.hpp</source>
     <destination>modm\src\modm\architecture\interface\gpio.hpp</destination>
-    <time>2.008 ms</time>
+    <time>0.996 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:interrupt</module>
     <source>..\modm\src\modm\architecture\interface\interrupt.hpp</source>
     <destination>modm\src\modm\architecture\interface\interrupt.hpp</destination>
-    <time>1.979 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:memory</module>
     <source>..\modm\src\modm\architecture\interface\memory.hpp</source>
     <destination>modm\src\modm\architecture\interface\memory.hpp</destination>
-    <time>1.947 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:architecture:register</module>
     <source>..\modm\src\modm\architecture\interface\register.hpp</source>
     <destination>modm\src\modm\architecture\interface\register.hpp</destination>
-    <time>8.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:architecture:uart</module>
-    <source>..\modm\src\modm\architecture\interface\uart.hpp</source>
-    <destination>modm\src\modm\architecture\interface\uart.hpp</destination>
-    <time>5.999 ms</time>
+    <time>4.002 ms</time>
   </operation>
   <operation>
     <module>modm:build</module>
     <source>..\modm\tools\build_script_generator\gdbinit</source>
     <destination>modm\gdbinit</destination>
-    <time>4.987 ms</time>
+    <time>1.005 ms</time>
   </operation>
   <operation>
     <module>modm:build</module>
     <source>..\modm\tools\build_script_generator\openocd.cfg.in</source>
     <destination>modm\openocd.cfg</destination>
-    <time>9.975 ms</time>
+    <time>4.023 ms</time>
   </operation>
   <operation>
     <module>modm:build</module>
     <source>..\modm\tools\build_script_generator\openocd_gdbinit.in</source>
     <destination>modm\openocd_gdbinit</destination>
-    <time>5.984 ms</time>
+    <time>3.988 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\compiler_arm_none_eabi_gcc.py</source>
     <destination>modm\ext\dlr\scons\site_tools\compiler_arm_none_eabi_gcc.py</destination>
-    <time>4.987 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\settings_buildpath.py</source>
     <destination>modm\ext\dlr\scons\site_tools\settings_buildpath.py</destination>
-    <time>3.989 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\settings_gcc_default_internal.py</source>
     <destination>modm\ext\dlr\scons\site_tools\settings_gcc_default_internal.py</destination>
-    <time>2.985 ms</time>
+    <time>4.987 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\utils_buildformat.py</source>
     <destination>modm\ext\dlr\scons\site_tools\utils_buildformat.py</destination>
-    <time>4.974 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\utils_buildsize.py</source>
     <destination>modm\ext\dlr\scons\site_tools\utils_buildsize.py</destination>
-    <time>4.988 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\utils_common.py</source>
     <destination>modm\ext\dlr\scons\site_tools\utils_common.py</destination>
-    <time>5.952 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\ext\dlr\scons-build-tools\site_tools\utils_gcc_version.py</source>
     <destination>modm\ext\dlr\scons\site_tools\utils_gcc_version.py</destination>
-    <time>5.708 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\resources\SConscript.in</source>
     <destination>modm\SConscript</destination>
-    <time>30.019 ms</time>
-  </operation>
-  <operation>
-    <module>modm:build:scons</module>
-    <source>..\modm\tools\build_script_generator\scons\resources\SConstruct.in</source>
-    <destination>SConstruct</destination>
-    <time>12.995 ms</time>
+    <time>27.928 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\resources\build_target.py.in</source>
     <destination>modm\scons\site_tools\build_target.py</destination>
-    <time>9.973 ms</time>
+    <time>4.021 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\artifact.py</source>
     <destination>modm\scons\site_tools\artifact.py</destination>
-    <time>1.991 ms</time>
+    <time>0.996 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\black_magic_probe.py</source>
     <destination>modm\scons\site_tools\black_magic_probe.py</destination>
-    <time>3.988 ms</time>
+    <time>1.961 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\find_files.py</source>
     <destination>modm\scons\site_tools\find_files.py</destination>
-    <time>4.955 ms</time>
+    <time>0.984 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\gdb.py</source>
     <destination>modm\scons\site_tools\gdb.py</destination>
-    <time>5.029 ms</time>
+    <time>0.964 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\log_itm.py</source>
     <destination>modm\scons\site_tools\log_itm.py</destination>
-    <time>3.989 ms</time>
+    <time>4.023 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\postmortem_gdb.py</source>
     <destination>modm\scons\site_tools\postmortem_gdb.py</destination>
-    <time>5.985 ms</time>
+    <time>1.013 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\program_openocd.py</source>
     <destination>modm\scons\site_tools\program_openocd.py</destination>
-    <time>5.021 ms</time>
+    <time>1.030 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\qtcreator.py</source>
     <destination>modm\scons\site_tools\qtcreator.py</destination>
-    <time>4.995 ms</time>
+    <time>1.995 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\qtcreator\project.config.in</source>
     <destination>modm\scons\site_tools\qtcreator\project.config.in</destination>
-    <time>3.989 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\qtcreator\project.creator.in</source>
     <destination>modm\scons\site_tools\qtcreator\project.creator.in</destination>
-    <time>1.032 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\qtcreator\project.files.in</source>
     <destination>modm\scons\site_tools\qtcreator\project.files.in</destination>
-    <time>3.027 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\qtcreator\project.includes.in</source>
     <destination>modm\scons\site_tools\qtcreator\project.includes.in</destination>
-    <time>3.957 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:build:scons</module>
     <source>..\modm\tools\build_script_generator\scons\site_tools\template.py</source>
     <destination>modm\scons\site_tools\template.py</destination>
-    <time>5.760 ms</time>
+    <time>4.021 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:core</module>
     <source>..\modm\ext\arm\cmsis\CMSIS\Core\Include\cmsis_compiler.h</source>
     <destination>modm\ext\cmsis\core\cmsis_compiler.h</destination>
-    <time>7.764 ms</time>
+    <time>3.979 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:core</module>
     <source>..\modm\ext\arm\cmsis\CMSIS\Core\Include\cmsis_gcc.h</source>
     <destination>modm\ext\cmsis\core\cmsis_gcc.h</destination>
-    <time>8.326 ms</time>
+    <time>3.999 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:core</module>
     <source>..\modm\ext\arm\cmsis\CMSIS\Core\Include\cmsis_version.h</source>
     <destination>modm\ext\cmsis\core\cmsis_version.h</destination>
-    <time>2.146 ms</time>
+    <time>1.032 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:core</module>
     <source>..\modm\ext\arm\cmsis\CMSIS\Core\Include\core_cm4.h</source>
     <destination>modm\ext\cmsis\core\core_cm4.h</destination>
-    <time>4.955 ms</time>
+    <time>4.972 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:core</module>
     <source>..\modm\ext\arm\cmsis\CMSIS\Core\Include\mpu_armv7.h</source>
     <destination>modm\ext\cmsis\core\mpu_armv7.h</destination>
-    <time>7.979 ms</time>
+    <time>4.963 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:device</module>
     <source>..\modm\ext\st\device.hpp.in</source>
     <destination>modm\src\modm\platform\device.hpp</destination>
-    <time>5.984 ms</time>
+    <time>3.026 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:device</module>
     <source>..\modm\ext\st\stm32\stm32f4xx\Include\stm32f427xx.h</source>
     <destination>modm\ext\cmsis\device\stm32f427xx.h</destination>
-    <time>17.931 ms</time>
+    <time>15.731 ms</time>
   </operation>
   <operation>
     <module>modm:cmsis:device</module>
@@ -379,454 +343,310 @@
     <time>1.995 ms</time>
   </operation>
   <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\debug.hpp</source>
-    <destination>modm\src\modm\debug.hpp</destination>
-    <time>1.028 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\debug.hpp</source>
-    <destination>modm\src\modm\debug\debug.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\error_report.cpp</source>
-    <destination>modm\src\modm\debug\error_report.cpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\error_report.hpp</source>
-    <destination>modm\src\modm\debug\error_report.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger.hpp</source>
-    <destination>modm\src\modm\debug\logger.hpp</destination>
-    <time>3.958 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\imp\std.hpp</source>
-    <destination>modm\src\modm\debug\logger\imp\std.hpp</destination>
-    <time>2.995 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\level.hpp</source>
-    <destination>modm\src\modm\debug\logger\level.hpp</destination>
-    <time>4.984 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\logger.hpp</source>
-    <destination>modm\src\modm\debug\logger\logger.hpp</destination>
-    <time>4.021 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style.hpp</source>
-    <destination>modm\src\modm\debug\logger\style.hpp</destination>
-    <time>1.995 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style\prefix.hpp</source>
-    <destination>modm\src\modm\debug\logger\style\prefix.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style\prefix_impl.hpp</source>
-    <destination>modm\src\modm\debug\logger\style\prefix_impl.hpp</destination>
-    <time>3.593 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style\std_colour.hpp</source>
-    <destination>modm\src\modm\debug\logger\style\std_colour.hpp</destination>
-    <time>3.026 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style\std_colour_impl.hpp</source>
-    <destination>modm\src\modm\debug\logger\style\std_colour_impl.hpp</destination>
-    <time>0.997 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style_impl.hpp</source>
-    <destination>modm\src\modm\debug\logger\style_impl.hpp</destination>
-    <time>2.013 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\logger\style_wrapper.hpp</source>
-    <destination>modm\src\modm\debug\logger\style_wrapper.hpp</destination>
-    <time>4.040 ms</time>
-  </operation>
-  <operation>
-    <module>modm:debug</module>
-    <source>..\modm\src\modm\debug\module.md</source>
-    <destination>modm\src\modm\debug\module.md</destination>
-    <time>0.997 ms</time>
-  </operation>
-  <operation>
     <module>modm:io</module>
     <source>..\modm\ext\mpaland\printf.h</source>
     <destination>modm\ext\printf\printf.h</destination>
-    <time>2.007 ms</time>
+    <time>1.982 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\ext\mpaland\printf\printf.c</source>
     <destination>modm\ext\printf\printf.source</destination>
-    <time>10.981 ms</time>
+    <time>3.968 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\io.hpp</source>
     <destination>modm\src\modm\io.hpp</destination>
-    <time>2.980 ms</time>
+    <time>0.970 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\iodevice.hpp</source>
     <destination>modm\src\modm\io\iodevice.hpp</destination>
-    <time>3.956 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\iodevice_wrapper.hpp</source>
     <destination>modm\src\modm\io\iodevice_wrapper.hpp</destination>
-    <time>3.989 ms</time>
+    <time>1.995 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\iostream.cpp</source>
     <destination>modm\src\modm\io\iostream.cpp</destination>
-    <time>4.987 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\iostream.hpp.in</source>
     <destination>modm\src\modm\io\iostream.hpp</destination>
-    <time>12.963 ms</time>
+    <time>8.022 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\iostream_printf.cpp.in</source>
     <destination>modm\src\modm\io\iostream_printf.cpp</destination>
-    <time>16.956 ms</time>
+    <time>9.990 ms</time>
   </operation>
   <operation>
     <module>modm:io</module>
     <source>..\modm\src\modm\io\module.md</source>
     <destination>modm\src\modm\io\module.md</destination>
-    <time>6.017 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math</module>
     <source>..\modm\src\modm\math\math.hpp.in</source>
     <destination>modm\src\modm\math.hpp</destination>
-    <time>6.985 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:math</module>
     <source>..\modm\src\modm\math\tolerance.hpp</source>
     <destination>modm\src\modm\math\tolerance.hpp</destination>
-    <time>0.976 ms</time>
+    <time>3.025 ms</time>
   </operation>
   <operation>
     <module>modm:math:units</module>
     <source>..\modm\src\modm\math\units.hpp</source>
     <destination>modm\src\modm\math\units.hpp</destination>
-    <time>4.972 ms</time>
+    <time>1.995 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils.hpp</source>
     <destination>modm\src\modm\math\utils.hpp</destination>
-    <time>2.951 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\arithmetic_traits.hpp</source>
     <destination>modm\src\modm\math\utils\arithmetic_traits.hpp</destination>
-    <time>5.084 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\bit_constants.hpp</source>
     <destination>modm\src\modm\math\utils\bit_constants.hpp</destination>
-    <time>4.432 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\bit_operation.cpp</source>
     <destination>modm\src\modm\math\utils\bit_operation.cpp</destination>
-    <time>2.017 ms</time>
+    <time>1.994 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\bit_operation.hpp</source>
     <destination>modm\src\modm\math\utils\bit_operation.hpp</destination>
-    <time>1.972 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\crc32.hpp</source>
     <destination>modm\src\modm\math\utils\crc32.hpp</destination>
-    <time>3.991 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\endianness.hpp</source>
     <destination>modm\src\modm\math\utils\endianness.hpp</destination>
-    <time>5.017 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\misc.hpp</source>
     <destination>modm\src\modm\math\utils\misc.hpp</destination>
-    <time>4.955 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\operator.hpp</source>
     <destination>modm\src\modm\math\utils\operator.hpp</destination>
-    <time>1.995 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\operator_impl.hpp</source>
     <destination>modm\src\modm\math\utils\operator_impl.hpp</destination>
-    <time>4.985 ms</time>
+    <time>1.961 ms</time>
   </operation>
   <operation>
     <module>modm:math:utils</module>
     <source>..\modm\src\modm\math\utils\pc\operator.cpp</source>
     <destination>modm\src\modm\math\utils\pc\operator.cpp</destination>
-    <time>4.032 ms</time>
+    <time>3.990 ms</time>
   </operation>
   <operation>
     <module>modm:platform</module>
     <source>..\modm\src\modm\platform\platform.hpp.in</source>
     <destination>modm\src\modm\platform.hpp</destination>
-    <time>7.977 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can</module>
-    <source>..\modm\src\modm\platform\can\stm32\can_filter.cpp.in</source>
-    <destination>modm\src\modm\platform\can\can_filter.cpp</destination>
-    <time>7.863 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can</module>
-    <source>..\modm\src\modm\platform\can\stm32\can_filter.hpp.in</source>
-    <destination>modm\src\modm\platform\can\can_filter.hpp</destination>
-    <time>13.883 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can</module>
-    <source>..\modm\src\modm\platform\can\stm32\error_code.hpp</source>
-    <destination>modm\src\modm\platform\can\error_code.hpp</destination>
-    <time>4.026 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can.common</module>
-    <source>..\modm\src\modm\platform\can\common\can_bit_timings.hpp</source>
-    <destination>modm\src\modm\platform\can\can_bit_timings.hpp</destination>
-    <time>4.999 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can:1</module>
-    <source>..\modm\src\modm\platform\can\stm32\can.cpp.in</source>
-    <destination>modm\src\modm\platform\can\can_1.cpp</destination>
-    <time>31.909 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can:1</module>
-    <source>..\modm\src\modm\platform\can\stm32\can.hpp.in</source>
-    <destination>modm\src\modm\platform\can\can_1.hpp</destination>
-    <time>15.957 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can:2</module>
-    <source>..\modm\src\modm\platform\can\stm32\can.cpp.in</source>
-    <destination>modm\src\modm\platform\can\can_2.cpp</destination>
-    <time>26.894 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:can:2</module>
-    <source>..\modm\src\modm\platform\can\stm32\can.hpp.in</source>
-    <destination>modm\src\modm\platform\can\can_2.hpp</destination>
-    <time>9.010 ms</time>
+    <time>1.998 ms</time>
   </operation>
   <operation>
     <module>modm:platform:clock</module>
     <source>..\modm\src\modm\platform\clock\common\common.hpp</source>
     <destination>modm\src\modm\platform\clock\common.hpp</destination>
-    <time>4.922 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:platform:core</module>
     <source>..\modm\src\modm\platform\core\stm32\linkerscript\stm32_dccm.ld.in</source>
     <destination>modm\link\linkerscript.ld</destination>
-    <time>34.023 ms</time>
+    <time>29.886 ms</time>
   </operation>
   <operation>
     <module>modm:platform:core</module>
     <source>..\modm\src\modm\platform\core\stm32\startup_platform.c.in</source>
     <destination>modm\src\modm\platform\core\startup_platform.c</destination>
-    <time>10.971 ms</time>
+    <time>5.966 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\assert.cpp</source>
     <destination>modm\src\modm\platform\core\assert.cpp</destination>
-    <time>4.987 ms</time>
+    <time>1.963 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\atomic_lock.hpp</source>
     <destination>modm\src\modm\platform\core\atomic_lock.hpp</destination>
-    <time>2.012 ms</time>
+    <time>0.952 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\clock.cpp</source>
     <destination>modm\src\modm\platform\core\clock.cpp</destination>
-    <time>4.988 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\cxxabi.cpp</source>
     <destination>modm\src\modm\platform\core\cxxabi.cpp</destination>
-    <time>5.362 ms</time>
+    <time>2.007 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\delay.cpp.in</source>
     <destination>modm\src\modm\platform\core\delay.cpp</destination>
-    <time>13.960 ms</time>
+    <time>7.945 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\delay.hpp</source>
     <destination>modm\src\modm\platform\core\delay.hpp</destination>
-    <time>1.995 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\flash_reader.hpp</source>
     <destination>modm\src\modm\platform\core\flash_reader.hpp</destination>
-    <time>3.959 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\hardware_init.hpp</source>
     <destination>modm\src\modm\platform\core\hardware_init.hpp</destination>
-    <time>6.019 ms</time>
+    <time>4.024 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\heap_newlib.cpp</source>
     <destination>modm\src\modm\platform\core\heap_newlib.cpp</destination>
-    <time>5.001 ms</time>
+    <time>3.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\heap_table.cpp.in</source>
     <destination>modm\src\modm\platform\core\heap_table.cpp</destination>
-    <time>4.986 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\heap_table.hpp.in</source>
     <destination>modm\src\modm\platform\core\heap_table.hpp</destination>
-    <time>6.016 ms</time>
+    <time>5.024 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\reset_handler.sx</source>
     <destination>modm\src\modm\platform\core\reset_handler.sx</destination>
-    <time>1.995 ms</time>
+    <time>0.984 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\startup.c.in</source>
     <destination>modm\src\modm\platform\core\startup.c</destination>
-    <time>12.965 ms</time>
+    <time>3.990 ms</time>
   </operation>
   <operation>
     <module>modm:platform:cortex-m</module>
     <source>..\modm\src\modm\platform\core\cortex\vectors.c.in</source>
     <destination>modm\src\modm\platform\core\vectors.c</destination>
-    <time>13.963 ms</time>
+    <time>9.008 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\base.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\base.hpp</destination>
-    <time>13.928 ms</time>
+    <time>4.998 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\enable.cpp.in</source>
     <destination>modm\src\modm\platform\gpio\enable.cpp</destination>
-    <time>15.959 ms</time>
+    <time>10.008 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\peripherals.hpp.in</source>
     <destination>modm\src\modm\platform\core\peripherals.hpp</destination>
-    <time>8.973 ms</time>
+    <time>1.993 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A0.hpp</destination>
-    <time>26.964 ms</time>
+    <time>21.932 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A1.hpp</destination>
-    <time>4.023 ms</time>
+    <time>3.994 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A10.hpp</destination>
-    <time>3.958 ms</time>
+    <time>4.974 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A11.hpp</destination>
-    <time>5.019 ms</time>
+    <time>4.000 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A12.hpp</destination>
-    <time>3.988 ms</time>
+    <time>3.958 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A13.hpp</destination>
-    <time>3.990 ms</time>
+    <time>0.939 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A14.hpp</destination>
-    <time>3.989 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
@@ -838,271 +658,271 @@
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A2.hpp</destination>
-    <time>3.987 ms</time>
+    <time>3.985 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A3.hpp</destination>
-    <time>3.566 ms</time>
+    <time>3.987 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A4.hpp</destination>
-    <time>3.974 ms</time>
+    <time>3.991 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A5.hpp</destination>
-    <time>3.989 ms</time>
+    <time>3.987 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A6.hpp</destination>
-    <time>4.024 ms</time>
+    <time>4.957 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A7.hpp</destination>
-    <time>3.986 ms</time>
+    <time>5.003 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A8.hpp</destination>
-    <time>3.997 ms</time>
+    <time>5.002 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_A9.hpp</destination>
-    <time>3.982 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B0.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B1.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B10.hpp</destination>
-    <time>3.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B11.hpp</destination>
-    <time>3.991 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B12.hpp</destination>
-    <time>3.999 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B13.hpp</destination>
-    <time>4.942 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B14.hpp</destination>
-    <time>4.022 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B15.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B2.hpp</destination>
-    <time>3.959 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B3.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B4.hpp</destination>
-    <time>3.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B5.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B6.hpp</destination>
-    <time>4.021 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B7.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B8.hpp</destination>
-    <time>5.372 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_B9.hpp</destination>
-    <time>4.026 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C0.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C1.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C10.hpp</destination>
-    <time>3.986 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C11.hpp</destination>
-    <time>4.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C12.hpp</destination>
-    <time>3.991 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C13.hpp</destination>
-    <time>2.991 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C14.hpp</destination>
-    <time>3.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C15.hpp</destination>
-    <time>3.992 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C2.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C3.hpp</destination>
-    <time>3.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C4.hpp</destination>
-    <time>0.997 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C5.hpp</destination>
-    <time>3.993 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C6.hpp</destination>
-    <time>3.954 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C7.hpp</destination>
-    <time>4.035 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C8.hpp</destination>
-    <time>3.978 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_C9.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_D0.hpp</destination>
-    <time>3.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_D1.hpp</destination>
-    <time>3.992 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_D10.hpp</destination>
-    <time>3.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_D11.hpp</destination>
     <time>4.987 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B0.hpp</destination>
+    <time>3.996 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B1.hpp</destination>
+    <time>3.983 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B10.hpp</destination>
+    <time>3.989 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B11.hpp</destination>
+    <time>5.021 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B12.hpp</destination>
+    <time>3.955 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B13.hpp</destination>
+    <time>5.018 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B14.hpp</destination>
+    <time>3.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B15.hpp</destination>
+    <time>4.986 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B2.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B3.hpp</destination>
+    <time>4.986 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B4.hpp</destination>
+    <time>4.023 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B5.hpp</destination>
+    <time>3.957 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B6.hpp</destination>
+    <time>3.990 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B7.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B8.hpp</destination>
+    <time>4.035 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_B9.hpp</destination>
+    <time>3.989 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C0.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C1.hpp</destination>
+    <time>3.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C10.hpp</destination>
+    <time>4.955 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C11.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C12.hpp</destination>
+    <time>4.026 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C13.hpp</destination>
+    <time>3.984 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C14.hpp</destination>
+    <time>3.990 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C15.hpp</destination>
+    <time>3.989 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C2.hpp</destination>
+    <time>3.987 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C3.hpp</destination>
+    <time>4.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C4.hpp</destination>
+    <time>0.959 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C5.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C6.hpp</destination>
+    <time>4.021 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C7.hpp</destination>
+    <time>4.987 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C8.hpp</destination>
+    <time>3.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_C9.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_D0.hpp</destination>
+    <time>0.966 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_D1.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_D10.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_D11.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D12.hpp</destination>
-    <time>4.022 ms</time>
+    <time>4.021 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
@@ -1114,109 +934,109 @@
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D14.hpp</destination>
-    <time>4.022 ms</time>
+    <time>4.027 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D15.hpp</destination>
-    <time>1.973 ms</time>
+    <time>0.960 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D2.hpp</destination>
-    <time>3.954 ms</time>
+    <time>4.030 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D3.hpp</destination>
-    <time>5.019 ms</time>
+    <time>3.980 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D4.hpp</destination>
-    <time>1.962 ms</time>
+    <time>3.026 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D5.hpp</destination>
-    <time>3.990 ms</time>
+    <time>0.964 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D6.hpp</destination>
-    <time>4.986 ms</time>
+    <time>4.019 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D7.hpp</destination>
-    <time>11.003 ms</time>
+    <time>0.968 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D8.hpp</destination>
-    <time>1.962 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_D9.hpp</destination>
-    <time>0.998 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E0.hpp</destination>
-    <time>3.977 ms</time>
+    <time>4.021 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E1.hpp</destination>
-    <time>4.987 ms</time>
+    <time>0.966 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E10.hpp</destination>
-    <time>4.953 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E11.hpp</destination>
-    <time>4.987 ms</time>
+    <time>4.021 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E12.hpp</destination>
-    <time>4.022 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E13.hpp</destination>
-    <time>4.954 ms</time>
+    <time>3.990 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E14.hpp</destination>
-    <time>4.987 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E15.hpp</destination>
-    <time>0.997 ms</time>
+    <time>3.989 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
@@ -1228,642 +1048,576 @@
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E3.hpp</destination>
-    <time>4.954 ms</time>
+    <time>3.993 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E4.hpp</destination>
-    <time>3.990 ms</time>
+    <time>3.986 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E5.hpp</destination>
-    <time>4.024 ms</time>
+    <time>3.993 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E6.hpp</destination>
-    <time>5.049 ms</time>
+    <time>3.986 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E7.hpp</destination>
-    <time>4.024 ms</time>
+    <time>3.990 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_E8.hpp</destination>
-    <time>4.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_E9.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F0.hpp</destination>
-    <time>1.029 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F1.hpp</destination>
-    <time>1.962 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F10.hpp</destination>
-    <time>3.958 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F11.hpp</destination>
-    <time>4.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F12.hpp</destination>
-    <time>0.997 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F13.hpp</destination>
-    <time>0.997 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F14.hpp</destination>
     <time>4.022 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F15.hpp</destination>
-    <time>1.962 ms</time>
+    <destination>modm\src\modm\platform\gpio\gpio_E9.hpp</destination>
+    <time>0.963 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F2.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F3.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F4.hpp</destination>
-    <time>5.018 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F5.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F6.hpp</destination>
-    <time>4.954 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F7.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F8.hpp</destination>
-    <time>5.026 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_F9.hpp</destination>
-    <time>4.979 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G0.hpp</destination>
-    <time>3.990 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G1.hpp</destination>
-    <time>1.029 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G10.hpp</destination>
-    <time>4.025 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G11.hpp</destination>
-    <time>0.994 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G12.hpp</destination>
-    <time>4.954 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G13.hpp</destination>
-    <time>4.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G14.hpp</destination>
-    <time>3.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G15.hpp</destination>
-    <time>4.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G2.hpp</destination>
-    <time>0.998 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G3.hpp</destination>
-    <time>3.988 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G4.hpp</destination>
-    <time>1.962 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G5.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G6.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G7.hpp</destination>
-    <time>4.987 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G8.hpp</destination>
-    <time>4.021 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_G9.hpp</destination>
-    <time>4.014 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H0.hpp</destination>
-    <time>4.028 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H1.hpp</destination>
-    <time>4.948 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H10.hpp</destination>
-    <time>1.030 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H11.hpp</destination>
-    <time>4.985 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H12.hpp</destination>
-    <time>0.967 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H13.hpp</destination>
-    <time>4.020 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H14.hpp</destination>
-    <time>4.020 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H15.hpp</destination>
-    <time>3.957 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H2.hpp</destination>
-    <time>4.021 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H3.hpp</destination>
+    <destination>modm\src\modm\platform\gpio\gpio_F0.hpp</destination>
     <time>0.966 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H4.hpp</destination>
-    <time>2.008 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H5.hpp</destination>
-    <time>3.977 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H6.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H7.hpp</destination>
-    <time>4.020 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H8.hpp</destination>
-    <time>4.986 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_H9.hpp</destination>
-    <time>3.958 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I0.hpp</destination>
-    <time>4.023 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I1.hpp</destination>
-    <time>4.984 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I10.hpp</destination>
-    <time>3.989 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I11.hpp</destination>
-    <time>1.996 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I2.hpp</destination>
-    <time>4.992 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I3.hpp</destination>
-    <time>4.949 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:gpio</module>
-    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I4.hpp</destination>
+    <destination>modm\src\modm\platform\gpio\gpio_F1.hpp</destination>
     <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I5.hpp</destination>
-    <time>3.989 ms</time>
+    <destination>modm\src\modm\platform\gpio\gpio_F10.hpp</destination>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
-    <destination>modm\src\modm\platform\gpio\gpio_I6.hpp</destination>
+    <destination>modm\src\modm\platform\gpio\gpio_F11.hpp</destination>
+    <time>4.021 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F12.hpp</destination>
+    <time>0.965 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F13.hpp</destination>
+    <time>4.021 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F14.hpp</destination>
+    <time>0.966 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F15.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F2.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F3.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F4.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F5.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F6.hpp</destination>
+    <time>4.030 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F7.hpp</destination>
     <time>3.981 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F8.hpp</destination>
+    <time>3.026 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_F9.hpp</destination>
+    <time>3.987 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G0.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G1.hpp</destination>
+    <time>4.137 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G10.hpp</destination>
+    <time>1.000 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G11.hpp</destination>
+    <time>3.987 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G12.hpp</destination>
+    <time>1.010 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G13.hpp</destination>
+    <time>3.981 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G14.hpp</destination>
+    <time>3.982 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G15.hpp</destination>
+    <time>0.999 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G2.hpp</destination>
+    <time>3.029 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G3.hpp</destination>
+    <time>0.964 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G4.hpp</destination>
+    <time>1.006 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G5.hpp</destination>
+    <time>1.021 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G6.hpp</destination>
+    <time>0.997 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G7.hpp</destination>
+    <time>1.001 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G8.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_G9.hpp</destination>
+    <time>3.989 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H0.hpp</destination>
+    <time>0.965 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H1.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H10.hpp</destination>
+    <time>1.032 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H11.hpp</destination>
+    <time>0.995 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H12.hpp</destination>
+    <time>0.998 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H13.hpp</destination>
+    <time>0.999 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H14.hpp</destination>
+    <time>0.995 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H15.hpp</destination>
+    <time>0.999 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H2.hpp</destination>
+    <time>1.041 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H3.hpp</destination>
+    <time>0.986 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H4.hpp</destination>
+    <time>1.000 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H5.hpp</destination>
+    <time>0.995 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H6.hpp</destination>
+    <time>3.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H7.hpp</destination>
+    <time>3.986 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H8.hpp</destination>
+    <time>1.963 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_H9.hpp</destination>
+    <time>3.024 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I0.hpp</destination>
+    <time>3.991 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I1.hpp</destination>
+    <time>3.988 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I10.hpp</destination>
+    <time>0.999 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I11.hpp</destination>
+    <time>0.995 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I2.hpp</destination>
+    <time>3.987 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I3.hpp</destination>
+    <time>3.992 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I4.hpp</destination>
+    <time>0.964 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I5.hpp</destination>
+    <time>1.032 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
+    <destination>modm\src\modm\platform\gpio\gpio_I6.hpp</destination>
+    <time>0.995 ms</time>
+  </operation>
+  <operation>
+    <module>modm:platform:gpio</module>
+    <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_I7.hpp</destination>
-    <time>4.021 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_I8.hpp</destination>
-    <time>4.021 ms</time>
+    <time>1.001 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\pin.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\gpio_I9.hpp</destination>
-    <time>0.966 ms</time>
+    <time>0.993 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\port.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\port.hpp</destination>
-    <time>17.983 ms</time>
+    <time>13.963 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\set.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\set.hpp</destination>
-    <time>30.951 ms</time>
+    <time>23.936 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\software_port.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\software_port.hpp</destination>
-    <time>15.914 ms</time>
+    <time>10.971 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio</module>
     <source>..\modm\src\modm\platform\gpio\stm32\unused.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\unused.hpp</destination>
-    <time>10.971 ms</time>
+    <time>5.972 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio.common</module>
     <source>..\modm\src\modm\platform\gpio\common\connector.hpp</source>
     <destination>modm\src\modm\platform\gpio\connector.hpp</destination>
-    <time>1.963 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio.common</module>
     <source>..\modm\src\modm\platform\gpio\common\connector_detail.hpp.in</source>
     <destination>modm\src\modm\platform\gpio\connector_detail.hpp</destination>
-    <time>5.011 ms</time>
+    <time>5.964 ms</time>
   </operation>
   <operation>
     <module>modm:platform:gpio.common</module>
     <source>..\modm\src\modm\platform\gpio\common\inverted.hpp</source>
     <destination>modm\src\modm\platform\gpio\inverted.hpp</destination>
-    <time>1.995 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:rcc</module>
     <source>..\modm\src\modm\platform\clock\stm32\rcc.cpp.in</source>
     <destination>modm\src\modm\platform\clock\rcc.cpp</destination>
-    <time>19.978 ms</time>
+    <time>11.960 ms</time>
   </operation>
   <operation>
     <module>modm:platform:rcc</module>
     <source>..\modm\src\modm\platform\clock\stm32\rcc.hpp.in</source>
     <destination>modm\src\modm\platform\clock\rcc.hpp</destination>
-    <time>25.009 ms</time>
+    <time>15.957 ms</time>
   </operation>
   <operation>
     <module>modm:platform:rcc</module>
     <source>..\modm\src\modm\platform\clock\stm32\rcc_impl.hpp.in</source>
     <destination>modm\src\modm\platform\clock\rcc_impl.hpp</destination>
-    <time>15.957 ms</time>
+    <time>13.997 ms</time>
   </operation>
   <operation>
     <module>modm:platform:systick</module>
     <source>..\modm\src\modm\platform\clock\systick\systick_timer.cpp.in</source>
     <destination>modm\src\modm\platform\clock\systick_timer.cpp</destination>
-    <time>6.982 ms</time>
+    <time>3.946 ms</time>
   </operation>
   <operation>
     <module>modm:platform:systick</module>
     <source>..\modm\src\modm\platform\clock\systick\systick_timer.hpp.in</source>
     <destination>modm\src\modm\platform\clock\systick_timer.hpp</destination>
-    <time>10.939 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:timer</module>
-    <source>..\modm\src\modm\platform\timer\stm32\advanced_base.hpp.in</source>
-    <destination>modm\src\modm\platform\timer\advanced_base.hpp</destination>
-    <time>9.972 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:timer</module>
-    <source>..\modm\src\modm\platform\timer\stm32\basic_base.hpp.in</source>
-    <destination>modm\src\modm\platform\timer\basic_base.hpp</destination>
-    <time>6.981 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:timer</module>
-    <source>..\modm\src\modm\platform\timer\stm32\general_purpose_base.hpp.in</source>
-    <destination>modm\src\modm\platform\timer\general_purpose_base.hpp</destination>
-    <time>6.573 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:timer:4</module>
-    <source>..\modm\src\modm\platform\timer\stm32\general_purpose.cpp.in</source>
-    <destination>modm\src\modm\platform\timer\timer_4.cpp</destination>
-    <time>11.003 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:timer:4</module>
-    <source>..\modm\src\modm\platform\timer\stm32\general_purpose.hpp.in</source>
-    <destination>modm\src\modm\platform\timer\timer_4.hpp</destination>
-    <time>21.942 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart_base.hpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_base.hpp</destination>
-    <time>11.980 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart_baudrate.hpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_baudrate.hpp</destination>
-    <time>11.972 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart:2</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart.cpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_2.cpp</destination>
-    <time>15.954 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart:2</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart.hpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_2.hpp</destination>
-    <time>14.009 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart:2</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart_hal.hpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_hal_2.hpp</destination>
-    <time>11.968 ms</time>
-  </operation>
-  <operation>
-    <module>modm:platform:uart:2</module>
-    <source>..\modm\src\modm\platform\uart\stm32\uart_hal_impl.hpp.in</source>
-    <destination>modm\src\modm\platform\uart\uart_hal_2_impl.hpp</destination>
-    <time>26.928 ms</time>
+    <time>2.992 ms</time>
   </operation>
   <operation>
     <module>modm:processing</module>
     <source>..\modm\src\modm\processing\processing.hpp.in</source>
     <destination>modm\src\modm\processing.hpp</destination>
-    <time>7.899 ms</time>
+    <time>3.992 ms</time>
   </operation>
   <operation>
     <module>modm:processing</module>
     <source>..\modm\src\modm\processing\task.hpp</source>
     <destination>modm\src\modm\processing\task.hpp</destination>
-    <time>4.328 ms</time>
+    <time>1.032 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer.hpp</source>
     <destination>modm\src\modm\processing\timer.hpp</destination>
-    <time>1.996 ms</time>
+    <time>0.998 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\module.md</source>
     <destination>modm\src\modm\processing\timer\module.md</destination>
-    <time>8.963 ms</time>
+    <time>1.029 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\periodic_timer.hpp</source>
     <destination>modm\src\modm\processing\timer\periodic_timer.hpp</destination>
-    <time>3.844 ms</time>
+    <time>6.950 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\periodic_timer_impl.hpp</source>
     <destination>modm\src\modm\processing\timer\periodic_timer_impl.hpp</destination>
-    <time>5.525 ms</time>
+    <time>2.992 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\timeout.hpp</source>
     <destination>modm\src\modm\processing\timer\timeout.hpp</destination>
-    <time>4.986 ms</time>
+    <time>2.992 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\timeout_impl.hpp</source>
     <destination>modm\src\modm\processing\timer\timeout_impl.hpp</destination>
-    <time>5.983 ms</time>
+    <time>2.038 ms</time>
   </operation>
   <operation>
     <module>modm:processing:timer</module>
     <source>..\modm\src\modm\processing\timer\timestamp.hpp</source>
     <destination>modm\src\modm\processing\timer\timestamp.hpp</destination>
-    <time>1.995 ms</time>
+    <time>1.952 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\allocator.hpp</source>
     <destination>modm\src\modm\utils\allocator.hpp</destination>
-    <time>1.994 ms</time>
+    <time>1.028 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\allocator\allocator_base.hpp</source>
     <destination>modm\src\modm\utils\allocator\allocator_base.hpp</destination>
-    <time>0.954 ms</time>
+    <time>0.962 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\allocator\block.hpp</source>
     <destination>modm\src\modm\utils\allocator\block.hpp</destination>
-    <time>4.021 ms</time>
+    <time>1.031 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\allocator\dynamic.hpp</source>
     <destination>modm\src\modm\utils\allocator\dynamic.hpp</destination>
-    <time>1.963 ms</time>
+    <time>2.991 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\allocator\static.hpp</source>
     <destination>modm\src\modm\utils\allocator\static.hpp</destination>
-    <time>3.990 ms</time>
+    <time>0.997 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\dummy.cpp</source>
     <destination>modm\src\modm\utils\dummy.cpp</destination>
-    <time>2.993 ms</time>
+    <time>1.001 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\dummy.hpp</source>
     <destination>modm\src\modm\utils\dummy.hpp</destination>
-    <time>3.989 ms</time>
+    <time>0.995 ms</time>
   </operation>
   <operation>
     <module>modm:utils</module>
     <source>..\modm\src\modm\utils\utils.hpp</source>
     <destination>modm\src\modm\utils.hpp</destination>
-    <time>1.995 ms</time>
+    <time>2.993 ms</time>
   </operation>
 </buildlog>

@@ -10,6 +10,7 @@
     <option name="modm:build:project.name">test</option>
     <option name="modm:target">stm32f427iih</option>
     <option name="modm:build:openocd.cfg">openocd.cfg</option>
+    <option name="modm:build:scons:include_sconstruct">False</option>
   </options>
   <modules>
     <module>modm:architecture:delay</module>
