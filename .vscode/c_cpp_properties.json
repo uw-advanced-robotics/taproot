@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "rm-type-board-a",
+            "includePath": [
+                "${workspaceRoot}",
+                "./mcb-2019-2020-project/modm/src",
+                "./mcb-2019-2020-project/modm/ext/cmsis/core",
+                "./mcb-2019-2020-project/modm/ext/cmsis/device",
+                "./mcb-2019-2020-project"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerPath": "C:/Users/Matthew/Documents/UW/ARUW/Summer-Projects-2019/8 2019-q3-update/bin/arm-none-eabi-gcc.exe"
+        }
+    ],
+    "version": 4
+}

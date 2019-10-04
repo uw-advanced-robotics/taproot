@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "openocd",
+            "cwd": "${workspaceRoot}",
+            "executable": "./mcb-2019-2020-project/build/debug/mcb-2019-2020.elf",
+            "name": "Debug",
+            "device": "STM32F427II",
+            "configFiles": [
+                "./mcb-2019-2020-project/openocd.cfg"
+            ]
+        }
+    ]
+}
