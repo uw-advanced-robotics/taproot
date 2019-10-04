@@ -17,10 +17,10 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
   - pip install cpplint
-  - chmod +x ./linter.sh
+  - chmod +x ./scripts/linter.sh
 
 cpplint:
   script:
-    - ./linter.sh
+    - ./scripts/linter.sh
   only:
   - merge_requests

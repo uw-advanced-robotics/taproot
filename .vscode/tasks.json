@@ -1,0 +1,62 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build - Release",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "scripts/releaseBuild.sh",
+            "windows": {
+                "command": "scripts/windows/releaseBuild.bat"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Program - Release",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "scripts/releaseProgram.sh",
+            "windows": {
+                "command": "scripts/windows/releaseProgram.bat"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build - Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "scripts/debugBuild.sh",
+            "windows": {
+                "command": "scripts/windows/debugBuild.bat"
+            },
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "Program - Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "scripts/debugProgram.sh",
+            "windows": {
+                "command": "scripts/windows/debugProgram.bat"
+            },
+            "group": "build",
+            "problemMatcher": []
+        }
+    ]
+}
