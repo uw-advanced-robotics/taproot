@@ -57,6 +57,19 @@
             },
             "group": "build",
             "problemMatcher": []
+        },
+        {
+            "label": "Setup Build",
+            "type":"shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "scripts/setupBuild.sh",
+            "windows": {
+                "command": "scripts/windows/setupBuild.bat",
+            },
+            "group": "none",
+            "problemMatcher": []
         }
     ]
 }
