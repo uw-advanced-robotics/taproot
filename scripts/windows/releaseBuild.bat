@@ -11,7 +11,7 @@ if exist %AppData%\..\Local\Continuum\anaconda3\Scripts\activate.bat (
     echo Activating Anaconda from overide location %Anaconda%...
     call %Anaconda%\Scripts\activate.bat modm
 ) else (
-    echo Anaconda not found, please try again. (Expected location: %AppData%\..\Local\Continuum\anacoda3\Scripts\activate.bat, or C:\ProgramData\anaconda3\Scripts\activate.bat, or %Anaconda%\Scripts\activate.bat)
+    echo Anaconda not found, please try again. Expected location: %AppData%\..\Local\Continuum\anacoda3\Scripts\activate.bat, or C:\ProgramData\anaconda3\Scripts\activate.bat, or %Anaconda%\Scripts\activate.bat
     exit /B 1
 )
 
