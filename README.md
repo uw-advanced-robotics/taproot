@@ -86,7 +86,7 @@ The modm website provides a great number of examples that can be very useful whe
 
 #### How to program an MCB
 
-1. In VSCode, open the Command Pallate (Ctrl + Shift + P)
+1. In VSCode, open the Command Palette (Ctrl + Shift + P)
 2. Find `Tasks: Run Task`
 3. Select `Program - Release` or `Program - Debug`
 
@@ -103,7 +103,7 @@ ALTERNATIVELY, if just programming, not debugging:
 
 ALTERNATIVELY...
 
-1. Open the folder `mc-2019-2020` in VSCode. Press F5.
+1. Open the folder `mcb-2019-2020` in VSCode. Press F5.
 
 
 ### Special cases guide
