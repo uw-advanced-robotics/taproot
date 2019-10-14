@@ -23,7 +23,11 @@ pip install jinja2 scons future pyelftools lbuild
    this: `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git` (if you do not use the command `--recursive`, you will have to clone the modm submodule. From the mcb-2019-2020 file, in the anaconda prompt, cd into mcb-2019-2020/modm and type the following commands: `git submodule init`, `git submodule update`)
 
 This will clone the modm subdirectory.
-5. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
+5. Add your anaconda3/Scripts folder to your PATH variable. It will likely be a path like `C:\Users\%username%\AppData\Local\Continuum\anaconda3\Scripts`, though it depends on how you installed Anaconda. Below is what the folder's contents should be.
+
+![anaconda-images.png](https://i.imgur.com/gBax6Os.png)
+
+6. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
 
 ### Instructions for setting up vscode
 1. Install the c/c++ extension.
