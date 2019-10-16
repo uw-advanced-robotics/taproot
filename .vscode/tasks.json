@@ -9,12 +9,15 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "scripts/releaseBuild.sh",
+            "command": "${workspaceRoot}/scripts/releaseBuild.sh",
             "windows": {
-                "command": "scripts/windows/releaseBuild.bat"
+                "command": "${workspaceRoot}/scripts/windows/releaseBuild.bat"
             },
             "group": "build",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
         },
         {
             "label": "Program - Release",
@@ -22,15 +25,18 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "scripts/releaseProgram.sh",
+            "command": "${workspaceRoot}/scripts/releaseProgram.sh",
             "windows": {
-                "command": "scripts/windows/releaseProgram.bat"
+                "command": "${workspaceRoot}/scripts/windows/releaseProgram.bat"
             },
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
         },
         {
             "label": "Build - Debug",
@@ -38,12 +44,15 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "scripts/debugBuild.sh",
+            "command": "${workspaceRoot}/scripts/debugBuild.sh",
             "windows": {
-                "command": "scripts/windows/debugBuild.bat"
+                "command": "${workspaceRoot}/scripts/windows/debugBuild.bat"
             },
             "group": "build",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
         },
         {
             "label": "Program - Debug",
@@ -51,12 +60,15 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "scripts/debugProgram.sh",
+            "command": "${workspaceRoot}/scripts/debugProgram.sh",
             "windows": {
-                "command": "scripts/windows/debugProgram.bat"
+                "command": "${workspaceRoot}/scripts/windows/debugProgram.bat"
             },
             "group": "build",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
         },
         {
             "label": "Setup Build",
@@ -64,12 +76,15 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "scripts/setupBuild.sh",
+            "command": "${workspaceRoot}/scripts/setupBuild.sh",
             "windows": {
-                "command": "scripts/windows/setupBuild.bat",
+                "command": "${workspaceRoot}/scripts/windows/setupBuild.bat",
             },
             "group": "none",
-            "problemMatcher": []
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
         }
     ]
 }
