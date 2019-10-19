@@ -5,7 +5,14 @@ compiler, openocd debugger, and vscode editor.
 
 ## New user guide
 
-1. Download [openocd](https://drive.google.com/file/d/14LnGVDfvSiih2daIdglWiC25xgwJkTM7/view?usp=sharing), [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads),and [anaconda](https://www.anaconda.com/distribution/). To download the 7zip files, if you do not have a 7zip extractor, you can use
+
+1. Download [openocd](https://drive.google.com/file/d/14LnGVDfvSiih2daIdglWiC25xgwJkTM7/view?usp=sharing),
+   [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads),
+   and [anaconda](https://www.anaconda.com/distribution/). (During installation, make sure to check the 'Add to PATH' box) If you perfer, rather
+   than downloading openocd and the arm-gcc-toolchain from the provided links, I
+   have created a 7zip file containing both, which can be downloaded
+   [here](https://drive.google.com/file/d/1-GCnAhZSidhW827O36aBPIegsX6G6-6S/view?usp=sharing).
+   To download the 7zip files, if you do not have a 7zip extractor, you can use
    [this](https://extract.me/) website to extract the file. 
 2. Add the /bin of openocd and the gcc-toolchain to your path. <br><br>
 
