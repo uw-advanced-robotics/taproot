@@ -17,7 +17,7 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
   - pip install cpplint
-  - chmod +x ./scripts/linter.sh
+  - chmod +x ./linter.sh
 
 cpplint:
   script:
