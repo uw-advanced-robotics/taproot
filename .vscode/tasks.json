@@ -9,9 +9,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "${workspaceRoot}/scripts/releaseBuild.sh",
+            "command": "/usr/bin/env python3 $(which scons) build",
             "windows": {
-                "command": "${workspaceRoot}/scripts/windows/releaseBuild.bat"
+                "command": "conda run -n modm scons build"
             },
             "group": "build",
             "problemMatcher": [],
@@ -25,9 +25,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "${workspaceRoot}/scripts/releaseProgram.sh",
+            "command": "/usr/bin/env python3 $(which scons) program",
             "windows": {
-                "command": "${workspaceRoot}/scripts/windows/releaseProgram.bat"
+                "command": "conda run -n modm scons program"
             },
             "group": {
                 "kind": "build",
@@ -44,9 +44,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "${workspaceRoot}/scripts/debugBuild.sh",
+            "command": "/usr/bin/env python3 $(which scons) build profile=debug",
             "windows": {
-                "command": "${workspaceRoot}/scripts/windows/debugBuild.bat"
+                "command": "conda run -n modm scons build profile=debug"
             },
             "group": "build",
             "problemMatcher": [],
@@ -60,9 +60,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "${workspaceRoot}/scripts/debugProgram.sh",
+            "command": "/usr/bin/env python3 $(which scons) program profile=debug",
             "windows": {
-                "command": "${workspaceRoot}/scripts/windows/debugProgram.bat"
+                "command": "conda run -n modm scons program profile=debug"
             },
             "group": "build",
             "problemMatcher": [],
@@ -76,9 +76,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "${workspaceRoot}/scripts/setupBuild.sh",
+            "command": "lbuild build",
             "windows": {
-                "command": "${workspaceRoot}/scripts/windows/setupBuild.bat",
+                "command": "conda run -n lbuild build"
             },
             "group": "none",
             "problemMatcher": [],
