@@ -7,7 +7,8 @@
                 "./mcb-2019-2020-project/modm/src",
                 "./mcb-2019-2020-project/modm/ext/cmsis/core",
                 "./mcb-2019-2020-project/modm/ext/cmsis/device",
-                "./mcb-2019-2020-project"
+                "./mcb-2019-2020-project",
+                "./mcb-2019-2020-project/modm/ext/freertos/inc"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",

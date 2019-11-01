@@ -28,8 +28,8 @@ namespace Board
 struct SystemClock
 {
     static constexpr uint32_t Frequency = 180_MHz;
-    static constexpr uint32_t Apb1 = Frequency / 4;
-    static constexpr uint32_t Apb2 = Frequency / 2;
+    static constexpr uint32_t Apb1 = Frequency / 2;
+    static constexpr uint32_t Apb2 = Frequency;
 
     static constexpr uint32_t Adc = Apb2;
 
@@ -56,8 +56,8 @@ struct SystemClock
     static constexpr uint32_t I2c2 = Apb1;
     static constexpr uint32_t I2c3 = Apb1;
 
-    static constexpr uint32_t Apb1Timer = Apb1;
-    static constexpr uint32_t Apb2Timer = Apb2;
+    static constexpr uint32_t Apb1Timer = 2 * Apb1;
+    static constexpr uint32_t Apb2Timer = 2 * Apb2;
     static constexpr uint32_t Timer1  = Apb2Timer;
     static constexpr uint32_t Timer2  = Apb1Timer;
     static constexpr uint32_t Timer3  = Apb1Timer;
@@ -93,7 +93,6 @@ struct SystemClock
         return true;
     }
 };
-
 
 // initialize a button built into mcb
 using Button = GpioInputB2;
@@ -178,6 +177,21 @@ initialize()
     DigitalInPins::setInput();
     // init button on board
     Button::setInput();
+
+    CanFilter::setStartFilterBankForCan2(14);
+    // initialize CAN 1
+    Can1::connect<GpioD0::Rx, GpioD1::Tx>(Gpio::InputType::PullUp);
+    Can1::initialize<Board::SystemClock, 1000_kbps>(9);
+    // receive every message for CAN 1
+    CanFilter::setFilter(0, CanFilter::FIFO0,
+        CanFilter::StandardIdentifier(0),
+        CanFilter::StandardFilterMask(0));
+    Can2::connect<GpioB12::Rx, GpioB13::Tx>(Gpio::InputType::PullUp);
+    Can2::initialize<Board::SystemClock, 1000_kbps>(12);
+    // receive every message for CAN 2
+    CanFilter::setFilter(14, CanFilter::FIFO0,
+        CanFilter::StandardIdentifier(0),
+        CanFilter::StandardFilterMask(0));
 }
 
 }  // namespace Board

@@ -15,6 +15,11 @@
 
 #include <modm/architecture/utils.hpp>
 
+#include "platform\can\can_1.hpp"
+#include "platform\can\can_2.hpp"
+#include "platform\can\can_bit_timings.hpp"
+#include "platform\can\can_filter.hpp"
+#include "platform\can\error_code.hpp"
 #include "platform\clock\common.hpp"
 #include "platform\clock\rcc.hpp"
 #include "platform\clock\systick_timer.hpp"
