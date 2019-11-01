@@ -1,1 +1,1 @@
-# Code containing communication protocols
+# Code containing aruwlib protocols

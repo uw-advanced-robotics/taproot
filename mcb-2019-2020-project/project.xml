@@ -18,6 +18,11 @@
     <module>modm:platform:clock</module>
     <module>modm:platform:core</module>
     <module>modm:platform:gpio</module>
+    <module>modm:platform:can:1</module>
+    <module>modm:platform:can:2</module>
+    <module>modm:container</module>
     <module>modm:build:scons</module>
+    <module>modm:math:utils</module>
+    <module>modm:math:saturated</module>
   </modules>
 </library>

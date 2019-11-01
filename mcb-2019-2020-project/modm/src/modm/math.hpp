@@ -12,6 +12,7 @@
 #ifndef MODM_MATH_HPP
 #define	MODM_MATH_HPP
 
+#include "math\saturated\saturated.hpp"
 #include "math\tolerance.hpp"
 #include "math\units.hpp"
 #include "math\utils.hpp"
