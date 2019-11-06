@@ -16,6 +16,7 @@
 
 #include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
+#include "robot-type/robot.hpp"
 
 using namespace modm::platform;
 

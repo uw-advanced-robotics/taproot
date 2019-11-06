@@ -9,9 +9,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build",
+            "command": "/usr/bin/env python3 $(which scons) build robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons build"
+                "command": "conda run -n modm scons build robot=${command:aruw.getRobotType}"
             },
             "group": "build",
             "problemMatcher": [],
@@ -25,9 +25,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program",
+            "command": "/usr/bin/env python3 $(which scons) program robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons program"
+                "command": "conda run -n modm scons program robot=${command:aruw.getRobotType}"
             },
             "group": {
                 "kind": "build",
@@ -44,9 +44,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) build profile=debug robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons build profile=debug"
+                "command": "conda run -n modm scons build profile=debug robot=${command:aruw.getRobotType}"
             },
             "group": "build",
             "problemMatcher": [],
@@ -60,9 +60,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) program profile=debug robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons program profile=debug"
+                "command": "conda run -n modm scons program profile=debug robot=${command:aruw.getRobotType}"
             },
             "group": "build",
             "problemMatcher": [],

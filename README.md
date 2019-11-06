@@ -36,6 +36,7 @@ This will clone the modm subdirectory.
 1. Install the c/c++ extension.
 2. Install the cortex-debug extension.
 3. For vscode intellisense to work properly, you need to add your compiler path individually. To do so, press "ctrl + p" and type `>c/c++ edit configurations (UI)`. In the screen that comes up, under the compiler path section, add the path of the "arm-none-eabi-gcc.exe" file located in the arm-gcc-toolchain /bin folder. Make sure to put double quotation marks around the path name.
+4. Install the [robot chooser extension](https://gitlab.com/aruw/code-2019-2020/vscode-robot-chooser-2019-2020#how-to-install)
 
 ## Workflow guide
 

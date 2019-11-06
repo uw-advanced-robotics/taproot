@@ -24,7 +24,7 @@ env["CONFIG_PROJECT_NAME"] = project_name
 env.SConscript(dirs=generated_paths, exports="env")
 
 env.Append(CPPPATH=".")
-ignored = [".lbuild_cache", build_path] + generated_paths
+ignored = [".lbuild_cache", build_path, "robot-type"] + generated_paths
 sources = []
 # Finding application sources
 sources += env.FindSourceFiles(".", ignorePaths=ignored)
@@ -53,5 +53,15 @@ if profile == "debug":
     env.Append(CCFLAGS = [
        "-fno-inline",
     ])
+
+# Get the robot type
+robot = ARGUMENTS.get("robot","soldier").upper()
+
+robot_types = ['HERO', 'ENGINEER', 'SOLDIER', 'DRONE', 'SENTRY']
+if robot not in robot_types:
+    Exit("Robot is not set to a valid robot!");
+
+# Add robot specific source files.
+sources += ['robot-type\\robot.hpp','robot-type\\' + robot.lower() + '.cpp']
 
 env.BuildTarget(sources)
