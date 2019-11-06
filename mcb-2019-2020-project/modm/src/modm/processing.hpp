@@ -14,6 +14,10 @@
 #ifndef MODM_PROCESSING_HPP
 #define	MODM_PROCESSING_HPP
 
+#include "processing\resumable.hpp"
+#include "processing\resumable\macros.hpp"
+#include "processing\resumable\nested_resumable.hpp"
+#include "processing\resumable\resumable.hpp"
 #include "processing\task.hpp"
 #include "processing\timer.hpp"
 #include "processing\timer\periodic_timer.hpp"

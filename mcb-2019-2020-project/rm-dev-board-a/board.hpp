@@ -151,6 +151,13 @@ using DigitalInPins = SoftwareGpioPort
     DigitalInPinY, DigitalInPinZ
 >;
 
+// gpio pins used for SPI communication to the onboard MPU6500 IMU
+using ImuSck = GpioF7;
+using ImuMiso = GpioF8;
+using ImuMosi = GpioF9;
+using ImuNcc = GpioF6;
+using ImuSpiMaster = SpiMaster5;
+
 inline void
 killAllGpioOutput()
 {
