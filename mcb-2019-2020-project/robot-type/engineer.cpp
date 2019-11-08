@@ -1,4 +1,4 @@
 #include <robot-type/robot.hpp>
 RobotType RobotInfo::getRobotType() {
-        return Engineer;
+        return RobotType::Engineer;
 };
