@@ -1,26 +1,27 @@
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/python/tags/
-image: python:latest
-
-# Pip's cache doesn't store the python packages
-# https://pip.pypa.io/en/stable/reference/pip_install/#caching
-#
-# If you want to also cache the installed packages, you have to install
-# them in a virtualenv and cache it as well.
-cache:
-  paths:
-    - venv/
-
 before_script:
   - python -V # Print out python version for debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - pip install cpplint
-  - chmod +x ./linter.sh
 
 cpplint:
+  image: aruw/mcb-2020-gitlab-ci:latest
+  before_script:
+    - chmod +x ./linter.sh
   script:
     - ./linter.sh
   only:
   - merge_requests
+  - master
+  - develop
+
+build-code:
+  image: aruw/mcb-2020-gitlab-ci:latest
+  script:
+    - cd mcb-2019-2020-project # Go to robot code diretory
+    - rm -r modm # Because lbuild clean is broken
+    - lbuild build # Make sure that modm is setup for linux.
+    - /usr/bin/env python3 $(which scons) build # Build the robot code!
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  only:
+    - merge_requests
+    - master
+    - develop
