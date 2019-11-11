@@ -1,5 +1,4 @@
 {
-    "C_Cpp.errorSquiggles": "Enabled",
     "editor.tabSize": 4,
     "files.associations": {
         "array": "cpp",
@@ -69,5 +68,16 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Enabled",
+    "C_Cpp.default.includePath": [
+        "${workspaceRoot}",
+        "./mcb-2019-2020-project/modm/src",
+        "./mcb-2019-2020-project/modm/ext/cmsis/core",
+        "./mcb-2019-2020-project/modm/ext/cmsis/device",
+        "./mcb-2019-2020-project"
+    ],
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64"
 }
