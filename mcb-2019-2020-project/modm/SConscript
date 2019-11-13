@@ -177,6 +177,7 @@ files = [
     env.File(r"src\modm\io\iostream_printf.cpp"),
     env.File(r"src\modm\math\utils\bit_operation.cpp"),
     env.File(r"src\modm\math\utils\pc\operator.cpp"),
+    env.File(r"src\modm\platform\adc\adc_interrupt_1.cpp"),
     env.File(r"src\modm\platform\can\can_1.cpp"),
     env.File(r"src\modm\platform\can\can_2.cpp"),
     env.File(r"src\modm\platform\can\can_filter.cpp"),
@@ -194,6 +195,7 @@ files = [
     env.File(r"src\modm\platform\core\vectors.c"),
     env.File(r"src\modm\platform\gpio\enable.cpp"),
     env.File(r"src\modm\platform\spi\spi_master_5.cpp"),
+    env.File(r"src\modm\platform\timer\timer_8.cpp"),
     env.File(r"src\modm\platform\uart\uart_1.cpp"),
     env.File(r"src\modm\utils\dummy.cpp"),
 ]

@@ -16,6 +16,8 @@
     <module>modm:architecture:delay</module>
     <module>modm:architecture:clock</module>
     <module>modm:platform:clock</module>
+    <module>modm:platform:timer:8</module>
+    <module>modm:platform:adc:1</module>
     <module>modm:platform:core</module>
     <module>modm:platform:gpio</module>
     <module>modm:architecture:spi.device</module>

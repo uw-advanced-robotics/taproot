@@ -16,6 +16,8 @@
 
 #include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
+#include <src/communication/gpio/analog.hpp>
+#include <src/communication/gpio/pwm.hpp>
 #include "robot-type/robot.hpp"
 
 using namespace modm::platform;
@@ -128,28 +130,52 @@ using PowerOuts = SoftwareGpioPort
     PowerOut3, PowerOut4
 >;
 
-// initilize 4 digital output pins
-using DigitalOutPinS = GpioOutputA0;
-using DigitalOutPinT = GpioOutputA1;
-using DigitalOutPinU = GpioOutputA2;
-using DigitalOutPinV = GpioOutputA3;
+// initialize 4 analog input pins
+using AnalogInPinS = GpioOutputA0;
+using AnalogInPinT = GpioOutputA1;
+using AnalogInPinU = GpioOutputA2;
+using AnalogInPinV = GpioOutputA3;
 
-using DigitalOutPins = SoftwareGpioPort
+using AnalogInPins = SoftwareGpioPort
 <
-    DigitalOutPinS, DigitalOutPinT,
-    DigitalOutPinU, DigitalOutPinV
+    AnalogInPinS, AnalogInPinT,
+    AnalogInPinU, AnalogInPinV
 >;
 
-// initiazlize 4 digital input pins
-using DigitalInPinW = GpioInputI5;
-using DigitalInPinX = GpioInputI6;
-using DigitalInPinY = GpioInputI7;
-using DigitalInPinZ = GpioInputI2;
+// initialize 4 pwm output pins
+using PWMOutPinW = GpioInputI5;
+using PWMOutPinX = GpioInputI6;
+using PWMOutPinY = GpioInputI7;
+using PWMOutPinZ = GpioInputI2;
+
+using PWMOutPins = SoftwareGpioPort
+<
+    PWMOutPinW, PWMOutPinX,
+    PWMOutPinY, PWMOutPinZ
+>;
+
+// initialize 4 digital input pins
+using DigitalInPinA = GpioOutputI0;
+using DigitalInPinB = GpioOutputH12;
+using DigitalInPinC = GpioOutputH11;
+using DigitalInPinD = GpioOutputH10;
 
 using DigitalInPins = SoftwareGpioPort
 <
-    DigitalInPinW, DigitalInPinX,
-    DigitalInPinY, DigitalInPinZ
+    DigitalInPinA, DigitalInPinB,
+    DigitalInPinC, DigitalInPinD
+>;
+
+// initialize 4 digital output pins
+using DigitalOutPinE = GpioInputD15;
+using DigitalOutPinF = GpioInputD14;
+using DigitalOutPinG = GpioInputD13;
+using DigitalOutPinH = GpioInputD12;
+
+using DigitalOutPins = SoftwareGpioPort
+<
+    DigitalOutPinE, DigitalOutPinF,
+    DigitalOutPinG, DigitalOutPinH
 >;
 
 // gpio pins used for SPI communication to the onboard MPU6500 IMU
@@ -165,6 +191,7 @@ killAllGpioOutput()
     Leds::setOutput(modm::Gpio::High);
     PowerOuts::setOutput(modm::Gpio::Low);
     DigitalOutPins::setOutput(modm::Gpio::Low);
+    aruwlib::gpio::Pwm::WriteAll(0.0);
 }
 
 inline void
@@ -173,7 +200,6 @@ initialize()
     // init clock
     SystemClock::enable();
     SysTickTimer::initialize<SystemClock>();
-
     // init Leds
     Leds::setOutput(modm::Gpio::Low);
     // init 24V output
@@ -183,8 +209,14 @@ initialize()
     // init digital in pins
     // interrupts disabled
     DigitalInPins::setInput();
+    // set analog in pins
+    AnalogInPins::setAnalogInput();
     // init button on board
     Button::setInput();
+
+    // init PWM and analog pins
+    aruwlib::gpio::Analog::init();
+    aruwlib::gpio::Pwm::init();
 
     CanFilter::setStartFilterBankForCan2(14);
     // initialize CAN 1

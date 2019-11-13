@@ -812,7 +812,7 @@ typedef struct
 {
   __OM  union
   {
-    __OM  uint8_t    uint8_t;                 /*!< Offset: 0x000 ( /W)  ITM Stimulus Port 8-bit */
+    __OM  uint8_t    u8;                 /*!< Offset: 0x000 ( /W)  ITM Stimulus Port 8-bit */
     __OM  uint16_t   u16;                /*!< Offset: 0x000 ( /W)  ITM Stimulus Port 16-bit */
     __OM  uint32_t   u32;                /*!< Offset: 0x000 ( /W)  ITM Stimulus Port 32-bit */
   }  PORT [32U];                         /*!< Offset: 0x000 ( /W)  ITM Stimulus Port Registers */
@@ -2065,7 +2065,7 @@ __STATIC_INLINE uint32_t ITM_SendChar (uint32_t ch)
     {
       __NOP();
     }
-    ITM->PORT[0U].uint8_t = (uint8_t)ch;
+    ITM->PORT[0U].u8 = (uint8_t)ch;
   }
   return (ch);
 }
