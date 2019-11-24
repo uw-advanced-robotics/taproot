@@ -4,9 +4,9 @@ before_script:
 cpplint:
   image: aruw/mcb-2020-gitlab-ci:latest
   before_script:
-    - chmod +x ./linter.sh
+    - chmod +x ./.gitlab/linter.sh
   script:
-    - ./linter.sh
+    - ./.gitlab/linter.sh
   only:
   - merge_requests
   - master

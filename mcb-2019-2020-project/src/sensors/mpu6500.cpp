@@ -16,6 +16,7 @@ namespace sensors {
     bool Mpu6500::imuInitialized = false;
 
     // initialize the imu and SPIbx
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void Mpu6500::init() {
         Board::ImuNcc::GpioOutput();
 
@@ -89,6 +90,7 @@ namespace sensors {
     }
 
     // get temperature value in C
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     float Mpu6500::mpuGetTemp() {
         if (imuInitialized) {
             return 21.0f + static_cast<float>(mpu6500Data.temp) / 333.87f;
@@ -99,6 +101,7 @@ namespace sensors {
     }
 
     // get accleration reading on x-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getAx() {
         if (imuInitialized) {
             return mpu6500Data.ax;
@@ -109,6 +112,7 @@ namespace sensors {
     }
 
     // get accleration reading on y-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getAy() {
         if (imuInitialized) {
             return mpu6500Data.ay;
@@ -119,6 +123,7 @@ namespace sensors {
     }
 
     // get acceleration reading on z-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getAz() {
         if (imuInitialized) {
             return mpu6500Data.az;
@@ -129,6 +134,7 @@ namespace sensors {
     }
 
     // get gyro reading on x-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getGx() {
         if (imuInitialized) {
             return mpu6500Data.gx;
@@ -139,6 +145,7 @@ namespace sensors {
     }
 
     // get gyro reading on y-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getGy() {
         if (imuInitialized) {
             return mpu6500Data.gy;
@@ -149,6 +156,7 @@ namespace sensors {
     }
 
     // get gyro reading on z-axis
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Mpu6500::getGz() {
         if (imuInitialized) {
             return mpu6500Data.gz;
@@ -231,6 +239,7 @@ namespace sensors {
     }
 
     // calibrates the imu only when we have flags
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void Mpu6500::caliFlagHandler() {
         if (imuCaliFlags.accCalcFlag) {
             getMpuAccOffset();

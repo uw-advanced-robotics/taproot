@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+Examples of this file available at https://github.com/danmar/cppcheck/tree/master/rules
+<rule version="1">
+    NOTE: When the patten is used, the file will already be processed. The code is passed in a special way, please click the link for more info.
+    <pattern>special regex, see https://sourceforge.net/p/cppcheck/wiki/Home/ for more info</pattern>
+    <message>
+        <id>UniqueId</id>
+        <severity>error, warning, style, performance, portability, information, or debug</severity>
+        <summary>The message sent to the console, explain the rule.</summary>
+    </message>
+</rule>
+-->
