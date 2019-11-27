@@ -101,21 +101,23 @@ struct SystemClock
 using Button = GpioInputB2;
 
 // initialize 9 green Leds and 1 red LED
-using Led1 = GpioOutputG1;
-using Led2 = GpioOutputG2;
-using Led3 = GpioOutputG3;
-using Led4 = GpioOutputG4;
-using Led5 = GpioOutputG5;
-using Led6 = GpioOutputG6;
-using Led7 = GpioOutputG7;
-using Led8 = GpioOutputG8;
-using Led9 = GpioOutputF14;
+// leds 1-8 used for error handling codes
+// led9 used for error handling error (unrepresentable error)
+using LedA = GpioOutputG1;
+using LedB = GpioOutputG2;
+using LedC = GpioOutputG3;
+using LedD = GpioOutputG4;
+using LedE = GpioOutputG5;
+using LedF = GpioOutputG6;
+using LedG = GpioOutputG7;
+using LedH = GpioOutputG8;
+using LedGreen = GpioOutputF14;
 using LedRed = GpioOutputE11;
 
 using Leds = SoftwareGpioPort
 <
-    Led1, Led2, Led3, Led4, Led5,
-    Led6, Led7, Led8, Led9, LedRed
+    LedA, LedB, LedC, LedD, LedE,
+    LedF, LedG, LedH, LedGreen, LedRed
 >;
 
 // initialize 4 24V outputs
