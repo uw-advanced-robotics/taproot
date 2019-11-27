@@ -78,7 +78,7 @@
             },
             "command": "lbuild build",
             "windows": {
-                "command": "conda run -n lbuild build"
+                "command": "conda run -n modm lbuild build"
             },
             "group": "none",
             "problemMatcher": [],
