@@ -12,6 +12,15 @@
 #ifndef MODM_MATH_HPP
 #define	MODM_MATH_HPP
 
+#include "math\filter.hpp"
+#include "math\filter\debounce.hpp"
+#include "math\filter\fir.hpp"
+#include "math\filter\median.hpp"
+#include "math\filter\moving_average.hpp"
+#include "math\filter\pid.hpp"
+#include "math\filter\ramp.hpp"
+#include "math\filter\s_curve_controller.hpp"
+#include "math\filter\s_curve_generator.hpp"
 #include "math\saturated\saturated.hpp"
 #include "math\tolerance.hpp"
 #include "math\units.hpp"
