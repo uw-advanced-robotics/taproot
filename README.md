@@ -109,6 +109,8 @@ ALTERNATIVELY...
 
 1. Open the folder `mcb-2019-2020` in VSCode. Press F5.
 
+#### How to use the linters
+See information in [the .gitlab folder README.md file](.gitlab/README.md#locally-linting)
 
 ### Special cases guide
 
