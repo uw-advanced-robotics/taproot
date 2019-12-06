@@ -69,7 +69,8 @@ namespace can
         }
         int32_t handlerStoreId = DJI_MOTOR_NORMALIZED_ID(rxMessage.getIdentifier());
         // if (not in bounds) throw NON-FATAL-ERROR-CHECK
-        if (handlerStoreId >= 0 && handlerStoreId < MAX_RECEIVE_UNIQUE_HEADER_CAN1)
+        if ((handlerStoreId >= 0 && handlerStoreId < MAX_RECEIVE_UNIQUE_HEADER_CAN1)
+            && messageHandlerStore[handlerStoreId] != nullptr)
         {
             messageHandlerStore[handlerStoreId]->processMessage(rxMessage);
         }
