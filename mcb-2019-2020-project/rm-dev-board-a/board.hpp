@@ -16,8 +16,8 @@
 
 #include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
-#include <src/communication/gpio/analog.hpp>
-#include <src/communication/gpio/pwm.hpp>
+#include <src/aruwlib/communication/gpio/analog.hpp>
+#include <src/aruwlib/communication/gpio/pwm.hpp>
 #include "robot-type/robot.hpp"
 
 using namespace modm::platform;

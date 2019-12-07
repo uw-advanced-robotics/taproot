@@ -11,8 +11,6 @@
 
 #include "rm-dev-board-a/board.hpp"
 
-#include <modm/architecture/interface/delay.hpp>
-
 modm_extern_c void
 // cppcheck-suppress unusedFunction
 modm_abandon(const char *,

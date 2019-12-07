@@ -2,11 +2,11 @@
 #include <modm/container/smart_pointer.hpp>
 #include <modm/processing/timer.hpp>
 
-#include "src/control/command_scheduler.hpp"
-#include "src/control/example_command.hpp"
-#include "src/control/example_subsystem.hpp"
-#include "src/motor/dji_motor_tx_handler.hpp"
-#include "src/communication/can/can_rx_listener.hpp"
+#include "src/aruwlib/control/command_scheduler.hpp"
+#include "src/aruwsrc/control/example_command.hpp"
+#include "src/aruwsrc/control/example_subsystem.hpp"
+#include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
+#include "src/aruwlib/communication/can/can_rx_listener.hpp"
 
 aruwsrc::control::ExampleSubsystem testSubsystem;
 
