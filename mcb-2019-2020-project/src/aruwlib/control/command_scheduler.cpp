@@ -118,12 +118,18 @@ namespace control
     }
 
     // cppcheck-suppress unusedFunction //TODO Remove lint suppression
-    void CommandScheduler::removeCommand(modm::SmartPointer command)
+    void CommandScheduler::removeCommand(modm::SmartPointer command, bool interrupted)
     {
+        bool commandFound = false;
         for (auto& subsystemCommandPair : subsystemToCommandMap)
         {
             if (subsystemCommandPair.second == command)
             {
+                if (!commandFound)
+                {
+                    smrtPtrCommandCast(subsystemCommandPair.second)->end(interrupted);
+                    commandFound = true;
+                }
                 subsystemCommandPair.second = defaultNullCommand;
             }
         }

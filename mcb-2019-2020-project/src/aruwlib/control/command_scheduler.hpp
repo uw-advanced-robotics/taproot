@@ -32,7 +32,7 @@ class CommandScheduler
  public:
     static void run(void);
 
-    static void removeCommand(modm::SmartPointer command);
+    static void removeCommand(modm::SmartPointer command, bool interrupted);
 
     static bool registerSubsystem(Subsystem* subsystem);
 
