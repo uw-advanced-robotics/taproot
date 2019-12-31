@@ -1,6 +1,7 @@
 #ifndef __DJI_MOTOR_HPP__
 #define __DJI_MOTOR_HPP__
 
+#include <modm/processing/timer/timeout.hpp>
 #include <rm-dev-board-a/board.hpp>
 #include "src/aruwlib/communication/can/can_rx_handler.hpp"
 
@@ -43,9 +44,9 @@ class DjiMotor : public aruwlib::can::CanRxListner
     class EncoderStore
     {
      public:
-        int32_t getEncoderUnwrapped(void) const;
+        int32_t getEncoderUnwrapped() const;
 
-        int16_t getEncoderWrapped(void) const;
+        int16_t getEncoderWrapped() const;
      private:
         friend class DjiMotor;
 
@@ -66,7 +67,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
     DjiMotor(const DjiMotor&) = delete;
 
     // whenever you process a message, this callback is meant to be used by a subclass
-    void motorReceiveMessageCallback(void) {}
+    void motorReceiveMessageCallback() {}
 
     // overrides virtual method in the can class, called every time a message is
     // received by the can receive handler
@@ -82,29 +83,32 @@ class DjiMotor : public aruwlib::can::CanRxListner
     // is simply a sanity check.
     void setDesiredOutput(int32_t desiredOutput);
 
+    bool isMotorOnline();
+
     // Serializes send data and deposits it in a message to be sent.
     void serializeCanSendData(modm::can::Message* txMessage) const;
 
     // getter functions
-    int16_t getVoltageDesired(void) const;
+    int16_t getVoltageDesired() const;
 
-    uint32_t getMotorIdentifier(void) const;
+    uint32_t getMotorIdentifier() const;
 
-    int8_t getTemperature(void) const;
+    int8_t getTemperature() const;
 
-    int16_t getTorque(void) const;
+    int16_t getTorque() const;
 
-    int16_t getShaftRPM(void) const;
+    int16_t getShaftRPM() const;
 
-    int16_t getCurrentActual(void) const;
+    int16_t getCurrentActual() const;
 
-    bool isMotorOnline(void) const;
-
-    aruwlib::can::CanBus getCanBus(void) const;
+    aruwlib::can::CanBus getCanBus() const;
 
     EncoderStore encStore;
 
  private:
+    // wait time before the motor is considered disconnected, in milliseconds
+    static const uint32_t MOTOR_DISCONNECT_TIME = 100;
+
     // Parses receive data given message with the correct identifier.
     void parseCanRxData(const modm::can::Message& message);
 
@@ -123,6 +127,8 @@ class DjiMotor : public aruwlib::can::CanRxListner
     int16_t torque;
 
     bool motorOnline;
+
+    modm::ShortTimeout motorDisconnectTimeout;
 };
 
 }  // namespace motor

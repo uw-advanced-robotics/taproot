@@ -22,11 +22,15 @@ namespace motor
         torque(0),
         motorOnline(false)
     {
+        motorDisconnectTimeout.stop();
         DjiMotorTxHandler::addMotorToManager(this);
     }
 
     void DjiMotor::parseCanRxData(const modm::can::Message& message)
     {
+        // restart disconnect timer, since you just received a message from the motor
+        motorDisconnectTimeout.restart(MOTOR_DISCONNECT_TIME);
+
         if (message.getIdentifier() != DjiMotor::getMotorIdentifier())
         {
             return;
@@ -46,6 +50,12 @@ namespace motor
     {
         this->desiredOutput =
             static_cast<int16_t>(algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
+    }
+
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
+    bool DjiMotor::isMotorOnline()
+    {
+        return !motorDisconnectTimeout.isExpired() || motorDisconnectTimeout.isStopped();
     }
 
     void DjiMotor::serializeCanSendData(modm::can::Message* txMessage) const
@@ -94,13 +104,6 @@ namespace motor
         return currentActual;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
-    bool DjiMotor::isMotorOnline() const
-    {
-        return motorOnline;
-    }
-
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     aruwlib::can::CanBus DjiMotor::getCanBus() const
     {
         return motorCanBus;
