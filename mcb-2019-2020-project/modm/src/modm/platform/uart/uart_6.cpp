@@ -16,8 +16,8 @@
 // ----------------------------------------------------------------------------
 
 #include "../device.hpp"
-#include "uart_hal_1.hpp"
-#include "uart_1.hpp"
+#include "uart_hal_6.hpp"
+#include "uart_6.hpp"
 
 #include <modm/architecture/interface/atomic_lock.hpp>
 #include <modm/architecture/driver/atomic/queue.hpp>
@@ -28,20 +28,20 @@ namespace
 	static modm::atomic::Queue<uint8_t, 256> txBuffer;
 }
 void
-modm::platform::Usart1::initializeBuffered(uint32_t interruptPriority)
+modm::platform::Usart6::initializeBuffered(uint32_t interruptPriority)
 {
-	UsartHal1::enableInterruptVector(true, interruptPriority);
-	UsartHal1::enableInterrupt(Interrupt::RxNotEmpty);
+	UsartHal6::enableInterruptVector(true, interruptPriority);
+	UsartHal6::enableInterrupt(Interrupt::RxNotEmpty);
 }
 void
-modm::platform::Usart1::writeBlocking(uint8_t data)
+modm::platform::Usart6::writeBlocking(uint8_t data)
 {
-	while(!UsartHal1::isTransmitRegisterEmpty());
-	UsartHal1::write(data);
+	while(!UsartHal6::isTransmitRegisterEmpty());
+	UsartHal6::write(data);
 }
 
 void
-modm::platform::Usart1::writeBlocking(const uint8_t *data, std::size_t length)
+modm::platform::Usart6::writeBlocking(const uint8_t *data, std::size_t length)
 {
 	while (length-- != 0) {
 		writeBlocking(*data++);
@@ -49,29 +49,29 @@ modm::platform::Usart1::writeBlocking(const uint8_t *data, std::size_t length)
 }
 
 void
-modm::platform::Usart1::flushWriteBuffer()
+modm::platform::Usart6::flushWriteBuffer()
 {
 	while(!isWriteFinished());
 }
 
 bool
-modm::platform::Usart1::write(uint8_t data)
+modm::platform::Usart6::write(uint8_t data)
 {
-	if(txBuffer.isEmpty() && UsartHal1::isTransmitRegisterEmpty()) {
-		UsartHal1::write(data);
+	if(txBuffer.isEmpty() && UsartHal6::isTransmitRegisterEmpty()) {
+		UsartHal6::write(data);
 	} else {
 		if (!txBuffer.push(data))
 			return false;
 		// Disable interrupts while enabling the transmit interrupt
 		atomic::Lock lock;
 		// Transmit Data Register Empty Interrupt Enable
-		UsartHal1::enableInterrupt(Interrupt::TxEmpty);
+		UsartHal6::enableInterrupt(Interrupt::TxEmpty);
 	}
 	return true;
 }
 
 std::size_t
-modm::platform::Usart1::write(const uint8_t *data, std::size_t length)
+modm::platform::Usart6::write(const uint8_t *data, std::size_t length)
 {
 	uint32_t i = 0;
 	for (; i < length; ++i)
@@ -84,17 +84,17 @@ modm::platform::Usart1::write(const uint8_t *data, std::size_t length)
 }
 
 bool
-modm::platform::Usart1::isWriteFinished()
+modm::platform::Usart6::isWriteFinished()
 {
-	return txBuffer.isEmpty() && UsartHal1::isTransmitRegisterEmpty();
+	return txBuffer.isEmpty() && UsartHal6::isTransmitRegisterEmpty();
 }
 
 std::size_t
-modm::platform::Usart1::discardTransmitBuffer()
+modm::platform::Usart6::discardTransmitBuffer()
 {
 	std::size_t count = 0;
 	// disable interrupt since buffer will be cleared
-	UsartHal1::disableInterrupt(UsartHal1::Interrupt::TxEmpty);
+	UsartHal6::disableInterrupt(UsartHal6::Interrupt::TxEmpty);
 	while(!txBuffer.isEmpty()) {
 		++count;
 		txBuffer.pop();
@@ -103,7 +103,7 @@ modm::platform::Usart1::discardTransmitBuffer()
 }
 
 bool
-modm::platform::Usart1::read(uint8_t &data)
+modm::platform::Usart6::read(uint8_t &data)
 {
 	if (rxBuffer.isEmpty()) {
 		return false;
@@ -115,7 +115,7 @@ modm::platform::Usart1::read(uint8_t &data)
 }
 
 std::size_t
-modm::platform::Usart1::read(uint8_t *data, std::size_t length)
+modm::platform::Usart6::read(uint8_t *data, std::size_t length)
 {
 	uint32_t i = 0;
 	for (; i < length; ++i)
@@ -131,7 +131,7 @@ modm::platform::Usart1::read(uint8_t *data, std::size_t length)
 }
 
 std::size_t
-modm::platform::Usart1::discardReceiveBuffer()
+modm::platform::Usart6::discardReceiveBuffer()
 {
 	std::size_t count = 0;
 	while(!rxBuffer.isEmpty()) {
@@ -142,21 +142,21 @@ modm::platform::Usart1::discardReceiveBuffer()
 }
 
 
-MODM_ISR(USART1)
+MODM_ISR(USART6)
 {
-	if (modm::platform::UsartHal1::isReceiveRegisterNotEmpty()) {
+	if (modm::platform::UsartHal6::isReceiveRegisterNotEmpty()) {
 		// TODO: save the errors
 		uint8_t data;
-		modm::platform::UsartHal1::read(data);
+		modm::platform::UsartHal6::read(data);
 		rxBuffer.push(data);
 	}
-	if (modm::platform::UsartHal1::isTransmitRegisterEmpty()) {
+	if (modm::platform::UsartHal6::isTransmitRegisterEmpty()) {
 		if (txBuffer.isEmpty()) {
 			// transmission finished, disable TxEmpty interrupt
-			modm::platform::UsartHal1::disableInterrupt(modm::platform::UsartHal1::Interrupt::TxEmpty);
+			modm::platform::UsartHal6::disableInterrupt(modm::platform::UsartHal6::Interrupt::TxEmpty);
 		}
 		else {
-			modm::platform::UsartHal1::write(txBuffer.get());
+			modm::platform::UsartHal6::write(txBuffer.get());
 			txBuffer.pop();
 		}
 	}

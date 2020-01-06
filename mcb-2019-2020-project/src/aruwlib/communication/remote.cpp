@@ -40,7 +40,7 @@ namespace aruwlib {
         }
         uint8_t data;  // Next byte to be read
         // Read next byte if available and more needed for the current packet
-        while (Usart1::read(data) && currentBufferIndex < REMOTE_BUF_LEN){
+        while (Usart1::read(data) && currentBufferIndex < REMOTE_BUF_LEN) {
             rxBuffer[currentBufferIndex] = data;
             currentBufferIndex++;
             lastRead = modm::Clock::now();
@@ -50,7 +50,7 @@ namespace aruwlib {
             clearRxBuffer();
         }
         // Parse buffer if all 18 bytes are read
-        if (currentBufferIndex >= REMOTE_BUF_LEN){
+        if (currentBufferIndex >= REMOTE_BUF_LEN) {
             connected = true;
             parseBuffer();
             clearRxBuffer();
@@ -66,7 +66,7 @@ namespace aruwlib {
     // Returns the value of the given channel
     // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t Remote::getChannel(Channel ch) {
-        switch (ch){
+        switch (ch) {
             case Channel::RIGHT_HORIZONTAL: return remote.rightHorizontal;
             case Channel::RIGHT_VERTICAL: return remote.rightVertical;
             case Channel::LEFT_HORIZONTAL: return remote.leftHorizontal;
@@ -203,7 +203,7 @@ namespace aruwlib {
         // Reset bytes read counter
         currentBufferIndex = 0;
         // Clear remote rxBuffer
-        for (int i = 0; i < REMOTE_BUF_LEN; i++){
+        for (int i = 0; i < REMOTE_BUF_LEN; i++) {
             rxBuffer[i] = 0;
         }
         // Clear Usart1 rxBuffer

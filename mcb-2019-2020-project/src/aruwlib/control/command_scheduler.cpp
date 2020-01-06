@@ -68,6 +68,7 @@ namespace control
         return true;
     }
 
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void CommandScheduler::run()
     {
         uint32_t checkRunPeriod = DWT->CYCCNT;  // clock cycle count
@@ -145,6 +146,7 @@ namespace control
         );
     }
 
+    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     bool CommandScheduler::registerSubsystem(Subsystem* subsystem)
     {
         if (!isSubsystemRegistered(subsystem))

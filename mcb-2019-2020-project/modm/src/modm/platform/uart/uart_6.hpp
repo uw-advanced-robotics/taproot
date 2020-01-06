@@ -14,14 +14,14 @@
  */
 // ----------------------------------------------------------------------------
 
-#ifndef MODM_STM32_UART_1_HPP
-#define MODM_STM32_UART_1_HPP
+#ifndef MODM_STM32_UART_6_HPP
+#define MODM_STM32_UART_6_HPP
 
 #include <modm/architecture/interface/uart.hpp>
 #include <modm/platform/gpio/connector.hpp>
 #include "uart_base.hpp"
 #include "uart_baudrate.hpp"
-#include "uart_hal_1.hpp"
+#include "uart_hal_6.hpp"
 
 namespace modm
 {
@@ -30,13 +30,13 @@ namespace platform
 {
 
 /**
- * Universal asynchronous receiver transmitter (USART1)
+ * Universal asynchronous receiver transmitter (USART6)
  *
  * @author		Kevin Laeufer
  * @author		Niklas Hauser
- * @ingroup		modm_platform_uart modm_platform_uart_1
+ * @ingroup		modm_platform_uart modm_platform_uart_6
  */
-class Usart1 : public UartBase, public ::modm::Uart
+class Usart6 : public UartBase, public ::modm::Uart
 {
 private:
 	/// Second stage initialize for buffered uart
@@ -53,12 +53,12 @@ public:
 	static void
 	connect(Gpio::InputType InputTypeRx = Gpio::InputType::PullUp)
 	{
-		using Connector = GpioConnector<Peripheral::Usart1, Signals...>;
+		using Connector = GpioConnector<Peripheral::Usart6, Signals...>;
 		using Tx = typename Connector::template GetSignal< Gpio::Signal::Tx >;
 		using Rx = typename Connector::template GetSignal< Gpio::Signal::Rx >;
 		static_assert(((Connector::template IsValid<Tx> and Connector::template IsValid<Rx>) and sizeof...(Signals) == 2) or
 					  ((Connector::template IsValid<Tx> or  Connector::template IsValid<Rx>) and sizeof...(Signals) == 1),
-					  "Usart1::connect() requires one Tx and/or one Rx signal!");
+					  "Usart6::connect() requires one Tx and/or one Rx signal!");
 
 		// Connector::disconnect();
 		Tx::setOutput(Gpio::OutputType::PushPull);
@@ -71,14 +71,14 @@ public:
 	initialize(uint32_t interruptPriority = 12, Parity parity = Parity::Disabled)
 	{
 		constexpr UartBase::OversamplingMode oversample =
-				UartBaudrate::getOversamplingMode(SystemClock::Usart1, baudrate);
-		UsartHal1::initializeWithBrr(
-				UartBaudrate::getBrr<SystemClock::Usart1, baudrate, tolerance>(),
+				UartBaudrate::getOversamplingMode(SystemClock::Usart6, baudrate);
+		UsartHal6::initializeWithBrr(
+				UartBaudrate::getBrr<SystemClock::Usart6, baudrate, tolerance>(),
 				parity,
 				oversample);
 		initializeBuffered(interruptPriority);
-		UsartHal1::setTransmitterEnable(true);
-		UsartHal1::setReceiverEnable(true);
+		UsartHal6::setTransmitterEnable(true);
+		UsartHal6::setReceiverEnable(true);
 	}
 
 	static void
@@ -117,4 +117,4 @@ public:
 
 }	// namespace modm
 
-#endif // MODM_STM32_UART_1_HPP
+#endif // MODM_STM32_UART_6_HPP
