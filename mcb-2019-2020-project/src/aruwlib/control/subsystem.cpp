@@ -10,7 +10,6 @@ namespace control
     Subsystem::Subsystem() : defaultCommand(CommandScheduler::defaultNullCommand)
     {}
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void Subsystem::setDefaultCommand(modm::SmartPointer command)
     {
         defaultCommand = command;

@@ -38,7 +38,6 @@ void DJISerial::initialize() {
     }
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 bool DJISerial::send() {
     txBuffer[0] = SERIAL_HEAD_BYTE;
     txBuffer[FRAME_DATA_LENGTH_OFFSET] = txMessage.length;

@@ -39,7 +39,6 @@ namespace can
         messageHandlerStore[id] = CanRxHndl;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void CanRxHandler::pollCanData()
     {
         // handle incoming CAN 1 messages

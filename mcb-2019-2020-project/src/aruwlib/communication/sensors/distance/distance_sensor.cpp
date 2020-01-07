@@ -13,13 +13,11 @@ namespace sensors {
     DistanceSensor::~DistanceSensor() {}
 
     // Get minumum distance boundary
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     float DistanceSensor::getMinDistance() {
         return minDistance;
     }
 
     // Get maximun distance boundary
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     float DistanceSensor::getMaxDistance() {
         return maxDistance;
     }

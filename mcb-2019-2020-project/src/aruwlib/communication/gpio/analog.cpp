@@ -8,7 +8,6 @@ namespace aruwlib
 
 namespace gpio
 {
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void Analog::init()
     {
         // Initial ADC/Timer setup

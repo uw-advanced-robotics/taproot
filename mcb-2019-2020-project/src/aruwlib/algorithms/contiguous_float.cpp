@@ -69,14 +69,12 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) {
     return finalDiff;
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 void ContiguousFloat::shiftBounds(const float& shiftMagnitude) {
     upperBound += shiftMagnitude;
     lowerBound += shiftMagnitude;
     reboundValue();
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 void ContiguousFloat::shiftValue(const float& shiftMagnitude) {
     value += shiftMagnitude;
     reboundValue();
@@ -84,24 +82,20 @@ void ContiguousFloat::shiftValue(const float& shiftMagnitude) {
 
 // Getters/Setters ----------------
 // Value
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 float ContiguousFloat::getValue() const {
     return value;
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 void ContiguousFloat::setValue(const float& newValue) {
     value = newValue;
     this->reboundValue();
 }
 
 // Upper bound
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 float ContiguousFloat::getUpperBound() const {
     return upperBound;
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 void ContiguousFloat::setUpperBound(const float& newValue) {
     upperBound = newValue;
 
@@ -110,12 +104,10 @@ void ContiguousFloat::setUpperBound(const float& newValue) {
 }
 
 // Lower bound
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 float ContiguousFloat::getLowerBound() const {
     return lowerBound;
 }
 
-// cppcheck-suppress unusedFunction //TODO Remove lint suppression
 void ContiguousFloat::setLowerBound(const float& newValue) {
     lowerBound = newValue;
 

@@ -45,14 +45,12 @@ namespace motor
         encStore.updateValue(encoderActual);
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void DjiMotor::setDesiredOutput(int32_t desiredOutput)
     {
         this->desiredOutput =
             static_cast<int16_t>(algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     bool DjiMotor::isMotorOnline()
     {
         return !motorDisconnectTimeout.isExpired() || motorDisconnectTimeout.isStopped();
@@ -80,25 +78,21 @@ namespace motor
         return motorIdentifier;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int8_t DjiMotor::getTemperature() const
     {
         return temperature;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t DjiMotor::getTorque() const
     {
         return torque;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t DjiMotor::getShaftRPM() const
     {
         return shaftRPM;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t DjiMotor::getCurrentActual() const
     {
         return currentActual;
@@ -109,13 +103,11 @@ namespace motor
         return motorCanBus;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int32_t DjiMotor::EncoderStore::getEncoderUnwrapped() const
     {
         return encoderWrapped + ENC_RESOLUTION * encoderRevolutions;
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     int16_t DjiMotor::EncoderStore::getEncoderWrapped() const
     {
         return encoderWrapped;

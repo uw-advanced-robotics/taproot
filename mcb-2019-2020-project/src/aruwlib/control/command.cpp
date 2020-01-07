@@ -8,7 +8,6 @@ namespace aruwlib
 
 namespace control
 {
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     bool Command::hasRequirement(Subsystem* requirement) const
     {
         return commandRequirements.find(requirement) != commandRequirements.end();
