@@ -8,7 +8,6 @@ namespace aruwlib
 namespace errors
 {
     // add an error to list of errors
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void ErrorController::addToErrorList(const SystemError error) {
         // only add error if it is not already added
         for (SystemError sysErr : errorList)
@@ -26,7 +25,6 @@ namespace errors
         }
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     void ErrorController::removeCurrentDisplayedError()
     {
         if (errorList.getSize() != 0) {
@@ -34,7 +32,6 @@ namespace errors
         }
     }
 
-    // cppcheck-suppress unusedFunction //TODO Remove lint suppression
     // Blink the list of errors in a loop on the board
     void ErrorController::update() {
         if (errorList.getSize() == 0) {

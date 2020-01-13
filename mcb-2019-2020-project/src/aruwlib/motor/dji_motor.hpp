@@ -34,7 +34,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
     #define ENC_RESOLUTION 8191
 
     // construct new motor
-    DjiMotor(MotorId desMotorIdentifier, aruwlib::can::CanBus motorCanBus);
+    DjiMotor(MotorId desMotorIdentifier, aruwlib::can::CanBus motorCanBus, bool isInverted);
 
     ~DjiMotor();
 
@@ -50,17 +50,27 @@ class DjiMotor : public aruwlib::can::CanRxListner
      private:
         friend class DjiMotor;
 
-        EncoderStore(
-            uint16_t encWrapped = 4096,
+        explicit EncoderStore(
+            bool inverted,
+            uint16_t encWrapped = (ENC_RESOLUTION + 1) / 2,
             int16_t encRevolutions = 0
-        ) : encoderWrapped(encWrapped), encoderRevolutions(encRevolutions)
+        ) : encoderWrapped(encWrapped),
+        encoderRevolutions(encRevolutions),
+        initialEncValue(0),
+        encStoreInverted(inverted)
         {}
 
         void updateValue(uint16_t newEncWrapped);
 
+        void setInitialEncoderValue(uint16_t initEncValue);
+
         uint16_t encoderWrapped;
 
         int16_t encoderRevolutions;
+
+        uint16_t initialEncValue;
+
+        bool encStoreInverted;
     };
 
     // delete copy constructor
@@ -89,7 +99,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
     void serializeCanSendData(modm::can::Message* txMessage) const;
 
     // getter functions
-    int16_t getVoltageDesired() const;
+    int16_t getOutputDesired() const;
 
     uint32_t getMotorIdentifier() const;
 
@@ -101,9 +111,13 @@ class DjiMotor : public aruwlib::can::CanRxListner
 
     int16_t getCurrentActual() const;
 
+    bool isMotorInverted() const;
+
     aruwlib::can::CanBus getCanBus() const;
 
     EncoderStore encStore;
+
+    int32_t encw;
 
  private:
     // wait time before the motor is considered disconnected, in milliseconds
@@ -126,7 +140,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
 
     int16_t torque;
 
-    bool motorOnline;
+    bool motorInverted;
 
     modm::ShortTimeout motorDisconnectTimeout;
 };

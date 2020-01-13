@@ -12,7 +12,6 @@
 #include "rm-dev-board-a/board.hpp"
 
 modm_extern_c void
-// cppcheck-suppress unusedFunction
 modm_abandon(const char *,
         const char *,
         const char *,
