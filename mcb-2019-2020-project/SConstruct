@@ -61,7 +61,4 @@ robot_types = ['HERO', 'ENGINEER', 'SOLDIER', 'DRONE', 'SENTRY']
 if robot not in robot_types:
     Exit("Robot is not set to a valid robot!");
 
-# Add robot specific source files.
-sources += [os.path.join('robot-type','robot.hpp'), os.path.join('robot-type',robot.lower() + '.cpp')]
-
 env.BuildTarget(sources)

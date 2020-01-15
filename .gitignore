@@ -3,8 +3,7 @@ mcb-2019-2020-project/project.xml.log
 .vscode/.cortex-debug.peripherals.state.json
 .vscode/.cortex-debug.registers.state.json
 .vscode/c_cpp_properties.json
-.vscode/aruw.txt
 .sconsign.dblite
 *.pyc
 project.xml.log
-.vscode/aruw.txt
+.robot_type.txt
