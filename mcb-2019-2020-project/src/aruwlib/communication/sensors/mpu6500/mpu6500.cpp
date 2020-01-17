@@ -1,9 +1,13 @@
 #include "mpu6500.hpp"
 #include "mpu6500_reg.hpp"
+#include "src/aruwlib/algorithms/math_user_utils.hpp"
 
 namespace aruwlib {
 
 namespace sensors {
+
+    MahonyAhrs Mpu6500::arhsAlgorithm;
+
     Mpu6500::mpu_info_t Mpu6500::mpu6500Data;
 
     uint8_t Mpu6500::mpu6500TxBuff[ACC_GYRO_BUFF_RX_SIZE] = {0};
@@ -64,11 +68,7 @@ namespace sensors {
             modm::delayMilliseconds(1);
         }
 
-        // offset for gyro drift
-        getMpuGyroOffset();
-
-        // offset for accel drift
-        getMpuAccOffset();
+        caliFlagHandler();
     }
 
     // parse imu data from data buffer
@@ -82,6 +82,8 @@ namespace sensors {
             mpu6500Data.gx = ((mpu6500RxBuff[8] << 8 | mpu6500RxBuff[9]) - mpu6500Data.gx_offset);
             mpu6500Data.gy = ((mpu6500RxBuff[10] << 8 | mpu6500RxBuff[11]) - mpu6500Data.gy_offset);
             mpu6500Data.gz = ((mpu6500RxBuff[12] << 8 | mpu6500RxBuff[13]) - mpu6500Data.gz_offset);
+
+            Mpu6500::calcImuAttitude(&mpu6500Data.imuAtti);
         } else {
             // NON-FATAL-ERROR-CHECK
         }
@@ -155,6 +157,13 @@ namespace sensors {
             // NON-FATAL-ERROR-CHECK
             return -1;
         }
+    }
+
+    MahonyAhrs::attitude Mpu6500::getImuAttitude() {
+        if (!imuInitialized) {
+            // NON-FATAL-ERROR-CHECK
+        }
+        return mpu6500Data.imuAtti;
     }
 
     // write to a given register
@@ -245,6 +254,21 @@ namespace sensors {
 
     void Mpu6500::mpuNssHigh() {
         Board::ImuNcc::setOutput(modm::GpioOutput::High);
+    }
+
+    void Mpu6500::calcImuAttitude(MahonyAhrs::attitude* imuAtti)
+    {
+        MahonyAhrs::ahrs_sensor imuSensor;
+        imuSensor.ax = static_cast<float>(mpu6500Data.ax)
+            / (ACCELERATION_SENSITIVITY / ACCELERATION_GRAVITY);
+        imuSensor.ay = static_cast<float>(mpu6500Data.ay)
+            / (ACCELERATION_SENSITIVITY / ACCELERATION_GRAVITY);
+        imuSensor.az = static_cast<float>(mpu6500Data.az)
+            / (ACCELERATION_SENSITIVITY / ACCELERATION_GRAVITY);
+        imuSensor.wx = algorithms::degreesToRadians(mpu6500Data.gx / LSB_D_PER_S_TO_D_PER_S);
+        imuSensor.wy = algorithms::degreesToRadians(mpu6500Data.gy / LSB_D_PER_S_TO_D_PER_S);
+        imuSensor.wz = algorithms::degreesToRadians(mpu6500Data.gz / LSB_D_PER_S_TO_D_PER_S);
+        arhsAlgorithm.mahony_ahrs_updateIMU(&imuSensor, imuAtti);
     }
 
 }  // namespace sensors

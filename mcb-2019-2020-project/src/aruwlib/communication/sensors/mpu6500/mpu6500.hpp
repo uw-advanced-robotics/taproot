@@ -8,6 +8,7 @@
 #define MPU6500_H
 
 #include <rm-dev-board-a/board.hpp>
+#include "src/aruwlib/algorithms/mahony_ahrs.hpp"
 
 using namespace modm::literals;
 
@@ -40,7 +41,22 @@ class  Mpu6500 {
 
     static void caliFlagHandler(void);
 
+    static void calcImuAttitude(MahonyAhrs::attitude* imuAtti);
+
+    static MahonyAhrs::attitude getImuAttitude();
+
  private:
+     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
+
+     // for converting from gyro values we receive to more conventional deg/sec
+     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
+
+     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
+
+     static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
+
+     static const uint8_t ACC_GYRO_BUFF_RX_SIZE = 14;
+
      typedef struct {
         // acceleration data
         int16_t ax = 0;
@@ -63,6 +79,8 @@ class  Mpu6500 {
         int16_t gx_offset = 0;
         int16_t gy_offset = 0;
         int16_t gz_offset = 0;
+
+        MahonyAhrs::attitude imuAtti;
     } mpu_info_t;
 
     typedef struct {
@@ -70,9 +88,7 @@ class  Mpu6500 {
         bool accCalcFlag = true;
     } mpu_cali_t;
 
-    #define MPU6500_OFFSET_SAMPLES 1000
-
-    #define ACC_GYRO_BUFF_RX_SIZE 14
+    static MahonyAhrs arhsAlgorithm;
 
     static bool imuInitialized;
 
