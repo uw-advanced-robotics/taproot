@@ -24,13 +24,6 @@ namespace control
 
     bool CommandScheduler::addCommand(modm::SmartPointer commandToAdd)
     {
-        // only add the command if (a) command is not already being run and (b) all
-        // subsystem dependencies can be interrupted.
-        if (isCommandScheduled(commandToAdd))
-        {
-            return false;
-        }
-
         bool commandAdded = false;
 
         set<Subsystem*> commandRequirements =

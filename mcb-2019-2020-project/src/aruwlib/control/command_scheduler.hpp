@@ -46,14 +46,14 @@ class CommandScheduler
 
     static const modm::SmartPointer defaultNullCommand;
 
+    static Command* smrtPtrCommandCast(modm::SmartPointer smrtPtr);
+
  private:
     static const float MAX_ALLOWABLE_SCHEDULER_RUNTIME;
 
     static std::map<Subsystem*, modm::SmartPointer> subsystemToCommandMap;
 
     static uint32_t commandSchedulerTimestamp;
-
-    static Command* smrtPtrCommandCast(modm::SmartPointer smrtPtr);
 };
 
 }  // namespace control

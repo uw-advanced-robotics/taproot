@@ -11,7 +11,6 @@
 #define __REMOTE_HPP__
 
 #include <rm-dev-board-a/board.hpp>
-
 namespace aruwlib {
 
 class Remote {
@@ -20,7 +19,7 @@ class Remote {
 
     enum class Switch { LEFT_SWITCH, RIGHT_SWITCH };
 
-    enum class SwitchState { UP, MID, DOWN, UNKNOWN };
+    enum class SwitchState { UNKNOWN, UP, MID, DOWN };
 
     enum class Key { W = 0, S, A, D, SHIFT, CTRL, Q, E, R, F, G, Z, X, C, V, B };
 
