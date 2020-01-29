@@ -12,8 +12,11 @@
 #include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "src/aruwlib/communication/can/can_rx_listener.hpp"
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
+#include "src/aruwlib/communication/serial/ref_serial.hpp"
 
 aruwsrc::control::ExampleSubsystem testSubsystem;
+
+aruwlib::serial::RefSerial refereeSerial;
 
 using namespace aruwlib::sensors;
 
@@ -29,6 +32,8 @@ int main()
 
     Board::initialize();
     aruwlib::Remote::initialize();
+
+    refereeSerial.initialize();
 
     Mpu6500::init();
 
@@ -56,6 +61,7 @@ int main()
     {
         // do this as fast as you can
         aruwlib::can::CanRxHandler::pollCanData();
+        refereeSerial.updateSerial();
 
         aruwlib::Remote::read();
 

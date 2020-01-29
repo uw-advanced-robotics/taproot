@@ -57,7 +57,7 @@ class DJISerial
         uint8_t data[SERIAL_RX_BUFF_SIZE];
         modm::Timestamp messageTimestamp;
         uint8_t sequenceNumber;
-    } SerialMessage_t;
+    } SerialMessage;
 
     /**
      * Construct a Serial object
@@ -89,7 +89,7 @@ class DJISerial
     /**
      * Called when a complete message is received, implemenent this yourself
      */
-    virtual void messageReceiveCallback(SerialMessage_t completeMessage) = 0;
+    virtual void messageReceiveCallback(SerialMessage completeMessage) = 0;
 
  private:
     enum SerialRxState
@@ -104,8 +104,8 @@ class DJISerial
 
     // stuff for rx, buffers to store parts of the header, state machine
     SerialRxState djiSerialRxState;
-    SerialMessage_t newMessage;  // message in middle of being constructed
-    SerialMessage_t mostRecentMessage;  // most recent complete message
+    SerialMessage newMessage;  // message in middle of being constructed
+    SerialMessage mostRecentMessage;  // most recent complete message
     uint16_t frameCurrReadByte;
     uint8_t frameHeader[FRAME_HEADER_LENGTH];
     // handle electrical noise
@@ -124,7 +124,7 @@ class DJISerial
 
  protected:  // subclasses can access the message that this class sends as to allow
              // for modification
-    SerialMessage_t txMessage;
+    SerialMessage txMessage;
 };
 
 }  // namespace serial

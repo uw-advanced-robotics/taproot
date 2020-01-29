@@ -195,7 +195,7 @@ void DJISerial::updateSerial() {
                 // update the time and copy over the message to the most recent message
                 newMessage.messageTimestamp = modm::Clock::now();
 
-                memcpy(&mostRecentMessage, &newMessage, sizeof(SerialMessage_t));
+                memcpy(&mostRecentMessage, &newMessage, sizeof(SerialMessage));
 
                 messageReceiveCallback(mostRecentMessage);
 

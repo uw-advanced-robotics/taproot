@@ -19,7 +19,7 @@ class SerialTestClass : public DJISerial
  public:
     SerialTestClass();
 
-    void messageReceiveCallback(SerialMessage_t completeMessage) override;
+    void messageReceiveCallback(SerialMessage completeMessage) override;
 
     void sendMessage(void);
 };
