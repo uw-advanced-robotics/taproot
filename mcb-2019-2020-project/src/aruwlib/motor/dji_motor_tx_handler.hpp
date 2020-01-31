@@ -67,6 +67,8 @@ class DjiMotorTxHandler
     );
 
     static void removeFromMotorManager(const DjiMotor& motor, DjiMotor** motorStore);
+
+    static void zeroTxMessage(modm::can::Message* message);
 };
 
 }  // namespace motor

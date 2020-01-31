@@ -69,6 +69,11 @@ namespace motor
         );
         can2MessageHigh.setExtended(false);
 
+        zeroTxMessage(&can1MessageLow);
+        zeroTxMessage(&can1MessageHigh);
+        zeroTxMessage(&can2MessageLow);
+        zeroTxMessage(&can2MessageHigh);
+
         serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
         serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
 
@@ -128,6 +133,14 @@ namespace motor
             return;
         }
         motorStore[id] = nullptr;
+    }
+
+    void DjiMotorTxHandler::zeroTxMessage(modm::can::Message* message)
+    {
+        for (int i = 0; i < message->length; i++)
+        {
+            message->data[i] = 0;
+        }
     }
 
 }  // namespace motor
