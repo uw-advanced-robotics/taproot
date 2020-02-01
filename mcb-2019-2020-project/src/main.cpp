@@ -3,18 +3,23 @@
 #include <modm/processing/timer.hpp>
 
 #include "src/aruwlib/control/controller_mapper.hpp"
-#include "src/aruwsrc/control/blink_led_command.hpp"
 #include "src/aruwlib/communication/remote.hpp"
 #include "src/aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
 #include "src/aruwlib/control/command_scheduler.hpp"
-#include "src/aruwsrc/control/example_command.hpp"
-#include "src/aruwsrc/control/example_subsystem.hpp"
+#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
+#include "aruwsrc/control/chassis/chassis_drive_command.hpp"
 #include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "src/aruwlib/communication/can/can_rx_listener.hpp"
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
 #include "src/aruwlib/communication/serial/ref_serial.hpp"
 
-aruwsrc::control::ExampleSubsystem testSubsystem;
+using namespace aruwsrc::chassis;
+
+#if defined(TARGET_SOLDIER)
+ChassisSubsystem soldierChassis;
+#else  // error
+#error "select soldier robot type only"
+#endif
 
 aruwlib::serial::RefSerial refereeSerial;
 
@@ -37,13 +42,11 @@ int main()
 
     Mpu6500::init();
 
-    modm::SmartPointer testDefaultCommand(
-        new aruwsrc::control::ExampleCommand(&testSubsystem));
-
-    CommandScheduler::registerSubsystem(&testSubsystem);
-
-    modm::SmartPointer blinkCommand(
-        new aruwsrc::control::BlinkLEDCommand(&testSubsystem));
+    #if defined(TARGET_SOLDIER)  // only soldier has the proper constants in for chassis code
+    modm::SmartPointer chassisDrive(new ChassisDriveCommand(&soldierChassis));
+    CommandScheduler::registerSubsystem(&soldierChassis);
+    soldierChassis.setDefaultCommand(chassisDrive);
+    #endif
 
     // timers
     // arbitrary, taken from last year since this send time doesn't overfill
@@ -51,11 +54,6 @@ int main()
     modm::ShortPeriodicTimer motorSendPeriod(3);
     // update imu
     modm::ShortPeriodicTimer updateImuPeriod(2);
-
-    IoMapper::addToggleMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP, {}),
-        blinkCommand
-    );
 
     while (1)
     {

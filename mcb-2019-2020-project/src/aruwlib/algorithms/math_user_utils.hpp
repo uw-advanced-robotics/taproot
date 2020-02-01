@@ -11,9 +11,14 @@ namespace algorithms
 
 constexpr float PI = 3.1415926535897932384626f;
 
-inline float degreesToRadians(float radians)
+inline float degreesToRadians(float degrees)
 {
-    return radians * PI / 180.0f;
+    return degrees * PI / 180.0f;
+}
+
+inline float radiansToDegrees(float radians)
+{
+    return radians * 180.f / PI;
 }
 
 template< typename T >

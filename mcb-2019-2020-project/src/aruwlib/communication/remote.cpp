@@ -10,6 +10,8 @@
 #include "remote.hpp"
 #include "src/aruwlib/control/controller_mapper.hpp"
 
+#include "src/aruwlib/algorithms/math_user_utils.hpp"
+
 namespace aruwlib {
     // The current remote information
     Remote::RemoteInfo Remote::remote;
@@ -64,12 +66,12 @@ namespace aruwlib {
     }
 
     // Returns the value of the given channel
-    int16_t Remote::getChannel(Channel ch) {
+    float Remote::getChannel(Channel ch) {
         switch (ch) {
-            case Channel::RIGHT_HORIZONTAL: return remote.rightHorizontal;
-            case Channel::RIGHT_VERTICAL: return remote.rightVertical;
-            case Channel::LEFT_HORIZONTAL: return remote.leftHorizontal;
-            case Channel::LEFT_VERTICAL: return remote.leftVertical;
+            case Channel::RIGHT_HORIZONTAL: return remote.rightHorizontal / STICK_MAX_VALUE;
+            case Channel::RIGHT_VERTICAL: return remote.rightVertical / STICK_MAX_VALUE;
+            case Channel::LEFT_HORIZONTAL: return remote.leftHorizontal / STICK_MAX_VALUE;
+            case Channel::LEFT_VERTICAL: return remote.leftVertical / STICK_MAX_VALUE;
         }
         return 0;
     }

@@ -33,7 +33,7 @@ class Remote {
     static bool isConnected(void);
 
     // Returns the value of the given channel
-    static int16_t getChannel(Channel ch);
+    static float getChannel(Channel ch);
 
     // Returns the state of the given switch
     static SwitchState getSwitch(Switch sw);
@@ -64,6 +64,8 @@ class Remote {
     #define REMOTE_READ_TIMEOUT 6  // Timeout delay between valid packets
     #define REMOTE_DISCONNECT_TIMEOUT 100  // Timeout delay for remote disconnect
     #define REMOTE_INT_PRI 12  // Interrupt priority
+
+    static constexpr float STICK_MAX_VALUE = 660.0f;
 
     // The current remote information
     static struct RemoteInfo {

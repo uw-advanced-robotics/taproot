@@ -33,9 +33,6 @@ namespace control
     {
         return false;
     }
-
-    void ExampleCommand::interrupted(void)
-    {}
 }  // namespace control
 
 }  // namespace aruwsrc

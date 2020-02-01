@@ -81,7 +81,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
 
     // overrides virtual method in the can class, called every time a message is
     // received by the can receive handler
-    void processMessage(const modm::can::Message& message)
+    void processMessage(const modm::can::Message& message) override
     {
         parseCanRxData(message);
         motorReceiveMessageCallback();
