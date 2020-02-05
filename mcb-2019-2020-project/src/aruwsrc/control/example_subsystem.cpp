@@ -5,8 +5,8 @@ namespace aruwsrc
 
 namespace control
 {
-    const aruwlib::motor::MotorId ExampleSubsystem::LEFT_MOTOR_ID = aruwlib::motor::MOTOR4;
-    const aruwlib::motor::MotorId ExampleSubsystem::RIGHT_MOTOR_ID = aruwlib::motor::MOTOR5;
+    const aruwlib::motor::MotorId ExampleSubsystem::LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
+    const aruwlib::motor::MotorId ExampleSubsystem::RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;
 
     void ExampleSubsystem::setDesiredRpm(float desRpm)
     {
@@ -31,7 +31,7 @@ namespace control
         float desiredRpm
     ) {
         pid->update(desiredRpm - motor->getShaftRPM());
-        motor->setDesiredOutput(pid->getValue());
+        motor->setDesiredOutput(static_cast<int32_t>(pid->getValue()));
     }
 }  // namespace control
 

@@ -189,7 +189,8 @@ namespace aruwlib {
         // Remote wheel
         remote.wheel = (rxBuffer[16] | rxBuffer[17] << 8) - 1024;
 
-        IoMapper::handleKeyStateChange(remote.key, remote.leftSwitch, remote.rightSwitch);
+        aruwlib::control::IoMapper::handleKeyStateChange(
+            remote.key, remote.leftSwitch, remote.rightSwitch);
     }
 
     // Clears the current rxBuffer

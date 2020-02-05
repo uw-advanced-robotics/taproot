@@ -5,14 +5,28 @@
  * command is attached to a subsystem. To create a new command,
  * extend the Command class and instantiate the virtual functions
  * in this class. See example_command.hpp for example of this.
+ * 
+ * Commands can also be comprised of a number of other commands.
+ * This is similar to command groups but much less structured.
+ * If you are going to do this, please follow the following
+ * conventions:
+ * - If you are making a comprised command, the comprised command
+ *   should operate at a high level. This means a comprised
+ *   command should act as a state machine that when it wants
+ *   to change the state of the robot, it adds/removes commands
+ *   to its command scheduler.
+ * - To interface with instances of commands that are a part of 
+ *   your comprised command, use the comprisedCommandScheduler
+ *   (an instance of a CommandScheduler). You will not need to
+ *   register subsystems (this is done when you add a subsystem
+ *   requirement to the command), but you can call the add/remove
+ *   command.
  */
 
 #ifndef __COMMAND_HPP__
 #define __COMMAND_HPP__
 
 #include <set>
-#include <modm/container/dynamic_array.hpp>
-#include <modm/container/smart_pointer.hpp>
 #include <rm-dev-board-a/board.hpp>
 #include "subsystem.hpp"
 
@@ -24,7 +38,8 @@ namespace control
 
 class Command {
  public:
-    Command() : prevSchedulerExecuteTimestamp(0)
+    Command() :
+    prevSchedulerExecuteTimestamp(0)
     {}
 
     /**
@@ -39,7 +54,7 @@ class Command {
      *
      * @return the set of subsystems that are required
      */
-    const std::set<Subsystem*>* getRequirements();
+    const std::set<Subsystem*>& getRequirements();
 
     /**
      * Whether the command requires a given subsystem.  Named "hasRequirement"
@@ -81,10 +96,7 @@ class Command {
      *
      * @return whether the command has finished.
      */
-    virtual bool isFinished(void) const
-    {
-       return false;
-    }
+    virtual bool isFinished(void) const = 0;
 
  private:
     friend class CommandScheduler;

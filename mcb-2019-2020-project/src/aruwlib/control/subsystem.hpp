@@ -24,8 +24,6 @@
 
 #include <rm-dev-board-a/board.hpp>
 
-#include <modm/container/smart_pointer.hpp>
-
 namespace aruwlib
 {
 
@@ -48,7 +46,7 @@ class Subsystem {
      *
      * @param defaultCommand the default command to associate with this subsystem
      */
-    void setDefaultCommand(modm::SmartPointer defaultCommand);
+    void setDefaultCommand(Command* defaultCommand);
 
     /**
      * Gets the default command for this subsystem. Returns null if no default
@@ -56,7 +54,7 @@ class Subsystem {
      *
      * @return the default command associated with this subsystem
      */
-    modm::SmartPointer getDefaultCommand(void) const;
+    Command* getDefaultCommand(void) const;
 
     /**
      * Called in the scheduler's run method assuming this command
@@ -72,8 +70,10 @@ class Subsystem {
      */
     virtual void refresh(void);
 
+    uint32_t prevSchedulerExecuteTimestamp;
+
  private:
-    modm::SmartPointer defaultCommand;
+    Command* defaultCommand;
 };
 
 }  // namespace control

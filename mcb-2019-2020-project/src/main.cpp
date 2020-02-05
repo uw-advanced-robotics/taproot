@@ -1,5 +1,4 @@
 #include <rm-dev-board-a/board.hpp>
-#include <modm/container/smart_pointer.hpp>
 #include <modm/processing/timer.hpp>
 
 #include "src/aruwlib/control/controller_mapper.hpp"
@@ -12,18 +11,19 @@
 #include "src/aruwlib/communication/can/can_rx_listener.hpp"
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
 #include "src/aruwlib/communication/serial/ref_serial.hpp"
+#include "src/aruwsrc/control/example_comprised_command.hpp"
 
 using namespace aruwsrc::chassis;
+using namespace aruwlib::sensors;
 
 #if defined(TARGET_SOLDIER)
 ChassisSubsystem soldierChassis;
+ChassisDriveCommand chassisDriveCommand(&soldierChassis);
 #else  // error
 #error "select soldier robot type only"
 #endif
 
 aruwlib::serial::RefSerial refereeSerial;
-
-using namespace aruwlib::sensors;
 
 int main()
 {
@@ -43,15 +43,14 @@ int main()
     Mpu6500::init();
 
     #if defined(TARGET_SOLDIER)  // only soldier has the proper constants in for chassis code
-    modm::SmartPointer chassisDrive(new ChassisDriveCommand(&soldierChassis));
-    CommandScheduler::registerSubsystem(&soldierChassis);
-    soldierChassis.setDefaultCommand(chassisDrive);
+    CommandScheduler::getMainScheduler().registerSubsystem(&soldierChassis);
+    soldierChassis.setDefaultCommand(&chassisDriveCommand);
     #endif
 
     // timers
     // arbitrary, taken from last year since this send time doesn't overfill
     // can bus
-    modm::ShortPeriodicTimer motorSendPeriod(3);
+    modm::ShortPeriodicTimer motorSendPeriod(2);
     // update imu
     modm::ShortPeriodicTimer updateImuPeriod(2);
 
@@ -70,7 +69,7 @@ int main()
 
         if (motorSendPeriod.execute())
         {
-            aruwlib::control::CommandScheduler::run();
+            CommandScheduler::getMainScheduler().run();
             aruwlib::motor::DjiMotorTxHandler::processCanSendData();
         }
 

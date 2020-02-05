@@ -5,8 +5,8 @@
 #include <list>
 #include <utility>
 #include <numeric>
-#include "src/aruwlib/control/command.hpp"
-#include "src/aruwlib/control/command_scheduler.hpp"
+#include "command.hpp"
+#include "command_scheduler.hpp"
 #include "src/aruwlib/communication/remote.hpp"
 
 /* 
@@ -20,10 +20,12 @@ using namespace aruwlib;
 
 namespace aruwlib {
 
+namespace control {
+
 class IoMapper
 
 {
-friend class Remote;
+friend class aruwlib::Remote;
 
  private:
     /**
@@ -59,8 +61,8 @@ friend class Remote;
         bool pressed = false;
         bool toggled = false;
         MapType type;
-        modm::SmartPointer command;
-        MapInfo(MapType mt, modm::SmartPointer sp) : type(mt), command(sp) {}
+        Command* command;
+        MapInfo(MapType mt, Command* sp) : type(mt), command(sp) {}
     };
 
     struct compareRemoteMapPtrs {
@@ -89,23 +91,23 @@ friend class Remote;
      * Note: a press mapping is only executed once
      */
 
-    static void addPressMapping(RemoteMap* mapping, modm::SmartPointer command);
+    static void addPressMapping(RemoteMap* mapping, Command* command);
 
     /**
      * Attaches a command to a remote control mapping which executes while a mapping is held
      * Note: a hold mapping is interrupted when the key is no longer being held
      */
 
-    static void addHoldMapping(RemoteMap* mapping, modm::SmartPointer command);
+    static void addHoldMapping(RemoteMap* mapping, Command* command);
 
-    static void addHoldRepeatMapping(RemoteMap* mapping, modm::SmartPointer command);
+    static void addHoldRepeatMapping(RemoteMap* mapping, Command* command);
 
     /**
      * Attaches a command to a remote control mapping which executes whenever a mapping is toggled
      * Note: a toggle mapping is interrupted when the key is untoggled
      */
 
-    static void addToggleMapping(RemoteMap* mapping, modm::SmartPointer command);
+    static void addToggleMapping(RemoteMap* mapping, Command* command);
 
     /*
      *   Returns a RemoteMap with dependencies on specified keys and no switches
@@ -129,6 +131,8 @@ friend class Remote;
                                           Remote::SwitchState rightSwitchState,
                                           std::list<Remote::Key> k = {});
 };
+
+}  // namespace control
 
 }  // namespace aruwlib
 

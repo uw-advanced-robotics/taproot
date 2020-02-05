@@ -236,6 +236,11 @@ initialize()
         CanFilter::StandardFilterMask(0));
 }
 
+inline uint32_t getTimeMicroseconds()
+{
+    return DWT->CYCCNT / static_cast<uint32_t>(modm::clock::fcpu_MHz);
+}
+
 }  // namespace Board
 
 #endif  // MODM_ROBOMASTER_DEV_BOARD_A_HPP
