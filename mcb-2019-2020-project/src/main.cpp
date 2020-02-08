@@ -23,8 +23,6 @@ ChassisDriveCommand chassisDriveCommand(&soldierChassis);
 #error "select soldier robot type only"
 #endif
 
-aruwlib::serial::RefSerial refereeSerial;
-
 int main()
 {
     aruwlib::algorithms::ContiguousFloatTest contiguousFloatTest;
@@ -38,7 +36,7 @@ int main()
     Board::initialize();
     aruwlib::Remote::initialize();
 
-    refereeSerial.initialize();
+    aruwlib::serial::RefSerial::getRefSerial().initialize();
 
     Mpu6500::init();
 
@@ -58,7 +56,7 @@ int main()
     {
         // do this as fast as you can
         aruwlib::can::CanRxHandler::pollCanData();
-        refereeSerial.updateSerial();
+        aruwlib::serial::RefSerial::getRefSerial().updateSerial();
 
         aruwlib::Remote::read();
 

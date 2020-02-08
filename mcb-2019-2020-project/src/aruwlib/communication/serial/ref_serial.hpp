@@ -216,7 +216,11 @@ class RefSerial : public DJISerial
 
     void sendDisplayData(const DisplayData& displayData);
 
+    static RefSerial& getRefSerial();
+
  private:
+    static RefSerial refSerial;
+
     RobotData robotData;
     GameData gameData;
     modm::BoundedDeque<DamageEvent, REF_DAMAGE_EVENT_SIZE> receivedDpsTracker;
