@@ -12,6 +12,7 @@
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
 #include "src/aruwlib/communication/serial/ref_serial.hpp"
 #include "src/aruwsrc/control/example_comprised_command.hpp"
+#include "src/aruwlib/communication/serial/xavier_serial.hpp"
 
 using namespace aruwsrc::chassis;
 using namespace aruwlib::sensors;
@@ -37,6 +38,7 @@ int main()
     aruwlib::Remote::initialize();
 
     aruwlib::serial::RefSerial::getRefSerial().initialize();
+    aruwlib::serial::XavierSerial::getXavierSerial().initialize();
 
     Mpu6500::init();
 
@@ -56,6 +58,7 @@ int main()
     {
         // do this as fast as you can
         aruwlib::can::CanRxHandler::pollCanData();
+        aruwlib::serial::XavierSerial::getXavierSerial().updateSerial();
         aruwlib::serial::RefSerial::getRefSerial().updateSerial();
 
         aruwlib::Remote::read();

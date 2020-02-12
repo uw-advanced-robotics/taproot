@@ -40,12 +40,12 @@ void DJISerial::initialize() {
 
 bool DJISerial::send() {
     txBuffer[0] = SERIAL_HEAD_BYTE;
-    txBuffer[FRAME_DATA_LENGTH_OFFSET] = txMessage.length;
-    txBuffer[FRAME_DATA_LENGTH_OFFSET + 1] = txMessage.length >> 8;
+    txBuffer[FRAME_DATA_LENGTH_OFFSET] = txMessage.length & 0xFF;
+    txBuffer[FRAME_DATA_LENGTH_OFFSET + 1] = (txMessage.length >> 8) & 0xFF;
     txBuffer[FRAME_SEQUENCENUM_OFFSET] = txMessage.sequenceNumber;
     txBuffer[FRAME_CRC8_OFFSET] = algorithms::calculateCRC8(txBuffer, 4, CRC8_INIT);
-    txBuffer[FRAME_TYPE_OFFSET] = txMessage.type;
-    txBuffer[FRAME_TYPE_OFFSET + 1] = txMessage.type >> 8;
+    txBuffer[FRAME_TYPE_OFFSET] = (txMessage.type) & 0xFF;
+    txBuffer[FRAME_TYPE_OFFSET + 1] = (txMessage.type >> 8) & 0xFF;
 
     // we can't send, trying to send too much
     if (FRAME_HEADER_LENGTH + txMessage.length + FRAME_CRC16_LENGTH >= SERIAL_TX_BUFF_SIZE) {
