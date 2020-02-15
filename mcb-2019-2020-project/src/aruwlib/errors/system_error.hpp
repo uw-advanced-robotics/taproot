@@ -24,18 +24,35 @@ static const uint8_t ERROR_TYPE_SIZE = 8 - ERROR_LOCATION_SIZE;
 
 // Location of errors; subject to change
 enum Location {
-    CAN = 0, MOTOR_CONTROL, LOCATION_AMOUNT
+    CAN_RX = 0,
+    MOTOR_CONTROL,
+    MPU6500,
+    DJI_SERIAL,
+    COMMAND_SCHEDULER,
+    LOCATION_AMOUNT
 };
 
 // Type of errors; subject to change
 enum ErrorType {
-    MOTOR_DISCONNECTED = 0, BAD_MOTOR_INPUT,
+    IMU_DATA_NOT_INITIALIZED = 0,
+    IMU_NOT_RECEIVING_PROPERLY,
+    INVALID_MESSAGE_LENGTH,
+    NULL_MOTOR_ID,
+    CRC8_FAILURE,
+    CRC16_FAILURE,
+    MESSAGE_LENGTH_OVERFLOW,
+    RUN_TIME_OVERFLOW,
+    MOTOR_ID_OUT_OF_BOUNDS,
+    ADDING_NULLPTR_COMMAND,
+    ADDING_COMMAND_WITH_NULL_SUBSYSTEM_DEPENDENCIES,
     ERROR_TYPE_AMOUNT
 };
 
 class SystemError
 {
  public:
+    SystemError() : location(LOCATION_AMOUNT), errorType(ERROR_TYPE_AMOUNT) {}
+
     SystemError(Location l, ErrorType et) : location(l), errorType(et)
     {
         static_assert(LOCATION_AMOUNT <= ERROR_LOCATION_SIZE * ERROR_LOCATION_SIZE,
@@ -44,9 +61,9 @@ class SystemError
             "You have declared too many error types!");
     }
 
-    Location getLocation(void) const;
+    Location getLocation() const;
 
-    ErrorType getErrorType(void) const;
+    ErrorType getErrorType() const;
 
  private:
     Location location;

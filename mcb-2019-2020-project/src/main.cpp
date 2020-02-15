@@ -11,6 +11,7 @@
 #include "src/aruwlib/communication/can/can_rx_listener.hpp"
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
 #include "src/aruwlib/communication/serial/ref_serial.hpp"
+#include "src/aruwlib/errors/error_controller.hpp"
 #include "src/aruwsrc/control/example_comprised_command.hpp"
 #include "src/aruwlib/communication/serial/xavier_serial.hpp"
 
@@ -70,6 +71,7 @@ int main()
 
         if (motorSendPeriod.execute())
         {
+            aruwlib::errors::ErrorController::update();
             CommandScheduler::getMainScheduler().run();
             aruwlib::motor::DjiMotorTxHandler::processCanSendData();
         }

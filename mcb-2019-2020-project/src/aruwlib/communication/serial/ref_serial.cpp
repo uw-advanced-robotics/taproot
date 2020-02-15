@@ -72,7 +72,6 @@ void RefSerial::messageReceiveCallback(SerialMessage completeMessage)
             break;
         }
         default :
-            // THROW-NON-FATAL-ERROR-CHECK
             break;
     }
 }

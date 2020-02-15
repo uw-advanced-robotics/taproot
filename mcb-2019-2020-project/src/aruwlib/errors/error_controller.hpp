@@ -12,32 +12,38 @@ namespace aruwlib
 namespace errors
 {
 
+/**
+ * Protocol description:
+ * The 8 leds on the mcb are used to indicate a location and error type. LEDs A-D transmit
+ * the error location and E-H the error type.
+ * For location, the LSB is D, and for error type, the LSB is H
+ * The other green led (next to the red led) comes on
+ * when you have added an invalid error. The red led is always on (not used). Default, leds
+ * A-H are always off if no errors are detected
+ */
 class ErrorController
 {
  public:
-    ErrorController() : prevLedErrorChangeWait(ERROR_ROTATE_TIME)
-    {}
+    static void addToErrorList(SystemError error);
 
-    void addToErrorList(const SystemError error);
-
-    void removeCurrentDisplayedError(void);
-
-    void update();
+    static void update();
 
  private:
-    const int ERROR_ROTATE_TIME = 2000;
+    static const int ERROR_ROTATE_TIME = 3000;
 
-    const unsigned ERROR_LIST_MAX_SIZE = 5;
+    static const unsigned ERROR_LIST_MAX_SIZE = 16;
 
-    modm::LinkedList <SystemError> errorList;
+    static modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
 
-    modm::ShortTimeout prevLedErrorChangeWait;
+    static modm::ShortTimeout prevLedErrorChangeWait;
 
-    bool getBinaryNumber(Location location, ErrorType errorType, uint8_t* number);
+    static int currentDisplayIndex;
 
-    void setLedError(uint8_t binaryRep);
+    static bool getLedErrorCodeBits(Location location, ErrorType errorType, uint8_t* number);
 
-    void ledSwitch(uint8_t ledLocation, bool display);
+    static void setLedError(uint8_t binaryRep);
+
+    static void ledSwitch(uint8_t ledLocation, bool display);
 };
 
 }  // namespace errors

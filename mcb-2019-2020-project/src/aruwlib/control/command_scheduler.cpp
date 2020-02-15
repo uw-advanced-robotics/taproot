@@ -6,6 +6,8 @@
 #include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "src/aruwlib/communication/can/can_rx_handler.hpp"
 #include "command.hpp"
+#include "src/aruwlib/errors/error_controller.hpp"
+#include "src/aruwlib/errors/system_error.hpp"
 
 using namespace std;
 
@@ -27,7 +29,9 @@ namespace control
     {
         if (commandToAdd == nullptr)
         {
-            // THROW-NON-FATAL-ERROR-CHECK
+            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
+                aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+            aruwlib::errors::ErrorController::addToErrorList(error);
             return;
         }
 
@@ -54,7 +58,9 @@ namespace control
             {
                 // the command you are trying to add has a subsystem that is not in the
                 // scheduler, so you cannot add it (will lead to undefined control behavior)
-                // THROW-NON-FATAL-ERROR-CHECK
+                aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
+                    aruwlib::errors::ErrorType::ADDING_COMMAND_WITH_NULL_SUBSYSTEM_DEPENDENCIES);
+                aruwlib::errors::ErrorController::addToErrorList(error);
                 return;
             }
         }
@@ -118,7 +124,9 @@ namespace control
         {
             // shouldn't take more than 1 ms to complete all this stuff, if it does something
             // is seriously wrong (i.e. you are adding subsystems unchecked)
-            // THROW-NON-FATAL-ERROR-CHECK
+            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
+                aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
+            aruwlib::errors::ErrorController::addToErrorList(error);
         }
     }
 
@@ -163,7 +171,9 @@ namespace control
         {
             subsystemToCommandMap[subsystem] = nullptr;
         } else {
-            // THROW-NON-FATAL-ERROR-CHECK
+            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
+                aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+            aruwlib::errors::ErrorController::addToErrorList(error);
         }
     }
 

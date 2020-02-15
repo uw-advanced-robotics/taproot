@@ -2,6 +2,8 @@
 #include <rm-dev-board-a/board.hpp>
 #include "dji_motor_tx_handler.hpp"
 #include "dji_motor.hpp"
+#include "src/aruwlib/errors/error_controller.hpp"
+#include "src/aruwlib/errors/system_error.hpp"
 
 #define CAN_DJI_MESSAGE_SEND_LENGTH 8
 #define CAN_DJI_LOW_IDENTIFIER 0X200
@@ -129,7 +131,9 @@ namespace motor
         if (motorStore[id] == nullptr)
         {
             // error, trying to remove something that doesn't exist!
-            // NON-FATAL-ERROR-CHECK
+            aruwlib::errors::SystemError error(aruwlib::errors::Location::MOTOR_CONTROL,
+                aruwlib::errors::ErrorType::NULL_MOTOR_ID);
+            aruwlib::errors::ErrorController::addToErrorList(error);
             return;
         }
         motorStore[id] = nullptr;

@@ -7,8 +7,15 @@ namespace aruwlib
 {
 namespace errors
 {
+    modm::BoundedDeque<SystemError, ErrorController::ERROR_LIST_MAX_SIZE>
+        ErrorController::errorList;
+
+    modm::ShortTimeout ErrorController::prevLedErrorChangeWait(ERROR_ROTATE_TIME);
+
+    int ErrorController::currentDisplayIndex = 0;
+
     // add an error to list of errors
-    void ErrorController::addToErrorList(const SystemError error) {
+    void ErrorController::addToErrorList(SystemError error) {
         // only add error if it is not already added
         for (SystemError sysErr : errorList)
         {
@@ -16,24 +23,19 @@ namespace errors
                 sysErr.getErrorType() == error.getErrorType()
                 && sysErr.getLocation() == error.getLocation()
             ) {
-                return;
+                return;  // the error is already added
             }
         }
-        if (errorList.getSize() <= ERROR_LIST_MAX_SIZE)
+        if (errorList.getSize() >= errorList.getMaxSize())
         {
-            errorList.append(error);
+            errorList.removeFront();  // remove the oldest element in the error list
         }
-    }
-
-    void ErrorController::removeCurrentDisplayedError()
-    {
-        if (errorList.getSize() != 0) {
-            errorList.removeFront();
-        }
+        errorList.append(error);
     }
 
     // Blink the list of errors in a loop on the board
     void ErrorController::update() {
+        // there are no errors to display, default display
         if (errorList.getSize() == 0) {
             setLedError(0);
             Board::LedGreen::setOutput(modm::Gpio::High);
@@ -43,14 +45,12 @@ namespace errors
         // change error every ERROR_ROTATE_TIME time increment
         if (prevLedErrorChangeWait.execute()) {
             prevLedErrorChangeWait.restart(ERROR_ROTATE_TIME);
-            SystemError currDisplayError = errorList.getFront();
-            errorList.removeFront();
-            errorList.append(currDisplayError);
+            currentDisplayIndex = (currentDisplayIndex + 1) % errorList.getSize();
         }
 
         uint8_t displayNum = 0;
-        if (getBinaryNumber(errorList.getFront().getLocation(),
-            errorList.getFront().getErrorType(), &displayNum)
+        if (getLedErrorCodeBits(errorList.get(currentDisplayIndex).getLocation(),
+            errorList.get(currentDisplayIndex).getErrorType(), &displayNum)
         ) {
             setLedError(displayNum);
             Board::LedGreen::setOutput(modm::Gpio::High);
@@ -60,7 +60,11 @@ namespace errors
         }
     }
 
-    bool ErrorController::getBinaryNumber(Location location, ErrorType errorType, uint8_t* number) {
+    bool ErrorController::getLedErrorCodeBits(
+        Location location,
+        ErrorType errorType,
+        uint8_t* number
+    ) {
         // Limit location and error type
         // Check to make sure they are within bounds
 
