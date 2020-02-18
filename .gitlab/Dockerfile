@@ -8,7 +8,7 @@
 
 FROM python:3.8.0-slim-buster
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget bzip2 scons git cppcheck \
+    && apt-get install -y --no-install-recommends wget bzip2 git cppcheck \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -17,4 +17,4 @@ RUN wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/RC2.1
     && rm gcc-arm.tar.bz2
 ENV PATH="/gcc-arm-none-eabi-9-2019-q4-major/bin:$PATH"
 
-RUN pip install modm cpplint
+RUN pip install modm cpplint scons
