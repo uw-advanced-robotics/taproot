@@ -5,6 +5,7 @@ compiler, openocd debugger, and vscode editor.
 
 ## New user guide
 
+Note: The beginning of the guide is for windows users. If you are using mac, skip steps 1-3 and instead refer to [modm's guide](https://modm.io/guide/installation/).
 
 1. Download [openocd](https://drive.google.com/file/d/14LnGVDfvSiih2daIdglWiC25xgwJkTM7/view?usp=sharing),
    [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads),
@@ -25,6 +26,7 @@ conda create --name modm python=3 pip
 activate modm
 conda install -c conda-forge git
 pip install jinja2 scons future pyelftools lbuild
+pip install pywin32
 ```
 4. Next, clone this repository. When you clone this repository. Insure you type `--recursive` when cloning. Your git clone command should look something like
    this: `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git` (if you do not use the command `--recursive`, you will have to clone the modm submodule. From the mcb-2019-2020 file, in the anaconda prompt, cd into mcb-2019-2020/modm and type the following commands: `git submodule init`, `git submodule update`)
@@ -36,7 +38,7 @@ This will clone the modm subdirectory.
 1. Install the c/c++ extension.
 2. Install the cortex-debug extension.
 3. For vscode intellisense to work properly, you need to add your compiler path individually. To do so, press "ctrl + p" and type `>c/c++ edit configurations (UI)`. In the screen that comes up, under the compiler path section, add the path of the "arm-none-eabi-gcc.exe" file located in the arm-gcc-toolchain /bin folder. Make sure to put double quotation marks around the path name.
-4. Install the [robot chooser extension](https://gitlab.com/aruw/code-2019-2020/vscode-robot-chooser-2019-2020#how-to-install)
+4. Install the robot chooser extension from VSCode marketplace (just search for it). The repository for the robot chooser can be found [here](https://gitlab.com/aruw/code-2019-2020/vscode-robot-chooser-2019-2020#how-to-install).
 
 ## Workflow guide
 

@@ -54,6 +54,12 @@ if profile == "debug":
        "-fno-inline",
     ])
 
+
+if GetOption('num_jobs') == 1:
+    SetOption('num_jobs', 8)
+
+print("running with -j", GetOption('num_jobs'))
+
 # Get the robot type
 robot = ARGUMENTS.get("robot","soldier").upper()
 
