@@ -44,6 +44,7 @@
     <module>modm:math:saturated</module>
     <module>modm:math:filter</module>
     <module>modm:processing</module>
+    <module>modm:math:geometry</module>
     <module>modm:ui:display</module>
   </modules>
 </library>
