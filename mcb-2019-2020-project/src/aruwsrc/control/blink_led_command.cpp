@@ -22,7 +22,8 @@ namespace control
         Board::LedA::set();
     }
 
-    void BlinkLEDCommand::end(bool interrupted)
+    // NOLINTNEXTLINE (see https://github.com/cpplint/cpplint/issues/131)
+    void BlinkLEDCommand::end(bool)
     {
         endCounter++;
         Board::LedA::reset();

@@ -107,14 +107,14 @@ namespace chassis
         // the x and y movement will be slowed by a fraction of auto rotation amount for maximizing
         // power consumption when the wheel rotation speed for chassis rotationis greater than the
         // MIN_ROTATION_THRESHOLD
-        if (fabs(chassisRotationDesiredWheelspeed) > MIN_ROTATION_THRESHOLD)
+        if (fabsf(chassisRotationDesiredWheelspeed) > MIN_ROTATION_THRESHOLD)
         {
             // power(max revolve speed - specified revolve speed, 2)
             // / power(max revolve speed, 2)
             rTranslationalGain =
                 powf(
                     ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR + MIN_ROTATION_THRESHOLD
-                    - fabs(chassisRotationDesiredWheelspeed)
+                    - fabsf(chassisRotationDesiredWheelspeed)
                     / ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR,
                     2.0f
                 );

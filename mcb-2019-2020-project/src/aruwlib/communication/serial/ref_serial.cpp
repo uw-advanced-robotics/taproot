@@ -1,5 +1,7 @@
 #include "ref_serial.hpp"
 
+#include "src/aruwlib/algorithms/math_user_utils.hpp"
+
 namespace aruwlib
 {
 
@@ -85,11 +87,11 @@ void RefSerial::sendDisplayData(const DisplayData& displayData)
 
     // 3 float variables to display on the referee client UI
     const uint32_t ref_comms_float_to_display1
-        = reinterpret_cast<const uint32_t&>(displayData.float1);
+        = aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float1);
     const uint32_t ref_comms_float_to_display2
-        = reinterpret_cast<const uint32_t&>(displayData.float2);
+        = aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float2);
     const uint32_t ref_comms_float_to_display3
-        = reinterpret_cast<const uint32_t&>(displayData.float3);
+        = aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float3);
 
     // 3 custom floats to display
     uint8_t data[13] = {
@@ -224,7 +226,7 @@ float RefSerial::decodeTofloat(const uint8_t* startByte)
         | (startByte[2] << 16)
         | (startByte[1] << 8)
         | startByte[0];
-    return reinterpret_cast<float&>(unsigned_value);
+    return aruwlib::algorithms::reinterpretCopy<uint32_t, float>(unsigned_value);
 }
 
 bool RefSerial::decodeToGameStatus(const SerialMessage& message)

@@ -1,7 +1,8 @@
 #ifndef __USER_MATH_UTILS_HPP__
 #define __USER_MATH_UTILS_HPP__
 
-#include <math.h>
+#include <cmath>
+#include <cstring>
 
 namespace aruwlib
 {
@@ -41,6 +42,22 @@ T limitVal(T val, T min, T max)
         return val;
     }
 }
+
+
+template <typename From, typename To>
+To reinterpretCopy(From from) {
+    static_assert(sizeof(From) == sizeof(To), "can only reinterpret-copy types of the same size");
+    To result;
+    memcpy(static_cast<void*>(&result), static_cast<void*>(&from), sizeof(To));
+    return result;
+}
+
+/**
+  * @brief     Fast inverse square-root, to calculate 1/Sqrt(x)
+  * @param[in] input:x
+  * @retval    1/Sqrt(x)
+  */
+float fastInvSqrt(float x);
 
 }  // namespace algorithms
 

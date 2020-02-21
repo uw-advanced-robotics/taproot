@@ -18,7 +18,7 @@ build-code:
     - cd mcb-2019-2020-project # Go to robot code diretory
     - rm -r modm # Because lbuild clean is broken
     - lbuild build # Make sure that modm is setup for linux.
-    - /usr/bin/env python3 $(which scons) build -j2 # Build the robot code!
+    - /usr/bin/env python3 $(which scons) build -j2 additional-ccflags=-Werror # Build the robot code!
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   only:

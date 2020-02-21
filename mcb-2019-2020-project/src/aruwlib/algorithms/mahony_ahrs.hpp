@@ -70,8 +70,6 @@ class MahonyAhrs
     float integralFBx, integralFBy, integralFBz;
 
     float gx, gy, gz, ax, ay, az, mx, my, mz;
-
-    float invSqrt(float x);
 };  // MahonyAhrs
 
 #endif  // __AHRS_H__

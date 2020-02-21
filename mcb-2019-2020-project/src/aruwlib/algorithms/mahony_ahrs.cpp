@@ -15,9 +15,12 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include <math.h>
-#include <stdint.h>
+#include <cmath>
+#include <cstdint>
+
 #include "mahony_ahrs.hpp"
+
+#include "math_user_utils.hpp"
 
 //---------------------------------------------------------------------------------------------------
 // Definitions
@@ -53,13 +56,13 @@ void MahonyAhrs::mahony_ahrs_update(ahrs_sensor *sensor, attitude *atti)
         float hx, hy, bx, bz;
 
         // Normalise accelerometer measurement
-        recipNorm = invSqrt(ax * ax + ay * ay + az * az);
+        recipNorm = aruwlib::algorithms::fastInvSqrt(ax * ax + ay * ay + az * az);
         ax *= recipNorm;
         ay *= recipNorm;
         az *= recipNorm;
 
         // Normalise magnetometer measurement
-        recipNorm = invSqrt(mx * mx + my * my + mz * mz);
+        recipNorm = aruwlib::algorithms::fastInvSqrt(mx * mx + my * my + mz * mz);
         mx *= recipNorm;
         my *= recipNorm;
         mz *= recipNorm;
@@ -132,17 +135,17 @@ void MahonyAhrs::mahony_ahrs_update(ahrs_sensor *sensor, attitude *atti)
     q3 += (qa * gz + qb * gy - qc * gx);
 
     // Normalise quaternion
-    recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+    recipNorm = aruwlib::algorithms::fastInvSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
     q0 *= recipNorm;
     q1 *= recipNorm;
     q2 *= recipNorm;
     q3 *= recipNorm;
 
-    atti->roll = atan2(2 * q2 * q3 + 2 * q0 * q1,
-        -2 * q1 * q1 - 2 * q2 * q2 + 1) * 57.3;  // roll     -pi----pi
-    atti->pitch = asin(-2 * q1 * q3 + 2 * q0 * q2) * 57.3;  // pitch    -pi/2----pi/2
-    atti->yaw = atan2(2 * q1 * q2 + 2 * q0 * q3,
-        -2 * q2 * q2 - 2 * q3 * q3 + 1) * 57.3;   // yaw      -pi----pi
+    atti->roll = atan2f(2 * q2 * q3 + 2 * q0 * q1,
+        -2 * q1 * q1 - 2 * q2 * q2 + 1) * 57.3f;  // roll     -pi----pi
+    atti->pitch = asinf(-2 * q1 * q3 + 2 * q0 * q2) * 57.3f;  // pitch    -pi/2----pi/2
+    atti->yaw = atan2f(2 * q1 * q2 + 2 * q0 * q3,
+        -2 * q2 * q2 - 2 * q3 * q3 + 1) * 57.3f;   // yaw      -pi----pi
 }
 
 void MahonyAhrs::mahony_ahrs_updateIMU(ahrs_sensor *sensor, attitude *atti)
@@ -167,7 +170,7 @@ void MahonyAhrs::mahony_ahrs_updateIMU(ahrs_sensor *sensor, attitude *atti)
         float halfex, halfey, halfez;
 
         // Normalise accelerometer measurement
-        recipNorm = invSqrt(ax * ax + ay * ay + az * az);
+        recipNorm = aruwlib::algorithms::fastInvSqrt(ax * ax + ay * ay + az * az);
         ax *= recipNorm;
         ay *= recipNorm;
         az *= recipNorm;
@@ -218,16 +221,16 @@ void MahonyAhrs::mahony_ahrs_updateIMU(ahrs_sensor *sensor, attitude *atti)
     q3 += (qa * gz + qb * gy - qc * gx);
 
     // Normalise quaternion
-    recipNorm = invSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+    recipNorm = aruwlib::algorithms::fastInvSqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
     q0 *= recipNorm;
     q1 *= recipNorm;
     q2 *= recipNorm;
     q3 *= recipNorm;
-    atti->roll = atan2(2 * q2 * q3 + 2 * q0 * q1,
-        -2 * q1 * q1 - 2 * q2 * q2 + 1) * 57.3;  // roll  -pi----pi
-    atti->pitch = asin(-2 * q1 * q3 + 2 * q0 * q2) * 57.3;  // pitch -pi/2----pi/2
-    atti->yaw = atan2(2 * q1 * q2 + 2 * q0 * q3,
-        -2 * q2 * q2 - 2 * q3 * q3 + 1) * 57.3;  // yaw   -pi----pi
+    atti->roll = atan2f(2 * q2 * q3 + 2 * q0 * q1,
+        -2 * q1 * q1 - 2 * q2 * q2 + 1) * 57.3f;  // roll  -pi----pi
+    atti->pitch = asinf(-2 * q1 * q3 + 2 * q0 * q2) * 57.3f;  // pitch -pi/2----pi/2
+    atti->yaw = atan2f(2 * q1 * q2 + 2 * q0 * q3,
+        -2 * q2 * q2 - 2 * q3 * q3 + 1) * 57.3f;  // yaw   -pi----pi
 }
 
 void MahonyAhrs::resetQuaternion()
@@ -236,21 +239,4 @@ void MahonyAhrs::resetQuaternion()
     q1 = 0.0f;
     q2 = 0.0f;
     q3 = 0.0f;
-}
-
-/**
-  * @brief     Fast inverse square-root, to calculate 1/Sqrt(x)
-               sizeof(long) must be 4 bytes.
-  * @param[in] input:x
-  * @retval    1/Sqrt(x)
-  */
-float MahonyAhrs::invSqrt(float x)
-{
-    float halfx = 0.5f * x;
-    float y = x;
-    int64_t i = *(reinterpret_cast<int64_t *>(&y));
-    i = 0x5f3759df - (i >> 1);
-    y = *(reinterpret_cast<float *>(&i));
-    y = y * (1.5f - (halfx * y * y));
-    return y;
 }
