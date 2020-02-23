@@ -187,6 +187,13 @@ using ImuMosi = GpioF9;
 using ImuNcc = GpioF6;
 using ImuSpiMaster = SpiMaster5;
 
+using DisplaySck = GpioB3;
+using DisplayMiso = GpioB4;
+using DisplayMosi = GpioA7;
+using DisplayReset = GpioB10;
+using DisplayCommand = GpioB9;
+using DisplaySpiMaster = SpiMaster1;
+
 inline void
 killAllGpioOutput()
 {
