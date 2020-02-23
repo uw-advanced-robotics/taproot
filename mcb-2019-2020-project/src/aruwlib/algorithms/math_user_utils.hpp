@@ -22,6 +22,11 @@ inline float radiansToDegrees(float radians)
     return radians * 180.f / PI;
 }
 
+inline bool compareFloatClose(float val1, float val2, float epsilon)
+{
+    return fabsf(val1 - val2) < epsilon;
+}
+
 template< typename T >
 T limitVal(T val, T min, T max)
 {
