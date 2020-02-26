@@ -84,7 +84,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
     // is simply a sanity check.
     void setDesiredOutput(int32_t desiredOutput);
 
-    bool isMotorOnline();
+    bool isMotorOnline() const;
 
     // Serializes send data and deposits it in a message to be sent.
     void serializeCanSendData(modm::can::Message* txMessage) const;
@@ -106,9 +106,30 @@ class DjiMotor : public aruwlib::can::CanRxListner
 
     aruwlib::can::CanBus getCanBus() const;
 
-    EncoderStore encStore;
+    template<typename T>
+    static void assertEncoderType()
+    {
+        constexpr bool good_type =
+            std::is_same<typename std::decay<T>::type, std::int64_t>::value ||
+            std::is_same<typename std::decay<T>::type, std::uint16_t>::value;
+        static_assert(good_type, "x is not of the correct type");
+    }
 
-    int32_t encw;
+    template<typename T>
+    static T degreesToEncoder(float angle)
+    {
+        assertEncoderType<T>();
+        return static_cast<T>((ENC_RESOLUTION * angle) / 360);
+    }
+
+    template<typename T>
+    static float encoderToDegrees(T encoder)
+    {
+        assertEncoderType<T>();
+        return (360.0f * static_cast<float>(encoder)) / ENC_RESOLUTION;
+    }
+
+    EncoderStore encStore;
 
  private:
     // wait time before the motor is considered disconnected, in milliseconds

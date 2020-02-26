@@ -41,11 +41,11 @@ float ContiguousFloat::unwrapAbove() const {
     return upperBound + (value - lowerBound);
 }
 
-float ContiguousFloat::difference(const float& otherValue) {
+float ContiguousFloat::difference(const float& otherValue) const {
     return difference(ContiguousFloat(otherValue, lowerBound, upperBound));
 }
 
-float ContiguousFloat::difference(const ContiguousFloat& otherValue) {
+float ContiguousFloat::difference(const ContiguousFloat& otherValue) const {
     // Find the shortest path to the target (smallest difference)
     float aboveDiff = otherValue.getValue() - this->unwrapAbove();
     float belowDiff = otherValue.getValue() - this->unwrapBelow();

@@ -49,8 +49,6 @@ namespace motor
         // invert motor if necessary
         encoderActual = motorInverted ? ENC_RESOLUTION - encoderActual : encoderActual;
         encStore.updateValue(encoderActual);
-
-        this->encw = encStore.getEncoderWrapped();
     }
 
     void DjiMotor::setDesiredOutput(int32_t desiredOutput)
@@ -60,7 +58,7 @@ namespace motor
         this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
     }
 
-    bool DjiMotor::isMotorOnline()
+    bool DjiMotor::isMotorOnline() const
     {
         /*
          * motor online if the disconnect timout has not expired (if it received message but

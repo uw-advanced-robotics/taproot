@@ -11,20 +11,31 @@
 #include "src/aruwlib/communication/can/can_rx_listener.hpp"
 #include "src/aruwlib/algorithms/contiguous_float_test.hpp"
 #include "src/aruwlib/communication/serial/ref_serial.hpp"
+#include "src/aruwsrc/control/turret/turret_subsystem.hpp"
+#include "src/aruwsrc/control/turret/turret_cv_command.hpp"
+#include "src/aruwsrc/control/turret/turret_init_command.hpp"
+#include "src/aruwsrc/control/turret/turret_manual_command.hpp"
+#include "src/aruwsrc/control/example/example_comprised_command.hpp"
 #include "src/aruwlib/errors/error_controller.hpp"
-#include "src/aruwsrc/control/example_comprised_command.hpp"
 #include "src/aruwlib/communication/serial/xavier_serial.hpp"
 #include "src/aruwlib/display/sh1106.hpp"
 
 using namespace aruwsrc::chassis;
+using namespace aruwsrc::control;
 using namespace aruwlib::sensors;
 
 #if defined(TARGET_SOLDIER)
+TurretSubsystem turretSubsystem;
+TurretCVCommand turretCVCommand(&turretSubsystem);
+TurretInitCommand turretInitCommand(&turretSubsystem);
+TurretManualCommand turretManualCommand(&turretSubsystem);
+
 ChassisSubsystem soldierChassis;
 ChassisDriveCommand chassisDriveCommand(&soldierChassis);
 #else  // error
 #error "select soldier robot type only"
 #endif
+
 
 int main()
 {
@@ -71,6 +82,13 @@ int main()
     #if defined(TARGET_SOLDIER)  // only soldier has the proper constants in for chassis code
     CommandScheduler::getMainScheduler().registerSubsystem(&soldierChassis);
     soldierChassis.setDefaultCommand(&chassisDriveCommand);
+
+    CommandScheduler::getMainScheduler().registerSubsystem(&turretSubsystem);
+    turretSubsystem.setDefaultCommand(&turretManualCommand);
+    IoMapper::addHoldMapping(
+        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP, {}),
+        &turretCVCommand);
+    CommandScheduler::getMainScheduler().addCommand(&turretInitCommand);
     #endif
 
     // timers

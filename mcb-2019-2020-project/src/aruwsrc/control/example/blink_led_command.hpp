@@ -36,7 +36,7 @@ class BlinkLEDCommand : public Command
       *
       * @param interrupted whether the command was interrupted/canceled
       */
-    void end(bool interrupted);
+    void end(bool);
 
     /**
       * Whether the command has finished.  Once a command finishes, the scheduler
