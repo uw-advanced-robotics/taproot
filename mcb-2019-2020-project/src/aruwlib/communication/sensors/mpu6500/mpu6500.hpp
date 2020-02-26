@@ -53,7 +53,7 @@ class  Mpu6500 {
 
      static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-     static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
+     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
      static const uint8_t ACC_GYRO_BUFF_RX_SIZE = 14;
 

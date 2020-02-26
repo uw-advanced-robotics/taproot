@@ -248,7 +248,7 @@ namespace sensors {
             mpuReadRegs(MPU6500_ACCEL_XOUT_H, mpu6500RxBuff, 14);
             mpu6500Data.ax_offset += (mpu6500RxBuff[0] << 8) | mpu6500RxBuff[1];
             mpu6500Data.ay_offset += (mpu6500RxBuff[2] << 8) | mpu6500RxBuff[3];
-            mpu6500Data.az_offset += (mpu6500RxBuff[4] << 8) | mpu6500RxBuff[5];
+            mpu6500Data.az_offset += ((mpu6500RxBuff[4] << 8) | mpu6500RxBuff[5]) - 4096;
             modm::delayMilliseconds(2);
         }
 
