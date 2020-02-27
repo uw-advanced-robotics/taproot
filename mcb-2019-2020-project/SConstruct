@@ -64,11 +64,4 @@ if GetOption('num_jobs') == 1:
 
 print("running with -j", GetOption('num_jobs'))
 
-# Get the robot type
-robot = ARGUMENTS.get("robot","soldier").upper()
-
-robot_types = ['HERO', 'ENGINEER', 'SOLDIER', 'DRONE', 'SENTRY']
-if robot not in robot_types:
-    Exit("Robot is not set to a valid robot!");
-
 env.BuildTarget(sources)

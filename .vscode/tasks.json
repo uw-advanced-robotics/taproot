@@ -11,7 +11,7 @@
             },
             "command": "/usr/bin/env python3 $(which scons) build robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons build robot=${command:aruw.getRobotType}"
+                "command": "conda run -n modm scons build"
             },
             "group": "build",
             "problemMatcher": [],
@@ -27,7 +27,7 @@
             },
             "command": "/usr/bin/env python3 $(which scons) program robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons program robot=${command:aruw.getRobotType}"
+                "command": "conda run -n modm scons program"
             },
             "group": {
                 "kind": "build",
@@ -46,7 +46,7 @@
             },
             "command": "/usr/bin/env python3 $(which scons) build profile=debug robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons build profile=debug robot=${command:aruw.getRobotType}"
+                "command": "conda run -n modm scons build profile=debug"
             },
             "group": "build",
             "problemMatcher": [],
@@ -62,7 +62,7 @@
             },
             "command": "/usr/bin/env python3 $(which scons) program profile=debug robot=${command:aruw.getRobotType}",
             "windows": {
-                "command": "conda run -n modm scons program profile=debug robot=${command:aruw.getRobotType}"
+                "command": "conda run -n modm scons program profile=debug"
             },
             "group": "build",
             "problemMatcher": [],
