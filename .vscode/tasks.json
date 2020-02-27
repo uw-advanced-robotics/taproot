@@ -9,7 +9,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build robot=${command:aruw.getRobotType}",
+            "command": "/usr/bin/env python3 $(which scons) build",
             "windows": {
                 "command": "conda run -n modm scons build"
             },
@@ -25,7 +25,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program robot=${command:aruw.getRobotType}",
+            "command": "/usr/bin/env python3 $(which scons) program",
             "windows": {
                 "command": "conda run -n modm scons program"
             },
@@ -44,7 +44,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build profile=debug robot=${command:aruw.getRobotType}",
+            "command": "/usr/bin/env python3 $(which scons) build profile=debug",
             "windows": {
                 "command": "conda run -n modm scons build profile=debug"
             },
@@ -60,7 +60,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program profile=debug robot=${command:aruw.getRobotType}",
+            "command": "/usr/bin/env python3 $(which scons) program profile=debug",
             "windows": {
                 "command": "conda run -n modm scons program profile=debug"
             },
