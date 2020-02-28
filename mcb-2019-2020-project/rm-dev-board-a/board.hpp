@@ -76,6 +76,15 @@ struct SystemClock
     static constexpr uint32_t Timer13 = Apb1Timer;
     static constexpr uint32_t Timer14 = Apb1Timer;
 
+    static constexpr uint32_t PWM_FREQUENCY = 50;
+    static constexpr uint32_t PWM_RESOLUTION = 31000;
+    static constexpr uint32_t APB1_TIMER_CLOCKS = 48150000;
+    static constexpr uint32_t APB2_TIMER_CLOCKS = 92500000;
+    static constexpr uint32_t APB1_PRESCALER
+        = ((APB1_TIMER_CLOCKS/PWM_FREQUENCY) / PWM_RESOLUTION - 1);
+    static constexpr uint32_t APB2_PRESCALER
+        = ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
+
     static bool inline
     enable()
     {

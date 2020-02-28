@@ -10,6 +10,8 @@
 #ifndef PWM_HPP
 #define PWM_HPP
 
+#include <cstdint>
+
 namespace aruwlib
 {
 
@@ -17,8 +19,6 @@ namespace gpio
 {
 
 class Pwm {
- private:
-    #define PWM_RESOLUTION TIM8->ARR
  public:
     // PWM pins
     enum Pin
