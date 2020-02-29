@@ -1,14 +1,14 @@
 /**
  * This is part of aruw's library.
  * 
- * This is a subsystem code for y-axis movement. Connect this to
+ * This is a subsystem code for x-axis movement. Connect this to
  * a digital output pin (preset to pin E on our board). This
  * sends a digital out signal to a solenoid, which actuates
  * a piston, used for collecting far bins.
  */
 
-#ifndef __SUBSYSTEM_YAXIS_HPP__
-#define __SUBSYSTEM_YAXIS_HPP__
+#ifndef __SUBSYSTEM_XAXIS_HPP__
+#define __SUBSYSTEM_XAXIS_HPP__
 
 #include <modm/math/filter/pid.hpp>
 #include "src/aruwlib/control/command_scheduler.hpp"
@@ -16,7 +16,7 @@
 
 using namespace aruwlib::control;
 
-using yAxisDigitalOutPin = Board::DigitalOutPinE;
+using xAxisDigitalOutPin = Board::DigitalOutPinE;
 
 namespace aruwsrc
 {
@@ -24,14 +24,14 @@ namespace aruwsrc
 namespace engineer
 {
 
-class YAxisSubsystem : public Subsystem
+class XAxisSubsystem : public Subsystem
 {
  public:
-    YAxisSubsystem(): isExtended(false) {}
+    XAxisSubsystem(): isExtended(false) {}
 
     void refresh();
 
-    void setYAxisExtended(bool isExtended);
+    void setXAxisExtended(bool isExtended);
 
     bool getIsExtended();
 

@@ -1,12 +1,12 @@
 /**
  * This code is part of aruw's repository.
- * Call this command to extend the y axis on the engineer.
+ * Call this command to extend the x axis on the engineer.
  * This sends a digital out signal to a solenoid, which actuates
  * a piston, used for collecting far bins.
  */
 
-#ifndef __EXTEND_YAXIS_COMMAND__
-#define __EXTEND_YAXIS_COMMAND__
+#ifndef __EXTEND_XAXIS_COMMAND__
+#define __EXTEND_XAXIS_COMMAND__
 
 #include "src/aruwlib/control/command.hpp"
 
@@ -18,12 +18,12 @@ namespace aruwsrc
 namespace engineer
 {
 
-class YAxisSubsystem;
+class XAxisSubsystem;
 
-class YaxisCommand : public Command
+class XaxisCommand : public Command
 {
  public:
-    explicit YaxisCommand(YAxisSubsystem* subsystem);
+    explicit XaxisCommand(XAxisSubsystem* subsystem);
 
     void initialize();
 
@@ -36,7 +36,7 @@ class YaxisCommand : public Command
     void interrupted();
 
  private:
-    YAxisSubsystem* yAxisSubsystem;
+    XAxisSubsystem* xAxisSubsystem;
 };
 
 }  // namespace engineer

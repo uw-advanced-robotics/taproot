@@ -1,6 +1,6 @@
 // Subsystem for Y-Axis Mechanism
 
-#include "yaxis_subsystem.hpp"
+#include "xaxis_subsystem.hpp"
 
 #include <rm-dev-board-a/board.hpp>
 
@@ -9,17 +9,17 @@ namespace aruwsrc
 
 namespace engineer
 {
-    void YAxisSubsystem::refresh() {
+    void XAxisSubsystem::refresh() {
         // for refresh, keep calling set(isExtended);
-        yAxisDigitalOutPin::set(isExtended);
+        xAxisDigitalOutPin::set(isExtended);
     }
 
-    void YAxisSubsystem::setYAxisExtended(bool isExtended) {
+    void XAxisSubsystem::setXAxisExtended(bool isExtended) {
         this->isExtended = isExtended;
-        yAxisDigitalOutPin::set(isExtended);
+        xAxisDigitalOutPin::set(isExtended);
     }
 
-    bool YAxisSubsystem::getIsExtended() {
+    bool XAxisSubsystem::getIsExtended() {
         return this->isExtended;
     }
 }  // namespace engineer
