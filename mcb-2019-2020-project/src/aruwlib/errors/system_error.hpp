@@ -1,15 +1,17 @@
 /**
  * example for how to create and add an error to the ErrorController:
- * 
- *     SystemError error1(MOTOR_CONTROL, MOTOR_DISCONNECTED);
- *     ErrorController::addToErrorList(error1);
+ * use macro in create_errors.hpp
+ *      
+ *     RAISE_ERROR("Error in DJI Serial", aruwlib::errors::Location::DJI_SERIAL,
+ *     aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
  * 
  * then call ErrorController::update() to update the list of errors
  */
 
-#ifndef LED_ERROR_HPP
-#define LED_ERROR_HPP
+#ifndef __SYSTEM_ERROR_HPP__
+#define __SYSTEM_ERROR_HPP__
 
+#include <string>
 #include <rm-dev-board-a/board.hpp>
 
 namespace aruwlib
@@ -29,7 +31,9 @@ enum Location {
     MPU6500,
     DJI_SERIAL,
     COMMAND_SCHEDULER,
-    LOCATION_AMOUNT
+    CONTROLLER_MAPPER,
+    TURRET,
+    LOCATION_AMOUNT,
 };
 
 // Type of errors; subject to change
@@ -45,27 +49,42 @@ enum ErrorType {
     MOTOR_ID_OUT_OF_BOUNDS,
     ADDING_NULLPTR_COMMAND,
     ADDING_COMMAND_WITH_NULL_SUBSYSTEM_DEPENDENCIES,
+    INVALID_REMOVE,
+    INVALID_KEY_MAP_TYPE,
+    INVALID_ADD,
+    MOTOR_OFFLINE,
+    INVALID_MOTOR_OUTPUT,
     ERROR_TYPE_AMOUNT
 };
 
 class SystemError
 {
  public:
-    SystemError() : location(LOCATION_AMOUNT), errorType(ERROR_TYPE_AMOUNT) {}
+    SystemError();
 
-    SystemError(Location l, ErrorType et) : location(l), errorType(et)
-    {
-        static_assert(LOCATION_AMOUNT <= ERROR_LOCATION_SIZE * ERROR_LOCATION_SIZE,
-            "You have declared too many locations!");
-        static_assert(ERROR_TYPE_AMOUNT <= ERROR_TYPE_SIZE * ERROR_TYPE_SIZE,
-            "You have declared too many error types!");
-    }
+    SystemError(const std::string& desc,
+                int line,
+                const std::string& file,
+                Location l,
+                ErrorType et);
+
+    int getLineNumber() const;
+
+    std::string getDescription() const;
+
+    std::string getFilename() const;
 
     Location getLocation() const;
 
     ErrorType getErrorType() const;
 
  private:
+    int lineNumber;
+
+    std::string description;
+
+    std::string filename;
+
     Location location;
 
     ErrorType errorType;

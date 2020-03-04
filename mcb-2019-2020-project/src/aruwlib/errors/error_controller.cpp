@@ -22,6 +22,9 @@ namespace errors
             if (
                 sysErr.getErrorType() == error.getErrorType()
                 && sysErr.getLocation() == error.getLocation()
+                && (sysErr.getDescription().compare(error.getDescription()) == 0)
+                && (sysErr.getFilename().compare(error.getFilename()) == 0)
+                && sysErr.getLineNumber() == error.getLineNumber()
             ) {
                 return;  // the error is already added
             }
@@ -94,23 +97,23 @@ namespace errors
         }
     }
 
-    void ErrorController::ledSwitch(uint8_t ledLocation, bool display) {
-        switch(ledLocation) {
-            case 0: Board::LedA::setOutput(!display);
+    void ErrorController::ledSwitch(uint8_t ledOnBoard, bool displayOnBoard) {
+        switch(ledOnBoard) {
+            case 0: Board::LedA::setOutput(!displayOnBoard);
                 break;
-            case 1: Board::LedB::setOutput(!display);
+            case 1: Board::LedB::setOutput(!displayOnBoard);
                 break;
-            case 2: Board::LedC::setOutput(!display);
+            case 2: Board::LedC::setOutput(!displayOnBoard);
                 break;
-            case 3: Board::LedD::setOutput(!display);
+            case 3: Board::LedD::setOutput(!displayOnBoard);
                 break;
-            case 4: Board::LedE::setOutput(!display);
+            case 4: Board::LedE::setOutput(!displayOnBoard);
                 break;
-            case 5: Board::LedF::setOutput(!display);
+            case 5: Board::LedF::setOutput(!displayOnBoard);
                 break;
-            case 6: Board::LedG::setOutput(!display);
+            case 6: Board::LedG::setOutput(!displayOnBoard);
                 break;
-            case 7: Board::LedH::setOutput(!display);
+            case 7: Board::LedH::setOutput(!displayOnBoard);
                 break;
         }
     }

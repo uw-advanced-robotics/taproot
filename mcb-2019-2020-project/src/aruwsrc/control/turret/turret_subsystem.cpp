@@ -5,6 +5,7 @@
 #include "src/aruwlib/communication/remote.hpp"
 #include "src/aruwlib/algorithms/math_user_utils.hpp"
 #include "src/aruwlib/control/controller_mapper.hpp"
+#include "src/aruwlib/errors/create_errors.hpp"
 
 using namespace aruwlib::motor;
 
@@ -38,6 +39,8 @@ namespace control
     {
         if (!yawMotor.isMotorOnline())
         {
+            RAISE_ERROR("trying to get velocity and yaw motor offline",
+                    aruwlib::errors::TURRET, aruwlib::errors::MOTOR_OFFLINE);
             // throw error
             return 0;
         }
@@ -49,7 +52,8 @@ namespace control
     {
         if (!pitchMotor.isMotorOnline())
         {
-            // throw error
+            RAISE_ERROR("trying to get velocity and pitch motor offline",
+                    aruwlib::errors::TURRET, aruwlib::errors::MOTOR_OFFLINE);
             return 0;
         }
 
@@ -100,7 +104,8 @@ namespace control
     {
         if (out > INT32_MAX || out < INT32_MIN)
         {
-            // return error
+            RAISE_ERROR("pitch motor output invalid",
+                    aruwlib::errors::TURRET, aruwlib::errors::INVALID_MOTOR_OUTPUT);
             return;
         }
         if (pitchMotor.isMotorOnline())
@@ -122,7 +127,8 @@ namespace control
     void TurretSubsystem::setYawMotorOutput(float out)
     {
         if (out > INT32_MAX || out < INT32_MIN) {
-            // return error
+            RAISE_ERROR("yaw motor output invalid",
+                    aruwlib::errors::TURRET, aruwlib::errors::INVALID_MOTOR_OUTPUT);
             return;
         }
         if (yawMotor.isMotorOnline())

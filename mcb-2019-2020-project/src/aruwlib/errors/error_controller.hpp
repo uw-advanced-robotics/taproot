@@ -29,7 +29,7 @@ class ErrorController
     static void update();
 
  private:
-    static const int ERROR_ROTATE_TIME = 3000;
+    static const int ERROR_ROTATE_TIME = 5000;
 
     static const unsigned ERROR_LIST_MAX_SIZE = 16;
 
@@ -43,7 +43,7 @@ class ErrorController
 
     static void setLedError(uint8_t binaryRep);
 
-    static void ledSwitch(uint8_t ledLocation, bool display);
+    static void ledSwitch(uint8_t ledOnBoard, bool displayOnBoard);
 };
 
 }  // namespace errors

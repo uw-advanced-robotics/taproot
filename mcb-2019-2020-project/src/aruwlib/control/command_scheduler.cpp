@@ -6,8 +6,7 @@
 #include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "src/aruwlib/communication/can/can_rx_handler.hpp"
 #include "command.hpp"
-#include "src/aruwlib/errors/error_controller.hpp"
-#include "src/aruwlib/errors/system_error.hpp"
+#include "src/aruwlib/errors/create_errors.hpp"
 
 using namespace std;
 
@@ -29,9 +28,9 @@ namespace control
     {
         if (commandToAdd == nullptr)
         {
-            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
-                aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
-            aruwlib::errors::ErrorController::addToErrorList(error);
+            RAISE_ERROR("attempting to add nullptr command",
+                    aruwlib::errors::Location::COMMAND_SCHEDULER,
+                    aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
             return;
         }
 
@@ -58,9 +57,9 @@ namespace control
             {
                 // the command you are trying to add has a subsystem that is not in the
                 // scheduler, so you cannot add it (will lead to undefined control behavior)
-                aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
-                    aruwlib::errors::ErrorType::ADDING_COMMAND_WITH_NULL_SUBSYSTEM_DEPENDENCIES);
-                aruwlib::errors::ErrorController::addToErrorList(error);
+                RAISE_ERROR("Attempting to add a command without subsystem in the scheduler",
+                        aruwlib::errors::Location::COMMAND_SCHEDULER,
+                        aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
                 return;
             }
         }
@@ -124,9 +123,9 @@ namespace control
         {
             // shouldn't take more than 1 ms to complete all this stuff, if it does something
             // is seriously wrong (i.e. you are adding subsystems unchecked)
-            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
-                aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
-            aruwlib::errors::ErrorController::addToErrorList(error);
+            RAISE_ERROR("scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME",
+                    aruwlib::errors::Location::COMMAND_SCHEDULER,
+                    aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
         }
     }
 
@@ -171,9 +170,9 @@ namespace control
         {
             subsystemToCommandMap[subsystem] = nullptr;
         } else {
-            aruwlib::errors::SystemError error(aruwlib::errors::Location::COMMAND_SCHEDULER,
-                aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
-            aruwlib::errors::ErrorController::addToErrorList(error);
+            RAISE_ERROR("subsystem is already added or trying to add nullptr subsystem",
+                    aruwlib::errors::Location::COMMAND_SCHEDULER,
+                    aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
         }
     }
 
