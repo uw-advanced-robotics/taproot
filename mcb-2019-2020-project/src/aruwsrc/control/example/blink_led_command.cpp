@@ -8,7 +8,7 @@ namespace control
 {
     BlinkLEDCommand::BlinkLEDCommand(aruwsrc::control::ExampleSubsystem* subsystem)
     {
-        this->addSubsystemRequirement(reinterpret_cast<Subsystem*>(subsystem));
+        this->addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
     }
 
     void BlinkLEDCommand::initialize() {

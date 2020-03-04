@@ -38,6 +38,8 @@ class TurretPid
 
     float getOutput();
 
+    void reset();
+
  private:
     // gains and constants, to be set by the user
     float kp = 0.0f;

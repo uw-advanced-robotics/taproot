@@ -146,7 +146,7 @@ void DJISerial::updateSerial() {
                     {
                         djiSerialRxState = SERIAL_HEADER_SEARCH;
                         RAISE_ERROR("CRC8 failure", aruwlib::errors::Location::DJI_SERIAL,
-                            aruwlib::errors::ErrorType::CRC8_FAILURE);
+                            aruwlib::errors::ErrorType::CRC_FAILURE);
                         return;
                     }
                 }
@@ -196,7 +196,7 @@ void DJISerial::updateSerial() {
                         delete[] crc16CheckData;
                         djiSerialRxState = SERIAL_HEADER_SEARCH;
                         RAISE_ERROR("CRC16 failure", aruwlib::errors::Location::DJI_SERIAL,
-                            aruwlib::errors::ErrorType::CRC16_FAILURE);
+                            aruwlib::errors::ErrorType::CRC_FAILURE);
                         return;
                     }
                     delete[] crc16CheckData;

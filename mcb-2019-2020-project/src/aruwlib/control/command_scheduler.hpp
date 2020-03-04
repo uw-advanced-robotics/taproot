@@ -51,7 +51,7 @@ class CommandScheduler
     static CommandScheduler& getMainScheduler();
 
  private:
-    // maximum time before we start erroring, in seconds
+    // maximum time before we start erroring, in microseconds
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
 
     // a map containing keys of subsystems, pairs of Commands

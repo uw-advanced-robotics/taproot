@@ -59,6 +59,8 @@ class ExtendedKalman
 
     float getLastFiltered() const;
 
+    void reset();
+
  private:
     float xLast;  // last optimal prediction
     float xMid;   // forcast optimal prediction

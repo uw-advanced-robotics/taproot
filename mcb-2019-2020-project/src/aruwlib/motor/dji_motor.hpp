@@ -31,7 +31,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
 {
  public:
     // 0 - 8191 for dji motors
-    static constexpr uint16_t ENC_RESOLUTION = 8191;
+    static constexpr uint16_t ENC_RESOLUTION = 8192;
 
     // construct new motor
     DjiMotor(MotorId desMotorIdentifier, aruwlib::can::CanBus motorCanBus, bool isInverted);
@@ -51,7 +51,7 @@ class DjiMotor : public aruwlib::can::CanRxListner
         friend class DjiMotor;
 
         explicit EncoderStore(
-            uint16_t encWrapped = (ENC_RESOLUTION + 1) / 2,
+            uint16_t encWrapped = ENC_RESOLUTION / 2,
             int64_t encRevolutions = 0
         ) : encoderWrapped(encWrapped),
         encoderRevolutions(encRevolutions)

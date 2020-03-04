@@ -54,9 +54,9 @@ class ExampleCommand : public Command
 
     void interrupted(void);
 
- private:
-    static const int16_t DEFAULT_WHEEL_RPM = 1000;
+    static const int16_t DEFAULT_WHEEL_RPM = 6000;
 
+ private:
     ExampleSubsystem* subsystemExample;
 
     int speed;

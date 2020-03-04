@@ -47,7 +47,7 @@ namespace motor
         motorDisconnectTimeout.restart(MOTOR_DISCONNECT_TIME);
 
         // invert motor if necessary
-        encoderActual = motorInverted ? ENC_RESOLUTION - encoderActual : encoderActual;
+        encoderActual = motorInverted ? ENC_RESOLUTION - 1 - encoderActual : encoderActual;
         encStore.updateValue(encoderActual);
     }
 

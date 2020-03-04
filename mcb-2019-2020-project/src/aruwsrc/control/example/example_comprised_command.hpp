@@ -1,5 +1,5 @@
-#ifndef __HPP__
-#define __HPP__
+#ifndef __EXAMPLE_COMPRISED_COMAND_HPP__
+#define __EXAMPLE_COMPRISED_COMAND_HPP__
 
 #include "example_command.hpp"
 #include "example_subsystem.hpp"
