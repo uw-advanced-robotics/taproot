@@ -97,12 +97,6 @@ void DJISerial::updateSerial() {
                 }
             }
 
-            // recursively call youself if you have received the frame header. Important that we
-            // don't miss any bytes coming in when polling.
-            if (djiSerialRxState == PROCESS_FRAME_HEADER)
-            {
-                updateSerial();
-            }
             break;
         }
         case PROCESS_FRAME_HEADER:  // the frame header consists of the length, type, and CRC8
@@ -153,10 +147,6 @@ void DJISerial::updateSerial() {
 
                 // move on to processing message body
                 djiSerialRxState = PROCESS_FRAME_DATA;
-
-                // recursively call yourself so you don't miss any data that is in the process of
-                // being received.
-                updateSerial();
             }
             break;
         }
