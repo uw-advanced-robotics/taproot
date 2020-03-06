@@ -25,7 +25,7 @@ namespace agitator
         bool isAgitatorInverted
     ) :
         agitatorPositionPid(kp, ki, kd, maxIAccum, maxOutput, 1.0f, 0.0f, 1.0f, 0.0f),
-        agitatorMotor(agitatorMotorId, agitatorCanBusId, isAgitatorInverted),
+        agitatorMotor(agitatorMotorId, agitatorCanBusId, isAgitatorInverted, "agitator motor"),
         desiredAgitatorAngle(0.0f),
         agitatorCalibratedZeroAngle(0.0f),
         agitatorIsCalibrated(false),

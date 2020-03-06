@@ -1,6 +1,7 @@
 #ifndef __DJI_MOTOR_HPP__
 #define __DJI_MOTOR_HPP__
 
+#include <string>
 #include <modm/processing/timer/timeout.hpp>
 #include <rm-dev-board-a/board.hpp>
 #include "src/aruwlib/communication/can/can_rx_handler.hpp"
@@ -34,7 +35,8 @@ class DjiMotor : public aruwlib::can::CanRxListner
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
     // construct new motor
-    DjiMotor(MotorId desMotorIdentifier, aruwlib::can::CanBus motorCanBus, bool isInverted);
+    DjiMotor(MotorId desMotorIdentifier, aruwlib::can::CanBus motorCanBus, bool isInverted,
+            const std::string& name);
 
     ~DjiMotor();
 
@@ -106,6 +108,8 @@ class DjiMotor : public aruwlib::can::CanRxListner
 
     aruwlib::can::CanBus getCanBus() const;
 
+    const std::string& getName() const;
+
     template<typename T>
     static void assertEncoderType()
     {
@@ -153,6 +157,8 @@ class DjiMotor : public aruwlib::can::CanRxListner
     int16_t torque;
 
     bool motorInverted;
+
+    std::string motorName;
 
     modm::ShortTimeout motorDisconnectTimeout;
 };

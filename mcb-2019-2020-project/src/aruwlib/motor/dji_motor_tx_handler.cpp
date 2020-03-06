@@ -146,6 +146,15 @@ namespace motor
         }
     }
 
+    DjiMotor const* DjiMotorTxHandler::getCan1MotorData(MotorId motorId)
+    {
+        return can1MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
+    }
+
+    DjiMotor const* DjiMotorTxHandler::getCan2MotorData(MotorId motorId)
+    {
+        return can2MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
+    }
 }  // namespace motor
 
 }  // namespace aruwlib

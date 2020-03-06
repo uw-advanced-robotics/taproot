@@ -183,10 +183,10 @@ class ChassisSubsystem : public Subsystem {
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID
     ):
-        leftFrontMotor(leftFrontMotorId, CAN_BUS_MOTORS, false),
-        leftBackMotor(leftBackMotorId, CAN_BUS_MOTORS, false),
-        rightFrontMotor(rightFrontMotorId, CAN_BUS_MOTORS, false),
-        rightBackMotor(rightBackMotorId, CAN_BUS_MOTORS, false),
+        leftFrontMotor(leftFrontMotorId, CAN_BUS_MOTORS, false, "left front drive motor"),
+        leftBackMotor(leftBackMotorId, CAN_BUS_MOTORS, false, "left back drive motor"),
+        rightFrontMotor(rightFrontMotorId, CAN_BUS_MOTORS, false, "right front drive motor"),
+        rightBackMotor(rightBackMotorId, CAN_BUS_MOTORS, false, "right back drive motor"),
         leftFrontVelocityPid(
             VELOCITY_PID_KP,
             VELOCITY_PID_KI,
