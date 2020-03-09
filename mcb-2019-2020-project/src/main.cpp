@@ -30,6 +30,8 @@
 #include "src/aruwsrc/control/turret/turret_cv_command.hpp"
 #include "src/aruwsrc/control/turret/turret_init_command.hpp"
 #include "src/aruwsrc/control/turret/turret_manual_command.hpp"
+#include "src/aruwsrc/control/hopper-cover/hopper_subsystem.hpp"
+#include "src/aruwsrc/control/hopper-cover/open_hopper_command.hpp"
 
 /* error handling includes --------------------------------------------------*/
 #include "src/aruwlib/errors/error_controller.hpp"
@@ -41,6 +43,7 @@ using namespace aruwlib;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::control;
 using namespace aruwlib::sensors;
+using namespace aruwsrc::control;
 
 /* define subsystems --------------------------------------------------------*/
 #if defined(TARGET_SOLDIER)
@@ -64,6 +67,11 @@ AgitatorSubsystem agitator17mm(
 );
 
 ExampleSubsystem frictionWheelSubsystem;
+
+HopperSubsystem soldierHopper(aruwlib::gpio::Pwm::W,
+        HopperSubsystem::SOLDIER_HOPPER_OPEN_PWM,
+        HopperSubsystem::SOLDIER_HOPPER_CLOSE_PWM,
+        HopperSubsystem::SOLDIER_PWM_RAMP_SPEED);
 
 #elif defined(TARGET_SENTRY)
 AgitatorSubsystem sentryAgitator(
@@ -91,6 +99,7 @@ AgitatorSubsystem sentryKicker(
 );
 
 ExampleSubsystem frictionWheelSubsystem;
+
 #endif
 
 /* define commands ----------------------------------------------------------*/
@@ -103,6 +112,8 @@ aruwsrc::control::ExampleCommand spinFrictionWheelCommand(&frictionWheelSubsyste
 
 ShootFastComprisedCommand agitatorShootSlowCommand(&agitator17mm);
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator17mm);
+OpenHopperCommand openHopperCommand(&soldierHopper);
+
 #elif defined(TARGET_SENTRY)
 aruwsrc::control::ExampleCommand spinFrictionWheelCommand(&frictionWheelSubsystem,
         ExampleCommand::DEFAULT_WHEEL_RPM);
@@ -161,6 +172,8 @@ int main()
     CommandScheduler::getMainScheduler().registerSubsystem(&frictionWheelSubsystem);
     CommandScheduler::getMainScheduler().registerSubsystem(&soldierChassis);
     CommandScheduler::getMainScheduler().registerSubsystem(&turretSubsystem);
+    CommandScheduler::getMainScheduler().registerSubsystem(&soldierHopper);
+
     #elif defined(TARGET_SENTRY)
     CommandScheduler::getMainScheduler().registerSubsystem(&sentryAgitator);
     CommandScheduler::getMainScheduler().registerSubsystem(&sentryKicker);
@@ -195,6 +208,10 @@ int main()
         IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP, {}),
         &turretCVCommand
     );
+    IoMapper::addHoldMapping(
+        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+        &openHopperCommand
+    );
     #elif defined(TARGET_SENTRY)
     IoMapper::addHoldRepeatMapping(
         IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
@@ -217,7 +234,7 @@ int main()
         aruwlib::serial::XavierSerial::getXavierSerial().updateSerial();
         aruwlib::serial::RefSerial::getRefSerial().updateSerial();
 
-        Remote::read();
+        aruwlib::Remote::read();
 
         if (updateImuPeriod.execute())
         {
