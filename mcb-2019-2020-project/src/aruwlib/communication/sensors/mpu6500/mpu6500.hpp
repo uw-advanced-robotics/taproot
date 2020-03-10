@@ -19,31 +19,33 @@ namespace sensors {
 class  Mpu6500 {
  public:
     // initialize the imu and SPI
-    static void init(void);
+    static void init();
 
     // read data from the imu
-    static void read(void);
+    static void read();
 
-    static int16_t getAx(void);
+    static float getAx();
 
-    static int16_t getAy(void);
+    static float getAy();
 
-    static int16_t getAz(void);
+    static float getAz();
 
-    static int16_t getGx(void);
+    static float getGx();
 
-    static int16_t getGy(void);
+    static float getGy();
 
-    static int16_t getGz(void);
+    static float getGz();
 
     // get temperature value in C
-    static float mpuGetTemp(void);
+    static float mpuGetTemp();
 
-    static void caliFlagHandler(void);
+    static void caliFlagHandler();
 
     static void calcImuAttitude(MahonyAhrs::attitude* imuAtti);
 
     static MahonyAhrs::attitude getImuAttitude();
+
+    static float getTiltAngle();
 
  private:
      static constexpr float ACCELERATION_GRAVITY = 9.80665f;
@@ -79,6 +81,8 @@ class  Mpu6500 {
         int16_t gx_offset = 0;
         int16_t gy_offset = 0;
         int16_t gz_offset = 0;
+
+        float tiltAngle = 0.0f;
 
         MahonyAhrs::attitude imuAtti;
     } mpu_info_t;

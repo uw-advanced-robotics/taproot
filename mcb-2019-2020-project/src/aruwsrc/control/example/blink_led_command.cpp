@@ -33,16 +33,6 @@ namespace control
     {
         return completedTimer.isExpired();
     }
-
-    void BlinkLEDCommand::interrupted()
-    {
-        end(true);
-    }
-
-    bool BlinkLEDCommand::runsWhenDisabled()
-    {
-        return false;
-    }
 }  // namespace control
 
 }  // namespace aruwsrc

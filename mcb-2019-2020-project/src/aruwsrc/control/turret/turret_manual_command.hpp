@@ -24,6 +24,8 @@ class TurretManualCommand : public Command {
     void end(bool);
 
  private:
+    const float USER_INPUT_SCALAR = 50.0f;
+
     const float YAW_P = 1.0f;
     const float YAW_I = 0.0f;
     const float YAW_D = 0.0f;

@@ -46,16 +46,6 @@ class BlinkLEDCommand : public Command
       */
     bool isFinished(void) const;
 
-    void interrupted(void);
-
-    /**
-      * Whether the given command should run when the robot is disabled.  Override
-      * to return true if the command should run when disabled.
-      *
-      * @return whether the command should run when the robot is disabled
-      */
-    bool runsWhenDisabled(void);
-
     modm::ShortTimeout completedTimer;
 
     int refershCounter = 0;

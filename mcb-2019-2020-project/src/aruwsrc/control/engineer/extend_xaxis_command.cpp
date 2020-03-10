@@ -35,9 +35,6 @@ namespace engineer
     {
         return false;
     }
-
-    void XaxisCommand::interrupted(void)
-    {}
 }  // namespace engineer
 
 }  // namespace aruwsrc

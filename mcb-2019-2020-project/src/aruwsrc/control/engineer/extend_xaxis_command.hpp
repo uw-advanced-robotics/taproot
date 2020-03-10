@@ -33,8 +33,6 @@ class XaxisCommand : public Command
 
     bool isFinished() const;
 
-    void interrupted();
-
  private:
     XAxisSubsystem* xAxisSubsystem;
 };

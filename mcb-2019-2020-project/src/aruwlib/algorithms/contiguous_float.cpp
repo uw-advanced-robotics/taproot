@@ -80,6 +80,38 @@ void ContiguousFloat::shiftValue(const float& shiftMagnitude) {
     reboundValue();
 }
 
+float ContiguousFloat::limitValue(const ContiguousFloat& valueToLimit,
+                                 const float& min,
+                                 const float& max)
+{
+    ContiguousFloat minContig(min, valueToLimit.lowerBound, valueToLimit.upperBound);
+    ContiguousFloat maxContig(max, valueToLimit.lowerBound, valueToLimit.upperBound);
+    return limitValue(valueToLimit, minContig, maxContig);
+}
+
+float ContiguousFloat::limitValue(const ContiguousFloat& valueToLimit,
+                                 const ContiguousFloat& min,
+                                 const ContiguousFloat& max)
+{
+    if (min.getValue() == max.getValue())
+    {
+        return valueToLimit.getValue();
+    }
+    if ((min.getValue() < max.getValue()
+                && (valueToLimit.getValue() > max.getValue()
+                || valueToLimit.getValue() < min.getValue()))
+        || (min.getValue() > max.getValue()
+                && valueToLimit.getValue() > max.getValue()
+                && valueToLimit.getValue() < min.getValue()))
+    {
+        float targetMinDifference = fabs(valueToLimit.difference(min));
+        float targetMaxDifference = fabs(valueToLimit.difference(max));
+        return targetMinDifference < targetMaxDifference ? min.getValue() : max.getValue();
+    } else {
+        return valueToLimit.getValue();
+    }
+}
+
 // Getters/Setters ----------------
 // Value
 float ContiguousFloat::getValue() const {

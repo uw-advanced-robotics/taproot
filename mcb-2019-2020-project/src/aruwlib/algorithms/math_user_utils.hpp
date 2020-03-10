@@ -48,6 +48,13 @@ T limitVal(T val, T min, T max)
     }
 }
 
+inline float lowPassFilter(float prevValue, float newValue, float alpha)
+{
+    if (alpha < 0.0f || alpha > 1.0f) {
+        return newValue;
+    }
+    return alpha * newValue + (1.0f - alpha) * prevValue;
+}
 
 template <typename From, typename To>
 To reinterpretCopy(From from) {

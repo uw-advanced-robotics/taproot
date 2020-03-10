@@ -1,4 +1,3 @@
-#include <rm-dev-board-a/board.hpp>
 #include "turret_pid.hpp"
 #include "src/aruwlib/algorithms/math_user_utils.hpp"
 

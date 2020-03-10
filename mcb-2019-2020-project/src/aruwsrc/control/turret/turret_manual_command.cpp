@@ -1,5 +1,9 @@
 #include "turret_manual_command.hpp"
 #include "turret_subsystem.hpp"
+#include "src/aruwlib/communication/remote.hpp"
+#include "src/aruwlib/control/control_operator_interface.hpp"
+
+using namespace aruwlib;
 
 namespace aruwsrc
 {
@@ -28,10 +32,10 @@ void TurretManualCommand::execute()
 
 void TurretManualCommand::updateTurretVelocity()
 {
-    pitchVelocityTarget = turretSubsystem->getRemoteYMovement() +
-                          turretSubsystem->getMouseXMovement();
-    yawVelocityTarget = turretSubsystem->getRemoteXMovement() +
-                        turretSubsystem->getMouseYMovement();
+    pitchVelocityTarget = USER_INPUT_SCALAR
+            * aruwlib::control::ControlOperatorInterface::getTurretPitchInput();
+    yawVelocityTarget = USER_INPUT_SCALAR
+            * aruwlib::control::ControlOperatorInterface::getTurretYawInput();
 
     manualPitchPid.update(pitchVelocityTarget - turretSubsystem->getPitchVelocity());
     manualYawPid.update(yawVelocityTarget - turretSubsystem->getYawVelocity());

@@ -59,6 +59,8 @@ class Remote {
     // Returns the value of the wheel
     static int16_t getWheel(void);
 
+    static uint32_t getUpdateCounter();
+
  private:
     #define REMOTE_BUF_LEN 18  // Length of the remote recieve buffer
     #define REMOTE_READ_TIMEOUT 6  // Timeout delay between valid packets
@@ -69,6 +71,7 @@ class Remote {
 
     // The current remote information
     static struct RemoteInfo {
+        uint32_t updateCounter = 0;
         int16_t rightHorizontal;
         int16_t rightVertical;
         int16_t leftHorizontal;

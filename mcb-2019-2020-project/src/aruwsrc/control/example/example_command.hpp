@@ -52,8 +52,6 @@ class ExampleCommand : public Command
       */
     bool isFinished(void) const;
 
-    void interrupted(void);
-
     static const int16_t DEFAULT_WHEEL_RPM = 6000;
 
  private:

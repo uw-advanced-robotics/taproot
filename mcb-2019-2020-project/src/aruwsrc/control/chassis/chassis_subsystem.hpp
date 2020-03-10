@@ -36,7 +36,7 @@ class ChassisSubsystem : public Subsystem {
  private:
     #if defined(TARGET_SOLDIER)
     // velocity pid gains and constants
-    const float VELOCITY_PID_KP            = 15.0f;
+    const float VELOCITY_PID_KP            = 20.0f;
     const float VELOCITY_PID_KI            = 0.0f;
     const float VELOCITY_PID_KD            = 0.0f;
     const float VELOCITY_PID_MAX_ERROR_SUM = 0.0f;
@@ -67,7 +67,7 @@ class ChassisSubsystem : public Subsystem {
      */
     static constexpr float CHASSIS_REVOLVE_PID_MAX_P = MAX_WHEEL_SPEED_SINGLE_MOTOR;
     // derivative term used in chassis pid
-    static constexpr float CHASSIS_REVOLVE_PID_KD = 235.0f;
+    static constexpr float CHASSIS_REVOLVE_PID_KD = 500.0f;
     // derivative max term
     static constexpr float CHASSIS_REVOLVE_PID_MAX_D = 0.0f;
     // the maximum revolve error before we start using the derivative term
@@ -173,6 +173,8 @@ class ChassisSubsystem : public Subsystem {
     float rightFrontRpm;
     float rightBackRpm;
 
+    float chassisDesiredR = 0.0f;
+
     // rotation pid variables
     aruwlib::algorithms::ExtendedKalman chassisRotationErrorKalman;
 
@@ -239,14 +241,8 @@ class ChassisSubsystem : public Subsystem {
     // the max rotation speed
     float calculateRotationTranslationalGain(float chassisRotationDesiredWheelspeed);
 
-    // Returns the value used for chassis movement forward and backward, between -1 and 1
-    static float getChassisX();
-
-    // Returns the value used for chassis movement side to side, between -1 and 1
-    static float getChassisY();
-
-    // Returns the value used for chassis rotation, between -1 and 1
-    static float getChassisR();
+    // returns the desired rotation based on what was input into the subsystem via setDesiredOutput
+    float getChassisDesiredRotation() const;
 
  private:
     /**

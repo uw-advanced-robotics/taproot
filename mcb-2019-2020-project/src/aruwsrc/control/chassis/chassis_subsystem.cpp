@@ -55,6 +55,8 @@ namespace chassis
             = aruwlib::algorithms::limitVal<float>(leftBackRpm,   -maxWheelSpeed, maxWheelSpeed);
         rightBackRpm
             = aruwlib::algorithms::limitVal<float>(rightBackRpm,  -maxWheelSpeed, maxWheelSpeed);
+
+        chassisDesiredR = r;
     }
 
     void ChassisSubsystem::updateMotorRpmPid(
@@ -124,31 +126,9 @@ namespace chassis
         return rTranslationalGain;
     }
 
-    float ChassisSubsystem::getChassisX()
+    float ChassisSubsystem::getChassisDesiredRotation() const
     {
-        return aruwlib::algorithms::limitVal<float>(
-            Remote::getChannel(Remote::Channel::LEFT_VERTICAL)
-            + static_cast<float>(Remote::keyPressed(Remote::Key::W))
-            - static_cast<float>(Remote::keyPressed(Remote::Key::S)), -1.0f, 1.0f
-        );
-    }
-
-    float ChassisSubsystem::getChassisY()
-    {
-        return aruwlib::algorithms::limitVal<float>(
-            Remote::getChannel(Remote::Channel::LEFT_HORIZONTAL)
-            + static_cast<float>(Remote::keyPressed(Remote::Key::A))
-            - static_cast<float>(Remote::keyPressed(Remote::Key::D)), -1.0f, 1.0f
-        );
-    }
-
-    float ChassisSubsystem::getChassisR()
-    {
-        return aruwlib::algorithms::limitVal<float>(
-            Remote::getChannel(Remote::Channel::RIGHT_HORIZONTAL)
-            + static_cast<float>(Remote::keyPressed(Remote::Key::Q))
-            - static_cast<float>(Remote::keyPressed(Remote::Key::E)), -1.0f, 1.0f
-        );
+        return chassisDesiredR;
     }
 }  // namespace chassis
 

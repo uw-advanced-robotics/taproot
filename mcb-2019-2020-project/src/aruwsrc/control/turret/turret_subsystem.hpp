@@ -5,6 +5,7 @@
 #include "src/aruwlib/control/subsystem.hpp"
 #include "src/aruwlib/motor/dji_motor.hpp"
 #include "src/aruwlib/algorithms/contiguous_float.hpp"
+#include "src/aruwlib/algorithms/linear_interpolation.hpp"
 
 using namespace aruwlib::control;
 
@@ -16,6 +17,12 @@ namespace control
 
 class TurretSubsystem : public Subsystem {
  public:
+    static constexpr float TURRET_START_ANGLE = 90.0f;
+    static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
+    static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
+    static constexpr float TURRET_PITCH_MIN_ANGLE = TURRET_START_ANGLE - 13.0f;
+    static constexpr float TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 20.0f;
+
     TurretSubsystem();
 
     void refresh();
@@ -34,28 +41,44 @@ class TurretSubsystem : public Subsystem {
     void setYawMotorOutput(float out);
     void setPitchMotorOutput(float out);
 
-    float getRemoteXMovement() const;
-    float getRemoteYMovement() const;
+    /**
+     * Calculates a yaw output that uses the desired chassis rotation as a feed forward gain.
+     * 
+     * The chassis rotation is given in desired wheel rpm.
+     */
+    float yawFeedForwardCalculation(float desiredChassisRotation);
 
-    int16_t getMouseXMovement() const;
-    int16_t getMouseYMovement() const;
+    /**
+     * Set a target angle in chassis frame, the angle is accordingly limited.
+     * Note that since there is no controller in this subsystem, this target
+     * angle merely acts as a safe way to set angles when using a position controller.
+     */
+    void setYawTarget(float target);
+    void setPitchTarget(float target);
+
+    float getYawTarget() const;
+    float getPitchTarget() const;
+
+    void updateCurrentTurretAngles();
 
  private:
-    const int TURRET_START_ANGLE = 90.0f;
-    const int TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90;
-    const int TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90;
-    const int TURRET_PITCH_MIN_ANGLE = TURRET_START_ANGLE - 15;
-    const int TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 20;
-
     const uint16_t YAW_START_ENCODER_POSITION = 8160;
-    const uint16_t PITCH_START_ENCODER_POSITION = 4780;
+    const uint16_t PITCH_START_ENCODER_POSITION = 4100;
 
-    const float REMOTE_INPUT_SCALER = 10000;
-    const float KEYBOARD_INPUT_SCALAR = 50;
+    static constexpr float FEED_FORWARD_KP = 2.0f;
+    static constexpr float FEED_FORWARD_SIN_GAIN = 2.0f;
+    static constexpr float FEED_FORWARD_KD = 1.0f;
+    static constexpr float FEED_FORWARD_MAX_OUTPUT = 20000.0f;
+    static constexpr float FEED_FORWARD_DERIVATIVE_LOW_PASS = 0.8f;
 
     const aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
     static const aruwlib::motor::MotorId PITCH_MOTOR_ID = aruwlib::motor::MOTOR6;
     static const aruwlib::motor::MotorId YAW_MOTOR_ID = aruwlib::motor::MOTOR5;
+
+    uint32_t prevUpdateCounterChassisRotateDerivative = 0;
+    aruwlib::algorithms::LinearInterpolation chassisRotateDerivativeInterpolation;
+    float feedforwardChassisRotateDerivative = 0.0f;
+    float feedforwardPrevChassisRotationDesired = 0.0f;
 
     aruwlib::motor::DjiMotor pitchMotor;
     aruwlib::motor::DjiMotor yawMotor;
@@ -63,7 +86,11 @@ class TurretSubsystem : public Subsystem {
     aruwlib::algorithms::ContiguousFloat currPitchAngle;
     aruwlib::algorithms::ContiguousFloat currYawAngle;
 
-    void updateCurrentTurretAngles();
+    aruwlib::algorithms::ContiguousFloat yawTarget;
+    aruwlib::algorithms::ContiguousFloat pitchTarget;
+
+    void updateCurrentYawAngle();
+    void updateCurrentPitchAngle();
 
     int32_t getVelocity(const aruwlib::motor::DjiMotor &motor) const;
 };

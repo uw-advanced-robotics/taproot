@@ -191,6 +191,8 @@ namespace aruwlib {
 
         aruwlib::control::IoMapper::handleKeyStateChange(
             remote.key, remote.leftSwitch, remote.rightSwitch);
+
+        remote.updateCounter++;
     }
 
     // Clears the current rxBuffer
@@ -221,5 +223,10 @@ namespace aruwlib {
         remote.key = 0;
         remote.wheel = 0;
         clearRxBuffer();
+    }
+
+    uint32_t Remote::getUpdateCounter()
+    {
+        return remote.updateCounter;
     }
 }  // namespace aruwlib

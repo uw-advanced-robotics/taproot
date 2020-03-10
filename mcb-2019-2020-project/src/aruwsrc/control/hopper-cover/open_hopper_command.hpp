@@ -27,8 +27,6 @@ class OpenHopperCommand : public Command
 
     bool isFinished() const;
 
-    void interrupted();
-
  private:
     HopperSubsystem* subsystemHopper;
 };

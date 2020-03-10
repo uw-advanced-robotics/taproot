@@ -7,7 +7,7 @@
   * 
   * float sensorData;
   * float filtered;
-  * ExtendedKalman kalman(0.0f, 1.0f);
+  * ExtendedKalman kalman(1.0f, 0.0f);
   * while(1)
   * {
   *     filtered = kalman.filterData(sensorData);
