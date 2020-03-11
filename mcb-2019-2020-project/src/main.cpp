@@ -30,6 +30,9 @@
 #include "src/aruwsrc/control/turret/turret_cv_command.hpp"
 #include "src/aruwsrc/control/turret/turret_init_command.hpp"
 #include "src/aruwsrc/control/turret/turret_manual_command.hpp"
+#include "src/aruwsrc/control/sentinel/sentinel_drive_manual_command.hpp"
+#include "src/aruwsrc/control/sentinel/sentinel_auto_drive_command.hpp"
+#include "src/aruwsrc/control/sentinel/sentinel_drive_subsystem.hpp"
 #include "src/aruwsrc/control/turret/turret_world_relative_position_command.hpp"
 #include "src/aruwsrc/control/chassis/chassis_autorotate_command.hpp"
 #include "src/aruwsrc/control/hopper-cover/hopper_subsystem.hpp"
@@ -97,7 +100,10 @@ AgitatorSubsystem sentryKicker(
     AgitatorSubsystem::SENTRY_KICKER_MOTOR_ID,
     AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
     false
+
 );
+
+aruwsrc::control::SentinelDriveSubsystem sentinelDrive;
 
 ExampleSubsystem frictionWheelSubsystem;
 
@@ -125,6 +131,9 @@ ShootFastComprisedCommand agitatorShootSlowCommand(&sentryAgitator);
 AgitatorCalibrateCommand agitatorCalibrateCommand(&sentryAgitator);
 AgitatorRotateCommand agitatorKickerCommand(&sentryKicker, 3.0f, 1, 0, false);
 AgitatorCalibrateCommand agitatorCalibrateKickerCommand(&sentryKicker);
+
+SentinelAutoDriveCommand sentinelAutoDrive(&sentinelDrive);
+SentinelDriveManualCommand sentinelDriveManual(&sentinelDrive);
 #endif
 
 int main()
@@ -179,6 +188,8 @@ int main()
     CommandScheduler::getMainScheduler().registerSubsystem(&sentryAgitator);
     CommandScheduler::getMainScheduler().registerSubsystem(&sentryKicker);
     CommandScheduler::getMainScheduler().registerSubsystem(&frictionWheelSubsystem);
+    CommandScheduler::getMainScheduler().registerSubsystem(&sentinelDrive);
+    sentinelDrive.initLimitSwitches();
     #endif
 
     /* set any default commands to subsystems here --------------------------*/
@@ -188,6 +199,7 @@ int main()
     frictionWheelSubsystem.setDefaultCommand(&spinFrictionWheelCommand);
     #elif defined(TARGET_SENTRY)
     frictionWheelSubsystem.setDefaultCommand(&spinFrictionWheelCommand);
+    sentinelDrive.setDefaultCommand(&sentinelDriveManual);
     #endif
 
     /* add any starting commands to the scheduler here ----------------------*/
@@ -224,6 +236,10 @@ int main()
     IoMapper::addHoldRepeatMapping(
         IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
         &agitatorKickerCommand
+    );
+    IoMapper::addHoldRepeatMapping(
+        IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
+        &sentinelAutoDrive
     );
     #endif
 

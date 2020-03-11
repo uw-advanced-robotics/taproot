@@ -46,5 +46,6 @@
     <module>modm:processing</module>
     <module>modm:math:geometry</module>
     <module>modm:ui:display</module>
+    <module>modm:platform:random</module>
   </modules>
 </library>

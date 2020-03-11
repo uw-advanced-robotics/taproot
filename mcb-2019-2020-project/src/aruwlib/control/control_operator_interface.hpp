@@ -30,9 +30,13 @@ class ControlOperatorInterface {
     // clear lower and upper bound
     static float getTurretPitchInput();
 
+    static float getSentinelSpeedInput();
+
  private:
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / 1000.0f);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / 1000.0f);
+
+    static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
 
     static uint32_t prevUpdateCounterX;
     static uint32_t prevUpdateCounterY;

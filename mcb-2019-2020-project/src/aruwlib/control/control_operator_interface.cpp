@@ -68,6 +68,12 @@ namespace control
         return static_cast<float>(Remote::getChannel(Remote::Channel::RIGHT_VERTICAL))
                 + static_cast<float>(Remote::getMouseY()) * USER_MOUSE_PITCH_SCALAR;
     }
+
+    float ControlOperatorInterface::getSentinelSpeedInput()
+    {
+        return aruwlib::Remote::getChannel(aruwlib::Remote::Channel::LEFT_HORIZONTAL)
+                * USER_STICK_SENTINEL_DRIVE_SCALAR;
+    }
 }  // namespace control
 
 }  // namespace aruwlib
