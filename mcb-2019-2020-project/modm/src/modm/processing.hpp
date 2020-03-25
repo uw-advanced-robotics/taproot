@@ -14,6 +14,10 @@
 #ifndef MODM_PROCESSING_HPP
 #define	MODM_PROCESSING_HPP
 
+#include "processing\protothread.hpp"
+#include "processing\protothread\macros.hpp"
+#include "processing\protothread\protothread.hpp"
+#include "processing\protothread\semaphore.hpp"
 #include "processing\resumable.hpp"
 #include "processing\resumable\macros.hpp"
 #include "processing\resumable\nested_resumable.hpp"
