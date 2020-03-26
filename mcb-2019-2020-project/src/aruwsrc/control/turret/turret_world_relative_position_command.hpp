@@ -10,7 +10,7 @@
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 class TurretWorldRelativePositionCommand : public Command
@@ -74,7 +74,7 @@ class TurretWorldRelativePositionCommand : public Command
     static float projectWorldRelativeYawToChassisFrame(float yawAngle, float imuInitialAngle);
 };
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc
 

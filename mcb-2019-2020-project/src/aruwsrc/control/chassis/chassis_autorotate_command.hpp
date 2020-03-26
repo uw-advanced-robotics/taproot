@@ -19,7 +19,7 @@ class ChassisAutorotateCommand : public Command
 {
  public:
     explicit ChassisAutorotateCommand(ChassisSubsystem* chassis,
-                                     aruwsrc::control::TurretSubsystem const* turret) :
+                                     aruwsrc::turret::TurretSubsystem const* turret) :
                                      chassis(chassis),
                                      turret(turret)
     {
@@ -38,7 +38,7 @@ class ChassisAutorotateCommand : public Command
     static constexpr float CHASSIS_AUTOROTATE_PID_KP = -85.0f;
 
     ChassisSubsystem* chassis;
-    aruwsrc::control::TurretSubsystem const* turret;
+    aruwsrc::turret::TurretSubsystem const* turret;
 };
 
 }  // namespace chassis

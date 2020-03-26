@@ -9,7 +9,7 @@ using namespace aruwlib::control;
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 class TurretSubsystem;
@@ -48,7 +48,7 @@ class TurretManualCommand : public Command {
     void updateTurretVelocity();
 };
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc
 

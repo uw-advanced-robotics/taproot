@@ -6,7 +6,7 @@
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 TurretInitCommand::TurretInitCommand(TurretSubsystem *subsystem) :
@@ -39,6 +39,6 @@ void TurretInitCommand::updateTurretPosition()
     turretSubsystem->setYawMotorOutput(initYawPid.getValue());
 }
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc

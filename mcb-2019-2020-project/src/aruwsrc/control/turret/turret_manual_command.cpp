@@ -8,7 +8,7 @@ using namespace aruwlib;
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 TurretManualCommand::TurretManualCommand(TurretSubsystem *subsystem) :
     turretSubsystem(subsystem),
@@ -44,6 +44,6 @@ void TurretManualCommand::updateTurretVelocity()
     turretSubsystem->setYawMotorOutput(manualYawPid.getValue());
 }
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc

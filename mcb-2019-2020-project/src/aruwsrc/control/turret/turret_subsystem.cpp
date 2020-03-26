@@ -8,11 +8,12 @@
 #include "src/aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
 
 using namespace aruwlib::motor;
+using namespace aruwlib;
 
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
     TurretSubsystem::TurretSubsystem() :
         pitchMotor(PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
@@ -229,6 +230,6 @@ namespace control
         }
         return chassisRotationFeedForward;
     }
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc

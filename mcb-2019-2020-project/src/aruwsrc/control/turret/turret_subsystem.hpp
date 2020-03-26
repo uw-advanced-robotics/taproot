@@ -12,7 +12,7 @@ using namespace aruwlib::control;
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 class TurretSubsystem : public Subsystem {
@@ -95,7 +95,7 @@ class TurretSubsystem : public Subsystem {
     int32_t getVelocity(const aruwlib::motor::DjiMotor &motor) const;
 };
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc
 

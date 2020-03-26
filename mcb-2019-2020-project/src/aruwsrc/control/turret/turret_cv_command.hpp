@@ -10,7 +10,7 @@ using namespace aruwlib::control;
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 class TurretSubsystem;
@@ -52,7 +52,7 @@ class TurretCVCommand : public Command {
     void yawIncrementAngle(float angle);
 };
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc
 

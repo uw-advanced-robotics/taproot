@@ -18,9 +18,8 @@
 #include "aruwlib/algorithms/contiguous_float_test.hpp"
 
 /* aruwsrc control includes -------------------------------------------------*/
-#include "src/aruwsrc/control/example/example_command.hpp"
-#include "src/aruwsrc/control/example/example_comprised_command.hpp"
-#include "src/aruwsrc/control/example/example_subsystem.hpp"
+#include "src/aruwsrc/control/launcher/friction_wheel_subsystem.hpp"
+#include "src/aruwsrc/control/launcher/friction_wheel_rotate_command.hpp"
 #include "src/aruwsrc/control/agitator/agitator_subsystem.hpp"
 #include "src/aruwsrc/control/agitator/agitator_calibrate_command.hpp"
 #include "src/aruwsrc/control/agitator/agitator_shoot_comprised_command_instances.hpp"
@@ -49,7 +48,8 @@ using namespace aruwlib;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::control;
 using namespace aruwlib::sensors;
-using namespace aruwsrc::control;
+using namespace aruwsrc::turret;
+using namespace aruwsrc::launcher;
 
 /* define subsystems --------------------------------------------------------*/
 #if defined(TARGET_SOLDIER)
@@ -70,7 +70,7 @@ AgitatorSubsystem agitator17mm(
     AgitatorSubsystem::isAgitatorInverted
 );
 
-ExampleSubsystem frictionWheelSubsystem;
+FrictionWheelSubsystem frictionWheelSubsystem;
 
 HopperSubsystem soldierHopper(aruwlib::gpio::Pwm::W,
         HopperSubsystem::SOLDIER_HOPPER_OPEN_PWM,
@@ -100,12 +100,10 @@ AgitatorSubsystem sentryKicker(
     AgitatorSubsystem::SENTRY_KICKER_MOTOR_ID,
     AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
     false
-
 );
 
+FrictionWheelSubsystem frictionWheelSubsystem;
 aruwsrc::control::SentinelDriveSubsystem sentinelDrive;
-
-ExampleSubsystem frictionWheelSubsystem;
 
 #endif
 
@@ -113,9 +111,12 @@ ExampleSubsystem frictionWheelSubsystem;
 
 #if defined(TARGET_SOLDIER)
 ChassisDriveCommand chassisDriveCommand(&soldierChassis);
+
+FrictionWheelRotateCommand spinFrictionWheelCommand(&frictionWheelSubsystem,
+        FrictionWheelRotateCommand::DEFAULT_WHEEL_RPM);
+FrictionWheelRotateCommand frictionWheelStopCommand(&frictionWheelSubsystem, 0);
+
 ChassisAutorotateCommand chassisAutorotateCommand(&soldierChassis, &turret17mm);
-aruwsrc::control::ExampleCommand spinFrictionWheelCommand(&frictionWheelSubsystem,
-        ExampleCommand::DEFAULT_WHEEL_RPM);
 
 TurretWorldRelativePositionCommand turretUserCommand(&turret17mm, &soldierChassis);
 
@@ -124,8 +125,8 @@ AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator17mm);
 OpenHopperCommand openHopperCommand(&soldierHopper);
 
 #elif defined(TARGET_SENTRY)
-aruwsrc::control::ExampleCommand spinFrictionWheelCommand(&frictionWheelSubsystem,
-        ExampleCommand::DEFAULT_WHEEL_RPM);
+FrictionWheelRotateCommand spinFrictionWheelCommand(&frictionWheelSubsystem,
+        FrictionWheelRotateCommand::DEFAULT_WHEEL_RPM);
 
 ShootFastComprisedCommand agitatorShootSlowCommand(&sentryAgitator);
 AgitatorCalibrateCommand agitatorCalibrateCommand(&sentryAgitator);
@@ -227,6 +228,10 @@ int main()
     IoMapper::addHoldMapping(
         IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &openHopperCommand
+    );
+    IoMapper::addHoldMapping(
+        IoMapper::newKeyMap(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN),
+        &frictionWheelStopCommand
     );
     #elif defined(TARGET_SENTRY)
     IoMapper::addHoldRepeatMapping(

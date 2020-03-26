@@ -10,7 +10,7 @@ using namespace aruwlib;
 namespace aruwsrc
 {
 
-namespace control
+namespace turret
 {
 
 TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
@@ -133,6 +133,6 @@ float TurretWorldRelativePositionCommand::projectWorldRelativeYawToChassisFrame(
     return yawAngle - aruwlib::sensors::Mpu6500::getImuAttitude().yaw + imuInitialAngle;
 }
 
-}  // namespace control
+}  // namespace turret
 
 }  // namespace aruwsrc
