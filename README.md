@@ -9,29 +9,21 @@ Note: The beginning of the guide is for windows users. If you are using mac, ski
 
 1. Download [openocd](https://drive.google.com/file/d/14LnGVDfvSiih2daIdglWiC25xgwJkTM7/view?usp=sharing),
    [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads),
-   and [anaconda](https://www.anaconda.com/distribution/). (During installation, make sure to check the 'Add to PATH' box) If you perfer, rather
-   than downloading openocd and the arm-gcc-toolchain from the provided links, I
-   have created a 7zip file containing both, which can be downloaded
-   [here](https://drive.google.com/file/d/1-GCnAhZSidhW827O36aBPIegsX6G6-6S/view?usp=sharing).
-   To download the 7zip files, if you do not have a 7zip extractor, you can use
-   [this](https://extract.me/) website to extract the file. 
-2. Add the /bin of openocd and the gcc-toolchain to your path. <br><br>
+   and [anaconda](https://www.anaconda.com/distribution/). During installation of Anaconda, make sure to check the 'Add to PATH' box.
+   There is also a 7-ZIP archive containing the first two [here](https://drive.google.com/file/d/1-GCnAhZSidhW827O36aBPIegsX6G6-6S/view?usp=sharing), if preferred.
+2. Add the path to the `/bin` directories of OpenOCD and the GNU Toolchain to your PATH environment variable. You can find this setting by searching for "environment" in your Start menu and selecting "Edit the system environment variables". Then click "Environment Variables..." and enter the paths as shown below.<br><br>
 
 
-    ![path-images.PNG](https://i.imgur.com/ZpV4WpX.png)
+    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/0a2c25d23166bc1ff58b41594ba63e4e/Overview.png" height="500px" />
 
 3. When conda is installed run the following commands in the anaconda prompt: <br>
 ```
 conda create --name modm python=3 pip
 activate modm
-conda install -c conda-forge git
+conda install -c conda-forge git pywin32
 pip install jinja2 scons future pyelftools lbuild
-pip install pywin32
 ```
-4. Next, clone this repository. When you clone this repository. Insure you type `--recursive` when cloning. Your git clone command should look something like
-   this: `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git` (if you do not use the command `--recursive`, you will have to clone the modm submodule. From the mcb-2019-2020 file, in the anaconda prompt, cd into mcb-2019-2020/modm and type the following commands: `git submodule init`, `git submodule update`)
-
-This will clone the modm subdirectory.
+4. Clone this repository: `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git`. If you forget the `--recursive`, run: `git submodule init .\mcb-2019-2020-project\modm\` and `git submodule update --recursive`
 5. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
 
 ### Instructions for setting up vscode
