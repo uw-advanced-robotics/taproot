@@ -46,6 +46,7 @@
     <module>modm:processing</module>
     <module>modm:math:geometry</module>
     <module>modm:ui:display</module>
+    <module>modm:ui:menu</module>
     <module>modm:platform:random</module>
     <module>modm:debug</module>
     <module>modm:driver:bno055</module>
