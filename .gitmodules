@@ -1,3 +1,4 @@
 [submodule "modm"]
 	path = modm
-	url = https://github.com/modm-io/modm.git
+	url = https://github.com/uw-advanced-robotics/modm.git
+	branch = aruw-master
