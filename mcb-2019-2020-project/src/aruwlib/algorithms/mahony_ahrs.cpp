@@ -19,7 +19,6 @@
 #include <cstdint>
 
 #include "mahony_ahrs.hpp"
-
 #include "math_user_utils.hpp"
 
 //---------------------------------------------------------------------------------------------------

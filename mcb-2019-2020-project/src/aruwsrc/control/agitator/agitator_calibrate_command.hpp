@@ -1,7 +1,7 @@
 #ifndef __AGITATOR_CALIBRATE_COMMAND_HPP__
 #define __AGITATOR_CALIBRATE_COMMAND_HPP__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 #include "agitator_subsystem.hpp"
 
 namespace aruwsrc
@@ -22,13 +22,13 @@ class AgitatorCalibrateCommand : public aruwlib::control::Command
  public:
     explicit AgitatorCalibrateCommand(AgitatorSubsystem* agitator);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool interrupted);
+    void end(bool interrupted) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
 
  private:
     AgitatorSubsystem* agitator;

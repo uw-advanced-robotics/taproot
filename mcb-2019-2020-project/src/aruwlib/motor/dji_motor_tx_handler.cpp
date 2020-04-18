@@ -1,8 +1,8 @@
 #include <modm/architecture/interface/assert.h>
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 #include "dji_motor_tx_handler.hpp"
 #include "dji_motor.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
 
 #define CAN_DJI_MESSAGE_SEND_LENGTH 8
 #define CAN_DJI_LOW_IDENTIFIER 0X200

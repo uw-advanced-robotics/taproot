@@ -31,8 +31,8 @@
 #define __MOTOR_MANAGER_HPP__
 
 #include <limits.h>
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
-#include "src/aruwlib/communication/can/can_rx_handler.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/communication/can/can_rx_handler.hpp"
 #include "dji_motor.hpp"
 
 namespace aruwlib

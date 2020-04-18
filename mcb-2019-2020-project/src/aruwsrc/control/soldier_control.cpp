@@ -1,5 +1,5 @@
-#include "robot-type/robot_type.hpp"
-#include "src/aruwlib/control/controller_mapper.hpp"
+#include <aruwlib/control/controller_mapper.hpp>
+#include "robot_type.hpp"
 #include "agitator/agitator_subsystem.hpp"
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"

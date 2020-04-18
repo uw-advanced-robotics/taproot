@@ -2,10 +2,10 @@
 #define __AGITATOR_ROTATE_COMMAND_HPP__
 
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
+#include <aruwlib/algorithms/ramp.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
 #include "agitator_subsystem.hpp"
-#include "src/aruwlib/algorithms/ramp.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
 
 namespace aruwsrc
 {
@@ -65,13 +65,13 @@ class AgitatorRotateCommand : public aruwlib::control::Command
         float setpointTolerance = AGITATOR_SETPOINT_TOLERANCE
     );
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool interrupted);
+    void end(bool interrupted) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
 };
 
 }  // namespace agitator

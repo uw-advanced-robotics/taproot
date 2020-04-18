@@ -8,9 +8,8 @@
  */
 
 #include "remote.hpp"
-#include "src/aruwlib/control/controller_mapper.hpp"
-
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/control/controller_mapper.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
 
 namespace aruwlib {
     // The current remote information

@@ -1,10 +1,10 @@
 #ifndef __CHASSIS_SUBSYSTEM_HPP__
 #define __CHASSIS_SUBSYSTEM_HPP__
 
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/algorithms/extended_kalman.hpp>
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
-#include "src/aruwlib/algorithms/extended_kalman.hpp"
 
 using namespace aruwlib::control;
 

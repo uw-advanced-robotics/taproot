@@ -8,7 +8,7 @@ min and max distance are in cm
 #define ANALOG_DISTANCE_SENSOR_H
 
 #include "distance_sensor.hpp"
-#include "src/aruwlib/communication/gpio/analog.hpp"
+#include "aruwlib/communication/gpio/analog.hpp"
 
 namespace aruwlib {
 

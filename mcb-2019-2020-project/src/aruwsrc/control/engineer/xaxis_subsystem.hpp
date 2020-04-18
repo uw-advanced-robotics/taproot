@@ -11,8 +11,8 @@
 #define __SUBSYSTEM_XAXIS_HPP__
 
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command_scheduler.hpp"
-#include "src/aruwlib/control/subsystem.hpp"
+#include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/control/subsystem.hpp>
 
 using namespace aruwlib::control;
 

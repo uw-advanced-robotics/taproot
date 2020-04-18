@@ -1,7 +1,7 @@
 #ifndef __FRICTION_WHEEL_ROTATE_COMMAND_HPP__
 #define __FRICTION_WHEEL_ROTATE_COMMAND_HPP__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 
 using namespace aruwlib::control;
 
@@ -18,15 +18,13 @@ class FrictionWheelRotateCommand : public Command
  public:
     FrictionWheelRotateCommand(FrictionWheelSubsystem* subsystem, int speed);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool);
+    void end(bool) override;
 
-    bool isFinished() const;
-
-    void interrupted();
+    bool isFinished() const override;
 
     static const int16_t DEFAULT_WHEEL_RPM = 6000;
 

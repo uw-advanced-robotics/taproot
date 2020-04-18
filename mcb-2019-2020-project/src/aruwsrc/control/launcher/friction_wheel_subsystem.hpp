@@ -2,10 +2,10 @@
 #define __FRICTION_WHEEL_SUBSYSTEM_HPP__
 
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command_scheduler.hpp"
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
-#include "src/aruwlib/algorithms/ramp.hpp"
+#include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/algorithms/ramp.hpp>
 
 using namespace aruwlib::control;
 
@@ -30,7 +30,7 @@ class FrictionWheelSubsystem : public Subsystem
 
     void setDesiredRpm(float desRpm);
 
-    void refresh();
+    void refresh() override;
 
  private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;

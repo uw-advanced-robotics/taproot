@@ -7,7 +7,7 @@
 #ifndef __COMMAND_EXAMPLE_HPP__
 #define __COMMAND_EXAMPLE_HPP__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 
 using namespace aruwlib::control;
 
@@ -28,13 +28,13 @@ class ExampleCommand : public Command
       * The initial subroutine of a command.  Called once when the command is
       * initially scheduled.
       */
-    void initialize(void);
+    void initialize() override;
 
     /**
       * The main body of a command.  Called repeatedly while the command is
       * scheduled.
       */
-    void execute(void);
+    void execute() override;
 
     /**
       * The action to take when the command ends.  Called when either the command
@@ -42,7 +42,7 @@ class ExampleCommand : public Command
       *
       * @param interrupted whether the command was interrupted/canceled
       */
-    void end(bool interrupted);
+    void end(bool interrupted) override;
 
     /**
       * Whether the command has finished.  Once a command finishes, the scheduler
@@ -50,7 +50,7 @@ class ExampleCommand : public Command
       *
       * @return whether the command has finished.
       */
-    bool isFinished(void) const;
+    bool isFinished() const override;
 
     static const int16_t DEFAULT_WHEEL_RPM = 6000;
 

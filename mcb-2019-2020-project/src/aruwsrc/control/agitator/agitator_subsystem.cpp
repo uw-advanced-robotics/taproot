@@ -1,10 +1,10 @@
-#include "agitator_subsystem.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
+#include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/errors/create_errors.hpp>
+#include "agitator_subsystem.hpp"
 #include "agitator_rotate_command.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
 
 using namespace aruwlib::motor;
 

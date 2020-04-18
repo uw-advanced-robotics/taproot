@@ -1,7 +1,8 @@
 #ifndef __CAN_RX_LISTENER__
 #define __CAN_RX_LISTENER__
 
-#include <rm-dev-board-a/board.hpp>
+#include <cstdint>
+#include <modm/architecture/interface/can_message.hpp>
 
 namespace aruwlib
 {

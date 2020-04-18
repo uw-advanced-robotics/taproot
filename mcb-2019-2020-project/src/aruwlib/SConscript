@@ -1,0 +1,19 @@
+Import("env")
+
+from os.path import abspath
+
+files = env.FindSourceFiles(".")
+
+library = env.StaticLibrary(target="aruwlib", source=files)
+
+env.AppendUnique(LIBS=[
+    library,
+])
+
+env.AppendUnique(LIBPATH=[
+    abspath(str(library[0].get_dir())),
+])
+
+profile = ARGUMENTS.get("profile", "release")
+
+Return("library")

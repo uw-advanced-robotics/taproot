@@ -1,4 +1,4 @@
-#include "robot-type/robot_type.hpp"
+#include "robot_type.hpp"
 
 #if defined(TARGET_ENGINEER)
 namespace aruwsrc

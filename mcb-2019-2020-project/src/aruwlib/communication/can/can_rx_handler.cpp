@@ -1,8 +1,9 @@
 #include <modm/architecture/interface/assert.h>
 #include <modm/container/linked_list.hpp>
+#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 #include "can_rx_handler.hpp"
-#include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
+
 namespace aruwlib
 {
 

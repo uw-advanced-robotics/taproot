@@ -3,8 +3,8 @@
 #ifndef _SERVO_HPP_
 #define _SERVO_HPP_
 
-#include "src/aruwlib/communication/gpio/pwm.hpp"
-#include "src/aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/communication/gpio/pwm.hpp"
+#include "aruwlib/algorithms/ramp.hpp"
 
 namespace aruwlib
 {

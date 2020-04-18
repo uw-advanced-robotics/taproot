@@ -1,5 +1,6 @@
-#include <rm-dev-board-a/board.hpp>
 #include "analog.hpp"
+
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 using namespace Board;
 

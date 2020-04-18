@@ -1,7 +1,8 @@
+#include <aruwlib/communication/remote.hpp>
+#include <aruwlib/control/control_operator_interface.hpp>
 #include "turret_manual_command.hpp"
 #include "turret_subsystem.hpp"
-#include "src/aruwlib/communication/remote.hpp"
-#include "src/aruwlib/control/control_operator_interface.hpp"
+
 
 using namespace aruwlib;
 

@@ -54,9 +54,6 @@ namespace control
     {
         return false;
     }
-
-    void SentinelAutoDriveCommand::interrupted()
-    {}
 }  // namespace control
 
 }  // namespace aruwsrc

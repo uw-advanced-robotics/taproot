@@ -27,7 +27,6 @@
 #define __COMMAND_HPP__
 
 #include <set>
-#include <rm-dev-board-a/board.hpp>
 #include "subsystem.hpp"
 
 namespace aruwlib

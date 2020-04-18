@@ -1,4 +1,4 @@
-#include <rm-dev-board-a/board.hpp>
+#include <aruwlib/rm-dev-board-a/board.hpp>
 #include "blink_led_command.hpp"
 
 namespace aruwsrc

@@ -1,21 +1,21 @@
-#include <rm-dev-board-a/board.hpp>
+#include <aruwlib/rm-dev-board-a/board.hpp>
 #include <modm/processing/timer.hpp>
 
 /* communication includes ---------------------------------------------------*/
-#include "src/aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
-#include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
-#include "src/aruwlib/communication/can/can_rx_listener.hpp"
-#include "src/aruwlib/communication/remote.hpp"
-#include "src/aruwlib/communication/serial/xavier_serial.hpp"
-#include "src/aruwlib/communication/serial/ref_serial.hpp"
-#include "src/aruwlib/display/sh1106.hpp"
+#include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
+#include <aruwlib/motor/dji_motor_tx_handler.hpp>
+#include <aruwlib/communication/can/can_rx_listener.hpp>
+#include <aruwlib/communication/remote.hpp>
+#include <aruwlib/communication/serial/xavier_serial.hpp>
+#include <aruwlib/communication/serial/ref_serial.hpp>
+#include <aruwlib/display/sh1106.hpp>
 
 /* error handling includes --------------------------------------------------*/
-#include "src/aruwlib/errors/error_controller.hpp"
+#include <aruwlib/errors/error_controller.hpp>
 
 /* control includes ---------------------------------------------------------*/
-#include "src/aruwsrc/control/robot_control.hpp"
-#include "src/aruwlib/control/command_scheduler.hpp"
+#include "aruwsrc/control/robot_control.hpp"
+#include <aruwlib/control/command_scheduler.hpp>
 
 /* define timers here -------------------------------------------------------*/
 modm::ShortPeriodicTimer updateImuPeriod(2);

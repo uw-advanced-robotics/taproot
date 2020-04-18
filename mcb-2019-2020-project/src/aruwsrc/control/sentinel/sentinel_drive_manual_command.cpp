@@ -2,10 +2,10 @@
 
 #include <stdlib.h>
 
-#include "src/aruwlib/control/control_operator_interface.hpp"
+#include <aruwlib/control/control_operator_interface.hpp>
+#include <aruwlib/communication/remote.hpp>
 #include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
-#include "src/aruwlib/communication/remote.hpp"
 
 namespace aruwsrc
 {
@@ -36,9 +36,6 @@ namespace control
     {
         return false;
     }
-
-    void SentinelDriveManualCommand::interrupted()
-    {}
 }  // namespace control
 
 }  // namespace aruwsrc

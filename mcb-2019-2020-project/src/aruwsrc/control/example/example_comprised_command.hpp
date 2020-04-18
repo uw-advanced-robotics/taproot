@@ -1,9 +1,9 @@
 #ifndef __EXAMPLE_COMPRISED_COMAND_HPP__
 #define __EXAMPLE_COMPRISED_COMAND_HPP__
 
+#include <aruwlib/control/comprised_command.hpp>
 #include "example_command.hpp"
 #include "example_subsystem.hpp"
-#include "src/aruwlib/control/comprised_command.hpp"
 
 namespace aruwsrc
 {

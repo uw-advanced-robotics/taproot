@@ -1,11 +1,12 @@
 #include <algorithm>
 #include <random>
 #include <cfloat>
+#include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/control/controller_mapper.hpp>
+#include <aruwlib/errors/create_errors.hpp>
+#include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
 #include "turret_subsystem.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
-#include "src/aruwlib/control/controller_mapper.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
-#include "src/aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
+
 
 using namespace aruwlib::motor;
 using namespace aruwlib;

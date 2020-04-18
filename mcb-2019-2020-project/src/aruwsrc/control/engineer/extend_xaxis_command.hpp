@@ -8,7 +8,7 @@
 #ifndef __EXTEND_XAXIS_COMMAND__
 #define __EXTEND_XAXIS_COMMAND__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 
 using namespace aruwlib::control;
 

@@ -2,7 +2,7 @@
 #define __REF_SERIAL_HPP__
 
 #include <modm/container/deque.hpp>
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
 
 namespace aruwlib

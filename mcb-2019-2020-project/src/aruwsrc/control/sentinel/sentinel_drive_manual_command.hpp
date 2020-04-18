@@ -1,8 +1,7 @@
 #ifndef __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
 #define __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
 
-
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 #include "sentinel_drive_subsystem.hpp"
 #include "modm/processing/timer.hpp"
 
@@ -21,15 +20,13 @@ class SentinelDriveManualCommand : public Command
  public:
     explicit SentinelDriveManualCommand(SentinelDriveSubsystem* subsystem);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool);
+    void end(bool) override;
 
-    bool isFinished() const;
-
-    void interrupted();
+    bool isFinished() const override;
 
  private:
     SentinelDriveSubsystem* subsystemSentinelDrive;

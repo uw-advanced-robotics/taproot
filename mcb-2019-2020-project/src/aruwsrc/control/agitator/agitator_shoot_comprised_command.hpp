@@ -1,9 +1,9 @@
 #ifndef __SHOOT_COMPRISED_COMMAND_HPP__
 #define __SHOOT_COMPRISED_COMMAND_HPP__
 
-#include "src/aruwlib/control/comprised_command.hpp"
+#include <aruwlib/control/comprised_command.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
 #include "agitator_subsystem.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
 #include "agitator_rotate_command.hpp"
 #include "agitator_unjam_command.hpp"
 

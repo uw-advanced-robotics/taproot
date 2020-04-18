@@ -1,7 +1,7 @@
 #ifndef __CONTROL_OPERATOR_INTERFACE_HPP__
 #define __CONTROL_OPERATOR_INTERFACE_HPP__
 
-#include "src/aruwlib/algorithms/linear_interpolation.hpp"
+#include "aruwlib/algorithms/linear_interpolation.hpp"
 
 namespace aruwlib
 {

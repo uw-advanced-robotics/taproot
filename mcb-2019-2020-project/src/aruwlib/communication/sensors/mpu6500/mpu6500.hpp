@@ -7,8 +7,8 @@
 #ifndef MPU6500_H
 #define MPU6500_H
 
-#include <rm-dev-board-a/board.hpp>
-#include "src/aruwlib/algorithms/mahony_ahrs.hpp"
+#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/algorithms/mahony_ahrs.hpp"
 
 using namespace modm::literals;
 

@@ -7,7 +7,7 @@
 #include <numeric>
 #include "command.hpp"
 #include "command_scheduler.hpp"
-#include "src/aruwlib/communication/remote.hpp"
+#include "aruwlib/communication/remote.hpp"
 
 /* 
  * Control for mapping commands to actions. For example, all the remote

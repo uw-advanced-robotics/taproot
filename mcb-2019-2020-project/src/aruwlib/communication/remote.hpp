@@ -10,7 +10,9 @@
 #ifndef __REMOTE_HPP__
 #define __REMOTE_HPP__
 
-#include <rm-dev-board-a/board.hpp>
+#include <cstdint>
+#include <modm/platform.hpp>
+
 namespace aruwlib {
 
 class Remote {

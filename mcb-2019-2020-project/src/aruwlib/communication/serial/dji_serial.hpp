@@ -2,7 +2,7 @@
 #define __serial_h_
 
 #include <modm/processing.hpp>
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 /**
  * Extend this class and implement messageReceiveCallback if you

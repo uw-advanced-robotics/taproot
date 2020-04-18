@@ -3,7 +3,7 @@
 
 #include <modm/container.hpp>
 #include <modm/processing/timer.hpp>
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "system_error.hpp"
 
 namespace aruwlib

@@ -1,6 +1,6 @@
 #include "ref_serial.hpp"
 
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
 
 namespace aruwlib
 {

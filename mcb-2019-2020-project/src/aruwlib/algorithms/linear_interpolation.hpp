@@ -1,7 +1,9 @@
 #ifndef __LINEAR_INTERPOLATION_HPP__
 #define __LINEAR_INTERPOLATION_HPP__
 
-#include <rm-dev-board-a/board.hpp>
+#include <cstdint>
+
+#include <modm/architecture/interface/clock.hpp>
 
 namespace aruwlib
 {

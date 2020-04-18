@@ -2,7 +2,7 @@
 #define __BLINK_LED_COMMAND_HPP__
 
 #include <modm/processing/timer/timeout.hpp>
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 #include "example_subsystem.hpp"
 
 using namespace aruwlib::control;

@@ -1,11 +1,11 @@
 #ifndef __TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP__
 #define __TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP__
 
-#include "src/aruwsrc/algorithms/turret_pid.hpp"
-#include "src/aruwlib/control/command.hpp"
-#include "src/aruwlib/algorithms/contiguous_float.hpp"
-#include "src/aruwsrc/control/turret/turret_subsystem.hpp"
-#include "src/aruwsrc/control/chassis/chassis_subsystem.hpp"
+#include <aruwlib/control/command.hpp>
+#include <aruwlib/algorithms/contiguous_float.hpp>
+#include "aruwsrc/algorithms/turret_pid.hpp"
+#include "aruwsrc/control/turret/turret_subsystem.hpp"
+#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
 
 namespace aruwsrc
 {
@@ -19,15 +19,13 @@ class TurretWorldRelativePositionCommand : public Command
     TurretWorldRelativePositionCommand(TurretSubsystem *subsystem,
                                        chassis::ChassisSubsystem *chassis);
 
-    void initialize();
+    void initialize() override;
 
-    bool isFinished() const {return false;}
+    bool isFinished() const override {return false;}
 
-    void execute();
+    void execute() override;
 
-    void end(bool);
-
-    void refresh();
+    void end(bool) override;
 
  private:
     static constexpr float YAW_P = 4500.0f;

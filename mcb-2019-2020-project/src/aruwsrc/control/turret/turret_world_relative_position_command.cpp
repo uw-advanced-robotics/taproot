@@ -1,8 +1,8 @@
 #include "turret_world_relative_position_command.hpp"
-#include "src/aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
-#include "src/aruwlib/communication/remote.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
-#include "src/aruwlib/control/control_operator_interface.hpp"
+#include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
+#include <aruwlib/communication/remote.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/control/control_operator_interface.hpp>
 
 using namespace aruwlib::sensors;
 using namespace aruwlib;

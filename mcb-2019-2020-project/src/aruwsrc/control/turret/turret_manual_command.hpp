@@ -2,7 +2,7 @@
 #define __TURRET_MANUAL_COMMAND_H__
 
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 
 using namespace aruwlib::control;
 
@@ -17,11 +17,11 @@ class TurretManualCommand : public Command {
  public:
     explicit TurretManualCommand(TurretSubsystem *subsystem);
 
-    void initialize() {}
-    bool isFinished() const;
+    void initialize() override {}
+    bool isFinished() const override;
 
-    void execute();
-    void end(bool);
+    void execute() override;
+    void end(bool) override;
 
  private:
     const float USER_INPUT_SCALAR = 50.0f;

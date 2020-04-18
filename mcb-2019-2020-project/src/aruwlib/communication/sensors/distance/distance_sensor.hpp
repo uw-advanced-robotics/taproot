@@ -6,7 +6,7 @@ Planned sensors: basic analog IR, Sharp IR, Adafruit VL6180X, and Seeed IR
 #ifndef DISTANCE_SENSOR_H
 #define DISTANCE_SENSOR_H
 
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 namespace aruwlib {
 

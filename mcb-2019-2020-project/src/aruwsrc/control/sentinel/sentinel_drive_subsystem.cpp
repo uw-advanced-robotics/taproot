@@ -1,7 +1,7 @@
+#include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/errors/create_errors.hpp>
 #include "sentinel_drive_subsystem.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
 
 namespace aruwsrc
 {

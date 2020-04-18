@@ -1,5 +1,4 @@
 #include <cstdint>
-#include "rm-dev-board-a/board.hpp"
 #include "math_user_utils.hpp"
 
 float aruwlib::algorithms::fastInvSqrt(float x)

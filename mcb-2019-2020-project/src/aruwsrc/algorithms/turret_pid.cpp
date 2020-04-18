@@ -1,5 +1,5 @@
 #include "turret_pid.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
+#include <aruwlib/algorithms/math_user_utils.hpp>
 
 using namespace aruwlib::algorithms;
 

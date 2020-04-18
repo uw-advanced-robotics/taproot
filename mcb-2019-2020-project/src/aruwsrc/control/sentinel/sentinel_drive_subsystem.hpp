@@ -1,10 +1,10 @@
 #ifndef __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 #define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 
+#include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command_scheduler.hpp"
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
 
 using namespace aruwlib::control;
 
@@ -42,7 +42,7 @@ class SentinelDriveSubsystem : public Subsystem
 
     void setDesiredRpm(float desRpm);
 
-    void refresh();
+    void refresh() override;
 
     void initLimitSwitches();
 

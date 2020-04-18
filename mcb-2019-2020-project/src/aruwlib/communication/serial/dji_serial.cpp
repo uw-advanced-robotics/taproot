@@ -1,7 +1,7 @@
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
-#include "src/aruwlib/algorithms/crc.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
+#include "aruwlib/algorithms/crc.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 
 namespace aruwlib
 {

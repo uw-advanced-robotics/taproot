@@ -1,7 +1,7 @@
 #ifndef __OPEN_HOPPER_COMMAND_HPP__
 #define __OPEN_HOPPER_COMMAND_HPP__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
 #include "hopper_subsystem.hpp"
 
 using namespace aruwlib::control;
@@ -19,13 +19,13 @@ class OpenHopperCommand : public Command
  public:
     explicit OpenHopperCommand(HopperSubsystem* subsystem);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool);
+    void end(bool) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
 
  private:
     HopperSubsystem* subsystemHopper;

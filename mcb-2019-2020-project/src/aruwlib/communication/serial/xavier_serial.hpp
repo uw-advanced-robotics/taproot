@@ -1,7 +1,7 @@
 #ifndef __SERIAL_XAVIER_HPP__
 #define __SERIAL_XAVIER_HPP__
 
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
 
 namespace aruwlib

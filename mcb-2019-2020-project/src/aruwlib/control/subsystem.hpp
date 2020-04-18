@@ -22,7 +22,7 @@
 #ifndef __SUBSYSTEM_HPP__
 #define __SUBSYSTEM_HPP__
 
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 namespace aruwlib
 {

@@ -1,5 +1,5 @@
+#include <aruwlib/communication/remote.hpp>
 #include "turret_cv_command.hpp"
-#include "src/aruwlib/communication/remote.hpp"
 #include "turret_subsystem.hpp"
 
 namespace aruwsrc

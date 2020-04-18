@@ -14,54 +14,54 @@ from os.path import join, abspath
 # User Configurable Options
 project_name = "mcb-2019-2020"
 build_path = "build"
-generated_paths = ['modm']
+generated_paths = ['modm', "./src/aruwlib"]
+
 # SCons environment with all tools
 env = DefaultEnvironment(tools=[], ENV=os.environ)
 env["CONFIG_BUILD_BASE"] = abspath(build_path)
 env["CONFIG_PROJECT_NAME"] = project_name
 
-# Building all libraries
+# Configure build jobs
+if GetOption('num_jobs') == 1:
+    SetOption('num_jobs', 8)
+
+print("Configured {0} parallel build jobs (-j{0})".format(GetOption('num_jobs')))
+
+# Building all libraries (read from sconscript files located in generated_paths)
 env.SConscript(dirs=generated_paths, exports="env")
 
-env.Append(CPPPATH=".")
-ignored = [".lbuild_cache", build_path, "robot-type"] + generated_paths
-sources = []
-# Finding application sources
-sources += env.FindSourceFiles(".", ignorePaths=ignored)
-# So you want to add or remove compile options?
-#   0. Check what options you want to add to GCC:
-#      https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
-#   1. Check what the environment variables are called in SCons:
-#      https://www.scons.org/doc/latest/HTML/scons-user/apa.html
-#   2. You can append one or multiple options like this
-#       env.Append(CCFLAGS="-pedantic")
-#       env.Append(CCFLAGS=["-pedantic", "-pedantic-errors"])
-#   3. If you need to remove options, you need to do this:
-#       env["CCFLAGS"].remove("-pedantic")
-#      Note that a lot of options also have a "-no-{option}" option
-#      that may overwrite previous options.
-#   4. Add your environment changes below these instructions
-#      inside this SConstruct file.
-#   5. COMMIT THIS SCONSTRUCT FILE NOW!
-#   6. Tell lbuild not to overwrite this SConstruct file anymore:
-#       <option name="modm:build:scons:include_sconstruct">False</option>
-#   7. Anyone using your project now also benefits from your environment changes.
+# References:
+#   GCC flags: https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+#   Scons API: https://www.scons.org/doc/latest/HTML/scons-user/apa.html
+# 
+# You can append one or multiple options like this
+#     env.Append(CCFLAGS="-pedantic")
+#     env.Append(CCFLAGS=["-pedantic", "-pedantic-errors"])
+# If you need to remove options, you need to do this:
+#     env["CCFLAGS"].remove("-pedantic")
+# Note that a lot of options also have a "-no-{option}" option
+# that may overwrite previous options.
+
+# Configure build flags that are unique to debug or release profile
 
 profile = ARGUMENTS.get("profile", "release")
 
 if profile == "debug":
     env.Append(CCFLAGS = [
-       "-fno-inline",
+        "-fno-inline",
     ])
-    
+
 if 'additional-ccflags' in ARGUMENTS:
     env.Append(CCFLAGS = [
        ARGUMENTS['additional-ccflags'],
     ])
 
-if GetOption('num_jobs') == 1:
-    SetOption('num_jobs', 8)
+# add this path so you don't have to write #include "src/..."
+env.AppendUnique(CPPPATH=[abspath(r"./src"),
+                          abspath(r"./robot-type")])
 
-print("running with -j", GetOption('num_jobs'))
+# don't compile this stuff
+ignored = [".lbuild_cache", build_path, "robot-type"] + generated_paths
+sources = env.FindSourceFiles(".", ignorePaths=ignored)
 
 env.BuildTarget(sources)

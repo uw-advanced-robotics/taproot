@@ -1,11 +1,10 @@
 #ifndef __CHASSIS_AUTOROTATE_COMMAND_HPP__
 #define __CHASSIS_AUTOROTATE_COMMAND_HPP__
 
-#include "src/aruwlib/control/command.hpp"
+#include <aruwlib/control/command.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwsrc/control/turret/turret_subsystem.hpp"
 #include "chassis_subsystem.hpp"
-#include "src/aruwsrc/control/turret/turret_subsystem.hpp"
-
-#include "src/aruwlib/motor/dji_motor.hpp"
 
 using namespace aruwlib::control;
 
@@ -26,13 +25,13 @@ class ChassisAutorotateCommand : public Command
         addSubsystemRequirement(dynamic_cast<Subsystem*>(chassis));
     }
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool);
+    void end(bool) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
 
  private:
     static constexpr float CHASSIS_AUTOROTATE_PID_KP = -85.0f;

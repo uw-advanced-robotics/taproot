@@ -1,5 +1,5 @@
+#include <aruwlib/control/subsystem.hpp>
 #include "agitator_calibrate_command.hpp"
-#include "src/aruwlib/control/subsystem.hpp"
 
 namespace aruwsrc
 {

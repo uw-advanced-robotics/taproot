@@ -2,7 +2,7 @@
 
 #include "xaxis_subsystem.hpp"
 
-#include <rm-dev-board-a/board.hpp>
+#include <aruwlib/rm-dev-board-a/board.hpp>
 
 namespace aruwsrc
 {

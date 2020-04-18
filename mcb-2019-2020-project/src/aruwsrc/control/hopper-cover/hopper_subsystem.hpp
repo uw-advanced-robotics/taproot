@@ -8,9 +8,9 @@
 #define __OPEN_HOPPER_SUBSYSTEM__
 
 #include <modm/math/filter/pid.hpp>
-#include "src/aruwlib/control/command_scheduler.hpp"
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/servo.hpp"
+#include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/servo.hpp>
 
 using namespace aruwlib::control;
 
@@ -56,7 +56,7 @@ class HopperSubsystem : public Subsystem
      */
     void setClose();
 
-    void refresh();
+    void refresh() override;
 
  private:
     aruwlib::motor::Servo hopper;

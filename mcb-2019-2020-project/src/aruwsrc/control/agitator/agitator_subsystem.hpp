@@ -3,10 +3,9 @@
 
 #include <modm/math/filter/pid.hpp>
 #include <modm/processing/timer/timeout.hpp>
-
-#include "src/aruwlib/control/subsystem.hpp"
-#include "src/aruwlib/motor/dji_motor.hpp"
-#include "src/aruwsrc/algorithms/turret_pid.hpp"
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwsrc/algorithms/turret_pid.hpp"
 
 namespace aruwsrc
 {
@@ -88,7 +87,7 @@ class AgitatorSubsystem : public aruwlib::control::Subsystem {
         bool isAgitatorInverted
     );
 
-    void refresh();
+    void refresh() override;
 
     void setAgitatorDesiredAngle(const float& newAngle);
 

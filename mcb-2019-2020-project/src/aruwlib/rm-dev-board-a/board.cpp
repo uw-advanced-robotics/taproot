@@ -9,7 +9,7 @@
  */
 // ----------------------------------------------------------------------------
 
-#include "rm-dev-board-a/board.hpp"
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 modm_extern_c void
 modm_abandon(const char *,

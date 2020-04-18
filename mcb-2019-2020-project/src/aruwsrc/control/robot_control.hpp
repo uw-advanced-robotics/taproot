@@ -1,7 +1,7 @@
 #ifndef __ROBOT_CONTROL_HPP__
 #define __ROBOT_CONTROL_HPP__
 
-#include <rm-dev-board-a/board.hpp>
+#include <aruwlib/rm-dev-board-a/board.hpp>
 
 namespace aruwsrc
 {

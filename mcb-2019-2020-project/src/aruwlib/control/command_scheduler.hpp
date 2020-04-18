@@ -18,7 +18,7 @@
 
 #include <map>
 #include <modm/container/linked_list.hpp>
-#include <rm-dev-board-a/board.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 #include "subsystem.hpp"
 

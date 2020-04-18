@@ -1,8 +1,8 @@
+#include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/communication/remote.hpp>
+#include <aruwlib/control/control_operator_interface.hpp>
+#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
 #include "chassis_autorotate_command.hpp"
-#include "src/aruwlib/algorithms/math_user_utils.hpp"
-#include "src/aruwlib/communication/remote.hpp"
-#include "src/aruwsrc/control/chassis/chassis_subsystem.hpp"
-#include "src/aruwlib/control/control_operator_interface.hpp"
 
 using namespace aruwlib::control;
 

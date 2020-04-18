@@ -1,5 +1,5 @@
 #include "controller_mapper.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 
 namespace aruwlib {
 

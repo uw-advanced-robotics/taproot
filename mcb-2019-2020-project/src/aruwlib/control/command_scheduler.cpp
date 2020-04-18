@@ -2,11 +2,11 @@
 #include <set>
 #include <algorithm>
 #include <modm/processing/timer.hpp>
+#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+#include "aruwlib/communication/can/can_rx_handler.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 #include "command_scheduler.hpp"
-#include "src/aruwlib/motor/dji_motor_tx_handler.hpp"
-#include "src/aruwlib/communication/can/can_rx_handler.hpp"
 #include "command.hpp"
-#include "src/aruwlib/errors/create_errors.hpp"
 
 using namespace std;
 
