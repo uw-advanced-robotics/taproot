@@ -12,3 +12,9 @@ float aruwlib::algorithms::fastInvSqrt(float x)
     y = y * (1.5f - (halfx * y * y));
     return y;
 }
+
+void aruwlib::algorithms::rotateVector(float* x, float* y, float radians) {
+    float x_temp = *x;
+    *x = (*x) * cosf(radians) - *y * sinf(radians);
+    *y = x_temp * sinf(radians) + *y * cosf(radians);
+}

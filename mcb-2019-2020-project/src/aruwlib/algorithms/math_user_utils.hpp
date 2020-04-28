@@ -71,6 +71,15 @@ To reinterpretCopy(From from) {
   */
 float fastInvSqrt(float x);
 
+/** 
+ *  @brief performs a rotation matrix on the given x and y components of a vector
+ *  @param x the x component of the vector to be rotated
+ *  @param y the y component of the vector to be rotated
+ *  @param angle the angle by which to rotate the vector <x, y>, in radians
+ *  @retval none
+ */
+void rotateVector(float* x, float* y, float radians);
+
 }  // namespace algorithms
 
 }  // namespace aruwlib

@@ -15,7 +15,7 @@ namespace agitator
 
 class AgitatorSubsystem : public aruwlib::control::Subsystem {
  public:
-    #if defined(TARGET_SOLDIER)
+    #if defined(TARGET_SOLDIER) || defined(TARGET_OLD_SOLDIER)
     // position pid terms
     // pid terms for soldier
     static constexpr float PID_17MM_P = 170000.0f;

@@ -6,6 +6,7 @@
 #include "chassis/chassis_drive_command.hpp"
 #include "chassis/chassis_subsystem.hpp"
 #include "chassis/chassis_autorotate_command.hpp"
+#include "chassis/wiggle_drive_command.hpp"
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_cv_command.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
@@ -53,6 +54,8 @@ FrictionWheelSubsystem frictionWheels;
 ChassisDriveCommand chassisDriveCommand(&chassis);
 
 ChassisAutorotateCommand chassisAutorotateCommand(&chassis, &turret);
+
+WiggleDriveCommand wiggleDriveCommand(&chassis, &turret);
 
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(&turret, &chassis);
 
@@ -115,6 +118,11 @@ void registerSoldierIoMappings()
     IoMapper::addHoldMapping(
             IoMapper::newKeyMap(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN),
             &stopFrictionWheels);
+
+    IoMapper::addHoldMapping(
+            IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
+            &wiggleDriveCommand);
+
     /// \todo left switch up is cv command
 }
 

@@ -23,9 +23,15 @@ namespace control
 class HopperSubsystem : public Subsystem
 {
  public:
+    #if defined(TARGET_SOLDIER)
     static constexpr float SOLDIER_HOPPER_OPEN_PWM = 0.21f;
     static constexpr float SOLDIER_HOPPER_CLOSE_PWM = 0.11f;
     static constexpr float SOLDIER_PWM_RAMP_SPEED = 0.001f;
+    #elif defined(TARGET_OLD_SOLDIER)
+    static constexpr float OLD_SOLDIER_HOPPER_OPEN_PWM = 0.21f;
+    static constexpr float OLD_SOLDIER_HOPPER_CLOSE_PWM = 0.11f;
+    static constexpr float OLD_SOLDIER_PWM_RAMP_SPEED = 0.001f;
+    #endif
 
     /* 
      * constructor
