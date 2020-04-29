@@ -1,0 +1,29 @@
+<library>
+  <repositories>
+    <!-- path to modm repository -->
+    <repository>
+      <path>../../modm/repo.lb</path>
+    </repository>
+  </repositories>
+  <options>
+    <option name="modm:build:project.name">aruw-mcb-sim</option>
+    <option name="modm:target">hosted-windows</option>
+    <option name="modm:build:scons:include_sconstruct">False</option>
+
+  </options>
+  <modules>
+    <module>modm:build:scons</module>
+    <module>modm:platform:core</module>
+    <module>modm:container</module>
+    <module>modm:math:utils</module>
+    <module>modm:math:saturated</module>
+    <module>modm:math:filter</module>
+    <module>modm:math:geometry</module>
+    <module>modm:ui:display</module>
+    <module>modm:ui:menu</module>
+    <module>modm:processing</module>
+    <module>modm:processing:protothread</module>
+    <module>modm:architecture:can</module>
+    <module>modm:io</module>
+  </modules>
+</library>

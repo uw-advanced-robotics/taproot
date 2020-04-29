@@ -14,11 +14,17 @@ from os.path import join, abspath
 # User Configurable Options
 project_name = "mcb-2019-2020"
 build_path = "build"
-generated_paths = ['modm', "./src/aruwlib"]
+external_scons_libraries = ["modm/", "sim-modm/modm/", "./src/aruwlib"]
+# don't compile this stuff
+ignored = [".lbuild_cache", build_path, "robot-type"] + external_scons_libraries
+
+target_env = ARGUMENTS.get("target-env", "hardware")
+if target_env not in ["hardware", "simulator"]:
+    raise Exception("Illegal target-env: " + target_env)
 
 # SCons environment with all tools
 env = DefaultEnvironment(tools=[], ENV=os.environ)
-env["CONFIG_BUILD_BASE"] = abspath(build_path)
+env["CONFIG_BUILD_BASE"] = abspath(join(build_path, target_env))
 env["CONFIG_PROJECT_NAME"] = project_name
 
 # Configure build jobs
@@ -27,8 +33,14 @@ if GetOption('num_jobs') == 1:
 
 print("Configured {0} parallel build jobs (-j{0})".format(GetOption('num_jobs')))
 
+# TODO: Clean up management of the library list
+if target_env == "hardware":
+    external_scons_libraries.remove("sim-modm/modm/")
+else:
+    external_scons_libraries.remove("modm/")
+
 # Building all libraries (read from sconscript files located in generated_paths)
-env.SConscript(dirs=generated_paths, exports="env")
+env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # References:
 #   GCC flags: https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
@@ -51,6 +63,10 @@ if profile == "debug":
         "-fno-inline",
     ])
 
+env.Append(CPPFLAGS = [
+    "-DENV_" + target_env.upper()
+])
+
 if 'additional-ccflags' in ARGUMENTS:
     env.Append(CCFLAGS = [
        ARGUMENTS['additional-ccflags'],
@@ -60,8 +76,6 @@ if 'additional-ccflags' in ARGUMENTS:
 env.AppendUnique(CPPPATH=[abspath(r"./src"),
                           abspath(r"./robot-type")])
 
-# don't compile this stuff
-ignored = [".lbuild_cache", build_path, "robot-type"] + generated_paths
 sources = env.FindSourceFiles(".", ignorePaths=ignored)
 
 env.BuildTarget(sources)
