@@ -45,6 +45,7 @@ bool PeriodicMilliTimer::execute()
         } while(timeout.expireTime <= now);
 
         timeout.isRunning = true;
+        timeout.isExecuted = false;
         return true;
     }
     return false;
