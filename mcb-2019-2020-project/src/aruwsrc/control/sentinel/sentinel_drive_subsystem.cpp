@@ -3,6 +3,8 @@
 #include <aruwlib/errors/create_errors.hpp>
 #include "sentinel_drive_subsystem.hpp"
 
+using namespace aruwlib::gpio;
+
 namespace aruwsrc
 {
 
@@ -10,11 +12,14 @@ namespace control
 {
     void SentinelDriveSubsystem::initLimitSwitches()
     {
-        leftLimitSwitch::setInputTrigger(modm::platform::Gpio::InputTrigger::RisingEdge);
-        leftLimitSwitch::configure(modm::platform::Gpio::InputType::PullDown);
-
-        rightLimitSwitch::setInputTrigger(modm::platform::Gpio::InputTrigger::RisingEdge);
-        rightLimitSwitch::configure(modm::platform::Gpio::InputType::PullDown);
+        Digital::configureInputPullMode(
+            leftLimitSwitch,
+            aruwlib::gpio::Digital::InputPullMode::PullDown
+        );
+        Digital::configureInputPullMode(
+            rightLimitSwitch,
+            aruwlib::gpio::Digital::InputPullMode::PullDown
+        );
     }
 
     void SentinelDriveSubsystem::setDesiredRpm(float desRpm)
@@ -68,10 +73,10 @@ namespace control
     // being at the start of the rail, right limit switch indicates end of rail.
     void SentinelDriveSubsystem::resetOffsetFromLimitSwitch ()
     {
-        if (leftLimitSwitch::read()) {  // DigitalPin where limit switch is placed
+        if (Digital::read(leftLimitSwitch)) {  // DigitalPin where limit switch is placed
             leftZeroRailOffset = distanceFromEncoder(&leftWheel);
             rightZeroRailOffset = distanceFromEncoder(&rightWheel);
-        } else if (rightLimitSwitch::read()) {
+        } else if (Digital::read(rightLimitSwitch)) {
             leftZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&leftWheel);
             rightZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&rightWheel);
         }

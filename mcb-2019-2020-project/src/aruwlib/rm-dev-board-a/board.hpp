@@ -14,13 +14,21 @@
 #ifndef MODM_ROBOMASTER_DEV_BOARD_A_HPP
 #define MODM_ROBOMASTER_DEV_BOARD_A_HPP
 
+#ifndef ENV_SIMULATOR
 #include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
+
+using namespace modm::platform;
+#else
+#include <modm/math/units.hpp>
+#endif
+
 #include "robot_type.hpp"
 #include "aruwlib/communication/gpio/analog.hpp"
 #include "aruwlib/communication/gpio/pwm.hpp"
+#include "aruwlib/communication/gpio/leds.hpp"
+#include "aruwlib/communication/can/can.hpp"
 
-using namespace modm::platform;
 
 /// @ingroup TODO
 namespace Board
@@ -88,6 +96,7 @@ struct SystemClock
     static bool inline
     enable()
     {
+        #ifndef ENV_SIMULATOR
         Rcc::enableExternalCrystal();  // 8 MHz
         Rcc::enablePll(
             Rcc::PllSource::ExternalCrystal,
@@ -101,10 +110,13 @@ struct SystemClock
         Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div2);
         Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div1);
         Rcc::updateCoreFrequency<Frequency>();
+        #endif
 
         return true;
     }
 };
+
+#ifndef ENV_SIMULATOR
 
 // initialize a button built into mcb
 using Button = GpioInputB2;
@@ -123,7 +135,7 @@ using LedH = GpioOutputG8;
 using LedGreen = GpioOutputF14;
 using LedRed = GpioOutputE11;
 
-using Leds = SoftwareGpioPort
+using LedsPort = SoftwareGpioPort
 <
     LedA, LedB, LedC, LedD, LedE,
     LedF, LedG, LedH, LedGreen, LedRed
@@ -203,12 +215,16 @@ using DisplayReset = GpioB10;
 using DisplayCommand = GpioB9;
 using DisplaySpiMaster = SpiMaster1;
 
+#endif
+
 inline void
 killAllGpioOutput()
 {
-    Leds::setOutput(modm::Gpio::High);
+    #ifndef ENV_SIMULATOR
+    LedsPort::setOutput(modm::Gpio::High);
     PowerOuts::setOutput(modm::Gpio::Low);
     DigitalOutPins::setOutput(modm::Gpio::Low);
+    #endif
     aruwlib::gpio::Pwm::WriteAll(0.0);
 }
 
@@ -217,44 +233,20 @@ initialize()
 {
     // init clock
     SystemClock::enable();
+    #ifndef ENV_SIMULATOR
     SysTickTimer::initialize<SystemClock>();
-    // init Leds
-    Leds::setOutput(modm::Gpio::Low);
+    aruwlib::gpio::Leds::init();
     // init 24V output
     PowerOuts::setOutput(modm::Gpio::High);
-    // init digital out pins
-    DigitalOutPins::setOutput(modm::Gpio::Low);
-    // init digital in pins
-    // interrupts disabled
-    DigitalInPins::setInput();
-    // set analog in pins
-    AnalogInPins::setAnalogInput();
     // init button on board
     Button::setInput();
+    #endif
 
     // init PWM and analog pins
     aruwlib::gpio::Analog::init();
     aruwlib::gpio::Pwm::init();
 
-    CanFilter::setStartFilterBankForCan2(14);
-    // initialize CAN 1
-    Can1::connect<GpioD0::Rx, GpioD1::Tx>(Gpio::InputType::PullUp);
-    Can1::initialize<Board::SystemClock, 1000_kbps>(9);
-    // receive every message for CAN 1
-    CanFilter::setFilter(0, CanFilter::FIFO0,
-        CanFilter::StandardIdentifier(0),
-        CanFilter::StandardFilterMask(0));
-    Can2::connect<GpioB12::Rx, GpioB13::Tx>(Gpio::InputType::PullUp);
-    Can2::initialize<Board::SystemClock, 1000_kbps>(12);
-    // receive every message for CAN 2
-    CanFilter::setFilter(14, CanFilter::FIFO0,
-        CanFilter::StandardIdentifier(0),
-        CanFilter::StandardFilterMask(0));
-}
-
-inline uint32_t getTimeMicroseconds()
-{
-    return DWT->CYCCNT / static_cast<uint32_t>(modm::clock::fcpu_MHz);
+    aruwlib::can::Can::initialize();
 }
 
 }  // namespace Board

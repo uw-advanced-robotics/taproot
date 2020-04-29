@@ -5,6 +5,7 @@
 #include <aruwlib/control/command.hpp>
 #include <aruwlib/algorithms/ramp.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/architecture/timeout.hpp>
 #include "agitator_subsystem.hpp"
 
 namespace aruwsrc
@@ -34,7 +35,7 @@ class AgitatorRotateCommand : public aruwlib::control::Command
 
     uint32_t agitatorMinRotatePeriod;
 
-    modm::ShortTimeout agitatorMinRotateTimeout;
+    aruwlib::arch::MilliTimeout agitatorMinRotateTimeout;
 
     float agitatorSetpointTolerance;
 

@@ -3,6 +3,7 @@
 
 #include <modm/processing.hpp>
 #include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/communication/serial/uart.hpp"
 
 /**
  * Extend this class and implement messageReceiveCallback if you
@@ -42,13 +43,6 @@ class DJISerial
     static const uint8_t FRAME_CRC16_LENGTH = 2;
 
  public:
-    typedef enum
-    {
-        // PORT_UART1 = 0,
-        PORT_UART2 = 1,
-        PORT_UART6 = 2,
-    } SerialPort;
-
     typedef struct
     {
         uint8_t headByte;
@@ -65,7 +59,7 @@ class DJISerial
      * @param isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement
      */
     DJISerial(
-        SerialPort port,
+        Uart::UartPort port,
         bool isRxCRCEnforcementEnabled
     );
 
@@ -100,7 +94,7 @@ class DJISerial
     };
 
     // serial port you are connected to
-    SerialPort port;
+    Uart::UartPort port;
 
     // stuff for rx, buffers to store parts of the header, state machine
     SerialRxState djiSerialRxState;

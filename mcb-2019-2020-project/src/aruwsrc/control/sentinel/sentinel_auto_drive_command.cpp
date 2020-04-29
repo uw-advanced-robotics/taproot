@@ -1,4 +1,6 @@
+#ifndef ENV_SIMULATOR
 #include <modm/platform/random/random_number_generator.hpp>
+#endif
 
 #include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
@@ -12,7 +14,9 @@ namespace control
         : subsystemSentinelDrive(subsystem), changeVelocityTimer(CHANGE_TIME_INTERVAL)
     {
         addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
+        #ifndef ENV_SIMULATOR
         RandomNumberGenerator::enable();
+        #endif
     }
 
     void SentinelAutoDriveCommand::initialize()
@@ -23,14 +27,22 @@ namespace control
     void SentinelAutoDriveCommand::execute()
     {
         if (this->changeVelocityTimer.isExpired() || !chosenNewRPM) {
+            #ifdef ENV_SIMULATOR
+            chosenNewRPM = true;
+            #else
             chosenNewRPM = RandomNumberGenerator::isReady();
+            #endif
             if (chosenNewRPM) {
                 this->changeVelocityTimer.restart(CHANGE_TIME_INTERVAL);
+                #ifdef ENV_SIMULATOR
+                currentRPM = MIN_RPM + (MAX_RPM - MIN_RPM)/2;
+                #else
                 uint32_t randVal = RandomNumberGenerator::getValue();
                 currentRPM = randVal % (MAX_RPM - MIN_RPM + 1) + MIN_RPM;
                 if (randVal % 2 == 0) {
                     currentRPM *= -1.0f;
                 }
+                #endif
             }
         }
 

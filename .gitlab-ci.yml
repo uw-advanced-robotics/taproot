@@ -2,7 +2,7 @@ before_script:
   - python -V # Print out python version for debugging
 
 cpplint:
-  image: aruw/mcb-2020-gitlab-ci:2020-02-17.3
+  image: aruw/mcb-2020-gitlab-ci:2020-04-27.2
   before_script:
     - chmod +x ./.gitlab/linter.sh
   script:
@@ -13,12 +13,14 @@ cpplint:
   - develop
 
 build-code:
-  image: aruw/mcb-2020-gitlab-ci:2020-02-17.3
+  image: aruw/mcb-2020-gitlab-ci:2020-04-27.2
   script:
     - cd mcb-2019-2020-project # Go to robot code diretory
     - rm -r modm # Because lbuild clean is broken
     - lbuild build # Make sure that modm is setup for linux.
+    - cd sim-modm && sed -i -e 's/hosted-windows/hosted-linux/g' project.xml && lbuild build && cd -
     - /usr/bin/env python3 $(which scons) build -j2 additional-ccflags=-Werror # Build the robot code!
+    - /usr/bin/env python3 $(which scons) build -j2 target-env=simulator # Build the code for simulation
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   only:

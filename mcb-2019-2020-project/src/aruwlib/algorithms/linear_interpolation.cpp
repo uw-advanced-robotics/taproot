@@ -1,5 +1,7 @@
 #include "linear_interpolation.hpp"
 
+#include <aruwlib/architecture/clock.hpp>
+
 namespace aruwlib
 {
 
@@ -13,7 +15,7 @@ namespace algorithms
 
     void LinearInterpolation::update(float newValue)
     {
-        uint32_t currTime = modm::Clock::now().getTime();
+        uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
         slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);
         previousValue = newValue;
         lastUpdateCallTime = currTime;

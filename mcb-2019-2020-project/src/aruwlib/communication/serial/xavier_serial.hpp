@@ -1,6 +1,8 @@
 #ifndef __SERIAL_XAVIER_HPP__
 #define __SERIAL_XAVIER_HPP__
 
+#include <aruwlib/architecture/timeout.hpp>
+
 #include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
 
@@ -113,7 +115,7 @@ class XavierSerial : public DJISerial
     // tx variables
     uint8_t txMsgSwitchIndex;
 
-    modm::ShortTimeout txRobotIdTimeout;
+    aruwlib::arch::MilliTimeout txRobotIdTimeout;
 
     bool autoAimRequestQueued;
 
@@ -125,7 +127,7 @@ class XavierSerial : public DJISerial
     bool hasAimData;
 
     // cv online variables
-    modm::ShortTimeout cvOfflineTimeout;
+    aruwlib::arch::MilliTimeout cvOfflineTimeout;
 
     bool isCvOnline;
 

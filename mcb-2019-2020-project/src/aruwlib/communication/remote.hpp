@@ -11,7 +11,10 @@
 #define __REMOTE_HPP__
 
 #include <cstdint>
+
+#ifndef ENV_SIMULATOR
 #include <modm/platform.hpp>
+#endif
 
 namespace aruwlib {
 
@@ -97,8 +100,8 @@ class Remote {
     // uart recieve buffer
     static uint8_t rxBuffer[REMOTE_BUF_LEN];
 
-    // Timestamp when last byte was read
-    static modm::Timestamp lastRead;
+    // Timestamp when last byte was read (milliseconds)
+    static uint32_t lastRead;
 
     // Current count of bytes read
     static uint8_t currentBufferIndex;

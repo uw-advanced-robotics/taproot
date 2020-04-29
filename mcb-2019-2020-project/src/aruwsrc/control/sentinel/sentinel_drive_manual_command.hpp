@@ -3,7 +3,6 @@
 
 #include <aruwlib/control/command.hpp>
 #include "sentinel_drive_subsystem.hpp"
-#include "modm/processing/timer.hpp"
 
 using namespace aruwlib::control;
 

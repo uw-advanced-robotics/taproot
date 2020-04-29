@@ -42,32 +42,23 @@ namespace can
 
     void CanRxHandler::pollCanData()
     {
+        modm::can::Message rxMessage;
         // handle incoming CAN 1 messages
-        if (modm::platform::Can1::isMessageAvailable())
+        if (Can::getMessage(CanBus::CAN_BUS1, &rxMessage))
         {
-            modm::can::Message rxMessage;
-            bool messageAvailable = modm::platform::Can1::getMessage(rxMessage);
-            processReceivedCanData(rxMessage, messageHandlerStoreCan1, messageAvailable);
+            processReceivedCanData(rxMessage, messageHandlerStoreCan1);
         }
         // handle incoming CAN 2 messages
-        if (modm::platform::Can2::isMessageAvailable())
+        if (Can::getMessage(CanBus::CAN_BUS2, &rxMessage))
         {
-            modm::can::Message rxMessage;
-            bool messageAvailable = modm::platform::Can2::getMessage(rxMessage);
-            processReceivedCanData(rxMessage, messageHandlerStoreCan2, messageAvailable);
+            processReceivedCanData(rxMessage, messageHandlerStoreCan2);
         }
     }
 
     void CanRxHandler::processReceivedCanData(
         const modm::can::Message& rxMessage,
-        CanRxListner *const* messageHandlerStore,
-        const bool messageAvailable
+        CanRxListner *const* messageHandlerStore
     ) {
-        // double check message is actually valid
-        if (!messageAvailable)
-        {
-            return;
-        }
         int32_t handlerStoreId = DJI_MOTOR_NORMALIZED_ID(rxMessage.getIdentifier());
         if ((handlerStoreId >= 0 && handlerStoreId < MAX_RECEIVE_UNIQUE_HEADER_CAN1)
             && messageHandlerStore[handlerStoreId] != nullptr)

@@ -1,4 +1,5 @@
 #include "turret_pid.hpp"
+#include <aruwlib/architecture/clock.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
 
 using namespace aruwlib::algorithms;
@@ -26,7 +27,7 @@ float TurretPid::runController(float error, float errorDerivative)
 float TurretPid::runControllerDerivateError(float error, float dt)
 {
     float errorDerivative = error / dt;
-    previousTimestamp = modm::Clock::now().getTime();
+    previousTimestamp = aruwlib::arch::clock::getTimeMilliseconds();
     return runController(error, errorDerivative);
 }
 

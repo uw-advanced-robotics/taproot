@@ -6,7 +6,7 @@
 #include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
 #include <aruwlib/control/control_operator_interface.hpp>
 
-#include "modm/processing/timer/timestamp.hpp"
+#include <aruwlib/architecture/clock.hpp>
 
 using namespace aruwlib::algorithms;
 using namespace aruwlib::sensors;
@@ -35,7 +35,7 @@ void WiggleDriveCommand::initialize()
 
     // The offset so when we start calculating a rotation angle, the initial
     // time is zero.
-    timeOffset = modm::Clock::now<modm::Timestamp>().getTime();
+    timeOffset = aruwlib::arch::clock::getTimeMilliseconds();
 }
 
 float WiggleDriveCommand::wiggleSin(float t)
@@ -55,7 +55,7 @@ void WiggleDriveCommand::execute()
     // We only wiggle when the turret is online.
     if (turret->isTurretOnline())
     {
-        float curTime = static_cast<float>(modm::Clock::now().getTime() - timeOffset)
+        float curTime = static_cast<float>(aruwlib::arch::clock::getTimeMilliseconds() - timeOffset)
                 - startTimeForAngleOffset;
         float desiredAngleError;
         float turretYawAngle = turret->getYawAngleFromCenter();

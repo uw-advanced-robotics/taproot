@@ -69,7 +69,7 @@ env.Append(CPPFLAGS = [
 
 if 'additional-ccflags' in ARGUMENTS:
     env.Append(CCFLAGS = [
-       ARGUMENTS['additional-ccflags'],
+       *ARGUMENTS['additional-ccflags'].split(","),
     ])
 
 # add this path so you don't have to write #include "src/..."

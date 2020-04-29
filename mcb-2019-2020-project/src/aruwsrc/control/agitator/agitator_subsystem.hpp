@@ -2,9 +2,9 @@
 #define __AGITATOR_SUBSYSTEM_HPP__
 
 #include <modm/math/filter/pid.hpp>
-#include <modm/processing/timer/timeout.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/architecture/timeout.hpp>
 #include "aruwsrc/algorithms/turret_pid.hpp"
 
 namespace aruwsrc
@@ -135,7 +135,7 @@ class AgitatorSubsystem : public aruwlib::control::Subsystem {
     // If the agitator has not reached the desired position in a certain time, the
     // agitator is considered jammed.
     // units: milliseconds
-    modm::ShortTimeout agitatorJammedTimeout;
+    aruwlib::arch::MilliTimeout agitatorJammedTimeout;
 
     // the current agitator timeout time, in milliseconds
     uint32_t agitatorJammedTimeoutPeriod;

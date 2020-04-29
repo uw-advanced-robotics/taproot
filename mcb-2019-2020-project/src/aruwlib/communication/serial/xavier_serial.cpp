@@ -9,7 +9,7 @@ namespace serial
 XavierSerial XavierSerial::xavierSerial;
 
 XavierSerial::XavierSerial() :
-DJISerial(DJISerial::SerialPort::PORT_UART2, false),
+DJISerial(Uart::UartPort::Uart2, false),
 txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
 autoAimRequestQueued(false),
 autoAimRequestState(false),

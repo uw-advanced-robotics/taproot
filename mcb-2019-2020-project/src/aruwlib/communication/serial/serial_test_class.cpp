@@ -7,7 +7,7 @@ namespace serial
 {
 
 SerialTestClass::SerialTestClass():
-DJISerial(DJISerial::SerialPort::PORT_UART2, true),
+DJISerial(Uart::UartPort::Uart2, true),
 messageId(0), i(0)
 {}
 

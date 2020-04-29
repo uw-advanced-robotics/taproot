@@ -1,5 +1,6 @@
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
+
+#include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
@@ -9,7 +10,7 @@ namespace serial
 {
 
 DJISerial::DJISerial(
-    SerialPort port,
+    Uart::UartPort port,
     bool isRxCRCEnforcementEnabled
 ):
 port(port),
@@ -26,13 +27,14 @@ txBuffer()
 
 void DJISerial::initialize() {
     switch (this->port) {
-    case PORT_UART2:
-        Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
-        Usart2::initialize<Board::SystemClock, 115200>();
+    case Uart::UartPort::Uart1:
+        Uart::init<Uart::UartPort::Uart1, 115200>();
         break;
-    case PORT_UART6:
-        Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
-        Usart6::initialize<Board::SystemClock, 115200>();
+    case Uart::UartPort::Uart2:
+        Uart::init<Uart::UartPort::Uart2, 115200>();
+        break;
+    case Uart::UartPort::Uart6:
+        Uart::init<Uart::UartPort::Uart6, 115200>();
         break;
     default:
         break;
@@ -250,44 +252,13 @@ bool DJISerial::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC
 }
 
 uint32_t DJISerial::read(uint8_t *data, uint16_t length) {
-    switch (this->port) {
-    case PORT_UART2:
-    {
-        uint32_t successRead = 0;
-        for (int i = 0; i < length && Usart2::read(data[i]); i++) {
-            successRead++;
-        }
-        return successRead;
-    }
-    case PORT_UART6:
-    {
-        uint32_t successRead = 0;
-        for (int i = 0; i < length && Usart6::read(data[i]); i++) {
-            successRead++;
-        }
-        return successRead;
-    }
-        return Usart6::read(data, length);
-    default:
-        return 0;
-    }
+    return Uart::read(this->port, data, length);
 }
 
 uint32_t DJISerial::write(const uint8_t *data, uint16_t length) {
-    switch (this->port) {
-    case PORT_UART2:
-        if (Usart2::isWriteFinished()) {
-            return Usart2::write(data, length);
-        } else {
-            return 0;
-        }
-    case PORT_UART6:
-        if (Usart6::isWriteFinished()) {
-            return Usart6::write(data, length);
-        } else {
-            return 0;
-        }
-    default:
+    if (Uart::isWriteFinished(this->port)) {
+        return Uart::write(this->port, data, length);
+    } else {
         return 0;
     }
 }

@@ -1,7 +1,7 @@
 #ifndef __BLINK_LED_COMMAND_HPP__
 #define __BLINK_LED_COMMAND_HPP__
 
-#include <modm/processing/timer/timeout.hpp>
+#include <aruwlib/architecture/timeout.hpp>
 #include <aruwlib/control/command.hpp>
 #include "example_subsystem.hpp"
 
@@ -46,7 +46,7 @@ class BlinkLEDCommand : public Command
       */
     bool isFinished(void) const;
 
-    modm::ShortTimeout completedTimer;
+    aruwlib::arch::MilliTimeout completedTimer;
 
     int refershCounter = 0;
     int endCounter = 0;

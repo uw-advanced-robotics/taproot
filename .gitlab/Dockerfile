@@ -8,7 +8,7 @@
 
 FROM python:3.8.0-slim-buster
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget bzip2 git cppcheck \
+    && apt-get install -y --no-install-recommends wget bzip2 git cppcheck gcc g++ \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

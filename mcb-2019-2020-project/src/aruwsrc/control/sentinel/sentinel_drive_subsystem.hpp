@@ -4,6 +4,7 @@
 #include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
+#include <aruwlib/communication/gpio/digital.hpp>
 #include <modm/math/filter/pid.hpp>
 
 using namespace aruwlib::control;
@@ -50,8 +51,8 @@ class SentinelDriveSubsystem : public Subsystem
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR6;
     static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR5;
     const aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
-    using leftLimitSwitch = Board::DigitalInPinA;
-    using rightLimitSwitch = Board::DigitalInPinB;
+    const aruwlib::gpio::Digital::InputPin leftLimitSwitch = aruwlib::gpio::Digital::InputPin::A;
+    const aruwlib::gpio::Digital::InputPin rightLimitSwitch = aruwlib::gpio::Digital::InputPin::B;
 
     const float PID_P = 5.0f;
     const float PID_I = 0.0f;

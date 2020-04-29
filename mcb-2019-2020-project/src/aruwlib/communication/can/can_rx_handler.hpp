@@ -19,8 +19,12 @@
 #ifndef __CAN_INTERFACE_HPP__
 #define __CAN_INTERFACE_HPP__
 
+#ifndef ENV_SIMULATOR
 #include <modm/platform/can/can_1.hpp>
 #include <modm/platform/can/can_2.hpp>
+#endif
+#include <modm/architecture/interface/can_message.hpp>
+
 #include "can_rx_listener.hpp"
 
 namespace aruwlib
@@ -62,8 +66,7 @@ class CanRxHandler
 
     static void processReceivedCanData(
         const modm::can::Message& rxMessage,
-        CanRxListner *const* messageHandlerStore,
-        const bool messageAvailable
+        CanRxListner *const* messageHandlerStore
     );
 
     static void remoteReceiveHandler(

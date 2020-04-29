@@ -1,5 +1,7 @@
 #include "servo.hpp"
+
 #include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/architecture/clock.hpp"
 
 namespace aruwlib
 {
@@ -19,12 +21,12 @@ Servo::Servo(aruwlib::gpio::Pwm::Pin currPort, float maximumPWM, float minimumPW
 // giving the servo a specific PWM value
 void Servo::setTargetPwm(float PWM) {
     pwmOutputRamp.setTarget(PWM);
-    prevTime = modm::Clock::now().getTime();
+    prevTime = aruwlib::arch::clock::getTimeMilliseconds();
 }
 
 // update the pwmOutputRamp object from loop in main
 void Servo::updateSendPwmRamp(){
-    uint32_t currTime = modm::Clock::now().getTime();
+    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
     pwmOutputRamp.update(pwmRampSpeed * (currTime - prevTime));
     prevTime = currTime;
     currentPWM = pwmOutputRamp.getValue();

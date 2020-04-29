@@ -1,4 +1,4 @@
-#include <aruwlib/rm-dev-board-a/board.hpp>
+#include <aruwlib/communication/gpio/leds.hpp>
 #include "blink_led_command.hpp"
 
 namespace aruwsrc
@@ -19,14 +19,14 @@ namespace control
     void BlinkLEDCommand::execute()
     {
         refershCounter++;
-        Board::LedA::set();
+        aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::A, true);
     }
 
     // NOLINTNEXTLINE (see https://github.com/cpplint/cpplint/issues/131)
     void BlinkLEDCommand::end(bool)
     {
         endCounter++;
-        Board::LedA::reset();
+        aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::A, false);
     }
 
     bool BlinkLEDCommand::isFinished() const

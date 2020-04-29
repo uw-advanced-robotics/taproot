@@ -1,3 +1,4 @@
+#include <aruwlib/architecture/clock.hpp>
 #include "agitator_rotate_command.hpp"
 
 namespace aruwsrc
@@ -36,13 +37,13 @@ namespace agitator
         connectedAgitator->armAgitatorUnjamTimer(agitatorMinRotatePeriod);
         agitatorMinRotateTimeout.restart(agitatorMinRotatePeriod);
 
-        agitatorPrevRotateTime = modm::Clock::now().getTime();
+        agitatorPrevRotateTime = aruwlib::arch::clock::getTimeMilliseconds();
     }
 
     void AgitatorRotateCommand::execute()
     {
         // update the agitator setpoint ramp
-        uint32_t currTime = modm::Clock::now().getTime();
+        uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
         rampToTargetAngle.update(
                 (currTime - agitatorPrevRotateTime) * agitatorTargetAngleChange
                 / static_cast<float>(agitatorDesiredRotateTime));

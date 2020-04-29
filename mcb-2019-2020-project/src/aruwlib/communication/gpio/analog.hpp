@@ -10,7 +10,11 @@
 #ifndef ANALOG_HPP
 #define ANALOG_HPP
 
+#include <stdint.h>
+
+#ifndef ENV_SIMULATOR
 #include <modm/platform/adc/adc_1.hpp>
+#endif
 
 namespace aruwlib
 {

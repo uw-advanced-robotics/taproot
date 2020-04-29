@@ -1,10 +1,12 @@
 #include <utility>
 #include <set>
 #include <algorithm>
-#include <modm/processing/timer.hpp>
+
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "aruwlib/communication/can/can_rx_handler.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+#include "aruwlib/architecture/clock.hpp"
+
 #include "command_scheduler.hpp"
 #include "command.hpp"
 
@@ -74,7 +76,7 @@ namespace control
 
     void CommandScheduler::run()
     {
-        uint32_t checkRunPeriod = Board::getTimeMicroseconds();
+        uint32_t runStart = aruwlib::arch::clock::getTimeMicroseconds();
         // Timestamp for reference and for disallowing a command from running
         // multiple times during the same call to run.
         if (this == &mainScheduler)
@@ -119,7 +121,8 @@ namespace control
         }
         // make sure we are not going over tolerable runtime, otherwise something is really
         // wrong with the code
-        if (Board::getTimeMicroseconds() - checkRunPeriod > MAX_ALLOWABLE_SCHEDULER_RUNTIME)
+        uint32_t runEnd = aruwlib::arch::clock::getTimeMicroseconds();
+        if (runEnd - runStart > MAX_ALLOWABLE_SCHEDULER_RUNTIME)
         {
             // shouldn't take more than 1 ms to complete all this stuff, if it does something
             // is seriously wrong (i.e. you are adding subsystems unchecked)

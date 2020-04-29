@@ -11,18 +11,21 @@
 
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
+// In simulation, we'll let modm's default implementation handle this.
+#ifndef ENV_SIMULATOR
 modm_extern_c void
 modm_abandon(const char *,
         const char *,
         const char *,
         uintptr_t)
 {
-    Board::Leds::setOutput();
+    Board::LedsPort::setOutput();
     for (int times=10; times >= 0; times--)
     {
-        Board::Leds::toggle();
+        Board::LedsPort::toggle();
         modm::delayMilliseconds(100);
-        Board::Leds::toggle();
+        Board::LedsPort::toggle();
         modm::delayMilliseconds(100);
     }
 }
+#endif

@@ -16,8 +16,6 @@
 
 using namespace aruwlib::control;
 
-using xAxisDigitalOutPin = Board::DigitalOutPinE;
-
 namespace aruwsrc
 {
 

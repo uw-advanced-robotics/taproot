@@ -2,8 +2,8 @@
 #define __COMMAND_SENTINEL_DRIVE_RANDOM_HPP__
 
 #include <aruwlib/control/command.hpp>
+#include <aruwlib/architecture/timeout.hpp>
 #include "sentinel_drive_subsystem.hpp"
-#include "modm/processing/timer.hpp"
 
 using namespace aruwlib::control;
 
@@ -38,7 +38,7 @@ class SentinelAutoDriveCommand : public Command
     bool chosenNewRPM = false;
 
     SentinelDriveSubsystem* subsystemSentinelDrive;
-    modm::ShortTimeout changeVelocityTimer;
+    aruwlib::arch::MilliTimeout changeVelocityTimer;
 };
 
 }  // namespace control

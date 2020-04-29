@@ -5,6 +5,7 @@
 #include <aruwlib/control/controller_mapper.hpp>
 #include <aruwlib/errors/create_errors.hpp>
 #include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
+#include <aruwlib/architecture/clock.hpp>
 #include "turret_subsystem.hpp"
 
 
@@ -209,7 +210,7 @@ namespace turret
         }
         prevUpdateCounterChassisRotateDerivative = Remote::getUpdateCounter();
         float derivativeInterpolated = chassisRotateDerivativeInterpolation
-                .getInterpolatedValue(modm::Clock::now().getTime());
+                .getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds());
 
         feedforwardChassisRotateDerivative = aruwlib::algorithms::lowPassFilter(
                 feedforwardChassisRotateDerivative,

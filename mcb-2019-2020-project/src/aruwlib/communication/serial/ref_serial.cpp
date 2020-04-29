@@ -1,6 +1,7 @@
 #include "ref_serial.hpp"
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/architecture/clock.hpp"
 
 namespace aruwlib
 {
@@ -11,7 +12,7 @@ namespace serial
 RefSerial RefSerial::refSerial;
 
 RefSerial::RefSerial() :
-DJISerial(DJISerial::SerialPort::PORT_UART6, true),
+DJISerial(Uart::UartPort::Uart6, true),
 robotData(),
 gameData(),
 receivedDpsTracker()
@@ -144,9 +145,9 @@ void RefSerial::sendCustomData(const CustomData& customData)
         return;
     }
 
-    if (modm::Clock::now().getTime() - this->txMessage.messageTimestamp.getTime()
+    if (aruwlib::arch::clock::getTimeMilliseconds() - this->txMessage.messageTimestamp.getTime()
         < TIME_BETWEEN_REF_UI_DISPLAY_SEND_MS
-    ) {
+) {
         // not enough time has passed before next send
         // send at max every 100 ms (max frequency 10Hz)
         return;
@@ -407,7 +408,7 @@ void RefSerial::updateReceivedDamage()
     // decrease receivedDps by that amount of damage and increment head index
     while (
         receivedDpsTracker.getSize() > 0
-        && modm::Clock::now().getTime() -
+        && aruwlib::arch::clock::getTimeMilliseconds() -
         receivedDpsTracker.getFront().timestampMs > 1000
     ) {
         robotData.receivedDps -= receivedDpsTracker.getFront().damageAmount;

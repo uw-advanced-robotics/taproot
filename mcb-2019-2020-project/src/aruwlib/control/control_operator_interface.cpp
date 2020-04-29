@@ -1,6 +1,7 @@
 #include "control_operator_interface.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/communication/remote.hpp"
+#include "aruwlib/architecture/clock.hpp"
 
 using namespace aruwlib;
 using namespace aruwlib::algorithms;
@@ -25,7 +26,7 @@ namespace control
         }
         prevUpdateCounterX = Remote::getUpdateCounter();
         return aruwlib::algorithms::limitVal<float>(
-                chassisXInput.getInterpolatedValue(modm::Clock::now().getTime())
+                chassisXInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds())
                 + static_cast<float>(Remote::keyPressed(Remote::Key::W))
                 - static_cast<float>(Remote::keyPressed(Remote::Key::S)),
                 -1.0f, 1.0f);
@@ -38,7 +39,7 @@ namespace control
         }
         prevUpdateCounterY = Remote::getUpdateCounter();
         return aruwlib::algorithms::limitVal<float>(
-                chassisYInput.getInterpolatedValue(modm::Clock::now().getTime())
+                chassisYInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds())
                 + static_cast<float>(Remote::keyPressed(Remote::Key::A))
                 - static_cast<float>(Remote::keyPressed(Remote::Key::D)),
                 -1.0f, 1.0f);
@@ -51,7 +52,7 @@ namespace control
         }
         prevUpdateCounterZ = Remote::getUpdateCounter();
         return aruwlib::algorithms::limitVal<float>(
-                chassisRInput.getInterpolatedValue(modm::Clock::now().getTime())
+                chassisRInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds())
                 + static_cast<float>(Remote::keyPressed(Remote::Key::Q))
                 - static_cast<float>(Remote::keyPressed(Remote::Key::E)),
                 -1.0f, 1.0f);

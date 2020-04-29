@@ -32,7 +32,7 @@ class ExampleComprisedCommand : public ComprisedCommand
 
     ExampleCommand otherExampleCommand;
 
-    modm::ShortTimeout switchTimer;
+    aruwlib::arch::MilliTimeout switchTimer;
 
     bool switchCommand;
 };
