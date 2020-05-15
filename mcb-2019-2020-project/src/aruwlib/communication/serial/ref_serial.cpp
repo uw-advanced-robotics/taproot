@@ -24,7 +24,7 @@ RefSerial& RefSerial::getRefSerial()
 }
 
 // rx stuff
-void RefSerial::messageReceiveCallback(SerialMessage completeMessage)
+void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
 {
     updateReceivedDamage();
     switch(completeMessage.type)

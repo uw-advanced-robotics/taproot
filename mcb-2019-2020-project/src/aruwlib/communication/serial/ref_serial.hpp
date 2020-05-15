@@ -11,6 +11,13 @@ namespace aruwlib
 namespace serial
 {
 
+/**
+ * A class meant to communicate with the 2019 version of the RoboMaster
+ * referee system. Does not include UI drawings.
+ * 
+ * @note use the static function `getRefSerial` to interact with this class
+ *      rather than instantiating your own `RefSerial` object.
+ */
 class RefSerial : public DJISerial
 {
  private:
@@ -22,10 +29,10 @@ class RefSerial : public DJISerial
     static const uint16_t CUSTOM_DATA_SENDER_ID_LENGTH = 2;
     static const uint16_t CUSTOM_DATA_RECIPIENT_ID_LENGTH = 2;
 
-    // tx message constants
+    // TX message constants
     static const uint32_t TIME_BETWEEN_REF_UI_DISPLAY_SEND_MS = 100;
 
-    // rx message type defines
+    // RX message type defines
     static const uint16_t REF_MESSAGE_TYPE_GAME_STATUS                   = 0x1;
     static const uint16_t REF_MESSAGE_TYPE_GAME_RESULT                   = 0x2;
     static const uint16_t REF_MESSAGE_TYPE_ALL_ROBOT_HP                  = 0x3;
@@ -37,25 +44,25 @@ class RefSerial : public DJISerial
     static const uint16_t REF_MESSAGE_TYPE_SENTINEL_DRONE_BULLETS_REMAIN = 0x208;
     static const uint16_t REF_MESSAGE_TYPE_CUSTOM_DATA                   = 0x301;
 
-    // rx message type defines
+    // TX message type defines
     static const uint16_t REF_CUSTOM_DATA_TYPE_UI_INDICATOR = 0xD180;
 
  public:
     typedef enum
     {
-        PREMATCH = 0,        // pre-competition stage
-        SETUP = 1,           // setup stage
-        INITIALIZATION = 2,  // initialization stage
-        COUNTDOWN = 3,       // 5-second countdown
-        IN_GAME = 4,         // in middle of the game
-        END_GAME = 5,        // calculating competition results
+        PREMATCH = 0,        ///< Pre-competition. stage
+        SETUP = 1,           ///< Setup stage.
+        INITIALIZATION = 2,  ///< Initialization stage.
+        COUNTDOWN = 3,       ///< 5-second countdown.
+        IN_GAME = 4,         ///< In middle of the game.
+        END_GAME = 5,        ///< Calculating competition results.
     } GameStages;
 
     typedef enum
     {
-        DRAW = 0,  // match was a draw
-        RED = 1,   // red team won the match
-        BLUE = 2,  // blue team won the match
+        DRAW = 0,  ///< Match was a draw.
+        RED = 1,   ///< Red team won the match.
+        BLUE = 2,  ///< Blue team won the match.
     } GameWinner;
 
     typedef enum
@@ -79,65 +86,65 @@ class RefSerial : public DJISerial
 
     typedef enum
     {
-        FRONT = 0,  // armor #0 (front)
-        LEFT = 1,   // armor #1 (left)
-        REAR = 2,   // armor #2 (rear)
-        RIGHT = 3,  // armor #3 (right)
-        TOP = 4,    // armor #4 (top)
+        FRONT = 0,  ///< armor #0 (front).
+        LEFT = 1,   ///< armor #1 (left).
+        REAR = 2,   ///< armor #2 (rear).
+        RIGHT = 3,  ///< armor #3 (right).
+        TOP = 4,    ///< armor #4 (top).
     } ArmorId;
 
     typedef enum
     {
         NO_DAMAGE_RECEIVED = 0,
-        MODULE_OFFLINE = 1,         // module offline
-        ARMOR_DAMAGE = 2,           // armor damage
-        BARREL_OVERHEAT = 3,        // barrel overheat
-        CHASSIS_POWER_OVERRUN = 4,  // chassis power overrun
-        COLLISION = 5,              // chassis collision
+        MODULE_OFFLINE = 1,         ///< Module offline.
+        ARMOR_DAMAGE = 2,           ///< Armor damage.
+        BARREL_OVERHEAT = 3,        ///< Barrel overheat.
+        CHASSIS_POWER_OVERRUN = 4,  ///< Chassis power overrun.
+        COLLISION = 5,              ///< Chassis collision.
     } DamageType;
 
     typedef struct
     {
-        uint16_t damageAmount;  // amount of damage received
-        uint32_t timestampMs;   // time when damage was received (in milliseconds)
+        uint16_t damageAmount;  ///< Amount of damage received
+        uint32_t timestampMs;   ///< Time when damage was received (in milliseconds).
     } DamageEvent;
 
     typedef enum
     {
-        AMMO_17 = 1,  // 17 mm projectile ammo
-        AMMO_42 = 2,  // 42 mm projectile ammo
+        AMMO_17 = 1,  ///< 17 mm projectile ammo.
+        AMMO_42 = 2,  ///< 42 mm projectile ammo.
     } BulletType;
 
     typedef struct
     {
-        GameStages gameStage : 4;     // current stage in the game
-        uint16_t stageTimeRemaining;  // remaining time in the current stage (in seconds)
-        GameWinner gameWinner;        // results of the match
+        GameStages gameStage : 4;     ///< Current stage in the game.
+        uint16_t stageTimeRemaining;  ///< Remaining time in the current stage (in seconds).
+        GameWinner gameWinner;        ///< Results of the match.
     } GameData;
 
     typedef struct
     {
-        uint16_t volt;         // output voltage to the chassis (in mV)
-        uint16_t current;      // output current to the chassis (in mA)
-        float power;           // output power to the chassis (in W)
-        uint16_t powerBuffer;  // chassis power buffer (in J)
-        float x, y, z;         // x, y, z coordinate of the chassis
+        uint16_t volt;         ///< Output voltage to the chassis (in mV).
+        uint16_t current;      ///< Output current to the chassis (in mA).
+        float power;           ///< Output power to the chassis (in W).
+        uint16_t powerBuffer;  ///< Chassis power buffer (in J).
+        float x, y, z;         ///< x, y, z coordinate of the chassis.
     } ChassisData;
 
     typedef struct
     {
-        BulletType bulletType;                // 17mm or 42mm last projectile shot
-        uint8_t firing_freq;                  // firing frequency (in Hz)
-        uint16_t heat17;                      // current 17mm turret heat
-        uint16_t heatCoolingRate17;           // 17mm turret cooling value per second
-        uint16_t heatLimit17;                 // 17mm turret heat limit
-        uint16_t heat42;                      // current 42mm turret heat
-        uint16_t heatCoolingRate42;           // 42mm turret cooling value per second
-        uint16_t heatLimit42;                 // 42mm turret heat limit
-        uint16_t sentinelDroneBulletsRemain;  // number of bullets remaining in sentinel
-                                              // and drone only (500 max)
-        float bulletSpeed;                    // last bullet speed (in m/s)
-        float yaw;                            // barrel yaw position (degree)
+        BulletType bulletType;                ///< 17mm or 42mm last projectile shot.
+        uint8_t firing_freq;                  ///< Firing frequency (in Hz).
+        uint16_t heat17;                      ///< Current 17mm turret heat.
+        uint16_t heatCoolingRate17;           ///< 17mm turret cooling value per second.
+        uint16_t heatLimit17;                 ///< 17mm turret heat limit.
+        uint16_t heat42;                      ///< Current 42mm turret heat.
+        uint16_t heatCoolingRate42;           ///< 42mm turret cooling value per second.
+        uint16_t heatLimit42;                 ///< 42mm turret heat limit.
+        uint16_t sentinelDroneBulletsRemain;  ///< Number of bullets remaining in sentinel
+                                              ///< and drone only (500 max).
+        float bulletSpeed;                    ///< Last bullet speed (in m/s).
+        float yaw;                            ///< Barrel yaw position (degree).
     } TurretData;
 
     typedef struct
@@ -161,25 +168,26 @@ class RefSerial : public DJISerial
 
     typedef struct
     {
-        RobotId robotId;              // robot type and team
-        uint8_t robotLevel;           // current level of this robot (1-3)
-        uint16_t previousHp;          // health of this robot before damage was
-                                      // received, used to calculate receivedDps
-                                      // if no damage was received recently,
-                                      // previousHp = currentHp
-        uint16_t currentHp;           // current health of this robot
-        uint16_t maxHp;               // max health of this robot
-        uint8_t gimbalHasPower : 1;   // 1 if there is 24V output to gimbal, 0 for 0V
-        uint8_t chassisHasPower : 1;  // 1 if there is 24V output to chassis, 0 for 0V
-        uint8_t shooterHasPower : 1;  // 1 if there is 24V output to shooter, 0 for 0V
-        ArmorId damagedArmorId : 4;   // armor ID that was damaged
-        DamageType damageType : 4;    // cause of damage
-        float receivedDps;            // damage per second received
-        ChassisData chassis;          // chassis power draw and position data
-        TurretData turret;            // turret firing and heat data
-        RobotHpData allRobotHp;       // current HP of all the robots
+        RobotId robotId;              ///< Robot type and team.
+        uint8_t robotLevel;           ///< Current level of this robot (1-3).
+        uint16_t previousHp;          ///< Health of this robot before damage was
+                                      ///< received, used to calculate receivedDps
+                                      ///< if no damage was received recently,
+                                      ///< previousHp = currentHp.
+        uint16_t currentHp;           ///< Current health of this robot.
+        uint16_t maxHp;               ///< Max health of this robot.
+        uint8_t gimbalHasPower : 1;   ///< 1 if there is 24V output to gimbal, 0 for 0V.
+        uint8_t chassisHasPower : 1;  ///< 1 if there is 24V output to chassis, 0 for 0V.
+        uint8_t shooterHasPower : 1;  ///< 1 if there is 24V output to shooter, 0 for 0V.
+        ArmorId damagedArmorId : 4;   ///< Armor ID that was damaged.
+        DamageType damageType : 4;    ///< Cause of damage.
+        float receivedDps;            ///< Damage per second received.
+        ChassisData chassis;          ///< Chassis power draw and position data.
+        TurretData turret;            ///< Turret firing and heat data.
+        RobotHpData allRobotHp;       ///< Current HP of all the robots.
     } RobotData;
 
+    ///< Information that is sent to the UI when the ref system is connected to a server.
     typedef struct
     {
         float float1;
@@ -194,6 +202,10 @@ class RefSerial : public DJISerial
         bool bool6;
     } DisplayData;
 
+    /**
+     * We package the custom data using this structure. Used for display data
+     * as well as display drawings (though this is not implemented yet).
+     */
     typedef struct
     {
         uint16_t type;
@@ -203,46 +215,66 @@ class RefSerial : public DJISerial
         uint16_t length;
     } CustomData;
 
-    RefSerial();
-
     /**
-     * Handles the types of messages defined above in the RX message handlers section
+     * Handles the types of messages defined above in the RX message handlers section.
      */
-    void messageReceiveCallback(SerialMessage completeMessage) override;
+    void messageReceiveCallback(const SerialMessage& completeMessage) override;
 
+    ///< Returns a reference to the most up to date robot data struct.
     const RobotData& getRobotData() const;
 
+    ///< Returns a reference to the most up to date game data struct.
     const GameData& getGameData() const;
 
+    ///< Packages the display data in a `CustomData` struct and then sends it via `sendCustomData`.
     void sendDisplayData(const DisplayData& displayData);
 
+    /**
+     * We store an instantiation of a `RefSerial` class inside the class itself.
+     * This is how you should interact with this class (through this statically
+     * instantiated object).
+     */ 
     static RefSerial& getRefSerial();
 
  private:
+    ///< The instantiation of this class used to interact with this class.
     static RefSerial refSerial;
 
     RobotData robotData;
     GameData gameData;
     modm::BoundedDeque<DamageEvent, REF_DAMAGE_EVENT_SIZE> receivedDpsTracker;
 
+    /**
+     * Constructs a RefSerial class connected to `Uart::UartPort::Uart6` with
+     * CRC enforcement enabled.
+     * 
+     * Private so only this class can construct itself.
+     *
+     * @see `DjiSerial`
+     */
+    RefSerial();
+
     void sendCustomData(const CustomData& customData);
 
     /** 
-     * @brief given 6 boolean variables to display to the referee ui, 
-     *        packet them into an 8 bit integer and return that value.
-     *        The ending bit is the first given boolean, 
-     *        the next bit from the end is the second given boolean, and so on.
-     * @params bool1, bool2, ..., bool6 the boolean indicator variables to display to the referee client ui.
-     * @return the 8 bit variable packeting the 6 boolean indicators
+     * Given 6 boolean variables to display to the referee ui, packet them into
+     * an 8 bit integer and return that value. The ending bit is the first given
+     * boolean, the next bit from the end is the second given boolean, and so on.
+     *
+     * @params[in] bool1, bool2, ..., bool6 the boolean indicator variables to display
+     *      to the referee client ui.
+     * @return the 8 bit variable packeting the 6 boolean indicators.
      */
     uint8_t packBoolMask(
         bool bool1, bool bool2, bool bool3, bool bool4, bool bool5, bool bool6);
 
     /** 
-     * @brief given RobotId, returns the client_id that the referee system uses to display
-     *        the received messages to the given client_id robot
-     * @param RobotId the id of the robot received from the referee system to get the client_id of
-     * @return the client_id of the robot requested
+     * Given RobotId, returns the client_id that the referee system uses to display
+     * the received messages to the given client_id robot.
+     *
+     * @param[in] RobotId the id of the robot received from the referee system
+     *      to get the client_id of.
+     * @return the client_id of the robot requested.
      */
     uint16_t getRobotClientID(RobotId robotId);
 

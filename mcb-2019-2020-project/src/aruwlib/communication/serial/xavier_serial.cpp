@@ -30,7 +30,7 @@ void XavierSerial::initializeCV()
     this->initialize();
 }
 
-void XavierSerial::messageReceiveCallback(SerialMessage completeMessage)
+void XavierSerial::messageReceiveCallback(const SerialMessage& completeMessage)
 {
     cvOfflineTimeout.restart(TIME_OFFLINE_CV_AIM_DATA_MS);
     switch (completeMessage.type)
@@ -50,15 +50,17 @@ void XavierSerial::messageReceiveCallback(SerialMessage completeMessage)
     }
 }
 
-bool XavierSerial::decodeToTurrentAimData(SerialMessage message, TurretAimData *aimData)
+bool XavierSerial::decodeToTurrentAimData(const SerialMessage& message, TurretAimData *aimData)
 {
     if (message.length != AIM_DATA_MESSAGE_SIZE)
     {
         return false;
     }
 
-    int16_t raw_pitch = *(reinterpret_cast<int16_t*>(message.data + AIM_DATA_MESSAGE_PITCH_OFFSET));
-    int16_t raw_yaw = *(reinterpret_cast<int16_t*>(message.data + AIM_DATA_MESSAGE_YAW_OFFSET));
+    int16_t raw_pitch = *(reinterpret_cast<const int16_t*>(message.data +
+                                                           AIM_DATA_MESSAGE_PITCH_OFFSET));
+    int16_t raw_yaw = *(reinterpret_cast<const int16_t*>(message.data +
+                                                         AIM_DATA_MESSAGE_YAW_OFFSET));
 
     bool raw_has_target = message.data[AIM_DATA_MESSAGE_HAS_TARGET];
 
@@ -71,9 +73,9 @@ bool XavierSerial::decodeToTurrentAimData(SerialMessage message, TurretAimData *
 }
 
 void XavierSerial::sendMessage(
-    const IMUData *imuData,
-    const ChassisData *chassisData,
-    const TurretAimData *turretData,
+    const IMUData& imuData,
+    const ChassisData& chassisData,
+    const TurretAimData& turretData,
     uint8_t robotId
 ) {
     isCvOnline = !cvOfflineTimeout.isExpired();
@@ -81,9 +83,9 @@ void XavierSerial::sendMessage(
     {
         case CV_MESSAGE_TYPE_TURRET_TELEMETRY:
         {
-            if (sendTurrentData(
-                turretData->pitch,
-                turretData->yaw)
+            if (sendTurretData(
+                turretData.pitch,
+                turretData.yaw)
             ) {
                 incRxMsgSwitchIndex();
             }
@@ -157,7 +159,7 @@ bool XavierSerial::getLastAimData(TurretAimData *aimData) const
     return false;
 }
 
-bool XavierSerial::sendTurrentData(float pitch, float yaw)
+bool XavierSerial::sendTurretData(float pitch, float yaw)
 {
     int16_t data[2] =
     {
@@ -172,29 +174,29 @@ bool XavierSerial::sendTurrentData(float pitch, float yaw)
 }
 
 // transmit code
-bool XavierSerial::sendIMUChassisData(const IMUData *imuData, const ChassisData *chassisData) {
+bool XavierSerial::sendIMUChassisData(const IMUData& imuData, const ChassisData& chassisData) {
     int16_t data[13] =
     {
         // Accelerometer readings in static frame
-        static_cast<int16_t>(imuData->ax * 100),
-        static_cast<int16_t>(imuData->ay * 100),
-        static_cast<int16_t>(imuData->az * 100),
+        static_cast<int16_t>(imuData.ax * 100),
+        static_cast<int16_t>(imuData.ay * 100),
+        static_cast<int16_t>(imuData.az * 100),
         // MCB IMU angles are in degrees
-        static_cast<int16_t>(imuData->rol * 100),
-        static_cast<int16_t>(imuData->pit * 100),
-        static_cast<int16_t>(imuData->yaw * 100),
+        static_cast<int16_t>(imuData.rol * 100),
+        static_cast<int16_t>(imuData.pit * 100),
+        static_cast<int16_t>(imuData.yaw * 100),
         // MCB IMU angular velocities are in radians/s
-        static_cast<int16_t>(imuData->wx * 100),
-        static_cast<int16_t>(imuData->wy * 100),
-        static_cast<int16_t>(imuData->wz * 100),
+        static_cast<int16_t>(imuData.wx * 100),
+        static_cast<int16_t>(imuData.wy * 100),
+        static_cast<int16_t>(imuData.wz * 100),
         // Wheel RPMs
-        chassisData->rightFrontWheelRPM,
-        chassisData->leftFrontWheelRPM,
-        chassisData->leftBackWheeRPM,
-        chassisData->rightBackWheelRPM
+        chassisData.rightFrontWheelRPM,
+        chassisData.leftFrontWheelRPM,
+        chassisData.leftBackWheeRPM,
+        chassisData.rightBackWheelRPM
     };
 
-    memcpy(this->txMessage.data, reinterpret_cast<uint8_t*>(data), 13 * 2);
+    memcpy(this->txMessage.data, reinterpret_cast<uint8_t*>(data), 13 * sizeof(uint16_t));
     this->txMessage.length = 2 * 13;
     this->txMessage.type = CV_MESSAGE_TYPE_IMU;
     return this->send();

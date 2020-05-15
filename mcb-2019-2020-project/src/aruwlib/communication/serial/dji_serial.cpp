@@ -197,7 +197,7 @@ void DJISerial::updateSerial() {
                 // update the time and copy over the message to the most recent message
                 newMessage.messageTimestamp = modm::Clock::now();
 
-                memcpy(&mostRecentMessage, &newMessage, sizeof(SerialMessage));
+                mostRecentMessage = newMessage;
 
                 messageReceiveCallback(mostRecentMessage);
 
@@ -217,13 +217,6 @@ void DJISerial::updateSerial() {
     }
 }
 
-/**
- * Calculate CRC8 of given array and compare against expectedCRC8
- * @param data array to calculate CRC8
- * @param length length of array to check
- * @param expectedCRC8 expected CRC8
- * @return if the calculated CRC8 matches CRC8 given
- */
 bool DJISerial::verifyCRC8(uint8_t *data, uint32_t length, uint8_t expectedCRC8) {
     uint8_t actualCRC8 = 0;
     if (data == NULL)
@@ -234,13 +227,6 @@ bool DJISerial::verifyCRC8(uint8_t *data, uint32_t length, uint8_t expectedCRC8)
     return actualCRC8 == expectedCRC8;
 }
 
-/**
- * Calculate CRC16 of given array and compare against expectedCRC16
- * @param data array to calculate CRC16
- * @param length length of array to check
- * @param expectedCRC16 expected CRC16
- * @return if the calculated CRC16 matches CRC16 given
- */
 bool DJISerial::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC16) {
     uint16_t actualCRC16 = 0;
     if (data == NULL)
