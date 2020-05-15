@@ -1,26 +1,25 @@
-# Copyright (c) 2017-2018, Niklas Hauser
-#
-# This file is part of the modm project.
-#
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-#!/usr/bin/env python3
-
 import os
 from os.path import join, abspath
 
 # User Configurable Options
 project_name = "mcb-2019-2020"
 build_path = "build"
-external_scons_libraries = ["modm/", "sim-modm/modm/", "./src/aruwlib"]
-# don't compile this stuff
-ignored = [".lbuild_cache", build_path, "robot-type"] + external_scons_libraries
+hardware_modm_path = "modm/"
+sim_modm_path = "sim-modm/modm/"
+aruwlib_path = "./src/aruwlib"
 
-target_env = ARGUMENTS.get("target-env", "hardware")
-if target_env not in ["hardware", "simulator"]:
-    raise Exception("Illegal target-env: " + target_env)
+# don't compile this stuff
+ignored_dirs = [".lbuild_cache", build_path, "robot-type", sim_modm_path, hardware_modm_path, aruwlib_path]
+ignored_files = []
+
+if len(COMMAND_LINE_TARGETS) > 1:
+    raise Exception("This build script currently supports only one target per invocation.")
+
+build_target = COMMAND_LINE_TARGETS[0]
+if build_target in ["build-tests", "run-tests"]:
+    target_env = "tests"
+else:
+    target_env = "hardware"
 
 # SCons environment with all tools
 env = DefaultEnvironment(tools=[], ENV=os.environ)
@@ -33,13 +32,17 @@ if GetOption('num_jobs') == 1:
 
 print("Configured {0} parallel build jobs (-j{0})".format(GetOption('num_jobs')))
 
-# TODO: Clean up management of the library list
+modm_path = None
 if target_env == "hardware":
-    external_scons_libraries.remove("sim-modm/modm/")
+    modm_path = hardware_modm_path
+    ignored_dirs.append("test/")
 else:
-    external_scons_libraries.remove("modm/")
+    modm_path = sim_modm_path
+    ignored_files.append("src/main.cpp")
 
-# Building all libraries (read from sconscript files located in generated_paths)
+# Building all libraries (read from sconscript files located in provided dirs)
+# Ensure that modm is first, otherwise aruwlib won't have the needed build config
+external_scons_libraries = [modm_path, "./src/aruwlib"]
 env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # References:
@@ -64,7 +67,7 @@ if profile == "debug":
     ])
 
 env.Append(CPPFLAGS = [
-    "-DENV_" + target_env.upper()
+    "-DENV_" + {"hardware": "HARDWARE", "tests": "SIMULATOR"}[target_env]
 ])
 
 if 'additional-ccflags' in ARGUMENTS:
@@ -73,9 +76,27 @@ if 'additional-ccflags' in ARGUMENTS:
     ])
 
 # add this path so you don't have to write #include "src/..."
-env.AppendUnique(CPPPATH=[abspath(r"./src"),
-                          abspath(r"./robot-type")])
+env.AppendUnique(CPPPATH=[
+    abspath(r"./src"),
+    abspath(r"./robot-type")
+])
 
-sources = env.FindSourceFiles(".", ignorePaths=ignored)
+sources = env.FindSourceFiles(".", ignorePaths=ignored_dirs, ignoreFiles=ignored_files)
+if target_env == "hardware":
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
 
-env.BuildTarget(sources)
+    # SCons functions
+    env.Alias("build", program)
+    # The executable depends on the linkerscript
+    env.Depends(target=program, dependency=abspath("modm/link/linkerscript.ld"))
+    env.Alias("size", env.Size(program))
+    env.Alias("gdb", env.OpenOcdGdb(program))
+
+    env.Alias("program", env.OpenOcd(program, commands=["modm_program {$SOURCE}"]))
+    env.Alias("all", ["build", "size"])
+    env.Default("all")
+else:
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".exe", source=sources)
+    # WARNING: all test targets must be included in the target_env check earlier in the file
+    env.Alias("build-tests", program)
+    env.Alias("run-tests", env.Run(program))

@@ -20,7 +20,7 @@ build-code:
     - lbuild build # Make sure that modm is setup for linux.
     - cd sim-modm && sed -i -e 's/hosted-windows/hosted-linux/g' project.xml && lbuild build && cd -
     - /usr/bin/env python3 $(which scons) build -j2 additional-ccflags=-Werror # Build the robot code!
-    - /usr/bin/env python3 $(which scons) build -j2 target-env=simulator # Build the code for simulation
+    - /usr/bin/env python3 $(which scons) build-tests -j2 # Build the code for simulation
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   only:

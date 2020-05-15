@@ -39,6 +39,38 @@
             }
         },
         {
+            "label": "Build Tests - Release",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "/usr/bin/env python3 $(which scons) build-tests",
+            "windows": {
+                "command": "conda run -n modm scons build-tests"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
+        },
+        {
+            "label": "Run Tests - Release",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "/usr/bin/env python3 $(which scons) run-tests",
+            "windows": {
+                "command": "conda run -n modm scons run-tests"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
+        },
+        {
             "label": "Build - Debug",
             "type": "shell",
             "presentation": {
