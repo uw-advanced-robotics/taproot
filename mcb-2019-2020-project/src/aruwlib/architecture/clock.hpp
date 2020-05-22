@@ -1,3 +1,5 @@
+#ifndef __ARUW_CLOCK_HPP__
+#define __ARUW_CLOCK_HPP__
 #include <stdint.h>
 
 #ifndef ENV_SIMULATOR
@@ -27,3 +29,4 @@ namespace clock {
 }  // namespace arch
 
 }  // namespace aruwlib
+#endif
