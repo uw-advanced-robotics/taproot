@@ -20,7 +20,7 @@ namespace sensors {
     // Read sensor and update current distance
     float AnalogDistanceSensor::read() {
         // Read analog pin and convert to volts
-        float reading = aruwlib::gpio::Analog::Read(pin);
+        float reading = aruwlib::gpio::Analog::read(pin);
 
         // Linear model
         float linear = m * reading / 1000.0 + b;

@@ -25,10 +25,7 @@ namespace gpio
         #endif
     }
 
-    /*
-    * Reads voltage across the specified pin. Units in mV.
-    */
-    uint16_t Analog::Read(Pin pin) {
+    uint16_t Analog::read(Pin pin) {
         #ifdef ENV_SIMULATOR
         return 0;
         #else

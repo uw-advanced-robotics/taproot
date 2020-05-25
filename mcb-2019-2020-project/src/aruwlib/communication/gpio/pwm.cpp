@@ -1,5 +1,6 @@
 #include "aruwlib/rm-dev-board-a/board.hpp"
 #include "pwm.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
 
 using namespace Board;
 
@@ -20,7 +21,7 @@ namespace gpio
         Timer8::setOverflow(Board::SystemClock::PWM_RESOLUTION);
         #endif
         // Set all out pins to 0 duty
-        WriteAll(0.0f);
+        writeAll(0.0f);
 
         #ifndef ENV_SIMULATOR
         // Start the timer
@@ -32,26 +33,23 @@ namespace gpio
     /*
      * Sets all Timer channels to the same duty
      */
-    void Pwm::WriteAll(double duty) {
+    void Pwm::writeAll(float duty) {
         #ifndef ENV_SIMULATOR
-        Timer8::configureOutputChannel(1, Timer8::OutputCompareMode::Pwm,
-            Board::SystemClock::PWM_RESOLUTION * duty);
-        Timer8::configureOutputChannel(2, Timer8::OutputCompareMode::Pwm,
-            Board::SystemClock::PWM_RESOLUTION * duty);
-        Timer8::configureOutputChannel(3, Timer8::OutputCompareMode::Pwm,
-            Board::SystemClock::PWM_RESOLUTION * duty);
-        Timer8::configureOutputChannel(4, Timer8::OutputCompareMode::Pwm,
-            Board::SystemClock::PWM_RESOLUTION * duty);
+        write(duty, Pin::W);
+        write(duty, Pin::X);
+        write(duty, Pin::Y);
+        write(duty, Pin::Z);
         #endif
     }
 
     /*
      * Sets the PWM duty for a specified pin
      */
-    void Pwm::Write(double duty, Pin pin) {
+    void Pwm::write(float duty, Pin pin) {
         #ifndef ENV_SIMULATOR
-        Timer8::configureOutputChannel(static_cast<int>(pin),
-        Timer8::OutputCompareMode::Pwm, Board::SystemClock::PWM_RESOLUTION * duty);
+        duty = aruwlib::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
+        uint16_t dutyConverted = static_cast<float>(Board::SystemClock::PWM_RESOLUTION) * duty;
+        Timer8::configureOutputChannel(static_cast<int>(pin), dutyConverted);
         #endif
     }
 }  // namespace gpio

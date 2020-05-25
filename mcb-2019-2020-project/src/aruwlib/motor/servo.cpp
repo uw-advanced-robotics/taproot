@@ -30,7 +30,7 @@ void Servo::updateSendPwmRamp(){
     pwmOutputRamp.update(pwmRampSpeed * (currTime - prevTime));
     prevTime = currTime;
     currentPWM = pwmOutputRamp.getValue();
-    aruwlib::gpio::Pwm::Write(pwmOutputRamp.getValue(), servoPin);
+    aruwlib::gpio::Pwm::write(pwmOutputRamp.getValue(), servoPin);
 }
 
 // gets the current PWM output value.

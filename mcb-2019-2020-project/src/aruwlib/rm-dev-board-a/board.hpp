@@ -225,7 +225,7 @@ killAllGpioOutput()
     PowerOuts::setOutput(modm::Gpio::Low);
     DigitalOutPins::setOutput(modm::Gpio::Low);
     #endif
-    aruwlib::gpio::Pwm::WriteAll(0.0);
+    aruwlib::gpio::Pwm::writeAll(0.0);
 }
 
 inline void
