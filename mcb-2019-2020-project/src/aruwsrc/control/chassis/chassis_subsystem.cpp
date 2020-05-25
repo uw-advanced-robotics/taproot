@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2019 Sanger_X
+ */
+
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/communication/remote.hpp>
 #include "chassis_subsystem.hpp"

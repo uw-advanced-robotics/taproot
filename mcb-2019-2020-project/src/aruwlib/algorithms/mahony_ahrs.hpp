@@ -15,8 +15,8 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#ifndef __AHRS_H__
-#define __AHRS_H__
+#ifndef MAHONY_AHRS_H_
+#define MAHONY_AHRS_H_
 
 class MahonyAhrs
 {
@@ -54,22 +54,22 @@ class MahonyAhrs
     void resetQuaternion(void);
 
  private:
-    #define sampleFreq 500.0f         // sample frequency in Hz
-    #define twoKpDef (2.0f * 0.5f)    // 2 * proportional gain
-    #define twoKiDef (2.0f * 0.005f)  // 2 * integral gain
+    #define sampleFreq 500.0f         ///< sample frequency in Hz.
+    #define twoKpDef (2.0f * 0.5f)    ///< 2 * proportional gain.
+    #define twoKiDef (2.0f * 0.005f)  ///< 2 * integral gain.
 
     //---------------------------------------------------------------------
     // Variable definitions
-    static constexpr float twoKp = twoKpDef;  // 2 * proportional gain (Kp)
-    static constexpr float twoKi = twoKiDef;  // 2 * integral gain (Ki)
+    static constexpr float twoKp = twoKpDef;  ///< 2 * proportional gain (Kp).
+    static constexpr float twoKi = twoKiDef;  ///< 2 * integral gain (Ki).
 
-    // quaternion of sensor frame relative to auxiliary frame
+    ///< Quaternion of sensor frame relative to auxiliary frame.
     float q0, q1, q2, q3;
 
-    // integral error terms scaled by Ki
+    ///< Integral error terms scaled by Ki.
     float integralFBx, integralFBy, integralFBz;
 
     float gx, gy, gz, ax, ay, az, mx, my, mz;
-};  // MahonyAhrs
+};  // class MahonyAhrs
 
-#endif  // __AHRS_H__
+#endif  // MAHONY_AHRS_H_

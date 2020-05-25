@@ -21,10 +21,8 @@ namespace algorithms
         lastUpdateCallTime = currTime;
     }
 
-float slope1 = 0;
     float LinearInterpolation::getInterpolatedValue(uint32_t currTime)
     {
-        slope1 = slope;
         return slope * static_cast<float>(currTime - lastUpdateCallTime) + previousValue;
     }
 }  // namespace algorithms

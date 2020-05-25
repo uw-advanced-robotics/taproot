@@ -46,7 +46,7 @@ bool DJISerial::send() {
     txBuffer[FRAME_DATA_LENGTH_OFFSET] = txMessage.length & 0xFF;
     txBuffer[FRAME_DATA_LENGTH_OFFSET + 1] = (txMessage.length >> 8) & 0xFF;
     txBuffer[FRAME_SEQUENCENUM_OFFSET] = txMessage.sequenceNumber;
-    txBuffer[FRAME_CRC8_OFFSET] = algorithms::calculateCRC8(txBuffer, 4, CRC8_INIT);
+    txBuffer[FRAME_CRC8_OFFSET] = algorithms::calculateCRC8(txBuffer, 4);
     txBuffer[FRAME_TYPE_OFFSET] = (txMessage.type) & 0xFF;
     txBuffer[FRAME_TYPE_OFFSET + 1] = (txMessage.type >> 8) & 0xFF;
 
@@ -63,7 +63,7 @@ bool DJISerial::send() {
     // add crc16
     uint16_t CRC16Val = algorithms::calculateCRC16(
         txBuffer,
-        FRAME_HEADER_LENGTH + txMessage.length, CRC16_INIT
+        FRAME_HEADER_LENGTH + txMessage.length
     );
     txBuffer[FRAME_HEADER_LENGTH + txMessage.length] = CRC16Val;
     txBuffer[FRAME_HEADER_LENGTH + txMessage.length + 1] = CRC16Val >> 8;
@@ -223,7 +223,7 @@ bool DJISerial::verifyCRC8(uint8_t *data, uint32_t length, uint8_t expectedCRC8)
     {
         return false;
     }
-    actualCRC8 = algorithms::calculateCRC8(data, length, CRC8_INIT);
+    actualCRC8 = algorithms::calculateCRC8(data, length);
     return actualCRC8 == expectedCRC8;
 }
 
@@ -233,7 +233,7 @@ bool DJISerial::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC
     {
         return false;
     }
-    actualCRC16 = algorithms::calculateCRC16(data, length, CRC16_INIT);
+    actualCRC16 = algorithms::calculateCRC16(data, length);
     return actualCRC16 == expectedCRC16;
 }
 

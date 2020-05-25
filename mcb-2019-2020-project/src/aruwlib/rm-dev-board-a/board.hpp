@@ -30,12 +30,12 @@ using namespace modm::platform;
 #include "aruwlib/communication/can/can.hpp"
 
 
-/// @ingroup TODO
+///< @ingroup TODO
 namespace Board
 {
     using namespace modm::literals;
 
-/// STM32F427 running at 180MHz from the external 12MHz crystal
+///< STM32F427 running at 180MHz from the external 12MHz crystal
 struct SystemClock
 {
     static constexpr uint32_t Frequency = 180_MHz;
