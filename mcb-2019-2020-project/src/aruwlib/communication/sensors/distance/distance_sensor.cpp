@@ -9,18 +9,18 @@ namespace sensors {
         minDistance(minDistance),
         maxDistance(maxDistance) {}
 
-    // Destructor
-    DistanceSensor::~DistanceSensor() {}
-
-    // Get minumum distance boundary
-    float DistanceSensor::getMinDistance() {
+    float DistanceSensor::getMinDistance() const {
         return minDistance;
     }
 
-    // Get maximun distance boundary
-    float DistanceSensor::getMaxDistance() {
+    float DistanceSensor::getMaxDistance() const {
         return maxDistance;
     }
+
+    float DistanceSensor::getDistance() const {
+        return distance;
+    }
+
 }  // namespace sensors
 
 }  // namespace aruwlib

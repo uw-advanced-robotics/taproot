@@ -1,11 +1,5 @@
-/*
-Basic analog IR Sensor
-The distance conversion can be tweaked depending on the sensor
-min and max distance are in cm
-*/
-
-#ifndef ANALOG_DISTANCE_SENSOR_H
-#define ANALOG_DISTANCE_SENSOR_H
+#ifndef ANALOG_DISTANCE_SENSOR_H_
+#define ANALOG_DISTANCE_SENSOR_H_
 
 #include "distance_sensor.hpp"
 #include "aruwlib/communication/gpio/analog.hpp"
@@ -14,9 +8,35 @@ namespace aruwlib {
 
 namespace sensors {
 
+/**
+ * Basic analog IR Sensor.
+ * - The distance conversion can be tweaked depending on the sensor.
+ * - Min and max distance are in cm.
+ * 
+ * See here (https://i.stack.imgur.com/babQg.png) for a graph of what
+ * an IR sensor should look like. Datasheets will have specifics for
+ * what the distance curve should look like. Thsi class gives a general
+ * curve fit that first calculates a linear fit from the raw voltage
+ * of the form \f$ y=mx+b \f$
+ * and then the output is put into the equation \f$ dist = \frac{1}{linear} + offset \f$.
+ */
 class AnalogDistanceSensor: public DistanceSensor {
  public:
-    // Constructor to init analog IR boundary, distance conversion, and analog pin
+    /**
+     * Constructor to initialize the analog IR boundary,
+     * distance conversion, and analog pin.
+     * 
+     * @param[in] minDistance the sensor's min valid distance
+     * @param[in] maxDistance the sensor's max valid distance
+     * @param[in] m the slope of the linear model that describes
+     *      the relationship between analog input and distance.
+     * @param[in] b the y intercept of the linear model that
+     *      describes the relationship between analog input and
+     *      distance.
+     * @param[in] offset the offset in the non-linear portion of
+     *      the model.
+     * @param[in] pin the analog pin that the sensor is connected to.
+     */
     AnalogDistanceSensor(
         float minDistance,
         float maxDistance,
@@ -26,26 +46,36 @@ class AnalogDistanceSensor: public DistanceSensor {
         gpio::Analog::Pin pin
     );
 
-    // Read sensor and updates current distance
-    float read(void) override;
+    /**
+     * Reads the sensor, updates the current distance, and returns this reading.
+     * 
+     * @return the updated value.  May or may not be valid. If it is not valid,
+     *      -1 is returned.
+     */
+    float read() override;
 
-    // Checks if current reading is within bounds
-    bool validReading(void) override;
+    /**
+     * Checks if current reading is within bounds.
+     * 
+     * @return `true` if the reading is within the min and max distance, exclusive.
+     *      Returns `false` otherwise.
+     */
+    bool validReading() const override;
 
  private:
-    // Distance calulation values for linear model y=mx+b
+    ///< Distance calulation values for linear model \f$ y = mx + b \f$.
     float m;
     float b;
 
-    // Offset value of inverse
+    ///< Offset value of inverse of the model.
     float offset;
 
-    // Analog pin
+    ///< The analog pin which the sensor is connected to.
     gpio::Analog::Pin pin;
-};
+};  // class AnalogDistanceSensor
 
 }  // namespace sensors
 
 }  // namespace aruwlib
 
-#endif  // ANALOG_DISTANCE_SENSOR_H
+#endif  // ANALOG_DISTANCE_SENSOR_H_

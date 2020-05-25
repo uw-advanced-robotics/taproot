@@ -1,10 +1,5 @@
-/*
-General distance sensor class for basic analog IR or other sensors to build off of
-Planned sensors: basic analog IR, Sharp IR, Adafruit VL6180X, and Seeed IR
-*/
-
-#ifndef DISTANCE_SENSOR_H
-#define DISTANCE_SENSOR_H
+#ifndef DISTANCE_SENSOR_H_
+#define DISTANCE_SENSOR_H_
 
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
@@ -14,26 +9,34 @@ namespace sensors {
 
 class DistanceSensor {
  public:
-    // Constructor to init boundaries
+    /**
+     * Constructor to init boundaries.
+     * 
+     * @param[in] minDistance the min valid distance.
+     * @param[in] maxDistance the max valid distance.
+     */
     DistanceSensor(float minDistance, float maxDistance);
 
-    // Destructor
-    virtual ~DistanceSensor(void) = 0;
+    ///< Default destructor
+    virtual ~DistanceSensor() = default;
 
-    // Init sensor
-    virtual void init(void) = 0;
+    ///< Initialize the sensor.
+    virtual void init() = 0;
 
-    // Read sensor and updates current distance
-    virtual float read(void) = 0;
+    ///< Read sensor and updates current distance.
+    virtual float read() = 0;
 
-    // Checks if current reading is within bounds
-    virtual bool validReading(void) = 0;
+    ///< Checks if current reading is within bounds.
+    virtual bool validReading() const = 0;
 
-    // Get minumum distance boundary
-    float getMinDistance(void);
+    ///< Get minumum distance boundary.
+    float getMinDistance() const;
 
-    // Get maximun distance boundary
-    float getMaxDistance(void);
+    ///< Get maximun distance boundary.
+    float getMaxDistance() const;
+
+    ///< Get the current distance.
+    float getDistance() const;
 
  protected:
     // Distance from sensor
@@ -44,10 +47,10 @@ class DistanceSensor {
 
     // Upper boundary for reliable readings
     float maxDistance;
-};
+};  // class DistanceSensor
 
 }  // namespace sensors
 
 }  // namespace aruwlib
 
-#endif  // DISTANCE_SENSOR_H
+#endif  // DISTANCE_SENSOR_H_

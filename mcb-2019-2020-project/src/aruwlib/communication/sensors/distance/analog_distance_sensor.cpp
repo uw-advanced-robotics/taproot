@@ -3,7 +3,6 @@
 namespace aruwlib {
 
 namespace sensors {
-    // Constructor to init analog IR boundary, distance conversion, and analog pin
     AnalogDistanceSensor::AnalogDistanceSensor(
         float minDistance,
         float maxDistance,
@@ -17,22 +16,20 @@ namespace sensors {
         offset(offset),
         pin(pin) {}
 
-    // Read sensor and update current distance
     float AnalogDistanceSensor::read() {
         // Read analog pin and convert to volts
         float reading = aruwlib::gpio::Analog::read(pin);
 
         // Linear model
-        float linear = m * reading / 1000.0 + b;
+        float linear = m * reading / 1000.0f + b;
 
         // Convert to cm distance
-        distance = 1 / linear + offset;
+        distance = 1.0f / linear + offset;
 
         return validReading() ? distance : -1.0f;
     }
 
-    // Checks if current reading is within bounds
-    bool AnalogDistanceSensor::validReading() {
+    bool AnalogDistanceSensor::validReading() const {
         return (distance > minDistance) && (distance < maxDistance);
     }
 }  // namespace sensors
