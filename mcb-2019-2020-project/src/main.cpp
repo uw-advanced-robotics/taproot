@@ -19,6 +19,8 @@
 #include "aruwsrc/control/robot_control.hpp"
 #include <aruwlib/control/command_scheduler.hpp>
 
+using namespace modm::literals;
+
 /* define timers here -------------------------------------------------------*/
 aruwlib::arch::PeriodicMilliTimer updateImuPeriod(2);
 aruwlib::arch::PeriodicMilliTimer sendMotorTimeout(2);

@@ -205,7 +205,7 @@ using DigitalOutPins = SoftwareGpioPort
 using ImuSck = GpioF7;
 using ImuMiso = GpioF8;
 using ImuMosi = GpioF9;
-using ImuNcc = GpioF6;
+using ImuNss = GpioF6;
 using ImuSpiMaster = SpiMaster5;
 
 using DisplaySck = GpioB3;

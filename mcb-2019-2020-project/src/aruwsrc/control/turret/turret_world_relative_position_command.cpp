@@ -49,7 +49,7 @@ TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
 
 void TurretWorldRelativePositionCommand::initialize()
 {
-    imuInitialYaw = Mpu6500::getImuAttitude().yaw;
+    imuInitialYaw = Mpu6500::getYaw();
     yawPid.reset();
     pitchPid.reset();
     yawTargetAngle.setValue(turretSubsystem->getYawTarget());
@@ -123,14 +123,14 @@ float TurretWorldRelativePositionCommand::projectChassisRelativeYawToWorldRelati
     float yawAngle,
     float imuInitialAngle
 ) {
-    return yawAngle + aruwlib::sensors::Mpu6500::getImuAttitude().yaw - imuInitialAngle;
+    return yawAngle + aruwlib::sensors::Mpu6500::getYaw() - imuInitialAngle;
 }
 
 float TurretWorldRelativePositionCommand::projectWorldRelativeYawToChassisFrame(
     float yawAngle,
     float imuInitialAngle
 ) {
-    return yawAngle - aruwlib::sensors::Mpu6500::getImuAttitude().yaw + imuInitialAngle;
+    return yawAngle - aruwlib::sensors::Mpu6500::getYaw() + imuInitialAngle;
 }
 
 }  // namespace turret

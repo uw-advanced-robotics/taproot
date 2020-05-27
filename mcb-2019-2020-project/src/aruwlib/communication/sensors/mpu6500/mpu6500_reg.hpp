@@ -1,5 +1,5 @@
-#ifndef MPU6500_REG_H
-#define MPU6500_REG_H
+#ifndef MPU6500_REG_HPP_
+#define MPU6500_REG_HPP_
 
 namespace aruwlib
 {
@@ -116,4 +116,4 @@ namespace sensors
 
 }  // namespace aruwlib
 
-#endif  // MPU6500_REG_H
+#endif  // MPU6500_REG_HPP_

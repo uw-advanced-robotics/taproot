@@ -14,9 +14,8 @@ namespace sensors {
     void Mpu6500::read() {
     }
 
-    // get temperature value in C
-    float Mpu6500::mpuGetTemp() {
-        return 0;
+    bool Mpu6500::initialized() {
+        return imuInitialized;
     }
 
     // get accleration reading on x-axis
@@ -49,8 +48,21 @@ namespace sensors {
         return 0;
     }
 
-    MahonyAhrs::attitude Mpu6500::getImuAttitude() {
-        return MahonyAhrs::attitude();
+    // get temperature value in C
+    float Mpu6500::getTemp() {
+        return 0;
+    }
+
+    float Mpu6500::getYaw() {
+        return 0;
+    }
+
+    float Mpu6500::getPitch() {
+        return 0;
+    }
+
+    float Mpu6500::getRoll() {
+        return 0;
     }
 
     float Mpu6500::getTiltAngle()

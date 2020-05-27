@@ -1,128 +1,219 @@
-/*
- * To use this class, call Remote::init() to properly initialize and calibrate
- * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temp
- * values from the imu. Use the getter methods to access imu information.
- */
+#ifndef MPU6500_HPP_
+#define MPU6500_HPP_
 
-#ifndef MPU6500_H
-#define MPU6500_H
+#include <cstdint>
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
-#include "aruwlib/algorithms/mahony_ahrs.hpp"
-
-using namespace modm::literals;
+#include "aruwlib/algorithms/MahonyAHRS.h"
 
 namespace aruwlib {
 
 namespace sensors {
 
-class  Mpu6500 {
+/**
+ * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
+ * 
+ * To use this class, call Remote::init() to properly initialize and calibrate
+ * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temp
+ * values from the imu. Use the getter methods to access imu information.
+ * 
+ * @note if you are shaking the imu while it is initializing, the offsets will likely
+ *      be calibrated poorly and unexpectedly bad results may occur.
+ */
+class Mpu6500 {
  public:
-    // initialize the imu and SPI
+    /**
+     * Initialize the imu and the SPI line. Uses SPI1, which is internal to the
+     * type A board.
+     * 
+     * @note this function blocks for approximately 1 second.
+     */
     static void init();
 
-    // read data from the imu
+    /**
+     * Read data from the imu. Call at 500 hz for best performance.
+     */ 
     static void read();
 
+    /**
+     * To be safe, whenever you call the functions below, call this function to insure
+     * the data you are about to receive is not garbage.
+     */
+    static bool initialized();
+
+    /**
+     * Returns the acceleration reading in the x direction, in
+     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
+     */
     static float getAx();
 
+    /**
+     * Returns the acceleration reading in the y direction, in
+     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
+     */
     static float getAy();
 
+    /**
+     * Returns the acceleration reading in the z direction, in
+     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
+     */
     static float getAz();
 
+    /**
+     * Returns the gyroscope reading in the x direction, in
+     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     */
     static float getGx();
 
+    /**
+     * Returns the gyroscope reading in the y direction, in
+     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     */
     static float getGy();
 
+    /**
+     * Returns the gyroscope reading in the z direction, in
+     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     */
     static float getGz();
 
-    // get temperature value in C
-    static float mpuGetTemp();
+    /**
+     * Returns the temperature of the imu in degrees C.
+     */
+    static float getTemp();
 
-    static void caliFlagHandler();
+    /**
+     * Returns yaw angle. in degrees.
+     */
+    static float getYaw();
 
-    static void calcImuAttitude(MahonyAhrs::attitude* imuAtti);
+    /**
+     * Returns pitch angle in degrees.
+     */
+    static float getPitch();
 
-    static MahonyAhrs::attitude getImuAttitude();
+    /**
+     * Returns roll angle in degrees.
+     */
+    static float getRoll();
 
+    /**
+     * Returns the angle difference between the normal vector of the plane that the
+     * type A board lies on and of the angle directly upward.
+     */
     static float getTiltAngle();
 
  private:
-     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
+    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
-     // for converting from gyro values we receive to more conventional deg/sec
-     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
+    ///< Use for converting from gyro values we receive to more conventional degrees / second.
+    static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
 
-     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
+    ///< Use to convert the raw acceleration into more conventional degrees / second^2
+    static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
+    ///< The number of samples we take in order to determine the mpu offsets.
+    static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
-     static const uint8_t ACC_GYRO_BUFF_RX_SIZE = 14;
+    ///< The number of bytes read to read acceleration, gyro, and temp.
+    static const uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
-     typedef struct {
-        // acceleration data
-        int16_t ax = 0;
-        int16_t ay = 0;
-        int16_t az = 0;
+    /**
+     * Storage for the raw data we receive from the mpu6500, as well as offsets
+     * that are used each time we receive data.
+     */
+    struct RawData {
+        ///< Raw acceleration data.
+        struct Accel {
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+        };
 
-        // gyroscope data
-        int16_t gx = 0;
-        int16_t gy = 0;
-        int16_t gz = 0;
+        ///< Raw gyroscope data.
+        struct Gyro {
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+        };
 
-        // temperature
+        ///< Acceleration offset calculated in init.
+        struct AccelOffset {
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+        };
+
+        ///< Gyroscope offset calculated in init.
+        struct GyroOffset {
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+        };
+
+        Accel accel;
+        Gyro gyro;
+
+        ///< Raw temperature.
         uint16_t temp = 0;
 
-        // offsets
-        int16_t ax_offset = 0;
-        int16_t ay_offset = 0;
-        int16_t az_offset = 0;
-
-        int16_t gx_offset = 0;
-        int16_t gy_offset = 0;
-        int16_t gz_offset = 0;
-
-        float tiltAngle = 0.0f;
-
-        MahonyAhrs::attitude imuAtti;
-    } mpu_info_t;
-
-    typedef struct {
-        bool gyroCalcFlag = true;
-        bool accCalcFlag = true;
-    } mpu_cali_t;
+        AccelOffset accelOffset;
+        GyroOffset gyroOffset;
+    };
 
     static bool imuInitialized;
 
-    #ifndef ENV_SIMULATOR
-    static MahonyAhrs arhsAlgorithm;
+#ifndef ENV_SIMULATOR
+    static RawData raw;
 
-    static mpu_info_t mpu6500Data;
+    static Mahony mahonyAlgorithm;
 
-    static uint8_t mpu6500TxBuff[ACC_GYRO_BUFF_RX_SIZE];
+    static float tiltAngle;
 
-    static uint8_t mpu6500RxBuff[ACC_GYRO_BUFF_RX_SIZE];
+    static uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE];
 
-    static mpu_cali_t imuCaliFlags;
+    static uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE];
 
-    static void mpuNssLow(void);
+    ///< Compute the gyro offset values. @note this function blocks.
+    static void calculateGyroOffset();
 
-    static void mpuNssHigh(void);
+    ///< Calibrate accelerometer offset values. @note this function blocks.
+    static void calculateAccOffset();
 
-    static uint8_t mpuWriteReg(uint8_t const reg, uint8_t const data);
+    // Functions for interacting with hardware directly.
 
-    static uint8_t mpuReadReg(uint8_t const reg);
+    ///< Pull the NSS pin low to initiate contact with the imu.
+    static void mpuNssLow();
 
-    static uint8_t mpuReadRegs(uint8_t const regAddr, uint8_t *pData, uint8_t len);
+    ///< Pull the NSS pin high to end contact with the imu.
+    static void mpuNssHigh();
 
-    static void getMpuGyroOffset(void);
+    /**
+     * If the imu is not initializes, logs an error and returns 0,
+     * otherwise returns the value passed in.
+     */
+    static inline float validateReading(float reading);
 
-    static void getMpuAccOffset(void);
-    #endif
+    /**
+     * Write to a given register.
+     */
+    static uint8_t spiWriteRegister(uint8_t reg, uint8_t data);
+
+    /**
+     * Read from a given register.
+     */
+    static uint8_t spiReadRegister(uint8_t reg);
+
+    /**
+     * Read from several registers.
+     * regAddr is the first address read, and it reads len number of addresses
+     * from that point.
+     */
+    static uint8_t spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+#endif
 };
 
 }  // namespace sensors
 
 }  // namespace aruwlib
 
-#endif
+#endif  // MPU6500_HPP_
