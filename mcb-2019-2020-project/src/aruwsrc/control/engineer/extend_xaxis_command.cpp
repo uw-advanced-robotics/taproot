@@ -1,40 +1,38 @@
 #include "extend_xaxis_command.hpp"
+
 #include "xaxis_subsystem.hpp"
+
+#include <aruwlib/control/subsystem.hpp>
 
 namespace aruwsrc
 {
 
 namespace engineer
 {
-    XaxisCommand::XaxisCommand(XAxisSubsystem* subsystem)
-        : Command(), xAxisSubsystem(subsystem)
-    {
-        addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
-    }
+ExtendXAxisCommand::ExtendXAxisCommand(XAxisSubsystem* subsystem)
+    : Command(), xAxisSubsystem(subsystem)
+{
+    addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(subsystem));
+}
 
-    void XaxisCommand::initialize(void)
-    {
-        xAxisSubsystem->setXAxisExtended(true);  // default movement is "not extended"
-    }
+void ExtendXAxisCommand::initialize()
+{
+    xAxisSubsystem->setExtended(true);  // default movement is "not extended"
+}
 
-    void XaxisCommand::execute(void)
-    {
-        xAxisSubsystem->setXAxisExtended(true);
-    }
+void ExtendXAxisCommand::execute()
+{}
 
-    void XaxisCommand::end(bool interrupted)
-    {
-        if (interrupted)
-        {
-            xAxisSubsystem->setXAxisExtended(false);
-        }
-        xAxisSubsystem->setXAxisExtended(false);
-    }
+// NOLINTNEXTLINE
+void ExtendXAxisCommand::end(bool)
+{
+    xAxisSubsystem->setExtended(false);
+}
 
-    bool XaxisCommand::isFinished(void) const
-    {
-        return false;
-    }
+bool ExtendXAxisCommand::isFinished() const
+{
+    return false;
+}
 }  // namespace engineer
 
 }  // namespace aruwsrc

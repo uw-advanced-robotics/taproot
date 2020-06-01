@@ -1,20 +1,8 @@
-/**
- * This is part of aruw's library.
- * 
- * This is a subsystem code for x-axis movement. Connect this to
- * a digital output pin (preset to pin E on our board). This
- * sends a digital out signal to a solenoid, which actuates
- * a piston, used for collecting far bins.
- */
+#ifndef XAXIS_SUBSYSTEM_HPP_
+#define XAXIS_SUBSYSTEM_HPP_
 
-#ifndef __SUBSYSTEM_XAXIS_HPP__
-#define __SUBSYSTEM_XAXIS_HPP__
-
-#include <modm/math/filter/pid.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/subsystem.hpp>
-
-using namespace aruwlib::control;
 
 namespace aruwsrc
 {
@@ -22,23 +10,29 @@ namespace aruwsrc
 namespace engineer
 {
 
-class XAxisSubsystem : public Subsystem
+/**
+ * This is a subsystem code for x-axis movement (moving the
+ * grabber back and forward). Connect this to a digital output
+ * pin. This controls a solenoid, which actuates a piston.
+ */
+class XAxisSubsystem : public aruwlib::control::Subsystem
 {
  public:
-    XAxisSubsystem(): isExtended(false) {}
+    explicit XAxisSubsystem(aruwlib::gpio::Digital::OutputPin pin)
+        : pin(pin), extended(false) {}
 
-    void refresh();
+    void setExtended(bool isExtended);
 
-    void setXAxisExtended(bool isExtended);
-
-    bool getIsExtended();
+    bool isExtended() const;
 
  private:
-    bool isExtended;
-};
+    aruwlib::gpio::Digital::OutputPin pin;
+
+    bool extended;
+};  // class XAxisSubsystem
 
 }  // namespace engineer
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // XAXIS_SUBSYSTEM_HPP_

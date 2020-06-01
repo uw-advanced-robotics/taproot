@@ -1,16 +1,7 @@
-/**
- * This code is part of aruw's repository.
- * Call this command to extend the x axis on the engineer.
- * This sends a digital out signal to a solenoid, which actuates
- * a piston, used for collecting far bins.
- */
-
-#ifndef __EXTEND_XAXIS_COMMAND__
-#define __EXTEND_XAXIS_COMMAND__
+#ifndef EXTEND_XAXIS_COMMAND_HPP_
+#define EXTEND_XAXIS_COMMAND_HPP_
 
 #include <aruwlib/control/command.hpp>
-
-using namespace aruwlib::control;
 
 namespace aruwsrc
 {
@@ -20,25 +11,30 @@ namespace engineer
 
 class XAxisSubsystem;
 
-class XaxisCommand : public Command
+/**
+ * Call this command to extend the x axis on the engineer.
+ * This sends a digital out signal to a solenoid, which actuates
+ * a piston, used for collecting far bins.
+ */
+class ExtendXAxisCommand : public aruwlib::control::Command
 {
  public:
-    explicit XaxisCommand(XAxisSubsystem* subsystem);
+    explicit ExtendXAxisCommand(XAxisSubsystem* subsystem);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool interrupted);
+    void end(bool) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
 
  private:
     XAxisSubsystem* xAxisSubsystem;
-};
+};  // class ExtendXAxisCommand
 
 }  // namespace engineer
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // EXTEND_XAXIS_COMMAND_HPP_

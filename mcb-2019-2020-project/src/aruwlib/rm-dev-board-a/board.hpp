@@ -28,6 +28,7 @@ using namespace modm::platform;
 #include "aruwlib/communication/gpio/pwm.hpp"
 #include "aruwlib/communication/gpio/leds.hpp"
 #include "aruwlib/communication/can/can.hpp"
+#include "aruwlib/communication/gpio/digital.hpp"
 
 
 ///< @ingroup TODO
@@ -245,6 +246,7 @@ initialize()
     // init PWM and analog pins
     aruwlib::gpio::Analog::init();
     aruwlib::gpio::Pwm::init();
+    aruwlib::gpio::Digital::init();
 
     aruwlib::can::Can::initialize();
 }
