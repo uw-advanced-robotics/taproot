@@ -4,12 +4,13 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/communication/remote.hpp>
 #include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
-#include <aruwlib/control/control_operator_interface.hpp>
+#include <aruwlib/Drivers.hpp>
 
 #include <aruwlib/architecture/clock.hpp>
 
 using namespace aruwlib::algorithms;
 using namespace aruwlib::sensors;
+using aruwlib::Drivers;
 
 namespace aruwsrc
 {
@@ -47,9 +48,9 @@ float WiggleDriveCommand::wiggleSin(float t)
 void WiggleDriveCommand::execute()
 {
     float r;
-    float x = ControlOperatorInterface::getChassisXInput()
+    float x = Drivers::controlOperatorInterface.getChassisXInput()
             * ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
-    float y = ControlOperatorInterface::getChassisYInput()
+    float y = Drivers::controlOperatorInterface.getChassisYInput()
             * ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     // We only wiggle when the turret is online.
@@ -89,7 +90,7 @@ void WiggleDriveCommand::execute()
         // relative while wiggling.
         aruwlib::algorithms::rotateVector(&x, &y, -degreesToRadians(turretYawAngle));
     } else {
-        r = ControlOperatorInterface::getChassisRInput()
+        r = Drivers::controlOperatorInterface.getChassisRInput()
             * ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
     }
 

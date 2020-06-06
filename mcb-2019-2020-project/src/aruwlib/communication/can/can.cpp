@@ -1,4 +1,4 @@
-#include <aruwlib/communication/can/can.hpp>
+#include "can.hpp"
 
 #include <modm/platform.hpp>
 
@@ -29,7 +29,7 @@ void aruwlib::can::Can::initialize() {
 }
 
 
-bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) {
+bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const {
     #ifdef ENV_SIMULATOR
     return false;
     #else
@@ -59,7 +59,7 @@ bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message 
     #endif
 }
 
-bool aruwlib::can::Can::isReadyToSend(CanBus bus) {
+bool aruwlib::can::Can::isReadyToSend(CanBus bus) const {
     #ifdef ENV_SIMULATOR
     return false;
     #else

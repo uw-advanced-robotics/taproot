@@ -1,8 +1,8 @@
 #ifndef __serial_h_
 #define __serial_h_
 
+#include <cstdint>
 #include <modm/processing.hpp>
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 
 namespace aruwlib

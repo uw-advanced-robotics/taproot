@@ -2,7 +2,6 @@
 #define __REF_SERIAL_HPP__
 
 #include <modm/container/deque.hpp>
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
 
 namespace aruwlib
@@ -15,8 +14,8 @@ namespace serial
  * A class meant to communicate with the 2019 version of the RoboMaster
  * referee system. Does not include UI drawings.
  * 
- * @note use the static function `getRefSerial` to interact with this class
- *      rather than instantiating your own `RefSerial` object.
+ * @note use the static function located in Drivers to interact with
+ *      this class.
  */
 class RefSerial : public DJISerial
 {
@@ -216,6 +215,16 @@ class RefSerial : public DJISerial
     } CustomData;
 
     /**
+     * Constructs a RefSerial class connected to `Uart::UartPort::Uart6` with
+     * CRC enforcement enabled.
+     *
+     * @see `DjiSerial`
+     */
+    RefSerial();
+    RefSerial(const RefSerial&) = delete;
+    RefSerial &operator=(const RefSerial&) = default;
+
+    /**
      * Handles the types of messages defined above in the RX message handlers section.
      */
     void messageReceiveCallback(const SerialMessage& completeMessage) override;
@@ -229,30 +238,10 @@ class RefSerial : public DJISerial
     ///< Packages the display data in a `CustomData` struct and then sends it via `sendCustomData`.
     void sendDisplayData(const DisplayData& displayData);
 
-    /**
-     * We store an instantiation of a `RefSerial` class inside the class itself.
-     * This is how you should interact with this class (through this statically
-     * instantiated object).
-     */ 
-    static RefSerial& getRefSerial();
-
  private:
-    ///< The instantiation of this class used to interact with this class.
-    static RefSerial refSerial;
-
     RobotData robotData;
     GameData gameData;
     modm::BoundedDeque<DamageEvent, REF_DAMAGE_EVENT_SIZE> receivedDpsTracker;
-
-    /**
-     * Constructs a RefSerial class connected to `Uart::UartPort::Uart6` with
-     * CRC enforcement enabled.
-     * 
-     * Private so only this class can construct itself.
-     *
-     * @see `DjiSerial`
-     */
-    RefSerial();
 
     void sendCustomData(const CustomData& customData);
 

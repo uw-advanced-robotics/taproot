@@ -28,13 +28,13 @@ txBuffer()
 void DJISerial::initialize() {
     switch (this->port) {
     case Uart::UartPort::Uart1:
-        Uart::init<Uart::UartPort::Uart1, 115200>();
+        Drivers::uart.init<Uart::UartPort::Uart1, 115200>();
         break;
     case Uart::UartPort::Uart2:
-        Uart::init<Uart::UartPort::Uart2, 115200>();
+        Drivers::uart.init<Uart::UartPort::Uart2, 115200>();
         break;
     case Uart::UartPort::Uart6:
-        Uart::init<Uart::UartPort::Uart6, 115200>();
+        Drivers::uart.init<Uart::UartPort::Uart6, 115200>();
         break;
     default:
         break;
@@ -238,12 +238,12 @@ bool DJISerial::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC
 }
 
 uint32_t DJISerial::read(uint8_t *data, uint16_t length) {
-    return Uart::read(this->port, data, length);
+    return Drivers::uart.read(this->port, data, length);
 }
 
 uint32_t DJISerial::write(const uint8_t *data, uint16_t length) {
-    if (Uart::isWriteFinished(this->port)) {
-        return Uart::write(this->port, data, length);
+    if (Drivers::uart.isWriteFinished(this->port)) {
+        return Drivers::uart.write(this->port, data, length);
     } else {
         return 0;
     }

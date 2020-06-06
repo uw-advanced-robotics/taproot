@@ -1,7 +1,8 @@
 #ifndef __TURRET_PID_HPP__
 #define __TURRET_PID_HPP__
 
-#include <aruwlib/rm-dev-board-a/board.hpp>
+#include <cstdint>
+
 #include <aruwlib/algorithms/extended_kalman.hpp>
 
 namespace aruwsrc

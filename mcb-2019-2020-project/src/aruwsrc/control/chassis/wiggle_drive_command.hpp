@@ -6,21 +6,18 @@
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
 #include "chassis_subsystem.hpp"
 
-using namespace aruwlib::control;
-using namespace aruwsrc::turret;
-
 namespace aruwsrc
 {
 
 namespace chassis
 {
 
-class WiggleDriveCommand : public Command {
+class WiggleDriveCommand : public aruwlib::control::Command {
  public:
-    explicit WiggleDriveCommand(ChassisSubsystem* chassis, TurretSubsystem* turret)
+    explicit WiggleDriveCommand(ChassisSubsystem* chassis, aruwsrc::turret::TurretSubsystem* turret)
     : chassis(chassis), turret(turret)
     {
-        addSubsystemRequirement(dynamic_cast<Subsystem*>(chassis));
+        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
     }
 
     void initialize() override;
@@ -39,7 +36,7 @@ class WiggleDriveCommand : public Command {
     static constexpr float WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR = 10.0f;
 
     ChassisSubsystem* chassis;
-    TurretSubsystem* turret;
+    aruwsrc::turret::TurretSubsystem* turret;
 
     uint32_t timeOffset = 0;
     float startTimeForAngleOffset = 0.0f;

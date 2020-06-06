@@ -1,7 +1,8 @@
 #ifndef UART_HPP
 #define UART_HPP
 
-#include <stdint.h>
+#include <cstdint>
+#include <cstdlib>
 
 #ifndef ENV_SIMULATOR
 #include <modm/platform.hpp>
@@ -38,6 +39,10 @@ class Uart {
     using Parity = modm::platform::UartBase::Parity;
     #endif
 
+    Uart() = default;
+    Uart(const Uart&) = delete;
+    Uart &operator=(const Uart&) = default;
+
     /**
      * .initializes a particular Uart with the pins particular to the RoboMaster type a board.
      * 
@@ -47,7 +52,7 @@ class Uart {
      * @tparam parity @see `Parity`.
      */
     template<UartPort port, modm::baudrate_t baudrate, Parity parity = Parity::Disabled>
-    static void init()
+    void init()
     {
         #ifndef ENV_SIMULATOR
         // TODO(kaelin): move pin definition to Board?
@@ -75,7 +80,7 @@ class Uart {
      *
      * @return `true` if a byte was received, `false` otherwise.
      */
-    static bool read(UartPort port, uint8_t *data);
+    bool read(UartPort port, uint8_t *data);
 
     /**
      * Read a block of bytes.
@@ -86,7 +91,7 @@ class Uart {
      *
      * @return number of bytes which could be read, maximal `length`.
      */
-    static std::size_t read(UartPort port, uint8_t *data, std::size_t length);
+    std::size_t read(UartPort port, uint8_t *data, std::size_t length);
 
     /**
      * Empty the receive FIFO queue and hardware buffer.
@@ -94,7 +99,7 @@ class Uart {
      * @param[in] port the port's buffer to discard.
      * @return the size of the deleted FIFO queue.
      */
-    static std::size_t discardReceiveBuffer(UartPort port);
+    std::size_t discardReceiveBuffer(UartPort port);
 
     /**
      * Pushes a single byte into the buffer.
@@ -103,7 +108,7 @@ class Uart {
      * @return `true` if data has been successfully sent, `false` if buffer is full.
      * @note this writing is buffered.
      */
-    static bool write(UartPort port, uint8_t data);
+    bool write(UartPort port, uint8_t data);
 
     /**
      * Pushes a block of bytes into the buffer.
@@ -114,7 +119,7 @@ class Uart {
      * @return the number of bytes that have been written.
      * @note this writing may be buffered.
      */
-    static std::size_t write(UartPort port, const uint8_t *data, std::size_t length);
+    std::size_t write(UartPort port, const uint8_t *data, std::size_t length);
 
     /**
      * Because the data is buffered, check here to see if the buffer is empty
@@ -123,7 +128,7 @@ class Uart {
      * @param[in] port the port to see if writing is finished.
      * @return `true` if the buffer is empty and the last byte has been sent.
      */
-    static bool isWriteFinished(UartPort port);
+    bool isWriteFinished(UartPort port) const;
 };
 
 }  // namespace serial

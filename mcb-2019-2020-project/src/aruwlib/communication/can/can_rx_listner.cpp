@@ -1,5 +1,5 @@
 #include "can_rx_listener.hpp"
-#include "can_rx_handler.hpp"
+#include "aruwlib/Drivers.hpp"
 
 namespace aruwlib
 {
@@ -8,12 +8,12 @@ namespace can
 {
     CanRxListner::~CanRxListner()
     {
-        CanRxHandler::removeReceiveHandler(*this);
+        Drivers::canRxHandler.removeReceiveHandler(*this);
     }
 
     CanRxListner::CanRxListner(uint32_t id, CanBus cB) : canIdentifier(id), canBus(cB)
     {
-        CanRxHandler::attachReceiveHandler(this);
+        Drivers::canRxHandler.attachReceiveHandler(this);
     }
 }  // namespace can
 

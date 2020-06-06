@@ -17,13 +17,17 @@ CanBus
 
 class Can {
  public:
-    static void initialize();
+    Can() = default;
+    Can(const Can&) = delete;
+    Can &operator=(const Can&) = default;
 
-    static bool isMessageAvailable(CanBus bus);
-    static bool getMessage(CanBus bus, modm::can::Message *message);
+    void initialize();
 
-    static bool isReadyToSend(CanBus bus);
-    static bool sendMessage(CanBus bus, const modm::can::Message& message);
+    bool isMessageAvailable(CanBus bus) const;
+    bool getMessage(CanBus bus, modm::can::Message *message);
+
+    bool isReadyToSend(CanBus bus) const;
+    bool sendMessage(CanBus bus, const modm::can::Message& message);
 };
 
 }  // namespace can

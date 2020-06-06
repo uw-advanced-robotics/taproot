@@ -204,11 +204,13 @@ namespace turret
                 * (fabsf(FEED_FORWARD_SIN_GAIN * sinf(getYawAngleFromCenter()
                 * aruwlib::algorithms::PI / 180.0f)) + 1.0f);
 
-        if (Remote::getUpdateCounter() != prevUpdateCounterChassisRotateDerivative) {
+        if (Drivers::remote.getUpdateCounter()
+            != prevUpdateCounterChassisRotateDerivative) {
             chassisRotateDerivativeInterpolation.update(
                     desiredChassisRotation - feedforwardPrevChassisRotationDesired);
         }
-        prevUpdateCounterChassisRotateDerivative = Remote::getUpdateCounter();
+        prevUpdateCounterChassisRotateDerivative
+            = Drivers::remote.getUpdateCounter();
         float derivativeInterpolated = chassisRotateDerivativeInterpolation
                 .getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds());
 

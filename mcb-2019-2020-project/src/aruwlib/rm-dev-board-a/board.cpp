@@ -9,7 +9,7 @@
  */
 // ----------------------------------------------------------------------------
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "board.hpp"
 
 // In simulation, we'll let modm's default implementation handle this.
 #ifndef ENV_SIMULATOR
@@ -28,4 +28,5 @@ modm_abandon(const char *,
         modm::delayMilliseconds(100);
     }
 }
+
 #endif

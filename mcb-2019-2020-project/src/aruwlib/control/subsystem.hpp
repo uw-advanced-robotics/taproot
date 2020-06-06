@@ -22,7 +22,7 @@
 #ifndef __SUBSYSTEM_HPP__
 #define __SUBSYSTEM_HPP__
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include <cstdint>
 
 namespace aruwlib
 {

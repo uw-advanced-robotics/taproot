@@ -1,3 +1,4 @@
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/controller_mapper.hpp>
 #include "robot_type.hpp"
 #include "agitator/agitator_subsystem.hpp"
@@ -21,6 +22,8 @@ using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::turret;
+using aruwlib::Drivers;
+using aruwlib::control::IoMapper;
 
 namespace aruwsrc
 {
@@ -75,11 +78,11 @@ FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
 /* register subsystems here -------------------------------------------------*/
 void registerSoldierSubsystems()
 {
-    CommandScheduler::getMainScheduler().registerSubsystem(&agitator);
-    CommandScheduler::getMainScheduler().registerSubsystem(&chassis);
-    CommandScheduler::getMainScheduler().registerSubsystem(&turret);
-    CommandScheduler::getMainScheduler().registerSubsystem(&hopperCover);
-    CommandScheduler::getMainScheduler().registerSubsystem(&frictionWheels);
+    Drivers::commandScheduler.registerSubsystem(&agitator);
+    Drivers::commandScheduler.registerSubsystem(&chassis);
+    Drivers::commandScheduler.registerSubsystem(&turret);
+    Drivers::commandScheduler.registerSubsystem(&hopperCover);
+    Drivers::commandScheduler.registerSubsystem(&frictionWheels);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
@@ -93,33 +96,33 @@ void setDefaultSoldierCommands()
 /* add any starting commands to the scheduler here --------------------------*/
 void startSoldierCommands()
 {
-    CommandScheduler::getMainScheduler().addCommand(&agitatorCalibrateCommand);
+    Drivers::commandScheduler.addCommand(&agitatorCalibrateCommand);
 }
 
 /* register io mappings here ------------------------------------------------*/
 void registerSoldierIoMappings()
 {
-    IoMapper::addHoldRepeatMapping(
+    Drivers::ioMapper.addHoldRepeatMapping(
             IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
             &agitatorShootFastCommand);
 
-    IoMapper::addHoldRepeatMapping(
+    Drivers::ioMapper.addHoldRepeatMapping(
             IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
             &chassisAutorotateCommand);
 
-    IoMapper::addHoldMapping(
+    Drivers::ioMapper.addHoldMapping(
             IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
             &chassisDriveCommand);
 
-    IoMapper::addHoldMapping(
+    Drivers::ioMapper.addHoldMapping(
             IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
             &openHopperCommand);
 
-    IoMapper::addHoldMapping(
+    Drivers::ioMapper.addHoldMapping(
             IoMapper::newKeyMap(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN),
             &stopFrictionWheels);
 
-    IoMapper::addHoldMapping(
+    Drivers::ioMapper.addHoldMapping(
             IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
             &wiggleDriveCommand);
 
@@ -133,7 +136,6 @@ void initSubsystemCommands()
     startSoldierCommands();
     registerSoldierIoMappings();
 }
-
 
 }  // namespace control
 

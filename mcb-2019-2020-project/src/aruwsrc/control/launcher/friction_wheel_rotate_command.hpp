@@ -3,8 +3,6 @@
 
 #include <aruwlib/control/command.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -13,7 +11,7 @@ namespace launcher
 
 class FrictionWheelSubsystem;
 
-class FrictionWheelRotateCommand : public Command
+class FrictionWheelRotateCommand : public aruwlib::control::Command
 {
  public:
     FrictionWheelRotateCommand(FrictionWheelSubsystem* subsystem, int speed);

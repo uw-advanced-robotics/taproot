@@ -9,8 +9,6 @@
 
 #include <aruwlib/control/command.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -19,7 +17,7 @@ namespace control
 
 class ExampleSubsystem;
 
-class ExampleCommand : public Command
+class ExampleCommand : public aruwlib::control::Command
 {
  public:
     explicit ExampleCommand(ExampleSubsystem* subsystem, int speed);

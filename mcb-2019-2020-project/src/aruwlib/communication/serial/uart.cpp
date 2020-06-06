@@ -95,7 +95,7 @@ namespace serial
         #endif
     }
 
-    bool Uart::isWriteFinished(UartPort port) {
+    bool Uart::isWriteFinished(UartPort port) const {
         #ifdef ENV_SIMULATOR
         return false;
         #else

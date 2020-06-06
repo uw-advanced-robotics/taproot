@@ -3,7 +3,6 @@
 
 #include <aruwlib/architecture/timeout.hpp>
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "dji_serial.hpp"
 
 namespace aruwlib
@@ -15,8 +14,7 @@ namespace serial
 /**
  * A class used to communicate with our Xaviers.
  * 
- * @note use the static function `getXavierSerial` to interact with this class
- *      rather than instantiating your own `XavierSerial` object.
+ * @note use the static function in Drivers to interact with this class.
  */
 class XavierSerial : public DJISerial
 {
@@ -99,7 +97,9 @@ class XavierSerial : public DJISerial
         int16_t rightBackWheelRPM;
     } ChassisData;
 
-    static XavierSerial& getXavierSerial();
+    XavierSerial();
+    XavierSerial(const XavierSerial&) = delete;
+    XavierSerial &operator=(const XavierSerial&) = default;
 
     /**
      * Call this before using the serial line, initializes the uart line
@@ -138,9 +138,6 @@ class XavierSerial : public DJISerial
     bool getLastAimData(TurretAimData *aimData) const;
 
  private:
-    ///< Main xavier serial instance that everyone will use.
-    static XavierSerial xavierSerial;
-
     // TX variables.
 
     ///< Used to increment through message send types.
@@ -190,9 +187,6 @@ class XavierSerial : public DJISerial
         CV_MESSAGE_TYPE_ROBOT_ID,
         CV_MESSAGE_TYPE_AUTO_AIM_REQUEST
     };
-
-    ///< We make this private so only this class can instantiate this class.
-    XavierSerial();
 
     // TX functions.
 

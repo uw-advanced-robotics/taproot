@@ -5,8 +5,6 @@
 #include <aruwlib/architecture/timeout.hpp>
 #include "sentinel_drive_subsystem.hpp"
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -15,7 +13,7 @@ namespace control
 
 class SentinelDriveSubsystem;
 
-class SentinelAutoDriveCommand : public Command
+class SentinelAutoDriveCommand : public aruwlib::control::Command
 {
  public:
     explicit SentinelAutoDriveCommand(SentinelDriveSubsystem* subsystem);

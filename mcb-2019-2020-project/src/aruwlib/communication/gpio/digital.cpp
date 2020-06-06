@@ -64,7 +64,7 @@ namespace gpio
         #endif
     }
 
-    bool Digital::read(Digital::InputPin pin) {
+    bool Digital::read(Digital::InputPin pin) const {
         #ifdef ENV_SIMULATOR
         return false;
         #else

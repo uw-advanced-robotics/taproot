@@ -15,6 +15,10 @@ namespace gpio
  */
 class Leds {
  public:
+    Leds() = default;
+    Leds(const Leds&) = delete;
+    Leds &operator=(const Leds&) = default;
+
     /**
      * The LED letters correspond to the letters written next to the LEDs
      * on the RoboMaster type A board. The `Green` LED is the led next
@@ -32,7 +36,7 @@ class Leds {
      * Initializes the LEDs by putting the pins in output mode and settting
      * all the pins to low.
      */
-    static void init();
+    void init();
 
     /**
      * Sets a given led to either high or low.
@@ -43,7 +47,7 @@ class Leds {
      * @param[in] isSet `true` if you want to turn the LED off, `false` if you want
      *      to turn the LED on.
      */
-    static void set(LedPin pin, bool isSet);
+    void set(LedPin pin, bool isSet);
 };  // class Leds
 
 }  // namespace gpio

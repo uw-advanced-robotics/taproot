@@ -3,7 +3,6 @@
 
 #include <modm/container.hpp>
 #include <aruwlib/architecture/timeout.hpp>
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "system_error.hpp"
 
 namespace aruwlib
@@ -24,26 +23,30 @@ namespace errors
 class ErrorController
 {
  public:
-    static void addToErrorList(SystemError error);
+    ErrorController() : prevLedErrorChangeWait(ERROR_ROTATE_TIME) {}
+    ErrorController(const ErrorController&) = delete;
+    ErrorController &operator=(const ErrorController&) = default;
 
-    static void update();
+    void addToErrorList(SystemError error);
+
+    void update();
 
  private:
     static const int ERROR_ROTATE_TIME = 5000;
 
     static const unsigned ERROR_LIST_MAX_SIZE = 16;
 
-    static modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
+    modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
 
-    static aruwlib::arch::MilliTimeout prevLedErrorChangeWait;
+    aruwlib::arch::MilliTimeout prevLedErrorChangeWait;
 
-    static int currentDisplayIndex;
+    int currentDisplayIndex = 0;
 
-    static bool getLedErrorCodeBits(Location location, ErrorType errorType, uint8_t* number);
+    bool getLedErrorCodeBits(Location location, ErrorType errorType, uint8_t* number);
 
-    static void setLedError(uint8_t binaryRep);
+    void setLedError(uint8_t binaryRep);
 
-    static void ledSwitch(uint8_t ledOnBoard, bool displayOnBoard);
+    void ledSwitch(uint8_t ledOnBoard, bool displayOnBoard);
 };
 
 }  // namespace errors

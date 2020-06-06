@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <modm/architecture/interface/can_message.hpp>
 
-#include "aruwlib/communication/can/can.hpp"
+#include "can.hpp"
 
 namespace aruwlib
 {

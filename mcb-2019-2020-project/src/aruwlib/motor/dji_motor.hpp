@@ -3,7 +3,6 @@
 
 #include <string>
 #include <aruwlib/architecture/timeout.hpp>
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "aruwlib/communication/can/can_rx_handler.hpp"
 
 namespace aruwlib

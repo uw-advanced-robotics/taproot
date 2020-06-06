@@ -5,8 +5,6 @@
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <modm/math/filter/pid.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -14,7 +12,7 @@ namespace turret
 {
 
 class TurretSubsystem;
-class TurretInitCommand : public Command {
+class TurretInitCommand : public aruwlib::control::Command {
  public:
     explicit TurretInitCommand(TurretSubsystem *subsystem);
 

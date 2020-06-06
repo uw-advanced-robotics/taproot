@@ -4,8 +4,6 @@
 #include <aruwlib/control/command.hpp>
 #include "sentinel_drive_subsystem.hpp"
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -14,7 +12,7 @@ namespace control
 
 class SentinelDriveSubsystem;
 
-class SentinelDriveManualCommand : public Command
+class SentinelDriveManualCommand : public aruwlib::control::Command
 {
  public:
     explicit SentinelDriveManualCommand(SentinelDriveSubsystem* subsystem);

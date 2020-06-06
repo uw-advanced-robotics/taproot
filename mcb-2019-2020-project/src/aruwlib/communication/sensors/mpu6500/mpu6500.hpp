@@ -21,86 +21,90 @@ namespace sensors {
  */
 class Mpu6500 {
  public:
+    Mpu6500() = default;
+    Mpu6500(const Mpu6500&) = delete;
+    Mpu6500 &operator=(const Mpu6500&) = default;
+
     /**
      * Initialize the imu and the SPI line. Uses SPI1, which is internal to the
      * type A board.
      * 
      * @note this function blocks for approximately 1 second.
      */
-    static void init();
+    void init();
 
     /**
      * Read data from the imu. Call at 500 hz for best performance.
      */ 
-    static void read();
+    void read();
 
     /**
      * To be safe, whenever you call the functions below, call this function to insure
      * the data you are about to receive is not garbage.
      */
-    static bool initialized();
+    bool initialized() const;
 
     /**
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    static float getAx();
+    float getAx() const;
 
     /**
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    static float getAy();
+    float getAy() const;
 
     /**
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    static float getAz();
+    float getAz() const;
 
     /**
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    static float getGx();
+    float getGx() const;
 
     /**
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    static float getGy();
+    float getGy() const;
 
     /**
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    static float getGz();
+    float getGz() const;
 
     /**
      * Returns the temperature of the imu in degrees C.
      */
-    static float getTemp();
+    float getTemp() const;
 
     /**
      * Returns yaw angle. in degrees.
      */
-    static float getYaw();
+    float getYaw();
 
     /**
      * Returns pitch angle in degrees.
      */
-    static float getPitch();
+    float getPitch();
 
     /**
      * Returns roll angle in degrees.
      */
-    static float getRoll();
+    float getRoll();
 
     /**
      * Returns the angle difference between the normal vector of the plane that the
      * type A board lies on and of the angle directly upward.
      */
-    static float getTiltAngle();
+    float getTiltAngle() const;
 
  private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
@@ -160,55 +164,55 @@ class Mpu6500 {
         GyroOffset gyroOffset;
     };
 
-    static bool imuInitialized;
+    bool imuInitialized = false;
 
 #ifndef ENV_SIMULATOR
-    static RawData raw;
+    RawData raw;
 
-    static Mahony mahonyAlgorithm;
+    Mahony mahonyAlgorithm;
 
-    static float tiltAngle;
+    float tiltAngle = 0.0f;
 
-    static uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE];
+    uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = { 0 };
 
-    static uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE];
+    uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = { 0 };
 
     ///< Compute the gyro offset values. @note this function blocks.
-    static void calculateGyroOffset();
+    void calculateGyroOffset();
 
     ///< Calibrate accelerometer offset values. @note this function blocks.
-    static void calculateAccOffset();
+    void calculateAccOffset();
 
     // Functions for interacting with hardware directly.
 
     ///< Pull the NSS pin low to initiate contact with the imu.
-    static void mpuNssLow();
+    void mpuNssLow();
 
     ///< Pull the NSS pin high to end contact with the imu.
-    static void mpuNssHigh();
+    void mpuNssHigh();
 
     /**
      * If the imu is not initializes, logs an error and returns 0,
      * otherwise returns the value passed in.
      */
-    static inline float validateReading(float reading);
+    inline float validateReading(float reading) const;
 
     /**
      * Write to a given register.
      */
-    static uint8_t spiWriteRegister(uint8_t reg, uint8_t data);
+    uint8_t spiWriteRegister(uint8_t reg, uint8_t data);
 
     /**
      * Read from a given register.
      */
-    static uint8_t spiReadRegister(uint8_t reg);
+    uint8_t spiReadRegister(uint8_t reg);
 
     /**
      * Read from several registers.
      * regAddr is the first address read, and it reads len number of addresses
      * from that point.
      */
-    static uint8_t spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+    uint8_t spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
 #endif
 };
 

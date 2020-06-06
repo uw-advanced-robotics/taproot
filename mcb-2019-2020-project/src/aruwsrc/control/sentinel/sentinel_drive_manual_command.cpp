@@ -2,10 +2,13 @@
 
 #include <stdlib.h>
 
-#include <aruwlib/control/control_operator_interface.hpp>
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/communication/remote.hpp>
 #include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
+
+using aruwlib::Drivers;
+using aruwlib::control::Subsystem;
 
 namespace aruwsrc
 {
@@ -23,7 +26,8 @@ namespace control
 
     void SentinelDriveManualCommand::execute()
     {
-        subsystemSentinelDrive->setDesiredRpm(ControlOperatorInterface::getSentinelSpeedInput());
+        subsystemSentinelDrive->setDesiredRpm(
+            Drivers::controlOperatorInterface.getSentinelSpeedInput());
     }
 
     // NOLINTNEXTLINE

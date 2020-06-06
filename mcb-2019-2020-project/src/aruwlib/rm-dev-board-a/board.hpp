@@ -18,18 +18,12 @@
 #include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
 
+#include "robot_type.hpp"
+
 using namespace modm::platform;
 #else
 #include <modm/math/units.hpp>
 #endif
-
-#include "robot_type.hpp"
-#include "aruwlib/communication/gpio/analog.hpp"
-#include "aruwlib/communication/gpio/pwm.hpp"
-#include "aruwlib/communication/gpio/leds.hpp"
-#include "aruwlib/communication/can/can.hpp"
-#include "aruwlib/communication/gpio/digital.hpp"
-
 
 ///< @ingroup TODO
 namespace Board
@@ -218,37 +212,17 @@ using DisplaySpiMaster = SpiMaster1;
 
 #endif
 
-inline void
-killAllGpioOutput()
-{
-    #ifndef ENV_SIMULATOR
-    LedsPort::setOutput(modm::Gpio::High);
-    PowerOuts::setOutput(modm::Gpio::Low);
-    DigitalOutPins::setOutput(modm::Gpio::Low);
-    #endif
-    aruwlib::gpio::Pwm::writeAll(0.0);
-}
-
-inline void
-initialize()
+inline void initialize()
 {
     // init clock
     SystemClock::enable();
     #ifndef ENV_SIMULATOR
     SysTickTimer::initialize<SystemClock>();
-    aruwlib::gpio::Leds::init();
     // init 24V output
     PowerOuts::setOutput(modm::Gpio::High);
     // init button on board
     Button::setInput();
     #endif
-
-    // init PWM and analog pins
-    aruwlib::gpio::Analog::init();
-    aruwlib::gpio::Pwm::init();
-    aruwlib::gpio::Digital::init();
-
-    aruwlib::can::Can::initialize();
 }
 
 }  // namespace Board

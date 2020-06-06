@@ -1,10 +1,10 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/communication/remote.hpp>
-#include <aruwlib/control/control_operator_interface.hpp>
+#include <aruwlib/Drivers.hpp>
 #include "aruwsrc/control/chassis/chassis_subsystem.hpp"
 #include "chassis_autorotate_command.hpp"
 
-using namespace aruwlib::control;
+using aruwlib::Drivers;
 
 namespace aruwsrc
 {
@@ -28,13 +28,13 @@ void ChassisAutorotateCommand::execute()
 
     float chassisXDesiredWheelspeed =
             aruwlib::algorithms::limitVal<float>(
-                    ControlOperatorInterface::getChassisXInput(),
+                    Drivers::controlOperatorInterface.getChassisXInput(),
                     -rTranslationalGain, rTranslationalGain)
             * ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     float chassisYDesiredWheelspeed =
             aruwlib::algorithms::limitVal<float>(
-                    ControlOperatorInterface::getChassisYInput(),
+                    Drivers::controlOperatorInterface.getChassisYInput(),
                     -rTranslationalGain, rTranslationalGain)
             * ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 

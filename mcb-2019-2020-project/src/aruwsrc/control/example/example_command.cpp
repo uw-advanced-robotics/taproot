@@ -1,6 +1,8 @@
 #include "example_command.hpp"
 #include "example_subsystem.hpp"
 
+using aruwlib::control::Subsystem;
+
 namespace aruwsrc
 {
 

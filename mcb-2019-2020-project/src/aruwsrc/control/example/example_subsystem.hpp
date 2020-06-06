@@ -19,15 +19,13 @@
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace control
 {
 
-class ExampleSubsystem : public Subsystem
+class ExampleSubsystem : public aruwlib::control::Subsystem
 {
  public:
     ExampleSubsystem(

@@ -27,13 +27,14 @@
 #define __COMMAND_HPP__
 
 #include <set>
-#include "subsystem.hpp"
 
 namespace aruwlib
 {
 
 namespace control
 {
+
+class Subsystem;
 
 class Command {
  public:

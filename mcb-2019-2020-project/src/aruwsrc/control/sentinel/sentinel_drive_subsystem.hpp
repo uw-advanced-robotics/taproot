@@ -7,7 +7,6 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <modm/math/filter/pid.hpp>
 
-using namespace aruwlib::control;
 
 namespace aruwsrc
 {
@@ -15,7 +14,7 @@ namespace aruwsrc
 namespace control
 {
 
-class SentinelDriveSubsystem : public Subsystem
+class SentinelDriveSubsystem : public aruwlib::control::Subsystem
 {
  public:
     static constexpr float MAX_POWER_CONSUMPTION = 30.0f;

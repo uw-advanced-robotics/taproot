@@ -25,7 +25,7 @@ namespace gpio
         #endif
     }
 
-    uint16_t Analog::read(Pin pin) {
+    uint16_t Analog::read(Pin pin) const {
         #ifdef ENV_SIMULATOR
         return 0;
         #else

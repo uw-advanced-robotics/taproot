@@ -12,15 +12,13 @@
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/servo.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace control
 {
 
-class HopperSubsystem : public Subsystem
+class HopperSubsystem : public aruwlib::control::Subsystem
 {
  public:
     #if defined(TARGET_SOLDIER)

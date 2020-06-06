@@ -13,7 +13,7 @@ namespace aruwsrc
 namespace turret
 {
 
-class TurretWorldRelativePositionCommand : public Command
+class TurretWorldRelativePositionCommand : public aruwlib::control::Command
 {
  public:
     TurretWorldRelativePositionCommand(TurretSubsystem *subsystem,

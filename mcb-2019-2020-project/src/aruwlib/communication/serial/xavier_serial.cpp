@@ -6,8 +6,6 @@ namespace aruwlib
 namespace serial
 {
 
-XavierSerial XavierSerial::xavierSerial;
-
 XavierSerial::XavierSerial() :
 DJISerial(Uart::UartPort::Uart2, false),
 txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
@@ -17,11 +15,6 @@ lastAimData(),
 hasAimData(false),
 isCvOnline(false)
 {}
-
-XavierSerial& XavierSerial::getXavierSerial()
-{
-    return xavierSerial;
-}
 
 void XavierSerial::initializeCV()
 {

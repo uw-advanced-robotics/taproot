@@ -10,30 +10,15 @@
 #include "remote.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/architecture/clock.hpp"
-#include "aruwlib/control/controller_mapper.hpp"
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 
 using namespace aruwlib::serial;
 
 namespace aruwlib {
-    // The current remote information
-    Remote::RemoteInfo Remote::remote;
-
-    // Remote connection state
-    bool Remote::connected = false;
-
-    // uart recieve buffer
-    uint8_t Remote::rxBuffer[REMOTE_BUF_LEN];
-
-    // Timestamp when last byte was read
-    uint32_t Remote::lastRead;
-
-    // Current count of bytes read
-    uint8_t Remote::currentBufferIndex = 0;
-
     // Enables and initializes Usart1 communication
     void Remote::initialize() {
-        Uart::init<Uart::UartPort::Uart1, 100000, Uart::Parity::Even>();
+        Drivers::uart.init<Uart::Uart1, 100000, Uart::Parity::Even>();
     }
 
     // Reads/parses the current buffer and updates the current remote info states
@@ -45,7 +30,8 @@ namespace aruwlib {
         }
         uint8_t data;  // Next byte to be read
         // Read next byte if available and more needed for the current packet
-        while (Uart::read(Uart::UartPort::Uart1, &data) && currentBufferIndex < REMOTE_BUF_LEN) {
+        while (Drivers::uart.read(Uart::UartPort::Uart1, &data)
+            && currentBufferIndex < REMOTE_BUF_LEN) {
             rxBuffer[currentBufferIndex] = data;
             currentBufferIndex++;
             lastRead = aruwlib::arch::clock::getTimeMilliseconds();
@@ -63,12 +49,12 @@ namespace aruwlib {
     }
 
     // Returns if the remote is connected
-    bool Remote::isConnected() {
+    bool Remote::isConnected() const {
         return connected;
     }
 
     // Returns the value of the given channel
-    float Remote::getChannel(Channel ch) {
+    float Remote::getChannel(Channel ch) const {
         switch (ch) {
             case Channel::RIGHT_HORIZONTAL: return remote.rightHorizontal / STICK_MAX_VALUE;
             case Channel::RIGHT_VERTICAL: return remote.rightVertical / STICK_MAX_VALUE;
@@ -79,7 +65,7 @@ namespace aruwlib {
     }
 
     // Returns the value of the given switch
-    Remote::SwitchState Remote::getSwitch(Switch sw) {
+    Remote::SwitchState Remote::getSwitch(Switch sw) const {
         switch (sw) {
             case Switch::LEFT_SWITCH: return remote.leftSwitch;
             case Switch::RIGHT_SWITCH: return remote.rightSwitch;
@@ -88,36 +74,36 @@ namespace aruwlib {
     }
 
     // Returns the current mouse x value
-    int16_t Remote::getMouseX() {
+    int16_t Remote::getMouseX() const {
         return remote.mouse.x;
     }
 
     // Returns the current mouse y value
-    int16_t Remote::getMouseY() {
+    int16_t Remote::getMouseY() const {
         return remote.mouse.y;
     }
 
     // Returns the current mouse z value
-    int16_t Remote::getMouseZ() {
+    int16_t Remote::getMouseZ() const {
         return remote.mouse.z;
     }
 
     // Returns the current mouse l value
-    bool Remote::getMouseL() {
+    bool Remote::getMouseL() const {
         return remote.mouse.l;
     }
 
     // Returns the current mouse r value
-    bool Remote::getMouseR() {
+    bool Remote::getMouseR() const {
         return remote.mouse.r;
     }
 
-    bool Remote::keyPressed(Key key) {
+    bool Remote::keyPressed(Key key) const {
         return (remote.key & (1 << (uint8_t) key)) != 0;
     }
 
     // Returns the value of the wheel
-    int16_t Remote::getWheel() {
+    int16_t Remote::getWheel() const {
         return remote.wheel;
     }
 
@@ -191,7 +177,7 @@ namespace aruwlib {
         // Remote wheel
         remote.wheel = (rxBuffer[16] | rxBuffer[17] << 8) - 1024;
 
-        aruwlib::control::IoMapper::handleKeyStateChange(
+        Drivers::ioMapper.handleKeyStateChange(
             remote.key, remote.leftSwitch, remote.rightSwitch);
 
         remote.updateCounter++;
@@ -206,7 +192,7 @@ namespace aruwlib {
             rxBuffer[i] = 0;
         }
         // Clear Usart1 rxBuffer
-        Uart::discardReceiveBuffer(Uart::UartPort::Uart1);
+        Drivers::uart.discardReceiveBuffer(Uart::UartPort::Uart1);
     }
 
     // Resets the current remote info
@@ -227,7 +213,7 @@ namespace aruwlib {
         clearRxBuffer();
     }
 
-    uint32_t Remote::getUpdateCounter()
+    uint32_t Remote::getUpdateCounter() const
     {
         return remote.updateCounter;
     }

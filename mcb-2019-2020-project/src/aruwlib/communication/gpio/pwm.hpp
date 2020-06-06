@@ -18,6 +18,10 @@ namespace gpio
  */
 class Pwm {
  public:
+    Pwm() = default;
+    Pwm(const Pwm&) = delete;
+    Pwm &operator=(const Pwm&) = default;
+
     /**
      * PWM pins whose name corresponds to the names defined on the
      * RoboMaster type A board.
@@ -27,7 +31,7 @@ class Pwm {
         W = 1, X, Y, Z
     };
 
-    static void init();
+    void init();
 
     /**
      * Sets all Timer channels to the same duty.
@@ -35,7 +39,7 @@ class Pwm {
      * @param[in] duty the duty cycle to be set. If the duty is outside of the range
      *      of [0, 1] the duty is limited to within the range.
      */
-    static void writeAll(float duty);
+    void writeAll(float duty);
 
     /**
      * Sets the PWM duty for a specified pin.
@@ -44,7 +48,7 @@ class Pwm {
      *      of [0, 1] the duty is limited to within the range.
      * @param[in] pin the PWM pin to be set.
      */
-    static void write(float duty, Pwm::Pin pin);
+    void write(float duty, Pwm::Pin pin);
 };  // class Pwm
 
 }  // namespace gpio

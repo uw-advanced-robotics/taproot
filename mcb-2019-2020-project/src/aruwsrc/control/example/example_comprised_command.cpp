@@ -3,7 +3,6 @@
 #include "example_command.hpp"
 #include "example_subsystem.hpp"
 
-
 namespace aruwsrc
 {
 
@@ -11,7 +10,7 @@ namespace control
 {
 
 ExampleComprisedCommand::ExampleComprisedCommand(ExampleSubsystem* subsystem) :
-ComprisedCommand(),
+aruwlib::control::ComprisedCommand(),
 exampleCommand(subsystem, 2000),
 otherExampleCommand(subsystem, 500),
 switchTimer(2000),

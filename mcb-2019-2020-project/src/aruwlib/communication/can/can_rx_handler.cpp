@@ -3,15 +3,13 @@
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 #include "can_rx_handler.hpp"
+#include "aruwlib/Drivers.hpp"
 
 namespace aruwlib
 {
 
 namespace can
 {
-    CanRxListner* CanRxHandler::messageHandlerStoreCan1[MAX_RECEIVE_UNIQUE_HEADER_CAN1] = {0};
-    CanRxListner* CanRxHandler::messageHandlerStoreCan2[MAX_RECEIVE_UNIQUE_HEADER_CAN2] = {0};
-
     void CanRxHandler::attachReceiveHandler(CanRxListner *const CanRxHndl)
     {
         if (CanRxHndl->canBus == can::CanBus::CAN_BUS1)
@@ -44,12 +42,12 @@ namespace can
     {
         modm::can::Message rxMessage;
         // handle incoming CAN 1 messages
-        if (Can::getMessage(CanBus::CAN_BUS1, &rxMessage))
+        if (Drivers::can.getMessage(CanBus::CAN_BUS1, &rxMessage))
         {
             processReceivedCanData(rxMessage, messageHandlerStoreCan1);
         }
         // handle incoming CAN 2 messages
-        if (Can::getMessage(CanBus::CAN_BUS2, &rxMessage))
+        if (Drivers::can.getMessage(CanBus::CAN_BUS2, &rxMessage))
         {
             processReceivedCanData(rxMessage, messageHandlerStoreCan2);
         }

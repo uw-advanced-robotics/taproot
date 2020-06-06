@@ -4,8 +4,6 @@
 namespace aruwlib {
 
 namespace sensors {
-    bool Mpu6500::imuInitialized = false;
-
     // initialize the imu and SPIbx
     void Mpu6500::init() {
     }
@@ -14,42 +12,42 @@ namespace sensors {
     void Mpu6500::read() {
     }
 
-    bool Mpu6500::initialized() {
+    bool Mpu6500::initialized() const {
         return imuInitialized;
     }
 
     // get accleration reading on x-axis
-    float Mpu6500::getAx() {
+    float Mpu6500::getAx() const {
         return 0;
     }
 
     // get accleration reading on y-axis
-    float Mpu6500::getAy() {
+    float Mpu6500::getAy() const {
         return 0;
     }
 
     // get acceleration reading on z-axis
-    float Mpu6500::getAz() {
+    float Mpu6500::getAz() const {
         return 0;
     }
 
     // get gyro reading on x-axis
-    float Mpu6500::getGx() {
+    float Mpu6500::getGx() const {
         return 0;
     }
 
     // get gyro reading on y-axis
-    float Mpu6500::getGy() {
+    float Mpu6500::getGy() const {
         return 0;
     }
 
     // get gyro reading on z-axis (degrees per second)
-    float Mpu6500::getGz() {
+    float Mpu6500::getGz() const {
         return 0;
     }
 
     // get temperature value in C
-    float Mpu6500::getTemp() {
+    float Mpu6500::getTemp() const {
         return 0;
     }
 
@@ -65,7 +63,7 @@ namespace sensors {
         return 0;
     }
 
-    float Mpu6500::getTiltAngle()
+    float Mpu6500::getTiltAngle() const
     {
         return 0;
     }

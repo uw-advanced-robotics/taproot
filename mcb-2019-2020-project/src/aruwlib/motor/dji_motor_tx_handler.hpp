@@ -31,8 +31,6 @@
 #define __MOTOR_MANAGER_HPP__
 
 #include <limits.h>
-#include "aruwlib/algorithms/math_user_utils.hpp"
-#include "aruwlib/communication/can/can_rx_handler.hpp"
 #include "dji_motor.hpp"
 
 namespace aruwlib
@@ -46,33 +44,43 @@ namespace motor
 class DjiMotorTxHandler
 {
  public:
+    DjiMotorTxHandler() = default;
+    // delete copy constructor.
+    DjiMotorTxHandler(const DjiMotorTxHandler&) = delete;
+    // We will need this to reset.
+    DjiMotorTxHandler &operator=(const DjiMotorTxHandler&) = default;
+
     // Called when a motor is created, adds to the motor manager
     // and checks to make sure the motor is not already being used.
-    static void addMotorToManager(DjiMotor* motor);
+    void addMotorToManager(DjiMotor* motor);
 
-    static void processCanSendData(void);
+    void processCanSendData();
 
-    // delete copy constructor
-    DjiMotorTxHandler(const DjiMotorTxHandler&) = delete;
+    void removeFromMotorManager(const DjiMotor& motor);
 
-    static void removeFromMotorManager(const DjiMotor& motor);
+    DjiMotor const* getCan1MotorData(MotorId motorId);
 
-    static DjiMotor const* getCan1MotorData(MotorId motorId);
+    DjiMotor const* getCan2MotorData(MotorId motorId);
 
-    static DjiMotor const* getCan2MotorData(MotorId motorId);
+    static DjiMotorTxHandler &getMainTxHandler();
 
  private:
-    static void addMotorToManager(DjiMotor** canMotorStore, DjiMotor*const motor);
+    static const int DJI_MOTORS_PER_CAN = 8;
 
-    static void serializeMotorStoreSendData(
+    DjiMotor* can1MotorStore[DJI_MOTORS_PER_CAN] = {0};
+    DjiMotor* can2MotorStore[DJI_MOTORS_PER_CAN] = {0};
+
+    void addMotorToManager(DjiMotor** canMotorStore, DjiMotor*const motor);
+
+    void serializeMotorStoreSendData(
         DjiMotor** canMotorStore,
         modm::can::Message* messageLow,
         modm::can::Message* messageHigh
     );
 
-    static void removeFromMotorManager(const DjiMotor& motor, DjiMotor** motorStore);
+    void removeFromMotorManager(const DjiMotor& motor, DjiMotor** motorStore);
 
-    static void zeroTxMessage(modm::can::Message* message);
+    void zeroTxMessage(modm::can::Message* message);
 };
 
 }  // namespace motor

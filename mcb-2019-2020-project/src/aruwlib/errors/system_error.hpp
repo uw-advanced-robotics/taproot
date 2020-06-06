@@ -12,7 +12,6 @@
 #define __SYSTEM_ERROR_HPP__
 
 #include <string>
-#include "aruwlib/rm-dev-board-a/board.hpp"
 
 namespace aruwlib
 {

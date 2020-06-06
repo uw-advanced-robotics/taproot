@@ -7,15 +7,13 @@
 #include <aruwlib/motor/dji_motor.hpp>
 #include <aruwlib/algorithms/ramp.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace launcher
 {
 
-class FrictionWheelSubsystem : public Subsystem
+class FrictionWheelSubsystem : public aruwlib::control::Subsystem
 {
  public:
     FrictionWheelSubsystem(

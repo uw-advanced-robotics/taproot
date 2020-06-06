@@ -4,8 +4,6 @@
 #include <aruwlib/control/command.hpp>
 #include "hopper_subsystem.hpp"
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -14,7 +12,7 @@ namespace control
 
 class OpenHopperCommand;
 
-class OpenHopperCommand : public Command
+class OpenHopperCommand : public aruwlib::control::Command
 {
  public:
     explicit OpenHopperCommand(HopperSubsystem* subsystem);

@@ -2,6 +2,7 @@
 
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/communication/gpio/leds.hpp"
+#include "aruwlib/Drivers.hpp"
 
 #include "error_controller.hpp"
 
@@ -11,13 +12,6 @@ namespace aruwlib
 {
 namespace errors
 {
-    modm::BoundedDeque<SystemError, ErrorController::ERROR_LIST_MAX_SIZE>
-        ErrorController::errorList;
-
-    aruwlib::arch::MilliTimeout ErrorController::prevLedErrorChangeWait(ERROR_ROTATE_TIME);
-
-    int ErrorController::currentDisplayIndex = 0;
-
     // add an error to list of errors
     void ErrorController::addToErrorList(SystemError error) {
         // only add error if it is not already added
@@ -45,7 +39,7 @@ namespace errors
         // there are no errors to display, default display
         if (errorList.getSize() == 0) {
             setLedError(0);
-            aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::LedPin::Green, true);
+            Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
             return;
         }
 
@@ -60,10 +54,10 @@ namespace errors
             errorList.get(currentDisplayIndex).getErrorType(), &displayNum)
         ) {
             setLedError(displayNum);
-            aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::LedPin::Green, true);
+            Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
         } else {
             setLedError(0);
-            aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::LedPin::Green, false);
+            Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, false);
         }
     }
 
@@ -97,7 +91,8 @@ namespace errors
         // If it is a 1, the LED corresponding will blink
         for (int i = 0; i < 8; i++) {
             bool display = (binaryRep >> i) & 1;
-            aruwlib::gpio::Leds::set(static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
+            Drivers::leds.set(
+                static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
         }
     }
 }  // namespace errors

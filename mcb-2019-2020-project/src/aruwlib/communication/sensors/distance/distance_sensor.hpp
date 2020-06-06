@@ -1,8 +1,6 @@
 #ifndef DISTANCE_SENSOR_H_
 #define DISTANCE_SENSOR_H_
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
 namespace aruwlib {
 
 namespace sensors {

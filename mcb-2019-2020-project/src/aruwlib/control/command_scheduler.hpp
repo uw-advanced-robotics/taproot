@@ -18,9 +18,8 @@
 
 #include <map>
 #include <modm/container/linked_list.hpp>
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
 #include "subsystem.hpp"
+#include "command.hpp"
 
 namespace aruwlib
 {
@@ -33,6 +32,8 @@ class CommandScheduler
  public:
     CommandScheduler() : subsystemToCommandMap()
     {}
+    CommandScheduler(const CommandScheduler&) = default;
+    CommandScheduler &operator=(const CommandScheduler&) = default;
 
     void runCommands();
 
@@ -48,8 +49,6 @@ class CommandScheduler
 
     void addCommand(Command* commandToAdd);
 
-    static CommandScheduler& getMainScheduler();
-
  private:
     // maximum time before we start erroring, in microseconds
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
@@ -58,8 +57,6 @@ class CommandScheduler
     std::map<Subsystem*, Command*> subsystemToCommandMap;
 
     static uint32_t commandSchedulerTimestamp;
-
-    static CommandScheduler mainScheduler;
 };
 
 }  // namespace control

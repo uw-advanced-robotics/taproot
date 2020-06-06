@@ -4,22 +4,16 @@
 #include <aruwlib/architecture/periodic_timer.hpp>
 
 /* communication includes ---------------------------------------------------*/
-#include <aruwlib/motor/dji_motor_tx_handler.hpp>
-#include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
-#include <aruwlib/communication/can/can_rx_listener.hpp>
-#include <aruwlib/communication/remote.hpp>
-#include <aruwlib/communication/serial/xavier_serial.hpp>
-#include <aruwlib/communication/serial/ref_serial.hpp>
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/display/sh1106.hpp>
 
 /* error handling includes --------------------------------------------------*/
-#include <aruwlib/errors/error_controller.hpp>
 
 /* control includes ---------------------------------------------------------*/
 #include "aruwsrc/control/robot_control.hpp"
-#include <aruwlib/control/command_scheduler.hpp>
 
 using namespace modm::literals;
+using aruwlib::Drivers;
 
 /* define timers here -------------------------------------------------------*/
 aruwlib::arch::PeriodicMilliTimer updateImuPeriod(2);
@@ -46,9 +40,9 @@ int main()
 
         if (sendMotorTimeout.execute())
         {
-            aruwlib::errors::ErrorController::update();
-            aruwlib::control::CommandScheduler::getMainScheduler().run();
-            aruwlib::motor::DjiMotorTxHandler::processCanSendData();
+            Drivers::errorController.update();
+            Drivers::commandScheduler.run();
+            Drivers::djiMotorTxHandler.processCanSendData();
         }
         #ifndef ENV_SIMULATOR
 
@@ -60,6 +54,12 @@ int main()
 
 void initializeIo()
 {
+    aruwlib::Drivers::analog.init();
+    aruwlib::Drivers::pwm.init();
+    aruwlib::Drivers::digital.init();
+    aruwlib::Drivers::leds.init();
+    aruwlib::Drivers::can.initialize();
+
 #ifndef ENV_SIMULATOR
     /// \todo this should be an init in the display class
     Board::DisplaySpiMaster::connect<
@@ -83,21 +83,21 @@ void initializeIo()
     > display;
     display.initializeBlocking();
 
-    aruwlib::Remote::initialize();
-    aruwlib::sensors::Mpu6500::init();
+    Drivers::remote.initialize();
+    Drivers::mpu6500.init();
 
-    aruwlib::serial::RefSerial::getRefSerial().initialize();
-    aruwlib::serial::XavierSerial::getXavierSerial().initialize();
+    Drivers::refSerial.initialize();
+    Drivers::xavierSerial.initialize();
 }
 
 void updateIo()
 {
-    aruwlib::can::CanRxHandler::pollCanData();
-    aruwlib::serial::XavierSerial::getXavierSerial().updateSerial();
-    aruwlib::serial::RefSerial::getRefSerial().updateSerial();
-    aruwlib::Remote::read();
+    Drivers::canRxHandler.pollCanData();
+    Drivers::xavierSerial.updateSerial();
+    Drivers::refSerial.updateSerial();
+    Drivers::remote.read();
     if (updateImuPeriod.execute())
     {
-        aruwlib::sensors::Mpu6500::read();
+        Drivers::mpu6500.read();
     }
 }

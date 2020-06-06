@@ -1,13 +1,11 @@
 #include "controller_mapper.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+#include "aruwlib/Drivers.hpp"
+#include "command_scheduler.hpp"
 
 namespace aruwlib {
 
 namespace control {
-
-std::map<IoMapper::RemoteMap*,
-         IoMapper::MapInfo*,
-         IoMapper::compareRemoteMapPtrs> IoMapper::remoteMappings;
 
 void IoMapper::handleKeyStateChange(uint16_t key,
                                     Remote::SwitchState leftSwitch,
@@ -30,27 +28,28 @@ void IoMapper::handleKeyStateChange(uint16_t key,
                 case PRESS:
                     if (!mi->pressed) {
                         mi->pressed = true;
-                        CommandScheduler::getMainScheduler().addCommand(mi->command);
+                        Drivers::commandScheduler.addCommand(mi->command);
                     }
                     break;
                 case HOLD:
                     if (!mi->pressed) {
-                        CommandScheduler::getMainScheduler().addCommand(mi->command);
+                        Drivers::commandScheduler.addCommand(mi->command);
                         mi->pressed = true;
                     }
                     break;
                 case HOLD_REPEAT:  // spam add the command
-                    if (!CommandScheduler::getMainScheduler().isCommandScheduled(mi->command)) {
-                        CommandScheduler::getMainScheduler().addCommand(mi->command);
+                    if (!Drivers::commandScheduler.isCommandScheduled(mi->command)) {
+                        Drivers::commandScheduler.addCommand(mi->command);
                     }
                     break;
                 case TOGGLE:
                     if (!mi->pressed) {
                         if (mi->toggled) {
-                            CommandScheduler::getMainScheduler().removeCommand(mi->command, true);
+                            Drivers::commandScheduler.removeCommand(
+                                mi->command, true);
                             mi->toggled = false;
                         } else {
-                            CommandScheduler::getMainScheduler().addCommand(mi->command);
+                            Drivers::commandScheduler.addCommand(mi->command);
                             mi->toggled = true;
                         }
                         mi->pressed = true;
@@ -61,7 +60,7 @@ void IoMapper::handleKeyStateChange(uint16_t key,
                 }
         } else {
             if ((mi->type == HOLD && mi->pressed) || (mi->type == HOLD_REPEAT)) {
-                CommandScheduler::getMainScheduler().removeCommand(mi->command, true);
+                Drivers::commandScheduler.removeCommand(mi->command, true);
             }
             mi->pressed = false;
         }

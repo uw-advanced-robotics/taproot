@@ -22,6 +22,10 @@ namespace gpio
  */
 class Analog {
  public:
+    Analog() = default;
+    Analog(const Analog&) = delete;
+    Analog &operator=(const Analog&) = default;
+
     // Analog pins
     enum Pin
     {
@@ -29,12 +33,11 @@ class Analog {
     };
 
     ///< Initializes the ADC and connects the configured analog pins to it.
-    static void init();
+    void init();
 
     ///< Reads voltage across the specified pin. Units in mV.
-    static uint16_t read(Analog::Pin pin);
+    uint16_t read(Analog::Pin pin) const;
 };  // class Analog
-
 }  // namespace gpio
 
 }  // namespace aruwlib

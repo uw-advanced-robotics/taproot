@@ -1,5 +1,8 @@
-#include <aruwlib/communication/gpio/leds.hpp>
+#include <aruwlib/Drivers.hpp>
+#include <aruwlib/control/subsystem.hpp>
 #include "blink_led_command.hpp"
+
+using aruwlib::Drivers;
 
 namespace aruwsrc
 {
@@ -8,7 +11,7 @@ namespace control
 {
     BlinkLEDCommand::BlinkLEDCommand(aruwsrc::control::ExampleSubsystem* subsystem)
     {
-        this->addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
+        this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(subsystem));
     }
 
     void BlinkLEDCommand::initialize() {
@@ -19,14 +22,14 @@ namespace control
     void BlinkLEDCommand::execute()
     {
         refershCounter++;
-        aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::A, true);
+        Drivers::leds.set(aruwlib::gpio::Leds::A, true);
     }
 
     // NOLINTNEXTLINE (see https://github.com/cpplint/cpplint/issues/131)
     void BlinkLEDCommand::end(bool)
     {
         endCounter++;
-        aruwlib::gpio::Leds::set(aruwlib::gpio::Leds::A, false);
+        Drivers::leds.set(aruwlib::gpio::Leds::A, false);
     }
 
     bool BlinkLEDCommand::isFinished() const

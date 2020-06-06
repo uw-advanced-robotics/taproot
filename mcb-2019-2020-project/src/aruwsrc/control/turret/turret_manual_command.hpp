@@ -4,8 +4,6 @@
 #include <modm/math/filter/pid.hpp>
 #include <aruwlib/control/command.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -13,7 +11,7 @@ namespace turret
 {
 
 class TurretSubsystem;
-class TurretManualCommand : public Command {
+class TurretManualCommand : public aruwlib::control::Command {
  public:
     explicit TurretManualCommand(TurretSubsystem *subsystem);
 

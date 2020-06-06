@@ -1,5 +1,7 @@
 #include "analog_distance_sensor.hpp"
 
+#include "aruwlib/Drivers.hpp"
+
 namespace aruwlib {
 
 namespace sensors {
@@ -18,7 +20,7 @@ namespace sensors {
 
     float AnalogDistanceSensor::read() {
         // Read analog pin and convert to volts
-        float reading = aruwlib::gpio::Analog::read(pin);
+        float reading = Drivers::analog.read(pin);
 
         // Linear model
         float linear = m * reading / 1000.0f + b;

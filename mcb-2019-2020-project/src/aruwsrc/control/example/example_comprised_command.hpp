@@ -11,7 +11,7 @@ namespace aruwsrc
 namespace control
 {
 
-class ExampleComprisedCommand : public ComprisedCommand
+class ExampleComprisedCommand : public aruwlib::control::ComprisedCommand
 {
  public:
     explicit ExampleComprisedCommand(ExampleSubsystem* subsystem);

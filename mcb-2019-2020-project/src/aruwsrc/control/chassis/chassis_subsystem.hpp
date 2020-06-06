@@ -6,8 +6,6 @@
 #include <aruwlib/algorithms/extended_kalman.hpp>
 #include <modm/math/filter/pid.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
@@ -22,7 +20,7 @@ namespace chassis
  *     - in other words, 'x' is the bow/stern and 'y' is starboard/
  *       port in boat terms
  */ 
-class ChassisSubsystem : public Subsystem {
+class ChassisSubsystem : public aruwlib::control::Subsystem {
  public:
     // public constants
     // max wheel speed, measured in rpm of the encoder (rather than shaft)

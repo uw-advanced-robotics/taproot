@@ -53,7 +53,7 @@ class Servo {
     void updateSendPwmRamp();
 
     // gets the pwm output to said float value.
-    float getPWM();
+    float getPWM() const;
 
     // gets the minimum pwm output
     float getMinPWM() const;

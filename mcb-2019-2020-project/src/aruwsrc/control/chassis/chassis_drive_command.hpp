@@ -4,19 +4,17 @@
 #include <aruwlib/control/command.hpp>
 #include "chassis_subsystem.hpp"
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace chassis
 {
 
-class ChassisDriveCommand : public Command {
+class ChassisDriveCommand : public aruwlib::control::Command {
  public:
     explicit ChassisDriveCommand(ChassisSubsystem* chassis) : chassis(chassis)
     {
-        addSubsystemRequirement(dynamic_cast<Subsystem*>(chassis));
+        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
     }
 
     void initialize() override;

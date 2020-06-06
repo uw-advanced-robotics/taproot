@@ -1,5 +1,8 @@
 #include "friction_wheel_subsystem.hpp"
 #include "friction_wheel_rotate_command.hpp"
+#include <aruwlib/control/subsystem.hpp>
+
+using aruwlib::control::Subsystem;
 
 namespace aruwsrc
 {

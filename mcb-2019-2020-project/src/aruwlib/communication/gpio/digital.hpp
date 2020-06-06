@@ -24,6 +24,10 @@ namespace gpio
  */
 class Digital {
  public:
+    Digital() = default;
+    Digital(const Digital&) = delete;
+    Digital &operator=(const Digital&) = default;
+
     ///< Currently enabled digital input pins.
     enum InputPin
     {
@@ -50,7 +54,7 @@ class Digital {
      * Initializes all pins as output/input pins. Does not handle configuring
      * pin types (@see configureInputPullMode).
      */
-    static void init();
+    void init();
 
     /**
      * By default input pins are floating. Configure them to have a pull-up
@@ -59,7 +63,7 @@ class Digital {
      * @param[in] pin the InputPin to configure.
      * @param[in] mode the pull mode to be enabled.
      */
-    static void configureInputPullMode(InputPin pin, InputPullMode mode);
+    void configureInputPullMode(InputPin pin, InputPullMode mode);
 
     /**
      * Sets the digital OutputPin either high or low.
@@ -67,7 +71,7 @@ class Digital {
      * @param[in] pin the OutputPin to set.
      * @param[in] isSet `true` to send high, `false` to send low.
      */
-    static void set(OutputPin pin, bool isSet);
+    void set(OutputPin pin, bool isSet);
 
     /**
      * Reads from an InputPin.
@@ -75,7 +79,7 @@ class Digital {
      * @param[in] pin the InputPin to read from.
      * @return `true` if the pin is pulled high and `false` otherwise.
      */
-    static bool read(InputPin pin);
+    bool read(InputPin pin) const;
 };  // class Digital
 
 }  // namespace gpio

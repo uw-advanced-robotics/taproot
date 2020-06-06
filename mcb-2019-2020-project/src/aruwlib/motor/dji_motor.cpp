@@ -1,5 +1,6 @@
 #include "dji_motor.hpp"
-#include "dji_motor_tx_handler.hpp"
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
 
 namespace aruwlib
 {
@@ -8,7 +9,7 @@ namespace motor
 {
     DjiMotor::~DjiMotor()
     {
-        DjiMotorTxHandler::removeFromMotorManager(*this);
+        Drivers::djiMotorTxHandler.removeFromMotorManager(*this);
     }
 
     DjiMotor::DjiMotor(
@@ -28,7 +29,7 @@ namespace motor
         motorName(name)
     {
         motorDisconnectTimeout.stop();
-        DjiMotorTxHandler::addMotorToManager(this);
+        Drivers::djiMotorTxHandler.addMotorToManager(this);
     }
 
     void DjiMotor::parseCanRxData(const modm::can::Message& message)

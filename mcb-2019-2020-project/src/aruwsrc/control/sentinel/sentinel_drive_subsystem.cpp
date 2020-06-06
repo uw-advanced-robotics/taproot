@@ -12,11 +12,11 @@ namespace control
 {
     void SentinelDriveSubsystem::initLimitSwitches()
     {
-        Digital::configureInputPullMode(
+        Drivers::digital.configureInputPullMode(
             leftLimitSwitch,
             aruwlib::gpio::Digital::InputPullMode::PullDown
         );
-        Digital::configureInputPullMode(
+        Drivers::digital.configureInputPullMode(
             rightLimitSwitch,
             aruwlib::gpio::Digital::InputPullMode::PullDown
         );
@@ -73,10 +73,11 @@ namespace control
     // being at the start of the rail, right limit switch indicates end of rail.
     void SentinelDriveSubsystem::resetOffsetFromLimitSwitch ()
     {
-        if (Digital::read(leftLimitSwitch)) {  // DigitalPin where limit switch is placed
+        // DigitalPin where limit switch is placed
+        if (Drivers::digital.read(leftLimitSwitch)) {
             leftZeroRailOffset = distanceFromEncoder(&leftWheel);
             rightZeroRailOffset = distanceFromEncoder(&rightWheel);
-        } else if (Digital::read(rightLimitSwitch)) {
+        } else if (Drivers::digital.read(rightLimitSwitch)) {
             leftZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&leftWheel);
             rightZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&rightWheel);
         }

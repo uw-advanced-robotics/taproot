@@ -9,19 +9,12 @@ namespace aruwlib
 namespace serial
 {
 
-RefSerial RefSerial::refSerial;
-
 RefSerial::RefSerial() :
 DJISerial(Uart::UartPort::Uart6, true),
 robotData(),
 gameData(),
 receivedDpsTracker()
 {}
-
-RefSerial& RefSerial::getRefSerial()
-{
-    return refSerial;
-}
 
 // rx stuff
 void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)

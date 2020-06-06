@@ -1,4 +1,5 @@
 #include <aruwlib/control/command_scheduler.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
 #include "agitator_shoot_comprised_command.hpp"
 #include "agitator_rotate_command.hpp"
 #include "agitator_unjam_command.hpp"

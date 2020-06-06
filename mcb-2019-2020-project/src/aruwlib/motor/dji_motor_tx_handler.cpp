@@ -1,9 +1,8 @@
 #include <modm/architecture/interface/assert.h>
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/errors/create_errors.hpp"
-#include "aruwlib/communication/can/can.hpp"
 #include "dji_motor_tx_handler.hpp"
-#include "dji_motor.hpp"
+#include "aruwlib/Drivers.hpp"
 
 #define CAN_DJI_MESSAGE_SEND_LENGTH 8
 #define CAN_DJI_LOW_IDENTIFIER 0X200
@@ -14,11 +13,6 @@ namespace aruwlib
 
 namespace motor
 {
-    #define DJI_MOTORS_PER_CAN 8
-
-    DjiMotor* can1MotorStore[DJI_MOTORS_PER_CAN] = {0};
-    DjiMotor* can2MotorStore[DJI_MOTORS_PER_CAN] = {0};
-
     void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor*const motor)
     {
         int16_t idIndex = DJI_MOTOR_NORMALIZED_ID(motor->getMotorIdentifier());
@@ -79,15 +73,15 @@ namespace motor
         serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
         serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
 
-        if (aruwlib::can::Can::isReadyToSend(aruwlib::can::CanBus::CAN_BUS1))
+        if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS1))
         {
-            aruwlib::can::Can::sendMessage(aruwlib::can::CanBus::CAN_BUS1, can1MessageLow);
-            aruwlib::can::Can::sendMessage(aruwlib::can::CanBus::CAN_BUS1, can1MessageHigh);
+            Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
+            Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
         }
-        if (aruwlib::can::Can::isReadyToSend(aruwlib::can::CanBus::CAN_BUS2))
+        if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS2))
         {
-            aruwlib::can::Can::sendMessage(aruwlib::can::CanBus::CAN_BUS2, can1MessageLow);
-            aruwlib::can::Can::sendMessage(aruwlib::can::CanBus::CAN_BUS2, can1MessageHigh);
+            Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageLow);
+            Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageHigh);
         }
     }
 

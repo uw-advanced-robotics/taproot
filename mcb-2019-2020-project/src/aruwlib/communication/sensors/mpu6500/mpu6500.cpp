@@ -11,18 +11,6 @@ namespace sensors {
 
 using namespace modm::literals;
 
-bool Mpu6500::imuInitialized = false;
-
-Mpu6500::RawData Mpu6500::raw;
-
-Mahony Mpu6500::mahonyAlgorithm;
-
-float Mpu6500::tiltAngle;
-
-uint8_t Mpu6500::txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
-
-uint8_t Mpu6500::rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
-
 void Mpu6500::init() {
     Board::ImuNss::GpioOutput();
 
@@ -103,38 +91,38 @@ void Mpu6500::read() {
 
 // Getter functions.
 
-bool Mpu6500::initialized() {
+bool Mpu6500::initialized() const {
     return imuInitialized;
 }
 
-float Mpu6500::getAx() {
+float Mpu6500::getAx() const {
     return validateReading(static_cast<float>(raw.accel.x) *
                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
 }
 
-float Mpu6500::getAy() {
+float Mpu6500::getAy() const {
     return validateReading(static_cast<float>(raw.accel.y) *
                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
 }
 
-float Mpu6500::getAz() {
+float Mpu6500::getAz() const {
     return validateReading(static_cast<float>(raw.accel.z) *
                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
 }
 
-float Mpu6500::getGx() {
+float Mpu6500::getGx() const {
     return validateReading(static_cast<float>(raw.gyro.x) / LSB_D_PER_S_TO_D_PER_S);
 }
 
-float Mpu6500::getGy() {
+float Mpu6500::getGy() const {
     return validateReading(static_cast<float>(raw.gyro.y) / LSB_D_PER_S_TO_D_PER_S);
 }
 
-float Mpu6500::getGz() {
+float Mpu6500::getGz() const {
     return validateReading(static_cast<float>(raw.gyro.z) / LSB_D_PER_S_TO_D_PER_S);
 }
 
-float Mpu6500::getTemp() {
+float Mpu6500::getTemp() const {
     return validateReading(21.0f + static_cast<float>(raw.temp) / 333.87f);
 }
 
@@ -151,12 +139,12 @@ float Mpu6500::getRoll()
     return validateReading(mahonyAlgorithm.getRoll());
 }
 
-float Mpu6500::getTiltAngle()
+float Mpu6500::getTiltAngle() const
 {
     return validateReading(tiltAngle);
 }
 
-float Mpu6500::validateReading(float reading) {
+float Mpu6500::validateReading(float reading) const {
     if (imuInitialized) {
         return reading;
     }

@@ -6,7 +6,6 @@
 #include <utility>
 #include <numeric>
 #include "command.hpp"
-#include "command_scheduler.hpp"
 #include "aruwlib/communication/remote.hpp"
 
 /* 
@@ -71,7 +70,7 @@ friend class aruwlib::Remote;
         }
     };
 
-    static std::map<RemoteMap*, MapInfo*, compareRemoteMapPtrs> remoteMappings;
+    std::map<RemoteMap*, MapInfo*, compareRemoteMapPtrs> remoteMappings;
 
     /**
      * Iterates through all the current mappings to see which buttons are pressed
@@ -79,35 +78,39 @@ friend class aruwlib::Remote;
      * for each button pressed/combination of buttons, executes the commands.
      */
 
-    static void handleKeyStateChange(uint16_t key,
+    void handleKeyStateChange(uint16_t key,
                                      Remote::SwitchState leftSwitch,
                                      Remote::SwitchState rightSwitch);
 
-    static void addMap(RemoteMap* mapping, MapInfo* mapInfo);
+    void addMap(RemoteMap* mapping, MapInfo* mapInfo);
 
  public:
+    IoMapper() = default;
+    IoMapper(const IoMapper&) = delete;
+    IoMapper &operator=(const IoMapper&) = default;
+
     /**
      * Attaches a command to a remote control mapping which executes when a mapping is pressed
      * Note: a press mapping is only executed once
      */
 
-    static void addPressMapping(RemoteMap* mapping, Command* command);
+    void addPressMapping(RemoteMap* mapping, Command* command);
 
     /**
      * Attaches a command to a remote control mapping which executes while a mapping is held
      * Note: a hold mapping is interrupted when the key is no longer being held
      */
 
-    static void addHoldMapping(RemoteMap* mapping, Command* command);
+    void addHoldMapping(RemoteMap* mapping, Command* command);
 
-    static void addHoldRepeatMapping(RemoteMap* mapping, Command* command);
+    void addHoldRepeatMapping(RemoteMap* mapping, Command* command);
 
     /**
      * Attaches a command to a remote control mapping which executes whenever a mapping is toggled
      * Note: a toggle mapping is interrupted when the key is untoggled
      */
 
-    static void addToggleMapping(RemoteMap* mapping, Command* command);
+    void addToggleMapping(RemoteMap* mapping, Command* command);
 
     /*
      *   Returns a RemoteMap with dependencies on specified keys and no switches

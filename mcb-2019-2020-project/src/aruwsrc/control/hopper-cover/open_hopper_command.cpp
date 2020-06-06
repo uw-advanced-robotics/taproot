@@ -9,7 +9,7 @@ namespace control
     OpenHopperCommand::OpenHopperCommand(HopperSubsystem* subsystem)
         : Command(), subsystemHopper(subsystem)
     {
-        addSubsystemRequirement(reinterpret_cast<Subsystem*>(subsystem));
+        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(subsystem));
     }
 
     void OpenHopperCommand::initialize()

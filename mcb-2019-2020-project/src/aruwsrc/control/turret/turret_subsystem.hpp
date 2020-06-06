@@ -7,15 +7,13 @@
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/algorithms/linear_interpolation.hpp>
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace turret
 {
 
-class TurretSubsystem : public Subsystem {
+class TurretSubsystem : public aruwlib::control::Subsystem {
  public:
     static constexpr float TURRET_START_ANGLE = 90.0f;
     static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;

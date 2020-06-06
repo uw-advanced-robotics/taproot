@@ -5,6 +5,11 @@
 #include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
 
+#ifndef ENV_SIMULATOR
+using modm::platform::RandomNumberGenerator;
+#endif
+using aruwlib::control::Subsystem;
+
 namespace aruwsrc
 {
 

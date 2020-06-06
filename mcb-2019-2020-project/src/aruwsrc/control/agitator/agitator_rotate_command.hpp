@@ -4,8 +4,8 @@
 #include <modm/math/filter/pid.hpp>
 #include <aruwlib/control/command.hpp>
 #include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/architecture/timeout.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
 #include "agitator_subsystem.hpp"
 
 namespace aruwsrc

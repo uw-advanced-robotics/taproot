@@ -5,15 +5,13 @@
 #include <aruwlib/control/command.hpp>
 #include "example_subsystem.hpp"
 
-using namespace aruwlib::control;
-
 namespace aruwsrc
 {
 
 namespace control
 {
 
-class BlinkLEDCommand : public Command
+class BlinkLEDCommand : public aruwlib::control::Command
 {
  public:
     explicit BlinkLEDCommand(aruwsrc::control::ExampleSubsystem* subsystem);

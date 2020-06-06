@@ -1,7 +1,7 @@
 #include "servo.hpp"
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
 #include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/Drivers.hpp"
 
 namespace aruwlib
 {
@@ -30,11 +30,11 @@ void Servo::updateSendPwmRamp(){
     pwmOutputRamp.update(pwmRampSpeed * (currTime - prevTime));
     prevTime = currTime;
     currentPWM = pwmOutputRamp.getValue();
-    aruwlib::gpio::Pwm::write(pwmOutputRamp.getValue(), servoPin);
+    Drivers::pwm.write(pwmOutputRamp.getValue(), servoPin);
 }
 
 // gets the current PWM output value.
-float Servo::getPWM(){
+float Servo::getPWM() const {
     return currentPWM;
 }
 

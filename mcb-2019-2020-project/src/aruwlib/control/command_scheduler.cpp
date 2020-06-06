@@ -2,13 +2,11 @@
 #include <set>
 #include <algorithm>
 
-#include "aruwlib/motor/dji_motor_tx_handler.hpp"
-#include "aruwlib/communication/can/can_rx_handler.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 #include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/Drivers.hpp"
 
 #include "command_scheduler.hpp"
-#include "command.hpp"
 
 using namespace std;
 
@@ -18,13 +16,6 @@ namespace aruwlib
 namespace control
 {
     uint32_t CommandScheduler::commandSchedulerTimestamp = 0;
-
-    CommandScheduler CommandScheduler::mainScheduler;
-
-    CommandScheduler& CommandScheduler::getMainScheduler()
-    {
-        return mainScheduler;
-    }
 
     void CommandScheduler::addCommand(Command* commandToAdd)
     {
@@ -79,7 +70,7 @@ namespace control
         uint32_t runStart = aruwlib::arch::clock::getTimeMicroseconds();
         // Timestamp for reference and for disallowing a command from running
         // multiple times during the same call to run.
-        if (this == &mainScheduler)
+        if (this == &Drivers::commandScheduler)
         {
             commandSchedulerTimestamp++;
         }
