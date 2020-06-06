@@ -6,10 +6,8 @@
 
 namespace aruwsrc
 {
-
 namespace engineer
 {
-
 /**
  * This is a subsystem code for x-axis movement (moving the
  * grabber back and forward). Connect this to a digital output
@@ -17,15 +15,14 @@ namespace engineer
  */
 class XAxisSubsystem : public aruwlib::control::Subsystem
 {
- public:
-    explicit XAxisSubsystem(aruwlib::gpio::Digital::OutputPin pin)
-        : pin(pin), extended(false) {}
+public:
+    explicit XAxisSubsystem(aruwlib::gpio::Digital::OutputPin pin) : pin(pin), extended(false) {}
 
     void setExtended(bool isExtended);
 
     bool isExtended() const;
 
- private:
+private:
     aruwlib::gpio::Digital::OutputPin pin;
 
     bool extended;

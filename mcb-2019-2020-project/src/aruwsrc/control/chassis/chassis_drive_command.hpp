@@ -2,16 +2,16 @@
 #define __CHASSIS_DRIVE_COMMAND_HPP__
 
 #include <aruwlib/control/command.hpp>
+
 #include "chassis_subsystem.hpp"
 
 namespace aruwsrc
 {
-
 namespace chassis
 {
-
-class ChassisDriveCommand : public aruwlib::control::Command {
- public:
+class ChassisDriveCommand : public aruwlib::control::Command
+{
+public:
     explicit ChassisDriveCommand(ChassisSubsystem* chassis) : chassis(chassis)
     {
         addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
@@ -25,7 +25,7 @@ class ChassisDriveCommand : public aruwlib::control::Command {
 
     bool isFinished() const override;
 
- private:
+private:
     ChassisSubsystem* chassis;
 };
 

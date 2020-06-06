@@ -1,17 +1,16 @@
-#include <math.h>
 #include "contiguous_float.hpp"
+
+#include <math.h>
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 ContiguousFloat::ContiguousFloat(
     const float& value,
     const float& lowerBound,
-    const float& upperBound
-) {
+    const float& upperBound)
+{
     this->value = value;
 
     this->lowerBound = lowerBound;
@@ -21,31 +20,31 @@ ContiguousFloat::ContiguousFloat(
     this->reboundValue();
 }
 
-float ContiguousFloat::reboundValue() {
-    if (value < lowerBound) {
-        value = upperBound
-            + fmod(value - lowerBound, upperBound - lowerBound);
-    } else if (value > upperBound) {
-        value = lowerBound
-            + fmod(value - upperBound, upperBound - lowerBound);
+float ContiguousFloat::reboundValue()
+{
+    if (value < lowerBound)
+    {
+        value = upperBound + fmod(value - lowerBound, upperBound - lowerBound);
+    }
+    else if (value > upperBound)
+    {
+        value = lowerBound + fmod(value - upperBound, upperBound - lowerBound);
     }
 
     return value;
 }
 
-float ContiguousFloat::unwrapBelow() const {
-    return lowerBound - (upperBound - value);
-}
+float ContiguousFloat::unwrapBelow() const { return lowerBound - (upperBound - value); }
 
-float ContiguousFloat::unwrapAbove() const {
-    return upperBound + (value - lowerBound);
-}
+float ContiguousFloat::unwrapAbove() const { return upperBound + (value - lowerBound); }
 
-float ContiguousFloat::difference(const float& otherValue) const {
+float ContiguousFloat::difference(const float& otherValue) const
+{
     return difference(ContiguousFloat(otherValue, lowerBound, upperBound));
 }
 
-float ContiguousFloat::difference(const ContiguousFloat& otherValue) const {
+float ContiguousFloat::difference(const ContiguousFloat& otherValue) const
+{
     // Find the shortest path to the target (smallest difference)
     float aboveDiff = otherValue.getValue() - this->unwrapAbove();
     float belowDiff = otherValue.getValue() - this->unwrapBelow();
@@ -53,15 +52,11 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) const {
 
     float finalDiff = stdDiff;
 
-    if (
-        fabs(aboveDiff) < fabs(belowDiff)
-        && fabs(aboveDiff) < fabs(stdDiff))
+    if (fabs(aboveDiff) < fabs(belowDiff) && fabs(aboveDiff) < fabs(stdDiff))
     {
         finalDiff = aboveDiff;
     }
-    else if (
-        fabs(belowDiff) < fabs(aboveDiff)
-        && fabs(belowDiff) < fabs(stdDiff))
+    else if (fabs(belowDiff) < fabs(aboveDiff) && fabs(belowDiff) < fabs(stdDiff))
     {
         finalDiff = belowDiff;
     }
@@ -69,66 +64,68 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) const {
     return finalDiff;
 }
 
-void ContiguousFloat::shiftBounds(const float& shiftMagnitude) {
+void ContiguousFloat::shiftBounds(const float& shiftMagnitude)
+{
     upperBound += shiftMagnitude;
     lowerBound += shiftMagnitude;
     reboundValue();
 }
 
-void ContiguousFloat::shiftValue(const float& shiftMagnitude) {
+void ContiguousFloat::shiftValue(const float& shiftMagnitude)
+{
     value += shiftMagnitude;
     reboundValue();
 }
 
-float ContiguousFloat::limitValue(const ContiguousFloat& valueToLimit,
-                                 const float& min,
-                                 const float& max)
+float ContiguousFloat::limitValue(
+    const ContiguousFloat& valueToLimit,
+    const float& min,
+    const float& max)
 {
     ContiguousFloat minContig(min, valueToLimit.lowerBound, valueToLimit.upperBound);
     ContiguousFloat maxContig(max, valueToLimit.lowerBound, valueToLimit.upperBound);
     return limitValue(valueToLimit, minContig, maxContig);
 }
 
-float ContiguousFloat::limitValue(const ContiguousFloat& valueToLimit,
-                                 const ContiguousFloat& min,
-                                 const ContiguousFloat& max)
+float ContiguousFloat::limitValue(
+    const ContiguousFloat& valueToLimit,
+    const ContiguousFloat& min,
+    const ContiguousFloat& max)
 {
     if (min.getValue() == max.getValue())
     {
         return valueToLimit.getValue();
     }
-    if ((min.getValue() < max.getValue()
-                && (valueToLimit.getValue() > max.getValue()
-                || valueToLimit.getValue() < min.getValue()))
-        || (min.getValue() > max.getValue()
-                && valueToLimit.getValue() > max.getValue()
-                && valueToLimit.getValue() < min.getValue()))
+    if ((min.getValue() < max.getValue() &&
+         (valueToLimit.getValue() > max.getValue() || valueToLimit.getValue() < min.getValue())) ||
+        (min.getValue() > max.getValue() && valueToLimit.getValue() > max.getValue() &&
+         valueToLimit.getValue() < min.getValue()))
     {
         float targetMinDifference = fabs(valueToLimit.difference(min));
         float targetMaxDifference = fabs(valueToLimit.difference(max));
         return targetMinDifference < targetMaxDifference ? min.getValue() : max.getValue();
-    } else {
+    }
+    else
+    {
         return valueToLimit.getValue();
     }
 }
 
 // Getters/Setters ----------------
 // Value
-float ContiguousFloat::getValue() const {
-    return value;
-}
+float ContiguousFloat::getValue() const { return value; }
 
-void ContiguousFloat::setValue(const float& newValue) {
+void ContiguousFloat::setValue(const float& newValue)
+{
     value = newValue;
     this->reboundValue();
 }
 
 // Upper bound
-float ContiguousFloat::getUpperBound() const {
-    return upperBound;
-}
+float ContiguousFloat::getUpperBound() const { return upperBound; }
 
-void ContiguousFloat::setUpperBound(const float& newValue) {
+void ContiguousFloat::setUpperBound(const float& newValue)
+{
     upperBound = newValue;
 
     this->validateBounds();
@@ -136,19 +133,20 @@ void ContiguousFloat::setUpperBound(const float& newValue) {
 }
 
 // Lower bound
-float ContiguousFloat::getLowerBound() const {
-    return lowerBound;
-}
+float ContiguousFloat::getLowerBound() const { return lowerBound; }
 
-void ContiguousFloat::setLowerBound(const float& newValue) {
+void ContiguousFloat::setLowerBound(const float& newValue)
+{
     lowerBound = newValue;
 
     this->validateBounds();
     this->reboundValue();
 }
 
-void ContiguousFloat::validateBounds() {
-    if (lowerBound > upperBound) {
+void ContiguousFloat::validateBounds()
+{
+    if (lowerBound > upperBound)
+    {
         float tmp = this->lowerBound;
         this->lowerBound = this->upperBound;
         this->upperBound = tmp;

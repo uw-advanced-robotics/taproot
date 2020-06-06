@@ -2,14 +2,9 @@
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
-SerialTestClass::SerialTestClass():
-DJISerial(Uart::UartPort::Uart2, true),
-messageId(0), i(0)
-{}
+SerialTestClass::SerialTestClass() : DJISerial(Uart::UartPort::Uart2, true), messageId(0), i(0) {}
 
 void SerialTestClass::messageReceiveCallback(const SerialMessage& completeMessage)
 {

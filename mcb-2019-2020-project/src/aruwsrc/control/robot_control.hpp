@@ -3,10 +3,8 @@
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 void initSubsystemCommands();
 
 }  // namespace control

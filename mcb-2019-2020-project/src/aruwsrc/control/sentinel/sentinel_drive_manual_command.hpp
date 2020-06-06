@@ -2,19 +2,18 @@
 #define __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
 
 #include <aruwlib/control/command.hpp>
+
 #include "sentinel_drive_subsystem.hpp"
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 class SentinelDriveSubsystem;
 
 class SentinelDriveManualCommand : public aruwlib::control::Command
 {
- public:
+public:
     explicit SentinelDriveManualCommand(SentinelDriveSubsystem* subsystem);
 
     void initialize() override;
@@ -25,7 +24,7 @@ class SentinelDriveManualCommand : public aruwlib::control::Command
 
     bool isFinished() const override;
 
- private:
+private:
     SentinelDriveSubsystem* subsystemSentinelDrive;
 };
 

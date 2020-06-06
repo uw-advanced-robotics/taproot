@@ -9,8 +9,8 @@
 #include "communication/gpio/pwm.hpp"
 #include "communication/remote.hpp"
 #include "communication/sensors/mpu6500/mpu6500.hpp"
-#include "communication/serial/uart.hpp"
 #include "communication/serial/ref_serial.hpp"
+#include "communication/serial/uart.hpp"
 #include "communication/serial/xavier_serial.hpp"
 #include "control/command_scheduler.hpp"
 #include "control/control_operator_interface.hpp"
@@ -22,7 +22,7 @@ namespace aruwlib
 {
 class Drivers
 {
- public:
+public:
     static can::Can can;
     static can::CanRxHandler canRxHandler;
     static gpio::Analog analog;
@@ -43,7 +43,7 @@ class Drivers
 #ifdef ENV_SIMULATOR
     static void reset();
 
- private:
+private:
     static void resetCan();
     static void resetCanRxHandler();
     static void resetAnalog();

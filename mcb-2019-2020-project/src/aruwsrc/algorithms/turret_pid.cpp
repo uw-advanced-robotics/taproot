@@ -1,22 +1,23 @@
 #include "turret_pid.hpp"
-#include <aruwlib/architecture/clock.hpp>
+
 #include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/architecture/clock.hpp>
 
 using namespace aruwlib::algorithms;
 
 namespace aruwsrc
 {
-
 namespace algorithms
 {
-
 float TurretPid::runController(float error, float errorDerivative)
 {
     // p
     currErrorP = kp * proportionalKalman.filterData(error);
     // i
-    currErrorI = limitVal<float>(currErrorI + ki * proportionalKalman.getLastFiltered(),
-        -maxICumulative, maxICumulative);
+    currErrorI = limitVal<float>(
+        currErrorI + ki * proportionalKalman.getLastFiltered(),
+        -maxICumulative,
+        maxICumulative);
     // d
     currErrorD = -kd * derivativeKalman.filterData(errorDerivative);
     // total
@@ -31,10 +32,7 @@ float TurretPid::runControllerDerivateError(float error, float dt)
     return runController(error, errorDerivative);
 }
 
-float TurretPid::getOutput()
-{
-    return output;
-}
+float TurretPid::getOutput() { return output; }
 
 void TurretPid::reset()
 {

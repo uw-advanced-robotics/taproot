@@ -9,27 +9,29 @@
 
 namespace aruwlib
 {
-
 namespace gpio
 {
-
 /**
  * Analog output pins are pins W, X, Y, and Z (board pins PI5, PI6, PI7, PI2)
  * as referenced by the pin naming on the RoboMaster type A board.
- * 
- * To read from a pin call Read and pass the function a value (S - V) from the 
+ *
+ * To read from a pin call Read and pass the function a value (S - V) from the
  * analog inPin enum.
  */
-class Analog {
- public:
+class Analog
+{
+public:
     Analog() = default;
-    Analog(const Analog&) = delete;
-    Analog &operator=(const Analog&) = default;
+    Analog(const Analog &) = delete;
+    Analog &operator=(const Analog &) = default;
 
     // Analog pins
     enum Pin
     {
-        S = 1, T, U, V
+        S = 1,
+        T,
+        U,
+        V
     };
 
     ///< Initializes the ADC and connects the configured analog pins to it.

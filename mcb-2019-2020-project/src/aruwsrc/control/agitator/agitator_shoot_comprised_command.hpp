@@ -2,26 +2,24 @@
 #define __SHOOT_COMPRISED_COMMAND_HPP__
 
 #include <aruwlib/control/comprised_command.hpp>
-#include "agitator_subsystem.hpp"
+
 #include "agitator_rotate_command.hpp"
+#include "agitator_subsystem.hpp"
 #include "agitator_unjam_command.hpp"
 
 namespace aruwsrc
 {
-
 namespace agitator
 {
-
 class ShootComprisedCommand : public aruwlib::control::ComprisedCommand
 {
- public:
+public:
     ShootComprisedCommand(
         AgitatorSubsystem* agitator,
         float agitatorChangeAngle,
         float maxUnjamAngle,
         uint32_t agitatorDesiredRotateTime,
-        uint32_t minAgitatorRotateTime
-    );
+        uint32_t minAgitatorRotateTime);
 
     void initialize();
 
@@ -31,7 +29,7 @@ class ShootComprisedCommand : public aruwlib::control::ComprisedCommand
 
     bool isFinished() const;
 
- private:
+private:
     AgitatorSubsystem* connectedAgitator;
 
     AgitatorRotateCommand agitatorRotateCommand;

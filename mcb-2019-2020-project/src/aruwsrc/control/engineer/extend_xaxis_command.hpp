@@ -5,10 +5,8 @@
 
 namespace aruwsrc
 {
-
 namespace engineer
 {
-
 class XAxisSubsystem;
 
 /**
@@ -18,7 +16,7 @@ class XAxisSubsystem;
  */
 class ExtendXAxisCommand : public aruwlib::control::Command
 {
- public:
+public:
     explicit ExtendXAxisCommand(XAxisSubsystem* subsystem);
 
     void initialize() override;
@@ -29,7 +27,7 @@ class ExtendXAxisCommand : public aruwlib::control::Command
 
     bool isFinished() const override;
 
- private:
+private:
     XAxisSubsystem* xAxisSubsystem;
 };  // class ExtendXAxisCommand
 

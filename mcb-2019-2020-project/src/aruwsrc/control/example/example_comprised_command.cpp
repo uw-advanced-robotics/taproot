@@ -5,16 +5,14 @@
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
-ExampleComprisedCommand::ExampleComprisedCommand(ExampleSubsystem* subsystem) :
-aruwlib::control::ComprisedCommand(),
-exampleCommand(subsystem, 2000),
-otherExampleCommand(subsystem, 500),
-switchTimer(2000),
-switchCommand(false)
+ExampleComprisedCommand::ExampleComprisedCommand(ExampleSubsystem* subsystem)
+    : aruwlib::control::ComprisedCommand(),
+      exampleCommand(subsystem, 2000),
+      otherExampleCommand(subsystem, 500),
+      switchTimer(2000),
+      switchCommand(false)
 {
     this->addSubsystemRequirement(subsystem);
     this->comprisedCommandScheduler.registerSubsystem(subsystem);
@@ -25,8 +23,10 @@ void ExampleComprisedCommand::initialize()
     this->comprisedCommandScheduler.addCommand(dynamic_cast<Command*>(&exampleCommand));
 }
 
-void ExampleComprisedCommand::execute() {
-    if (switchTimer.execute()) {
+void ExampleComprisedCommand::execute()
+{
+    if (switchTimer.execute())
+    {
         switchTimer.restart(2000);
         if (switchCommand)
         {

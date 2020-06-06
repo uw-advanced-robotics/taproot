@@ -44,10 +44,10 @@ int main()
             Drivers::commandScheduler.run();
             Drivers::djiMotorTxHandler.processCanSendData();
         }
-        #ifndef ENV_SIMULATOR
+#ifndef ENV_SIMULATOR
 
         modm::delayMicroseconds(10);
-        #endif
+#endif
     }
     return 0;
 }
@@ -62,25 +62,23 @@ void initializeIo()
 
 #ifndef ENV_SIMULATOR
     /// \todo this should be an init in the display class
-    Board::DisplaySpiMaster::connect<
-        Board::DisplayMiso::Miso,
-        Board::DisplayMosi::Mosi,
-        Board::DisplaySck::Sck
-    >();
+    Board::DisplaySpiMaster::
+        connect<Board::DisplayMiso::Miso, Board::DisplayMosi::Mosi, Board::DisplaySck::Sck>();
 
     // SPI1 is on ABP2 which is at 90MHz; use prescaler 64 to get ~fastest baud rate below 1mHz max
     // 90MHz/64=~14MHz
     Board::DisplaySpiMaster::initialize<Board::SystemClock, 1406250_Hz>();
 #endif
     aruwlib::display::Sh1106<
-    #ifndef ENV_SIMULATOR
+#ifndef ENV_SIMULATOR
         Board::DisplaySpiMaster,
         Board::DisplayCommand,
         Board::DisplayReset,
-    #endif
-        128, 64,
-        false
-    > display;
+#endif
+        128,
+        64,
+        false>
+        display;
     display.initializeBlocking();
 
     Drivers::remote.initialize();

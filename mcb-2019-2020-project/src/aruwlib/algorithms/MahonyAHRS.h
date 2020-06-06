@@ -18,11 +18,12 @@
 //--------------------------------------------------------------------------------------------
 // Variable declaration
 
-class Mahony {
- private:
-    float twoKp;        // 2 * proportional gain (Kp)
-    float twoKi;        // 2 * integral gain (Ki)
-    float q0, q1, q2, q3;    // quaternion of sensor frame relative to auxiliary frame
+class Mahony
+{
+private:
+    float twoKp;           // 2 * proportional gain (Kp)
+    float twoKi;           // 2 * integral gain (Ki)
+    float q0, q1, q2, q3;  // quaternion of sensor frame relative to auxiliary frame
     float integralFBx, integralFBy, integralFBz;  // integral error terms scaled by Ki
     float invSampleFreq;
     float roll, pitch, yaw;
@@ -30,37 +31,50 @@ class Mahony {
     static float invSqrt(float x);
     void computeAngles();
 
-//-------------------------------------------------------------------------------------------
-// Function declarations
+    //-------------------------------------------------------------------------------------------
+    // Function declarations
 
- public:
+public:
     Mahony();
     void begin(float sampleFrequency) { invSampleFreq = 1.0f / sampleFrequency; }
-    void update(float gx, float gy, float gz,
-                float ax, float ay, float az,
-                float mx, float my, float mz);
+    void update(
+        float gx,
+        float gy,
+        float gz,
+        float ax,
+        float ay,
+        float az,
+        float mx,
+        float my,
+        float mz);
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
-    float getRoll() {
+    float getRoll()
+    {
         if (!anglesComputed) computeAngles();
         return roll * 57.29578f;
     }
-    float getPitch() {
+    float getPitch()
+    {
         if (!anglesComputed) computeAngles();
         return pitch * 57.29578f;
     }
-    float getYaw() {
+    float getYaw()
+    {
         if (!anglesComputed) computeAngles();
         return yaw * 57.29578f + 180.0f;
     }
-    float getRollRadians() {
+    float getRollRadians()
+    {
         if (!anglesComputed) computeAngles();
         return roll;
     }
-    float getPitchRadians() {
+    float getPitchRadians()
+    {
         if (!anglesComputed) computeAngles();
         return pitch;
     }
-    float getYawRadians() {
+    float getYawRadians()
+    {
         if (!anglesComputed) computeAngles();
         return yaw;
     }

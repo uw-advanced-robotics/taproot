@@ -3,17 +3,18 @@
 
 #include "analog_distance_sensor.hpp"
 
-namespace aruwlib {
-
-namespace sensors {
-
+namespace aruwlib
+{
+namespace sensors
+{
 /**
  * Basic SHARP IR Sensor via analog input.  Returns distance in cm.
  *
  * The distance conversion can be tweaked depending on the sensor.
  */
-class SharpIrGP2Y0A41: public AnalogDistanceSensor {
- public:
+class SharpIrGP2Y0A41 : public AnalogDistanceSensor
+{
+public:
     /**
      * Constructor to init Sharp IR analog pin.
      *
@@ -24,7 +25,7 @@ class SharpIrGP2Y0A41: public AnalogDistanceSensor {
     ///< Init not needed for Sharp IR.
     void init() override {}
 
- private:
+private:
     ///< Min distance boundary value (in cm).
     static constexpr float SHARP_IR_MIN = 4.0f;
     ///< Max distance boundary value (in cm).

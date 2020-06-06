@@ -6,29 +6,21 @@
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 ///< An approximation for pi.
 constexpr float PI = 3.1415926535897932384626f;
 
 ///< Floating point conversion from degrees to radians using PI.
-inline float degreesToRadians(float degrees)
-{
-    return degrees * PI / 180.0f;
-}
+inline float degreesToRadians(float degrees) { return degrees * PI / 180.0f; }
 
 ///< Floating point conversion from radians to degrees using PI.
-inline float radiansToDegrees(float radians)
-{
-    return radians * 180.f / PI;
-}
+inline float radiansToDegrees(float radians) { return radians * 180.f / PI; }
 
 /**
  * Use this instead of the == operator when asserting equality for floats.
  * Performs \code fabsf(val1-val2)<epsilon\endcode
- * 
+ *
  * @param[in] val1 the first value to compare.
  * @param[in] val2 the second value to compare.
  * @param[in] epsilon the floating point equality tolerance, for equality a
@@ -50,8 +42,7 @@ inline bool compareFloatClose(float val1, float val2, float epsilon)
  * @param[in] max the max that val will be limited to.
  * @return the limited value.
  */
-template< typename T >
-T limitVal(T val, T min, T max)
+template <typename T> T limitVal(T val, T min, T max)
 {
     if (min >= max)
     {
@@ -74,17 +65,17 @@ T limitVal(T val, T min, T max)
 /**
  * A simple floating point low pass filter, e.g.
  * \f$y_{filtered} = \alpha * y_{n+1} + (1-\alpha) \cdot y_n\f$
- * 
+ *
  * Here is a simple use case. To use the low pass filter, pass
  * in the val you are low passing in as the first parameter and
  * have that value accept what lowPassFilter returns.
  * \code
  * val = lowPassFilter(val, newValue, 0.1f);
  * \endcode
- * 
+ *
  * @note only use this if you are willing to introduce some lag into
  *      your system, and be careful if you do.
- * @param[in] prevValue the previous low passed value. 
+ * @param[in] prevValue the previous low passed value.
  * @param[in] newValue the new data to be passed into the low pass filter.
  * @param[in] alpha the amount of smoothing. The larger the alpha, the
  *      less smoothing occurs. An alpha of 1 means that you want to favor
@@ -94,14 +85,15 @@ T limitVal(T val, T min, T max)
  */
 inline float lowPassFilter(float prevValue, float newValue, float alpha)
 {
-    if (alpha < 0.0f || alpha > 1.0f) {
+    if (alpha < 0.0f || alpha > 1.0f)
+    {
         return newValue;
     }
     return alpha * newValue + (1.0f - alpha) * prevValue;
 }
 
-template <typename From, typename To>
-To reinterpretCopy(From from) {
+template <typename From, typename To> To reinterpretCopy(From from)
+{
     static_assert(sizeof(From) == sizeof(To), "can only reinterpret-copy types of the same size");
     To result;
     memcpy(static_cast<void*>(&result), static_cast<void*>(&from), sizeof(To));
@@ -116,7 +108,7 @@ To reinterpretCopy(From from) {
  */
 float fastInvSqrt(float x);
 
-/** 
+/**
  * Performs a rotation matrix on the given x and y components of a vector.
  *
  * @param x the x component of the vector to be rotated.

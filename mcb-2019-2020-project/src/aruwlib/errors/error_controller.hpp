@@ -1,16 +1,15 @@
 #ifndef ERROR_CONTROLLER_HPP
 #define ERROR_CONTROLLER_HPP
 
-#include <modm/container.hpp>
 #include <aruwlib/architecture/timeout.hpp>
+#include <modm/container.hpp>
+
 #include "system_error.hpp"
 
 namespace aruwlib
 {
-
 namespace errors
 {
-
 /**
  * Protocol description:
  * The 8 leds on the mcb are used to indicate a location and error type. LEDs A-D transmit
@@ -22,16 +21,16 @@ namespace errors
  */
 class ErrorController
 {
- public:
+public:
     ErrorController() : prevLedErrorChangeWait(ERROR_ROTATE_TIME) {}
     ErrorController(const ErrorController&) = delete;
-    ErrorController &operator=(const ErrorController&) = default;
+    ErrorController& operator=(const ErrorController&) = default;
 
     void addToErrorList(SystemError error);
 
     void update();
 
- private:
+private:
     static const int ERROR_ROTATE_TIME = 5000;
 
     static const unsigned ERROR_LIST_MAX_SIZE = 16;

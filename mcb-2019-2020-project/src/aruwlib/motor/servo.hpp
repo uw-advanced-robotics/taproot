@@ -3,17 +3,16 @@
 #ifndef _SERVO_HPP_
 #define _SERVO_HPP_
 
-#include "aruwlib/communication/gpio/pwm.hpp"
 #include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/communication/gpio/pwm.hpp"
 
 namespace aruwlib
 {
-
 namespace motor
 {
-
-class Servo {
- private:
+class Servo
+{
+private:
     // used to change servo speed
     // see construtctor for detail
     aruwlib::algorithms::Ramp pwmOutputRamp;
@@ -37,12 +36,15 @@ class Servo {
     // current port for output
     aruwlib::gpio::Pwm::Pin servoPin;
 
- public:
+public:
     // constructor
     // initializes class with PWMs; variable "pwmRampSpeed" is used for constructing pwmOutputRamp
     // the greater "pwmRampSpeed" is, the faster the servo will rotate
-    Servo(aruwlib::gpio::Pwm::Pin currPort,
-        const float maximumPWM, float minimumPWM, float pwmRampSpeed);
+    Servo(
+        aruwlib::gpio::Pwm::Pin currPort,
+        const float maximumPWM,
+        float minimumPWM,
+        float pwmRampSpeed);
 
     // sets the pwmOutputRamp object to the desired RPM.
     // do not repeatedly call

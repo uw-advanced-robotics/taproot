@@ -4,18 +4,11 @@
 
 using namespace aruwlib::arch;
 
-PeriodicMilliTimer::PeriodicMilliTimer() : period(0)
-{
-}
+PeriodicMilliTimer::PeriodicMilliTimer() : period(0) {}
 
-PeriodicMilliTimer::PeriodicMilliTimer(uint32_t period) : period(period), timeout(period)
-{
-}
+PeriodicMilliTimer::PeriodicMilliTimer(uint32_t period) : period(period), timeout(period) {}
 
-void PeriodicMilliTimer::restart()
-{
-    timeout.restart(period);
-}
+void PeriodicMilliTimer::restart() { timeout.restart(period); }
 
 void PeriodicMilliTimer::restart(uint32_t period)
 {
@@ -23,15 +16,9 @@ void PeriodicMilliTimer::restart(uint32_t period)
     restart();
 }
 
-void PeriodicMilliTimer::stop()
-{
-    timeout.stop();
-}
+void PeriodicMilliTimer::stop() { timeout.stop(); }
 
-bool PeriodicMilliTimer::isStopped() const
-{
-    return timeout.isStopped();
-}
+bool PeriodicMilliTimer::isStopped() const { return timeout.isStopped(); }
 
 bool PeriodicMilliTimer::execute()
 {
@@ -42,7 +29,7 @@ bool PeriodicMilliTimer::execute()
         do
         {
             timeout.expireTime += period;
-        } while(timeout.expireTime <= now);
+        } while (timeout.expireTime <= now);
 
         timeout.isRunning = true;
         timeout.isExecuted = false;

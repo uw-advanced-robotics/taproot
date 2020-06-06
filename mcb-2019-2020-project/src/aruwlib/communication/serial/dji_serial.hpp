@@ -2,20 +2,20 @@
 #define __serial_h_
 
 #include <cstdint>
+
 #include <modm/processing.hpp>
+
 #include "aruwlib/communication/serial/uart.hpp"
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
 /**
  * A serial handler that implements a specific protocol to be used for
  * communicating with the referee system. Also used for our personal
  * communication with the xavier.
- * 
+ *
  * Extend this class and implement messageReceiveCallback if you
  * want to use this serial protocol on a serial line.
  *
@@ -36,7 +36,7 @@ namespace serial
  */
 class DJISerial
 {
- private:
+private:
     static const uint16_t SERIAL_RX_BUFF_SIZE = 256;
     static const uint16_t SERIAL_TX_BUFF_SIZE = 256;
     static const uint16_t SERIAL_HEAD_BYTE = 0xA5;
@@ -47,15 +47,15 @@ class DJISerial
     static const uint8_t FRAME_TYPE_OFFSET = 5;
     static const uint8_t FRAME_CRC16_LENGTH = 2;
 
- public:
+public:
     /**
      * A container for storing TX and RX messages.
      */
     struct SerialMessage
     {
         uint8_t headByte;  ///< Use SERIAL_HEAD_BYTE.
-        uint16_t length;  ///< Must be less than SERIAL_RX_BUFF_SIZE or SERIAL_TX_BUFF_SIZE.
-        uint16_t type;  ///< The type is specified and interpreted by a derived class.
+        uint16_t length;   ///< Must be less than SERIAL_RX_BUFF_SIZE or SERIAL_TX_BUFF_SIZE.
+        uint16_t type;     ///< The type is specified and interpreted by a derived class.
         uint8_t data[SERIAL_RX_BUFF_SIZE];
         modm::Timestamp messageTimestamp;  ///< The timestamp is in milliseconds.
         uint8_t sequenceNumber;  ///< A derived class may increment this for debugging purposes.
@@ -67,15 +67,12 @@ class DJISerial
      * @param[in] port serial port to work on.
      * @param[in] isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement.
      */
-    DJISerial(
-        Uart::UartPort port,
-        bool isRxCRCEnforcementEnabled
-    );
+    DJISerial(Uart::UartPort port, bool isRxCRCEnforcementEnabled);
 
     /**
      * Initialize serial. In particular, initializes the hardware serial
      * specified upon construction.
-     * 
+     *
      * @note currently, only uart ports 1, 2, and 6 are enabled. Be sure
      *      to add a serial port to `uart.hpp` if you want to use the serial.
      *      Also, if you add a new uart port to be generated in the `project.xml`
@@ -96,13 +93,13 @@ class DJISerial
     /**
      * Called when a complete message is received. A derived class must
      * implement this in order to handle incoming messages properly.
-     * 
+     *
      * @param[in] completeMessage a reference to the full message that has
      *      just been received by this class.
      */
-    virtual void messageReceiveCallback(const SerialMessage& completeMessage) = 0;
+    virtual void messageReceiveCallback(const SerialMessage &completeMessage) = 0;
 
- private:
+private:
     // RX related information.
 
     enum SerialRxState
@@ -168,7 +165,7 @@ class DJISerial
 
     uint32_t write(const uint8_t *data, uint16_t length);
 
- protected:
+protected:
     /**
      * Subclasses can access the message that this class sends as to allow
      * for modification.

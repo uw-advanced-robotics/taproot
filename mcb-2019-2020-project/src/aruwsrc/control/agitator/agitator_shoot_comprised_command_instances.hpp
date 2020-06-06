@@ -5,32 +5,34 @@
 
 namespace aruwsrc
 {
-
 namespace agitator
 {
-
 class ShootFastComprisedCommand : public ShootComprisedCommand
 {
- public:
-    explicit ShootFastComprisedCommand(AgitatorSubsystem* agitator17mm) :
-    ShootComprisedCommand(
-        agitator17mm,
-        aruwlib::algorithms::PI / 5.0f,
-        aruwlib::algorithms::PI / 2.0f,
-        50, 20
-    ) {}
+public:
+    explicit ShootFastComprisedCommand(AgitatorSubsystem* agitator17mm)
+        : ShootComprisedCommand(
+              agitator17mm,
+              aruwlib::algorithms::PI / 5.0f,
+              aruwlib::algorithms::PI / 2.0f,
+              50,
+              20)
+    {
+    }
 };
 
 class ShootSlowComprisedCommand : public ShootComprisedCommand
 {
- public:
-    explicit ShootSlowComprisedCommand(AgitatorSubsystem* agitator17mm) :
-    ShootComprisedCommand(
-        agitator17mm,
-        aruwlib::algorithms::PI / 5.0f,
-        aruwlib::algorithms::PI / 2.0f,
-        300, 100
-    ) {}
+public:
+    explicit ShootSlowComprisedCommand(AgitatorSubsystem* agitator17mm)
+        : ShootComprisedCommand(
+              agitator17mm,
+              aruwlib::algorithms::PI / 5.0f,
+              aruwlib::algorithms::PI / 2.0f,
+              300,
+              100)
+    {
+    }
 };
 
 }  // namespace agitator

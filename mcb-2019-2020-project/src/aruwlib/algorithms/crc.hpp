@@ -5,10 +5,8 @@
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 #define CRC8_INIT 0xff
 #define CRC16_INIT 0xffff
 
@@ -21,9 +19,7 @@ namespace algorithms
  * @param[in] initCRC8 normally leave as CRC8_INIT.
  * @return the calculated crc.
  */
-uint8_t calculateCRC8(const uint8_t *message,
-                      uint32_t messageLength,
-                      uint8_t initCRC8 = CRC8_INIT);
+uint8_t calculateCRC8(const uint8_t *message, uint32_t messageLength, uint8_t initCRC8 = CRC8_INIT);
 
 /**
  * Fast crc16 calculation using a lookup table.
@@ -35,9 +31,10 @@ uint8_t calculateCRC8(const uint8_t *message,
  * @param[in] initCRC8 normally leave as CRC8_INIT.
  * @return the calculated crc.
  */
-uint16_t calculateCRC16(const uint8_t *message,
-                        uint32_t messageLength,
-                        uint16_t initCRC16 = CRC16_INIT);
+uint16_t calculateCRC16(
+    const uint8_t *message,
+    uint32_t messageLength,
+    uint16_t initCRC16 = CRC16_INIT);
 
 }  // namespace algorithms
 

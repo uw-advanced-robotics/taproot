@@ -4,29 +4,23 @@
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 /* define subsystems --------------------------------------------------------*/
 
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerDroneSubsystems()
-{}
+void registerDroneSubsystems() {}
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultDroneCommands()
-{}
+void setDefaultDroneCommands() {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startDroneCommands()
-{}
+void startDroneCommands() {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerDroneIoMappings()
-{}
+void registerDroneIoMappings() {}
 
 void initSubsystemCommands()
 {

@@ -3,10 +3,8 @@
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 /**
  * Wraps a float to allow easy comparison and manipulation of sensor readings
  * that wrap (e.g. -180 to 180).
@@ -19,14 +17,15 @@ namespace algorithms
  * Credit to: https://github.com/Team488/SeriouslyCommonLib/blob/af2ce83a830299a8ab3773bec9b8ccc6ab
  *            5a3367/src/main/java/xbot/common/math/ContiguousDouble.java
  */
-class ContiguousFloat {
- public:
+class ContiguousFloat
+{
+public:
     ContiguousFloat(const float& value, const float& lowerBound, const float& upperBound);
 
     /**
      * Shifts the value so that it still represents the same position but is
      * within the current bounds.
-     * 
+     *
      * @return the new value for chaining functions.
      */
     float reboundValue();
@@ -35,7 +34,7 @@ class ContiguousFloat {
      * Computes the difference between two values (other - this), accounting for
      * wrapping. Treats the given 'other' value as a number within the same bounds
      * as the current instance.
-     * 
+     *
      * @param[in] otherValue the other value to compare against.
      * @return the computed difference.
      */
@@ -44,7 +43,7 @@ class ContiguousFloat {
     /**
      * Computes the difference between two values (other - this), accounting for
      * wrapping.
-     * 
+     *
      * @param[in] otherValue the other value to compare against (must have the same bounds
      *      as the current instance).
      * @return the computed difference.
@@ -53,14 +52,14 @@ class ContiguousFloat {
 
     /**
      * Shifts both bounds by the specified amount
-     * 
+     *
      * @param[in] shiftMagnitude the amount to add to each bound.
      */
     void shiftBounds(const float& shiftMagnitude);
 
     /**
      * Shifts value by the specified amount (addition).
-     * 
+     *
      * @param[in] shiftMagnitude The amount to add to the current value.
      */
     void shiftValue(const float& shiftMagnitude);
@@ -86,9 +85,10 @@ class ContiguousFloat {
      *      valueToLimit will be limited above.
      * @return the limited value.
      */
-    static float limitValue(const ContiguousFloat& valueToLimit,
-                            const ContiguousFloat& min,
-                            const ContiguousFloat& max);
+    static float limitValue(
+        const ContiguousFloat& valueToLimit,
+        const ContiguousFloat& min,
+        const ContiguousFloat& max);
 
     /**
      * Runs the limitValue function from above, wrapping the min and max passed in to
@@ -102,9 +102,10 @@ class ContiguousFloat {
      *      valueToLimit will be limited above.
      * @return the limited value.
      */
-    static float limitValue(const ContiguousFloat& valueToLimit,
-                            const float& min,
-                            const float& max);
+    static float limitValue(
+        const ContiguousFloat& valueToLimit,
+        const float& min,
+        const float& max);
 
     // Getters/Setters ----------------
 
@@ -125,11 +126,11 @@ class ContiguousFloat {
     ///< Sets the lower bound to newValue.
     void setLowerBound(const float& newValue);
 
- private:
-    float value;   ///< The wrapped value.
+private:
+    float value;  ///< The wrapped value.
 
-    float lowerBound;   ///< The lower bound to wrap around.
-    float upperBound;   ///< The upper bound to wrap around.
+    float lowerBound;  ///< The lower bound to wrap around.
+    float upperBound;  ///< The upper bound to wrap around.
 
     /**
      * Flips the lower and upper bounds if the lower bound is larger than the
@@ -141,7 +142,7 @@ class ContiguousFloat {
      * Calculates a number representing the current value that is higher than
      * (or equal to) the upper bound. Used to make normal numerical comparisons
      * without needing to handle wrap cases.
-     * 
+     *
      * @return the computed value
      */
     float unwrapAbove() const;
@@ -150,7 +151,7 @@ class ContiguousFloat {
      * Calculates a number representing the current value that is lower than (or
      * equal to) the lower bound. Used to make normal numerical comparisons
      * without needing to handle wrap cases.
-     * 
+     *
      * @return the computed value
      */
     float unwrapBelow() const;

@@ -1,6 +1,6 @@
 /**
  * This is part of aruw's library.
- * 
+ *
  * This is example code for running friction wheels. As you can
  * see, there is a generic update pid loop that is independent of
  * what command is given to the subsystem. Additionally, the
@@ -14,35 +14,34 @@
 #ifndef __SUBSYSTEM_EXAMPLE_HPP__
 #define __SUBSYSTEM_EXAMPLE_HPP__
 
-#include <modm/math/filter/pid.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
+#include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 class ExampleSubsystem : public aruwlib::control::Subsystem
 {
- public:
+public:
     ExampleSubsystem(
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
         : leftWheel(leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
-        rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
-        velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-        velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-        desiredRpm(0)
-    {}
+          rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
+          velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+          velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+          desiredRpm(0)
+    {
+    }
 
     void setDesiredRpm(float desRpm);
 
     void refresh() override;
 
- private:
+private:
     static const aruwlib::motor::MotorId LEFT_MOTOR_ID;
     static const aruwlib::motor::MotorId RIGHT_MOTOR_ID;
     const aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
@@ -66,8 +65,7 @@ class ExampleSubsystem : public aruwlib::control::Subsystem
     void updateMotorRpmPid(
         modm::Pid<float>* pid,
         aruwlib::motor::DjiMotor* const motor,
-        float desiredRpm
-    );
+        float desiredRpm);
 };
 
 }  // namespace control

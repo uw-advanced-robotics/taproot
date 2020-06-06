@@ -1,50 +1,72 @@
 #ifndef SH1106_HPP
-    #error "Don't include this file directly, use 'sh1106.hpp' instead!"
+#error "Don't include this file directly, use 'sh1106.hpp' instead!"
 #endif
 
 #include "sh1106_defines.hpp"
 
-template <typename SPI, typename A0, typename Reset,
-    unsigned int Width, unsigned int Height, bool Flipped>
+template <
+    typename SPI,
+    typename A0,
+    typename Reset,
+    unsigned int Width,
+    unsigned int Height,
+    bool Flipped>
 void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
 {
-    for(uint8_t y = 0; y < (Height / 8); ++y)
+    for (uint8_t y = 0; y < (Height / 8); ++y)
     {
         // command mode
         a0.reset();
         spi.transferBlocking(SH1106_PAGE_ADDRESS | y);  // Row select
-        spi.transferBlocking(SH1106_COL_ADDRESS_MSB);  // Column select high
+        spi.transferBlocking(SH1106_COL_ADDRESS_MSB);   // Column select high
 
-        if (Flipped) {
+        if (Flipped)
+        {
             spi.transferBlocking(SH1106_COL_ADDRESS_LSB | 4);  // Column select low
-        } else {
+        }
+        else
+        {
             spi.transferBlocking(SH1106_COL_ADDRESS_LSB);  // Column select low
         }
 
         // switch to data mode
         a0.set();
-        for(uint8_t x = 0; x < Width; ++x) {
+        for (uint8_t x = 0; x < Width; ++x)
+        {
             spi.transferBlocking(this->display_buffer[x][y]);
         }
     }
 }
 
-template <typename SPI, typename A0, typename Reset,
-    unsigned int Width, unsigned int Height, bool Flipped>
+template <
+    typename SPI,
+    typename A0,
+    typename Reset,
+    unsigned int Width,
+    unsigned int Height,
+    bool Flipped>
 void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::setInvert(bool invert)
 {
     a0.reset();
 
-    if (invert) {
+    if (invert)
+    {
         spi.transferBlocking(SH1106_REVERSE);
-    } else {
+    }
+    else
+    {
         spi.transferBlocking(SH1106_NORMAL);
     }
 }
 
 // ----------------------------------------------------------------------------
-template <typename SPI, typename A0, typename Reset,
-    unsigned int Width, unsigned int Height, bool Flipped>
+template <
+    typename SPI,
+    typename A0,
+    typename Reset,
+    unsigned int Width,
+    unsigned int Height,
+    bool Flipped>
 void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::initializeBlocking()
 {
     a0.setOutput();
@@ -58,10 +80,13 @@ void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::initializ
     a0.reset();
 
     // View direction
-    if (Flipped) {
+    if (Flipped)
+    {
         spi.transferBlocking(SH1106_ADC_NORMAL);
         spi.transferBlocking(SH1106_SCAN_DIR_NORMAL);
-    } else {
+    }
+    else
+    {
         spi.transferBlocking(SH1106_ADC_REVERSE);
         spi.transferBlocking(SH1106_SCAN_DIR_REVERSE);
     }

@@ -1,51 +1,46 @@
-/* 
+/*
    Hopper subsystem is made of a servo that will spin
-   to two certain angles determined by the user as 
+   to two certain angles determined by the user as
    the open position and the close position
 */
 
 #ifndef __OPEN_HOPPER_SUBSYSTEM__
 #define __OPEN_HOPPER_SUBSYSTEM__
 
-#include <modm/math/filter/pid.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/servo.hpp>
+#include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 class HopperSubsystem : public aruwlib::control::Subsystem
 {
- public:
-    #if defined(TARGET_SOLDIER)
+public:
+#if defined(TARGET_SOLDIER)
     static constexpr float SOLDIER_HOPPER_OPEN_PWM = 0.21f;
     static constexpr float SOLDIER_HOPPER_CLOSE_PWM = 0.11f;
     static constexpr float SOLDIER_PWM_RAMP_SPEED = 0.001f;
-    #elif defined(TARGET_OLD_SOLDIER)
+#elif defined(TARGET_OLD_SOLDIER)
     static constexpr float OLD_SOLDIER_HOPPER_OPEN_PWM = 0.21f;
     static constexpr float OLD_SOLDIER_HOPPER_CLOSE_PWM = 0.11f;
     static constexpr float OLD_SOLDIER_PWM_RAMP_SPEED = 0.001f;
-    #endif
+#endif
 
-    /* 
+    /*
      * constructor
      * @param currPort the pin that the servo is connected to
      * @param open     the angle defined as open; a PWM value
      *                 (between 0 and 1)
      * @param close    the angle defined as close; a PWM value
-     *                 (between 0 and 1)  
+     *                 (between 0 and 1)
      * @param pwmRampSpeed   determines the speed of servo operation;
-     *                 a PWM value (between 0 and 1)   
+     *                 a PWM value (between 0 and 1)
      */
-    HopperSubsystem(aruwlib::gpio::Pwm::Pin currPort,
-                    float open,
-                    float close,
-                    float pwmRampSpeed) :
-                    hopper(currPort, open, close, pwmRampSpeed)
+    HopperSubsystem(aruwlib::gpio::Pwm::Pin currPort, float open, float close, float pwmRampSpeed)
+        : hopper(currPort, open, close, pwmRampSpeed)
     {
         hopper.setTargetPwm(close);
     }
@@ -62,7 +57,7 @@ class HopperSubsystem : public aruwlib::control::Subsystem
 
     void refresh() override;
 
- private:
+private:
     aruwlib::motor::Servo hopper;
 
     /*

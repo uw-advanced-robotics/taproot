@@ -5,21 +5,20 @@
 
 namespace aruwlib
 {
-
 namespace can
 {
-enum class
-CanBus
+enum class CanBus
 {
     CAN_BUS1,
     CAN_BUS2,
 };
 
-class Can {
- public:
+class Can
+{
+public:
     Can() = default;
-    Can(const Can&) = delete;
-    Can &operator=(const Can&) = default;
+    Can(const Can &) = delete;
+    Can &operator=(const Can &) = default;
 
     void initialize();
 
@@ -27,7 +26,7 @@ class Can {
     bool getMessage(CanBus bus, modm::can::Message *message);
 
     bool isReadyToSend(CanBus bus) const;
-    bool sendMessage(CanBus bus, const modm::can::Message& message);
+    bool sendMessage(CanBus bus, const modm::can::Message &message);
 };
 
 }  // namespace can

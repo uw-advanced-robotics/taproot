@@ -2,18 +2,17 @@
 #define __EXAMPLE_COMPRISED_COMAND_HPP__
 
 #include <aruwlib/control/comprised_command.hpp>
+
 #include "example_command.hpp"
 #include "example_subsystem.hpp"
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 class ExampleComprisedCommand : public aruwlib::control::ComprisedCommand
 {
- public:
+public:
     explicit ExampleComprisedCommand(ExampleSubsystem* subsystem);
 
     void initialize();
@@ -22,12 +21,9 @@ class ExampleComprisedCommand : public aruwlib::control::ComprisedCommand
 
     void end(bool interrupted);
 
-    bool isFinished() const override
-    {
-       return false;
-    }
+    bool isFinished() const override { return false; }
 
- private:
+private:
     ExampleCommand exampleCommand;
 
     ExampleCommand otherExampleCommand;

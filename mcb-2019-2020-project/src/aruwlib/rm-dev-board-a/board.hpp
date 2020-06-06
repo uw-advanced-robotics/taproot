@@ -15,8 +15,8 @@
 #define MODM_ROBOMASTER_DEV_BOARD_A_HPP
 
 #ifndef ENV_SIMULATOR
-#include <modm/platform.hpp>
 #include <modm/architecture/interface/clock.hpp>
+#include <modm/platform.hpp>
 
 #include "robot_type.hpp"
 
@@ -28,7 +28,7 @@ using namespace modm::platform;
 ///< @ingroup TODO
 namespace Board
 {
-    using namespace modm::literals;
+using namespace modm::literals;
 
 ///< STM32F427 running at 180MHz from the external 12MHz crystal
 struct SystemClock
@@ -49,11 +49,11 @@ struct SystemClock
     static constexpr uint32_t Usart1 = Apb2;
     static constexpr uint32_t Usart2 = Apb1;
     static constexpr uint32_t Usart3 = Apb1;
-    static constexpr uint32_t Uart4  = Apb1;
-    static constexpr uint32_t Uart5  = Apb1;
+    static constexpr uint32_t Uart4 = Apb1;
+    static constexpr uint32_t Uart5 = Apb1;
     static constexpr uint32_t Usart6 = Apb2;
-    static constexpr uint32_t Uart7  = Apb1;
-    static constexpr uint32_t Uart8  = Apb1;
+    static constexpr uint32_t Uart7 = Apb1;
+    static constexpr uint32_t Uart8 = Apb1;
 
     static constexpr uint32_t Can1 = Apb1;
     static constexpr uint32_t Can2 = Apb1;
@@ -64,15 +64,15 @@ struct SystemClock
 
     static constexpr uint32_t Apb1Timer = 2 * Apb1;
     static constexpr uint32_t Apb2Timer = 2 * Apb2;
-    static constexpr uint32_t Timer1  = Apb2Timer;
-    static constexpr uint32_t Timer2  = Apb1Timer;
-    static constexpr uint32_t Timer3  = Apb1Timer;
-    static constexpr uint32_t Timer4  = Apb1Timer;
-    static constexpr uint32_t Timer5  = Apb1Timer;
-    static constexpr uint32_t Timer6  = Apb1Timer;
-    static constexpr uint32_t Timer7  = Apb1Timer;
-    static constexpr uint32_t Timer8  = Apb2Timer;
-    static constexpr uint32_t Timer9  = Apb2Timer;
+    static constexpr uint32_t Timer1 = Apb2Timer;
+    static constexpr uint32_t Timer2 = Apb1Timer;
+    static constexpr uint32_t Timer3 = Apb1Timer;
+    static constexpr uint32_t Timer4 = Apb1Timer;
+    static constexpr uint32_t Timer5 = Apb1Timer;
+    static constexpr uint32_t Timer6 = Apb1Timer;
+    static constexpr uint32_t Timer7 = Apb1Timer;
+    static constexpr uint32_t Timer8 = Apb2Timer;
+    static constexpr uint32_t Timer9 = Apb2Timer;
     static constexpr uint32_t Timer10 = Apb2Timer;
     static constexpr uint32_t Timer11 = Apb2Timer;
     static constexpr uint32_t Timer12 = Apb1Timer;
@@ -83,15 +83,14 @@ struct SystemClock
     static constexpr uint32_t PWM_RESOLUTION = 31000;
     static constexpr uint32_t APB1_TIMER_CLOCKS = 48150000;
     static constexpr uint32_t APB2_TIMER_CLOCKS = 92500000;
-    static constexpr uint32_t APB1_PRESCALER
-        = ((APB1_TIMER_CLOCKS/PWM_FREQUENCY) / PWM_RESOLUTION - 1);
-    static constexpr uint32_t APB2_PRESCALER
-        = ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
+    static constexpr uint32_t APB1_PRESCALER =
+        ((APB1_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
+    static constexpr uint32_t APB2_PRESCALER =
+        ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
 
-    static bool inline
-    enable()
+    static bool inline enable()
     {
-        #ifndef ENV_SIMULATOR
+#ifndef ENV_SIMULATOR
         Rcc::enableExternalCrystal();  // 8 MHz
         Rcc::enablePll(
             Rcc::PllSource::ExternalCrystal,
@@ -105,7 +104,7 @@ struct SystemClock
         Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div2);
         Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div1);
         Rcc::updateCoreFrequency<Frequency>();
-        #endif
+#endif
 
         return true;
     }
@@ -130,11 +129,7 @@ using LedH = GpioOutputG8;
 using LedGreen = GpioOutputF14;
 using LedRed = GpioOutputE11;
 
-using LedsPort = SoftwareGpioPort
-<
-    LedA, LedB, LedC, LedD, LedE,
-    LedF, LedG, LedH, LedGreen, LedRed
->;
+using LedsPort = SoftwareGpioPort<LedA, LedB, LedC, LedD, LedE, LedF, LedG, LedH, LedGreen, LedRed>;
 
 // initialize 4 24V outputs
 using PowerOut1 = GpioOutputH2;
@@ -142,11 +137,7 @@ using PowerOut2 = GpioOutputH3;
 using PowerOut3 = GpioOutputH4;
 using PowerOut4 = GpioOutputH5;
 
-using PowerOuts = SoftwareGpioPort
-<
-    PowerOut1, PowerOut2,
-    PowerOut3, PowerOut4
->;
+using PowerOuts = SoftwareGpioPort<PowerOut1, PowerOut2, PowerOut3, PowerOut4>;
 
 // initialize 4 analog input pins
 using AnalogInPinS = GpioOutputA0;
@@ -154,11 +145,7 @@ using AnalogInPinT = GpioOutputA1;
 using AnalogInPinU = GpioOutputA2;
 using AnalogInPinV = GpioOutputA3;
 
-using AnalogInPins = SoftwareGpioPort
-<
-    AnalogInPinS, AnalogInPinT,
-    AnalogInPinU, AnalogInPinV
->;
+using AnalogInPins = SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV>;
 
 // initialize 4 pwm output pins
 using PWMOutPinW = GpioInputI5;
@@ -166,11 +153,7 @@ using PWMOutPinX = GpioInputI6;
 using PWMOutPinY = GpioInputI7;
 using PWMOutPinZ = GpioInputI2;
 
-using PWMOutPins = SoftwareGpioPort
-<
-    PWMOutPinW, PWMOutPinX,
-    PWMOutPinY, PWMOutPinZ
->;
+using PWMOutPins = SoftwareGpioPort<PWMOutPinW, PWMOutPinX, PWMOutPinY, PWMOutPinZ>;
 
 // initialize 4 digital input pins
 using DigitalInPinA = GpioOutputI0;
@@ -178,11 +161,7 @@ using DigitalInPinB = GpioOutputH12;
 using DigitalInPinC = GpioOutputH11;
 using DigitalInPinD = GpioOutputH10;
 
-using DigitalInPins = SoftwareGpioPort
-<
-    DigitalInPinA, DigitalInPinB,
-    DigitalInPinC, DigitalInPinD
->;
+using DigitalInPins = SoftwareGpioPort<DigitalInPinA, DigitalInPinB, DigitalInPinC, DigitalInPinD>;
 
 // initialize 4 digital output pins
 using DigitalOutPinE = GpioInputD15;
@@ -190,11 +169,8 @@ using DigitalOutPinF = GpioInputD14;
 using DigitalOutPinG = GpioInputD13;
 using DigitalOutPinH = GpioInputD12;
 
-using DigitalOutPins = SoftwareGpioPort
-<
-    DigitalOutPinE, DigitalOutPinF,
-    DigitalOutPinG, DigitalOutPinH
->;
+using DigitalOutPins =
+    SoftwareGpioPort<DigitalOutPinE, DigitalOutPinF, DigitalOutPinG, DigitalOutPinH>;
 
 // gpio pins used for SPI communication to the onboard MPU6500 IMU
 using ImuSck = GpioF7;
@@ -216,13 +192,13 @@ inline void initialize()
 {
     // init clock
     SystemClock::enable();
-    #ifndef ENV_SIMULATOR
+#ifndef ENV_SIMULATOR
     SysTickTimer::initialize<SystemClock>();
     // init 24V output
     PowerOuts::setOutput(modm::Gpio::High);
     // init button on board
     Button::setInput();
-    #endif
+#endif
 }
 
 }  // namespace Board

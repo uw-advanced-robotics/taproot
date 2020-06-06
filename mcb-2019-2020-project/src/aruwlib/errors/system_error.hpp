@@ -1,10 +1,10 @@
 /**
  * example for how to create and add an error to the ErrorController:
  * use macro in create_errors.hpp
- *      
+ *
  *     RAISE_ERROR("Error in DJI Serial", aruwlib::errors::Location::DJI_SERIAL,
  *     aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
- * 
+ *
  * then call ErrorController::update() to update the list of errors
  */
 
@@ -15,16 +15,15 @@
 
 namespace aruwlib
 {
-
 namespace errors
 {
-
 static const uint8_t ERROR_LOCATION_SIZE = 4;
 
 static const uint8_t ERROR_TYPE_SIZE = 8 - ERROR_LOCATION_SIZE;
 
 // Location of errors; subject to change
-enum Location {
+enum Location
+{
     CAN_RX = 0,
     MOTOR_CONTROL,
     MPU6500,
@@ -37,7 +36,8 @@ enum Location {
 };
 
 // Type of errors; subject to change
-enum ErrorType {
+enum ErrorType
+{
     IMU_DATA_NOT_INITIALIZED = 0,
     IMU_NOT_RECEIVING_PROPERLY,
     INVALID_MESSAGE_LENGTH,
@@ -59,14 +59,15 @@ enum ErrorType {
 
 class SystemError
 {
- public:
+public:
     SystemError();
 
-    SystemError(const std::string& desc,
-                int line,
-                const std::string& file,
-                Location l,
-                ErrorType et);
+    SystemError(
+        const std::string& desc,
+        int line,
+        const std::string& file,
+        Location l,
+        ErrorType et);
 
     int getLineNumber() const;
 
@@ -78,7 +79,7 @@ class SystemError
 
     ErrorType getErrorType() const;
 
- private:
+private:
     int lineNumber;
 
     std::string description;

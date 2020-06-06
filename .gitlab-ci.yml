@@ -1,19 +1,17 @@
 before_script:
   - python -V # Print out python version for debugging
 
-cpplint:
-  image: aruw/mcb-2020-gitlab-ci:2020-04-27.2
-  before_script:
-    - chmod +x ./.gitlab/linter.sh
+clang-format:
+  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
   script:
-    - ./.gitlab/linter.sh
+    - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r mcb-2019-2020-project/src/ mcb-2019-2020-project/test/
   only:
   - merge_requests
   - master
   - develop
 
 build-code:
-  image: aruw/mcb-2020-gitlab-ci:2020-04-27.2
+  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
   script:
     - cd mcb-2019-2020-project # Go to robot code diretory
     - rm -r modm # Because lbuild clean is broken

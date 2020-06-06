@@ -3,7 +3,7 @@
  * A simple API that allows users to easily interact and
  * communicate with the remote dbus communication via
  * UART with modm. This impletation allows for the
- * initialization of the remote and easy access for 
+ * initialization of the remote and easy access for
  * reading user inputs.
  */
 
@@ -16,21 +16,56 @@
 #include <modm/platform.hpp>
 #endif
 
-namespace aruwlib {
-
-class Remote {
- public:
+namespace aruwlib
+{
+class Remote
+{
+public:
     Remote() = default;
-    Remote(const Remote&) = delete;
-    Remote &operator=(const Remote&) = default;
+    Remote(const Remote &) = delete;
+    Remote &operator=(const Remote &) = default;
 
-    enum class Channel { RIGHT_HORIZONTAL, RIGHT_VERTICAL, LEFT_HORIZONTAL, LEFT_VERTICAL };
+    enum class Channel
+    {
+        RIGHT_HORIZONTAL,
+        RIGHT_VERTICAL,
+        LEFT_HORIZONTAL,
+        LEFT_VERTICAL
+    };
 
-    enum class Switch { LEFT_SWITCH, RIGHT_SWITCH };
+    enum class Switch
+    {
+        LEFT_SWITCH,
+        RIGHT_SWITCH
+    };
 
-    enum class SwitchState { UNKNOWN, UP, MID, DOWN };
+    enum class SwitchState
+    {
+        UNKNOWN,
+        UP,
+        MID,
+        DOWN
+    };
 
-    enum class Key { W = 0, S, A, D, SHIFT, CTRL, Q, E, R, F, G, Z, X, C, V, B };
+    enum class Key
+    {
+        W = 0,
+        S,
+        A,
+        D,
+        SHIFT,
+        CTRL,
+        Q,
+        E,
+        R,
+        F,
+        G,
+        Z,
+        X,
+        C,
+        V,
+        B
+    };
 
     // Enables and initializes Usart1 communication
     void initialize();
@@ -70,16 +105,17 @@ class Remote {
 
     uint32_t getUpdateCounter() const;
 
- private:
-    #define REMOTE_BUF_LEN 18  // Length of the remote recieve buffer
-    #define REMOTE_READ_TIMEOUT 6  // Timeout delay between valid packets
-    #define REMOTE_DISCONNECT_TIMEOUT 100  // Timeout delay for remote disconnect
-    #define REMOTE_INT_PRI 12  // Interrupt priority
+private:
+#define REMOTE_BUF_LEN 18              // Length of the remote recieve buffer
+#define REMOTE_READ_TIMEOUT 6          // Timeout delay between valid packets
+#define REMOTE_DISCONNECT_TIMEOUT 100  // Timeout delay for remote disconnect
+#define REMOTE_INT_PRI 12              // Interrupt priority
 
     static constexpr float STICK_MAX_VALUE = 660.0f;
 
     // The current remote information
-    struct RemoteInfo {
+    struct RemoteInfo
+    {
         uint32_t updateCounter = 0;
         int16_t rightHorizontal;
         int16_t rightVertical;
@@ -87,14 +123,15 @@ class Remote {
         int16_t leftVertical;
         SwitchState leftSwitch;
         SwitchState rightSwitch;
-        struct {  // Mouse information
+        struct
+        {  // Mouse information
             int16_t x;
             int16_t y;
             int16_t z;
             bool l;
             bool r;
         } mouse;
-        uint16_t key;  // Keyboard information
+        uint16_t key;   // Keyboard information
         int16_t wheel;  // Remote wheel information
     };
 
@@ -104,7 +141,7 @@ class Remote {
     bool connected = false;
 
     // uart recieve buffer
-    uint8_t rxBuffer[REMOTE_BUF_LEN] { 0 };
+    uint8_t rxBuffer[REMOTE_BUF_LEN]{0};
 
     // Timestamp when last byte was read (milliseconds)
     uint32_t lastRead = 0;

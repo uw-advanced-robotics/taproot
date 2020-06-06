@@ -1,5 +1,5 @@
 #ifndef SH1106_HPP
-    #error "Don't include this file directly, use 'sh1106.hpp' instead!"
+#error "Don't include this file directly, use 'sh1106.hpp' instead!"
 #endif
 
 template <unsigned int Width, unsigned int Height, bool Flipped>

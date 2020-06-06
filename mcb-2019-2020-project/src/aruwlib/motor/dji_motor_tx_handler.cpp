@@ -1,8 +1,10 @@
+#include "dji_motor_tx_handler.hpp"
+
 #include <modm/architecture/interface/assert.h>
+
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/errors/create_errors.hpp"
-#include "dji_motor_tx_handler.hpp"
-#include "aruwlib/Drivers.hpp"
 
 #define CAN_DJI_MESSAGE_SEND_LENGTH 8
 #define CAN_DJI_LOW_IDENTIFIER 0X200
@@ -10,146 +12,134 @@
 
 namespace aruwlib
 {
-
 namespace motor
 {
-    void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor*const motor)
+void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor* const motor)
+{
+    int16_t idIndex = DJI_MOTOR_NORMALIZED_ID(motor->getMotorIdentifier());
+    bool motorOverloaded = canMotorStore[idIndex] != nullptr;
+    bool motorOutOfBounds = (idIndex < 0) || (idIndex >= DJI_MOTORS_PER_CAN);
+    // kill start
+    modm_assert(!motorOverloaded && !motorOutOfBounds, "can", "motor init", "overloading", 1);
+    canMotorStore[idIndex] = motor;
+}
+
+void DjiMotorTxHandler::addMotorToManager(DjiMotor* motor)
+{
+    // add new motor to either the can1 or can2 motor store
+    // because we checked to see if the motor is overloaded, we will
+    // never have to worry about overfilling the CanxMotorStore array
+    if (motor->getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
     {
-        int16_t idIndex = DJI_MOTOR_NORMALIZED_ID(motor->getMotorIdentifier());
-        bool motorOverloaded = canMotorStore[idIndex] != nullptr;
-        bool motorOutOfBounds = (idIndex < 0) || (idIndex >= DJI_MOTORS_PER_CAN);
-        // kill start
-        modm_assert(!motorOverloaded && !motorOutOfBounds, "can", "motor init", "overloading", 1);
-        canMotorStore[idIndex] = motor;
+        addMotorToManager(can1MotorStore, motor);
     }
-
-    void DjiMotorTxHandler::addMotorToManager(DjiMotor* motor)
+    else
     {
-        // add new motor to either the can1 or can2 motor store
-        // because we checked to see if the motor is overloaded, we will
-        // never have to worry about overfilling the CanxMotorStore array
-        if (motor->getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
-        {
-            addMotorToManager(can1MotorStore, motor);
-        }
-        else
-        {
-            addMotorToManager(can2MotorStore, motor);
-        }
+        addMotorToManager(can2MotorStore, motor);
     }
+}
 
-    void DjiMotorTxHandler::processCanSendData()
+void DjiMotorTxHandler::processCanSendData()
+{
+    // set up new can messages to be sent via CAN bus 1 and 2
+    modm::can::Message can1MessageLow(CAN_DJI_LOW_IDENTIFIER, CAN_DJI_MESSAGE_SEND_LENGTH);
+    can1MessageLow.setExtended(false);
+
+    modm::can::Message can1MessageHigh(CAN_DJI_HIGH_IDENTIFIER, CAN_DJI_MESSAGE_SEND_LENGTH);
+    can1MessageHigh.setExtended(false);
+
+    modm::can::Message can2MessageLow(CAN_DJI_LOW_IDENTIFIER, CAN_DJI_MESSAGE_SEND_LENGTH);
+    can2MessageLow.setExtended(false);
+
+    modm::can::Message can2MessageHigh(CAN_DJI_HIGH_IDENTIFIER, CAN_DJI_MESSAGE_SEND_LENGTH);
+    can2MessageHigh.setExtended(false);
+
+    zeroTxMessage(&can1MessageLow);
+    zeroTxMessage(&can1MessageHigh);
+    zeroTxMessage(&can2MessageLow);
+    zeroTxMessage(&can2MessageHigh);
+
+    serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
+    serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
+
+    if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS1))
     {
-        // set up new can messages to be sent via CAN bus 1 and 2
-        modm::can::Message can1MessageLow(
-            CAN_DJI_LOW_IDENTIFIER,
-            CAN_DJI_MESSAGE_SEND_LENGTH
-        );
-        can1MessageLow.setExtended(false);
-
-        modm::can::Message can1MessageHigh(
-            CAN_DJI_HIGH_IDENTIFIER,
-            CAN_DJI_MESSAGE_SEND_LENGTH
-        );
-        can1MessageHigh.setExtended(false);
-
-        modm::can::Message can2MessageLow(
-            CAN_DJI_LOW_IDENTIFIER,
-            CAN_DJI_MESSAGE_SEND_LENGTH
-        );
-        can2MessageLow.setExtended(false);
-
-        modm::can::Message can2MessageHigh(
-            CAN_DJI_HIGH_IDENTIFIER,
-            CAN_DJI_MESSAGE_SEND_LENGTH
-        );
-        can2MessageHigh.setExtended(false);
-
-        zeroTxMessage(&can1MessageLow);
-        zeroTxMessage(&can1MessageHigh);
-        zeroTxMessage(&can2MessageLow);
-        zeroTxMessage(&can2MessageHigh);
-
-        serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
-        serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
-
-        if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS1))
-        {
-            Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
-            Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
-        }
-        if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS2))
-        {
-            Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageLow);
-            Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageHigh);
-        }
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
     }
+    if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS2))
+    {
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageLow);
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageHigh);
+    }
+}
 
-    void DjiMotorTxHandler::serializeMotorStoreSendData(
-        DjiMotor** canMotorStore,
-        modm::can::Message* messageLow,
-        modm::can::Message* messageHigh
-    ) {
-        for (int i = 0; i < DJI_MOTORS_PER_CAN; i++)
+void DjiMotorTxHandler::serializeMotorStoreSendData(
+    DjiMotor** canMotorStore,
+    modm::can::Message* messageLow,
+    modm::can::Message* messageHigh)
+{
+    for (int i = 0; i < DJI_MOTORS_PER_CAN; i++)
+    {
+        const DjiMotor* const motor = canMotorStore[i];
+        if (motor != nullptr)
         {
-            const DjiMotor*const motor = canMotorStore[i];
-            if (motor != nullptr)
+            if (motor->getMotorIdentifier() - 0x200 <= 4)
             {
-                if (motor->getMotorIdentifier() - 0x200 <= 4)
-                {
-                    motor->serializeCanSendData(messageLow);
-                }
-                else
-                {
-                    motor->serializeCanSendData(messageHigh);
-                }
+                motor->serializeCanSendData(messageLow);
+            }
+            else
+            {
+                motor->serializeCanSendData(messageHigh);
             }
         }
     }
+}
 
-    void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor)
+void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor)
+{
+    if (motor.getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
     {
-        if (motor.getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
-        {
-            removeFromMotorManager(motor, can1MotorStore);
-        }
-        else
-        {
-            removeFromMotorManager(motor, can2MotorStore);
-        }
+        removeFromMotorManager(motor, can1MotorStore);
     }
+    else
+    {
+        removeFromMotorManager(motor, can2MotorStore);
+    }
+}
 
-    void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor, DjiMotor** motorStore)
+void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor, DjiMotor** motorStore)
+{
+    uint32_t id = DJI_MOTOR_NORMALIZED_ID(motor.getMotorIdentifier());
+    if (motorStore[id] == nullptr)
     {
-        uint32_t id = DJI_MOTOR_NORMALIZED_ID(motor.getMotorIdentifier());
-        if (motorStore[id] == nullptr)
-        {
-            // error, trying to remove something that doesn't exist!
-            RAISE_ERROR("trying to remove something that doesn't exist",
-                    aruwlib::errors::Location::MOTOR_CONTROL,
-                    aruwlib::errors::ErrorType::NULL_MOTOR_ID);
-            return;
-        }
-        motorStore[id] = nullptr;
+        // error, trying to remove something that doesn't exist!
+        RAISE_ERROR(
+            "trying to remove something that doesn't exist",
+            aruwlib::errors::Location::MOTOR_CONTROL,
+            aruwlib::errors::ErrorType::NULL_MOTOR_ID);
+        return;
     }
+    motorStore[id] = nullptr;
+}
 
-    void DjiMotorTxHandler::zeroTxMessage(modm::can::Message* message)
+void DjiMotorTxHandler::zeroTxMessage(modm::can::Message* message)
+{
+    for (int i = 0; i < message->length; i++)
     {
-        for (int i = 0; i < message->length; i++)
-        {
-            message->data[i] = 0;
-        }
+        message->data[i] = 0;
     }
+}
 
-    DjiMotor const* DjiMotorTxHandler::getCan1MotorData(MotorId motorId)
-    {
-        return can1MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
-    }
+DjiMotor const* DjiMotorTxHandler::getCan1MotorData(MotorId motorId)
+{
+    return can1MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
+}
 
-    DjiMotor const* DjiMotorTxHandler::getCan2MotorData(MotorId motorId)
-    {
-        return can2MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
-    }
+DjiMotor const* DjiMotorTxHandler::getCan2MotorData(MotorId motorId)
+{
+    return can2MotorStore[DJI_MOTOR_NORMALIZED_ID(motorId)];
+}
 }  // namespace motor
 
 }  // namespace aruwlib

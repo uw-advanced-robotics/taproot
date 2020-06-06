@@ -4,22 +4,23 @@
 #include <aruwlib/control/command.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
+
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
+
 #include "chassis_subsystem.hpp"
 
 namespace aruwsrc
 {
-
 namespace chassis
 {
-
 class ChassisAutorotateCommand : public aruwlib::control::Command
 {
- public:
-    explicit ChassisAutorotateCommand(ChassisSubsystem* chassis,
-                                     aruwsrc::turret::TurretSubsystem const* turret) :
-                                     chassis(chassis),
-                                     turret(turret)
+public:
+    explicit ChassisAutorotateCommand(
+        ChassisSubsystem* chassis,
+        aruwsrc::turret::TurretSubsystem const* turret)
+        : chassis(chassis),
+          turret(turret)
     {
         addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
     }
@@ -32,7 +33,7 @@ class ChassisAutorotateCommand : public aruwlib::control::Command
 
     bool isFinished() const override;
 
- private:
+private:
     static constexpr float CHASSIS_AUTOROTATE_PID_KP = -85.0f;
 
     ChassisSubsystem* chassis;

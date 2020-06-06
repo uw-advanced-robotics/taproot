@@ -1,5 +1,3 @@
-#include "robot_type.hpp"
-
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 
@@ -7,6 +5,8 @@
 #include "aruwsrc/control/engineer/grabber_subsystem.hpp"
 #include "aruwsrc/control/engineer/squeeze_grabber_command.hpp"
 #include "aruwsrc/control/engineer/xaxis_subsystem.hpp"
+
+#include "robot_type.hpp"
 
 #if defined(TARGET_ENGINEER)
 
@@ -16,10 +16,8 @@ using namespace aruwlib::control;
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 const Digital::OutputPin grabberPin = Digital::OutputPin::E;
 const Digital::OutputPin xAxisPin = Digital::OutputPin::F;
 
@@ -37,16 +35,13 @@ void registerEngineerSubsystems()
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultEngineerCommands()
-{}
+void setDefaultEngineerCommands() {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startEngineerCommands()
-{}
+void startEngineerCommands() {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerEngineerIoMappings()
-{}
+void registerEngineerIoMappings() {}
 
 void initSubsystemCommands()
 {

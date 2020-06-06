@@ -2,19 +2,18 @@
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
-XavierSerial::XavierSerial() :
-DJISerial(Uart::UartPort::Uart2, false),
-txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
-autoAimRequestQueued(false),
-autoAimRequestState(false),
-lastAimData(),
-hasAimData(false),
-isCvOnline(false)
-{}
+XavierSerial::XavierSerial()
+    : DJISerial(Uart::UartPort::Uart2, false),
+      txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
+      autoAimRequestQueued(false),
+      autoAimRequestState(false),
+      lastAimData(),
+      hasAimData(false),
+      isCvOnline(false)
+{
+}
 
 void XavierSerial::initializeCV()
 {
@@ -31,7 +30,7 @@ void XavierSerial::messageReceiveCallback(const SerialMessage& completeMessage)
         case CV_MESSAGE_TYPE_TURRET_AIM:
         {
             TurretAimData aimData;
-            if(decodeToTurrentAimData(completeMessage, &aimData))
+            if (decodeToTurrentAimData(completeMessage, &aimData))
             {
                 lastAimData = aimData;
                 hasAimData = true;
@@ -43,17 +42,17 @@ void XavierSerial::messageReceiveCallback(const SerialMessage& completeMessage)
     }
 }
 
-bool XavierSerial::decodeToTurrentAimData(const SerialMessage& message, TurretAimData *aimData)
+bool XavierSerial::decodeToTurrentAimData(const SerialMessage& message, TurretAimData* aimData)
 {
     if (message.length != AIM_DATA_MESSAGE_SIZE)
     {
         return false;
     }
 
-    int16_t raw_pitch = *(reinterpret_cast<const int16_t*>(message.data +
-                                                           AIM_DATA_MESSAGE_PITCH_OFFSET));
-    int16_t raw_yaw = *(reinterpret_cast<const int16_t*>(message.data +
-                                                         AIM_DATA_MESSAGE_YAW_OFFSET));
+    int16_t raw_pitch =
+        *(reinterpret_cast<const int16_t*>(message.data + AIM_DATA_MESSAGE_PITCH_OFFSET));
+    int16_t raw_yaw =
+        *(reinterpret_cast<const int16_t*>(message.data + AIM_DATA_MESSAGE_YAW_OFFSET));
 
     bool raw_has_target = message.data[AIM_DATA_MESSAGE_HAS_TARGET];
 
@@ -69,17 +68,15 @@ void XavierSerial::sendMessage(
     const IMUData& imuData,
     const ChassisData& chassisData,
     const TurretAimData& turretData,
-    uint8_t robotId
-) {
+    uint8_t robotId)
+{
     isCvOnline = !cvOfflineTimeout.isExpired();
     switch (txMsgSwitchArray[txMsgSwitchIndex])
     {
         case CV_MESSAGE_TYPE_TURRET_TELEMETRY:
         {
-            if (sendTurretData(
-                turretData.pitch,
-                turretData.yaw)
-            ) {
+            if (sendTurretData(turretData.pitch, turretData.yaw))
+            {
                 incRxMsgSwitchIndex();
             }
             break;
@@ -142,7 +139,7 @@ void XavierSerial::stopTargetTracking()
     autoAimRequestState = false;
 }
 
-bool XavierSerial::getLastAimData(TurretAimData *aimData) const
+bool XavierSerial::getLastAimData(TurretAimData* aimData) const
 {
     if (hasAimData)
     {
@@ -154,11 +151,7 @@ bool XavierSerial::getLastAimData(TurretAimData *aimData) const
 
 bool XavierSerial::sendTurretData(float pitch, float yaw)
 {
-    int16_t data[2] =
-    {
-        static_cast<int16_t>(pitch * 100),
-        static_cast<int16_t>(yaw * 100)
-    };
+    int16_t data[2] = {static_cast<int16_t>(pitch * 100), static_cast<int16_t>(yaw * 100)};
 
     memcpy(this->txMessage.data, reinterpret_cast<uint8_t*>(data), 2 * 2);
     this->txMessage.length = 4;
@@ -167,27 +160,25 @@ bool XavierSerial::sendTurretData(float pitch, float yaw)
 }
 
 // transmit code
-bool XavierSerial::sendIMUChassisData(const IMUData& imuData, const ChassisData& chassisData) {
-    int16_t data[13] =
-    {
-        // Accelerometer readings in static frame
-        static_cast<int16_t>(imuData.ax * 100),
-        static_cast<int16_t>(imuData.ay * 100),
-        static_cast<int16_t>(imuData.az * 100),
-        // MCB IMU angles are in degrees
-        static_cast<int16_t>(imuData.rol * 100),
-        static_cast<int16_t>(imuData.pit * 100),
-        static_cast<int16_t>(imuData.yaw * 100),
-        // MCB IMU angular velocities are in radians/s
-        static_cast<int16_t>(imuData.wx * 100),
-        static_cast<int16_t>(imuData.wy * 100),
-        static_cast<int16_t>(imuData.wz * 100),
-        // Wheel RPMs
-        chassisData.rightFrontWheelRPM,
-        chassisData.leftFrontWheelRPM,
-        chassisData.leftBackWheeRPM,
-        chassisData.rightBackWheelRPM
-    };
+bool XavierSerial::sendIMUChassisData(const IMUData& imuData, const ChassisData& chassisData)
+{
+    int16_t data[13] = {// Accelerometer readings in static frame
+                        static_cast<int16_t>(imuData.ax * 100),
+                        static_cast<int16_t>(imuData.ay * 100),
+                        static_cast<int16_t>(imuData.az * 100),
+                        // MCB IMU angles are in degrees
+                        static_cast<int16_t>(imuData.rol * 100),
+                        static_cast<int16_t>(imuData.pit * 100),
+                        static_cast<int16_t>(imuData.yaw * 100),
+                        // MCB IMU angular velocities are in radians/s
+                        static_cast<int16_t>(imuData.wx * 100),
+                        static_cast<int16_t>(imuData.wy * 100),
+                        static_cast<int16_t>(imuData.wz * 100),
+                        // Wheel RPMs
+                        chassisData.rightFrontWheelRPM,
+                        chassisData.leftFrontWheelRPM,
+                        chassisData.leftBackWheeRPM,
+                        chassisData.rightBackWheelRPM};
 
     memcpy(this->txMessage.data, reinterpret_cast<uint8_t*>(data), 13 * sizeof(uint16_t));
     this->txMessage.length = 2 * 13;

@@ -5,15 +5,14 @@
 
 namespace aruwlib
 {
-
 namespace control
 {
-
-class ControlOperatorInterface {
- public:
+class ControlOperatorInterface
+{
+public:
     ControlOperatorInterface() = default;
-    ControlOperatorInterface(const ControlOperatorInterface&) = delete;
-    ControlOperatorInterface &operator=(const ControlOperatorInterface&) = default;
+    ControlOperatorInterface(const ControlOperatorInterface &) = delete;
+    ControlOperatorInterface &operator=(const ControlOperatorInterface &) = default;
 
     // Returns the value used for chassis movement forward and backward, between -1 and 1
     float getChassisXInput();
@@ -36,7 +35,7 @@ class ControlOperatorInterface {
 
     float getSentinelSpeedInput();
 
- private:
+private:
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / 1000.0f);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / 1000.0f);
 

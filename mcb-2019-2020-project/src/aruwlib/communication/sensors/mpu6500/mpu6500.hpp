@@ -5,37 +5,38 @@
 
 #include "aruwlib/algorithms/MahonyAHRS.h"
 
-namespace aruwlib {
-
-namespace sensors {
-
+namespace aruwlib
+{
+namespace sensors
+{
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
- * 
+ *
  * To use this class, call Remote::init() to properly initialize and calibrate
  * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temp
  * values from the imu. Use the getter methods to access imu information.
- * 
+ *
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 {
- public:
+class Mpu6500
+{
+public:
     Mpu6500() = default;
-    Mpu6500(const Mpu6500&) = delete;
-    Mpu6500 &operator=(const Mpu6500&) = default;
+    Mpu6500(const Mpu6500 &) = delete;
+    Mpu6500 &operator=(const Mpu6500 &) = default;
 
     /**
      * Initialize the imu and the SPI line. Uses SPI1, which is internal to the
      * type A board.
-     * 
+     *
      * @note this function blocks for approximately 1 second.
      */
     void init();
 
     /**
      * Read data from the imu. Call at 500 hz for best performance.
-     */ 
+     */
     void read();
 
     /**
@@ -106,7 +107,7 @@ class Mpu6500 {
      */
     float getTiltAngle() const;
 
- private:
+private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
     ///< Use for converting from gyro values we receive to more conventional degrees / second.
@@ -125,30 +126,35 @@ class Mpu6500 {
      * Storage for the raw data we receive from the mpu6500, as well as offsets
      * that are used each time we receive data.
      */
-    struct RawData {
+    struct RawData
+    {
         ///< Raw acceleration data.
-        struct Accel {
+        struct Accel
+        {
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
         };
 
         ///< Raw gyroscope data.
-        struct Gyro {
+        struct Gyro
+        {
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
         };
 
         ///< Acceleration offset calculated in init.
-        struct AccelOffset {
+        struct AccelOffset
+        {
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
         };
 
         ///< Gyroscope offset calculated in init.
-        struct GyroOffset {
+        struct GyroOffset
+        {
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
@@ -173,9 +179,9 @@ class Mpu6500 {
 
     float tiltAngle = 0.0f;
 
-    uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = { 0 };
+    uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
-    uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = { 0 };
+    uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
     ///< Compute the gyro offset values. @note this function blocks.
     void calculateGyroOffset();

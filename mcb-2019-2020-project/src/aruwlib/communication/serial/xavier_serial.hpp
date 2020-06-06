@@ -7,18 +7,16 @@
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
 /**
  * A class used to communicate with our Xaviers.
- * 
+ *
  * @note use the static function in Drivers to interact with this class.
  */
 class XavierSerial : public DJISerial
 {
- private:
+private:
     // TX message headers.
 
     ///< @note CV_MESSAGE_TYPEs for transmission should be defined incrementally from 0x01.
@@ -26,9 +24,9 @@ class XavierSerial : public DJISerial
     ///< Indicates you will send pitch and yaw turret data.
     static const uint8_t CV_MESSAGE_TYPE_TURRET_TELEMETRY = 0x01;
     ///< Indicates you will send imu angle, gyro, and acceleration data.
-    static const uint8_t CV_MESSAGE_TYPE_IMU              = 0x02;
+    static const uint8_t CV_MESSAGE_TYPE_IMU = 0x02;
     ///< Indicates you will send robot id.
-    static const uint8_t CV_MESSAGE_TYPE_ROBOT_ID         = 0x04;
+    static const uint8_t CV_MESSAGE_TYPE_ROBOT_ID = 0x04;
     ///< Indicates you will send a request for turret aim data.
     static const uint8_t CV_MESSAGE_TYPE_AUTO_AIM_REQUEST = 0x05;
 
@@ -50,17 +48,17 @@ class XavierSerial : public DJISerial
     // RX message constants for decoding an aim data message. These are zero indexed byte offsets.
 
     static const uint8_t AIM_DATA_MESSAGE_PITCH_OFFSET = 0;
-    static const uint8_t AIM_DATA_MESSAGE_YAW_OFFSET   = 2;
-    static const uint8_t AIM_DATA_MESSAGE_HAS_TARGET   = 4;
-    static const uint8_t AIM_DATA_MESSAGE_SIZE         = 5;
+    static const uint8_t AIM_DATA_MESSAGE_YAW_OFFSET = 2;
+    static const uint8_t AIM_DATA_MESSAGE_HAS_TARGET = 4;
+    static const uint8_t AIM_DATA_MESSAGE_SIZE = 5;
 
- public:
+public:
     // AutoAim Data
     typedef struct
     {
-        bool hasTarget;  ///< Whether or not the xavier has a target.
-        float pitch;     ///< The pitch angle in degrees, rounded to two decimals.
-        float yaw;       ///< The yaw angle in degrees, rounded to two decimals.
+        bool hasTarget;             ///< Whether or not the xavier has a target.
+        float pitch;                ///< The pitch angle in degrees, rounded to two decimals.
+        float yaw;                  ///< The yaw angle in degrees, rounded to two decimals.
         modm::Timestamp timestamp;  ///< A timestamp in milliseconds.
     } TurretAimData;
 
@@ -99,7 +97,7 @@ class XavierSerial : public DJISerial
 
     XavierSerial();
     XavierSerial(const XavierSerial&) = delete;
-    XavierSerial &operator=(const XavierSerial&) = default;
+    XavierSerial& operator=(const XavierSerial&) = default;
 
     /**
      * Call this before using the serial line, initializes the uart line
@@ -119,8 +117,7 @@ class XavierSerial : public DJISerial
         const IMUData& imuData,
         const ChassisData& chassisData,
         const TurretAimData& turretData,
-        uint8_t robotId
-    );
+        uint8_t robotId);
 
     ///< Start Requesting Xavier to Track Target.
     void beginTargetTracking();
@@ -135,9 +132,9 @@ class XavierSerial : public DJISerial
      * @return `true` if the xavier has sent aim data, `false` otherwise. If `false` is
      *      returned, `aimData` will not be updated.
      */
-    bool getLastAimData(TurretAimData *aimData) const;
+    bool getLastAimData(TurretAimData* aimData) const;
 
- private:
+private:
     // TX variables.
 
     ///< Used to increment through message send types.
@@ -163,7 +160,7 @@ class XavierSerial : public DJISerial
     /**
      * Whether or not aim data is up to date. Unless there has never been an
      * aim message, this is always `true`.
-     * 
+     *
      * \todo(Matthew) fix this state, should probably be `false` if we go offline
      *      but I should check about this.
      */
@@ -185,21 +182,20 @@ class XavierSerial : public DJISerial
         CV_MESSAGE_TYPE_TURRET_TELEMETRY,
         CV_MESSAGE_TYPE_IMU,
         CV_MESSAGE_TYPE_ROBOT_ID,
-        CV_MESSAGE_TYPE_AUTO_AIM_REQUEST
-    };
+        CV_MESSAGE_TYPE_AUTO_AIM_REQUEST};
 
     // TX functions.
 
     /**
      * Interprets a raw `SerialMessage`'s `data` field to extract yaw, pitch, and other aim
      * data information.
-     * 
+     *
      * @param[in] message the message to be decoded.
      * @param[out] aimData a return parameter through which the decoded message is returned.
      * @return `false` if the message length doesn't match `AIM_DATA_MESSAGE_SIZE`, `true`
      *      otherwise.
      */
-    bool decodeToTurrentAimData(const SerialMessage &message, TurretAimData *aimData);
+    bool decodeToTurrentAimData(const SerialMessage& message, TurretAimData* aimData);
 
     // RX functions.
 
@@ -224,7 +220,7 @@ class XavierSerial : public DJISerial
     /**
      * Packages `robotId` in an acceptable format for the base `DjiSerial` class to interpret
      * and sends the message via `DjiSerial`'s `send` function.
-     * 
+     *
      * @param robotdId the robot ID to send.
      * @return `true` if sending was a success, `false` otherwise.
      */

@@ -2,21 +2,20 @@
 #define __CAN_RX_LISTENER__
 
 #include <cstdint>
+
 #include <modm/architecture/interface/can_message.hpp>
 
 #include "can.hpp"
 
 namespace aruwlib
 {
-
 namespace can
 {
-
 // You must extend this class in order to use the features in this
 // namespace.
 class CanRxListner
 {
- public:
+public:
     // Construct a new CanRxListner, must specify the can identifier
     // and the can bus the receive handler will be watching.
     CanRxListner(uint32_t id, CanBus cB);

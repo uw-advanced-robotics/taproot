@@ -9,46 +9,53 @@
 
 namespace aruwlib
 {
-
 namespace gpio
 {
-
 /**
  * Similar to the Analog class, wraps input and output digital pins.
  * Currently 4 input and 4 output pins are configured.
- * 
+ *
  * @see InputPin for the input pins configured (pin names correspond
  *      to RoboMaster type A board definitions).
  * @see OutputPin for the output pins configured (pin names correspond
  *      to RoboMaster type A board definitions).
  */
-class Digital {
- public:
+class Digital
+{
+public:
     Digital() = default;
-    Digital(const Digital&) = delete;
-    Digital &operator=(const Digital&) = default;
+    Digital(const Digital &) = delete;
+    Digital &operator=(const Digital &) = default;
 
     ///< Currently enabled digital input pins.
     enum InputPin
     {
-        A, B, C, D
+        A,
+        B,
+        C,
+        D
     };
 
     ///< Currently enabled digital output pins.
     enum OutputPin
     {
-        E, F, G, H
+        E,
+        F,
+        G,
+        H
     };
 
-    #ifdef ENV_SIMULATOR
+#ifdef ENV_SIMULATOR
     enum InputPullMode
     {
-        Floating, PullUp, PullDown
+        Floating,
+        PullUp,
+        PullDown
     };
-    #else
+#else
     ///< This references a struct defined by modm.  Can either be floating, pull-up, or pull-down.
     using InputPullMode = modm::platform::Gpio::InputType;
-    #endif
+#endif
 
     /**
      * Initializes all pins as output/input pins. Does not handle configuring
@@ -59,7 +66,7 @@ class Digital {
     /**
      * By default input pins are floating. Configure them to have a pull-up
      * or pull-down resistor here.
-     * 
+     *
      * @param[in] pin the InputPin to configure.
      * @param[in] mode the pull mode to be enabled.
      */
@@ -67,7 +74,7 @@ class Digital {
 
     /**
      * Sets the digital OutputPin either high or low.
-     * 
+     *
      * @param[in] pin the OutputPin to set.
      * @param[in] isSet `true` to send high, `false` to send low.
      */
@@ -75,7 +82,7 @@ class Digital {
 
     /**
      * Reads from an InputPin.
-     * 
+     *
      * @param[in] pin the InputPin to read from.
      * @return `true` if the pin is pulled high and `false` otherwise.
      */

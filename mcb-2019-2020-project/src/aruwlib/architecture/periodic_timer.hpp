@@ -7,10 +7,9 @@ namespace aruwlib
 {
 namespace arch
 {
-
 class PeriodicMilliTimer
 {
- public:
+public:
     PeriodicMilliTimer();
 
     explicit PeriodicMilliTimer(uint32_t period);
@@ -24,7 +23,7 @@ class PeriodicMilliTimer
 
     bool isStopped() const;
 
- private:
+private:
     uint32_t period;
     aruwlib::arch::MilliTimeout timeout;
 };

@@ -5,14 +5,12 @@
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 /**
  * An output value is incremented or decremented at every call to update
  * until target has been reached.
- * 
+ *
  * This is very similar to modm's ramp except for one difference: rather than
  * setting the increment at the beginning, you set the increment each time,
  * which allows you to take into account systems where time increment is not
@@ -20,10 +18,10 @@ namespace algorithms
  */
 class Ramp
 {
- public:
+public:
     /**
      * Create a ramp generator.
-     * 
+     *
      * @param initialValue The starting value
      */
     explicit Ramp(const float& initialValue = 0.0f);
@@ -54,12 +52,12 @@ class Ramp
     ///< Returns the target value (where the ramp generator will head torwards).
     const float& getTarget() const;
 
- private:
+private:
     static constexpr float RAMP_EPSILON = 0.00000000001f;
     float target;        ///< The value's end goal.
     float value;         ///< The value to be incremented towards the target.
     bool targetReached;  ///< Whether or not target and value have converged.
-};  // class Ramp
+};                       // class Ramp
 
 }  // namespace algorithms
 

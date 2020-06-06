@@ -7,16 +7,14 @@
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
 /**
  * The kalman filter can be used by instantiating an ExtendedKalman
  * object and calling filterData.
- * 
+ *
  * Example source:
- * 
+ *
  * \code
  * float sensorData;
  * float filtered;
@@ -30,7 +28,7 @@ namespace algorithms
  */
 class ExtendedKalman
 {
- public:
+public:
     /**
      * Initializes a kalman filter with the given covariances.
      *
@@ -69,7 +67,7 @@ class ExtendedKalman
     ///< Resets the covariances and predictions.
     void reset();
 
- private:
+private:
     float xLast;  ///< last optimal prediction.
     float xMid;   ///< forcast optimal prediction.
     float xNow;   ///< current optimal prediction.
@@ -82,7 +80,7 @@ class ExtendedKalman
     float Q;      ///< system parameter
     float R;      ///< system parameter.
     float H;      ///< system parameter.
-};  // class ExtendedKalman
+};                // class ExtendedKalman
 
 }  // namespace algorithms
 

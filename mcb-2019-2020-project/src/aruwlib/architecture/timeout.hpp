@@ -7,15 +7,16 @@ namespace aruwlib
 {
 namespace arch
 {
-
-class MilliTimeout {
+class MilliTimeout
+{
     friend class PeriodicMilliTimer;
- private:
+
+private:
     bool isRunning;
     bool isExecuted;
     uint32_t expireTime;
 
- public:
+public:
     MilliTimeout();
     explicit MilliTimeout(uint32_t timeout_millis);
 

@@ -6,12 +6,10 @@
 #include <modm/architecture/interface/delay.hpp>
 #endif
 
-
 #include <modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp>
 
 namespace aruwlib
 {
-
 namespace display
 {
 /**
@@ -19,29 +17,29 @@ namespace display
  */
 template <
 #ifndef ENV_SIMULATOR
-            typename SPI, typename A0, typename Reset,
+    typename SPI,
+    typename A0,
+    typename Reset,
 #endif
-            unsigned int Width, unsigned int Height, bool Flipped>
+    unsigned int Width,
+    unsigned int Height,
+    bool Flipped>
 class Sh1106 : public modm::MonochromeGraphicDisplayBufferedVertical<Width, Height>
 {
- public:
-    virtual ~Sh1106()
-    {
-    }
+public:
+    virtual ~Sh1106() {}
 
     void initializeBlocking();
 
     /**
      * Update the display with the content of the RAM buffer
      */
-    virtual void
-    update();
+    virtual void update();
 
     // Invert the display content
-    void
-    setInvert(bool invert);
+    void setInvert(bool invert);
 
- protected:
+protected:
 #ifndef ENV_SIMULATOR
     SPI spi;
     A0 a0;

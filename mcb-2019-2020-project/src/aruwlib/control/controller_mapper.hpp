@@ -1,14 +1,16 @@
 #ifndef __CONTROLLER_HPP__
 #define __CONTROLLER_HPP__
 
-#include <map>
 #include <list>
-#include <utility>
+#include <map>
 #include <numeric>
-#include "command.hpp"
+#include <utility>
+
 #include "aruwlib/communication/remote.hpp"
 
-/* 
+#include "command.hpp"
+
+/*
  * Control for mapping commands to actions. For example, all the remote
  * mappings will be handled here. One creates a new RemoteMap
  * using the RemoteMapper class (i.e. press a button on the
@@ -17,46 +19,53 @@
 
 using namespace aruwlib;
 
-namespace aruwlib {
-
-namespace control {
-
+namespace aruwlib
+{
+namespace control
+{
 class IoMapper
 
 {
-friend class aruwlib::Remote;
+    friend class aruwlib::Remote;
 
- private:
+private:
     /**
      * PRESS: The command is added exactly once when you enter the state that matches
      *        the correct state.
-     * 
+     *
      * HOLD: The command is added once when the state matches the correct and removed
      *       when you leave this state.
-     * 
+     *
      * HOLD_REPEAT: The command is added when the state matches the correct state and
      *              is added again every time the command ends.
-     * 
+     *
      * TOGGLE: The command is added when the state matches the correct state and
      *         removed when you reenter the state again.
      */
-    enum MapType {
+    enum MapType
+    {
         HOLD_REPEAT,
         HOLD,
         PRESS,
         TOGGLE
     };
 
-    struct RemoteMap {
+    struct RemoteMap
+    {
         const Remote::SwitchState lSwitch;
         const Remote::SwitchState rSwitch;
         const uint16_t keys;
 
-        RemoteMap(Remote::SwitchState ls, Remote::SwitchState rs, uint16_t k) :
-        lSwitch(ls), rSwitch(rs), keys(k) {}
+        RemoteMap(Remote::SwitchState ls, Remote::SwitchState rs, uint16_t k)
+            : lSwitch(ls),
+              rSwitch(rs),
+              keys(k)
+        {
+        }
     };
 
-    struct MapInfo {
+    struct MapInfo
+    {
         bool pressed = false;
         bool toggled = false;
         MapType type;
@@ -64,8 +73,10 @@ friend class aruwlib::Remote;
         MapInfo(MapType mt, Command* sp) : type(mt), command(sp) {}
     };
 
-    struct compareRemoteMapPtrs {
-        bool operator()(const RemoteMap* a, const RemoteMap* b) const {
+    struct compareRemoteMapPtrs
+    {
+        bool operator()(const RemoteMap* a, const RemoteMap* b) const
+        {
             return a->keys != b->keys || a->lSwitch != b->lSwitch || a->rSwitch != b->rSwitch;
         }
     };
@@ -78,16 +89,17 @@ friend class aruwlib::Remote;
      * for each button pressed/combination of buttons, executes the commands.
      */
 
-    void handleKeyStateChange(uint16_t key,
-                                     Remote::SwitchState leftSwitch,
-                                     Remote::SwitchState rightSwitch);
+    void handleKeyStateChange(
+        uint16_t key,
+        Remote::SwitchState leftSwitch,
+        Remote::SwitchState rightSwitch);
 
     void addMap(RemoteMap* mapping, MapInfo* mapInfo);
 
- public:
+public:
     IoMapper() = default;
     IoMapper(const IoMapper&) = delete;
-    IoMapper &operator=(const IoMapper&) = default;
+    IoMapper& operator=(const IoMapper&) = default;
 
     /**
      * Attaches a command to a remote control mapping which executes when a mapping is pressed
@@ -122,17 +134,19 @@ friend class aruwlib::Remote;
      *   Returns a RemoteMap with dependencies on one specified switch and given keys
      */
 
-    static RemoteMap* newKeyMap(Remote::Switch sw,
-                                          Remote::SwitchState switchState,
-                                          std::list<Remote::Key> k = {});
+    static RemoteMap* newKeyMap(
+        Remote::Switch sw,
+        Remote::SwitchState switchState,
+        std::list<Remote::Key> k = {});
 
     /*
      *    Returns a RemoteMap with dependencies on both specified switches and given keys
      */
 
-    static RemoteMap* newKeyMap(Remote::SwitchState leftSwitchState,
-                                          Remote::SwitchState rightSwitchState,
-                                          std::list<Remote::Key> k = {});
+    static RemoteMap* newKeyMap(
+        Remote::SwitchState leftSwitchState,
+        Remote::SwitchState rightSwitchState,
+        std::list<Remote::Key> k = {});
 };
 
 }  // namespace control

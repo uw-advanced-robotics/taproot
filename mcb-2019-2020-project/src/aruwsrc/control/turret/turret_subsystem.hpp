@@ -1,20 +1,19 @@
 #ifndef __TURRET_SUBSYSTEM_HPP__
 #define __TURRET_SUBSYSTEM_HPP__
 
-#include <modm/math/filter/pid.hpp>
-#include <aruwlib/control/subsystem.hpp>
-#include <aruwlib/motor/dji_motor.hpp>
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/algorithms/linear_interpolation.hpp>
+#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/motor/dji_motor.hpp>
+#include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
 {
-
 namespace turret
 {
-
-class TurretSubsystem : public aruwlib::control::Subsystem {
- public:
+class TurretSubsystem : public aruwlib::control::Subsystem
+{
+public:
     static constexpr float TURRET_START_ANGLE = 90.0f;
     static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
     static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
@@ -41,7 +40,7 @@ class TurretSubsystem : public aruwlib::control::Subsystem {
 
     /**
      * Calculates a yaw output that uses the desired chassis rotation as a feed forward gain.
-     * 
+     *
      * The chassis rotation is given in desired wheel rpm.
      */
     float yawFeedForwardCalculation(float desiredChassisRotation);
@@ -59,7 +58,7 @@ class TurretSubsystem : public aruwlib::control::Subsystem {
 
     void updateCurrentTurretAngles();
 
- private:
+private:
     const uint16_t YAW_START_ENCODER_POSITION = 8160;
     const uint16_t PITCH_START_ENCODER_POSITION = 4100;
 
@@ -90,7 +89,7 @@ class TurretSubsystem : public aruwlib::control::Subsystem {
     void updateCurrentYawAngle();
     void updateCurrentPitchAngle();
 
-    int32_t getVelocity(const aruwlib::motor::DjiMotor &motor) const;
+    int32_t getVelocity(const aruwlib::motor::DjiMotor& motor) const;
 };
 
 }  // namespace turret

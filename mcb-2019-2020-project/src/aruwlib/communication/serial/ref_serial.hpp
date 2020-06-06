@@ -2,24 +2,23 @@
 #define __REF_SERIAL_HPP__
 
 #include <modm/container/deque.hpp>
+
 #include "dji_serial.hpp"
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
 /**
  * A class meant to communicate with the 2019 version of the RoboMaster
  * referee system. Does not include UI drawings.
- * 
+ *
  * @note use the static function located in Drivers to interact with
  *      this class.
  */
 class RefSerial : public DJISerial
 {
- private:
+private:
     // RX message constants
     static const uint16_t REF_DAMAGE_EVENT_SIZE = 20;
 
@@ -32,21 +31,21 @@ class RefSerial : public DJISerial
     static const uint32_t TIME_BETWEEN_REF_UI_DISPLAY_SEND_MS = 100;
 
     // RX message type defines
-    static const uint16_t REF_MESSAGE_TYPE_GAME_STATUS                   = 0x1;
-    static const uint16_t REF_MESSAGE_TYPE_GAME_RESULT                   = 0x2;
-    static const uint16_t REF_MESSAGE_TYPE_ALL_ROBOT_HP                  = 0x3;
-    static const uint16_t REF_MESSAGE_TYPE_ROBOT_STATUS                  = 0x201;
-    static const uint16_t REF_MESSAGE_TYPE_POWER_AND_HEAT                = 0x202;
-    static const uint16_t REF_MESSAGE_TYPE_ROBOT_POSITION                = 0x203;
-    static const uint16_t REF_MESSAGE_TYPE_RECEIVE_DAMAGE                = 0x206;
-    static const uint16_t REF_MESSAGE_TYPE_PROJECTILE_LAUNCH             = 0x207;
+    static const uint16_t REF_MESSAGE_TYPE_GAME_STATUS = 0x1;
+    static const uint16_t REF_MESSAGE_TYPE_GAME_RESULT = 0x2;
+    static const uint16_t REF_MESSAGE_TYPE_ALL_ROBOT_HP = 0x3;
+    static const uint16_t REF_MESSAGE_TYPE_ROBOT_STATUS = 0x201;
+    static const uint16_t REF_MESSAGE_TYPE_POWER_AND_HEAT = 0x202;
+    static const uint16_t REF_MESSAGE_TYPE_ROBOT_POSITION = 0x203;
+    static const uint16_t REF_MESSAGE_TYPE_RECEIVE_DAMAGE = 0x206;
+    static const uint16_t REF_MESSAGE_TYPE_PROJECTILE_LAUNCH = 0x207;
     static const uint16_t REF_MESSAGE_TYPE_SENTINEL_DRONE_BULLETS_REMAIN = 0x208;
-    static const uint16_t REF_MESSAGE_TYPE_CUSTOM_DATA                   = 0x301;
+    static const uint16_t REF_MESSAGE_TYPE_CUSTOM_DATA = 0x301;
 
     // TX message type defines
     static const uint16_t REF_CUSTOM_DATA_TYPE_UI_INDICATOR = 0xD180;
 
- public:
+public:
     typedef enum
     {
         PREMATCH = 0,        ///< Pre-competition. stage
@@ -222,7 +221,7 @@ class RefSerial : public DJISerial
      */
     RefSerial();
     RefSerial(const RefSerial&) = delete;
-    RefSerial &operator=(const RefSerial&) = default;
+    RefSerial& operator=(const RefSerial&) = default;
 
     /**
      * Handles the types of messages defined above in the RX message handlers section.
@@ -238,14 +237,14 @@ class RefSerial : public DJISerial
     ///< Packages the display data in a `CustomData` struct and then sends it via `sendCustomData`.
     void sendDisplayData(const DisplayData& displayData);
 
- private:
+private:
     RobotData robotData;
     GameData gameData;
     modm::BoundedDeque<DamageEvent, REF_DAMAGE_EVENT_SIZE> receivedDpsTracker;
 
     void sendCustomData(const CustomData& customData);
 
-    /** 
+    /**
      * Given 6 boolean variables to display to the referee ui, packet them into
      * an 8 bit integer and return that value. The ending bit is the first given
      * boolean, the next bit from the end is the second given boolean, and so on.
@@ -254,10 +253,9 @@ class RefSerial : public DJISerial
      *      to the referee client ui.
      * @return the 8 bit variable packeting the 6 boolean indicators.
      */
-    uint8_t packBoolMask(
-        bool bool1, bool bool2, bool bool3, bool bool4, bool bool5, bool bool6);
+    uint8_t packBoolMask(bool bool1, bool bool2, bool bool3, bool bool4, bool bool5, bool bool6);
 
-    /** 
+    /**
      * Given RobotId, returns the client_id that the referee system uses to display
      * the received messages to the given client_id robot.
      *

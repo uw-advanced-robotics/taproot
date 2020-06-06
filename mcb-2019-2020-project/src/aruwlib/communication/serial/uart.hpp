@@ -13,10 +13,8 @@
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
 /**
  * Class that wraps modm's Uart implementation.
  *
@@ -24,52 +22,61 @@ namespace serial
  * code for. If additional `UartPort`'s are added, they must be added
  * to this wrapper class here.
  */
-class Uart {
- public:
+class Uart
+{
+public:
     enum UartPort
     {
-        Uart1, Uart2, Uart6
+        Uart1,
+        Uart2,
+        Uart6
     };
 
-    #ifdef ENV_SIMULATOR
-    enum Parity {
-        Disabled, Even, Odd
+#ifdef ENV_SIMULATOR
+    enum Parity
+    {
+        Disabled,
+        Even,
+        Odd
     };
-    #else
+#else
     using Parity = modm::platform::UartBase::Parity;
-    #endif
+#endif
 
     Uart() = default;
-    Uart(const Uart&) = delete;
-    Uart &operator=(const Uart&) = default;
+    Uart(const Uart &) = delete;
+    Uart &operator=(const Uart &) = default;
 
     /**
      * .initializes a particular Uart with the pins particular to the RoboMaster type a board.
-     * 
+     *
      * @note follow covention in the functino when adding a `UartPort`.
      * @tparam port the particular port to initialize.
      * @tparam baudrate desired baud rate in Hz.
      * @tparam parity @see `Parity`.
      */
-    template<UartPort port, modm::baudrate_t baudrate, Parity parity = Parity::Disabled>
+    template <UartPort port, modm::baudrate_t baudrate, Parity parity = Parity::Disabled>
     void init()
     {
-        #ifndef ENV_SIMULATOR
+#ifndef ENV_SIMULATOR
         // TODO(kaelin): move pin definition to Board?
-        if constexpr (port == UartPort::Uart1) {
+        if constexpr (port == UartPort::Uart1)
+        {
             // TODO(kaelin): what's the TX pin on UART1?
             modm::platform::Usart1::connect<GpioB7::Rx>();
             modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
-        // NOLINTNEXTLINE
-        } else if constexpr (port == UartPort::Uart2) {
+        }
+        else if constexpr (port == UartPort::Uart2)
+        {
             modm::platform::Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
             modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(12, parity);
-        // NOLINTNEXTLINE
-        } else if constexpr (port == UartPort::Uart6) {
+        }
+        else if constexpr (port == UartPort::Uart6)
+        {
             modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
             modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
         }
-        #endif
+#endif
     }
 
     /**

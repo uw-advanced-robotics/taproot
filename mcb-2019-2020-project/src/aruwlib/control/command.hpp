@@ -1,11 +1,11 @@
 /**
  * This code is part of aruw's repository.
  *
- * A generic extendable class for implementing a command. Each 
+ * A generic extendable class for implementing a command. Each
  * command is attached to a subsystem. To create a new command,
  * extend the Command class and instantiate the virtual functions
  * in this class. See example_command.hpp for example of this.
- * 
+ *
  * Commands can also be comprised of a number of other commands.
  * This is similar to command groups but much less structured.
  * If you are going to do this, please follow the following
@@ -15,7 +15,7 @@
  *   command should act as a state machine that when it wants
  *   to change the state of the robot, it adds/removes commands
  *   to its command scheduler.
- * - To interface with instances of commands that are a part of 
+ * - To interface with instances of commands that are a part of
  *   your comprised command, use the comprisedCommandScheduler
  *   (an instance of a CommandScheduler). You will not need to
  *   register subsystems (this is done when you add a subsystem
@@ -30,17 +30,14 @@
 
 namespace aruwlib
 {
-
 namespace control
 {
-
 class Subsystem;
 
-class Command {
- public:
-    Command() :
-    prevSchedulerExecuteTimestamp(0)
-    {}
+class Command
+{
+public:
+    Command() : prevSchedulerExecuteTimestamp(0) {}
 
     /**
      * Specifies the set of subsystems used by this command.  Two commands cannot
@@ -98,7 +95,7 @@ class Command {
      */
     virtual bool isFinished(void) const = 0;
 
- private:
+private:
     friend class CommandScheduler;
 
     uint32_t prevSchedulerExecuteTimestamp;

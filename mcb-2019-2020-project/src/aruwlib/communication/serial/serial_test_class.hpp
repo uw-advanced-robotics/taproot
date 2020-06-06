@@ -5,20 +5,18 @@
 
 namespace aruwlib
 {
-
 namespace serial
 {
-
 /**
  * A simple serial tester to insure `DjiSerial` is working properly.
- * 
+ *
  * @note to test with a single MCB, instantiate a test class and connect
  *      TX to RX. You should be able to check if messages are being received.
  *      Additionally, watch `i` to check if you are dropping messages.
  */
 class SerialTestClass : public DJISerial
 {
- public:
+public:
     ///< Attaches this test class to `Uart2`.
     SerialTestClass();
 
@@ -28,7 +26,7 @@ class SerialTestClass : public DJISerial
     ///< Sends a message of length 1, the byte `60`, with the `sequenceNumber` incremented.
     void sendMessage();
 
- private:
+private:
     uint8_t messageId;
 
     uint8_t i;

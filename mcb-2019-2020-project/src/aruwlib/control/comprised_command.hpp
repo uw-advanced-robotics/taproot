@@ -6,17 +6,14 @@
 
 namespace aruwlib
 {
-
 namespace control
 {
-
 class ComprisedCommand : public Command
 {
- public:
-    ComprisedCommand() : Command(), comprisedCommandScheduler()
-    {}
+public:
+    ComprisedCommand() : Command(), comprisedCommandScheduler() {}
 
- protected:
+protected:
     CommandScheduler comprisedCommandScheduler;
 };
 

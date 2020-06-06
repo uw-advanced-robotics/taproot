@@ -5,19 +5,18 @@
 
 namespace aruwlib
 {
-
 namespace gpio
 {
-
 /**
  * A class specifically for handling the wrapping of the digital
  * pins connected to LEDs on the RoboMaster type A board.
  */
-class Leds {
- public:
+class Leds
+{
+public:
     Leds() = default;
-    Leds(const Leds&) = delete;
-    Leds &operator=(const Leds&) = default;
+    Leds(const Leds &) = delete;
+    Leds &operator=(const Leds &) = default;
 
     /**
      * The LED letters correspond to the letters written next to the LEDs
@@ -29,7 +28,16 @@ class Leds {
      */
     enum LedPin
     {
-        A = 0, B, C, D, E, F, G, H, Green, Red
+        A = 0,
+        B,
+        C,
+        D,
+        E,
+        F,
+        G,
+        H,
+        Green,
+        Red
     };
 
     /**
@@ -40,7 +48,7 @@ class Leds {
 
     /**
      * Sets a given led to either high or low.
-     * 
+     *
      * @note setting an LED to high (`isSet=true`) will turn the LED off and setting
      *      an LED to low (`isSet=false`) will turn the LED on.
      * @param[in] pin the LED to set

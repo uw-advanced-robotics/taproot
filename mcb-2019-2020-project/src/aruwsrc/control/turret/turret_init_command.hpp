@@ -1,19 +1,18 @@
 #ifndef __TURRET_INIT_COMMAND_H__
 #define __TURRET_INIT_COMMAND_H__
 
-#include <aruwlib/control/command.hpp>
 #include <aruwlib/algorithms/contiguous_float.hpp>
+#include <aruwlib/control/command.hpp>
 #include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
 {
-
 namespace turret
 {
-
 class TurretSubsystem;
-class TurretInitCommand : public aruwlib::control::Command {
- public:
+class TurretInitCommand : public aruwlib::control::Command
+{
+public:
     explicit TurretInitCommand(TurretSubsystem *subsystem);
 
     void initialize() override {}
@@ -22,7 +21,7 @@ class TurretInitCommand : public aruwlib::control::Command {
     void execute() override;
     void end(bool) override;
 
- private:
+private:
     const float YAW_P = 300.0f;
     const float YAW_I = 0.0f;
     const float YAW_D = 100.0f;

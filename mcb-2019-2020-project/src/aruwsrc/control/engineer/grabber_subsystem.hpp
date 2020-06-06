@@ -6,26 +6,27 @@
 
 namespace aruwsrc
 {
-
 namespace engineer
 {
-
 /**
- * This is a subsystem code for Engineer grabber mechanism. 
+ * This is a subsystem code for Engineer grabber mechanism.
  * The grabber will be actuated by a single solenoid that
- * controls two pneumatic pistons. 
+ * controls two pneumatic pistons.
  */
 class GrabberSubsystem : public aruwlib::control::Subsystem
 {
- public:
+public:
     explicit GrabberSubsystem(aruwlib::gpio::Digital::OutputPin pin)
-        : pin(pin), isGrabberSqueezed(false) {}
+        : pin(pin),
+          isGrabberSqueezed(false)
+    {
+    }
 
     void setSqueezed(bool isGrabberSqueezed);
 
     bool isSqueezed() const;
 
- private:
+private:
     aruwlib::gpio::Digital::OutputPin pin;
 
     bool isGrabberSqueezed;

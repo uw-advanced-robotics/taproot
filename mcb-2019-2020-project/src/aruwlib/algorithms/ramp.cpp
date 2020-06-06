@@ -1,18 +1,19 @@
-#include <math.h>
 #include "ramp.hpp"
+
+#include <math.h>
+
 #include "math_user_utils.hpp"
 
 namespace aruwlib
 {
-
 namespace algorithms
 {
-
-Ramp::Ramp(const float& initialValue) :
-    target(initialValue),
-    value(initialValue),
-    targetReached(true)
-{}
+Ramp::Ramp(const float& initialValue)
+    : target(initialValue),
+      value(initialValue),
+      targetReached(true)
+{
+}
 
 void Ramp::setTarget(const float& target)
 {
@@ -31,20 +32,11 @@ void Ramp::update(float increment)
     targetReached = compareFloatClose(value, target, RAMP_EPSILON);
 }
 
-const float& Ramp::getValue() const
-{
-    return this->value;
-}
+const float& Ramp::getValue() const { return this->value; }
 
-bool Ramp::isTargetReached() const
-{
-    return targetReached;
-}
+bool Ramp::isTargetReached() const { return targetReached; }
 
-const float& Ramp::getTarget() const
-{
-    return target;
-}
+const float& Ramp::getTarget() const { return target; }
 
 }  // namespace algorithms
 

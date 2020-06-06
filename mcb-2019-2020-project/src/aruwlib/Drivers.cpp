@@ -19,7 +19,6 @@ control::IoMapper Drivers::ioMapper;
 errors::ErrorController Drivers::errorController;
 motor::DjiMotorTxHandler Drivers::djiMotorTxHandler;
 
-
 #ifdef ENV_SIMULATOR
 void Drivers::reset()
 {

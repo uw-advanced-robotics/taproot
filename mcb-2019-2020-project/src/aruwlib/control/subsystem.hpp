@@ -26,14 +26,13 @@
 
 namespace aruwlib
 {
-
 namespace control
 {
-
 class Command;
 
-class Subsystem {
- public:
+class Subsystem
+{
+public:
     Subsystem();
 
     /**
@@ -64,7 +63,7 @@ class Subsystem {
      * subsystem). This method should not contain command specific
      * control code. When you create a subclass of Subsystem, you
      * should overwrite this virtual method.
-     * 
+     *
      * Must be virtual otherwise scheduler will refer to this method
      * rather than looking in child for this method.
      */
@@ -72,7 +71,7 @@ class Subsystem {
 
     uint32_t prevSchedulerExecuteTimestamp;
 
- private:
+private:
     Command* defaultCommand;
 };
 

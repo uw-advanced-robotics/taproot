@@ -1,7 +1,7 @@
 /**
  * Class for handling all the commands you would like to currently runs.
  * Only knows how to run commands and refresh subsystems and nothing else.
- * 
+ *
  * Contains list of all commands and subsystems that need to be run
  * currently, runs these commands and refresh the subsystems  every time
  * run is called. Uses isFinished function from command to determine if
@@ -17,23 +17,22 @@
 #define __SCHEDULER_HPP__
 
 #include <map>
+
 #include <modm/container/linked_list.hpp>
-#include "subsystem.hpp"
+
 #include "command.hpp"
+#include "subsystem.hpp"
 
 namespace aruwlib
 {
-
 namespace control
 {
-
 class CommandScheduler
 {
- public:
-    CommandScheduler() : subsystemToCommandMap()
-    {}
+public:
+    CommandScheduler() : subsystemToCommandMap() {}
     CommandScheduler(const CommandScheduler&) = default;
-    CommandScheduler &operator=(const CommandScheduler&) = default;
+    CommandScheduler& operator=(const CommandScheduler&) = default;
 
     void runCommands();
 
@@ -49,7 +48,7 @@ class CommandScheduler
 
     void addCommand(Command* commandToAdd);
 
- private:
+private:
     // maximum time before we start erroring, in microseconds
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
 

@@ -5,15 +5,13 @@
 
 namespace aruwsrc
 {
-
 namespace engineer
 {
-
 class GrabberSubsystem;
 
 class SqueezeGrabberCommand : public aruwlib::control::Command
 {
- public:
+public:
     explicit SqueezeGrabberCommand(GrabberSubsystem* subsystem);
 
     void initialize() override;
@@ -24,7 +22,7 @@ class SqueezeGrabberCommand : public aruwlib::control::Command
 
     bool isFinished() const override;
 
- private:
+private:
     GrabberSubsystem* grabber;
 };  // class SqueezeGrabberCommand
 

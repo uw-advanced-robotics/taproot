@@ -1,22 +1,19 @@
 #ifndef __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 #define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 
+#include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/motor/dji_motor.hpp>
-#include <aruwlib/communication/gpio/digital.hpp>
 #include <modm/math/filter/pid.hpp>
-
 
 namespace aruwsrc
 {
-
 namespace control
 {
-
 class SentinelDriveSubsystem : public aruwlib::control::Subsystem
 {
- public:
+public:
     static constexpr float MAX_POWER_CONSUMPTION = 30.0f;
     static constexpr float MAX_ENERGY_BUFFER = 200.0f;
 
@@ -28,11 +25,12 @@ class SentinelDriveSubsystem : public aruwlib::control::Subsystem
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
         : leftWheel(leftMotorId, CAN_BUS_MOTORS, false, "left sentinel drive motor"),
-        rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor"),
-        velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-        velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-        desiredRpm(0)
-    {}
+          rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor"),
+          velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+          velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+          desiredRpm(0)
+    {
+    }
 
     /**
      * Returns absolute position of the sentinel, relative to the left end of the rail (when rail
@@ -46,7 +44,7 @@ class SentinelDriveSubsystem : public aruwlib::control::Subsystem
 
     void initLimitSwitches();
 
- private:
+private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR6;
     static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR5;
     const aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;

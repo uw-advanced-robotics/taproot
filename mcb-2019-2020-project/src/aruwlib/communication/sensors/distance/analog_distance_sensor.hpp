@@ -1,18 +1,19 @@
 #ifndef ANALOG_DISTANCE_SENSOR_H_
 #define ANALOG_DISTANCE_SENSOR_H_
 
-#include "distance_sensor.hpp"
 #include "aruwlib/communication/gpio/analog.hpp"
 
-namespace aruwlib {
+#include "distance_sensor.hpp"
 
-namespace sensors {
-
+namespace aruwlib
+{
+namespace sensors
+{
 /**
  * Basic analog IR Sensor.
  * - The distance conversion can be tweaked depending on the sensor.
  * - Min and max distance are in cm.
- * 
+ *
  * See here (https://i.stack.imgur.com/babQg.png) for a graph of what
  * an IR sensor should look like. Datasheets will have specifics for
  * what the distance curve should look like. Thsi class gives a general
@@ -20,12 +21,13 @@ namespace sensors {
  * of the form \f$ y=mx+b \f$
  * and then the output is put into the equation \f$ dist = \frac{1}{linear} + offset \f$.
  */
-class AnalogDistanceSensor: public DistanceSensor {
- public:
+class AnalogDistanceSensor : public DistanceSensor
+{
+public:
     /**
      * Constructor to initialize the analog IR boundary,
      * distance conversion, and analog pin.
-     * 
+     *
      * @param[in] minDistance the sensor's min valid distance
      * @param[in] maxDistance the sensor's max valid distance
      * @param[in] m the slope of the linear model that describes
@@ -43,12 +45,11 @@ class AnalogDistanceSensor: public DistanceSensor {
         float m,
         float b,
         float offset,
-        gpio::Analog::Pin pin
-    );
+        gpio::Analog::Pin pin);
 
     /**
      * Reads the sensor, updates the current distance, and returns this reading.
-     * 
+     *
      * @return the updated value.  May or may not be valid. If it is not valid,
      *      -1 is returned.
      */
@@ -56,13 +57,13 @@ class AnalogDistanceSensor: public DistanceSensor {
 
     /**
      * Checks if current reading is within bounds.
-     * 
+     *
      * @return `true` if the reading is within the min and max distance, exclusive.
      *      Returns `false` otherwise.
      */
     bool validReading() const override;
 
- private:
+private:
     ///< Distance calulation values for linear model \f$ y = mx + b \f$.
     float m;
     float b;
