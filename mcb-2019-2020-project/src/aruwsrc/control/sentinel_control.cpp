@@ -1,4 +1,5 @@
-#include <aruwlib/control/controller_mapper.hpp>
+#include <aruwlib/Drivers.hpp>
+#include <aruwlib/control/command_mapper.hpp>
 
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
@@ -20,6 +21,8 @@
 
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
+using aruwlib::Drivers;
+using aruwlib::control::CommandMapper;
 
 namespace aruwsrc
 {
@@ -82,12 +85,12 @@ FrictionWheelRotateCommand stopLowerFrictionWheels(&lowerFrictionWheels, 0);
 /* register subsystems here -------------------------------------------------*/
 void registerSentinelSubsystems()
 {
-    CommandScheduler::getMainScheduler().registerSubsystem(&agitator);
-    CommandScheduler::getMainScheduler().registerSubsystem(&kickerMotor);
-    CommandScheduler::getMainScheduler().registerSubsystem(&sentinelDrive);
+    Drivers::commandScheduler.registerSubsystem(&agitator);
+    Drivers::commandScheduler.registerSubsystem(&kickerMotor);
+    Drivers::commandScheduler.registerSubsystem(&sentinelDrive);
     sentinelDrive.initLimitSwitches();
-    CommandScheduler::getMainScheduler().registerSubsystem(&upperFrictionWheels);
-    CommandScheduler::getMainScheduler().registerSubsystem(&lowerFrictionWheels);
+    Drivers::commandScheduler.registerSubsystem(&upperFrictionWheels);
+    Drivers::commandScheduler.registerSubsystem(&lowerFrictionWheels);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
@@ -101,31 +104,31 @@ void setDefaultSentinelCommands()
 /* add any starting commands to the scheduler here --------------------------*/
 void startSentinelCommands()
 {
-    CommandScheduler::getMainScheduler().addCommand(&agitatorCalibrateCommand);
-    CommandScheduler::getMainScheduler().addCommand(&agitatorCalibrateKickerCommand);
+    Drivers::commandScheduler.addCommand(&agitatorCalibrateCommand);
+    Drivers::commandScheduler.addCommand(&agitatorCalibrateKickerCommand);
 }
 
 /* register io mappings here ------------------------------------------------*/
 void registerSentinelIoMappings()
 {
-    IoMapper::addHoldRepeatMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
+    Drivers::commandMapper.addHoldRepeatMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
         &agitatorShootSlowCommand);
 
-    IoMapper::addHoldRepeatMapping(
-        IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
+    Drivers::commandMapper.addHoldRepeatMapping(
+        CommandMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
         &agitatorKickerCommand);
 
-    IoMapper::addHoldRepeatMapping(
-        IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldRepeatMapping(
+        CommandMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
         &sentinelAutoDrive);
 
-    IoMapper::addHoldMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &stopLowerFrictionWheels);
 
-    IoMapper::addHoldMapping(
-        IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
         &stopUpperFrictionWheels);
 }
 

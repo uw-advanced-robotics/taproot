@@ -1,30 +1,5 @@
-/**
- * This code is part of aruw's repository.
- *
- * A generic extendable class for implementing a command. Each
- * command is attached to a subsystem. To create a new command,
- * extend the Command class and instantiate the virtual functions
- * in this class. See example_command.hpp for example of this.
- *
- * Commands can also be comprised of a number of other commands.
- * This is similar to command groups but much less structured.
- * If you are going to do this, please follow the following
- * conventions:
- * - If you are making a comprised command, the comprised command
- *   should operate at a high level. This means a comprised
- *   command should act as a state machine that when it wants
- *   to change the state of the robot, it adds/removes commands
- *   to its command scheduler.
- * - To interface with instances of commands that are a part of
- *   your comprised command, use the comprisedCommandScheduler
- *   (an instance of a CommandScheduler). You will not need to
- *   register subsystems (this is done when you add a subsystem
- *   requirement to the command), but you can call the add/remove
- *   command.
- */
-
-#ifndef __COMMAND_HPP__
-#define __COMMAND_HPP__
+#ifndef COMMAND_HPP_
+#define COMMAND_HPP_
 
 #include <set>
 
@@ -34,66 +9,81 @@ namespace control
 {
 class Subsystem;
 
+/**
+ * A generic extendable class for implementing a command. Each
+ * command is attached to a subsystem. To create a new command,
+ * extend the Command class and instantiate the virtual functions
+ * in this class. See example_command.hpp for example of this.
+ */
 class Command
 {
 public:
     Command() : prevSchedulerExecuteTimestamp(0) {}
 
     /**
-     * Specifies the set of subsystems used by this command.  Two commands cannot
+     * Specifies the set of subsystems used by this command. Two commands cannot
      * use the same subsystem at the same time.  If another command is scheduled
      * that shares a requirement, the command will be interrupted. If no subsystems
      * are required, return an empty set.
      *
      * The generic Command class contains a list of the requrements. The user
      * should add requirements to this list accordingly (typically in the constructor
-     * of a class extending the Command class).
+     * of a class extending the Command class). If a Command does not specify any
+     * requirements, the Command cannot be added to the CommandScheduler.
      *
-     * @return the set of subsystems that are required
+     * @see CommandScheduler
+     * @return the set of subsystems that are required.
      */
-    const std::set<Subsystem*>& getRequirements();
+    const std::set<Subsystem*>& getRequirements() const;
 
     /**
-     * Whether the command requires a given subsystem.  Named "hasRequirement"
-     * rather than "requires" to avoid confusion with
+     * Returns whether the command requires a given subsystem.
      *
-     * @param requirement the subsystem to inquire about
-     * @return whether the subsystem is required
+     * @param[in] requirement the subsystem to inquire about.
+     * @return `true` if the subsystem is required for this Command, `false` otherwise.
      */
     bool hasRequirement(Subsystem* requirement) const;
 
     /**
-     * Adds the required subsystem to a list of required subsystems
+     * Adds the required subsystem to a list of required subsystems.
+     *
+     * @param[in] requirement the requirement to add to the list of requirements.
+     *      If the requirement is nullptr or if the requirement is already in the
+     *      set, nothing is added.
      */
     void addSubsystemRequirement(Subsystem* requirement);
 
     /**
-     * The initial subroutine of a command.  Called once when the command is
-     * initially scheduled.
+     * The initial subroutine of a command. Called once when the command is
+     * initially scheduled by a CommandScheduler.
      */
-    virtual void initialize(void) = 0;
+    virtual void initialize() = 0;
 
     /**
-     * The main body of a command.  Called repeatedly while the command is
-     * scheduled.
+     * The main body of a command. Called repeatedly while the command is
+     * scheduled by a CommandScheduler.
      */
-    virtual void execute(void) = 0;
+    virtual void execute() = 0;
 
     /**
-     * The action to take when the command ends.  Called when either the command
+     * The action to take when the command ends. Called when either the command
      * finishes normally, or when it interrupted/canceled.
      *
-     * @param interrupted whether the command was interrupted/canceled
+     * @param[in] interrupted whether the command was interrupted/canceled.
      */
     virtual void end(bool interrupted) = 0;
 
     /**
-     * Whether the command has finished.  Once a command finishes, the scheduler
-     * will call its end() method and un-schedule it.
+     * Whether the command has finished. Once a Command finishes, the scheduler
+     * will call the `end()` function and un-schedule it. If a Command is naturally
+     * finished (i.e. `isFinished() == true`), then the CommandScheduler will pass
+     * in `false` to `end()`. If, for example, another Command is added that in turn
+     * stops the Command from executing, then the CommandScheduler will pass in `true`
+     * to `end()`.
      *
      * @return whether the command has finished.
      */
-    virtual bool isFinished(void) const = 0;
+    virtual bool isFinished() const = 0;
 
 private:
     friend class CommandScheduler;
@@ -102,10 +92,10 @@ private:
 
     // contains pointers to const Subsystem pointers that this command requires
     std::set<Subsystem*> commandRequirements;
-};
+};  // class Command
 
 }  // namespace control
 
 }  // namespace aruwlib
 
-#endif
+#endif  // COMMAND_HPP_

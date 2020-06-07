@@ -1,5 +1,5 @@
 #include <aruwlib/Drivers.hpp>
-#include <aruwlib/control/controller_mapper.hpp>
+#include <aruwlib/control/command_mapper.hpp>
 
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
@@ -25,7 +25,7 @@ using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::turret;
 using aruwlib::Drivers;
-using aruwlib::control::IoMapper;
+using aruwlib::control::CommandMapper;
 
 namespace aruwsrc
 {
@@ -102,28 +102,28 @@ void startSoldierCommands() { Drivers::commandScheduler.addCommand(&agitatorCali
 /* register io mappings here ------------------------------------------------*/
 void registerSoldierIoMappings()
 {
-    Drivers::ioMapper.addHoldRepeatMapping(
-        IoMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
+    Drivers::commandMapper.addHoldRepeatMapping(
+        CommandMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
         &agitatorShootFastCommand);
 
-    Drivers::ioMapper.addHoldRepeatMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
+    Drivers::commandMapper.addHoldRepeatMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
         &chassisAutorotateCommand);
 
-    Drivers::ioMapper.addHoldMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &chassisDriveCommand);
 
-    Drivers::ioMapper.addHoldMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &openHopperCommand);
 
-    Drivers::ioMapper.addHoldMapping(
-        IoMapper::newKeyMap(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN),
         &stopFrictionWheels);
 
-    Drivers::ioMapper.addHoldMapping(
-        IoMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
+    Drivers::commandMapper.addHoldMapping(
+        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
         &wiggleDriveCommand);
 
     /// \todo left switch up is cv command

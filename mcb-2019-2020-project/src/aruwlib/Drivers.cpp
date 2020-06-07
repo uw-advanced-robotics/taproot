@@ -15,7 +15,7 @@ serial::XavierSerial Drivers::xavierSerial;
 serial::RefSerial Drivers::refSerial;
 control::CommandScheduler Drivers::commandScheduler;
 control::ControlOperatorInterface Drivers::controlOperatorInterface;
-control::IoMapper Drivers::ioMapper;
+control::CommandMapper Drivers::commandMapper;
 errors::ErrorController Drivers::errorController;
 motor::DjiMotorTxHandler Drivers::djiMotorTxHandler;
 
@@ -35,7 +35,7 @@ void Drivers::reset()
     resetRefSerial();
     resetCommandScheduler();
     resetControlOperatorInterface();
-    resetIoMapper();
+    resetCommandMapper();
     resetErrorController();
     resetDjiMotorTxHandler();
 }
@@ -53,7 +53,7 @@ void Drivers::resetXavierSerial() {}
 void Drivers::resetRefSerial() {}
 void Drivers::resetCommandScheduler() {}
 void Drivers::resetControlOperatorInterface() {}
-void Drivers::resetIoMapper() {}
+void Drivers::resetCommandMapper() {}
 void Drivers::resetErrorController() {}
 void Drivers::resetDjiMotorTxHandler() {}
 #endif

@@ -6,7 +6,7 @@ namespace aruwlib
 {
 namespace control
 {
-Subsystem::Subsystem() : prevSchedulerExecuteTimestamp(0), defaultCommand(nullptr) {}
+Subsystem::Subsystem() : defaultCommand(nullptr), prevSchedulerExecuteTimestamp(0) {}
 
 void Subsystem::setDefaultCommand(Command* command)
 {
@@ -18,7 +18,7 @@ void Subsystem::setDefaultCommand(Command* command)
 
 Command* Subsystem::getDefaultCommand() const { return defaultCommand; }
 
-void Subsystem::refresh(void) {}
+void Subsystem::refresh() {}
 
 }  // namespace control
 

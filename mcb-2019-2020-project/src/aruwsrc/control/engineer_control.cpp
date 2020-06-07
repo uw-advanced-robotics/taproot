@@ -1,3 +1,4 @@
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 
@@ -12,7 +13,8 @@
 
 using namespace aruwsrc::engineer;
 using namespace aruwlib::gpio;
-using namespace aruwlib::control;
+using aruwlib::Drivers;
+using aruwlib::control::CommandMapper;
 
 namespace aruwsrc
 {
@@ -30,8 +32,8 @@ XAxisSubsystem xAxis(xAxisPin);
 /* register subsystems here -------------------------------------------------*/
 void registerEngineerSubsystems()
 {
-    CommandScheduler::getMainScheduler().registerSubsystem(&grabber);
-    CommandScheduler::getMainScheduler().registerSubsystem(&xAxis);
+    Drivers::commandScheduler.registerSubsystem(&grabber);
+    Drivers::commandScheduler.registerSubsystem(&xAxis);
 }
 
 /* set any default commands to subsystems here ------------------------------*/

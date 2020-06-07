@@ -12,9 +12,9 @@
 #include "communication/serial/ref_serial.hpp"
 #include "communication/serial/uart.hpp"
 #include "communication/serial/xavier_serial.hpp"
+#include "control/command_mapper.hpp"
 #include "control/command_scheduler.hpp"
 #include "control/control_operator_interface.hpp"
-#include "control/controller_mapper.hpp"
 #include "errors/error_controller.hpp"
 #include "motor/dji_motor_tx_handler.hpp"
 
@@ -36,7 +36,7 @@ public:
     static serial::RefSerial refSerial;
     static control::CommandScheduler commandScheduler;
     static control::ControlOperatorInterface controlOperatorInterface;
-    static control::IoMapper ioMapper;
+    static control::CommandMapper commandMapper;
     static errors::ErrorController errorController;
     static motor::DjiMotorTxHandler djiMotorTxHandler;
 
@@ -57,7 +57,7 @@ private:
     static void resetRefSerial();
     static void resetCommandScheduler();
     static void resetControlOperatorInterface();
-    static void resetIoMapper();
+    static void resetCommandMapper();
     static void resetErrorController();
     static void resetDjiMotorTxHandler();
 #endif

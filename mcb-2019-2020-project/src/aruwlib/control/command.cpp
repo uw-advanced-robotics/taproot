@@ -32,7 +32,7 @@ void Command::addSubsystemRequirement(Subsystem* requirement)
     }
 }
 
-const set<Subsystem*>& Command::getRequirements() { return commandRequirements; }
+const set<Subsystem*>& Command::getRequirements() const { return commandRequirements; }
 
 }  // namespace control
 

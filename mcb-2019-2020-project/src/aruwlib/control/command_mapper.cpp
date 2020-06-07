@@ -1,4 +1,4 @@
-#include "controller_mapper.hpp"
+#include "command_mapper.hpp"
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
@@ -9,15 +9,15 @@ namespace aruwlib
 {
 namespace control
 {
-void IoMapper::handleKeyStateChange(
+void CommandMapper::handleKeyStateChange(
     uint16_t key,
     Remote::SwitchState leftSwitch,
     Remote::SwitchState rightSwitch)
 {
     for (std::pair<RemoteMap*, MapInfo*> it : remoteMappings)
     {
-        IoMapper::RemoteMap* rm = it.first;
-        IoMapper::MapInfo* mi = it.second;
+        CommandMapper::RemoteMap* rm = it.first;
+        CommandMapper::MapInfo* mi = it.second;
 
         bool triggeredCommandStateChange =
             ((leftSwitch == rm->lSwitch || rm->lSwitch == Remote::SwitchState::UNKNOWN) &&
@@ -82,27 +82,27 @@ void IoMapper::handleKeyStateChange(
     }
 }
 
-void IoMapper::addPressMapping(RemoteMap* mapping, Command* command)
+void CommandMapper::addPressMapping(RemoteMap* mapping, Command* command)
 {
-    addMap(mapping, new IoMapper::MapInfo(PRESS, command));
+    addMap(mapping, new CommandMapper::MapInfo(PRESS, command));
 }
 
-void IoMapper::addHoldMapping(RemoteMap* mapping, Command* command)
+void CommandMapper::addHoldMapping(RemoteMap* mapping, Command* command)
 {
-    addMap(mapping, new IoMapper::MapInfo(HOLD, command));
+    addMap(mapping, new CommandMapper::MapInfo(HOLD, command));
 }
 
-void IoMapper::addHoldRepeatMapping(RemoteMap* mapping, Command* command)
+void CommandMapper::addHoldRepeatMapping(RemoteMap* mapping, Command* command)
 {
-    addMap(mapping, new IoMapper::MapInfo(HOLD_REPEAT, command));
+    addMap(mapping, new CommandMapper::MapInfo(HOLD_REPEAT, command));
 }
 
-void IoMapper::addToggleMapping(RemoteMap* mapping, Command* command)
+void CommandMapper::addToggleMapping(RemoteMap* mapping, Command* command)
 {
-    addMap(mapping, new IoMapper::MapInfo(TOGGLE, command));
+    addMap(mapping, new CommandMapper::MapInfo(TOGGLE, command));
 }
 
-void IoMapper::addMap(RemoteMap* mapping, MapInfo* mapInfo)
+void CommandMapper::addMap(RemoteMap* mapping, MapInfo* mapInfo)
 {
     if (remoteMappings.insert(std::pair<RemoteMap*, MapInfo*>(mapping, mapInfo)).second == false)
     {
@@ -114,12 +114,12 @@ void IoMapper::addMap(RemoteMap* mapping, MapInfo* mapInfo)
     }
 }
 
-IoMapper::RemoteMap* IoMapper::newKeyMap(std::list<Remote::Key> keySet)
+CommandMapper::RemoteMap* CommandMapper::newKeyMap(std::list<Remote::Key> keySet)
 {
     return newKeyMap(Remote::SwitchState::UNKNOWN, Remote::SwitchState::UNKNOWN, keySet);
 }
 
-IoMapper::RemoteMap* IoMapper::newKeyMap(
+CommandMapper::RemoteMap* CommandMapper::newKeyMap(
     Remote::Switch sw,
     Remote::SwitchState switchState,
     std::list<Remote::Key> keySet)
@@ -138,10 +138,10 @@ IoMapper::RemoteMap* IoMapper::newKeyMap(
         aruwlib::errors::CONTROLLER_MAPPER,
         aruwlib::errors::INVALID_KEY_MAP_TYPE)
 
-    return NULL;
+    return nullptr;
 }
 
-IoMapper::RemoteMap* IoMapper::newKeyMap(
+CommandMapper::RemoteMap* CommandMapper::newKeyMap(
     Remote::SwitchState leftSwitchState,
     Remote::SwitchState rightSwitchState,
     std::list<Remote::Key> keySet)
@@ -150,7 +150,7 @@ IoMapper::RemoteMap* IoMapper::newKeyMap(
         return acc |= 1 << static_cast<uint16_t>(key);
     });
 
-    RemoteMap* ret = new IoMapper::RemoteMap(leftSwitchState, rightSwitchState, keys);
+    RemoteMap* ret = new CommandMapper::RemoteMap(leftSwitchState, rightSwitchState, keys);
     return ret;
 }
 

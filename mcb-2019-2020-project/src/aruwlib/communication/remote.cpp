@@ -176,7 +176,7 @@ void Remote::parseBuffer()
     // Remote wheel
     remote.wheel = (rxBuffer[16] | rxBuffer[17] << 8) - 1024;
 
-    Drivers::ioMapper.handleKeyStateChange(remote.key, remote.leftSwitch, remote.rightSwitch);
+    Drivers::commandMapper.handleKeyStateChange(remote.key, remote.leftSwitch, remote.rightSwitch);
 
     remote.updateCounter++;
 }
