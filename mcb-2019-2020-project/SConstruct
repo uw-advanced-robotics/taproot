@@ -8,12 +8,19 @@ hardware_modm_path = "modm/"
 sim_modm_path = "sim-modm/modm/"
 aruwlib_path = "./src/aruwlib"
 
+usage = "Usage: scons <target> [profile=<debug|release>]\n\
+   \"<target>\" is one of:\n\
+      - \"build\": build all code for the hardware platform.\n\
+      - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
+      - \"build-tests\": build core code and tests for the current host platform.\n\
+      - \"run-tests\": build core code and tests for the current host platform, and execute them locally with the test runner."
+
 # don't compile this stuff
 ignored_dirs = [".lbuild_cache", build_path, "robot-type", sim_modm_path, hardware_modm_path, aruwlib_path]
 ignored_files = []
 
-if len(COMMAND_LINE_TARGETS) > 1:
-    raise Exception("This build script currently supports only one target per invocation.")
+if len(COMMAND_LINE_TARGETS) != 1:
+    raise Exception("This build script currently supports exactly one target per invocation.\n" + usage)
 
 build_target = COMMAND_LINE_TARGETS[0]
 if build_target in ["build-tests", "run-tests"]:
