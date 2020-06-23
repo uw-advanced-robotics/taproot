@@ -85,7 +85,7 @@ public:
      * `isInterrupted = false`.
      *
      * @note checks the run time of the scheduler. An error is added to the
-     *      error handler if the time is greater than MAX_ALLOWABLE_SCHEDULER_RUNTIME
+     *      error handler if the time is greater than `MAX_ALLOWABLE_SCHEDULER_RUNTIME`
      *      (in microseconds).
      */
     void run();

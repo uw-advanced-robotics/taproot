@@ -12,6 +12,8 @@
 #include <aruwlib/motor/servo.hpp>
 #include <modm/math/filter/pid.hpp>
 
+#include "robot_type.hpp"
+
 namespace aruwsrc
 {
 namespace control
