@@ -117,22 +117,22 @@ private:
     struct RemoteInfo
     {
         uint32_t updateCounter = 0;
-        int16_t rightHorizontal;
-        int16_t rightVertical;
-        int16_t leftHorizontal;
-        int16_t leftVertical;
-        SwitchState leftSwitch;
-        SwitchState rightSwitch;
+        int16_t rightHorizontal = 0;
+        int16_t rightVertical = 0;
+        int16_t leftHorizontal = 0;
+        int16_t leftVertical = 0;
+        SwitchState leftSwitch = SwitchState::UNKNOWN;
+        SwitchState rightSwitch = SwitchState::UNKNOWN;
         struct
         {  // Mouse information
-            int16_t x;
-            int16_t y;
-            int16_t z;
-            bool l;
-            bool r;
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+            bool l = false;
+            bool r = false;
         } mouse;
-        uint16_t key;   // Keyboard information
-        int16_t wheel;  // Remote wheel information
+        uint16_t key = 0;   // Keyboard information
+        int16_t wheel = 0;  // Remote wheel information
     };
 
     RemoteInfo remote;
