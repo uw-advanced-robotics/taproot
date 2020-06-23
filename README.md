@@ -8,38 +8,42 @@ All ARUW MCB code for RoboMaster, using the modm framework, gnu compiler, openoc
 
 ## Download and installation guide
 
-Note: The beginning of the guide is for windows users. If you are using mac or linux, skip steps 1-3 and instead refer to [modm's guide here](https://modm.io/guide/installation/).
+Note: The beginning of the guide is for windows users. If you are using mac or linux, skip steps 1-5 and instead refer to [modm's guide here](https://modm.io/guide/installation/).
+
+_**Warning:** This build setup has not been fully tested on linux or mac. Compatibility with mac/linux is being worked on._
 
 1. Download [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When you open downloads page, you will see a number of installers. Choose the .zip version of newest toolchain release. Extract the contents of the downloaded file to a permanent location of your choice.
-2. Download the latest version of [openocd](https://gnutoolchains.com/arm-eabi/openocd/). Download the newest version of the software and extract the files to a permanent location.
+2. Download the latest version of [openocd](https://gnutoolchains.com/arm-eabi/openocd/). Download the newest version of the software and extract the files to a permanent location. The downloaded file is of type `.7zip`, so you will need a way to extract 7zip files, either by installing the 7zip extractor or by using an online unzipper.
 3. Download and install [anaconda](https://www.anaconda.com/distribution/). During installation of Anaconda, make sure to check the 'Add to PATH' box.
-4. Download the ST-Link V-2 driver [here](https://www.st.com/en/development-tools/stsw-link009.html#get-software), unzip, and run the executable to install the driver.
-5. Download [ozone_jlink_jscope.zip](https://drive.google.com/drive/u/1/folders/1E9i1JBILotoFClKc6L3-m4OWuW0kiO5A) in our google drive. This contains installers for Ozone, the J-Link drivers, and J-Scope (all J-Link related software). Once downloaded and unzipped, run the three installers.
-6. Add the path of the `/bin` directories of OpenOCD and the GNU Toolchain to your PATH environment variable. You can find this setting by searching for "environment" in your Start menu and selecting "Edit the system environment variables". Then click "Environment Variables..." and enter the paths as shown below.<br><br>
-
+4. Download MinGW. Follow the installation guide [here](http://www.mingw.org/wiki/Getting_Started).
+5. Add the path of the `/bin` directories of OpenOCD, the GNU Toolchain, and MinGW to your PATH environment variable. You can find this setting by searching for "environment" in your Start menu and selecting "Edit the system environment variables". Then click "Environment Variables..." and enter the paths as shown below.<br><br>
 
     <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/0a2c25d23166bc1ff58b41594ba63e4e/Overview.png" height="500px" />
 
-7. Open anaconda prompt (type "Anaconda Prompt" into the start menu to start the prompt) and run the following commands: <br>
+6. Download the ST-Link V-2 driver [here](https://www.st.com/en/development-tools/stsw-link009.html#get-software), unzip, and run the executable to install the driver.
+7. Download [ozone_jlink_jscope.zip](https://drive.google.com/drive/u/1/folders/1E9i1JBILotoFClKc6L3-m4OWuW0kiO5A) in our google drive. This contains installers for Ozone, the J-Link drivers, and J-Scope (all J-Link related software). Once downloaded and unzipped, run the three installers.
+8. Download and install [VSCode](https://code.visualstudio.com/download).
+9. Open anaconda prompt (type "Anaconda Prompt" into the start menu to start the prompt) and run the following commands: <br>
 ```
 conda create --name modm python=3 pip
 activate modm
 conda install -c conda-forge git pywin32
 pip install jinja2 scons future pyelftools lbuild
 ```
-8. Clone this repository: `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git`.
+10. Clone this repository: In a new terminal (Git Bash, anaconda, or cmd should work) type `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git`.
     - <em>If you forget the `--recursive`, run: `git submodule init .\mcb-2019-2020\modm\` and `git submodule update --recursive`.</em>
-9. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
+11. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
 
 ## VSCode setup guide
 1. Open the `mcb-2019-2020` folder in VSCode. The first time you try to open this folder, you can start VSCode, then in the "Welcome" page, under the "Start" menu, find "Open folder...". **Important: do NOT open the `mcb-2019-2020-project` folder.** If you do you will not be able to build code and VSCode intellisense will not work as expected.
 2. When you open up the folder, VSCode should prompt you to install the recommended extensions. Click "install recommended extensions". You should now have the "C/C++", "Cortex-Debug", and "aruw robot chooser" extensions.
     - If you do not, in extensions: marketplace (to open, type <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>X</kbd>), search "@recommended" and install all under "WORKSPACE RECOMMENDED".
-3. For VSCode intellisense to work properly, you need to add your compiler path to the .vscode project folder. To do so, type <kbd>ctrl</kbd>+<kbd>P</kbd>, type `>c/c++ edit configurations (JSON)`, and hit enter. This will generate a `c_cpp_properties.json` file with some default settings. Edit the "compilerPath" setting so it matches the example below. In particular, the "compilerPath" option should be the absolute path name to your version of `arm-none-eabi-gcc.exe` that you just installed above, which will be located in the arm-gcc-toolchain's `/bin` folder.
+3. For VSCode intellisense to work properly, you need to add your compiler path to the .vscode project folder. To do so, type <kbd>ctrl</kbd>+<kbd>P</kbd>, type `>c/c++ edit configurations (JSON)`, and hit enter. This will generate a `c_cpp_properties.json` file with some default settings. Replace the contents of this file with the below json. Edit the "compilerPath" setting so it matches the example below. In particular, the "compilerPath" option should be the absolute path name to your version of `arm-none-eabi-gcc.exe` that you just installed above, which will be located in the arm-gcc-toolchain's `/bin` folder.
 ```json
 {
     "configurations": [
         {
+            "name": "Win32",
             "compilerPath": "C:/path/to/bin/arm-none-eabi-gcc.exe"
         }
     ],
