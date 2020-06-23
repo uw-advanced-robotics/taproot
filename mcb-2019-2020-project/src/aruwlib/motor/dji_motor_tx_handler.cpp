@@ -69,8 +69,8 @@ void DjiMotorTxHandler::processCanSendData()
     }
     if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS2))
     {
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageLow);
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can1MessageHigh);
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can2MessageLow);
+        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh);
     }
 }
 
