@@ -29,9 +29,6 @@ void Pwm::init()
 #endif
 }
 
-/*
- * Sets all Timer channels to the same duty
- */
 void Pwm::writeAll(float duty)
 {
 #ifndef ENV_SIMULATOR
@@ -42,15 +39,14 @@ void Pwm::writeAll(float duty)
 #endif
 }
 
-/*
- * Sets the PWM duty for a specified pin
- */
 void Pwm::write(float duty, Pin pin)
 {
 #ifndef ENV_SIMULATOR
     duty = aruwlib::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
-    uint16_t dutyConverted = static_cast<float>(Board::SystemClock::PWM_RESOLUTION) * duty;
-    Timer8::configureOutputChannel(static_cast<int>(pin), dutyConverted);
+    Timer8::configureOutputChannel(
+        static_cast<int>(pin),
+        Timer8::OutputCompareMode::Pwm,
+        Board::SystemClock::PWM_RESOLUTION * duty);
 #endif
 }
 }  // namespace gpio
