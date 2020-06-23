@@ -6,3 +6,6 @@ mcb-2019-2020-project/**/project.xml.log
 .sconsign.dblite
 *.pyc
 .robot_type.txt
+docs/_build
+docs/api
+docs/doxyoutput

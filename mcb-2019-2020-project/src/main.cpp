@@ -16,7 +16,6 @@ using namespace modm::literals;
 using aruwlib::Drivers;
 
 /* define timers here -------------------------------------------------------*/
-aruwlib::arch::PeriodicMilliTimer updateImuPeriod(2);
 aruwlib::arch::PeriodicMilliTimer sendMotorTimeout(2);
 
 // Place any sort of input/output initialization here. For example, place
@@ -40,12 +39,12 @@ int main()
 
         if (sendMotorTimeout.execute())
         {
+            Drivers::mpu6500.read();
             Drivers::errorController.update();
             Drivers::commandScheduler.run();
             Drivers::djiMotorTxHandler.processCanSendData();
         }
 #ifndef ENV_SIMULATOR
-
         modm::delayMicroseconds(10);
 #endif
     }
@@ -83,7 +82,6 @@ void initializeIo()
 
     Drivers::remote.initialize();
     Drivers::mpu6500.init();
-
     Drivers::refSerial.initialize();
     Drivers::xavierSerial.initialize();
 }
@@ -94,8 +92,4 @@ void updateIo()
     Drivers::xavierSerial.updateSerial();
     Drivers::refSerial.updateSerial();
     Drivers::remote.read();
-    if (updateImuPeriod.execute())
-    {
-        Drivers::mpu6500.read();
-    }
 }

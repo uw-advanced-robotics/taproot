@@ -40,7 +40,7 @@ float Mpu6500::getPitch() { return 0; }
 
 float Mpu6500::getRoll() { return 0; }
 
-float Mpu6500::getTiltAngle() const { return 0; }
+float Mpu6500::getTiltAngle() { return 0; }
 }  // namespace sensors
 
 }  // namespace aruwlib

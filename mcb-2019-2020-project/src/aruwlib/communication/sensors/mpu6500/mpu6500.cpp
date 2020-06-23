@@ -84,8 +84,7 @@ void Mpu6500::read()
         raw.gyro.z = ((rxBuff[12] << 8 | rxBuff[13]) - raw.gyroOffset.z);
 
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
-        tiltAngle = aruwlib::algorithms::radiansToDegrees(
-            acos(cos(mahonyAlgorithm.getPitchRadians()) * cos(mahonyAlgorithm.getRollRadians())));
+        tiltAngleCalculated = false;
     }
     else
     {
@@ -144,7 +143,16 @@ float Mpu6500::getPitch() { return validateReading(mahonyAlgorithm.getPitch()); 
 
 float Mpu6500::getRoll() { return validateReading(mahonyAlgorithm.getRoll()); }
 
-float Mpu6500::getTiltAngle() const { return validateReading(tiltAngle); }
+float Mpu6500::getTiltAngle()
+{
+    if (!tiltAngleCalculated)
+    {
+        tiltAngle = aruwlib::algorithms::radiansToDegrees(acosf(
+            cosf(mahonyAlgorithm.getPitchRadians()) * cosf(mahonyAlgorithm.getRollRadians())));
+        tiltAngleCalculated = true;
+    }
+    return validateReading(tiltAngle);
+}
 
 float Mpu6500::validateReading(float reading) const
 {

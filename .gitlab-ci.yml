@@ -25,3 +25,23 @@ build-code:
     - merge_requests
     - master
     - develop
+
+pages:
+  image: alpine
+  before_script:
+    - apk update
+    - apk add py-pip python3-dev
+    - apk add make
+    - apk add --no-cache g++ gcc libxml2-dev libxslt-dev
+    - pip3 install lxml
+    - pip3 install sphinx breathe exhale
+    - pip install sphinx_rtd_theme
+    - apk add doxygen
+  script:
+    - cd docs && make html
+    - mv _build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop

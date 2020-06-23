@@ -105,7 +105,7 @@ public:
      * Returns the angle difference between the normal vector of the plane that the
      * type A board lies on and of the angle directly upward.
      */
-    float getTiltAngle() const;
+    float getTiltAngle();
 
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
@@ -178,6 +178,7 @@ private:
     Mahony mahonyAlgorithm;
 
     float tiltAngle = 0.0f;
+    bool tiltAngleCalculated = false;
 
     uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
