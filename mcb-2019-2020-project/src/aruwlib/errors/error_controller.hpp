@@ -26,7 +26,7 @@ public:
     ErrorController(const ErrorController&) = delete;
     ErrorController& operator=(const ErrorController&) = default;
 
-    void addToErrorList(SystemError error);
+    void addToErrorList(const SystemError& error);
 
     void update();
 

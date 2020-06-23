@@ -19,12 +19,7 @@ SystemError::SystemError()
         "You have declared too many error types!");
 }
 
-SystemError::SystemError(
-    const std::string& desc,
-    int line,
-    const std::string& file,
-    Location l,
-    ErrorType et)
+SystemError::SystemError(const char *desc, int line, const char *file, Location l, ErrorType et)
     : lineNumber(line),
       description(desc),
       filename(file),
@@ -41,9 +36,9 @@ SystemError::SystemError(
 
 int SystemError::getLineNumber() const { return lineNumber; }
 
-std::string SystemError::getDescription() const { return description; }
+const char *SystemError::getDescription() const { return description; }
 
-std::string SystemError::getFilename() const { return filename; }
+const char *SystemError::getFilename() const { return filename; }
 
 Location SystemError::getLocation() const { return location; }
 

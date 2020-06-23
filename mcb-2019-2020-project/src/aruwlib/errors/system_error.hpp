@@ -62,18 +62,13 @@ class SystemError
 public:
     SystemError();
 
-    SystemError(
-        const std::string& desc,
-        int line,
-        const std::string& file,
-        Location l,
-        ErrorType et);
+    SystemError(const char *desc, int line, const char *file, Location l, ErrorType et);
 
     int getLineNumber() const;
 
-    std::string getDescription() const;
+    const char *getDescription() const;
 
-    std::string getFilename() const;
+    const char *getFilename() const;
 
     Location getLocation() const;
 
@@ -82,9 +77,9 @@ public:
 private:
     int lineNumber;
 
-    std::string description;
+    const char *description;
 
-    std::string filename;
+    const char *filename;
 
     Location location;
 

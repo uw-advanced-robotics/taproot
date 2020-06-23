@@ -13,15 +13,17 @@ namespace aruwlib
 namespace errors
 {
 // add an error to list of errors
-void ErrorController::addToErrorList(SystemError error)
+void ErrorController::addToErrorList(const SystemError& error)
 {
     // only add error if it is not already added
+    // Note that we are okay with comparing raw char pointers because an error generated
+    // in our codebase use char pointers located in literals.
     for (SystemError sysErr : errorList)
     {
         if (sysErr.getErrorType() == error.getErrorType() &&
             sysErr.getLocation() == error.getLocation() &&
-            (sysErr.getDescription().compare(error.getDescription()) == 0) &&
-            (sysErr.getFilename().compare(error.getFilename()) == 0) &&
+            sysErr.getDescription() == error.getDescription() &&
+            sysErr.getFilename() == error.getFilename() &&
             sysErr.getLineNumber() == error.getLineNumber())
         {
             return;  // the error is already added
