@@ -30,6 +30,12 @@ public:
     Subsystem();
 
     /**
+     * Called once when you add the Subsystem to the commandScheduler stored in the
+     * Drivers class.
+     */
+    virtual void initialize();
+
+    /**
      * Sets the default Command of the Subsystem. The default Command will be
      * automatically scheduled when no other Commands are scheduled that require
      * the Subsystem. Default Commands should generally not end on their own, i.e.

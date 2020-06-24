@@ -8,6 +8,8 @@ namespace control
 {
 Subsystem::Subsystem() : defaultCommand(nullptr), prevSchedulerExecuteTimestamp(0) {}
 
+void Subsystem::initialize() {}
+
 void Subsystem::setDefaultCommand(Command* command)
 {
     if (command != nullptr)

@@ -14,7 +14,7 @@ DjiMotor::DjiMotor(
     aruwlib::can::CanBus motorCanBus,
     bool isInverted,
     const std::string& name)
-    : CanRxListner(static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
+    : CanRxListener(static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       encStore(),
       motorIdentifier(desMotorIdentifier),
       motorCanBus(motorCanBus),
@@ -90,7 +90,7 @@ int16_t DjiMotor::getTorque() const { return torque; }
 
 int16_t DjiMotor::getShaftRPM() const { return shaftRPM; }
 
-int16_t DjiMotor::getCurrentActual() const { return motorInverted; }
+bool DjiMotor::isMotorInverted() const { return motorInverted; }
 
 aruwlib::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 

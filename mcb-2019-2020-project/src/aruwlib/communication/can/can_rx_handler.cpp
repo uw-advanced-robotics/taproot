@@ -1,7 +1,6 @@
 #include "can_rx_handler.hpp"
 
 #include <modm/architecture/interface/assert.h>
-#include <modm/container/linked_list.hpp>
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
@@ -11,24 +10,24 @@ namespace aruwlib
 {
 namespace can
 {
-void CanRxHandler::attachReceiveHandler(CanRxListner* const CanRxHndl)
+void CanRxHandler::attachReceiveHandler(CanRxListener* const listener)
 {
-    if (CanRxHndl->canBus == can::CanBus::CAN_BUS1)
+    if (listener->canBus == can::CanBus::CAN_BUS1)
     {
-        attachReceiveHandler(CanRxHndl, messageHandlerStoreCan1, MAX_RECEIVE_UNIQUE_HEADER_CAN1);
+        attachReceiveHandler(listener, messageHandlerStoreCan1, MAX_RECEIVE_UNIQUE_HEADER_CAN1);
     }
     else
     {
-        attachReceiveHandler(CanRxHndl, messageHandlerStoreCan2, MAX_RECEIVE_UNIQUE_HEADER_CAN2);
+        attachReceiveHandler(listener, messageHandlerStoreCan2, MAX_RECEIVE_UNIQUE_HEADER_CAN2);
     }
 }
 
 void CanRxHandler::attachReceiveHandler(
-    CanRxListner* const CanRxHndl,
-    CanRxListner** messageHandlerStore,
-    const int16_t messageHandlerStoreSize)
+    CanRxListener* const CanRxHndl,
+    CanRxListener** messageHandlerStore,
+    int messageHandlerStoreSize)
 {
-    int8_t id = DJI_MOTOR_NORMALIZED_ID(CanRxHndl->canIdentifier);
+    int32_t id = DJI_MOTOR_NORMALIZED_ID(CanRxHndl->canIdentifier);
     bool receiveInterfaceOverloaded = messageHandlerStore[id] != nullptr;
     bool receiveAttachSuccess =
         !receiveInterfaceOverloaded || (id >= 0 && id < messageHandlerStoreSize);
@@ -43,24 +42,27 @@ void CanRxHandler::pollCanData()
     // handle incoming CAN 1 messages
     if (Drivers::can.getMessage(CanBus::CAN_BUS1, &rxMessage))
     {
-        processReceivedCanData(rxMessage, messageHandlerStoreCan1);
+        processReceivedCanData(rxMessage, messageHandlerStoreCan1, MAX_RECEIVE_UNIQUE_HEADER_CAN1);
     }
     // handle incoming CAN 2 messages
     if (Drivers::can.getMessage(CanBus::CAN_BUS2, &rxMessage))
     {
-        processReceivedCanData(rxMessage, messageHandlerStoreCan2);
+        processReceivedCanData(rxMessage, messageHandlerStoreCan2, MAX_RECEIVE_UNIQUE_HEADER_CAN2);
     }
 }
 
-void CanRxHandler::processReceivedCanData(
+inline void CanRxHandler::processReceivedCanData(
     const modm::can::Message& rxMessage,
-    CanRxListner* const* messageHandlerStore)
+    CanRxListener* const* messageHandlerStore,
+    int messageHandlerStoreSize)
 {
     int32_t handlerStoreId = DJI_MOTOR_NORMALIZED_ID(rxMessage.getIdentifier());
-    if ((handlerStoreId >= 0 && handlerStoreId < MAX_RECEIVE_UNIQUE_HEADER_CAN1) &&
-        messageHandlerStore[handlerStoreId] != nullptr)
+    if (handlerStoreId >= 0 && handlerStoreId < messageHandlerStoreSize)
     {
-        messageHandlerStore[handlerStoreId]->processMessage(rxMessage);
+        if (messageHandlerStore[handlerStoreId] != nullptr)
+        {
+            messageHandlerStore[handlerStoreId]->processMessage(rxMessage);
+        }
     }
     else
     {
@@ -71,30 +73,30 @@ void CanRxHandler::processReceivedCanData(
     }
 }
 
-void CanRxHandler::removeReceiveHandler(const CanRxListner& rxListner)
+void CanRxHandler::removeReceiveHandler(const CanRxListener& rxListner)
 {
     if (rxListner.canBus == CanBus::CAN_BUS1)
     {
-        remoteReceiveHandler(rxListner, messageHandlerStoreCan1);
+        removeReceiveHandler(rxListner, messageHandlerStoreCan1, MAX_RECEIVE_UNIQUE_HEADER_CAN1);
     }
     else
     {
-        remoteReceiveHandler(rxListner, messageHandlerStoreCan2);
+        removeReceiveHandler(rxListner, messageHandlerStoreCan2, MAX_RECEIVE_UNIQUE_HEADER_CAN2);
     }
 }
 
-void CanRxHandler::remoteReceiveHandler(
-    const CanRxListner& rxListner,
-    CanRxListner** messageHandlerStore)
+void CanRxHandler::removeReceiveHandler(
+    const CanRxListener& listener,
+    CanRxListener** messageHandlerStore,
+    int messageHandlerStoreSize)
 {
-    uint32_t id = DJI_MOTOR_NORMALIZED_ID(rxListner.canIdentifier);
-    if (messageHandlerStore[id] == nullptr)
+    int id = DJI_MOTOR_NORMALIZED_ID(listener.canIdentifier);
+    if (id < 0 || id >= messageHandlerStoreSize)
     {
         RAISE_ERROR(
-            "trying to remove something from rx listner that doesn't exist",
+            "index out of bounds",
             aruwlib::errors::CAN_RX,
-            aruwlib::errors::INVALID_REMOVE)
-        // error, trying to remove something that doesn't exist!
+            aruwlib::errors::INVALID_REMOVE);
         return;
     }
     messageHandlerStore[id] = nullptr;

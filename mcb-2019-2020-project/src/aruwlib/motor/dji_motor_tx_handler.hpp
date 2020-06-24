@@ -38,7 +38,7 @@ namespace aruwlib
 {
 namespace motor
 {
-#define DJI_MOTOR_NORMALIZED_ID(id) ((uint32_t)(id - aruwlib::motor::MotorId::MOTOR1))
+#define DJI_MOTOR_NORMALIZED_ID(id) ((int32_t)id - aruwlib::motor::MotorId::MOTOR1)
 
 class DjiMotorTxHandler
 {

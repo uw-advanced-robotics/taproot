@@ -13,7 +13,7 @@ namespace motor
 {
 // for declaring a new motor, must be one of these motor
 // identifiers
-enum MotorId
+enum MotorId : int32_t
 {
     MOTOR1 = 0X201,
     MOTOR2 = 0x202,
@@ -25,10 +25,10 @@ enum MotorId
     MOTOR8 = 0x208,
 };
 
-// extend the CanRxListner class, which allows one to connect a
+// extend the CanRxListener class, which allows one to connect a
 // motor to the receive handler and use the class's built in
 // receive handler
-class DjiMotor : public aruwlib::can::CanRxListner
+class DjiMotor : public aruwlib::can::CanRxListener
 {
 public:
     // 0 - 8191 for dji motors
@@ -105,8 +105,6 @@ public:
 
     int16_t getShaftRPM() const;
 
-    int16_t getCurrentActual() const;
-
     bool isMotorInverted() const;
 
     aruwlib::can::CanBus getCanBus() const;
@@ -147,8 +145,6 @@ private:
     aruwlib::can::CanBus motorCanBus;
 
     int16_t desiredOutput;
-
-    int16_t currentActual;
 
     int16_t shaftRPM;
 

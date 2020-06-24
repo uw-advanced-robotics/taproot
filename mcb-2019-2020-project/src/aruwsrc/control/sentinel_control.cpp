@@ -88,7 +88,6 @@ void registerSentinelSubsystems()
     Drivers::commandScheduler.registerSubsystem(&agitator);
     Drivers::commandScheduler.registerSubsystem(&kickerMotor);
     Drivers::commandScheduler.registerSubsystem(&sentinelDrive);
-    sentinelDrive.initLimitSwitches();
     Drivers::commandScheduler.registerSubsystem(&upperFrictionWheels);
     Drivers::commandScheduler.registerSubsystem(&lowerFrictionWheels);
 }

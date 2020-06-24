@@ -10,7 +10,7 @@ namespace aruwsrc
 {
 namespace control
 {
-void SentinelDriveSubsystem::initLimitSwitches()
+void SentinelDriveSubsystem::initialize()
 {
     Drivers::digital.configureInputPullMode(
         leftLimitSwitch,

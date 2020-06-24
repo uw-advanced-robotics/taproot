@@ -1,23 +1,5 @@
-/*
- * This file is part of ARUW's repository.
- *
- * Interfaces with modm receive data from CAN1 and CAN2 buses.
- *
- * To use, extend CanRxListner class and create a method called
- * processMessage. Next, call the function attachReceiveHandler,
- * which will add the class you instantiated to a list of classes
- * that will be handled on receive. The class you created and
- * attached will be called by the pollCanData function
- * every time there is a message available that has the CAN identifier
- * matching the identifier specified in the CanRxListner constructor.
- *
- * For proper closed loop motor control, it is necessary to have the
- * pollCanData function be called at a very high frequency,
- * so call this in a high frequency thread.
- */
-
-#ifndef __CAN_INTERFACE_HPP__
-#define __CAN_INTERFACE_HPP__
+#ifndef CAN_RX_HANDLER_HPP_
+#define CAN_RX_HANDLER_HPP_
 
 #include "can_rx_listener.hpp"
 
@@ -25,46 +7,117 @@ namespace aruwlib
 {
 namespace can
 {
+/**
+ * A handler that stores pointers to CanRxListener and that watches
+ * CAN 1 and CAN 2 for messages. If messages are received, it checks
+ * its internal maps for a `CanRxListener` that matches the message
+ * identifier and CAN bus and calls the listener's `processMessage`
+ * function.
+ *
+ * Interfaces with modm receive data from CAN1 and CAN2 buses.
+ *
+ * To use, extend CanRxListener class and create a method called
+ * processMessage. Next, call the function attachReceiveHandler,
+ * which will add the class you instantiated to a list of classes
+ * that will be handled on receive. The class you created and
+ * attached will be called by the pollCanData function
+ * every time there is a message available that has the CAN identifier
+ * matching the identifier specified in the CanRxListener constructor.
+ *
+ * For proper closed loop motor control, it is necessary to have the
+ * pollCanData function be called at a very high frequency,
+ * so call this in a high frequency thread.
+ *
+ * @see `CanRxListener` for information about how to properly create
+ *      add a listener to the handler.
+ * @see `Can` for modm CAN wrapper functions.
+ */
 class CanRxHandler
 {
 public:
     CanRxHandler() = default;
+
+    ///< Delete copy constructor.
     CanRxHandler(const CanRxHandler&) = delete;
-    CanRxHandler& operator=(const CanRxHandler&);
 
-    // Call this function to add a CanRxListner to the list of CanRxListner's
-    // that are referenced when a new CAN message is received.
-    void attachReceiveHandler(CanRxListner* const f);
+    ///< Delete operator=.
+    CanRxHandler& operator=(const CanRxHandler& other) = default;
 
-    // Function handles receiving messages and calling the appropriate
-    // processMessage function given the CAN bus and can identifier.
+    /**
+     * Call this function to add a CanRxListener to the list of CanRxListener's
+     * that are referenced when a new CAN message is received.
+     *
+     * @note do not call this function in an object that is globally (i.e. not on
+     *      that stack or heap) constructed. The map that the handler uses to
+     *      store listeners may or not be properly allocated if you do and
+     *      undefined behavior will follow.
+     * @note if you attempt to add a listener with an identifier identical to
+     *      something already in the `CanRxHandler`, an error is thrown and
+     *      the handler does not add the listener.
+     * @see `CanRxListener`
+     * @param[in] listener the listener to be attached ot the handler.
+     * @return true if listener successfully added, false otherwise.
+     */
+    void attachReceiveHandler(CanRxListener* const listener);
+
+    /**
+     * Function handles receiving messages and calling the appropriate
+     * processMessage function given the CAN bus and can identifier.
+     *
+     * @attention you should call this function as frequently as you receive
+     *      messages if you want to receive the most up to date messages.
+     *      modm's IQR puts CAN messages in a queue, and this function
+     *      clears out the queue once it is called.
+     */
     void pollCanData();
 
-    void removeReceiveHandler(const CanRxListner& rxListner);
+    /**
+     * Removes the passed in `CanRxListener` from the `CanRxHandler`. If the
+     * listener isn't in the handler, the
+     */
+    void removeReceiveHandler(const CanRxListener& rxListener);
 
 private:
     static const int MAX_RECEIVE_UNIQUE_HEADER_CAN1 = 8;
     static const int MAX_RECEIVE_UNIQUE_HEADER_CAN2 = 8;
-    static const uint16_t LOWEST_RECEIVE_ID = 0x201;
+    static const int LOWEST_RECEIVE_ID = 0x201;
 
-    CanRxListner* messageHandlerStoreCan1[MAX_RECEIVE_UNIQUE_HEADER_CAN1] = {0};
+    /**
+     * Stores pointers to the `CanRxListeners` for CAN 1, referenced when
+     * a new message is received.
+     */
+    CanRxListener* messageHandlerStoreCan1[MAX_RECEIVE_UNIQUE_HEADER_CAN1];
 
-    CanRxListner* messageHandlerStoreCan2[MAX_RECEIVE_UNIQUE_HEADER_CAN2] = {0};
+    /**
+     * Stores pointers to the `CanRxListeners` for CAN 2, referenced when
+     * a new message is received.
+     */
+    CanRxListener* messageHandlerStoreCan2[MAX_RECEIVE_UNIQUE_HEADER_CAN2];
 
+    /**
+     * Does the work of the public `attachReceiveHandler` function, but
+     * handles a particular CAN bus.
+     *
+     * @see `attachReceiveHandler`
+     */
     void attachReceiveHandler(
-        CanRxListner* const CanRxHndl,
-        CanRxListner** messageHandlerStore,
-        int16_t messageHandlerStoreSize);
+        CanRxListener* const CanRxHndl,
+        CanRxListener** messageHandlerStore,
+        int messageHandlerStoreSize);
 
-    void processReceivedCanData(
+    inline void processReceivedCanData(
         const modm::can::Message& rxMessage,
-        CanRxListner* const* messageHandlerStore);
+        CanRxListener* const* messageHandlerStore,
+        int messageHandlerStoreSize);
 
-    void remoteReceiveHandler(const CanRxListner& rxListner, CanRxListner** messageHandlerStore);
-};
+    void removeReceiveHandler(
+        const CanRxListener& listener,
+        CanRxListener** messageHandlerStore,
+        int messageHandlerStoreSize);
+};  // class CanRxHandler
 
 }  // namespace can
 
 }  // namespace aruwlib
 
-#endif
+#endif  // CAN_RX_HANDLER_HPP_
