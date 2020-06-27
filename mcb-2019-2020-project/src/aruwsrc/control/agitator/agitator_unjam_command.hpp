@@ -28,6 +28,8 @@ public:
 
     bool isFinished() const override;
 
+    const char* getName() const override { return "agitator unjam command"; }
+
 private:
     static constexpr uint32_t SALVATION_TIMEOUT_MS = 2000;
 

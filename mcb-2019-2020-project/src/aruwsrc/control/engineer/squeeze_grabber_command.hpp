@@ -22,6 +22,8 @@ public:
 
     bool isFinished() const override;
 
+    const char* getName() const override { return "squeeze grabber command"; }
+
 private:
     GrabberSubsystem* grabber;
 };  // class SqueezeGrabberCommand

@@ -21,6 +21,8 @@ public:
     void execute() override;
     void end(bool) override;
 
+    const char *getName() const override { return "turret init command"; }
+
 private:
     const float YAW_P = 300.0f;
     const float YAW_I = 0.0f;

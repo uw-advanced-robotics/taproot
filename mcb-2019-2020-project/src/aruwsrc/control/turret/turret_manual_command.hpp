@@ -20,6 +20,8 @@ public:
     void execute() override;
     void end(bool) override;
 
+    const char *getName() const override { return "turret manual command"; }
+
 private:
     const float USER_INPUT_SCALAR = 50.0f;
 

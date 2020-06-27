@@ -26,12 +26,6 @@ void BlinkLEDCommand::execute()
     Drivers::leds.set(aruwlib::gpio::Leds::A, true);
 }
 
-void BlinkLEDCommand::end(bool)
-{
-    endCounter++;
-    Drivers::leds.set(aruwlib::gpio::Leds::A, false);
-}
-
 bool BlinkLEDCommand::isFinished() const { return completedTimer.isExpired(); }
 }  // namespace control
 

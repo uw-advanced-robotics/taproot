@@ -29,6 +29,8 @@ public:
 
     bool isFinished() const override;
 
+    const char* getName() const override { return "chassis wiggle drive command"; }
+
 private:
     static constexpr float WIGGLE_PERIOD = 1600.0f;
     static constexpr float WIGGLE_MAX_ROTATE_ANGLE = 60.0f;

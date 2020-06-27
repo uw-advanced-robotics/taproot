@@ -21,13 +21,15 @@ public:
         uint32_t agitatorDesiredRotateTime,
         uint32_t minAgitatorRotateTime);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool interrupted);
+    void end(bool interrupted) override;
 
-    bool isFinished() const;
+    bool isFinished() const override;
+
+    const char* getName() const override { return "agitator shoot command"; }
 
 private:
     AgitatorSubsystem* connectedAgitator;

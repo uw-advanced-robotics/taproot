@@ -54,6 +54,11 @@ public:
     void addSubsystemRequirement(Subsystem* requirement);
 
     /**
+     * @return the name of the command, to be implemented by derived classes.
+     */
+    virtual const char* getName() const = 0;
+
+    /**
      * The initial subroutine of a command. Called once when the command is
      * initially scheduled by a CommandScheduler.
      */

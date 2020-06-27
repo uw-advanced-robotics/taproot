@@ -22,6 +22,8 @@ public:
 
     void end(bool) override;
 
+    const char *getName() const override { return "turret cv command"; }
+
 private:
     const float YAW_P = 1.0f;
     const float YAW_I = 0.0f;

@@ -15,13 +15,15 @@ class ExampleComprisedCommand : public aruwlib::control::ComprisedCommand
 public:
     explicit ExampleComprisedCommand(ExampleSubsystem* subsystem);
 
-    void initialize();
+    void initialize() override;
 
-    void execute();
+    void execute() override;
 
-    void end(bool interrupted);
+    void end(bool interrupted) override;
 
     bool isFinished() const override { return false; }
+
+    const char* getName() const override { return "example comprised command"; }
 
 private:
     ExampleCommand exampleCommand;
