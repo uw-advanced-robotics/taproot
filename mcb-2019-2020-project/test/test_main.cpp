@@ -1,3 +1,2 @@
-#include <iostream>
-
-int main(int argc, char **argv) { std::cout << "Hello World" << std::endl; }
+#define CATCH_CONFIG_MAIN
+#include "catch/catch.hpp"

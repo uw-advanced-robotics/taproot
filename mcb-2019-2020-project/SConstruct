@@ -88,6 +88,11 @@ env.AppendUnique(CPPPATH=[
     abspath(r"./robot-type")
 ])
 
+if target_env == "tests":
+    env.AppendUnique(CPPPATH=[
+        abspath(r"./test")
+    ])
+
 sources = env.FindSourceFiles(".", ignorePaths=ignored_dirs, ignoreFiles=ignored_files)
 if target_env == "hardware":
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
@@ -103,7 +108,7 @@ if target_env == "hardware":
     env.Alias("all", ["build", "size"])
     env.Default("all")
 else:
-    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".exe", source=sources)
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.exe", source=sources)
     # WARNING: all test targets must be included in the target_env check earlier in the file
     env.Alias("build-tests", program)
     env.Alias("run-tests", env.Run(program))
