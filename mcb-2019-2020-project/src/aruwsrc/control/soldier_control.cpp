@@ -25,6 +25,7 @@ using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::turret;
 using aruwlib::Drivers;
+using aruwlib::Remote;
 using aruwlib::control::CommandMapper;
 
 namespace aruwsrc
