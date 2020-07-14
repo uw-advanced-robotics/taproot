@@ -88,23 +88,23 @@ void startOldSoldierCommands() { Drivers::commandScheduler.addCommand(&agitatorC
 void registerOldSoldierIoMappings()
 {
     Drivers::commandMapper.addHoldRepeatMapping(
-        CommandMapper::newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
+        CommandMapper::newKeyMap(aruwlib::Remote::Switch::RIGHT_SWITCH, aruwlib::Remote::SwitchState::UP),
         &agitatorShootFastCommand);
 
     Drivers::commandMapper.addHoldRepeatMapping(
-        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
+        CommandMapper::newKeyMap(aruwlib::Remote::Switch::LEFT_SWITCH, aruwlib::Remote::SwitchState::MID),
         &chassisAutorotateCommand);
 
     Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+        CommandMapper::newKeyMap(aruwlib::Remote::Switch::LEFT_SWITCH, aruwlib::Remote::SwitchState::DOWN),
         &chassisDriveCommand);
 
     Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+        CommandMapper::newKeyMap(aruwlib::Remote::Switch::LEFT_SWITCH, aruwlib::Remote::SwitchState::DOWN),
         &openHopperCommand);
 
     Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
+        CommandMapper::newKeyMap(aruwlib::Remote::Switch::LEFT_SWITCH, aruwlib::Remote::SwitchState::UP),
         &wiggleDriveCommand);
 }
 
