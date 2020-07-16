@@ -78,10 +78,12 @@
         "./mcb-2019-2020-project/modm/ext/cmsis/core",
         "./mcb-2019-2020-project/modm/ext/cmsis/device",
         "./mcb-2019-2020-project/src",
-        "./mcb-2019-2020-project/robot-type",
         "./mcb-2019-2020-project/test"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",
-    "C_Cpp.default.intelliSenseMode": "gcc-x64"
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.default.forcedInclude": [
+        "./mcb-2019-2020-project/robot-type/robot_type.hpp"
+    ]
 }

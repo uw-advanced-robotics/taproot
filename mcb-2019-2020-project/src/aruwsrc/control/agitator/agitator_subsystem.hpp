@@ -8,8 +8,6 @@
 
 #include "aruwsrc/algorithms/turret_pid.hpp"
 
-#include "robot_type.hpp"
-
 namespace aruwsrc
 {
 namespace agitator

@@ -4,8 +4,6 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
-#include "robot_type.hpp"
-
 namespace aruwsrc
 {
 namespace engineer

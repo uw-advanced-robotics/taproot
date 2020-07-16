@@ -10,7 +10,7 @@
                 "panel": "new"
             },
             "command": "doxygen Doxyfile",
-            "problemMatcher": [],
+            "problemMatcher": []
         },
         {
             "label": "Build - Release",
@@ -113,7 +113,7 @@
         },
         {
             "label": "Setup Build",
-            "type":"shell",
+            "type": "shell",
             "presentation": {
                 "panel": "new"
             },

@@ -1,5 +1,3 @@
-#include "robot_type.hpp"
-
 #if defined(TARGET_DRONE)
 
 namespace aruwsrc

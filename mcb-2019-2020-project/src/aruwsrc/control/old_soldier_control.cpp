@@ -14,8 +14,6 @@
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
 
-#include "robot_type.hpp"
-
 #if defined(TARGET_OLD_SOLDIER)
 
 using namespace aruwsrc::agitator;

@@ -1,5 +1,3 @@
-#include "robot_type.hpp"
-
 #if defined(TARGET_HERO)
 
 namespace aruwsrc

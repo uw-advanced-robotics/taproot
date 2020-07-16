@@ -7,8 +7,6 @@
 #include <aruwlib/motor/dji_motor.hpp>
 #include <modm/math/filter/pid.hpp>
 
-#include "robot_type.hpp"
-
 namespace aruwsrc
 {
 namespace launcher

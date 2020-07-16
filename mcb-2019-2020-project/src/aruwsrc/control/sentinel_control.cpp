@@ -15,8 +15,6 @@
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
 
-#include "robot_type.hpp"
-
 #if defined(TARGET_SENTINEL)
 
 using namespace aruwsrc::agitator;

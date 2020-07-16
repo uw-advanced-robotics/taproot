@@ -7,8 +7,6 @@
 #include "aruwsrc/control/engineer/squeeze_grabber_command.hpp"
 #include "aruwsrc/control/engineer/xaxis_subsystem.hpp"
 
-#include "robot_type.hpp"
-
 #if defined(TARGET_ENGINEER)
 
 using namespace aruwsrc::engineer;

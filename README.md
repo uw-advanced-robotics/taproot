@@ -103,6 +103,10 @@ Microsoft provides a [helpful website](https://code.visualstudio.com/docs/getsta
 
 See the [wiki](https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/-/wikis/Software-Tools/Debugging-With-JLink) for an explanation on the difference between an ST-Link and J-Link and a step-by-step procedure on how to use the J-Link.
 
+## How to select robot type
+
+With the root directory opened in VSCode, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>. Type "ARUW: Select Robot Type" and hit enter. A dropdown menu should appear. Select the robot type from the dropdown.
+
 ## Advanced techniques: working with modm modules and lbuild
 
 Below are steps which explain how to add additional modm modules to the modm directory in the mcb-2019-2020-project directory.

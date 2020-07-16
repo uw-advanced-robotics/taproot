@@ -18,8 +18,6 @@
 #include <modm/architecture/interface/clock.hpp>
 #include <modm/platform.hpp>
 
-#include "robot_type.hpp"
-
 using namespace modm::platform;
 #else
 #include <modm/math/units.hpp>

@@ -7,20 +7,27 @@ build_path = "build"
 hardware_modm_path = "modm/"
 sim_modm_path = "sim-modm/modm/"
 aruwlib_path = "./src/aruwlib"
+robot_type_file = "./robot-type/robot_type.hpp"
+valid_robot_types = ["TARGET_SOLDIER", "TARGET_OLD_SOLDIER", "TARGET_DRONE", "TARGET_ENGINEER", "TARGET_SENTINEL", "TARGET_HERO"]
 
-usage = "Usage: scons <target> [profile=<debug|release>]\n\
-   \"<target>\" is one of:\n\
-      - \"build\": build all code for the hardware platform.\n\
-      - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
-      - \"build-tests\": build core code and tests for the current host platform.\n\
-      - \"run-tests\": build core code and tests for the current host platform, and execute them locally with the test runner."
+usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>]\n\
+    \"<target>\" is one of:\n\
+        - \"build\": build all code for the hardware platform.\n\
+        - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
+        - \"build-tests\": build core code and tests for the current host platform.\n\
+        - \"run-tests\": build core code and tests for the current host platform, and execute them locally with the test runner.\n\
+    \"TARGET_<ROBOT_TYPE>\" is an optional argument that can override whatever robot type has been specified in robot_type.hpp.\n\
+        - <ROBOT_TYPE> must be one of the following:\n\
+            - SOLDIER, OLD_SOLDIER, DRONE, ENGINEER, SENTINEL, HERO"
 
 # don't compile this stuff
-ignored_dirs = [".lbuild_cache", build_path, "robot-type", sim_modm_path, hardware_modm_path, aruwlib_path]
-ignored_files = []
+ignored_dirs = [".lbuild_cache", build_path, sim_modm_path, hardware_modm_path, aruwlib_path]
+ignored_files = [robot_type_file]
 
-if len(COMMAND_LINE_TARGETS) != 1:
-    raise Exception("This build script currently supports exactly one target per invocation.\n" + usage)
+if len(COMMAND_LINE_TARGETS) not in [1, 2]:
+    raise Exception("This build script has 1 required argument and 1 optional argument.\n" + usage)
+
+
 
 build_target = COMMAND_LINE_TARGETS[0]
 if build_target in ["build-tests", "run-tests"]:
@@ -37,7 +44,19 @@ env["CONFIG_PROJECT_NAME"] = project_name
 if GetOption('num_jobs') == 1:
     SetOption('num_jobs', 8)
 
-print("Configured {0} parallel build jobs (-j{0})".format(GetOption('num_jobs')))
+# Configure robot type and check against valid robot type
+robot_type = ARGUMENTS.get("robot")
+# If there is no optional argument, revert back to the macro in robot_type.hpp
+if robot_type == None:
+    with open(robot_type_file, "r") as robot_type_file_reader:
+        for word in robot_type_file_reader.read().splitlines():
+            if "#" in word and "define" in word and "TARGET_" in word:
+                robot_type = word.split()[-1]
+                break
+if robot_type not in valid_robot_types:
+    raise Exception(usage)
+
+print("Configured {0} parallel build jobs (-j{0}), {1}".format(GetOption('num_jobs'), robot_type))
 
 modm_path = None
 if target_env == "hardware":
@@ -49,7 +68,7 @@ else:
 
 # Building all libraries (read from sconscript files located in provided dirs)
 # Ensure that modm is first, otherwise aruwlib won't have the needed build config
-external_scons_libraries = [modm_path, "./src/aruwlib"]
+external_scons_libraries = [modm_path, aruwlib_path]
 env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # References:
@@ -84,9 +103,11 @@ if 'additional-ccflags' in ARGUMENTS:
 
 # add this path so you don't have to write #include "src/..."
 env.AppendUnique(CPPPATH=[
-    abspath(r"./src"),
-    abspath(r"./robot-type")
+    abspath(r"./src")
 ])
+
+# append on the global robot target build flag
+env.Append(CCFLAGS=["-D " + robot_type])
 
 if target_env == "tests":
     env.AppendUnique(CPPPATH=[
