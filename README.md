@@ -16,11 +16,20 @@ _**Warning:** This build setup has not been fully tested on linux or mac. Compat
 2. Download the latest version of [openocd](https://gnutoolchains.com/arm-eabi/openocd/). Download the newest version of the software and extract the files to a permanent location. The downloaded file is of type `.7zip`, so you will need a way to extract 7zip files, either by installing the 7zip extractor or by using an online unzipper.
 3. Download and install [anaconda](https://www.anaconda.com/distribution/). During installation of Anaconda, make sure to check the 'Add to PATH' box.
 4. Download MinGW. Follow the installation guide [here](http://www.mingw.org/wiki/Getting_Started).
-5. Add the path of the `/bin` directories of OpenOCD, the GNU Toolchain, and MinGW to your PATH environment variable. You can find this setting by searching for "environment" in your Start menu and selecting "Edit the system environment variables". Then click "Environment Variables..." and enter the paths as shown below.<br><br>
+5. Add the path of the `/bin` directories of OpenOCD, the GNU Toolchain, and MinGW to your PATH environment variable.
+    - In your Start menu, search for "environment" and select "Edit the system environment variables."
 
-    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/0a2c25d23166bc1ff58b41594ba63e4e/Overview.png" height="500px" />
+    - In the "User variables for _{your username here}_", where _{your username here}_ is a placeholder for your actual name. Double click on "Path."<br><br>
+    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/49592ade19d3a60bb0377d1ae54fd3e6/EnvironmentVarsMain.jpg" height="500px">
 
-6. Download the ST-Link V-2 driver [here](https://www.st.com/en/development-tools/stsw-link009.html#get-software), unzip, and run the executable to install the driver.
+    - In "Edit environment variable," click "New."<br><br>
+    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/8979edf979083ace722dba00883ad153/EnvironmentVarsPathVar.jpg" height="500px">
+
+    - Add the absolute path of the `/bin` directory of one of the tools listed above to the box that shows up after you click "New". Repeat this process for all of the necessary paths listed above.<br><br>
+    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/171f2c159ee4a765680aa7222627a7ec/EnvironmentVarsPathAddition.jpg" height="500px">
+
+    - Select "OK."
+6. Download the ST-Link V-2 driver [here](https://drive.google.com/drive/u/1/folders/1Ndk8Q-uUtzo3sQtzOoguDAVBZSM3IKT1), unzip, and run the executable to install the driver.
 7. Download [ozone_jlink_jscope.zip](https://drive.google.com/drive/u/1/folders/1E9i1JBILotoFClKc6L3-m4OWuW0kiO5A) in our google drive. This contains installers for Ozone, the J-Link drivers, and J-Scope (all J-Link related software). Once downloaded and unzipped, run the three installers.
 8. Download and install [VSCode](https://code.visualstudio.com/download).
 9. Open anaconda prompt (type "Anaconda Prompt" into the start menu to start the prompt) and run the following commands: <br>
