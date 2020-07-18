@@ -8,9 +8,11 @@ All ARUW MCB code for RoboMaster, using the modm framework, gnu compiler, openoc
 
 ## Download and installation guide
 
-Note: The beginning of the guide is for windows users. If you are using mac or linux, skip steps 1-5 and instead refer to [modm's guide here](https://modm.io/guide/installation/).
+For Windows and Debian Linux, there is specific setup that documented in this guide. For Windows users, see the [Windows specific setup](#windows-specific-setup). For Linux specific setup, see [Debian Linux (Ubuntu 18.04 and 20.04 LTS) specific setup](#debian-linux-ubuntu-18.04-and-20.04-lts-specific-setup). For mac, instead refer to [modm's guide here](https://modm.io/guide/installation/). Once operating system specific setup has been complete, jump to [operating system independent setup](#operating-system-independent-setup) to complete the necessary setup.
 
-_**Warning:** This build setup has not been fully tested on linux or mac. Compatibility with mac/linux is being worked on._
+_**Warning:** This build setup has not been fully tested on mac. Compatibility with mac is being worked on._
+
+### Windows specific setup
 
 1. Download [arm-gcc-toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When you open downloads page, you will see a number of installers. Choose the .zip version of newest toolchain release. Extract the contents of the downloaded file to a permanent location of your choice.
 2. Download the latest version of [openocd](https://gnutoolchains.com/arm-eabi/openocd/). Download the newest version of the software and extract the files to a permanent location. The downloaded file is of type `.7zip`, so you will need a way to extract 7zip files, either by installing the 7zip extractor or by using an online unzipper.
@@ -31,19 +33,87 @@ _**Warning:** This build setup has not been fully tested on linux or mac. Compat
     - Select "OK."
 6. Download the ST-Link V-2 driver [here](https://drive.google.com/drive/u/1/folders/1Ndk8Q-uUtzo3sQtzOoguDAVBZSM3IKT1), unzip, and run the executable to install the driver.
 7. Download [ozone_jlink_jscope.zip](https://drive.google.com/drive/u/1/folders/1E9i1JBILotoFClKc6L3-m4OWuW0kiO5A) in our google drive. This contains installers for Ozone, the J-Link drivers, and J-Scope (all J-Link related software). Once downloaded and unzipped, run the three installers.
-8. Download and install [VSCode](https://code.visualstudio.com/download).
-9. Open anaconda prompt (type "Anaconda Prompt" into the start menu to start the prompt) and run the following commands: <br>
-```
-conda create --name modm python=3 pip
-activate modm
-conda install -c conda-forge git pywin32
-pip install jinja2 scons future pyelftools lbuild
-```
-10. Clone this repository: In a new terminal (Git Bash, anaconda, or cmd should work) type `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git`.
-    - <em>If you forget the `--recursive`, run: `git submodule init .\mcb-2019-2020\modm\` and `git submodule update --recursive`.</em>
-11. Restart your computer for anaconda to properly install and for the path variables to be properly updated.
+8. Open anaconda prompt (type "Anaconda Prompt" into the start menu to start the prompt) and run the following commands: <br>
+    ```
+    conda create --name modm python=3 pip
+    activate modm
+    conda install -c conda-forge git pywin32
+    pip install jinja2 scons future pyelftools lbuild
+    ```
+
+### Debian Linux (Ubuntu 18.04 and 20.04 LTS) specific setup
+
+1. Run the following commands in a terminal:
+    ```
+    sudo apt-get install python3 python3-pip scons git
+    sudo apt-get --no-install-recommends install doxygen
+    pip3 install modm
+    sudo apt-get install gcc-avr binutils-avr avr-libc avrdude
+    sudo apt-get install openocd
+    pip3 install gdbgui
+    sudo apt-get install gcc build-essential libboost-all-dev
+    pip3 install lbuild
+    pip3 install pyelftools
+    ```
+2. Add lbuild to your path:
+    - Open `~/.bashrc` with a text editor.
+    - Scroll down to the end of the file and type this:
+        ```
+        PATH="$HOME/.local/bin:$PATH"
+        export PATH
+        ```
+    - Save the new updates.
+3. Download the [latest version](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads) of the arm-none-eabi toolchain. In particular, download "gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2", and unzip the file (`tar -xvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2`).
+4. Add the `/bin` folder of `gcc-arm-none-eabi-9-2020-q2-update` to your path:
+    - Open `~/.bashrc` with a text editor.
+    - Scroll down to the end of the file, and right above `PATH="$HOME/.local/bin:$PATH"`, type this:
+        ```
+        PATH=path/to/gcc-arm-none-eabi-9-2020-q2-update/bin:$PATH
+        ```
+       Where `path/to/gcc-arm-none-eabi-9-2020-q2-update` is replaced with your own path to the toolchain.
+
+14. When running on Ubuntu 18.04 LTS, an additional step must be taken to insure python 3 is used. If you are running 18.04, for a less intrusive way to run all scons scripts with Python 3 add this to your `.bashrc` or `.zshrc`:
+    ```
+    alias scons="/usr/bin/env python3 $(which scons)"
+    ```
+- Download and compile the latest version of openocd (`apt-get install openocd` is not enough by itself).
+    - In particular, you must clone the [openocd git repo](https://github.com/ntfreak/openocd), then run the following commands in a terminal located at the root directory of the cloned repo (taken from the openocd [README](https://github.com/ntfreak/openocd/blob/master/README)):
+        ```
+        ./bootstrap
+        ./configure
+        make
+        sudo make  install
+        ```
+- Install the ST-Link V2 driver. This is done through the terminal. The following instructions were taken and partially modified from [this site](https://freeelectron.ro/installing-st-link-v2-to-flash-stm32-targets-on-linux/).
+    ```
+    sudo apt-get install git make cmake libusb-1.0-0-dev
+    sudo apt-get install gcc build-essential
+    cd
+    mkdir stm32
+    cd stm32
+    git clone https://github.com/texane/stlink
+    cd stlink
+    cmake .
+    make
+    sudo make install
+    cd bin
+    sudo cp st-* /usr/local/bin
+    cd ..
+    sudo cp config/udev/rules.d/49-stlinkv* /etc/udev/rules.d/ 
+    sudo udevadm control --reload
+    ```
+- If you have an ST-Link on hand (if you are in lab, ask someone to help find one), test if the installation worked correctly. See the end of the document mentioned in the previous step to insure the ST-Link driver is properly installed.
+- **Once you have cloned the mcb-2019-2020 repository (see below)**, in a terminal navigate to `mcb-2019-2020-project` and type `lbuild build`. This will regenerate some of modm's code so you can build in Linux. Similarly, see [below](#how-to-modify-modm-to-run-tests-on-a-local-machine-for-linux) for how to update the source files for building the simulator on Linux.
+
+### Operating system independent setup
+
+1. Download and install [VSCode](https://code.visualstudio.com/download).
+2. Clone this repository: In a new terminal (Git Bash, anaconda, or cmd should work) type `git clone --recursive https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020.git`.
+    - _If you forget the `--recursive`, run: `git submodule init .\mcb-2019-2020\modm\` and `git submodule update --recursive`._
+3. Restart your computer to insure all installs have been updated.
 
 ## VSCode setup guide
+
 1. Open the `mcb-2019-2020` folder in VSCode. The first time you try to open this folder, you can start VSCode, then in the "Welcome" page, under the "Start" menu, find "Open folder...". **Important: do NOT open the `mcb-2019-2020-project` folder.** If you do you will not be able to build code and VSCode intellisense will not work as expected.
 2. When you open up the folder, VSCode should prompt you to install the recommended extensions. Click "install recommended extensions". You should now have the "C/C++", "Cortex-Debug", and "aruw robot chooser" extensions.
     - If you do not, in extensions: marketplace (to open, type <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>X</kbd>), search "@recommended" and install all under "WORKSPACE RECOMMENDED".
@@ -116,14 +186,27 @@ Below are steps which explain how to add additional modm modules to the modm dir
 3. To add a particular module, first find the module the folder presides in in the modm submodule (you can find the module in the path `modm/src/modm`).
 4. Here you should find a `module.lb` file. In the file search for `def init`. For example, if I wanted to add the gpio module, I would find the `module.lb` file with the path `modm\src\modm\platform\gpio\stm32\module.lb`, then find the `init` function, where I would find the following:
 
-```python
-def init(module):
-    module.name = ":platform:gpio"
-    module.description = "General Purpose I/O (GPIO)"
-```
+    ```python
+    def init(module):
+        module.name = ":platform:gpio"
+        module.description = "General Purpose I/O (GPIO)"
+    ```
 
 5. I now have the necessary information to add the module correctly. In my example, the module name is `:platform:gpio`, so I would add to the `project.xml` the following: `<module>modm:platform:gpio</module>`.
 6. Run the `Setup Build` task in VSCode, or `lbuild build` in anaconda (with modm activated).
+
+## How to modify modm to run tests on a local machine for Linux
+
+Currently, the modm build that runs locally is set up for windows. To modify this to run on Linux, do the following:
+- In a terminal, navigate to `mcb-2019-2020/mcb-2019-2020-project/sim-modm`.
+- Open `project.xml` in VSCode (in the terminal, type `code project.xml`).
+- You will find the below two lines. Remove the comment around the "hosted-linux" target (`<!-- -->`), and comment out the "hosted-windows" target.
+    ```xml
+    <option name="modm:target">hosted-windows</option>
+    <!-- <option name="modm:target">hosted-linux</option> -->
+    ```
+- Type `lbuild build` in the terminal you have open.
+- `cd ..` and type `scons run-tests` to insure the updates have succeeded.
 
 # Useful commands for running lbuild and scons
 
