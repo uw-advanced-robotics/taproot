@@ -1,12 +1,3 @@
-/**
- * Remote DBUS modm interface
- * A simple API that allows users to easily interact and
- * communicate with the remote dbus communication via
- * UART with modm. This impletation allows for the
- * initialization of the remote and easy access for
- * reading user inputs.
- */
-
 #include "remote.hpp"
 
 #include "aruwlib/Drivers.hpp"
@@ -18,10 +9,8 @@ using namespace aruwlib::serial;
 
 namespace aruwlib
 {
-// Enables and initializes Usart1 communication
 void Remote::initialize() { Drivers::uart.init<Uart::Uart1, 100000, Uart::Parity::Even>(); }
 
-// Reads/parses the current buffer and updates the current remote info states
 void Remote::read()
 {
     // Check disconnect timeout
@@ -52,10 +41,8 @@ void Remote::read()
     }
 }
 
-// Returns if the remote is connected
 bool Remote::isConnected() const { return connected; }
 
-// Returns the value of the given channel
 float Remote::getChannel(Channel ch) const
 {
     switch (ch)
@@ -72,7 +59,6 @@ float Remote::getChannel(Channel ch) const
     return 0;
 }
 
-// Returns the value of the given switch
 Remote::SwitchState Remote::getSwitch(Switch sw) const
 {
     switch (sw)
@@ -85,27 +71,20 @@ Remote::SwitchState Remote::getSwitch(Switch sw) const
     return SwitchState::UNKNOWN;
 }
 
-// Returns the current mouse x value
 int16_t Remote::getMouseX() const { return remote.mouse.x; }
 
-// Returns the current mouse y value
 int16_t Remote::getMouseY() const { return remote.mouse.y; }
 
-// Returns the current mouse z value
 int16_t Remote::getMouseZ() const { return remote.mouse.z; }
 
-// Returns the current mouse l value
 bool Remote::getMouseL() const { return remote.mouse.l; }
 
-// Returns the current mouse r value
 bool Remote::getMouseR() const { return remote.mouse.r; }
 
 bool Remote::keyPressed(Key key) const { return (remote.key & (1 << (uint8_t)key)) != 0; }
 
-// Returns the value of the wheel
 int16_t Remote::getWheel() const { return remote.wheel; }
 
-// Parses the current rxBuffer
 void Remote::parseBuffer()
 {
     // values implemented by shifting bits across based on the dr16
@@ -181,7 +160,6 @@ void Remote::parseBuffer()
     remote.updateCounter++;
 }
 
-// Clears the current rxBuffer
 void Remote::clearRxBuffer()
 {
     // Reset bytes read counter
@@ -195,7 +173,6 @@ void Remote::clearRxBuffer()
     Drivers::uart.discardReceiveBuffer(Uart::UartPort::Uart1);
 }
 
-// Resets the current remote info
 void Remote::reset()
 {
     remote.rightHorizontal = 0;
