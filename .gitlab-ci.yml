@@ -9,22 +9,62 @@ clang-format:
   - merge_requests
   - master
   - develop
+  except:
+  - schedules
 
-build-code:
+Weekly Build:
+  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
+  variables:
+    ARTIFACT_EXPIRE_TIME: 2 weeks
+    ARTIFACT_PATH: isolated-deploy
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - cd mcb-2019-2020-project
+    - rm -r modm && lbuild build
+    # soldier
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_SOLDIER -j2 additional-ccflags=-Werror # Build the robot code
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_soldier.elf
+    # old soldier
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_OLD_SOLDIER -j2 additional-ccflags=-Werror
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_old_soldier.elf
+    # drone
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_DRONE -j2 additional-ccflags=-Werror
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_drone.elf
+    # hero
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_HERO -j2 additional-ccflags=-Werror
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_hero.elf
+    # sentinel
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_SENTINEL -j2 additional-ccflags=-Werror
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_sentinel.elf
+    # engineer
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_ENGINEER -j2 additional-ccflags=-Werror
+    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_engineer.elf
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-build"
+    paths:
+    - $ARTIFACT_PATH/*
+    expire_in: 1 week
+  only:
+    - schedules
+
+# Only build the soldier target while doing merge verifications to save time
+Verification Build:
   image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
   script:
-    - cd mcb-2019-2020-project # Go to robot code diretory
+    - cd mcb-2019-2020-project
     - rm -r modm # Because lbuild clean is broken
     - lbuild build # Make sure that modm is setup for linux.
     - cd sim-modm && sed -i -e 's/hosted-windows/hosted-linux/g' project.xml && lbuild build && cd -
-    - /usr/bin/env python3 $(which scons) build -j2 additional-ccflags=-Werror # Build the robot code!
-    - /usr/bin/env python3 $(which scons) run-tests -j2 # Build the code for simulation
+    - /usr/bin/env python3 $(which scons) build robot=TARGET_SOLDIER -j2 additional-ccflags=-Werror # Build the robot code!
+    - /usr/bin/env python3 $(which scons) run-tests robot=TARGET_SOLDIER -j2 # Build the code for simulation
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   only:
     - merge_requests
     - master
     - develop
+  except:
+    - schedules
 
 pages:
   image: alpine
@@ -45,3 +85,5 @@ pages:
       - public
   only:
     - develop
+  except:
+    - schedules

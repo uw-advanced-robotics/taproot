@@ -20,13 +20,13 @@
 
 ## How to deploy to the MCB
 
-- Download `openocd.cfg` (the file located in this directory).
-- In a terminal (bash or windows based), navigate to the folder containing the downloaded `openocd.cfg`
+- Download the weekly build artifact from the develop branch (see [here](https://docs.gitlab.com/ee/ci/pipelines/job_artifacts.html#downloading-the-latest-artifacts) if you don't know how to do this). This artifact includes this readme as well as `openocd.cfg` and a number of `.elf` files.
+- In a terminal (bash or windows based), navigate to the folder containing the downloaded artifacts.
 - Type the following:
     ```
     openocd -f "./openocd.cfg" -c "modm_program path/to/elf/file/elf-file-name.elf"
     ```
-   where `path/to/elf/file` is a valid path to a `.elf` file that is present, `elf-file-name.elf` is a valid `.elf` file (see below), and `./openocd.cfg` is the file you downloaded in the first step. Note that as of now, downloading from GitLab may mean the filename is changed. You should replace `./openocd.cfg` with the actual name of the file you downloaded.
+   where `path/to/elf/file` is a valid path to an `.elf` file (either absolute or relative to where you are in the terminal), `elf-file-name.elf` is a valid `.elf` file (presumably one of the ones you downloaded from the build artifact), and `./openocd.cfg` is the file you downloaded in the first step. You should replace `./openocd.cfg` with the actual name of the file you downloaded if the `.cfg` file has been changed.
 
 ## Creating an elf file
 
