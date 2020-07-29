@@ -31,7 +31,7 @@ public:
 
     /*
      * constructor
-     * @param currPort the pin that the servo is connected to
+     * @param pwmPin the pin that the servo is connected to
      * @param open     the angle defined as open; a PWM value
      *                 (between 0 and 1)
      * @param close    the angle defined as close; a PWM value
@@ -39,8 +39,8 @@ public:
      * @param pwmRampSpeed   determines the speed of servo operation;
      *                 a PWM value (between 0 and 1)
      */
-    HopperSubsystem(aruwlib::gpio::Pwm::Pin currPort, float open, float close, float pwmRampSpeed)
-        : hopper(currPort, open, close, pwmRampSpeed)
+    HopperSubsystem(aruwlib::gpio::Pwm::Pin pwmPin, float open, float close, float pwmRampSpeed)
+        : hopper(pwmPin, open, close, pwmRampSpeed)
     {
         hopper.setTargetPwm(close);
     }

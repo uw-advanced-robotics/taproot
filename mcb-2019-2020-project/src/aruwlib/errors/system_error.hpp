@@ -32,6 +32,7 @@ enum Location
     SUBSYSTEM,
     CONTROLLER_MAPPER,
     TURRET,
+    SERVO,
     LOCATION_AMOUNT,
 };
 
