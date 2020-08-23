@@ -135,7 +135,7 @@ void XavierSerial::beginTargetTracking()
 
 void XavierSerial::stopTargetTracking()
 {
-    autoAimRequestQueued = false;
+    autoAimRequestQueued = true;
     autoAimRequestState = false;
 }
 
