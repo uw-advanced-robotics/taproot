@@ -3,6 +3,8 @@
 # clang-format-all: a tool to run clang-format on an entire project
 # Copyright (C) 2016 Evan Klitzke <evan@eklitzke.org>
 #
+# Edited to support clang-format-10 by Kaelin Laundry <wasabifan@outlook.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -32,7 +34,7 @@ FMT=""
 # that the version number be part of the command. We prefer clang-format if
 # that's present, otherwise we work backwards from highest version to lowest
 # version.
-for clangfmt in clang-format{,-{4,3}.{9,8,7,6,5,4,3,2,1,0}}; do
+for clangfmt in clang-format{,-10,-{4,3}.{9,8,7,6,5,4,3,2,1,0}}; do
     if which "$clangfmt" &>/dev/null; then
         FMT="$clangfmt"
         break

@@ -1,12 +1,57 @@
 # mcb-2019-2020
 
-All ARUW MCB code for RoboMaster, using the modm framework, gnu compiler, openocd debugger, and VSCode editor.
+All ARUW's MCB code for the RoboMaster competition. We use:
+- `modm`, a C++-native HAL
+- the gcc compiler
+- openocd to deploy and debug
+- VSCode, an editor
 
 [[_TOC_]]
 
 # New user guide
 
-## Download and installation guide
+The recommended way to develop is with our pre-built development Docker container.
+
+1. [Install Docker Desktop](https://docs.docker.com/get-docker/). The macOS and Linux instructions will work
+   as-is. If you are on Windows, there are two options:
+     - If you are on Windows 10 version 2004 or later ([how do I know?](https://support.microsoft.com/en-us/help/13443/windows-which-version-am-i-running)),
+       the relevant guide is [here](https://docs.docker.com/docker-for-windows/install-windows-home/).
+       Make sure you click "Enable WSL 2 Features" in the Docker installer.
+     - If you cannot update to Windows 10 version 2004 (recommended) but are running Windows 10 Pro
+       (not Home), you can follow [this guide](https://docs.docker.com/docker-for-windows/install/)
+       to use the Hyper-V backend instead.
+2. [Install Visual Studio Code](https://code.visualstudio.com/).
+3. [Install git](https://git-scm.com/).
+4. Open Visual Studio Code.
+5. Clone this repo. You can go to the "source control" tab on the right of the editor and choose
+   "Clone Repository". When asked, enter `https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020.git`
+   as the source URL. Pick a reasonable location to clone the repo into.
+
+   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/1e1f271fbda7085856d57e85491eae91/image.png" width="500px">
+
+6. Once it opens the new folder, an alert will appear with suggested extensions. Click "Install All".
+
+   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/edb88ab3074a99d5eed1a4b2a50b2e53/image.png" width="500px">
+
+7. vscode will now prompt you to open the development container. Choose "Reopen in Container". This
+   step may take a few minutes (or more!); it will download around 500 MB (2GB once uncompressed) of
+   necessary tools. Be patient.
+
+   _Heads-up:_ If you don't see the dialog, or it goes away, you can press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
+   and type "Reload Window" plus <kbd>Enter</kbd> to reload vscode.
+
+   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/198095587078b88d67ac674839cf4ad7/image.png" width="500px">
+
+   vscode is now attached to a "container", which includes all the tools
+   necessary to develop in this repo! In the future, you will always want to open
+   the workspace within its container.
+
+Now that you have the environment, let's test it out! Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>,
+type "Focus Next Terminal", and press <kbd>Enter</kbd>. In this terminal, type `scons run-tests` and
+press <kbd>Enter</kbd>. After building our code, it should run the tests and print a message
+indicating that all tests passed.
+
+## Non-containerized setup (NOT RECOMMENDED; see above)
 
 For Windows and Debian Linux, there is specific setup that documented in this guide. For Windows users, see the [Windows specific setup](#windows-specific-setup). For Linux specific setup, see [Debian Linux (Ubuntu 18.04 and 20.04 LTS) specific setup](#debian-linux-ubuntu-18.04-and-20.04-lts-specific-setup). For mac, instead refer to [modm's guide here](https://modm.io/guide/installation/). Once operating system specific setup has been complete, jump to [operating system independent setup](#operating-system-independent-setup) to complete the necessary setup.
 

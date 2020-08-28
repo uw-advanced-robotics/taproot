@@ -15,5 +15,6 @@
 
 #include <modm/architecture/utils.hpp>
 
-#include "platform\core\flash_reader.hpp"
+#include "platform/core/delay.hpp"
+#include "platform/core/flash_reader.hpp"
 #endif // MODM_PLATFORM_HPP

@@ -7,7 +7,7 @@
   </repositories>
   <options>
     <option name="modm:build:project.name">aruw-mcb-sim</option>
-    <option name="modm:target">hosted-windows</option>
+    <option name="modm:target">hosted-linux</option>
     <option name="modm:build:scons:include_sconstruct">False</option>
 
   </options>
@@ -24,6 +24,7 @@
     <module>modm:processing</module>
     <module>modm:processing:protothread</module>
     <module>modm:architecture:can</module>
+    <module>modm:architecture:delay</module>
     <module>modm:io</module>
   </modules>
 </library>

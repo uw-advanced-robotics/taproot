@@ -4,6 +4,8 @@
 
 #ifndef ENV_SIMULATOR
 #include <modm/platform.hpp>
+#else
+#include <modm/architecture/interface/clock.hpp>
 #endif
 
 namespace aruwlib
@@ -12,14 +14,7 @@ namespace arch
 {
 namespace clock
 {
-inline uint32_t getTimeMilliseconds()
-{
-#ifdef ENV_SIMULATOR
-    return 0;
-#else
-    return modm::Clock::now().getTime();
-#endif
-}
+inline uint32_t getTimeMilliseconds() { return modm::Clock::now().getTime(); }
 
 inline uint32_t getTimeMicroseconds()
 {

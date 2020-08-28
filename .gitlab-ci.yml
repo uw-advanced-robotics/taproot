@@ -1,8 +1,10 @@
+.CI_IMAGE: &CI_IMAGE aruw/mcb-2020-gitlab-ci:2020-05-25.1
+
 before_script:
   - python -V # Print out python version for debugging
 
 clang-format:
-  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
+  image: *CI_IMAGE
   script:
     - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r mcb-2019-2020-project/src/ mcb-2019-2020-project/test/
   only:
@@ -13,7 +15,7 @@ clang-format:
   - schedules
 
 Weekly Build:
-  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
+  image: *CI_IMAGE
   variables:
     ARTIFACT_EXPIRE_TIME: 2 weeks
     ARTIFACT_PATH: isolated-deploy
@@ -49,12 +51,11 @@ Weekly Build:
 
 # Only build the soldier target while doing merge verifications to save time
 Verification Build:
-  image: aruw/mcb-2020-gitlab-ci:2020-05-25.1
+  image: *CI_IMAGE
   script:
     - cd mcb-2019-2020-project
     - rm -r modm # Because lbuild clean is broken
     - lbuild build # Make sure that modm is setup for linux.
-    - cd sim-modm && sed -i -e 's/hosted-windows/hosted-linux/g' project.xml && lbuild build && cd -
     - /usr/bin/env python3 $(which scons) build robot=TARGET_SOLDIER -j2 additional-ccflags=-Werror # Build the robot code!
     - /usr/bin/env python3 $(which scons) run-tests robot=TARGET_SOLDIER -j2 # Build the code for simulation
   variables:

@@ -13,18 +13,19 @@
 
 modm::Clock::Type modm::Clock::time = 0;
 
-#include <windows.h>
+#include <sys/time.h>
 
 template< typename TimestampType >
 TimestampType
 modm::Clock::now()
 {
-	SYSTEMTIME now;
-	GetSystemTime(&now);
+	struct timeval now;
+	gettimeofday(&now, 0);
 
-	time = typename TimestampType::Type( now.wMilliseconds + (now.wSecond * 1'000) + (now.wMinute * 1'000 * 60) );
+	time = typename TimestampType::Type( (now.tv_sec * 1'000) + (now.tv_usec / 1'000) );
 	return time;
 }
+
 void
 modm::Clock::increment(uint_fast16_t step)
 {

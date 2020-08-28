@@ -14,6 +14,16 @@
 
 #include <stdint.h>
 
+#include "interface/accessor.hpp"
+#include "interface/accessor_flash.hpp"
+#include "interface/accessor_ram.hpp"
+#include "interface/assert.hpp"
+#include "interface/can.hpp"
+#include "interface/can_message.hpp"
+#include "interface/clock.hpp"
+#include "interface/delay.hpp"
+#include "interface/memory.hpp"
+#include "interface/register.hpp"
 #include "interface/peripheral.hpp"
 
 #endif	// MODM_INTERFACE_HPP

@@ -13,7 +13,7 @@ from os.path import abspath
 
 def build_target(env, sources):
 	# Building application
-	program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".exe", source=sources)
+	program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
 
 	# SCons functions
 	env.Alias("qtcreator", env.QtCreatorProject(sources))
