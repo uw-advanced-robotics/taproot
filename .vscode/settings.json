@@ -85,5 +85,12 @@
     "C_Cpp.default.intelliSenseMode": "gcc-x64",
     "C_Cpp.default.forcedInclude": [
         "./mcb-2019-2020-project/robot-type/robot_type.hpp"
-    ]
+    ],
+    "[markdown]": {
+        "editor.wordWrap": "off",
+        "editor.quickSuggestions": false,
+        "editor.rulers": [
+            100
+        ]
+    },
 }

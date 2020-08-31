@@ -51,6 +51,31 @@ type "Focus Next Terminal", and press <kbd>Enter</kbd>. In this terminal, type `
 press <kbd>Enter</kbd>. After building our code, it should run the tests and print a message
 indicating that all tests passed.
 
+## Optional: prevent Docker Desktop from running on startup
+
+By default, Docker will likely be configured to run on startup. Your mileage may vary, but this may
+be frustrating. If so, you can disable it! Open the Docker Desktop settings, which on Windows can be
+accessed via the Docker icon in the system tray:
+
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3aaec4ca0336a4b81f1a5d573a18d05f/image.png" width="500px">
+
+The "General" tab has a checkbox for disabling auto-start.
+
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/4b18706432e7d51c8a4d98b00462b399/image.png" width="500px">
+
+In the future, if you attempt to load the repository within the dev container and haven't manually
+started Docker, you will get the following error:
+
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3b03894ff5bc441c8273becfbf4980c6/image.png" width="500px">
+
+In this case, you can launch Docker manually and hit "Retry". On Windows, Docker Desktop can be
+started by searching for "docker" in the Start menu.
+
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/64e97a4ff076f79069ae4d8f670e19bd/image.png" width="500px">
+
+**We also recommend you _stop_ Docker when you're done! This can be done on Windows via the same
+icon in the system tray. This will help preserve battery life and RAM.**
+
 ## Non-containerized setup (NOT RECOMMENDED; see above)
 
 See the [wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/home) for information about how
