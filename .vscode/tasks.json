@@ -64,6 +64,22 @@
             }
         },
         {
+            "label": "Build Tests - Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug",
+            "windows": {
+                "command": "conda run -n modm scons build-tests profile=debug"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+            }
+        },
+        {
             "label": "Run Tests - Release",
             "type": "shell",
             "presentation": {
