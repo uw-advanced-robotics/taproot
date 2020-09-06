@@ -6,6 +6,28 @@
 # How to publish docker image:
 # docker push aruw/mcb-2020-gitlab-ci:2020-02-17.1
 
+# Temporary stages ===========
+FROM debian:buster as gtest-build
+
+ARG GTEST_VERSION=1.10.0
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends cmake build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+ADD https://github.com/google/googletest/archive/release-${GTEST_VERSION}.tar.gz /
+RUN tar -xzf /release-*.tar.gz
+
+RUN cd /googletest-release-${GTEST_VERSION}/ \
+    && mkdir build
+WORKDIR /googletest-release-${GTEST_VERSION}/build/
+
+RUN cmake ../
+RUN make -j
+
+# Main image =================
 FROM python:3.8.0-slim-buster
 # We do all installations in a single layer and clean up residual files in one
 # pass to minimize Docker image size (and thus, CI build time).
@@ -35,6 +57,11 @@ RUN wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/RC2.1
     && tar -xjf /gcc-arm.tar.bz2 \
     && rm gcc-arm.tar.bz2
 ENV PATH="/gcc-arm-none-eabi-9-2019-q4-major/bin:$PATH"
+
+ARG GTEST_VERSION=1.10.0
+# "install" gtest and gmock
+COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/googletest/include/ /usr/local/include/
+COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/build/lib/libg*.a /usr/local/lib/
 
 RUN pip install modm scons
 RUN wget -O /run-clang-format.py https://raw.githubusercontent.com/Sarcasm/run-clang-format/50a5250a2666218595ee21d68c71f50ac39866d2/run-clang-format.py

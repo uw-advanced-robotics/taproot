@@ -9,6 +9,7 @@ sim_modm_path = "sim-modm/modm/"
 aruwlib_path = "./src/aruwlib"
 robot_type_file = "./robot-type/robot_type.hpp"
 valid_robot_types = ["TARGET_SOLDIER", "TARGET_OLD_SOLDIER", "TARGET_DRONE", "TARGET_ENGINEER", "TARGET_SENTINEL", "TARGET_HERO"]
+gtest_libs = ["gtest", "gtest_main", "gmock", "gmock_main", "pthread"]
 
 usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>]\n\
     \"<target>\" is one of:\n\
@@ -113,6 +114,8 @@ if target_env == "tests":
     env.AppendUnique(CPPPATH=[
         abspath(r"./test")
     ])
+
+    env.AppendUnique(LIBS=gtest_libs)
 
 sources = env.FindSourceFiles(".", ignorePaths=ignored_dirs, ignoreFiles=ignored_files)
 if target_env == "hardware":
