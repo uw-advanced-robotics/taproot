@@ -1,3 +1,15 @@
-# Building the docker image
+# MCB CI Docker image
 
-See the top of the `Dockerfile` located in this directory for instructions on how to build the docker image.
+## Build and publish instructions
+
+With Makefile:
+```
+make build
+make publish
+```
+
+Manually (make sure to change version):
+```
+docker build -t aruw/mcb-2020-gitlab-ci:2020-02-17.1 .
+docker push aruw/mcb-2020-gitlab-ci:2020-02-17.1
+```

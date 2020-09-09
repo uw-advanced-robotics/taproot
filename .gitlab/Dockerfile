@@ -15,14 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
-# How to build docker image:
-# Windows CMD: docker build -t aruw/mcb-2020-gitlab-ci:2020-02-17.1 .
-# Windows PS: Get-Content Dockerfile | docker build -t aruw/mcb-2020-gitlab-ci:2020-02-17.1 .
-# Linux: docker build -t aruw/mcb-2020-gitlab-ci:2020-02-17.1 .
-#
-# How to publish docker image:
-# docker push aruw/mcb-2020-gitlab-ci:2020-02-17.1
-
 # Temporary stages ===========
 FROM debian:buster as gtest-build
 
