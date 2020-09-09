@@ -70,10 +70,10 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/RC2.1/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2 -O gcc-arm.tar.bz2 \
+RUN wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 -O gcc-arm.tar.bz2 \
     && tar -xjf /gcc-arm.tar.bz2 \
     && rm gcc-arm.tar.bz2
-ENV PATH="/gcc-arm-none-eabi-9-2019-q4-major/bin:$PATH"
+ENV PATH="/gcc-arm-none-eabi-9-2020-q2-update/bin:$PATH"
 
 ARG GTEST_VERSION=1.10.0
 # "install" gtest and gmock

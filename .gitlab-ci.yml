@@ -16,7 +16,7 @@
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2020-09-06.2
+  image: aruw/mcb-2020-gitlab-ci:2020-09-08.1
 
 before_script:
   - python -V # Print out python version for debugging
