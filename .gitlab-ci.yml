@@ -1,10 +1,10 @@
-.CI_IMAGE: &CI_IMAGE aruw/mcb-2020-gitlab-ci:2020-09-06.2
+default:
+  image: aruw/mcb-2020-gitlab-ci:2020-09-06.2
 
 before_script:
   - python -V # Print out python version for debugging
 
 clang-format:
-  image: *CI_IMAGE
   script:
     - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r mcb-2019-2020-project/src/ mcb-2019-2020-project/test/
   only:
@@ -15,7 +15,6 @@ clang-format:
   - schedules
 
 Weekly Build:
-  image: *CI_IMAGE
   variables:
     ARTIFACT_EXPIRE_TIME: 2 weeks
     ARTIFACT_PATH: isolated-deploy
@@ -51,7 +50,6 @@ Weekly Build:
 
 # Only build the soldier target while doing merge verifications to save time
 Verification Build:
-  image: *CI_IMAGE
   script:
     - cd mcb-2019-2020-project
     - rm -r modm # Because lbuild clean is broken
