@@ -12,6 +12,7 @@
 // Date          Author          Notes
 // 29/09/2011    SOH Madgwick    Initial release
 // 02/10/2011    SOH Madgwick    Optimised for reduced CPU load
+// 09/06/2020    Matthew Arnold  Update style, use safer casting
 //
 // Algorithm paper:
 // http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=4608934&url=http%3A%2F%2Fieeexplore.ieee.org%2Fstamp%2Fstamp.jsp%3Ftp%3D%26arnumber%3D4608934
@@ -23,11 +24,9 @@
 
 #include "MahonyAHRS.h"
 
-#include <math.h>
-
-#include "aruwlib/algorithms/math_user_utils.hpp"
-
-using namespace aruwlib::algorithms;
+#include <cinttypes>
+#include <cmath>
+#include <cstring>
 
 //-------------------------------------------------------------------------------------------
 // Definitions
@@ -38,6 +37,8 @@ using namespace aruwlib::algorithms;
 
 //============================================================================================
 // Functions
+
+static float fastInvSqrt(float x);
 
 //-------------------------------------------------------------------------------------------
 // AHRS algorithm update
@@ -277,6 +278,26 @@ void Mahony::computeAngles()
     pitch = asinf(-2.0f * (q1 * q3 - q0 * q2));
     yaw = atan2f(q1 * q2 + q0 * q3, 0.5f - q2 * q2 - q3 * q3);
     anglesComputed = 1;
+}
+
+template <typename From, typename To> To reinterpretCopy(From from)
+{
+    static_assert(sizeof(From) == sizeof(To), "can only reinterpret-copy types of the same size");
+    To result;
+    memcpy(static_cast<void*>(&result), static_cast<void*>(&from), sizeof(To));
+    return result;
+}
+
+float fastInvSqrt(float x)
+{
+    static_assert(sizeof(float) == 4, "fast inverse sqrt requires 32-bit float");
+    float halfx = 0.5f * x;
+    float y = x;
+    int32_t i = reinterpretCopy<float, int32_t>(y);
+    i = 0x5f3759df - (i >> 1);
+    y = reinterpretCopy<int32_t, float>(i);
+    y = y * (1.5f - (halfx * y * y));
+    return y;
 }
 
 //============================================================================================

@@ -8,6 +8,16 @@ All ARUW's MCB code for the RoboMaster competition. We use:
 
 [[_TOC_]]
 
+# Licensing
+
+aruw-mcb is covered under the GPL-3.0-or-later with the following exceptions:
+- `/modm` and `/aruw-mcb-project/modm` are licensed under MPL 2.0 by the modm project. We _are not_
+  the license holder for these files. See `/modm/LICENSE` for license information.
+- `aruw-mcb-project/src/aruwlib/algorithms/MahonyAHRS.h` and
+  `/aruw-mcb-project/src/aruwlib/algorithms/MahonyAHRS.cpp` are licensed under the GPL by SOH
+  Madgwick. The repo containing this code can be found
+  [here](https://github.com/uw-advanced-robotics/MahonyAHRS).
+
 # New user guide
 
 The recommended way to develop is with our pre-built development Docker container.
