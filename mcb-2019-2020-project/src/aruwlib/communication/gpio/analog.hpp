@@ -26,6 +26,8 @@
 #include <modm/platform/adc/adc_1.hpp>
 #endif
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 namespace gpio
@@ -42,7 +44,8 @@ class Analog
 public:
     Analog() = default;
     Analog(const Analog &) = delete;
-    Analog &operator=(const Analog &) = default;
+    Analog &operator=(const Analog &) = delete;
+    mockable ~Analog() = default;
 
     // Analog pins
     enum Pin
@@ -54,10 +57,10 @@ public:
     };
 
     ///< Initializes the ADC and connects the configured analog pins to it.
-    void init();
+    mockable void init();
 
     ///< Reads voltage across the specified pin. Units in mV.
-    uint16_t read(Analog::Pin pin) const;
+    mockable uint16_t read(Analog::Pin pin) const;
 };  // class Analog
 }  // namespace gpio
 

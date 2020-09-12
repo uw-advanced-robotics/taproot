@@ -26,6 +26,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace sensors
 {
 /**
@@ -59,6 +60,7 @@ public:
      * @param[in] pin the analog pin that the sensor is connected to.
      */
     AnalogDistanceSensor(
+        Drivers *drivers,
         float minDistance,
         float maxDistance,
         float m,
@@ -83,6 +85,8 @@ public:
     bool validReading() const override;
 
 private:
+    Drivers *drivers;
+
     ///< Distance calulation values for linear model \f$ y = mx + b \f$.
     float m;
     float b;

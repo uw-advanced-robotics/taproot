@@ -30,6 +30,8 @@
 
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 namespace serial
@@ -64,7 +66,8 @@ public:
 
     Uart() = default;
     Uart(const Uart &) = delete;
-    Uart &operator=(const Uart &) = default;
+    Uart &operator=(const Uart &) = delete;
+    mockable ~Uart() = default;
 
     /**
      * .initializes a particular Uart with the pins particular to the RoboMaster type a board.
@@ -106,7 +109,7 @@ public:
      *
      * @return `true` if a byte was received, `false` otherwise.
      */
-    bool read(UartPort port, uint8_t *data);
+    mockable bool read(UartPort port, uint8_t *data);
 
     /**
      * Read a block of bytes.
@@ -117,7 +120,7 @@ public:
      *
      * @return number of bytes which could be read, maximal `length`.
      */
-    std::size_t read(UartPort port, uint8_t *data, std::size_t length);
+    mockable std::size_t read(UartPort port, uint8_t *data, std::size_t length);
 
     /**
      * Empty the receive FIFO queue and hardware buffer.
@@ -125,7 +128,7 @@ public:
      * @param[in] port the port's buffer to discard.
      * @return the size of the deleted FIFO queue.
      */
-    std::size_t discardReceiveBuffer(UartPort port);
+    mockable std::size_t discardReceiveBuffer(UartPort port);
 
     /**
      * Pushes a single byte into the buffer.
@@ -134,7 +137,7 @@ public:
      * @return `true` if data has been successfully sent, `false` if buffer is full.
      * @note this writing is buffered.
      */
-    bool write(UartPort port, uint8_t data);
+    mockable bool write(UartPort port, uint8_t data);
 
     /**
      * Pushes a block of bytes into the buffer.
@@ -145,7 +148,7 @@ public:
      * @return the number of bytes that have been written.
      * @note this writing may be buffered.
      */
-    std::size_t write(UartPort port, const uint8_t *data, std::size_t length);
+    mockable std::size_t write(UartPort port, const uint8_t *data, std::size_t length);
 
     /**
      * Because the data is buffered, check here to see if the buffer is empty
@@ -154,7 +157,7 @@ public:
      * @param[in] port the port to see if writing is finished.
      * @return `true` if the buffer is empty and the last byte has been sent.
      */
-    bool isWriteFinished(UartPort port) const;
+    mockable bool isWriteFinished(UartPort port) const;
 };
 
 }  // namespace serial

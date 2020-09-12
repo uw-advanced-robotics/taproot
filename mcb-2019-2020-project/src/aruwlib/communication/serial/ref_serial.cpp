@@ -26,8 +26,8 @@ namespace aruwlib
 {
 namespace serial
 {
-RefSerial::RefSerial()
-    : DJISerial(Uart::UartPort::Uart6, true),
+RefSerial::RefSerial(Drivers* drivers)
+    : DJISerial(drivers, Uart::UartPort::Uart6, true),
       robotData(),
       gameData(),
       receivedDpsTracker()

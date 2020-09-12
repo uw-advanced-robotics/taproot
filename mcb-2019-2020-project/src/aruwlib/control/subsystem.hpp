@@ -24,6 +24,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace control
 {
 class Command;
@@ -46,7 +47,7 @@ class Command;
 class Subsystem
 {
 public:
-    Subsystem();
+    Subsystem(Drivers* drivers);
 
     /**
      * Called once when you add the Subsystem to the commandScheduler stored in the
@@ -87,6 +88,9 @@ public:
      * rather than looking in child for this function.
      */
     virtual void refresh();
+
+protected:
+    Drivers* drivers;
 
 private:
     Command* defaultCommand;

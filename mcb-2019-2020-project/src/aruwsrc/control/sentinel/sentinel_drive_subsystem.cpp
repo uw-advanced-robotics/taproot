@@ -31,10 +31,10 @@ namespace control
 {
 void SentinelDriveSubsystem::initialize()
 {
-    aruwlib::Drivers::digital.configureInputPullMode(
+    drivers->digital.configureInputPullMode(
         leftLimitSwitch,
         aruwlib::gpio::Digital::InputPullMode::PullDown);
-    aruwlib::Drivers::digital.configureInputPullMode(
+    drivers->digital.configureInputPullMode(
         rightLimitSwitch,
         aruwlib::gpio::Digital::InputPullMode::PullDown);
 }
@@ -63,6 +63,7 @@ float SentinelDriveSubsystem::absolutePosition()
     else if (leftWheel.isMotorOnline())
     {
         RAISE_ERROR(
+            drivers,
             "right sentinel drive motor offline",
             aruwlib::errors::Location::SUBSYSTEM,
             aruwlib::errors::ErrorType::MOTOR_OFFLINE);
@@ -71,6 +72,7 @@ float SentinelDriveSubsystem::absolutePosition()
     else if (rightWheel.isMotorOnline())
     {
         RAISE_ERROR(
+            drivers,
             "left sentinel drive motor offline",
             aruwlib::errors::Location::SUBSYSTEM,
             aruwlib::errors::ErrorType::MOTOR_OFFLINE);
@@ -79,6 +81,7 @@ float SentinelDriveSubsystem::absolutePosition()
     else
     {
         RAISE_ERROR(
+            drivers,
             "both sentinel drive motors offline",
             aruwlib::errors::Location::SUBSYSTEM,
             aruwlib::errors::ErrorType::MOTOR_OFFLINE);
@@ -93,12 +96,12 @@ float SentinelDriveSubsystem::absolutePosition()
 void SentinelDriveSubsystem::resetOffsetFromLimitSwitch()
 {
     // DigitalPin where limit switch is placed
-    if (aruwlib::Drivers::digital.read(leftLimitSwitch))
+    if (drivers->digital.read(leftLimitSwitch))
     {
         leftZeroRailOffset = distanceFromEncoder(&leftWheel);
         rightZeroRailOffset = distanceFromEncoder(&rightWheel);
     }
-    else if (aruwlib::Drivers::digital.read(rightLimitSwitch))
+    else if (drivers->digital.read(rightLimitSwitch))
     {
         leftZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&leftWheel);
         rightZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&rightWheel);

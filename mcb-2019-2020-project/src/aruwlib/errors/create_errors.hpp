@@ -28,11 +28,11 @@ namespace aruwlib
 {
 namespace errors
 {
-#define RAISE_ERROR(desc, l, et)                                                   \
+#define RAISE_ERROR(drivers, desc, l, et)                                          \
     do                                                                             \
     {                                                                              \
         aruwlib::errors::SystemError stringError(desc, __LINE__, __FILE__, l, et); \
-        aruwlib::Drivers::errorController.addToErrorList(stringError);             \
+        drivers->errorController.addToErrorList(stringError);                      \
     } while (0);
 
 }  // namespace errors

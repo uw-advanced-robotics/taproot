@@ -280,7 +280,8 @@ void Mahony::computeAngles()
     anglesComputed = 1;
 }
 
-template <typename From, typename To> To reinterpretCopy(From from)
+template <typename From, typename To>
+To reinterpretCopy(From from)
 {
     static_assert(sizeof(From) == sizeof(To), "can only reinterpret-copy types of the same size");
     To result;

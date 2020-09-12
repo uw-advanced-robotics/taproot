@@ -20,6 +20,7 @@
 #ifndef __AGITATOR_CALIBRATE_COMMAND_HPP__
 #define __AGITATOR_CALIBRATE_COMMAND_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 
 #include "agitator_subsystem.hpp"

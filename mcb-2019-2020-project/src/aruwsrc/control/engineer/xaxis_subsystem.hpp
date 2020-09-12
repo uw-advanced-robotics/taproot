@@ -35,7 +35,12 @@ namespace engineer
 class XAxisSubsystem : public aruwlib::control::Subsystem
 {
 public:
-    explicit XAxisSubsystem(aruwlib::gpio::Digital::OutputPin pin) : pin(pin), extended(false) {}
+    XAxisSubsystem(aruwlib::Drivers *drivers, aruwlib::gpio::Digital::OutputPin pin)
+        : aruwlib::control::Subsystem(drivers),
+          pin(pin),
+          extended(false)
+    {
+    }
 
     void setExtended(bool isExtended);
 

@@ -58,8 +58,14 @@ public:
      * @param pwmRampSpeed   determines the speed of servo operation;
      *                 a PWM value (between 0 and 1)
      */
-    HopperSubsystem(aruwlib::gpio::Pwm::Pin pwmPin, float open, float close, float pwmRampSpeed)
-        : hopper(pwmPin, open, close, pwmRampSpeed)
+    HopperSubsystem(
+        aruwlib::Drivers *drivers,
+        aruwlib::gpio::Pwm::Pin pwmPin,
+        float open,
+        float close,
+        float pwmRampSpeed)
+        : aruwlib::control::Subsystem(drivers),
+          hopper(drivers, pwmPin, open, close, pwmRampSpeed)
     {
         hopper.setTargetPwm(close);
     }

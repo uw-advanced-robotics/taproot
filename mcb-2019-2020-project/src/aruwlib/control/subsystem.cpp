@@ -25,7 +25,12 @@ namespace aruwlib
 {
 namespace control
 {
-Subsystem::Subsystem() : defaultCommand(nullptr), prevSchedulerExecuteTimestamp(0) {}
+Subsystem::Subsystem(Drivers* drivers)
+    : drivers(drivers),
+      defaultCommand(nullptr),
+      prevSchedulerExecuteTimestamp(0)
+{
+}
 
 void Subsystem::initialize() {}
 

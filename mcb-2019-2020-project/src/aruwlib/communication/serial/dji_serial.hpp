@@ -26,8 +26,11 @@
 
 #include "aruwlib/communication/serial/uart.hpp"
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
+class Drivers;
 namespace serial
 {
 /**
@@ -102,7 +105,9 @@ public:
      * @param[in] port serial port to work on.
      * @param[in] isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement.
      */
-    DJISerial(Uart::UartPort port, bool isRxCRCEnforcementEnabled);
+    DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcementEnabled);
+
+    mockable ~DJISerial() = default;
 
     /**
      * Initialize serial. In particular, initializes the hardware serial
@@ -114,7 +119,7 @@ public:
      *      file, you should add it to both the `Uart` class and this function.
      * @see `Uart`
      */
-    void initialize();
+    mockable void initialize();
 
     /**
      * Receive messages. Call periodically in order to receive all
@@ -123,7 +128,7 @@ public:
      * @note tested with a delay of 10 microseconds with referee system. The
      *      longer the timeout the more likely a message failure may occur.
      */
-    void updateSerial();
+    mockable void updateSerial();
 
     /**
      * Called when a complete message is received. A derived class must
@@ -201,6 +206,8 @@ private:
     uint32_t write(const uint8_t *data, uint16_t length);
 
 protected:
+    Drivers *drivers;
+
     /**
      * Subclasses can access the message that this class sends as to allow
      * for modification.

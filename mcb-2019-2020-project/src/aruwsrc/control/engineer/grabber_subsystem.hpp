@@ -35,8 +35,9 @@ namespace engineer
 class GrabberSubsystem : public aruwlib::control::Subsystem
 {
 public:
-    explicit GrabberSubsystem(aruwlib::gpio::Digital::OutputPin pin)
-        : pin(pin),
+    GrabberSubsystem(aruwlib::Drivers *drivers, aruwlib::gpio::Digital::OutputPin pin)
+        : aruwlib::control::Subsystem(drivers),
+          pin(pin),
           isGrabberSqueezed(false)
     {
     }

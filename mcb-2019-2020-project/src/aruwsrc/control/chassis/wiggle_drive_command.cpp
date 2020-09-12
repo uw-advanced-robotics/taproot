@@ -65,9 +65,9 @@ float WiggleDriveCommand::wiggleSin(float t)
 void WiggleDriveCommand::execute()
 {
     float r;
-    float x = Drivers::controlOperatorInterface.getChassisXInput() *
+    float x = drivers->controlOperatorInterface.getChassisXInput() *
               ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
-    float y = Drivers::controlOperatorInterface.getChassisYInput() *
+    float y = drivers->controlOperatorInterface.getChassisYInput() *
               ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     // We only wiggle when the turret is online.
@@ -111,7 +111,7 @@ void WiggleDriveCommand::execute()
     }
     else
     {
-        r = Drivers::controlOperatorInterface.getChassisRInput() *
+        r = drivers->controlOperatorInterface.getChassisRInput() *
             ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
     }
 

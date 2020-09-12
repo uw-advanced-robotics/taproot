@@ -17,7 +17,19 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <aruwlib/DriversSingleton.hpp>
+
 #if defined(TARGET_HERO)
+
+using aruwlib::DoNotUse_getDrivers;
+
+/*
+ * NOTE: We are using the DoNotUse_getDrivers() function here
+ *      because this file defines all subsystems and command
+ *      and thus we must pass in the single statically allocated
+ *      Drivers class to all of these objects.
+ */
+aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
 namespace aruwsrc
 {
@@ -28,23 +40,23 @@ namespace control
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerHeroSubsystems() {}
+void registerHeroSubsystems(aruwlib::Drivers *drivers) {}
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultHeroCommands() {}
+void setDefaultHeroCommands(aruwlib::Drivers *drivers) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startHeroCommands() {}
+void startHeroCommands(aruwlib::Drivers *drivers) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerHeroIoMappings() {}
+void registerHeroIoMappings(aruwlib::Drivers *drivers) {}
 
-void initSubsystemCommands()
+void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    registerHeroSubsystems();
-    setDefaultHeroCommands();
-    startHeroCommands();
-    registerHeroIoMappings();
+    registerHeroSubsystems(drivers);
+    setDefaultHeroCommands(drivers);
+    startHeroCommands(drivers);
+    registerHeroIoMappings(drivers);
 }
 
 }  // namespace control

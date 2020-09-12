@@ -20,6 +20,7 @@
 #ifndef __TURRET_MANUAL_COMMAND_H__
 #define __TURRET_MANUAL_COMMAND_H__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 #include <modm/math/filter/pid.hpp>
 
@@ -31,7 +32,7 @@ class TurretSubsystem;
 class TurretManualCommand : public aruwlib::control::Command
 {
 public:
-    explicit TurretManualCommand(TurretSubsystem *subsystem);
+    TurretManualCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem);
 
     void initialize() override {}
     bool isFinished() const override;
@@ -55,6 +56,8 @@ private:
     const float PITCH_D = 0.0f;
     const float PITCH_MAX_ERROR_SUM = 0.0f;
     const float PITCH_MAX_OUTPUT = 16000;
+
+    aruwlib::Drivers *drivers;
 
     TurretSubsystem *turretSubsystem;
     modm::Pid<float> manualYawPid;

@@ -28,7 +28,7 @@ using namespace aruwlib::serial;
 
 namespace aruwlib
 {
-void Remote::initialize() { Drivers::uart.init<Uart::Uart1, 100000, Uart::Parity::Even>(); }
+void Remote::initialize() { drivers->uart.init<Uart::Uart1, 100000, Uart::Parity::Even>(); }
 
 void Remote::read()
 {
@@ -40,7 +40,7 @@ void Remote::read()
     }
     uint8_t data;  // Next byte to be read
     // Read next byte if available and more needed for the current packet
-    while (Drivers::uart.read(Uart::UartPort::Uart1, &data) && currentBufferIndex < REMOTE_BUF_LEN)
+    while (drivers->uart.read(Uart::UartPort::Uart1, &data) && currentBufferIndex < REMOTE_BUF_LEN)
     {
         rxBuffer[currentBufferIndex] = data;
         currentBufferIndex++;
@@ -174,7 +174,7 @@ void Remote::parseBuffer()
     // Remote wheel
     remote.wheel = (rxBuffer[16] | rxBuffer[17] << 8) - 1024;
 
-    Drivers::commandMapper.handleKeyStateChange(remote.key, remote.leftSwitch, remote.rightSwitch);
+    drivers->commandMapper.handleKeyStateChange(remote.key, remote.leftSwitch, remote.rightSwitch);
 
     remote.updateCounter++;
 }
@@ -189,7 +189,7 @@ void Remote::clearRxBuffer()
         rxBuffer[i] = 0;
     }
     // Clear Usart1 rxBuffer
-    Drivers::uart.discardReceiveBuffer(Uart::UartPort::Uart1);
+    drivers->uart.discardReceiveBuffer(Uart::UartPort::Uart1);
 }
 
 void Remote::reset()

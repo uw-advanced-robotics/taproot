@@ -32,7 +32,7 @@ namespace control
 class ExampleComprisedCommand : public aruwlib::control::ComprisedCommand
 {
 public:
-    explicit ExampleComprisedCommand(ExampleSubsystem* subsystem);
+    explicit ExampleComprisedCommand(aruwlib::Drivers* drivers, ExampleSubsystem* subsystem);
 
     void initialize() override;
 

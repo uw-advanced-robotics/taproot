@@ -20,6 +20,7 @@
 #ifndef __AGITATOR_ROTATE_COMMAND_HPP__
 #define __AGITATOR_ROTATE_COMMAND_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/algorithms/ramp.hpp>
 #include <aruwlib/architecture/timeout.hpp>

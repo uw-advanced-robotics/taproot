@@ -23,8 +23,14 @@ namespace aruwlib
 {
 namespace serial
 {
-XavierSerial::XavierSerial()
-    : DJISerial(Uart::UartPort::Uart2, false),
+const uint8_t XavierSerial::txMsgSwitchArray[XavierSerial::CV_MESSAGE_TYPE_SIZE] = {
+    XavierSerial::CV_MESSAGE_TYPE_TURRET_TELEMETRY,
+    XavierSerial::CV_MESSAGE_TYPE_IMU,
+    XavierSerial::CV_MESSAGE_TYPE_ROBOT_ID,
+    XavierSerial::CV_MESSAGE_TYPE_AUTO_AIM_REQUEST};
+
+XavierSerial::XavierSerial(Drivers* drivers)
+    : DJISerial(drivers, Uart::UartPort::Uart2, false),
       txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
       autoAimRequestQueued(false),
       autoAimRequestState(false),

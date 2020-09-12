@@ -20,6 +20,7 @@
 #ifndef __TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP__
 #define __TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/control/command.hpp>
 
@@ -35,6 +36,7 @@ class TurretWorldRelativePositionCommand : public aruwlib::control::Command
 {
 public:
     TurretWorldRelativePositionCommand(
+        aruwlib::Drivers *drivers,
         TurretSubsystem *subsystem,
         chassis::ChassisSubsystem *chassis);
 
@@ -74,6 +76,8 @@ private:
 
     static constexpr float PITCH_GRAVITY_COMPENSATION_KP = 4000.0f;
 
+    aruwlib::Drivers *drivers;
+
     TurretSubsystem *turretSubsystem;
     chassis::ChassisSubsystem *chassisSubsystem;
 
@@ -89,8 +93,8 @@ private:
     void runYawPositionController();
     void runPitchPositionController();
 
-    static float projectChassisRelativeYawToWorldRelative(float yawAngle, float imuInitialAngle);
-    static float projectWorldRelativeYawToChassisFrame(float yawAngle, float imuInitialAngle);
+    float projectChassisRelativeYawToWorldRelative(float yawAngle, float imuInitialAngle);
+    float projectWorldRelativeYawToChassisFrame(float yawAngle, float imuInitialAngle);
 };
 
 }  // namespace turret

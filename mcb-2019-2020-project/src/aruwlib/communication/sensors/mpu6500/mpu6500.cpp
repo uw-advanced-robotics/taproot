@@ -17,7 +17,6 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ENV_SIMULATOR
 #include "mpu6500.hpp"
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
@@ -34,6 +33,7 @@ using namespace modm::literals;
 
 void Mpu6500::init()
 {
+#ifndef ENV_SIMULATOR
     Board::ImuNss::GpioOutput();
 
     // connect GPIO pins to the alternate SPI function
@@ -55,6 +55,7 @@ void Mpu6500::init()
     if (MPU6500_ID != spiReadRegister(MPU6500_WHO_AM_I))
     {
         RAISE_ERROR(
+            drivers,
             "failed to initialize the imu properly",
             aruwlib::errors::Location::MPU6500,
             aruwlib::errors::ErrorType::IMU_NOT_RECEIVING_PROPERLY);
@@ -85,10 +86,12 @@ void Mpu6500::init()
 
     calculateAccOffset();
     calculateGyroOffset();
+#endif
 }
 
 void Mpu6500::read()
 {
+#ifndef ENV_SIMULATOR
     if (imuInitialized)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
@@ -108,10 +111,12 @@ void Mpu6500::read()
     else
     {
         RAISE_ERROR(
+            drivers,
             "failed to initialize the imu properly",
             aruwlib::errors::Location::MPU6500,
             aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
     }
+#endif
 }
 
 // Getter functions.
@@ -180,6 +185,7 @@ float Mpu6500::validateReading(float reading) const
         return reading;
     }
     RAISE_ERROR(
+        drivers,
         "failed to initialize the imu properly",
         aruwlib::errors::Location::MPU6500,
         aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
@@ -190,6 +196,7 @@ float Mpu6500::validateReading(float reading) const
 
 void Mpu6500::calculateGyroOffset()
 {
+#ifndef ENV_SIMULATOR
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
@@ -202,10 +209,12 @@ void Mpu6500::calculateGyroOffset()
     raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
     raw.gyroOffset.y /= MPU6500_OFFSET_SAMPLES;
     raw.gyroOffset.z /= MPU6500_OFFSET_SAMPLES;
+#endif
 }
 
 void Mpu6500::calculateAccOffset()
 {
+#ifndef ENV_SIMULATOR
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
@@ -218,12 +227,14 @@ void Mpu6500::calculateAccOffset()
     raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
     raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
     raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
+#endif
 }
 
 // Hardware interface functions.
 
 uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 {
+#ifndef ENV_SIMULATOR
     mpuNssLow();
     uint8_t tx = reg & 0x7F;
     uint8_t rx = 0;
@@ -231,11 +242,13 @@ uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
     tx = data;
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
+#endif
     return 0;
 }
 
 uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 {
+#ifndef ENV_SIMULATOR
     mpuNssLow();
     uint8_t tx = reg | 0x80;
     uint8_t rx = 0;
@@ -243,10 +256,14 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
     return rx;
+#else
+    return 0;
+#endif
 }
 
 uint8_t Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 {
+#ifndef ENV_SIMULATOR
     mpuNssLow();
     uint8_t tx = regAddr | 0x80;
     uint8_t rx = 0;
@@ -254,14 +271,24 @@ uint8_t Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     Board::ImuSpiMaster::transferBlocking(txBuff, pData, len);
     mpuNssHigh();
+#endif
     return 0;
 }
 
-void Mpu6500::mpuNssLow() { Board::ImuNss::setOutput(modm::GpioOutput::Low); }
+void Mpu6500::mpuNssLow()
+{
+#ifndef ENV_SIMULATOR
+    Board::ImuNss::setOutput(modm::GpioOutput::Low);
+#endif
+}
 
-void Mpu6500::mpuNssHigh() { Board::ImuNss::setOutput(modm::GpioOutput::High); }
+void Mpu6500::mpuNssHigh()
+{
+#ifndef ENV_SIMULATOR
+    Board::ImuNss::setOutput(modm::GpioOutput::High);
+#endif
+}
 
 }  // namespace sensors
 
 }  // namespace aruwlib
-#endif

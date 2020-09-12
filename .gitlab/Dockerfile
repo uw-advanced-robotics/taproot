@@ -70,6 +70,7 @@ ENV PATH="/gcc-arm-none-eabi-9-2020-q2-update/bin:$PATH"
 ARG GTEST_VERSION=1.10.0
 # "install" gtest and gmock
 COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/googletest/include/ /usr/local/include/
+COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/googlemock/include/ /usr/local/include/
 COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/build/lib/libg*.a /usr/local/lib/
 
 RUN pip install modm scons

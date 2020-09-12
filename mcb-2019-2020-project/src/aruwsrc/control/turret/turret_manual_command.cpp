@@ -30,8 +30,9 @@ namespace aruwsrc
 {
 namespace turret
 {
-TurretManualCommand::TurretManualCommand(TurretSubsystem *subsystem)
-    : turretSubsystem(subsystem),
+TurretManualCommand::TurretManualCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem)
+    : drivers(drivers),
+      turretSubsystem(subsystem),
       manualYawPid(YAW_P, YAW_I, YAW_D, YAW_MAX_ERROR_SUM, YAW_MAX_OUTPUT),
       manualPitchPid(PITCH_P, PITCH_I, PITCH_D, PITCH_MAX_ERROR_SUM, PITCH_MAX_OUTPUT)
 {
@@ -47,8 +48,8 @@ void TurretManualCommand::execute() { updateTurretVelocity(); }
 void TurretManualCommand::updateTurretVelocity()
 {
     pitchVelocityTarget =
-        USER_INPUT_SCALAR * Drivers::controlOperatorInterface.getTurretPitchInput();
-    yawVelocityTarget = USER_INPUT_SCALAR * Drivers::controlOperatorInterface.getTurretYawInput();
+        USER_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretPitchInput();
+    yawVelocityTarget = USER_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretYawInput();
 
     manualPitchPid.update(pitchVelocityTarget - turretSubsystem->getPitchVelocity());
     manualYawPid.update(yawVelocityTarget - turretSubsystem->getYawVelocity());

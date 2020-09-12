@@ -59,12 +59,12 @@ void CanRxHandler::pollCanData()
 {
     modm::can::Message rxMessage;
     // handle incoming CAN 1 messages
-    if (Drivers::can.getMessage(CanBus::CAN_BUS1, &rxMessage))
+    if (drivers->can.getMessage(CanBus::CAN_BUS1, &rxMessage))
     {
         processReceivedCanData(rxMessage, messageHandlerStoreCan1, MAX_RECEIVE_UNIQUE_HEADER_CAN1);
     }
     // handle incoming CAN 2 messages
-    if (Drivers::can.getMessage(CanBus::CAN_BUS2, &rxMessage))
+    if (drivers->can.getMessage(CanBus::CAN_BUS2, &rxMessage))
     {
         processReceivedCanData(rxMessage, messageHandlerStoreCan2, MAX_RECEIVE_UNIQUE_HEADER_CAN2);
     }
@@ -86,6 +86,7 @@ inline void CanRxHandler::processReceivedCanData(
     else
     {
         RAISE_ERROR(
+            drivers,
             "Invalid can id received - not between 0x200 and 0x208",
             aruwlib::errors::Location::CAN_RX,
             aruwlib::errors::ErrorType::MOTOR_ID_OUT_OF_BOUNDS);
@@ -113,6 +114,7 @@ void CanRxHandler::removeReceiveHandler(
     if (id < 0 || id >= messageHandlerStoreSize)
     {
         RAISE_ERROR(
+            drivers,
             "index out of bounds",
             aruwlib::errors::CAN_RX,
             aruwlib::errors::INVALID_REMOVE);

@@ -78,7 +78,8 @@
         "./mcb-2019-2020-project/modm/ext/cmsis/core",
         "./mcb-2019-2020-project/modm/ext/cmsis/device",
         "./mcb-2019-2020-project/src",
-        "./mcb-2019-2020-project/test"
+        "./mcb-2019-2020-project/test",
+        "/usr/local/include"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",

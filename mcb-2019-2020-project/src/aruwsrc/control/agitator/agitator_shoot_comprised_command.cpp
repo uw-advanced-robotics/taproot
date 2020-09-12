@@ -32,12 +32,14 @@ namespace aruwsrc
 namespace agitator
 {
 ShootComprisedCommand::ShootComprisedCommand(
+    aruwlib::Drivers* drivers,
     AgitatorSubsystem* agitator,
     float agitatorChangeAngle,
     float maxUnjamAngle,
     uint32_t agitatorDesiredRotateTime,
     uint32_t minAgitatorRotateTime)
-    : connectedAgitator(agitator),
+    : aruwlib::control::ComprisedCommand(drivers),
+      connectedAgitator(agitator),
       agitatorRotateCommand(
           agitator,
           agitatorChangeAngle,

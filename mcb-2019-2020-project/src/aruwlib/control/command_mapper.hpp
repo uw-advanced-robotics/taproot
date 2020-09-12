@@ -29,9 +29,11 @@
 
 #include "command.hpp"
 #include "command_scheduler.hpp"
+#include "mock_macros.hpp"
 
 namespace aruwlib
 {
+class Drivers;
 namespace control
 {
 /**
@@ -75,9 +77,10 @@ public:
         }
     };
 
-    CommandMapper() = default;
-    CommandMapper(CommandMapper&) = delete;
-    CommandMapper& operator=(CommandMapper&) = default;
+    CommandMapper(Drivers* drivers) : drivers(drivers) {}
+    CommandMapper(const CommandMapper&) = delete;
+    CommandMapper& operator=(const CommandMapper&) = delete;
+    mockable ~CommandMapper() = default;
 
     /**
      * Attaches a Command to a remote control mapping which is added to the
@@ -86,7 +89,7 @@ public:
      * @param[in] mapping a particular remote mapping associated with the Command.
      * @param[in] Command the Command to be triggered by this mapping.
      */
-    void addPressMapping(RemoteMap* mapping, Command* Command);
+    mockable void addPressMapping(RemoteMap* mapping, Command* Command);
 
     /**
      * Attaches a Command to a remote control mapping which is added to the
@@ -96,7 +99,7 @@ public:
      * @param[in] mapping a particular remote mapping associated with the Command.
      * @param[in] Command the Command to be triggered by this mapping.
      */
-    void addHoldMapping(RemoteMap* mapping, Command* Command);
+    mockable void addHoldMapping(RemoteMap* mapping, Command* Command);
 
     /**
      * Attaches a Command to a remote control mapping which is added to
@@ -107,7 +110,7 @@ public:
      * @param[in] mapping a particular remote mapping associated with the Command.
      * @param[in] Command the Command to be triggered by this mapping.
      */
-    void addHoldRepeatMapping(RemoteMap* mapping, Command* Command);
+    mockable void addHoldRepeatMapping(RemoteMap* mapping, Command* Command);
 
     /**
      * Attaches a Command to a remote control mapping which adds the command
@@ -117,17 +120,17 @@ public:
      * @param[in] Command the Command to be triggered by this mapping.
      * @note a toggle mapping is interrupted when the key is untoggled.
      */
-    void addToggleMapping(RemoteMap* mapping, Command* Command);
+    mockable void addToggleMapping(RemoteMap* mapping, Command* Command);
 
     /**
      * @return a RemoteMap with dependencies on specified keys and no switches.
      */
-    static RemoteMap* newKeyMap(std::list<Remote::Key> k);
+    mockable RemoteMap* newKeyMap(std::list<Remote::Key> k);
 
     /**
      * @return a RemoteMap with dependencies on one specified switch and given keys.
      */
-    static RemoteMap* newKeyMap(
+    mockable RemoteMap* newKeyMap(
         Remote::Switch sw,
         Remote::SwitchState switchState,
         std::list<Remote::Key> k = {});
@@ -135,7 +138,7 @@ public:
     /**
      * @return a RemoteMap with dependencies on both specified switches and given keys.
      */
-    static RemoteMap* newKeyMap(
+    mockable RemoteMap* newKeyMap(
         Remote::SwitchState leftSwitchState,
         Remote::SwitchState rightSwitchState,
         std::list<Remote::Key> k = {});
@@ -177,6 +180,8 @@ private:
             return a->keys != b->keys || a->lSwitch != b->lSwitch || a->rSwitch != b->rSwitch;
         }
     };
+
+    Drivers* drivers;
 
     std::map<RemoteMap*, MapInfo*, compareRemoteMapPtrs> remoteMappings;
 

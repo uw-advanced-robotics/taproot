@@ -36,9 +36,10 @@ namespace aruwsrc
 {
 namespace turret
 {
-TurretSubsystem::TurretSubsystem()
-    : pitchMotor(PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
-      yawMotor(YAW_MOTOR_ID, CAN_BUS_MOTORS, false, "yaw motor"),
+TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers)
+    : aruwlib::control::Subsystem(drivers),
+      pitchMotor(drivers, PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
+      yawMotor(drivers, YAW_MOTOR_ID, CAN_BUS_MOTORS, false, "yaw motor"),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
@@ -69,6 +70,7 @@ int32_t TurretSubsystem::getYawVelocity() const
     if (!yawMotor.isMotorOnline())
     {
         RAISE_ERROR(
+            drivers,
             "trying to get velocity and yaw motor offline",
             aruwlib::errors::TURRET,
             aruwlib::errors::MOTOR_OFFLINE);
@@ -84,6 +86,7 @@ int32_t TurretSubsystem::getPitchVelocity() const
     if (!pitchMotor.isMotorOnline())
     {
         RAISE_ERROR(
+            drivers,
             "trying to get velocity and pitch motor offline",
             aruwlib::errors::TURRET,
             aruwlib::errors::MOTOR_OFFLINE);
@@ -147,6 +150,7 @@ void TurretSubsystem::setPitchMotorOutput(float out)
     if (out > INT32_MAX || out < INT32_MIN)
     {
         RAISE_ERROR(
+            drivers,
             "pitch motor output invalid",
             aruwlib::errors::TURRET,
             aruwlib::errors::INVALID_MOTOR_OUTPUT);
@@ -171,6 +175,7 @@ void TurretSubsystem::setYawMotorOutput(float out)
     if (out > INT32_MAX || out < INT32_MIN)
     {
         RAISE_ERROR(
+            drivers,
             "yaw motor output invalid",
             aruwlib::errors::TURRET,
             aruwlib::errors::INVALID_MOTOR_OUTPUT);
@@ -232,12 +237,12 @@ float TurretSubsystem::yawFeedForwardCalculation(float desiredChassisRotation)
              sinf(getYawAngleFromCenter() * aruwlib::algorithms::PI / 180.0f)) +
          1.0f);
 
-    if (Drivers::remote.getUpdateCounter() != prevUpdateCounterChassisRotateDerivative)
+    if (drivers->remote.getUpdateCounter() != prevUpdateCounterChassisRotateDerivative)
     {
         chassisRotateDerivativeInterpolation.update(
             desiredChassisRotation - feedforwardPrevChassisRotationDesired);
     }
-    prevUpdateCounterChassisRotateDerivative = Drivers::remote.getUpdateCounter();
+    prevUpdateCounterChassisRotateDerivative = drivers->remote.getUpdateCounter();
     float derivativeInterpolated = chassisRotateDerivativeInterpolation.getInterpolatedValue(
         aruwlib::arch::clock::getTimeMilliseconds());
 

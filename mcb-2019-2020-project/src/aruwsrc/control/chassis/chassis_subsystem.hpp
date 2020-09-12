@@ -201,14 +201,31 @@ private:
 
 public:
     ChassisSubsystem(
+        aruwlib::Drivers* drivers,
         aruwlib::motor::MotorId leftFrontMotorId = LEFT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId leftBackMotorId = LEFT_BACK_MOTOR_ID,
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID)
-        : leftFrontMotor(leftFrontMotorId, CAN_BUS_MOTORS, false, "left front drive motor"),
-          leftBackMotor(leftBackMotorId, CAN_BUS_MOTORS, false, "left back drive motor"),
-          rightFrontMotor(rightFrontMotorId, CAN_BUS_MOTORS, false, "right front drive motor"),
-          rightBackMotor(rightBackMotorId, CAN_BUS_MOTORS, false, "right back drive motor"),
+        : aruwlib::control::Subsystem(drivers),
+          leftFrontMotor(
+              drivers,
+              leftFrontMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "left front drive motor"),
+          leftBackMotor(drivers, leftBackMotorId, CAN_BUS_MOTORS, false, "left back drive motor"),
+          rightFrontMotor(
+              drivers,
+              rightFrontMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "right front drive motor"),
+          rightBackMotor(
+              drivers,
+              rightBackMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "right back drive motor"),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
               VELOCITY_PID_KI,

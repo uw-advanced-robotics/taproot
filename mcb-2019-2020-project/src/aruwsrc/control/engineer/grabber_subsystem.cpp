@@ -27,7 +27,7 @@ namespace engineer
 {
 void GrabberSubsystem::setSqueezed(bool isGrabberSqueezed)
 {
-    aruwlib::Drivers::digital.set(pin, isGrabberSqueezed);
+    drivers->digital.set(pin, isGrabberSqueezed);
     this->isGrabberSqueezed = isGrabberSqueezed;
 }
 

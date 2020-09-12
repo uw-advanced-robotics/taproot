@@ -54,20 +54,20 @@ void CommandMapper::handleKeyStateChange(
                     if (!mi->pressed)
                     {
                         mi->pressed = true;
-                        Drivers::commandScheduler.addCommand(mi->command);
+                        drivers->commandScheduler.addCommand(mi->command);
                     }
                     break;
                 case HOLD:
                     if (!mi->pressed)
                     {
-                        Drivers::commandScheduler.addCommand(mi->command);
+                        drivers->commandScheduler.addCommand(mi->command);
                         mi->pressed = true;
                     }
                     break;
                 case HOLD_REPEAT:  // spam add the command
-                    if (!Drivers::commandScheduler.isCommandScheduled(mi->command))
+                    if (!drivers->commandScheduler.isCommandScheduled(mi->command))
                     {
-                        Drivers::commandScheduler.addCommand(mi->command);
+                        drivers->commandScheduler.addCommand(mi->command);
                     }
                     break;
                 case TOGGLE:
@@ -75,12 +75,12 @@ void CommandMapper::handleKeyStateChange(
                     {
                         if (mi->toggled)
                         {
-                            Drivers::commandScheduler.removeCommand(mi->command, true);
+                            drivers->commandScheduler.removeCommand(mi->command, true);
                             mi->toggled = false;
                         }
                         else
                         {
-                            Drivers::commandScheduler.addCommand(mi->command);
+                            drivers->commandScheduler.addCommand(mi->command);
                             mi->toggled = true;
                         }
                         mi->pressed = true;
@@ -94,7 +94,7 @@ void CommandMapper::handleKeyStateChange(
         {
             if ((mi->type == HOLD && mi->pressed) || (mi->type == HOLD_REPEAT))
             {
-                Drivers::commandScheduler.removeCommand(mi->command, true);
+                drivers->commandScheduler.removeCommand(mi->command, true);
             }
             mi->pressed = false;
         }
@@ -126,10 +126,10 @@ void CommandMapper::addMap(RemoteMap* mapping, MapInfo* mapInfo)
     if (remoteMappings.insert(std::pair<RemoteMap*, MapInfo*>(mapping, mapInfo)).second == false)
     {
         RAISE_ERROR(
+            drivers,
             "failed to insert io mapping",
             aruwlib::errors::CONTROLLER_MAPPER,
-            aruwlib::errors::INVALID_ADD)
-        // throw exception here?
+            aruwlib::errors::INVALID_ADD);
     }
 }
 
@@ -153,9 +153,10 @@ CommandMapper::RemoteMap* CommandMapper::newKeyMap(
     }
 
     RAISE_ERROR(
+        drivers,
         "adding a key map with unknown switch state",
         aruwlib::errors::CONTROLLER_MAPPER,
-        aruwlib::errors::INVALID_KEY_MAP_TYPE)
+        aruwlib::errors::INVALID_KEY_MAP_TYPE);
 
     return nullptr;
 }

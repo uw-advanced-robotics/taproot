@@ -33,7 +33,7 @@ void ChassisDriveCommand::initialize() {}
 
 void ChassisDriveCommand::execute()
 {
-    float chassisRotationDesiredWheelspeed = Drivers::controlOperatorInterface.getChassisRInput() *
+    float chassisRotationDesiredWheelspeed = drivers->controlOperatorInterface.getChassisRInput() *
                                              ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     // what we will multiply x and y speed by to take into account rotation
@@ -41,13 +41,13 @@ void ChassisDriveCommand::execute()
         chassis->calculateRotationTranslationalGain(chassisRotationDesiredWheelspeed);
 
     float chassisXDesiredWheelspeed = aruwlib::algorithms::limitVal<float>(
-                                          Drivers::controlOperatorInterface.getChassisXInput(),
+                                          drivers->controlOperatorInterface.getChassisXInput(),
                                           -rTranslationalGain,
                                           rTranslationalGain) *
                                       ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     float chassisYDesiredWheelspeed = aruwlib::algorithms::limitVal<float>(
-                                          Drivers::controlOperatorInterface.getChassisYInput(),
+                                          drivers->controlOperatorInterface.getChassisYInput(),
                                           -rTranslationalGain,
                                           rTranslationalGain) *
                                       ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;

@@ -46,10 +46,12 @@ class ExampleSubsystem : public aruwlib::control::Subsystem
 {
 public:
     ExampleSubsystem(
+        aruwlib::Drivers* drivers,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
-        : leftWheel(leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
-          rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
+        : aruwlib::control::Subsystem(drivers),
+          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
+          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
           velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           desiredRpm(0)

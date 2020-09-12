@@ -64,7 +64,7 @@ AllowAllConstructorInitializersOnNextLine: false
 
 #  Force break after template declaration only when the following
 # declaration spans multiple lines.
-AlwaysBreakTemplateDeclarations: MultiLine
+AlwaysBreakTemplateDeclarations: Yes
 
 # Break after return type automatically. PenaltyReturnTypeOnItsOwnLine is taken into account.
 AlwaysBreakAfterReturnType: None

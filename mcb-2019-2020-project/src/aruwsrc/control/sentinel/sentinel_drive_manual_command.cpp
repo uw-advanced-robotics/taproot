@@ -34,8 +34,11 @@ namespace aruwsrc
 {
 namespace control
 {
-SentinelDriveManualCommand::SentinelDriveManualCommand(SentinelDriveSubsystem* subsystem)
+SentinelDriveManualCommand::SentinelDriveManualCommand(
+    aruwlib::Drivers* drivers,
+    SentinelDriveSubsystem* subsystem)
     : Command(),
+      drivers(drivers),
       subsystemSentinelDrive(subsystem)
 {
     addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
@@ -46,7 +49,7 @@ void SentinelDriveManualCommand::initialize() {}
 void SentinelDriveManualCommand::execute()
 {
     subsystemSentinelDrive->setDesiredRpm(
-        Drivers::controlOperatorInterface.getSentinelSpeedInput());
+        drivers->controlOperatorInterface.getSentinelSpeedInput());
 }
 
 void SentinelDriveManualCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0); }

@@ -16,7 +16,7 @@
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2020-09-08.1
+  image: aruw/mcb-2020-gitlab-ci:2020-09-10.1
 
 before_script:
   - python -V # Print out python version for debugging
@@ -75,6 +75,18 @@ Verification Build:
     - /usr/bin/env python3 $(which scons) run-tests robot=TARGET_SOLDIER -j2 # Build the code for simulation
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
+  only:
+    - merge_requests
+    - master
+    - develop
+  except:
+    - schedules
+
+Policy Checks:
+  script:
+    - /usr/local/bin/python3 ./scripts/check_singleton_drivers.py ./mcb-2019-2020-project/src/ 
+  variables:
+    GIT_SUBMODULE_STRATEGY: none
   only:
     - merge_requests
     - master

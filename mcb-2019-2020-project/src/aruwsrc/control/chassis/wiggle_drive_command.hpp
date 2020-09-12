@@ -20,6 +20,7 @@
 #ifndef __WIGGLE_DRIVE_COMMAND_HPP__
 #define __WIGGLE_DRIVE_COMMAND_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
@@ -33,8 +34,12 @@ namespace chassis
 class WiggleDriveCommand : public aruwlib::control::Command
 {
 public:
-    explicit WiggleDriveCommand(ChassisSubsystem* chassis, aruwsrc::turret::TurretSubsystem* turret)
-        : chassis(chassis),
+    WiggleDriveCommand(
+        aruwlib::Drivers* drivers,
+        ChassisSubsystem* chassis,
+        aruwsrc::turret::TurretSubsystem* turret)
+        : drivers(drivers),
+          chassis(chassis),
           turret(turret)
     {
         addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
@@ -57,6 +62,7 @@ private:
     static constexpr float TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING = 0.5f;
     static constexpr float WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR = 10.0f;
 
+    aruwlib::Drivers* drivers;
     ChassisSubsystem* chassis;
     aruwsrc::turret::TurretSubsystem* turret;
 

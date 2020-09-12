@@ -81,15 +81,15 @@ void DjiMotorTxHandler::processCanSendData()
     serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
     serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
 
-    if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS1))
+    if (drivers->can.isReadyToSend(can::CanBus::CAN_BUS1))
     {
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
     }
-    if (Drivers::can.isReadyToSend(can::CanBus::CAN_BUS2))
+    if (drivers->can.isReadyToSend(can::CanBus::CAN_BUS2))
     {
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can2MessageLow);
-        Drivers::can.sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageLow);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh);
     }
 }
 
@@ -134,6 +134,7 @@ void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor, DjiMotor**
     {
         // error, trying to remove something that doesn't exist!
         RAISE_ERROR(
+            drivers,
             "trying to remove something that doesn't exist",
             aruwlib::errors::Location::MOTOR_CONTROL,
             aruwlib::errors::ErrorType::NULL_MOTOR_ID);

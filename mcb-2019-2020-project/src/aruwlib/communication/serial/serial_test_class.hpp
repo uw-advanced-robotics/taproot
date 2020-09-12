@@ -24,6 +24,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace serial
 {
 /**
@@ -37,7 +38,7 @@ class SerialTestClass : public DJISerial
 {
 public:
     ///< Attaches this test class to `Uart2`.
-    SerialTestClass();
+    SerialTestClass(Drivers* drivers);
 
     ///< Stores the sequenceNumber in `messageId`.
     void messageReceiveCallback(const SerialMessage& completeMessage) override;

@@ -34,6 +34,7 @@ namespace aruwsrc
 namespace agitator
 {
 AgitatorSubsystem::AgitatorSubsystem(
+    aruwlib::Drivers* drivers,
     float kp,
     float ki,
     float kd,
@@ -43,8 +44,14 @@ AgitatorSubsystem::AgitatorSubsystem(
     aruwlib::motor::MotorId agitatorMotorId,
     aruwlib::can::CanBus agitatorCanBusId,
     bool isAgitatorInverted)
-    : agitatorPositionPid(kp, ki, kd, maxIAccum, maxOutput, 1.0f, 0.0f, 1.0f, 0.0f),
-      agitatorMotor(agitatorMotorId, agitatorCanBusId, isAgitatorInverted, "agitator motor"),
+    : aruwlib::control::Subsystem(drivers),
+      agitatorPositionPid(kp, ki, kd, maxIAccum, maxOutput, 1.0f, 0.0f, 1.0f, 0.0f),
+      agitatorMotor(
+          drivers,
+          agitatorMotorId,
+          agitatorCanBusId,
+          isAgitatorInverted,
+          "agitator motor"),
       desiredAgitatorAngle(0.0f),
       agitatorCalibratedZeroAngle(0.0f),
       agitatorIsCalibrated(false),
@@ -60,6 +67,7 @@ void AgitatorSubsystem::armAgitatorUnjamTimer(const uint32_t& predictedRotateTim
     if (predictedRotateTime == 0)
     {
         RAISE_ERROR(
+            drivers,
             "The predicted rotate time is 0, this is physically impossible",
             aruwlib::errors::SUBSYSTEM,
             aruwlib::errors::ZERO_DESIRED_AGITATOR_ROTATE_TIME);

@@ -22,6 +22,8 @@
 
 #include <cstdint>
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 namespace gpio
@@ -38,7 +40,8 @@ class Pwm
 public:
     Pwm() = default;
     Pwm(const Pwm &) = delete;
-    Pwm &operator=(const Pwm &) = default;
+    Pwm &operator=(const Pwm &) = delete;
+    mockable ~Pwm() = default;
 
     /**
      * PWM pins whose name corresponds to the names defined on the
@@ -52,7 +55,7 @@ public:
         Z
     };
 
-    void init();
+    mockable void init();
 
     /**
      * Sets all Timer channels to the same duty.
@@ -60,7 +63,7 @@ public:
      * @param[in] duty the duty cycle to be set. If the duty is outside of the range
      *      of [0, 1] the duty is limited to within the range.
      */
-    void writeAll(float duty);
+    mockable void writeAll(float duty);
 
     /**
      * Sets the PWM duty for a specified pin.
@@ -69,7 +72,7 @@ public:
      *      of [0, 1] the duty is limited to within the range.
      * @param[in] pin the PWM pin to be set.
      */
-    void write(float duty, Pwm::Pin pin);
+    mockable void write(float duty, Pwm::Pin pin);
 };  // class Pwm
 
 }  // namespace gpio

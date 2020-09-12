@@ -26,6 +26,7 @@ namespace aruwlib
 namespace sensors
 {
 AnalogDistanceSensor::AnalogDistanceSensor(
+    Drivers *drivers,
     float minDistance,
     float maxDistance,
     float m,
@@ -33,6 +34,7 @@ AnalogDistanceSensor::AnalogDistanceSensor(
     float offset,
     gpio::Analog::Pin pin)
     : DistanceSensor(minDistance, maxDistance),
+      drivers(drivers),
       m(m),
       b(b),
       offset(offset),
@@ -43,7 +45,7 @@ AnalogDistanceSensor::AnalogDistanceSensor(
 float AnalogDistanceSensor::read()
 {
     // Read analog pin and convert to volts
-    float reading = Drivers::analog.read(pin);
+    float reading = drivers->analog.read(pin);
 
     // Linear model
     float linear = m * reading / 1000.0f + b;

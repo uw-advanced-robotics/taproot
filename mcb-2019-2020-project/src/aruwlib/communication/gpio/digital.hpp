@@ -26,6 +26,8 @@
 
 #include <stdint.h>
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 namespace gpio
@@ -44,7 +46,8 @@ class Digital
 public:
     Digital() = default;
     Digital(const Digital &) = delete;
-    Digital &operator=(const Digital &) = default;
+    Digital &operator=(const Digital &) = delete;
+    mockable ~Digital() = default;
 
     ///< Currently enabled digital input pins.
     enum InputPin
@@ -80,7 +83,7 @@ public:
      * Initializes all pins as output/input pins. Does not handle configuring
      * pin types (@see configureInputPullMode).
      */
-    void init();
+    mockable void init();
 
     /**
      * By default input pins are floating. Configure them to have a pull-up
@@ -89,7 +92,7 @@ public:
      * @param[in] pin the InputPin to configure.
      * @param[in] mode the pull mode to be enabled.
      */
-    void configureInputPullMode(InputPin pin, InputPullMode mode);
+    mockable void configureInputPullMode(InputPin pin, InputPullMode mode);
 
     /**
      * Sets the digital OutputPin either high or low.
@@ -97,7 +100,7 @@ public:
      * @param[in] pin the OutputPin to set.
      * @param[in] isSet `true` to send high, `false` to send low.
      */
-    void set(OutputPin pin, bool isSet);
+    mockable void set(OutputPin pin, bool isSet);
 
     /**
      * Reads from an InputPin.
@@ -105,7 +108,7 @@ public:
      * @param[in] pin the InputPin to read from.
      * @return `true` if the pin is pulled high and `false` otherwise.
      */
-    bool read(InputPin pin) const;
+    mockable bool read(InputPin pin) const;
 };  // class Digital
 
 }  // namespace gpio

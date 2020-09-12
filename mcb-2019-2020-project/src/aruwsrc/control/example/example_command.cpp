@@ -28,8 +28,7 @@ namespace aruwsrc
 namespace control
 {
 ExampleCommand::ExampleCommand(ExampleSubsystem* subsystem, int speed)
-    : Command(),
-      subsystemExample(subsystem),
+    : subsystemExample(subsystem),
       speed(speed)
 {
     addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));

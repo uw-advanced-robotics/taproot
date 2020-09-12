@@ -27,13 +27,14 @@ namespace aruwlib
 {
 namespace serial
 {
-DJISerial::DJISerial(Uart::UartPort port, bool isRxCRCEnforcementEnabled)
+DJISerial::DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcementEnabled)
     : port(port),
       djiSerialRxState(SERIAL_HEADER_SEARCH),
       frameCurrReadByte(0),
       frameHeader(),
       rxCRCEnforcementEnabled(isRxCRCEnforcementEnabled),
-      txBuffer()
+      txBuffer(),
+      drivers(drivers)
 {
     txMessage.length = 0;
     newMessage.length = 0;
@@ -45,13 +46,13 @@ void DJISerial::initialize()
     switch (this->port)
     {
         case Uart::UartPort::Uart1:
-            Drivers::uart.init<Uart::UartPort::Uart1, 115200>();
+            drivers->uart.init<Uart::UartPort::Uart1, 115200>();
             break;
         case Uart::UartPort::Uart2:
-            Drivers::uart.init<Uart::UartPort::Uart2, 115200>();
+            drivers->uart.init<Uart::UartPort::Uart2, 115200>();
             break;
         case Uart::UartPort::Uart6:
-            Drivers::uart.init<Uart::UartPort::Uart6, 115200>();
+            drivers->uart.init<Uart::UartPort::Uart6, 115200>();
             break;
         default:
             break;
@@ -72,6 +73,7 @@ bool DJISerial::send()
     if (FRAME_HEADER_LENGTH + txMessage.length + FRAME_CRC16_LENGTH >= SERIAL_TX_BUFF_SIZE)
     {
         RAISE_ERROR(
+            drivers,
             "dji serial attempting to send greater than SERIAL_TX_BUFF_SIZE bytes",
             aruwlib::errors::Location::DJI_SERIAL,
             aruwlib::errors::ErrorType::MESSAGE_LENGTH_OVERFLOW);
@@ -93,6 +95,7 @@ bool DJISerial::send()
         return false;
         // the message did not completely send
         RAISE_ERROR(
+            drivers,
             "the message did not completely send",
             aruwlib::errors::Location::DJI_SERIAL,
             aruwlib::errors::ErrorType::INVALID_MESSAGE_LENGTH);
@@ -150,6 +153,7 @@ void DJISerial::updateSerial()
                 {
                     djiSerialRxState = SERIAL_HEADER_SEARCH;
                     RAISE_ERROR(
+                        drivers,
                         "invalid message length received",
                         aruwlib::errors::Location::DJI_SERIAL,
                         aruwlib::errors::ErrorType::INVALID_MESSAGE_LENGTH);
@@ -165,6 +169,7 @@ void DJISerial::updateSerial()
                     {
                         djiSerialRxState = SERIAL_HEADER_SEARCH;
                         RAISE_ERROR(
+                            drivers,
                             "CRC8 failure",
                             aruwlib::errors::Location::DJI_SERIAL,
                             aruwlib::errors::ErrorType::CRC_FAILURE);
@@ -218,6 +223,7 @@ void DJISerial::updateSerial()
                         delete[] crc16CheckData;
                         djiSerialRxState = SERIAL_HEADER_SEARCH;
                         RAISE_ERROR(
+                            drivers,
                             "CRC16 failure",
                             aruwlib::errors::Location::DJI_SERIAL,
                             aruwlib::errors::ErrorType::CRC_FAILURE);
@@ -241,6 +247,7 @@ void DJISerial::updateSerial()
             {
                 frameCurrReadByte = 0;
                 RAISE_ERROR(
+                    drivers,
                     "Invalid message length",
                     aruwlib::errors::Location::DJI_SERIAL,
                     aruwlib::errors::ErrorType::INVALID_MESSAGE_LENGTH);
@@ -275,14 +282,14 @@ bool DJISerial::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC
 
 uint32_t DJISerial::read(uint8_t *data, uint16_t length)
 {
-    return Drivers::uart.read(this->port, data, length);
+    return drivers->uart.read(this->port, data, length);
 }
 
 uint32_t DJISerial::write(const uint8_t *data, uint16_t length)
 {
-    if (Drivers::uart.isWriteFinished(this->port))
+    if (drivers->uart.isWriteFinished(this->port))
     {
-        return Drivers::uart.write(this->port, data, length);
+        return drivers->uart.write(this->port, data, length);
     }
     else
     {

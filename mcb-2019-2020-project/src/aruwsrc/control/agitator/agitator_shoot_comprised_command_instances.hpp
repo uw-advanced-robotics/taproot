@@ -20,6 +20,8 @@
 #ifndef __AGITATOR_SHOOT_COMPRISED_COMMANDS_HPP__
 #define __AGITATOR_SHOOT_COMPRISED_COMMANDS_HPP__
 
+#include <aruwlib/Drivers.hpp>
+
 #include "agitator_shoot_comprised_command.hpp"
 
 namespace aruwsrc
@@ -29,8 +31,9 @@ namespace agitator
 class ShootFastComprisedCommand : public ShootComprisedCommand
 {
 public:
-    explicit ShootFastComprisedCommand(AgitatorSubsystem* agitator17mm)
+    explicit ShootFastComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
         : ShootComprisedCommand(
+              drivers,
               agitator17mm,
               aruwlib::algorithms::PI / 5.0f,
               aruwlib::algorithms::PI / 2.0f,
@@ -43,8 +46,9 @@ public:
 class ShootSlowComprisedCommand : public ShootComprisedCommand
 {
 public:
-    explicit ShootSlowComprisedCommand(AgitatorSubsystem* agitator17mm)
+    explicit ShootSlowComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
         : ShootComprisedCommand(
+              drivers,
               agitator17mm,
               aruwlib::algorithms::PI / 5.0f,
               aruwlib::algorithms::PI / 2.0f,

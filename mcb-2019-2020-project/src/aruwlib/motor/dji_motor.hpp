@@ -55,6 +55,7 @@ public:
 
     // construct new motor
     DjiMotor(
+        Drivers* drivers,
         MotorId desMotorIdentifier,
         aruwlib::can::CanBus motorCanBus,
         bool isInverted,
@@ -130,7 +131,8 @@ public:
 
     const std::string& getName() const;
 
-    template <typename T> static void assertEncoderType()
+    template <typename T>
+    static void assertEncoderType()
     {
         constexpr bool good_type =
             std::is_same<typename std::decay<T>::type, std::int64_t>::value ||
@@ -138,13 +140,15 @@ public:
         static_assert(good_type, "x is not of the correct type");
     }
 
-    template <typename T> static T degreesToEncoder(float angle)
+    template <typename T>
+    static T degreesToEncoder(float angle)
     {
         assertEncoderType<T>();
         return static_cast<T>((ENC_RESOLUTION * angle) / 360);
     }
 
-    template <typename T> static float encoderToDegrees(T encoder)
+    template <typename T>
+    static float encoderToDegrees(T encoder)
     {
         assertEncoderType<T>();
         return (360.0f * static_cast<float>(encoder)) / ENC_RESOLUTION;
@@ -158,6 +162,8 @@ private:
 
     // Parses receive data given message with the correct identifier.
     void parseCanRxData(const modm::can::Message& message);
+
+    Drivers* drivers;
 
     uint32_t motorIdentifier;
 

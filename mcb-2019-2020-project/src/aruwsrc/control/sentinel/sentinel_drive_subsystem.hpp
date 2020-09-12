@@ -41,10 +41,12 @@ public:
     static constexpr float RAIL_LENGTH = 1900;
 
     SentinelDriveSubsystem(
+        aruwlib::Drivers* drivers,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
-        : leftWheel(leftMotorId, CAN_BUS_MOTORS, false, "left sentinel drive motor"),
-          rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor"),
+        : aruwlib::control::Subsystem(drivers),
+          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, false, "left sentinel drive motor"),
+          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor"),
           velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           desiredRpm(0)

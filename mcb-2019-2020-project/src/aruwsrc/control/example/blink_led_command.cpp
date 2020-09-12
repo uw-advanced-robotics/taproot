@@ -28,7 +28,10 @@ namespace aruwsrc
 {
 namespace control
 {
-BlinkLEDCommand::BlinkLEDCommand(aruwsrc::control::ExampleSubsystem* subsystem)
+BlinkLEDCommand::BlinkLEDCommand(
+    aruwlib::Drivers* drivers,
+    aruwsrc::control::ExampleSubsystem* subsystem)
+    : drivers(drivers)
 {
     this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(subsystem));
 }
@@ -42,7 +45,7 @@ void BlinkLEDCommand::initialize()
 void BlinkLEDCommand::execute()
 {
     refershCounter++;
-    Drivers::leds.set(aruwlib::gpio::Leds::A, true);
+    drivers->leds.set(aruwlib::gpio::Leds::A, true);
 }
 
 bool BlinkLEDCommand::isFinished() const { return completedTimer.isExpired(); }

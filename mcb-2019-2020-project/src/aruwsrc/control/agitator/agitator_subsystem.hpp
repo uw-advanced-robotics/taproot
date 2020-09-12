@@ -95,6 +95,7 @@ public:
     static constexpr float AGITATOR_GEAR_RATIO_GM3508 = 19.0f;
 
     explicit AgitatorSubsystem(
+        aruwlib::Drivers* drivers,
         float kp,
         float ki,
         float kd,

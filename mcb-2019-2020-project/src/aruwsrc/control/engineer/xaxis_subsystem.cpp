@@ -29,7 +29,7 @@ namespace engineer
 {
 void XAxisSubsystem::setExtended(bool isExtended)
 {
-    aruwlib::Drivers::digital.set(pin, extended);
+    drivers->digital.set(pin, extended);
     extended = isExtended;
 }
 

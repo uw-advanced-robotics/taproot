@@ -17,7 +17,7 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
+#include <aruwlib/DriversSingleton.hpp>
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 
@@ -30,8 +30,16 @@
 
 using namespace aruwsrc::engineer;
 using namespace aruwlib::gpio;
-using aruwlib::Drivers;
+using aruwlib::DoNotUse_getDrivers;
 using aruwlib::control::CommandMapper;
+
+/*
+ * NOTE: We are using the DoNotUse_getDrivers() function here
+ *      because this file defines all subsystems and command
+ *      and thus we must pass in the single statically allocated
+ *      Drivers class to all of these objects.
+ */
+aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
 namespace aruwsrc
 {
@@ -41,33 +49,33 @@ const Digital::OutputPin grabberPin = Digital::OutputPin::E;
 const Digital::OutputPin xAxisPin = Digital::OutputPin::F;
 
 /* define subsystems --------------------------------------------------------*/
-GrabberSubsystem grabber(grabberPin);
-XAxisSubsystem xAxis(xAxisPin);
+GrabberSubsystem grabber(drivers(), grabberPin);
+XAxisSubsystem xAxis(drivers(), xAxisPin);
 
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerEngineerSubsystems()
+void registerEngineerSubsystems(aruwlib::Drivers *drivers)
 {
-    Drivers::commandScheduler.registerSubsystem(&grabber);
-    Drivers::commandScheduler.registerSubsystem(&xAxis);
+    drivers->commandScheduler.registerSubsystem(&grabber);
+    drivers->commandScheduler.registerSubsystem(&xAxis);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultEngineerCommands() {}
+void setDefaultEngineerCommands(aruwlib::Drivers *drivers) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startEngineerCommands() {}
+void startEngineerCommands(aruwlib::Drivers *drivers) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerEngineerIoMappings() {}
+void registerEngineerIoMappings(aruwlib::Drivers *drivers) {}
 
-void initSubsystemCommands()
+void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    registerEngineerSubsystems();
-    setDefaultEngineerCommands();
-    startEngineerCommands();
-    registerEngineerIoMappings();
+    registerEngineerSubsystems(drivers);
+    setDefaultEngineerCommands(drivers);
+    startEngineerCommands(drivers);
+    registerEngineerIoMappings(drivers);
 }
 
 }  // namespace control

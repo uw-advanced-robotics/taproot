@@ -30,8 +30,9 @@ namespace aruwsrc
 {
 namespace turret
 {
-TurretCVCommand::TurretCVCommand(TurretSubsystem *subsystem)
-    : turretSubsystem(subsystem),
+TurretCVCommand::TurretCVCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem)
+    : drivers(drivers),
+      turretSubsystem(subsystem),
       yawTargetAngle(TurretSubsystem::TURRET_START_ANGLE, 0.0f, 360.0f),
       pitchTargetAngle(TurretSubsystem::TURRET_START_ANGLE, 0.0f, 360.0f),
       yawPid(
@@ -62,7 +63,7 @@ TurretCVCommand::TurretCVCommand(TurretSubsystem *subsystem)
 void TurretCVCommand::initialize()
 {
     sendRequestTimer.restart(TIME_BETWEEN_CV_REQUESTS);
-    Drivers::xavierSerial.beginTargetTracking();
+    drivers->xavierSerial.beginTargetTracking();
     yawPid.reset();
     pitchPid.reset();
 }
@@ -70,7 +71,7 @@ void TurretCVCommand::initialize()
 void TurretCVCommand::execute()
 {
     XavierSerial::TurretAimData cvData;
-    if (Drivers::xavierSerial.getLastAimData(&cvData))
+    if (drivers->xavierSerial.getLastAimData(&cvData))
     {
         if (cvData.hasTarget)
         {
@@ -80,14 +81,14 @@ void TurretCVCommand::execute()
     }
     else if (sendRequestTimer.isExpired())
     {
-        Drivers::xavierSerial.beginTargetTracking();
+        drivers->xavierSerial.beginTargetTracking();
     }
     runYawPositionController();
     runPitchPositionController();
 }
 
 // NOLINTNEXTLINE
-void TurretCVCommand::end(bool) { Drivers::xavierSerial.stopTargetTracking(); }
+void TurretCVCommand::end(bool) { drivers->xavierSerial.stopTargetTracking(); }
 
 void TurretCVCommand::runYawPositionController()
 {

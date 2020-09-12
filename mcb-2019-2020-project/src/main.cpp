@@ -23,7 +23,7 @@
 #include <aruwlib/architecture/periodic_timer.hpp>
 
 /* communication includes ---------------------------------------------------*/
-#include <aruwlib/Drivers.hpp>
+#include <aruwlib/DriversSingleton.hpp>
 #include <aruwlib/display/sh1106.hpp>
 
 /* error handling includes --------------------------------------------------*/
@@ -39,29 +39,37 @@ aruwlib::arch::PeriodicMilliTimer sendMotorTimeout(2);
 
 // Place any sort of input/output initialization here. For example, place
 // serial init stuff here.
-void initializeIo();
+void initializeIo(aruwlib::Drivers *drivers);
+
 // Anything that you would like to be called place here. It will be called
 // very frequently. Use PeriodicMilliTimers if you don't want something to be
 // called as frequently.
-void updateIo();
+void updateIo(aruwlib::Drivers *drivers);
 
 int main()
 {
+    /*
+     * NOTE: We are using DoNotUse_getDrivers here because in the main
+     *      robot loop we must access the singleton drivers to update
+     *      IO states and run the scheduler.
+     */
+    aruwlib::Drivers *drivers = aruwlib::DoNotUse_getDrivers();
+
     Board::initialize();
-    initializeIo();
-    aruwsrc::control::initSubsystemCommands();
+    initializeIo(drivers);
+    aruwsrc::control::initSubsystemCommands(drivers);
 
     while (1)
     {
         // do this as fast as you can
-        updateIo();
+        updateIo(drivers);
 
         if (sendMotorTimeout.execute())
         {
-            Drivers::mpu6500.read();
-            Drivers::errorController.update();
-            Drivers::commandScheduler.run();
-            Drivers::djiMotorTxHandler.processCanSendData();
+            drivers->mpu6500.read();
+            drivers->errorController.update();
+            drivers->commandScheduler.run();
+            drivers->djiMotorTxHandler.processCanSendData();
         }
 #ifndef ENV_SIMULATOR
         modm::delayMicroseconds(10);
@@ -70,13 +78,13 @@ int main()
     return 0;
 }
 
-void initializeIo()
+void initializeIo(aruwlib::Drivers *drivers)
 {
-    aruwlib::Drivers::analog.init();
-    aruwlib::Drivers::pwm.init();
-    aruwlib::Drivers::digital.init();
-    aruwlib::Drivers::leds.init();
-    aruwlib::Drivers::can.initialize();
+    drivers->analog.init();
+    drivers->pwm.init();
+    drivers->digital.init();
+    drivers->leds.init();
+    drivers->can.initialize();
 
 #ifndef ENV_SIMULATOR
     /// \todo this should be an init in the display class
@@ -99,16 +107,16 @@ void initializeIo()
         display;
     display.initializeBlocking();
 
-    Drivers::remote.initialize();
-    Drivers::mpu6500.init();
-    Drivers::refSerial.initialize();
-    Drivers::xavierSerial.initialize();
+    drivers->remote.initialize();
+    drivers->mpu6500.init();
+    drivers->refSerial.initialize();
+    drivers->xavierSerial.initialize();
 }
 
-void updateIo()
+void updateIo(aruwlib::Drivers *drivers)
 {
-    Drivers::canRxHandler.pollCanData();
-    Drivers::xavierSerial.updateSerial();
-    Drivers::refSerial.updateSerial();
-    Drivers::remote.read();
+    drivers->canRxHandler.pollCanData();
+    drivers->xavierSerial.updateSerial();
+    drivers->refSerial.updateSerial();
+    drivers->remote.read();
 }

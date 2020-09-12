@@ -26,6 +26,8 @@
 #include <aruwlib/motor/dji_motor.hpp>
 #include <modm/math/filter/pid.hpp>
 
+#include "mock_macros.hpp"
+
 namespace aruwsrc
 {
 namespace launcher
@@ -34,17 +36,19 @@ class FrictionWheelSubsystem : public aruwlib::control::Subsystem
 {
 public:
     FrictionWheelSubsystem(
+        aruwlib::Drivers *drivers,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
-        : leftWheel(leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
-          rightWheel(rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
+        : aruwlib::control::Subsystem(drivers),
+          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
+          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
           velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           desiredRpmRamp(0)
     {
     }
 
-    void setDesiredRpm(float desRpm);
+    mockable void setDesiredRpm(float desRpm);
 
     void refresh() override;
 

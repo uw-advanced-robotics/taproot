@@ -21,7 +21,7 @@
  * example for how to create and add an error to the ErrorController:
  * use macro in create_errors.hpp
  *
- *     RAISE_ERROR("Error in DJI Serial", aruwlib::errors::Location::DJI_SERIAL,
+ *     RAISE_ERROR(drivers, "Error in DJI Serial", aruwlib::errors::Location::DJI_SERIAL,
  *     aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
  *
  * then call ErrorController::update() to update the list of errors

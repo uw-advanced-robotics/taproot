@@ -24,8 +24,11 @@
 
 #include "aruwlib/algorithms/MahonyAHRS.h"
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
+class Drivers;
 namespace sensors
 {
 /**
@@ -41,9 +44,10 @@ namespace sensors
 class Mpu6500
 {
 public:
-    Mpu6500() = default;
+    Mpu6500(Drivers *drivers) : drivers(drivers) {}
     Mpu6500(const Mpu6500 &) = delete;
-    Mpu6500 &operator=(const Mpu6500 &) = default;
+    Mpu6500 &operator=(const Mpu6500 &) = delete;
+    mockable ~Mpu6500() = default;
 
     /**
      * Initialize the imu and the SPI line. Uses SPI1, which is internal to the
@@ -51,80 +55,80 @@ public:
      *
      * @note this function blocks for approximately 1 second.
      */
-    void init();
+    mockable void init();
 
     /**
      * Read data from the imu. Call at 500 hz for best performance.
      */
-    void read();
+    mockable void read();
 
     /**
      * To be safe, whenever you call the functions below, call this function to insure
      * the data you are about to receive is not garbage.
      */
-    bool initialized() const;
+    mockable bool initialized() const;
 
     /**
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    float getAx() const;
+    mockable float getAx() const;
 
     /**
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    float getAy() const;
+    mockable float getAy() const;
 
     /**
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    float getAz() const;
+    mockable float getAz() const;
 
     /**
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    float getGx() const;
+    mockable float getGx() const;
 
     /**
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    float getGy() const;
+    mockable float getGy() const;
 
     /**
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    float getGz() const;
+    mockable float getGz() const;
 
     /**
      * Returns the temperature of the imu in degrees C.
      */
-    float getTemp() const;
+    mockable float getTemp() const;
 
     /**
      * Returns yaw angle. in degrees.
      */
-    float getYaw();
+    mockable float getYaw();
 
     /**
      * Returns pitch angle in degrees.
      */
-    float getPitch();
+    mockable float getPitch();
 
     /**
      * Returns roll angle in degrees.
      */
-    float getRoll();
+    mockable float getRoll();
 
     /**
      * Returns the angle difference between the normal vector of the plane that the
      * type A board lies on and of the angle directly upward.
      */
-    float getTiltAngle();
+    mockable float getTiltAngle();
 
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
@@ -189,9 +193,10 @@ private:
         GyroOffset gyroOffset;
     };
 
+    Drivers *drivers;
+
     bool imuInitialized = false;
 
-#ifndef ENV_SIMULATOR
     RawData raw;
 
     Mahony mahonyAlgorithm;
@@ -239,7 +244,6 @@ private:
      * from that point.
      */
     uint8_t spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
-#endif
 };
 
 }  // namespace sensors

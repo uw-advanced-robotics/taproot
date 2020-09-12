@@ -62,7 +62,7 @@ void ErrorController::update()
     if (errorList.getSize() == 0)
     {
         setLedError(0);
-        Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
+        drivers->leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
         return;
     }
 
@@ -80,12 +80,12 @@ void ErrorController::update()
             &displayNum))
     {
         setLedError(displayNum);
-        Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
+        drivers->leds.set(aruwlib::gpio::Leds::LedPin::Green, true);
     }
     else
     {
         setLedError(0);
-        Drivers::leds.set(aruwlib::gpio::Leds::LedPin::Green, false);
+        drivers->leds.set(aruwlib::gpio::Leds::LedPin::Green, false);
     }
 }
 
@@ -119,7 +119,7 @@ void ErrorController::setLedError(uint8_t binaryRep)
     for (int i = 0; i < 8; i++)
     {
         bool display = (binaryRep >> i) & 1;
-        Drivers::leds.set(static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
+        drivers->leds.set(static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
     }
 }
 }  // namespace errors

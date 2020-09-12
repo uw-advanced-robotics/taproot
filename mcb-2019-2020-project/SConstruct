@@ -66,6 +66,7 @@ if target_env == "hardware":
 else:
     modm_path = sim_modm_path
     ignored_files.append("src/main.cpp")
+    ignored_files.append("src/aruwsrc/control/*_control.cpp")
 
 # Building all libraries (read from sconscript files located in provided dirs)
 # Ensure that modm is first, otherwise aruwlib won't have the needed build config

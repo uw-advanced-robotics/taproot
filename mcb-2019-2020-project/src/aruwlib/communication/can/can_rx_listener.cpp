@@ -25,12 +25,15 @@ namespace aruwlib
 {
 namespace can
 {
-CanRxListener::CanRxListener(uint32_t id, CanBus cB) : canIdentifier(id), canBus(cB)
+CanRxListener::CanRxListener(Drivers *drivers, uint32_t id, CanBus cB)
+    : canIdentifier(id),
+      canBus(cB),
+      drivers(drivers)
 {
-    Drivers::canRxHandler.attachReceiveHandler(this);
+    drivers->canRxHandler.attachReceiveHandler(this);
 }
 
-CanRxListener::~CanRxListener() { Drivers::canRxHandler.removeReceiveHandler(*this); }
+CanRxListener::~CanRxListener() { drivers->canRxHandler.removeReceiveHandler(*this); }
 }  // namespace can
 
 }  // namespace aruwlib

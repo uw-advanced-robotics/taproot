@@ -17,7 +17,19 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <aruwlib/DriversSingleton.hpp>
+
 #if defined(TARGET_DRONE)
+
+using aruwlib::DoNotUse_getDrivers;
+
+/*
+ * NOTE: We are using the DoNotUse_getDrivers() function here
+ *      because this file defines all subsystems and command
+ *      and thus we must pass in the single statically allocated
+ *      Drivers class to all of these objects.
+ */
+aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
 namespace aruwsrc
 {
@@ -28,23 +40,23 @@ namespace control
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerDroneSubsystems() {}
+void registerDroneSubsystems(aruwlib::Drivers *drivers) {}
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultDroneCommands() {}
+void setDefaultDroneCommands(aruwlib::Drivers *drivers) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startDroneCommands() {}
+void startDroneCommands(aruwlib::Drivers *drivers) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerDroneIoMappings() {}
+void registerDroneIoMappings(aruwlib::Drivers *drivers) {}
 
-void initSubsystemCommands()
+void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    registerDroneSubsystems();
-    setDefaultDroneCommands();
-    startDroneCommands();
-    registerDroneIoMappings();
+    registerDroneSubsystems(drivers);
+    setDefaultDroneCommands(drivers);
+    startDroneCommands(drivers);
+    registerDroneIoMappings(drivers);
 }
 
 }  // namespace control

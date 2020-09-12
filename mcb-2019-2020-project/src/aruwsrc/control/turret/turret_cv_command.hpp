@@ -36,7 +36,7 @@ namespace turret
 class TurretCVCommand : public aruwlib::control::Command
 {
 public:
-    explicit TurretCVCommand(TurretSubsystem *subsystem);
+    TurretCVCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem);
 
     void initialize() override;
 
@@ -70,6 +70,8 @@ private:
     static constexpr float PITCH_R_PROPORTIONAL_KALMAN = 2.0f;
 
     static constexpr uint32_t TIME_BETWEEN_CV_REQUESTS = 1000;
+
+    aruwlib::Drivers *drivers;
 
     TurretSubsystem *turretSubsystem;
 

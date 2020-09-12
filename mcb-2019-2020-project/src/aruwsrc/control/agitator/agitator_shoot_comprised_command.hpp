@@ -34,6 +34,7 @@ class ShootComprisedCommand : public aruwlib::control::ComprisedCommand
 {
 public:
     ShootComprisedCommand(
+        aruwlib::Drivers* drivers,
         AgitatorSubsystem* agitator,
         float agitatorChangeAngle,
         float maxUnjamAngle,

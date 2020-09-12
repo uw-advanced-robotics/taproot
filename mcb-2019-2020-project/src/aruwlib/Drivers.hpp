@@ -20,6 +20,7 @@
 #ifndef DRIVERS_HPP_
 #define DRIVERS_HPP_
 
+#ifndef ENV_SIMULATOR
 #include "communication/can/can.hpp"
 #include "communication/can/can_rx_handler.hpp"
 #include "communication/gpio/analog.hpp"
@@ -36,51 +37,94 @@
 #include "control/control_operator_interface.hpp"
 #include "errors/error_controller.hpp"
 #include "motor/dji_motor_tx_handler.hpp"
+#else
+#include <gmock/gmock.h>
+
+#include "aruwlib/mock/AnalogMock.hpp"
+#include "aruwlib/mock/CanMock.hpp"
+#include "aruwlib/mock/CanRxHandlerMock.hpp"
+#include "aruwlib/mock/CommandMapperMock.hpp"
+#include "aruwlib/mock/CommandSchedulerMock.hpp"
+#include "aruwlib/mock/ControlOperatorInterfaceMock.hpp"
+#include "aruwlib/mock/DigitalMock.hpp"
+#include "aruwlib/mock/DjiMotorTxHandlerMock.hpp"
+#include "aruwlib/mock/ErrorControllerMock.hpp"
+#include "aruwlib/mock/LedsMock.hpp"
+#include "aruwlib/mock/Mpu6500Mock.hpp"
+#include "aruwlib/mock/PwmMock.hpp"
+#include "aruwlib/mock/RefSerialMock.hpp"
+#include "aruwlib/mock/RemoteMock.hpp"
+#include "aruwlib/mock/UartMock.hpp"
+#include "aruwlib/mock/XavierSerialMock.hpp"
+#endif
 
 namespace aruwlib
 {
 class Drivers
 {
-public:
-    static can::Can can;
-    static can::CanRxHandler canRxHandler;
-    static gpio::Analog analog;
-    static gpio::Digital digital;
-    static gpio::Leds leds;
-    static gpio::Pwm pwm;
-    static Remote remote;
-    static sensors::Mpu6500 mpu6500;
-    static serial::Uart uart;
-    static serial::XavierSerial xavierSerial;
-    static serial::RefSerial refSerial;
-    static control::CommandScheduler commandScheduler;
-    static control::ControlOperatorInterface controlOperatorInterface;
-    static control::CommandMapper commandMapper;
-    static errors::ErrorController errorController;
-    static motor::DjiMotorTxHandler djiMotorTxHandler;
+    friend class DriversSingleton;
 
 #ifdef ENV_SIMULATOR
-    static void reset();
+public:
+#endif
+    Drivers()
+        : can(),
+          canRxHandler(this),
+          analog(),
+          digital(),
+          leds(),
+          pwm(),
+          remote(this),
+          mpu6500(this),
+          uart(),
+          xavierSerial(this),
+          refSerial(this),
+          commandScheduler(this),
+          controlOperatorInterface(this),
+          commandMapper(this),
+          errorController(this),
+          djiMotorTxHandler(this)
+    {
+    }
 
-private:
-    static void resetCan();
-    static void resetCanRxHandler();
-    static void resetAnalog();
-    static void resetDigital();
-    static void resetLeds();
-    static void resetPwm();
-    static void resetRemote();
-    static void resetMpu6500();
-    static void resetUart();
-    static void resetXavierSerial();
-    static void resetRefSerial();
-    static void resetCommandScheduler();
-    static void resetControlOperatorInterface();
-    static void resetCommandMapper();
-    static void resetErrorController();
-    static void resetDjiMotorTxHandler();
+#ifndef ENV_SIMULATOR
+public:
+    can::Can can;
+    can::CanRxHandler canRxHandler;
+    gpio::Analog analog;
+    gpio::Digital digital;
+    gpio::Leds leds;
+    gpio::Pwm pwm;
+    Remote remote;
+    sensors::Mpu6500 mpu6500;
+    serial::Uart uart;
+    serial::XavierSerial xavierSerial;
+    serial::RefSerial refSerial;
+    control::CommandScheduler commandScheduler;
+    control::ControlOperatorInterface controlOperatorInterface;
+    control::CommandMapper commandMapper;
+    errors::ErrorController errorController;
+    motor::DjiMotorTxHandler djiMotorTxHandler;
+#else
+    mock::CanMock can;
+    mock::CanRxHandlerMock canRxHandler;
+    mock::AnalogMock analog;
+    mock::DigitalMock digital;
+    mock::LedsMock leds;
+    mock::PwmMock pwm;
+    mock::RemoteMock remote;
+    mock::Mpu6500Mock mpu6500;
+    mock::UartMock uart;
+    mock::XavierSerialMock xavierSerial;
+    mock::RefSerialMock refSerial;
+    mock::CommandSchedulerMock commandScheduler;
+    mock::ControlOperatorInterfaceMock controlOperatorInterface;
+    mock::CommandMapperMock commandMapper;
+    mock::ErrorControllerMock errorController;
+    mock::DjiMotorTxHandlerMock djiMotorTxHandler;
 #endif
 };  // class Drivers
+
 }  // namespace aruwlib
 
 #endif  // DRIVERS_HPP_

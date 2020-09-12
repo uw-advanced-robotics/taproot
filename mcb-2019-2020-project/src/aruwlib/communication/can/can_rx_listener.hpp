@@ -28,6 +28,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace can
 {
 /**
@@ -65,7 +66,7 @@ namespace can
  * {
  *     while (true)
  *     {
- *         Drivers::canRxHandler.pollCanData();
+ *         DoNotUse__getDrivers()->canRxHandler.pollCanData();
  *     }
  * }
  * ```
@@ -85,7 +86,7 @@ public:
      *      rx listener.
      * @param[in] cB the CanBus that you would like to watch.
      */
-    CanRxListener(uint32_t id, CanBus cB);
+    CanRxListener(Drivers* drivers, uint32_t id, CanBus cB);
 
     ///< Delete copy constructor.
     CanRxListener(const CanRxListener&) = delete;
@@ -118,6 +119,8 @@ public:
      * which message corresponds to which CanRxListener child class.
      */
     const CanBus canBus;
+
+    Drivers* drivers;
 };  // class CanRxListener
 
 }  // namespace can

@@ -20,6 +20,7 @@
 #ifndef __AGITATOR_UNJAM_COMMAND_HPP__
 #define __AGITATOR_UNJAM_COMMAND_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/architecture/timeout.hpp>
 #include <aruwlib/control/command.hpp>

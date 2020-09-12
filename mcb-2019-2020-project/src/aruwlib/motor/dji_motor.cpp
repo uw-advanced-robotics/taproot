@@ -26,15 +26,17 @@ namespace aruwlib
 {
 namespace motor
 {
-DjiMotor::~DjiMotor() { Drivers::djiMotorTxHandler.removeFromMotorManager(*this); }
+DjiMotor::~DjiMotor() { drivers->djiMotorTxHandler.removeFromMotorManager(*this); }
 
 DjiMotor::DjiMotor(
+    Drivers* drivers,
     MotorId desMotorIdentifier,
     aruwlib::can::CanBus motorCanBus,
     bool isInverted,
     const std::string& name)
-    : CanRxListener(static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
+    : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       encStore(),
+      drivers(drivers),
       motorIdentifier(desMotorIdentifier),
       motorCanBus(motorCanBus),
       desiredOutput(0),
@@ -45,7 +47,7 @@ DjiMotor::DjiMotor(
       motorName(name)
 {
     motorDisconnectTimeout.stop();
-    Drivers::djiMotorTxHandler.addMotorToManager(this);
+    drivers->djiMotorTxHandler.addMotorToManager(this);
 }
 
 void DjiMotor::parseCanRxData(const modm::can::Message& message)

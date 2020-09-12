@@ -28,8 +28,14 @@ namespace aruwlib
 {
 namespace motor
 {
-Servo::Servo(aruwlib::gpio::Pwm::Pin pwmPin, float maximumPwm, float minimumPwm, float pwmRampSpeed)
-    : pwmOutputRamp(0.0f),
+Servo::Servo(
+    Drivers *drivers,
+    aruwlib::gpio::Pwm::Pin pwmPin,
+    float maximumPwm,
+    float minimumPwm,
+    float pwmRampSpeed)
+    : drivers(drivers),
+      pwmOutputRamp(0.0f),
       maxPwm(aruwlib::algorithms::limitVal<float>(maximumPwm, 0.0f, 1.0f)),
       minPwm(aruwlib::algorithms::limitVal<float>(minimumPwm, 0.0f, 1.0f)),
       pwmRampSpeed(pwmRampSpeed),
@@ -41,6 +47,7 @@ Servo::Servo(aruwlib::gpio::Pwm::Pin pwmPin, float maximumPwm, float minimumPwm,
         minPwm = 0.0f;
         maxPwm = 1.0f;
         RAISE_ERROR(
+            drivers,
             "min servo PWM > max servo PWM",
             errors::Location::SERVO,
             errors::ErrorType::INVALID_ADD);
@@ -59,7 +66,7 @@ void Servo::updateSendPwmRamp()
     pwmOutputRamp.update(pwmRampSpeed * (currTime - prevTime));
     prevTime = currTime;
     currentPwm = pwmOutputRamp.getValue();
-    Drivers::pwm.write(pwmOutputRamp.getValue(), servoPin);
+    drivers->pwm.write(pwmOutputRamp.getValue(), servoPin);
 }
 
 float Servo::getPWM() const { return currentPwm; }

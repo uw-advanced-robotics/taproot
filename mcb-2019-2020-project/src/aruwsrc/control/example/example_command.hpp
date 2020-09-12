@@ -26,6 +26,7 @@
 #ifndef __COMMAND_EXAMPLE_HPP__
 #define __COMMAND_EXAMPLE_HPP__
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 
 namespace aruwsrc
@@ -37,7 +38,7 @@ class ExampleSubsystem;
 class ExampleCommand : public aruwlib::control::Command
 {
 public:
-    explicit ExampleCommand(ExampleSubsystem* subsystem, int speed);
+    ExampleCommand(ExampleSubsystem* subsystem, int speed);
 
     /**
      * The initial subroutine of a command.  Called once when the command is

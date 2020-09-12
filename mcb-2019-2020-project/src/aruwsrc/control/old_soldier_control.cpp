@@ -17,7 +17,7 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
+#include <aruwlib/DriversSingleton.hpp>
 #include <aruwlib/control/command_mapper.hpp>
 
 #include "agitator/agitator_calibrate_command.hpp"
@@ -38,19 +38,29 @@
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::turret;
-using aruwlib::Drivers;
+using aruwlib::DoNotUse_getDrivers;
+using aruwlib::Remote;
 using aruwlib::control::CommandMapper;
+
+/*
+ * NOTE: We are using the DoNotUse_getDrivers() function here
+ *      because this file defines all subsystems and command
+ *      and thus we must pass in the single statically allocated
+ *      Drivers class to all of these objects.
+ */
+aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
 namespace aruwsrc
 {
 namespace control
 {
 /* define subsystems --------------------------------------------------------*/
-TurretSubsystem turret;
+TurretSubsystem turret(drivers());
 
-ChassisSubsystem chassis;
+ChassisSubsystem chassis(drivers());
 
 AgitatorSubsystem agitator(
+    drivers(),
     AgitatorSubsystem::PID_17MM_P,
     AgitatorSubsystem::PID_17MM_I,
     AgitatorSubsystem::PID_17MM_D,
@@ -62,85 +72,79 @@ AgitatorSubsystem agitator(
     AgitatorSubsystem::isAgitatorInverted);
 
 HopperSubsystem hopperCover(
+    drivers(),
     aruwlib::gpio::Pwm::W,
     HopperSubsystem::OLD_SOLDIER_HOPPER_OPEN_PWM,
     HopperSubsystem::OLD_SOLDIER_HOPPER_CLOSE_PWM,
     HopperSubsystem::OLD_SOLDIER_PWM_RAMP_SPEED);
 
 /* define commands ----------------------------------------------------------*/
-ChassisDriveCommand chassisDriveCommand(&chassis);
+ChassisDriveCommand chassisDriveCommand(drivers(), &chassis);
 
-ChassisAutorotateCommand chassisAutorotateCommand(&chassis, &turret);
+ChassisAutorotateCommand chassisAutorotateCommand(drivers(), &chassis, &turret);
 
-WiggleDriveCommand wiggleDriveCommand(&chassis, &turret);
+WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
 
-TurretWorldRelativePositionCommand turretWorldRelativeCommand(&turret, &chassis);
+TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
 
-ShootFastComprisedCommand agitatorShootFastCommand(&agitator);
+ShootFastComprisedCommand agitatorShootFastCommand(drivers(), &agitator);
 
 OpenHopperCommand openHopperCommand(&hopperCover);
 
 /* register subsystems here -------------------------------------------------*/
-void registerOldSoldierSubsystems()
+void registerOldSoldierSubsystems(aruwlib::Drivers *drivers)
 {
-    Drivers::commandScheduler.registerSubsystem(&agitator);
-    Drivers::commandScheduler.registerSubsystem(&chassis);
-    Drivers::commandScheduler.registerSubsystem(&turret);
-    Drivers::commandScheduler.registerSubsystem(&hopperCover);
+    drivers->commandScheduler.registerSubsystem(&agitator);
+    drivers->commandScheduler.registerSubsystem(&chassis);
+    drivers->commandScheduler.registerSubsystem(&turret);
+    drivers->commandScheduler.registerSubsystem(&hopperCover);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultOldSoldierCommands()
+void setDefaultOldSoldierCommands(aruwlib::Drivers *drivers)
 {
     chassis.setDefaultCommand(&chassisDriveCommand);
     turret.setDefaultCommand(&turretWorldRelativeCommand);
 }
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startOldSoldierCommands() { Drivers::commandScheduler.addCommand(&agitatorCalibrateCommand); }
+void startOldSoldierCommands(aruwlib::Drivers *drivers)
+{
+    drivers->commandScheduler.addCommand(&agitatorCalibrateCommand);
+}
 
 /* register io mappings here ------------------------------------------------*/
-void registerOldSoldierIoMappings()
+void registerOldSoldierIoMappings(aruwlib::Drivers *drivers)
 {
-    Drivers::commandMapper.addHoldRepeatMapping(
-        CommandMapper::newKeyMap(
-            aruwlib::Remote::Switch::RIGHT_SWITCH,
-            aruwlib::Remote::SwitchState::UP),
+    drivers->commandMapper.addHoldRepeatMapping(
+        drivers->commandMapper.newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
         &agitatorShootFastCommand);
 
-    Drivers::commandMapper.addHoldRepeatMapping(
-        CommandMapper::newKeyMap(
-            aruwlib::Remote::Switch::LEFT_SWITCH,
-            aruwlib::Remote::SwitchState::MID),
+    drivers->commandMapper.addHoldRepeatMapping(
+        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
         &chassisAutorotateCommand);
 
-    Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(
-            aruwlib::Remote::Switch::LEFT_SWITCH,
-            aruwlib::Remote::SwitchState::DOWN),
+    drivers->commandMapper.addHoldMapping(
+        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &chassisDriveCommand);
 
-    Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(
-            aruwlib::Remote::Switch::LEFT_SWITCH,
-            aruwlib::Remote::SwitchState::DOWN),
+    drivers->commandMapper.addHoldMapping(
+        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
         &openHopperCommand);
 
-    Drivers::commandMapper.addHoldMapping(
-        CommandMapper::newKeyMap(
-            aruwlib::Remote::Switch::LEFT_SWITCH,
-            aruwlib::Remote::SwitchState::UP),
+    drivers->commandMapper.addHoldMapping(
+        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
         &wiggleDriveCommand);
 }
 
-void initSubsystemCommands()
+void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    registerOldSoldierSubsystems();
-    setDefaultOldSoldierCommands();
-    startOldSoldierCommands();
-    registerOldSoldierIoMappings();
+    registerOldSoldierSubsystems(drivers);
+    setDefaultOldSoldierCommands(drivers);
+    startOldSoldierCommands(drivers);
+    registerOldSoldierIoMappings(drivers);
 }
 
 }  // namespace control

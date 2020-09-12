@@ -25,6 +25,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace control
 {
 /**
@@ -52,7 +53,7 @@ namespace control
 class ComprisedCommand : public Command
 {
 public:
-    ComprisedCommand() : Command(), comprisedCommandScheduler() {}
+    ComprisedCommand(Drivers *drivers) : Command(), comprisedCommandScheduler(drivers) {}
 
 protected:
     CommandScheduler comprisedCommandScheduler;

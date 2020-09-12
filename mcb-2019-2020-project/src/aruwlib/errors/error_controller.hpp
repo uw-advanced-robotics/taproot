@@ -23,10 +23,12 @@
 #include <aruwlib/architecture/timeout.hpp>
 #include <modm/container.hpp>
 
+#include "mock_macros.hpp"
 #include "system_error.hpp"
 
 namespace aruwlib
 {
+class Drivers;
 namespace errors
 {
 /**
@@ -41,18 +43,23 @@ namespace errors
 class ErrorController
 {
 public:
-    ErrorController() : prevLedErrorChangeWait(ERROR_ROTATE_TIME) {}
+    ErrorController(Drivers* drivers) : drivers(drivers), prevLedErrorChangeWait(ERROR_ROTATE_TIME)
+    {
+    }
     ErrorController(const ErrorController&) = delete;
-    ErrorController& operator=(const ErrorController&) = default;
+    ErrorController& operator=(const ErrorController&) = delete;
+    mockable ~ErrorController() = default;
 
-    void addToErrorList(const SystemError& error);
+    mockable void addToErrorList(const SystemError& error);
 
-    void update();
+    mockable void update();
 
 private:
     static const int ERROR_ROTATE_TIME = 5000;
 
     static const unsigned ERROR_LIST_MAX_SIZE = 16;
+
+    Drivers* drivers;
 
     modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
 

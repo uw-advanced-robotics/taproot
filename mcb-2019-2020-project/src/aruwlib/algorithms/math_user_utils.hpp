@@ -61,7 +61,8 @@ inline bool compareFloatClose(float val1, float val2, float epsilon)
  * @param[in] max the max that val will be limited to.
  * @return the limited value.
  */
-template <typename T> T limitVal(T val, T min, T max)
+template <typename T>
+T limitVal(T val, T min, T max)
 {
     if (min >= max)
     {
@@ -111,7 +112,8 @@ inline float lowPassFilter(float prevValue, float newValue, float alpha)
     return alpha * newValue + (1.0f - alpha) * prevValue;
 }
 
-template <typename From, typename To> To reinterpretCopy(From from)
+template <typename From, typename To>
+To reinterpretCopy(From from)
 {
     static_assert(sizeof(From) == sizeof(To), "can only reinterpret-copy types of the same size");
     To result;

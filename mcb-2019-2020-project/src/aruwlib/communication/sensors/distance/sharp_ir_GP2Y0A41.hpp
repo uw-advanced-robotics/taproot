@@ -24,6 +24,7 @@
 
 namespace aruwlib
 {
+class Drivers;
 namespace sensors
 {
 /**
@@ -39,7 +40,7 @@ public:
      *
      * @param[in] pin the analog pin to attach the sensor to.
      */
-    explicit SharpIrGP2Y0A41(gpio::Analog::Pin pin);
+    SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin);
 
     ///< Init not needed for Sharp IR.
     void init() override {}
