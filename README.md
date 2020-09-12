@@ -33,9 +33,11 @@ The recommended way to develop is with our pre-built development Docker containe
 2. [Install Visual Studio Code](https://code.visualstudio.com/).
 3. [Install git](https://git-scm.com/).
 4. Open Visual Studio Code.
-5. Clone this repo. You can go to the "source control" tab on the right of the editor and choose
+5. Clone this repo. You can go to the "source control" tab on the left of the editor and choose
    "Clone Repository". When asked, enter `https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020.git`
-   as the source URL. Pick a reasonable location to clone the repo into.
+   as the source URL. Pick a reasonable location to clone the repo into. Make sure you have your gitlab credentials ready when you clone your repo.
+   
+   If you don't enter them correctly the first time that's okay - If you're on windows open the **Credential Manager** app and go to **Windows Credentials**. Then correct your git credentials stored under `git:https://gitlab.com` before trying to clone again.
 
    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/1e1f271fbda7085856d57e85491eae91/image.png" width="500px">
 
