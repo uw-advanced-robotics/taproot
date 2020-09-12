@@ -1,6 +1,12 @@
-# mcb-2019-2020
+# aruw-mcb
 
-All ARUW's MCB code for the RoboMaster competition. We use:
+ARUW's "Main Control Board" (MCB) code for the RoboMaster competition.
+
+The MCB is a [RoboMaster Development Board Type A](https://store.dji.com/product/rm-development-board-type-a)
+which directly operates all major systems on our robots. Among these are drive, turret, launcher
+wheels, and human input.
+
+Software we use:
 - `modm`, a C++-native HAL
 - the gcc compiler
 - openocd to deploy and debug
@@ -63,27 +69,30 @@ type "Focus Next Terminal", and press <kbd>Enter</kbd>. In this terminal, type `
 press <kbd>Enter</kbd>. After building our code, it should run the tests and print a message
 indicating that all tests passed.
 
-## Optional: prevent Docker Desktop from running on startup
+### Optional: prevent Docker Desktop from running on startup
 
 By default, Docker will likely be configured to run on startup. Your mileage may vary, but this may
 be frustrating. If so, you can disable it! Open the Docker Desktop settings, which on Windows can be
 accessed via the Docker icon in the system tray:
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3aaec4ca0336a4b81f1a5d573a18d05f/image.png" width="500px">
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3aaec4ca0336a4b81f1a5d573a18d05f/image.png" width="250px">
+
 
 The "General" tab has a checkbox for disabling auto-start.
 
 <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/4b18706432e7d51c8a4d98b00462b399/image.png" width="500px">
+
 
 In the future, if you attempt to load the repository within the dev container and haven't manually
 started Docker, you will get the following error:
 
 <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3b03894ff5bc441c8273becfbf4980c6/image.png" width="500px">
 
+
 In this case, you can launch Docker manually and hit "Retry". On Windows, Docker Desktop can be
 started by searching for "docker" in the Start menu.
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/64e97a4ff076f79069ae4d8f670e19bd/image.png" width="500px">
+<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/64e97a4ff076f79069ae4d8f670e19bd/image.png" width="300px">
 
 **We also recommend you _stop_ Docker when you're done! This can be done on Windows via the same
 icon in the system tray. This will help preserve battery life and RAM.**
@@ -95,27 +104,21 @@ to set up your system manually on a Windows or Ubuntu Linux machine. This should
 if you are unable to use the Docker container provided above and is not recommended because of the
 complexity of setting up the environment correctly and because not all features are supported.
 
-# Workflow guide
+## Workflow guide
 
-## Branch naming conventions
+### Branch naming conventions
 
 - When you create a new branch, always branch off of `develop` (not `master`)
 - Names should follow the format `FirstL/{Issue Number}/short-description`
 - Example: `RyanT/0/linter-integration`
 
-## What is modm?
-
-We use an embedded library generator called modm in our codebase. It will eventually be important that you understand what how modm works. For now you can just think about it as handling lower level IO on our MCB. You should read [modm's homepage](https://modm.io/) so you have a general idea of what it does.
-
-## Modm examples
-
-The modm website provides a great number of examples that can be very useful when interacting with modm's hardware architecture layer for the first time. The examples are located on modm's website [here](https://modm.io/#examples).
-
-## Getting around VSCode
+### Getting around VSCode
 
 Microsoft provides a [helpful website](https://code.visualstudio.com/docs/getstarted/tips-and-tricks) that has a number of helpful shortcuts for getting around VSCode. There are many shortcuts that make programming faster. It is much appreciated when someone asks for help and can quickly navigate through the codebase while we work through a code bug.
 
-## How to build code and program the MCB
+### How to build code and program the MCB
+
+_If you would like to use the terminal instead, see the section "Building and running via the terminal" below._
 
 1. Make sure you have VSCode opened in the folder `mcb-2019-2020` (**not `mcb-2019-2020-project`**)
 2. Connect an ST-Link to the MCB and your computer.
@@ -124,69 +127,64 @@ Microsoft provides a [helpful website](https://code.visualstudio.com/docs/getsta
 <br><br>
     <img src=https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/08a6f537b097a6a0930688b8ac1f67a3/vscode-build-image.png height="200px" />
 
-## How to debug using an ST-Link
+### How to debug using an ST-Link
 
 1. Open the folder `mcb-2019-2020` in VSCode. Hit the debug tab on the left side or type <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>D</kbd>.
 2. Hit the green play arrow on the left top of the screen.
 3. See [this page](https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/-/wikis/Software-Tools/Debugging-With-STLink) for more information about using the ST-Link for programming the MCB and debugging.
-
 <br>
-
 <img src=https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/696c468a1b7fe346822984ba4fae1f56/vscode-debug-img.png height="400px" />
 
-## How to debug using a J-Link
+### How to debug using a J-Link
 
 See the [wiki](https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/-/wikis/Software-Tools/Debugging-With-JLink) for an explanation on the difference between an ST-Link and J-Link and a step-by-step procedure on how to use the J-Link.
 
-## How to select robot type
+### How to select robot type
 
 With the root directory opened in VSCode, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>. Type "ARUW: Select Robot Type" and hit enter. A dropdown menu should appear. Select the robot type from the dropdown.
 
-## Advanced techniques: working with modm modules and lbuild
+## Working with modm
 
-Below are steps which explain how to add additional modm modules to the modm directory in the mcb-2019-2020-project directory.
+### What is modm?
 
-1. Open `mcb-2019-2020/mcb-2019-2020-project/project.xml`.
-2. Here you will see a list of items that take the following form: `<module>modm<module name></module>`.
-3. To add a particular module, first find the module the folder presides in in the modm submodule (you can find the module in the path `modm/src/modm`).
-4. Here you should find a `module.lb` file. In the file search for `def init`. For example, if I wanted to add the gpio module, I would find the `module.lb` file with the path `modm\src\modm\platform\gpio\stm32\module.lb`, then find the `init` function, where I would find the following:
+We use an embedded library generator called modm in our codebase. It will eventually be important that you understand what how modm works. For now you can just think about it as handling lower level IO on our MCB. You should read [modm's homepage](https://modm.io/) so you have a general idea of what it does.
 
-    ```python
-    def init(module):
-        module.name = ":platform:gpio"
-        module.description = "General Purpose I/O (GPIO)"
-    ```
+### Modm examples
 
-5. I now have the necessary information to add the module correctly. In my example, the module name is `:platform:gpio`, so I would add to the `project.xml` the following: `<module>modm:platform:gpio</module>`.
-6. Run the `Setup Build` task in VSCode, or `lbuild build` in anaconda (with modm activated).
+The modm website provides a great number of examples that can be very useful when interacting with modm's hardware architecture layer for the first time. The examples are located on modm's website [here](https://modm.io/#examples).
 
-## How to modify modm to run tests on a local machine for Linux
+### Adding new dependencies on modm modules (advanced)
 
-Currently, the modm build that runs locally is set up for windows. To modify this to run on Linux, do the following:
-- In a terminal, navigate to `mcb-2019-2020/mcb-2019-2020-project/sim-modm`.
-- Open `project.xml` in VSCode (in the terminal, type `code project.xml`).
-- You will find the below two lines. Remove the comment around the "hosted-linux" target (`<!-- -->`), and comment out the "hosted-windows" target.
-    ```xml
-    <option name="modm:target">hosted-windows</option>
-    <!-- <option name="modm:target">hosted-linux</option> -->
-    ```
-- Type `lbuild build` in the terminal you have open.
-- `cd ..` and type `scons run-tests` to insure the updates have succeeded.
+Look up the fully-qualified name of the module from the [modm website](https://modm.io/reference/module/modm-architecture/).
+The name will look like `:platform:gpio`. Open `mcb-2019-2020-project/project.xml` and add an entry to the dependencies section like the following:
 
-# Useful commands for running lbuild and scons
+```xml
+<module>modm:platform:gpio</module>
+```
 
-For these commands to work properly, your anaconda prompt must be in the `mcb-2019-2020/mcb-2019-2020-project` directory (where the `SConstruct` and `project.xml` files are) and you must have modm activated (`activate modm` on anaconda prompt).
+Now open the terminal and run `lbuild build`.
 
-- `lbuild build` references the project.xml file to construct files specified in the .xml file from the modm directory.
+# Building and running via the terminal
 
-- `scons build` builds the program. Creates a "release" folder located in the build folder which contains the `.elf` file and the compiled `.o` files.
+The below commands require that your working directory is `aruw-mcb/mcb-2019-2020-project` (where the `SConstruct` and `project.xml` files are).
 
-- `scons build-tests` builds the unit testing program. As opposed to building to deploy on the mcb, this builds an executable which can be ran on your computer.
+- `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`. Note that there is a _separate_ instance used for the unit tests, which can be build by runnint the same command from within the `sim-modm` subdirectory.
+- `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder located in `build/hardware/` which contains the final `.elf` file as well as the intermediate object files (`.o`).
+- `scons build-tests`: Builds a program which hosts our unit tests. This executable can be run on your host computer (only supported on Linux) and prints results for each unit test run.
+- `scons program`: Builds as with `scons build` and then programs the board.
+- `scons run-tests`: Builds and runs the unit test program.
+- `scons size`: Prints statistics on program size and (satically-)allocated memory. Note that the reported available heap space is an upper bound, and this tool has no way of knowing about the real size of dynamic allocations.
 
-- `scons build profile=debug` builds the program for a debug configuration. Doing this creates a folder labeled "debug" located in the build folder.
+Note that all `scons` commands have optional `profile` and `target` options; the former controls whether performance and size optimizations are applied to the output, and the latter specifies which robot to build for. The default is to build in release mode for the Soldier.
 
-- `scons program` builds and programs the board, using the release configuration.
-
-- `scons build-tests` builds and runs the unit test program.
-
-- `scons program profile=debug` builds and programs the board, using debug build configuration.
+```
+Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>]
+    "<target>" is one of:
+        - "build": build all code for the hardware platform.
+        - "run": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.
+        - "build-tests": build core code and tests for the current host platform.
+        - "run-tests": build core code and tests for the current host platform, and execute them locally with the test runner.
+    "TARGET_<ROBOT_TYPE>" is an optional argument that can override whatever robot type has been specified in robot_type.hpp.
+        - <ROBOT_TYPE> must be one of the following:
+            - SOLDIER, OLD_SOLDIER, DRONE, ENGINEER, SENTINEL, HERO:
+```
