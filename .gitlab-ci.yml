@@ -23,7 +23,7 @@ before_script:
 
 clang-format:
   script:
-    - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r mcb-2019-2020-project/src/ mcb-2019-2020-project/test/
+    - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r aruw-mcb-project/src/ aruw-mcb-project/test/
   only:
   - merge_requests
   - master
@@ -37,26 +37,26 @@ Weekly Build:
     ARTIFACT_PATH: isolated-deploy
     GIT_SUBMODULE_STRATEGY: recursive
   script:
-    - cd mcb-2019-2020-project
+    - cd aruw-mcb-project
     - rm -r modm && lbuild build
     # soldier
     - /usr/bin/env python3 $(which scons) build robot=TARGET_SOLDIER -j2 additional-ccflags=-Werror # Build the robot code
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_soldier.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_soldier.elf
     # old soldier
     - /usr/bin/env python3 $(which scons) build robot=TARGET_OLD_SOLDIER -j2 additional-ccflags=-Werror
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_old_soldier.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_old_soldier.elf
     # drone
     - /usr/bin/env python3 $(which scons) build robot=TARGET_DRONE -j2 additional-ccflags=-Werror
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_drone.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_drone.elf
     # hero
     - /usr/bin/env python3 $(which scons) build robot=TARGET_HERO -j2 additional-ccflags=-Werror
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_hero.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_hero.elf
     # sentinel
     - /usr/bin/env python3 $(which scons) build robot=TARGET_SENTINEL -j2 additional-ccflags=-Werror
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_sentinel.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_sentinel.elf
     # engineer
     - /usr/bin/env python3 $(which scons) build robot=TARGET_ENGINEER -j2 additional-ccflags=-Werror
-    - cp build/hardware/release/mcb-2019-2020.elf ../$ARTIFACT_PATH/mcb_engineer.elf
+    - cp build/hardware/release/aruw-mcb.elf ../$ARTIFACT_PATH/mcb_engineer.elf
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-build"
     paths:
@@ -68,7 +68,7 @@ Weekly Build:
 # Only build the soldier target while doing merge verifications to save time
 Verification Build:
   script:
-    - cd mcb-2019-2020-project
+    - cd aruw-mcb-project
     - rm -r modm # Because lbuild clean is broken
     - lbuild build # Make sure that modm is setup for linux.
     - /usr/bin/env python3 $(which scons) build robot=TARGET_SOLDIER -j2 additional-ccflags=-Werror # Build the robot code!
@@ -84,7 +84,7 @@ Verification Build:
 
 Policy Checks:
   script:
-    - /usr/local/bin/python3 ./scripts/check_singleton_drivers.py ./mcb-2019-2020-project/src/ 
+    - /usr/local/bin/python3 ./scripts/check_singleton_drivers.py ./aruw-mcb-project/src/ 
   variables:
     GIT_SUBMODULE_STRATEGY: none
   only:

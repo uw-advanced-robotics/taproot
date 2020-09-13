@@ -74,18 +74,18 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "${workspaceRoot}",
-        "./mcb-2019-2020-project/modm/src",
-        "./mcb-2019-2020-project/modm/ext/cmsis/core",
-        "./mcb-2019-2020-project/modm/ext/cmsis/device",
-        "./mcb-2019-2020-project/src",
-        "./mcb-2019-2020-project/test",
+        "./aruw-mcb-project/modm/src",
+        "./aruw-mcb-project/modm/ext/cmsis/core",
+        "./aruw-mcb-project/modm/ext/cmsis/device",
+        "./aruw-mcb-project/src",
+        "./aruw-mcb-project/test",
         "/usr/local/include"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.default.intelliSenseMode": "gcc-x64",
     "C_Cpp.default.forcedInclude": [
-        "./mcb-2019-2020-project/robot-type/robot_type.hpp"
+        "./aruw-mcb/robot-type/robot_type.hpp"
     ],
     "[markdown]": {
         "editor.wordWrap": "off",

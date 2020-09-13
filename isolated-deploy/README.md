@@ -7,13 +7,13 @@
     - In your Start menu, search for "environment" and select "Edit the system environment variables."
 
     - In the "User variables for _{your username here}_", where _{your username here}_ is a placeholder for your actual name. Double click on "Path."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/49592ade19d3a60bb0377d1ae54fd3e6/EnvironmentVarsMain.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/49592ade19d3a60bb0377d1ae54fd3e6/EnvironmentVarsMain.jpg" height="500px">
 
     - In "Edit environment variable," click "New."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/8979edf979083ace722dba00883ad153/EnvironmentVarsPathVar.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/8979edf979083ace722dba00883ad153/EnvironmentVarsPathVar.jpg" height="500px">
 
     - Add the absolute path of the `/bin` directory of OpenOCD to the box that shows up after you click "New."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/171f2c159ee4a765680aa7222627a7ec/EnvironmentVarsPathAddition.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/171f2c159ee4a765680aa7222627a7ec/EnvironmentVarsPathAddition.jpg" height="500px">
 
     - Select "OK".
 - Download the ST-Link V-2 driver [here](https://drive.google.com/drive/u/1/folders/1Ndk8Q-uUtzo3sQtzOoguDAVBZSM3IKT1), unzip, and run the executable to install the driver.
@@ -30,4 +30,4 @@
 
 ## Creating an elf file
 
-To get a `.elf` file, you must build the codebase. Refer to [the main repo](#how-to-build-code-and-program-the-mcb) if you are confused about how to build. If you don't have the build environment set up but need a new build, ask on slack for someone to send you a `.elf` file. If you do have the environment but want to deploy using this technique, once you have a build, find the file in the build directory `build/hardware/<debug/hardware>/mcb-2019-2020.elf`. This is the `.elf` file you will want to use while deploying to the MCB.
+To get a `.elf` file, you must build the codebase. Refer to [the main repo](#how-to-build-code-and-program-the-mcb) if you are confused about how to build. If you don't have the build environment set up but need a new build, ask on slack for someone to send you a `.elf` file. If you do have the environment but want to deploy using this technique, once you have a build, find the file in the build directory `build/hardware/<debug/hardware>/aruw-mcb.elf`. This is the `.elf` file you will want to use while deploying to the MCB.

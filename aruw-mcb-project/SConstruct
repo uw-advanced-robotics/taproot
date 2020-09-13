@@ -2,7 +2,7 @@ import os
 from os.path import join, abspath
 
 # User Configurable Options
-project_name = "mcb-2019-2020"
+project_name = "aruw-mcb"
 build_path = "build"
 hardware_modm_path = "modm/"
 sim_modm_path = "sim-modm/modm/"
