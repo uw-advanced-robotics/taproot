@@ -25,7 +25,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -44,7 +44,7 @@
             },
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -60,7 +60,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -76,7 +76,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -92,7 +92,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -108,7 +108,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -124,7 +124,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         },
         {
@@ -140,7 +140,7 @@
             "group": "none",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/mcb-2019-2020-project"
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
         }
     ]

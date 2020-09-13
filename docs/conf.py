@@ -84,7 +84,7 @@ exhale_args = {
     # TIP: if using the sphinx-bootstrap-theme, you need
     # "treeViewIsBootstrap": True,
     "exhaleExecutesDoxygen": True,
-    "exhaleDoxygenStdin":    "INPUT = ../mcb-2019-2020-project/src"
+    "exhaleDoxygenStdin":    "INPUT = ../aruw-mcb-project/src"
 }
 
 # Tell sphinx what the primary language being documented is.

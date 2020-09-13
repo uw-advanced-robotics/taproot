@@ -40,16 +40,16 @@ The recommended way to develop is with our pre-built development Docker containe
 3. [Install git](https://git-scm.com/).
 4. Open Visual Studio Code.
 5. Clone this repo. You can go to the "source control" tab on the left of the editor and choose
-   "Clone Repository". When asked, enter `https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020.git`
+   "Clone Repository". When asked, enter `https://gitlab.com/aruw/controls/aruw-mcb.git`
    as the source URL. Pick a reasonable location to clone the repo into. Make sure you have your gitlab credentials ready when you clone your repo.
    
    If you don't enter them correctly the first time that's okay - If you're on windows open the **Credential Manager** app and go to **Windows Credentials**. Then correct your git credentials stored under `git:https://gitlab.com` before trying to clone again.
 
-   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/1e1f271fbda7085856d57e85491eae91/image.png" width="500px">
+   <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/d285d45f017f9f714e9f623a32a93de4/image.png" width="500px">
 
 6. Once it opens the new folder, an alert will appear with suggested extensions. Click "Install All".
 
-   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/edb88ab3074a99d5eed1a4b2a50b2e53/image.png" width="500px">
+   <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/69c6df320da651b9674446bc9e93b704/image.png" width="500px">
 
 7. vscode will now prompt you to open the development container. Choose "Reopen in Container". This
    step may take a few minutes (or more!); it will download around 500 MB (2GB once uncompressed) of
@@ -58,7 +58,7 @@ The recommended way to develop is with our pre-built development Docker containe
    _Heads-up:_ If you don't see the dialog, or it goes away, you can press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>
    and type "Reload Window" plus <kbd>Enter</kbd> to reload vscode.
 
-   <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/198095587078b88d67ac674839cf4ad7/image.png" width="500px">
+   <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/5a72cd1f6b827719bfa1c73f64b77b32/image.png" width="500px">
 
    vscode is now attached to a "container", which includes all the tools
    necessary to develop in this repo! In the future, you will always want to open
@@ -75,24 +75,24 @@ By default, Docker will likely be configured to run on startup. Your mileage may
 be frustrating. If so, you can disable it! Open the Docker Desktop settings, which on Windows can be
 accessed via the Docker icon in the system tray:
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3aaec4ca0336a4b81f1a5d573a18d05f/image.png" width="250px">
+<img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/851f134487d0743bb857c67c4adbbc43/image.png" width="250px">
 
 
 The "General" tab has a checkbox for disabling auto-start.
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/4b18706432e7d51c8a4d98b00462b399/image.png" width="500px">
+<img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/3f62cd700d1f47632df92d3c96accffd/image.png" width="500px">
 
 
 In the future, if you attempt to load the repository within the dev container and haven't manually
 started Docker, you will get the following error:
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/3b03894ff5bc441c8273becfbf4980c6/image.png" width="500px">
+<img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/7e0672866e62f550c9f91b44d021e40b/image.png" width="500px">
 
 
 In this case, you can launch Docker manually and hit "Retry". On Windows, Docker Desktop can be
 started by searching for "docker" in the Start menu.
 
-<img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb-2019-2020/uploads/64e97a4ff076f79069ae4d8f670e19bd/image.png" width="300px">
+<img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/00f31defc4d7855b40777816a4962f12/image.png" width="300px">
 
 **We also recommend you _stop_ Docker when you're done! This can be done on Windows via the same
 icon in the system tray. This will help preserve battery life and RAM.**
@@ -120,24 +120,24 @@ Microsoft provides a [helpful website](https://code.visualstudio.com/docs/getsta
 
 _If you would like to use the terminal instead, see the section "Building and running via the terminal" below._
 
-1. Make sure you have VSCode opened in the folder `mcb-2019-2020` (**not `mcb-2019-2020-project`**)
+1. Make sure you have VSCode opened in the folder `aruw-mcb` (**not `aruw-mcb-project`**)
 2. Connect an ST-Link to the MCB and your computer.
 3. In VSCode, open the Command Palette (<kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>P</kbd>)
 4. Find `Tasks: Run Task`. You should see the options below
 <br><br>
-    <img src=https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/08a6f537b097a6a0930688b8ac1f67a3/vscode-build-image.png height="200px" />
+    <img src=https://gitlab.com/aruw/controls/aruw-mcb/uploads/2ffb02c86387916c2c49ac3548151b38/image.png height="200px" />
 
 ### How to debug using an ST-Link
 
-1. Open the folder `mcb-2019-2020` in VSCode. Hit the debug tab on the left side or type <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>D</kbd>.
+1. Open the folder `aruw-mcb` in VSCode. Hit the debug tab on the left side or type <kbd>Ctrl</kbd>+<kbd>shift</kbd>+<kbd>D</kbd>.
 2. Hit the green play arrow on the left top of the screen.
-3. See [this page](https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/-/wikis/Software-Tools/Debugging-With-STLink) for more information about using the ST-Link for programming the MCB and debugging.
+3. See [this page](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/Software-Tools/Debugging-With-STLink) for more information about using the ST-Link for programming the MCB and debugging.
 <br>
-<img src=https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/uploads/696c468a1b7fe346822984ba4fae1f56/vscode-debug-img.png height="400px" />
+<img src=https://gitlab.com/aruw/controls/aruw-mcb/uploads/1f62ea310a20ee76092fe18de83d14a7/image.png height="400px" />
 
 ### How to debug using a J-Link
 
-See the [wiki](https://gitlab.com/aruw/code-2019-2020/mcb-2019-2020/-/wikis/Software-Tools/Debugging-With-JLink) for an explanation on the difference between an ST-Link and J-Link and a step-by-step procedure on how to use the J-Link.
+See the [wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/Software-Tools/Debugging-With-JLink) for an explanation on the difference between an ST-Link and J-Link and a step-by-step procedure on how to use the J-Link.
 
 ### How to select robot type
 
@@ -156,7 +156,7 @@ The modm website provides a great number of examples that can be very useful whe
 ### Adding new dependencies on modm modules (advanced)
 
 Look up the fully-qualified name of the module from the [modm website](https://modm.io/reference/module/modm-architecture/).
-The name will look like `:platform:gpio`. Open `mcb-2019-2020-project/project.xml` and add an entry to the dependencies section like the following:
+The name will look like `:platform:gpio`. Open `aruw-mcb-project/project.xml` and add an entry to the dependencies section like the following:
 
 ```xml
 <module>modm:platform:gpio</module>
@@ -166,7 +166,7 @@ Now open the terminal and run `lbuild build`.
 
 # Building and running via the terminal
 
-The below commands require that your working directory is `aruw-mcb/mcb-2019-2020-project` (where the `SConstruct` and `project.xml` files are).
+The below commands require that your working directory is `aruw-mcb/aruw-mcb-project` (where the `SConstruct` and `project.xml` files are).
 
 - `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`. Note that there is a _separate_ instance used for the unit tests, which can be build by runnint the same command from within the `sim-modm` subdirectory.
 - `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder located in `build/hardware/` which contains the final `.elf` file as well as the intermediate object files (`.o`).
