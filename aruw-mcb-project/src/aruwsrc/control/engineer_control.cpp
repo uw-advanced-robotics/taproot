@@ -62,13 +62,13 @@ void registerEngineerSubsystems(aruwlib::Drivers *drivers)
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultEngineerCommands(aruwlib::Drivers *drivers) {}
+void setDefaultEngineerCommands(aruwlib::Drivers *) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startEngineerCommands(aruwlib::Drivers *drivers) {}
+void startEngineerCommands(aruwlib::Drivers *) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerEngineerIoMappings(aruwlib::Drivers *drivers) {}
+void registerEngineerIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
