@@ -40,16 +40,16 @@ namespace control
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerDroneSubsystems(aruwlib::Drivers *drivers) {}
+void registerDroneSubsystems(aruwlib::Drivers *) {}
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultDroneCommands(aruwlib::Drivers *drivers) {}
+void setDefaultDroneCommands(aruwlib::Drivers *) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startDroneCommands(aruwlib::Drivers *drivers) {}
+void startDroneCommands(aruwlib::Drivers *) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerDroneIoMappings(aruwlib::Drivers *drivers) {}
+void registerDroneIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {

@@ -103,7 +103,7 @@ void registerOldSoldierSubsystems(aruwlib::Drivers *drivers)
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultOldSoldierCommands(aruwlib::Drivers *drivers)
+void setDefaultOldSoldierCommands(aruwlib::Drivers *)
 {
     chassis.setDefaultCommand(&chassisDriveCommand);
     turret.setDefaultCommand(&turretWorldRelativeCommand);

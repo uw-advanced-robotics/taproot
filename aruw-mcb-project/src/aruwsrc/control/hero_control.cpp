@@ -40,16 +40,16 @@ namespace control
 /* define commands ----------------------------------------------------------*/
 
 /* register subsystems here -------------------------------------------------*/
-void registerHeroSubsystems(aruwlib::Drivers *drivers) {}
+void registerHeroSubsystems(aruwlib::Drivers *) {}
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultHeroCommands(aruwlib::Drivers *drivers) {}
+void setDefaultHeroCommands(aruwlib::Drivers *) {}
 
 /* add any starting commands to the scheduler here --------------------------*/
-void startHeroCommands(aruwlib::Drivers *drivers) {}
+void startHeroCommands(aruwlib::Drivers *) {}
 
 /* register io mappings here ------------------------------------------------*/
-void registerHeroIoMappings(aruwlib::Drivers *drivers) {}
+void registerHeroIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {

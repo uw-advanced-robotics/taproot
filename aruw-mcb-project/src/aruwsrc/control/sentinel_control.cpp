@@ -124,7 +124,7 @@ void registerSentinelSubsystems(aruwlib::Drivers *drivers)
 }
 
 /* set any default commands to subsystems here ------------------------------*/
-void setDefaultSentinelCommands(aruwlib::Drivers *drivers)
+void setDefaultSentinelCommands(aruwlib::Drivers *)
 {
     sentinelDrive.setDefaultCommand(&sentinelDriveManual);
     upperFrictionWheels.setDefaultCommand(&spinUpperFrictionWheels);
