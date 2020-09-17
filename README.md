@@ -12,9 +12,19 @@ Software we use:
 - openocd to deploy and debug
 - VSCode, an editor
 
-[[_TOC_]]
+__In addition to this readme, check out 
+[the wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/home) and
+[generated documentation](https://aruw.gitlab.io/controls/aruw-mcb/)!__
 
-# Licensing
+## !!! Important notice for RoboMaster 2020 Robotics Competition Open Source Technical Challenge !!!
+
+If you are here to evaulate our submission check [the wiki](https://github.com/uw-advanced-robotics/aruw-mcb/wiki).
+
+## Contacting
+
+If you have any questions please contact us at robomstr@uw.edu.
+
+## Licensing
 
 aruw-mcb is covered under the GPL-3.0-or-later with the following exceptions:
 - `/modm` and `/aruw-mcb-project/modm` are licensed under MPL 2.0 by the modm project. We _are not_
@@ -24,7 +34,7 @@ aruw-mcb is covered under the GPL-3.0-or-later with the following exceptions:
   Madgwick. The repo containing this code can be found
   [here](https://github.com/uw-advanced-robotics/MahonyAHRS).
 
-# New user guide
+## New user guide
 
 The recommended way to develop is with our pre-built development Docker container.
 
@@ -164,7 +174,7 @@ The name will look like `:platform:gpio`. Open `aruw-mcb-project/project.xml` an
 
 Now open the terminal and run `lbuild build`.
 
-# Building and running via the terminal
+## Building and running via the terminal
 
 The below commands require that your working directory is `aruw-mcb/aruw-mcb-project` (where the `SConstruct` and `project.xml` files are).
 
