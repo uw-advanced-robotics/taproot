@@ -13,12 +13,12 @@ Software we use:
 - VSCode, an editor
 
 __In addition to this readme, check out 
-[the wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/home) and
+[our GitLab wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/home) and
 [generated documentation](https://aruw.gitlab.io/controls/aruw-mcb/)!__
 
 ## !!! Important notice for RoboMaster 2020 Robotics Competition Open Source Technical Challenge !!!
 
-If you are here to evaulate our submission check [the wiki](https://github.com/uw-advanced-robotics/aruw-mcb/wiki).
+If you are here to evaulate our submission check [our **GitHub** wiki](https://github.com/uw-advanced-robotics/aruw-mcb/wiki).
 
 ## Contacting
 
