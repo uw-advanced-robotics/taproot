@@ -183,11 +183,6 @@ void CommandScheduler::registerSubsystem(Subsystem* subsystem)
 {
     if (subsystem != nullptr && !isSubsystemRegistered(subsystem))
     {
-        // Only initialize the subsystem when adding to main scheduler.
-        if (this == &drivers->commandScheduler)
-        {
-            subsystem->initialize();
-        }
         subsystemToCommandMap[subsystem] = nullptr;
     }
     else

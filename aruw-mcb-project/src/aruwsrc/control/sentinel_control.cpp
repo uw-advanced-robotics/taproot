@@ -113,6 +113,16 @@ FrictionWheelRotateCommand stopUpperFrictionWheels(&upperFrictionWheels, 0);
 
 FrictionWheelRotateCommand stopLowerFrictionWheels(&lowerFrictionWheels, 0);
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems()
+{
+    agitator.initialize();
+    kickerMotor.initialize();
+    sentinelDrive.initialize();
+    upperFrictionWheels.initialize();
+    lowerFrictionWheels.initialize();
+}
+
 /* register subsystems here -------------------------------------------------*/
 void registerSentinelSubsystems(aruwlib::Drivers *drivers)
 {
@@ -164,6 +174,7 @@ void registerSentinelIoMappings(aruwlib::Drivers *drivers)
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerSentinelSubsystems(drivers);
     setDefaultSentinelCommands(drivers);
     startSentinelCommands(drivers);

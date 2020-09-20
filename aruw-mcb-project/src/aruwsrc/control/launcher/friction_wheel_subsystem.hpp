@@ -48,6 +48,8 @@ public:
     {
     }
 
+    void initialize() override;
+
     mockable void setDesiredRpm(float desRpm);
 
     void refresh() override;

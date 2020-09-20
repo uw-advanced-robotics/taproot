@@ -258,6 +258,8 @@ public:
     {
     }
 
+    void initialize() override;
+
     void setDesiredOutput(float x, float y, float r);
 
     /**

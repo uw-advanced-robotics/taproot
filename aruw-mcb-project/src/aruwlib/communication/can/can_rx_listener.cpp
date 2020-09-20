@@ -30,8 +30,9 @@ CanRxListener::CanRxListener(Drivers *drivers, uint32_t id, CanBus cB)
       canBus(cB),
       drivers(drivers)
 {
-    drivers->canRxHandler.attachReceiveHandler(this);
 }
+
+void CanRxListener::attachSelfToRxHandler() { drivers->canRxHandler.attachReceiveHandler(this); }
 
 CanRxListener::~CanRxListener() { drivers->canRxHandler.removeReceiveHandler(*this); }
 }  // namespace can

@@ -63,6 +63,8 @@ public:
 
     ~DjiMotor();
 
+    void initialize();
+
     // Data structure for storing encoder values. DjiMotor class may call
     // update(), which increments or decrements encoder revolutions and
     // sets the current wrapped encoder value to the updated input.

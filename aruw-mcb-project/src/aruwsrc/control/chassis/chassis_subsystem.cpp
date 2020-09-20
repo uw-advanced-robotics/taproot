@@ -33,6 +33,14 @@ namespace aruwsrc
 {
 namespace chassis
 {
+void ChassisSubsystem::initialize()
+{
+    leftBackMotor.initialize();
+    leftFrontMotor.initialize();
+    rightBackMotor.initialize();
+    rightFrontMotor.initialize();
+}
+
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r)
 {
     mecanumDriveCalculate(x, y, r, MAX_WHEEL_SPEED_SINGLE_MOTOR);

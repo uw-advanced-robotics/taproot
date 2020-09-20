@@ -37,6 +37,8 @@ void SentinelDriveSubsystem::initialize()
     drivers->digital.configureInputPullMode(
         rightLimitSwitch,
         aruwlib::gpio::Digital::InputPullMode::PullDown);
+    leftWheel.initialize();
+    rightWheel.initialize();
 }
 
 void SentinelDriveSubsystem::setDesiredRpm(float desRpm) { desiredRpm = desRpm; }

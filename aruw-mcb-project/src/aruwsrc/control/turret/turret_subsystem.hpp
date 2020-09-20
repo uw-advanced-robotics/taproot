@@ -41,6 +41,8 @@ public:
 
     TurretSubsystem(aruwlib::Drivers* drivers);
 
+    void initialize() override;
+
     void refresh() override;
 
     bool isTurretOnline() const;

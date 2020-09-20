@@ -62,6 +62,8 @@ AgitatorSubsystem::AgitatorSubsystem(
     agitatorJammedTimeout.stop();
 }
 
+void AgitatorSubsystem::initialize() { agitatorMotor.initialize(); }
+
 void AgitatorSubsystem::armAgitatorUnjamTimer(const uint32_t& predictedRotateTime)
 {
     if (predictedRotateTime == 0)
