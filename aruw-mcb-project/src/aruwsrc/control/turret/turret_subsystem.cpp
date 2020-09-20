@@ -47,6 +47,12 @@ TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers)
 {
 }
 
+void TurretSubsystem::initialize()
+{
+    yawMotor.initialize();
+    pitchMotor.initialize();
+}
+
 float TurretSubsystem::getYawAngleFromCenter() const
 {
     aruwlib::algorithms::ContiguousFloat yawAngleFromCenter(

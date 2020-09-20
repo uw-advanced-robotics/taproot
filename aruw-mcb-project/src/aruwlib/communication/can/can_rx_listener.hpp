@@ -39,6 +39,9 @@ namespace can
  * function will be called in `can_rx_handler`'s processReceivedCanData.
  * Additionally, you must call `initialize`.
  *
+ * @attention It is critical that you call `attachSelfToRxHandler`, otherwise
+ *      the rx listener will not receive data from the rx handler.
+ *
  * Below is a barebones example implementation of a `CanRxListener`.
  *
  * ```
@@ -61,6 +64,7 @@ namespace can
  *
  * ```
  * CanWatcher cw;
+ * cw.attachSelfToRxHandler();
  *
  * int main(int argv, char **argc)
  * {
@@ -79,8 +83,7 @@ class CanRxListener
 public:
     /**
      * Construct a new CanRxListener, must specify the can identifier
-     * and the can bus the receive handler will be watching. In doing so,
-     * adds itself to the CanRxHandler.
+     * and the can bus the receive handler will be watching.
      *
      * @param[in] id the message identifier to be associated with this
      *      rx listener.
@@ -96,6 +99,11 @@ public:
 
     ///< Here we remove the listener from receive interface.
     ~CanRxListener();
+
+    /**
+     * Adds itself to the CanRxHandler.
+     */
+    void attachSelfToRxHandler();
 
     /**
      * Called when a message is received with the particular id and

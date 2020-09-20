@@ -26,6 +26,12 @@ namespace control
 const aruwlib::motor::MotorId ExampleSubsystem::LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
 const aruwlib::motor::MotorId ExampleSubsystem::RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;
 
+void ExampleSubsystem::initialize()
+{
+    leftWheel.initialize();
+    rightWheel.initialize();
+}
+
 void ExampleSubsystem::setDesiredRpm(float desRpm) { desiredRpm = desRpm; }
 
 void ExampleSubsystem::refresh()

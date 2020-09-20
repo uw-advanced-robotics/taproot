@@ -39,6 +39,9 @@ namespace control
 
 /* define commands ----------------------------------------------------------*/
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems() {}
+
 /* register subsystems here -------------------------------------------------*/
 void registerDroneSubsystems(aruwlib::Drivers *) {}
 
@@ -53,6 +56,7 @@ void registerDroneIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerDroneSubsystems(drivers);
     setDefaultDroneCommands(drivers);
     startDroneCommands(drivers);

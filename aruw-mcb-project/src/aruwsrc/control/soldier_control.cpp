@@ -116,6 +116,16 @@ void registerSoldierSubsystems(aruwlib::Drivers *drivers)
     drivers->commandScheduler.registerSubsystem(&frictionWheels);
 }
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems()
+{
+    turret.initialize();
+    chassis.initialize();
+    agitator.initialize();
+    frictionWheels.initialize();
+    hopperCover.initialize();
+}
+
 /* set any default commands to subsystems here ------------------------------*/
 void setDefaultSoldierCommands(aruwlib::Drivers *)
 {
@@ -162,6 +172,7 @@ void registerSoldierIoMappings(aruwlib::Drivers *drivers)
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerSoldierSubsystems(drivers);
     setDefaultSoldierCommands(drivers);
     startSoldierCommands(drivers);

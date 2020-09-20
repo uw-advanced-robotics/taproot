@@ -93,6 +93,15 @@ ShootFastComprisedCommand agitatorShootFastCommand(drivers(), &agitator);
 
 OpenHopperCommand openHopperCommand(&hopperCover);
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems()
+{
+    turret.initialize();
+    chassis.initialize();
+    agitator.initialize();
+    hopperCover.initialize();
+}
+
 /* register subsystems here -------------------------------------------------*/
 void registerOldSoldierSubsystems(aruwlib::Drivers *drivers)
 {
@@ -141,6 +150,7 @@ void registerOldSoldierIoMappings(aruwlib::Drivers *drivers)
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerOldSoldierSubsystems(drivers);
     setDefaultOldSoldierCommands(drivers);
     startOldSoldierCommands(drivers);

@@ -39,6 +39,9 @@ namespace control
 
 /* define commands ----------------------------------------------------------*/
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems() {}
+
 /* register subsystems here -------------------------------------------------*/
 void registerHeroSubsystems(aruwlib::Drivers *) {}
 
@@ -53,6 +56,7 @@ void registerHeroIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerHeroSubsystems(drivers);
     setDefaultHeroCommands(drivers);
     startHeroCommands(drivers);

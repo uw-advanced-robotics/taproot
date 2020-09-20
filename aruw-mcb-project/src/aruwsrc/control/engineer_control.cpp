@@ -54,6 +54,9 @@ XAxisSubsystem xAxis(drivers(), xAxisPin);
 
 /* define commands ----------------------------------------------------------*/
 
+/* initialize subsystems ----------------------------------------------------*/
+void initializeSubsystems() {}
+
 /* register subsystems here -------------------------------------------------*/
 void registerEngineerSubsystems(aruwlib::Drivers *drivers)
 {
@@ -72,6 +75,7 @@ void registerEngineerIoMappings(aruwlib::Drivers *) {}
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
+    initializeSubsystems();
     registerEngineerSubsystems(drivers);
     setDefaultEngineerCommands(drivers);
     startEngineerCommands(drivers);

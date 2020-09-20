@@ -106,6 +106,8 @@ public:
         aruwlib::can::CanBus agitatorCanBusId,
         bool isAgitatorInverted);
 
+    void initialize() override;
+
     void refresh() override;
 
     void setAgitatorDesiredAngle(const float& newAngle);

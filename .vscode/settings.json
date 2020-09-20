@@ -85,7 +85,7 @@
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.default.intelliSenseMode": "gcc-x64",
     "C_Cpp.default.forcedInclude": [
-        "./aruw-mcb/robot-type/robot_type.hpp"
+        "./aruw-mcb-project/robot-type/robot_type.hpp"
     ],
     "[markdown]": {
         "editor.wordWrap": "off",
