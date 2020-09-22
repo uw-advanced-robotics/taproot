@@ -140,7 +140,8 @@ Sentinel Build:
 Policy Checks:
   stage: Initial Verification
   script:
-    - python3 ./scripts/check_singleton_drivers.py ./aruw-mcb-project/src/
+    - python3 ./scripts/check_singleton_drivers.py ./aruw-mcb-project/src/ 
+    - python3 ./scripts/check_license_headers.py
   variables:
     GIT_SUBMODULE_STRATEGY: none
   only: *verification_only
