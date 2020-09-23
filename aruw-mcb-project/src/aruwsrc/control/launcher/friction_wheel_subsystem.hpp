@@ -32,9 +32,16 @@ namespace aruwsrc
 {
 namespace launcher
 {
+/**
+ * A subsystem which regulates the speed of a two wheel shooter system.
+ */
 class FrictionWheelSubsystem : public aruwlib::control::Subsystem
 {
 public:
+    /**
+     * Creates a new friction wheel subsystem with DJI motor1 and motor2
+     * unless otherwise specified on CAN bus 1.
+     */
     FrictionWheelSubsystem(
         aruwlib::Drivers *drivers,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
@@ -50,8 +57,14 @@ public:
 
     void initialize() override;
 
+    /**
+     * Sets target flywheel RPM.
+     */
     mockable void setDesiredRpm(float desRpm);
 
+    /**
+     * Updates flywheel RPM ramp by elapsed time and sends motor output.
+     */
     void refresh() override;
 
 private:
