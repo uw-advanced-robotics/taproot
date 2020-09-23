@@ -28,6 +28,9 @@ namespace launcher
 {
 class FrictionWheelSubsystem;
 
+/**
+ * Command which sets a given friction wheel subsystem to a set speed.
+ */
 class FrictionWheelRotateCommand : public aruwlib::control::Command
 {
 public:
