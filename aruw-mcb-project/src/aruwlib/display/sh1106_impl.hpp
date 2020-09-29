@@ -45,7 +45,7 @@ void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
         }
         else
         {
-            spi.transferBlocking(SH1106_COL_ADDRESS_LSB);  // Column select low
+            spi.transferBlocking(SH1106_COL_ADDRESS_LSB | SH1106_COL_OFFSET);  // Column select low
         }
 
         // switch to data mode

@@ -64,6 +64,9 @@ protected:
     A0 a0;
     Reset reset;
 #endif
+
+private:
+    static constexpr uint8_t SH1106_COL_OFFSET = 2;
 };
 
 }  // namespace display
