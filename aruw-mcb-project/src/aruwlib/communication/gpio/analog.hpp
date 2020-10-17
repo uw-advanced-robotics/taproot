@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/platform/adc/adc_1.hpp>
 #endif
 

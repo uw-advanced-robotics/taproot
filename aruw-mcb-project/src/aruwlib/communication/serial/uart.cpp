@@ -29,7 +29,7 @@ namespace serial
 {
 bool Uart::read(UartPort port, uint8_t *data)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (port)
@@ -48,7 +48,7 @@ bool Uart::read(UartPort port, uint8_t *data)
 
 std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return 0;
 #else
     switch (port)
@@ -67,7 +67,7 @@ std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
 
 std::size_t Uart::discardReceiveBuffer(UartPort port)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return 0;
 #else
     switch (port)
@@ -86,7 +86,7 @@ std::size_t Uart::discardReceiveBuffer(UartPort port)
 
 bool Uart::write(UartPort port, uint8_t data)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (port)
@@ -105,7 +105,7 @@ bool Uart::write(UartPort port, uint8_t data)
 
 std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return 0;
 #else
     switch (port)
@@ -124,7 +124,7 @@ std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
 
 bool Uart::isWriteFinished(UartPort port) const
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (port)

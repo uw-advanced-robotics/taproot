@@ -20,7 +20,7 @@
 #ifndef SH1106_HPP
 #define SH1106_HPP
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/architecture/interface/accessor_flash.hpp>
 #include <modm/architecture/interface/delay.hpp>
 #endif
@@ -35,7 +35,7 @@ namespace display
  * Driver for SH1106 based OLED displays
  */
 template <
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     typename SPI,
     typename A0,
     typename Reset,
@@ -59,7 +59,7 @@ public:
     void setInvert(bool invert);
 
 protected:
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     SPI spi;
     A0 a0;
     Reset reset;
@@ -72,7 +72,7 @@ private:
 }  // namespace display
 }  // namespace aruwlib
 
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
 #include "sh1106_mock_impl.hpp"
 #else
 #include "sh1106_impl.hpp"

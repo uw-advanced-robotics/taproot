@@ -58,6 +58,7 @@ Drone Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_DRONE -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_DRONE -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_DRONE -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-drone.elf
   only: *default_only
@@ -72,6 +73,7 @@ Engineer Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_ENGINEER -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_ENGINEER -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_ENGINEER -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-engineer.elf
   only: *default_only
@@ -86,6 +88,7 @@ Hero Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_HERO -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_HERO -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_HERO -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-hero.elf
   only: *default_only
@@ -100,6 +103,7 @@ Old Soldier Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_OLD_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-old-soldier.elf
   only: *default_only
@@ -114,6 +118,7 @@ Soldier Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_SOLDIER -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_SOLDIER -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-soldier.elf
   only: *default_only
@@ -128,6 +133,7 @@ Sentinel Build:
   script:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_SENTINEL -j${NUM_JOBS} additional-ccflags=-Werror
+    - python3 $(which scons) build-sim robot=TARGET_SENTINEL -j${NUM_JOBS}
     - python3 $(which scons) run-tests robot=TARGET_SENTINEL -j${NUM_JOBS}
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-sentinel.elf
   only: *default_only

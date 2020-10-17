@@ -33,7 +33,7 @@
 #ifndef MODM_ROBOMASTER_DEV_BOARD_A_HPP
 #define MODM_ROBOMASTER_DEV_BOARD_A_HPP
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/architecture/interface/clock.hpp>
 #include <modm/platform.hpp>
 
@@ -107,7 +107,7 @@ struct SystemClock
 
     static bool inline enable()
     {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
         Rcc::enableExternalCrystal();  // 8 MHz
         Rcc::enablePll(
             Rcc::PllSource::ExternalCrystal,
@@ -127,7 +127,7 @@ struct SystemClock
     }
 };
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 
 // initialize a button built into mcb
 using Button = GpioInputB2;
@@ -209,7 +209,7 @@ inline void initialize()
 {
     // init clock
     SystemClock::enable();
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     SysTickTimer::initialize<SystemClock>();
     // init 24V output
     PowerOuts::setOutput(modm::Gpio::High);

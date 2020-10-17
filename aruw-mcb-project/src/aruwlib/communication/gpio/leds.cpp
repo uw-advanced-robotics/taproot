@@ -29,7 +29,7 @@ namespace gpio
 {
 void Leds::init()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     // init Leds
     LedsPort::setOutput(modm::Gpio::Low);
 #endif
@@ -37,7 +37,7 @@ void Leds::init()
 
 void Leds::set(Leds::LedPin pin, bool isSet)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     switch (pin)
     {
         case Leds::LedPin::A:

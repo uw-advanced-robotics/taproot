@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/platform.hpp>
 #endif
 

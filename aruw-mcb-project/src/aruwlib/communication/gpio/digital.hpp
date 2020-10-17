@@ -20,7 +20,7 @@
 #ifndef DIGITAL_HPP_
 #define DIGITAL_HPP_
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/platform.hpp>
 #endif
 
@@ -67,7 +67,7 @@ public:
         H
     };
 
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     enum InputPullMode
     {
         Floating,

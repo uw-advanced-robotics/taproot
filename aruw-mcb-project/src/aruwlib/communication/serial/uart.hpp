@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <cstdlib>
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/platform.hpp>
 #include <modm/platform/uart/uart_base.hpp>
 #endif
@@ -53,7 +53,7 @@ public:
         Uart6
     };
 
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     enum Parity
     {
         Disabled,
@@ -80,7 +80,7 @@ public:
     template <UartPort port, modm::baudrate_t baudrate, Parity parity = Parity::Disabled>
     void init()
     {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
         // TODO(kaelin): move pin definition to Board?
         if constexpr (port == UartPort::Uart1)
         {
