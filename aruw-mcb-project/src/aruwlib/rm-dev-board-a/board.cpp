@@ -20,7 +20,7 @@
 #include "board.hpp"
 
 // In simulation, we'll let modm's default implementation handle this.
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 modm_extern_c void modm_abandon(const char *, const char *, const char *, uintptr_t)
 {
     Board::LedsPort::setOutput();

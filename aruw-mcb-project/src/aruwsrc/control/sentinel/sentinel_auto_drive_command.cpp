@@ -17,14 +17,14 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 #include <modm/platform/random/random_number_generator.hpp>
 #endif
 
 #include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 using modm::platform::RandomNumberGenerator;
 #endif
 using aruwlib::control::Subsystem;
@@ -38,7 +38,7 @@ SentinelAutoDriveCommand::SentinelAutoDriveCommand(SentinelDriveSubsystem* subsy
       changeVelocityTimer(CHANGE_TIME_INTERVAL)
 {
     addSubsystemRequirement(dynamic_cast<Subsystem*>(subsystem));
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     RandomNumberGenerator::enable();
 #endif
 }
@@ -49,7 +49,7 @@ void SentinelAutoDriveCommand::execute()
 {
     if (this->changeVelocityTimer.isExpired() || !chosenNewRPM)
     {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
         chosenNewRPM = true;
 #else
         chosenNewRPM = RandomNumberGenerator::isReady();
@@ -57,7 +57,7 @@ void SentinelAutoDriveCommand::execute()
         if (chosenNewRPM)
         {
             this->changeVelocityTimer.restart(CHANGE_TIME_INTERVAL);
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
             currentRPM = MIN_RPM + (MAX_RPM - MIN_RPM) / 2;
 #else
             uint32_t randVal = RandomNumberGenerator::getValue();

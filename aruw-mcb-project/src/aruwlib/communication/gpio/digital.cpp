@@ -29,7 +29,7 @@ namespace gpio
 {
 void Digital::init()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     // init digital out pins
     DigitalOutPins::setOutput(modm::Gpio::Low);
     // init digital in pins
@@ -40,7 +40,7 @@ void Digital::init()
 
 void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMode mode)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     switch (pin)
     {
         case Digital::InputPin::A:
@@ -64,7 +64,7 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
 
 void Digital::set(Digital::OutputPin pin, bool isSet)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     switch (pin)
     {
         case Digital::OutputPin::E:
@@ -88,7 +88,7 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
 
 bool Digital::read(Digital::InputPin pin) const
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (pin)

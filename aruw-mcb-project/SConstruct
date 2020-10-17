@@ -34,6 +34,8 @@ usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TY
         - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
         - \"build-tests\": build core code and tests for the current host platform.\n\
         - \"run-tests\": build core code and tests for the current host platform, and execute them locally with the test runner.\n\
+        - \"build-sim\": build all code for the simulated environment, for the current host platform.\n\
+        - \"run-sim\": build all code for the simulated environment, for the current host platform, and execute the simulator locally.\n\
     \"TARGET_<ROBOT_TYPE>\" is an optional argument that can override whatever robot type has been specified in robot_type.hpp.\n\
         - <ROBOT_TYPE> must be one of the following:\n\
             - SOLDIER, OLD_SOLDIER, DRONE, ENGINEER, SENTINEL, HERO"
@@ -43,15 +45,19 @@ ignored_dirs = [".lbuild_cache", build_path, sim_modm_path, hardware_modm_path, 
 ignored_files = [robot_type_file]
 
 if len(COMMAND_LINE_TARGETS) not in [1, 2]:
-    raise Exception("This build script has 1 required argument and 1 optional argument.\n" + usage)
+    raise Exception("You did not enter the correct number of arguments.\n" + usage)
 
 
 
 build_target = COMMAND_LINE_TARGETS[0]
 if build_target in ["build-tests", "run-tests"]:
     target_env = "tests"
-else:
+elif build_target in ["build-sim", "run-sim"]:
+    target_env = "sim"
+elif build_target in ["build", "run"]:
     target_env = "hardware"
+else:
+    raise Exception("You did not select a valid target.\n" + usage)
 
 # SCons environment with all tools
 env = DefaultEnvironment(tools=[], ENV=os.environ)
@@ -79,6 +85,9 @@ print("Configured {0} parallel build jobs (-j{0}), {1}".format(GetOption('num_jo
 modm_path = None
 if target_env == "hardware":
     modm_path = hardware_modm_path
+    ignored_dirs.append("test/")
+elif target_env == "sim":
+    modm_path = sim_modm_path
     ignored_dirs.append("test/")
 else:
     modm_path = sim_modm_path
@@ -111,9 +120,19 @@ if profile == "debug":
         "-fno-inline",
     ])
 
-env.Append(CPPFLAGS = [
-    "-DENV_" + {"hardware": "HARDWARE", "tests": "SIMULATOR"}[target_env]
-])
+if target_env == "sim" or target_env == "tests":
+    env.Append(CPPFLAGS = [
+        "-DPLATFORM_HOSTED"
+    ])
+
+if target_env == "tests":
+    env.Append(CPPFLAGS = [
+        "-DENV_UNIT_TESTS"
+    ])
+elif target_env == "sim":
+    env.Append(CPPFLAGS = [
+        "-DENV_SIMULATOR"
+    ])
 
 if 'additional-ccflags' in ARGUMENTS:
     env.Append(CCFLAGS = [
@@ -149,8 +168,12 @@ if target_env == "hardware":
     env.Alias("program", env.OpenOcd(program, commands=["modm_program {$SOURCE}"]))
     env.Alias("all", ["build", "size"])
     env.Default("all")
-else:
+elif target_env == "tests":
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
     # WARNING: all test targets must be included in the target_env check earlier in the file
     env.Alias("build-tests", program)
     env.Alias("run-tests", env.Run(program))
+else:
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
+    env.Alias("build-sim", program)
+    env.Alias("run-sim", env.Run(program))

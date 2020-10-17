@@ -22,14 +22,14 @@
 #include <aruwlib/rm-dev-board-a/board.hpp>
 #include <modm/platform.hpp>
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
 using namespace modm::platform;
 #endif
 using namespace modm::literals;
 
 void aruwlib::can::Can::initialize()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     CanFilter::setStartFilterBankForCan2(14);
     // initialize CAN 1
     Can1::connect<GpioD0::Rx, GpioD1::Tx>(Gpio::InputType::PullUp);
@@ -53,7 +53,7 @@ void aruwlib::can::Can::initialize()
 
 bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (bus)
@@ -70,7 +70,7 @@ bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
 
 bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message* message)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (bus)
@@ -87,7 +87,7 @@ bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message*
 
 bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (bus)
@@ -104,7 +104,7 @@ bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
 
 bool aruwlib::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return false;
 #else
     switch (bus)

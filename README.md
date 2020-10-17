@@ -69,8 +69,8 @@ The recommended way to develop is with our pre-built development Docker containe
 
 Now that you have the environment, let's test it out! Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>,
 type "Focus Next Terminal", and press <kbd>Enter</kbd>. In this terminal, type
-`cd aruw-mcb-project && scons run-tests` and press <kbd>Enter</kbd>. After building our code, it
-should run the tests and print a message indicating that all tests passed.
+`cd aruw-mcb-project && scons run-tests` and press <kbd>Enter</kbd>. After building our
+code, it should run the tests and print a message indicating that all tests passed.
 
 ### Optional: prevent Docker Desktop from running on startup
 
@@ -187,7 +187,9 @@ Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>]
         - "run": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.
         - "build-tests": build core code and tests for the current host platform.
         - "run-tests": build core code and tests for the current host platform, and execute them locally with the test runner.
+        - "build-sim": build all code for the simulated environment, for the current host platform.
+        - "run-sim": build all code for the simulated environment, for the current host platform, and execute the simulator locally.
     "TARGET_<ROBOT_TYPE>" is an optional argument that can override whatever robot type has been specified in robot_type.hpp.
         - <ROBOT_TYPE> must be one of the following:
-            - SOLDIER, OLD_SOLDIER, DRONE, ENGINEER, SENTINEL, HERO:
+            - SOLDIER, OLD_SOLDIER, DRONE, ENGINEER, SENTINEL, HERO
 ```

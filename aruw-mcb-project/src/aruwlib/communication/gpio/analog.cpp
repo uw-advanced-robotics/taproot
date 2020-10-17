@@ -29,7 +29,7 @@ namespace gpio
 {
 void Analog::init()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     AnalogInPins::setAnalogInput();
 
     // Initial ADC/Timer setup
@@ -44,7 +44,7 @@ void Analog::init()
 
 uint16_t Analog::read(Pin pin) const
 {
-#ifdef ENV_SIMULATOR
+#ifdef PLATFORM_HOSTED
     return 0;
 #else
     switch (pin)

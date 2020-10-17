@@ -30,7 +30,7 @@ namespace gpio
 {
 void Pwm::init()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     Timer8::connect<PWMOutPinW::Ch1, PWMOutPinX::Ch2, PWMOutPinY::Ch3, PWMOutPinZ::Ch4>();
     Timer8::enable();
     Timer8::setMode(Timer8::Mode::UpCounter);
@@ -41,7 +41,7 @@ void Pwm::init()
     // Set all out pins to 0 duty
     writeAll(0.0f);
 
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     // Start the timer
     Timer8::start();
     Timer8::enableOutput();
@@ -50,7 +50,7 @@ void Pwm::init()
 
 void Pwm::writeAll(float duty)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     write(duty, Pin::W);
     write(duty, Pin::X);
     write(duty, Pin::Y);
@@ -60,7 +60,7 @@ void Pwm::writeAll(float duty)
 
 void Pwm::write(float duty, Pin pin)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     duty = aruwlib::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
     Timer8::configureOutputChannel(
         static_cast<int>(pin),

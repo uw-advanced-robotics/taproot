@@ -48,15 +48,12 @@
             }
         },
         {
-            "label": "Build Tests - Release",
+            "label": "Build Hosted - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-tests",
-            "windows": {
-                "command": "conda run -n modm scons build-tests"
-            },
+            "command": "/usr/bin/env python3 $(which scons) build-hosted profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -64,15 +61,12 @@
             }
         },
         {
-            "label": "Build Tests - Debug",
+            "label": "Run Hosted - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug",
-            "windows": {
-                "command": "conda run -n modm scons build-tests profile=debug"
-            },
+            "command": "/usr/bin/env python3 $(which scons) run-hosted profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -80,15 +74,25 @@
             }
         },
         {
-            "label": "Run Tests - Release",
+            "label": "Build Hosted Tests - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run-tests",
-            "windows": {
-                "command": "conda run -n modm scons run-tests"
+            "command": "/usr/bin/env python3 $(which scons) build-hosted tests=true profile=debug",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
+            }
+        },
+        {
+            "label": "Run Hosted Tests - Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
             },
+            "command": "/usr/bin/env python3 $(which scons) run-hosted tests=true profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {

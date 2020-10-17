@@ -33,7 +33,7 @@ using namespace modm::literals;
 
 void Mpu6500::init()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     Board::ImuNss::GpioOutput();
 
     // connect GPIO pins to the alternate SPI function
@@ -91,7 +91,7 @@ void Mpu6500::init()
 
 void Mpu6500::read()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     if (imuInitialized)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
@@ -196,7 +196,7 @@ float Mpu6500::validateReading(float reading) const
 
 void Mpu6500::calculateGyroOffset()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
@@ -214,7 +214,7 @@ void Mpu6500::calculateGyroOffset()
 
 void Mpu6500::calculateAccOffset()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
@@ -234,7 +234,7 @@ void Mpu6500::calculateAccOffset()
 
 uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     mpuNssLow();
     uint8_t tx = reg & 0x7F;
     uint8_t rx = 0;
@@ -248,7 +248,7 @@ uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 
 uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     mpuNssLow();
     uint8_t tx = reg | 0x80;
     uint8_t rx = 0;
@@ -263,7 +263,7 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 
 uint8_t Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     mpuNssLow();
     uint8_t tx = regAddr | 0x80;
     uint8_t rx = 0;
@@ -277,14 +277,14 @@ uint8_t Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 
 void Mpu6500::mpuNssLow()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     Board::ImuNss::setOutput(modm::GpioOutput::Low);
 #endif
 }
 
 void Mpu6500::mpuNssHigh()
 {
-#ifndef ENV_SIMULATOR
+#ifndef PLATFORM_HOSTED
     Board::ImuNss::setOutput(modm::GpioOutput::High);
 #endif
 }
