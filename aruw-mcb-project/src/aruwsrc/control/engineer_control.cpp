@@ -21,6 +21,7 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 
+#include "aruwsrc/control/engineer/TowSubsystem.hpp"
 #include "aruwsrc/control/engineer/extend_xaxis_command.hpp"
 #include "aruwsrc/control/engineer/grabber_subsystem.hpp"
 #include "aruwsrc/control/engineer/squeeze_grabber_command.hpp"
@@ -45,12 +46,22 @@ namespace aruwsrc
 {
 namespace control
 {
-const Digital::OutputPin grabberPin = Digital::OutputPin::E;
-const Digital::OutputPin xAxisPin = Digital::OutputPin::F;
+static constexpr Digital::OutputPin GRABBER_PIN = Digital::OutputPin::E;
+static constexpr Digital::OutputPin X_AXIS_PIN = Digital::OutputPin::F;
+static constexpr Digital::OutputPin TOWER_LEFT_PIN = Digital::OutputPin::G;
+static constexpr Digital::OutputPin TOWER_RIGHT_PIN = Digital::OutputPin::H;
+static constexpr Digital::InputPin TOWER_LEFT_LIMIT_SWITCH = Digital::InputPin::A;
+static constexpr Digital::InputPin TOWER_RIGHT_LIMIT_SWITCH = Digital::InputPin::B;
 
 /* define subsystems --------------------------------------------------------*/
-GrabberSubsystem grabber(drivers(), grabberPin);
-XAxisSubsystem xAxis(drivers(), xAxisPin);
+GrabberSubsystem grabber(drivers(), GRABBER_PIN);
+XAxisSubsystem xAxis(drivers(), X_AXIS_PIN);
+TowSubsystem tower(
+    drivers(),
+    TOWER_LEFT_PIN,
+    TOWER_RIGHT_PIN,
+    TOWER_LEFT_LIMIT_SWITCH,
+    TOWER_RIGHT_LIMIT_SWITCH);
 
 /* define commands ----------------------------------------------------------*/
 
