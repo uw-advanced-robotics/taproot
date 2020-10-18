@@ -4,15 +4,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build Doxygen",
-            "type": "shell",
-            "presentation": {
-                "panel": "new"
-            },
-            "command": "doxygen Doxyfile",
-            "problemMatcher": []
-        },
-        {
             "label": "Build - Release",
             "type": "shell",
             "presentation": {
@@ -34,9 +25,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program",
+            "command": "/usr/bin/env python3 $(which scons) run",
             "windows": {
-                "command": "conda run -n modm scons program"
+                "command": "conda run -n modm scons run"
             },
             "group": {
                 "kind": "build",
@@ -48,12 +39,12 @@
             }
         },
         {
-            "label": "Build Hosted - Debug",
+            "label": "Build Sim - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-hosted profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -61,12 +52,12 @@
             }
         },
         {
-            "label": "Run Hosted - Debug",
+            "label": "Run Sim - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run-hosted profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) run-sim profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -74,12 +65,12 @@
             }
         },
         {
-            "label": "Build Hosted Tests - Debug",
+            "label": "Build Tests - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-hosted tests=true profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -87,12 +78,12 @@
             }
         },
         {
-            "label": "Run Hosted Tests - Debug",
+            "label": "Run Tests - Debug",
             "type": "shell",
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run-hosted tests=true profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) run-tests profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -121,9 +112,9 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) program profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) run profile=debug",
             "windows": {
-                "command": "conda run -n modm scons program profile=debug"
+                "command": "conda run -n modm scons run profile=debug"
             },
             "group": "build",
             "problemMatcher": [],
@@ -132,7 +123,7 @@
             }
         },
         {
-            "label": "Setup Build",
+            "label": "lbuild build",
             "type": "shell",
             "presentation": {
                 "panel": "new"
