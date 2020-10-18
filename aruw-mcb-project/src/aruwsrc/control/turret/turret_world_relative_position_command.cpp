@@ -31,7 +31,7 @@ namespace turret
 TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
     aruwlib::Drivers *drivers,
     TurretSubsystem *subsystem,
-    chassis::ChassisSubsystem *chassis)
+    const chassis::ChassisSubsystem *chassis)
     : drivers(drivers),
       turretSubsystem(subsystem),
       chassisSubsystem(chassis),
@@ -72,14 +72,13 @@ void TurretWorldRelativePositionCommand::initialize()
 
 void TurretWorldRelativePositionCommand::execute()
 {
+    turretSubsystem->updateCurrentTurretAngles();
     runYawPositionController();
     runPitchPositionController();
 }
 
 void TurretWorldRelativePositionCommand::runYawPositionController()
 {
-    turretSubsystem->updateCurrentTurretAngles();
-
     yawTargetAngle.shiftValue(
         USER_YAW_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretYawInput());
 

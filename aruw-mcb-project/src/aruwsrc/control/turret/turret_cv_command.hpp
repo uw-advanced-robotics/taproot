@@ -33,6 +33,10 @@ namespace aruwsrc
 {
 namespace turret
 {
+/**
+ * A command that receives input from the vision system via the `XavierSerial` driver and aims the
+ * turret accordingly using a position PID controller.
+ */
 class TurretCVCommand : public aruwlib::control::Command
 {
 public:
@@ -44,16 +48,16 @@ public:
 
     void execute() override;
 
-    void end(bool isInterrupted) override;
+    void end(bool) override;
 
     const char *getName() const override { return "turret cv command"; }
 
 private:
-    static constexpr float YAW_P = 4500.0f;  // 500.0f;
+    static constexpr float YAW_P = 4500.0f;
     static constexpr float YAW_I = 0.0f;
-    static constexpr float YAW_D = 140.0f;  // 50.0f
+    static constexpr float YAW_D = 140.0f;
     static constexpr float YAW_MAX_ERROR_SUM = 0.0f;
-    static constexpr float YAW_MAX_OUTPUT = 32000.0f;  // 16000.0f
+    static constexpr float YAW_MAX_OUTPUT = 32000.0f;
     static constexpr float YAW_Q_DERIVATIVE_KALMAN = 1.0f;
     static constexpr float YAW_R_DERIVATIVE_KALMAN = 20.0f;
     static constexpr float YAW_Q_PROPORTIONAL_KALMAN = 1.0f;

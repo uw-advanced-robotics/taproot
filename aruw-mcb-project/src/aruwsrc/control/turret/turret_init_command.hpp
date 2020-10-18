@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TURRET_INIT_COMMAND_H__
-#define __TURRET_INIT_COMMAND_H__
+#ifndef TURRET_INIT_COMMAND_H_
+#define TURRET_INIT_COMMAND_H_
 
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/control/command.hpp>
@@ -29,45 +29,49 @@ namespace aruwsrc
 namespace turret
 {
 class TurretSubsystem;
+/**
+ * A placeholder command used to initialize the turret to a starting center
+ * position using a position PID controller.
+ */
 class TurretInitCommand : public aruwlib::control::Command
 {
 public:
     explicit TurretInitCommand(TurretSubsystem *subsystem);
 
     void initialize() override {}
+
     bool isFinished() const override;
 
     void execute() override;
-    void end(bool) override;
+
+    void end(bool) override {}
 
     const char *getName() const override { return "turret init command"; }
 
 private:
-    const float YAW_P = 300.0f;
-    const float YAW_I = 0.0f;
-    const float YAW_D = 100.0f;
-    const float YAW_MAX_ERROR_SUM = 0.0f;
-    const float YAW_MAX_OUTPUT = 16000;
+    static constexpr float YAW_P = 300.0f;
+    static constexpr float YAW_I = 0.0f;
+    static constexpr float YAW_D = 100.0f;
+    static constexpr float YAW_MAX_ERROR_SUM = 0.0f;
+    static constexpr float YAW_MAX_OUTPUT = 16000;
 
-    const float PITCH_P = 300.0f;
-    const float PITCH_I = 0.0f;
-    const float PITCH_D = 100.0f;
-    const float PITCH_MAX_ERROR_SUM = 0.0f;
-    const float PITCH_MAX_OUTPUT = 16000;
+    static constexpr float PITCH_P = 300.0f;
+    static constexpr float PITCH_I = 0.0f;
+    static constexpr float PITCH_D = 100.0f;
+    static constexpr float PITCH_MAX_ERROR_SUM = 0.0f;
+    static constexpr float PITCH_MAX_OUTPUT = 16000;
 
-    const float pitchTargetAngle = 90.0f;
-    const float yawTargetAngle = 90.0f;
+    static constexpr float PITCH_TARGET_ANGLE = 90.0f;
+    static constexpr float YAW_TARGET_ANGLE = 90.0f;
 
     TurretSubsystem *turretSubsystem;
 
     modm::Pid<float> initYawPid;
     modm::Pid<float> initPitchPid;
-
-    void updateTurretPosition(void);
-};
+};  // class TurretInitCommand
 
 }  // namespace turret
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // TURRET_INIT_COMMAND_H_

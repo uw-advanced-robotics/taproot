@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TURRET_MANUAL_COMMAND_H__
-#define __TURRET_MANUAL_COMMAND_H__
+#ifndef TURRET_MANUAL_COMMAND_H_
+#define TURRET_MANUAL_COMMAND_H_
 
 #include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
@@ -29,33 +29,38 @@ namespace aruwsrc
 namespace turret
 {
 class TurretSubsystem;
+/**
+ * A command that controls the turret gimbals using a velocity PID controller.
+ */
 class TurretManualCommand : public aruwlib::control::Command
 {
 public:
     TurretManualCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem);
 
     void initialize() override {}
+
     bool isFinished() const override;
 
     void execute() override;
-    void end(bool) override;
+
+    void end(bool) override {}
 
     const char *getName() const override { return "turret manual command"; }
 
 private:
-    const float USER_INPUT_SCALAR = 50.0f;
+    static constexpr float USER_INPUT_SCALAR = 50.0f;
 
-    const float YAW_P = 1.0f;
-    const float YAW_I = 0.0f;
-    const float YAW_D = 0.0f;
-    const float YAW_MAX_ERROR_SUM = 0.0f;
-    const float YAW_MAX_OUTPUT = 16000;
+    static constexpr float YAW_P = 1.0f;
+    static constexpr float YAW_I = 0.0f;
+    static constexpr float YAW_D = 0.0f;
+    static constexpr float YAW_MAX_ERROR_SUM = 0.0f;
+    static constexpr float YAW_MAX_OUTPUT = 16000;
 
-    const float PITCH_P = 1.0f;
-    const float PITCH_I = 0.0f;
-    const float PITCH_D = 0.0f;
-    const float PITCH_MAX_ERROR_SUM = 0.0f;
-    const float PITCH_MAX_OUTPUT = 16000;
+    static constexpr float PITCH_P = 1.0f;
+    static constexpr float PITCH_I = 0.0f;
+    static constexpr float PITCH_D = 0.0f;
+    static constexpr float PITCH_MAX_ERROR_SUM = 0.0f;
+    static constexpr float PITCH_MAX_OUTPUT = 16000;
 
     aruwlib::Drivers *drivers;
 
@@ -65,12 +70,10 @@ private:
 
     float yawVelocityTarget = 0;
     float pitchVelocityTarget = 0;
-
-    void updateTurretVelocity();
-};
+};  // class TurretManualCommand
 
 }  // namespace turret
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // TURRET_MANUAL_COMMAND_H_
