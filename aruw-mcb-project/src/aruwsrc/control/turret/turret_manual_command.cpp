@@ -41,11 +41,7 @@ TurretManualCommand::TurretManualCommand(aruwlib::Drivers *drivers, TurretSubsys
 
 bool TurretManualCommand::isFinished() const { return false; }
 
-void TurretManualCommand::end(bool) {}
-
-void TurretManualCommand::execute() { updateTurretVelocity(); }
-
-void TurretManualCommand::updateTurretVelocity()
+void TurretManualCommand::execute()
 {
     pitchVelocityTarget =
         USER_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretPitchInput();
