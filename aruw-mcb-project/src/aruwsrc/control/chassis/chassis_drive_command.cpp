@@ -58,14 +58,7 @@ void ChassisDriveCommand::execute()
         chassisRotationDesiredWheelspeed);
 }
 
-void ChassisDriveCommand::end(bool interrupted)
-{
-    if (interrupted)
-    {
-        chassis->setDesiredOutput(0.0f, 0.0f, 0.0f);
-    }
-    chassis->setDesiredOutput(0.0f, 0.0f, 0.0f);
-}
+void ChassisDriveCommand::end(bool) { chassis->setDesiredOutput(0.0f, 0.0f, 0.0f); }
 
 bool ChassisDriveCommand::isFinished() const { return false; }
 
