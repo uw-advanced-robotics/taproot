@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __WIGGLE_DRIVE_COMMAND_HPP__
-#define __WIGGLE_DRIVE_COMMAND_HPP__
+#ifndef WIGGLE_DRIVE_COMMAND_HPP_
+#define WIGGLE_DRIVE_COMMAND_HPP_
 
 #include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
@@ -31,6 +31,11 @@ namespace aruwsrc
 {
 namespace chassis
 {
+/**
+ * A command that automatically rotates the chassis back and forth, following
+ * a sine wave centered around the yaw gimbal angle, while still allowing for
+ * translational movement.
+ */
 class WiggleDriveCommand : public aruwlib::control::Command
 {
 public:
@@ -47,9 +52,14 @@ public:
 
     void initialize() override;
 
+    /**
+     * Updates the sine wave used for wiggling, updates the rotation PD controller,
+     * and applies a rotation matrix to the <x, y> vector before passing these to
+     * the chassis subsystem's `setDesiredOutput` function.
+     */
     void execute() override;
 
-    void end(bool interrupted) override;
+    void end(bool) override;
 
     bool isFinished() const override;
 
@@ -72,10 +82,10 @@ private:
 
     // sin curve to determine angle to rotate to based on current "time"
     float wiggleSin(float time);
-};
+};  // class WiggleDriveCommand
 
 }  // namespace chassis
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // WIGGLE_DRIVE_COMMAND_HPP_

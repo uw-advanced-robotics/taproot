@@ -63,7 +63,7 @@ void ChassisAutorotateCommand::execute()
         chassisRotationDesiredWheelspeed);
 }
 
-void ChassisAutorotateCommand::end(bool) {}
+void ChassisAutorotateCommand::end(bool) { chassis->setDesiredOutput(0.0f, 0.0f, 0.0f); }
 
 bool ChassisAutorotateCommand::isFinished() const { return false; }
 
