@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __AGITATOR_UNJAM_COMMAND_HPP__
-#define __AGITATOR_UNJAM_COMMAND_HPP__
+#ifndef AGITATOR_UNJAM_COMMAND_HPP_
+#define AGITATOR_UNJAM_COMMAND_HPP_
 
 #include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
@@ -32,9 +32,22 @@ namespace aruwsrc
 {
 namespace agitator
 {
+/**
+ * Command that takes control of an agitator motor and attempts to unjam it. Whether
+ * or not the agitator is actually in a jam condition is not up for this command to
+ * determine. It is assumed that unjamming must occur.
+ */
 class AgitatorUnjamCommand : public aruwlib::control::Command
 {
 public:
+    /**
+     * @param[in] agitator The associated agitator subsystem to control.
+     * @param[in] agitatorMaxUnjamAngle The maximum backwards rotation of the agitator
+     *      to be used in an unjam step. A random backwards angle is subsequently choosen
+     *      each time the agitator unjam command attempts to rotate the agitator backwards.
+     * @param[in] agitatorMaxWaitTime The maximum amount of time the controller will
+     *      wait for the motor to rotate backwards before commencing with a forward rotation.
+     */
     AgitatorUnjamCommand(
         AgitatorSubsystem* agitator,
         float agitatorMaxUnjamAngle,
@@ -57,11 +70,15 @@ private:
 
     static constexpr float AGITATOR_SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
 
-    // the maximum time that the command will wait from commanding the agitator to rotate
-    // backwards to rotating forwards again.
+    /**
+     * The maximum time that the command will wait from commanding the agitator to rotate
+     * backwards to rotating forwards again.
+     */
     static constexpr uint32_t AGITATOR_MAX_WAIT_TIME = 130;
 
-    // minimum angle the agitator will rotate backwards when unjamming
+    /**
+     * Minimum angle the agitator will rotate backwards when unjamming.
+     */
     static constexpr float MIN_AGITATOR_UNJAM_ANGLE = aruwlib::algorithms::PI / 4.0f;
 
     enum AgitatorUnjamState
@@ -74,12 +91,16 @@ private:
 
     AgitatorUnjamState currUnjamstate;
 
-    // time allowed to rotate back the the currAgitatorUnjamAngle
+    /**
+     * Time allowed to rotate back the the `currAgitatorUnjamAngle`.
+     */
     aruwlib::arch::MilliTimeout agitatorUnjamRotateTimeout;
 
     aruwlib::arch::MilliTimeout salvationTimeout;
 
-    // usually set to AGITATOR_MAX_WAIT_TIME, but can be user enabled
+    /**
+     * Usually set to `AGITATOR_MAX_WAIT_TIME`, but can be user defined.
+     */
     uint32_t agitatorMaxWaitTime;
 
     AgitatorSubsystem* connectedAgitator;
@@ -89,10 +110,10 @@ private:
     float currAgitatorUnjamAngle;
 
     float agitatorSetpointBeforeUnjam;
-};
+};  // class AgitatorUnjamCommand
 
 }  // namespace agitator
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // AGITATOR_UNJAM_COMMAND_HPP_

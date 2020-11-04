@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __SHOOT_COMPRISED_COMMAND_HPP__
-#define __SHOOT_COMPRISED_COMMAND_HPP__
+#ifndef AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_
+#define AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_
 
 #include <aruwlib/control/comprised_command.hpp>
 
@@ -30,9 +30,22 @@ namespace aruwsrc
 {
 namespace agitator
 {
+/**
+ * A comprised command that combines the agitator unjam and rotate commands and provides
+ * unjam monitoring to perform a single agitator rotation with unjamming if necessary.
+ */
 class ShootComprisedCommand : public aruwlib::control::ComprisedCommand
 {
 public:
+    /**
+     * @param[in] agitator The agitator to interact with.
+     * @param[in] agitatorChangeAngle The angle in radians that the agitator should rotate.
+     * @param[in] maxUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
+     *      passed on directly to this command's constructor.
+     * @param[in] agitatorDesiredRotateTime The desired time it takes to rotate, in milliseconds.
+     * @param[in] minAgitatorRotateTime The minimum expected rotation time, in milliseconds.
+     *      See `AgitatorRotateCommand`'s constructorfor more details.
+     */
     ShootComprisedCommand(
         aruwlib::Drivers* drivers,
         AgitatorSubsystem* agitator,
@@ -59,10 +72,10 @@ private:
     AgitatorUnjamCommand agitatorUnjamCommand;
 
     bool unjamSequenceCommencing;
-};
+};  // class AgitatorShootComprisedCommand
 
 }  // namespace agitator
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_
