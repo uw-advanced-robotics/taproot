@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __AGITATOR_SHOOT_COMPRISED_COMMANDS_HPP__
-#define __AGITATOR_SHOOT_COMPRISED_COMMANDS_HPP__
+#ifndef AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
+#define AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
 
 #include <aruwlib/Drivers.hpp>
 
@@ -28,10 +28,15 @@ namespace aruwsrc
 {
 namespace agitator
 {
+/**
+ * A class that extends the shoot comprised command and defines the system parameters of the
+ * comprised command. The constants are choosen for fast rotation speed for a soldier robot's
+ * agitator.
+ */
 class ShootFastComprisedCommand : public ShootComprisedCommand
 {
 public:
-    explicit ShootFastComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
+    ShootFastComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
         : ShootComprisedCommand(
               drivers,
               agitator17mm,
@@ -41,12 +46,17 @@ public:
               20)
     {
     }
-};
+};  // class ShootFastComprisedCommand
 
+/**
+ * A class that extends the shoot comprised command and defines the system parameters of the
+ * comprised command. The constants are choosen for slow rotation speed for a soldier robot's
+ * agitator.
+ */
 class ShootSlowComprisedCommand : public ShootComprisedCommand
 {
 public:
-    explicit ShootSlowComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
+    ShootSlowComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
         : ShootComprisedCommand(
               drivers,
               agitator17mm,
@@ -56,10 +66,10 @@ public:
               100)
     {
     }
-};
+};  // class ShootSlowComprisedCommand
 
 }  // namespace agitator
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_

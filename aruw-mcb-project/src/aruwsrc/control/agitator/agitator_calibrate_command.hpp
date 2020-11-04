@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __AGITATOR_CALIBRATE_COMMAND_HPP__
-#define __AGITATOR_CALIBRATE_COMMAND_HPP__
+#ifndef AGITATOR_CALIBRATE_COMMAND_HPP_
+#define AGITATOR_CALIBRATE_COMMAND_HPP_
 
 #include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
@@ -30,15 +30,18 @@ namespace aruwsrc
 namespace agitator
 {
 /**
- * Default command that can be used to calibrate the agitator (i.e. spam calls
- * agitatorCalibrateHere). By default, the agitator will keep calling agitatorCalibrateHere
+ * Default command that can be used to calibrate the agitator (spam calls
+ * `agitatorCalibrateHere`). By default, the agitator will keep calling `agitatorCalibrateHere`
  * until the agitator is connected, however this command is for the following:
- *  - a placeholder command initially
- *  - allows you to recalibrate an agitator that has already been calibrated if necessary
+ *  - A placeholder command initially.
+ *  - Allows you to recalibrate an agitator that has already been calibrated if necessary.
  */
 class AgitatorCalibrateCommand : public aruwlib::control::Command
 {
 public:
+    /**
+     * @param[in] agitator The subsystem this command is dependent upon.
+     */
     explicit AgitatorCalibrateCommand(AgitatorSubsystem* agitator);
 
     const char* getName() const override { return "agitator calibrate command"; }
@@ -53,10 +56,10 @@ public:
 
 private:
     AgitatorSubsystem* agitator;
-};
+};  // class AgitatorCalibrateCommand
 
 }  // namespace agitator
 
 }  // namespace aruwsrc
 
-#endif
+#endif  // AGITATOR_CALIBRATE_COMMAND_HPP_

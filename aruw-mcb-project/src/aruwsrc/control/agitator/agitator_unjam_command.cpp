@@ -47,11 +47,9 @@ AgitatorUnjamCommand::AgitatorUnjamCommand(
 
 void AgitatorUnjamCommand::initialize()
 {
-    // define a random time that the agitator will take to unjam backwards.
     agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
 
     // define a random unjam angle between [MIN_AGITATOR_UNJAM_ANGLE, agitatorUnjamAngleMax]
-
     float randomUnjamAngle =
         fmodf(rand(), agitatorUnjamAngleMax - MIN_AGITATOR_UNJAM_ANGLE) + MIN_AGITATOR_UNJAM_ANGLE;
 
