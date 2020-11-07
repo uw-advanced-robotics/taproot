@@ -59,7 +59,7 @@ public:
         MotorId desMotorIdentifier,
         aruwlib::can::CanBus motorCanBus,
         bool isInverted,
-        const std::string& name);
+        const char* name);
 
     ~DjiMotor();
 
@@ -131,7 +131,7 @@ public:
 
     aruwlib::can::CanBus getCanBus() const;
 
-    const std::string& getName() const;
+    const char* getName() const;
 
     template <typename T>
     static void assertEncoderType()
@@ -181,7 +181,7 @@ private:
 
     bool motorInverted;
 
-    std::string motorName;
+    const char* motorName;
 
     aruwlib::arch::MilliTimeout motorDisconnectTimeout;
 };
