@@ -146,6 +146,17 @@ See the [wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/Software-Tools/
 
 With the root directory opened in VSCode, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>. Type "ARUW: Select Robot Type" and hit enter. A dropdown menu should appear. Select the robot type from the dropdown.
 
+### How to select an appropriate VSCode C/C++ configuration
+
+This codebase has a number of different build targets (see [this wiki
+page](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/Build-Targets-Overview) for more
+information). Because the build setup is different for the test, sim, and MCB environments, while
+working on a particular portion of code you may select an appropriate profile that provides optimal
+[intellisense](https://code.visualstudio.com/docs/editor/intellisense). To select a configuration,
+in VSCode, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>, then type "C/C++:Select a Configuration"
+and hit enter. A dropdown menu will appear where you may choose either the "Test", "Sim", or "MCB"
+configuration.
+
 ## Working with modm
 
 ### What is modm?

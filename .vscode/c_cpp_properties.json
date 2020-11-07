@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Test",
+            "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED"],
+            "compilerPath": "/usr/bin/g++",
+            "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "Sim",
+            "defines": ["${default}", "PLATFORM_HOSTED"],
+            "compilerPath": "/usr/bin/g++",
+            "intelliSenseMode": "gcc-x64"
+        },
+        {
+            "name": "MCB",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}
