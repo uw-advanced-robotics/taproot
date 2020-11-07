@@ -33,7 +33,7 @@ DjiMotor::DjiMotor(
     MotorId desMotorIdentifier,
     aruwlib::can::CanBus motorCanBus,
     bool isInverted,
-    const std::string& name)
+    const char* name)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       encStore(),
       drivers(drivers),
@@ -120,7 +120,7 @@ bool DjiMotor::isMotorInverted() const { return motorInverted; }
 
 aruwlib::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
-const std::string& DjiMotor::getName() const { return motorName; }
+const char* DjiMotor::getName() const { return motorName; }
 
 int64_t DjiMotor::EncoderStore::getEncoderUnwrapped() const
 {
