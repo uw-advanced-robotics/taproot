@@ -32,6 +32,7 @@
 #include "aruwlib/mock/ErrorControllerMock.hpp"
 #include "aruwlib/mock/LedsMock.hpp"
 #include "aruwlib/mock/Mpu6500Mock.hpp"
+#include "aruwlib/mock/OledDisplayMock.hpp"
 #include "aruwlib/mock/PwmMock.hpp"
 #include "aruwlib/mock/RefSerialMock.hpp"
 #include "aruwlib/mock/RemoteMock.hpp"
@@ -52,6 +53,7 @@
 #include "control/command_mapper.hpp"
 #include "control/command_scheduler.hpp"
 #include "control/control_operator_interface.hpp"
+#include "display/OledDisplay.hpp"
 #include "errors/error_controller.hpp"
 #include "motor/dji_motor_tx_handler.hpp"
 #endif
@@ -81,7 +83,8 @@ public:
           controlOperatorInterface(this),
           commandMapper(this),
           errorController(this),
-          djiMotorTxHandler(this)
+          djiMotorTxHandler(this),
+          oledDisplay(this)
     {
     }
 
@@ -102,6 +105,7 @@ public:
     mock::CommandMapperMock commandMapper;
     mock::ErrorControllerMock errorController;
     mock::DjiMotorTxHandlerMock djiMotorTxHandler;
+    mock::OledDisplayMock oledDisplay;
 #else
 public:
     can::Can can;
@@ -120,6 +124,7 @@ public:
     control::CommandMapper commandMapper;
     errors::ErrorController errorController;
     motor::DjiMotorTxHandler djiMotorTxHandler;
+    display::OledDisplay oledDisplay;
 #endif
 };  // class Drivers
 
