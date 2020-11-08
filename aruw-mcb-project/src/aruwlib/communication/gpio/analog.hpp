@@ -53,7 +53,8 @@ public:
         S = 1,
         T,
         U,
-        V
+        V,
+        OLED_JOYSTICK,
     };
 
     ///< Initializes the ADC and connects the configured analog pins to it.

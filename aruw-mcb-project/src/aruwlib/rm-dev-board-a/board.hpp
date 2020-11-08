@@ -156,13 +156,15 @@ using PowerOut4 = GpioOutputH5;
 
 using PowerOuts = SoftwareGpioPort<PowerOut1, PowerOut2, PowerOut3, PowerOut4>;
 
-// initialize 4 analog input pins
+// initialize analog input pins
 using AnalogInPinS = GpioOutputA0;
 using AnalogInPinT = GpioOutputA1;
 using AnalogInPinU = GpioOutputA2;
 using AnalogInPinV = GpioOutputA3;
+using AnalogInPinOled = GpioOutputA6;
 
-using AnalogInPins = SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV>;
+using AnalogInPins =
+    SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV, AnalogInPinOled>;
 
 // initialize 4 pwm output pins
 using PWMOutPinW = GpioInputI5;
