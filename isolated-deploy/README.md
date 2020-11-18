@@ -7,13 +7,13 @@
     - In your Start menu, search for "environment" and select "Edit the system environment variables."
 
     - In the "User variables for _{your username here}_", where _{your username here}_ is a placeholder for your actual name. Double click on "Path."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/49592ade19d3a60bb0377d1ae54fd3e6/EnvironmentVarsMain.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/c02e3c34b52f4c5756cdd9149e891da6/EnvironmentVarsMain.jpg" height="500px">
 
     - In "Edit environment variable," click "New."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/8979edf979083ace722dba00883ad153/EnvironmentVarsPathVar.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/44ba293d6876ca856ad51289c3bf2368/EnvironmentVarsPathVar.jpg" height="500px">
 
     - Add the absolute path of the `/bin` directory of OpenOCD to the box that shows up after you click "New."<br><br>
-    <img src="https://gitlab.com/aruw/code-2019-2020/aruw-mcb/uploads/171f2c159ee4a765680aa7222627a7ec/EnvironmentVarsPathAddition.jpg" height="500px">
+    <img src="https://gitlab.com/aruw/controls/aruw-mcb/uploads/8f25bbfc917288f9c92155f64b76d476/EnvironmentVarsPathAddition.jpg" height="500px">
 
     - Select "OK".
 - Download the ST-Link V-2 driver [here](https://drive.google.com/drive/u/1/folders/1Ndk8Q-uUtzo3sQtzOoguDAVBZSM3IKT1), unzip, and run the executable to install the driver.
