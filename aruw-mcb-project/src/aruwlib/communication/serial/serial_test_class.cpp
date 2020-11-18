@@ -24,7 +24,7 @@ namespace aruwlib
 namespace serial
 {
 SerialTestClass::SerialTestClass(Drivers* drivers)
-    : DJISerial(drivers, Uart::UartPort::Uart2, true),
+    : DJISerial(drivers, Uart::UartPort::Uart2),
       messageId(0),
       i(0)
 {

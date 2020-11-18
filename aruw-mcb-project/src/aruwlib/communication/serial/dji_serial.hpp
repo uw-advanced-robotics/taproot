@@ -41,6 +41,8 @@ namespace serial
  * Extend this class and implement messageReceiveCallback if you
  * want to use this serial protocol on a serial line.
  *
+ * @tparam RxCrcEnabled `true` if crc8 and crc16 enforcement are enabled.
+ *
  * Structure of a Serial Message:
  * \rst
  * +-----------------+------------------------------------------------------------+
@@ -72,6 +74,7 @@ namespace serial
  * +-----------------+------------------------------------------------------------+
  * \endrst
  */
+template <bool RxCrcEnabled = false>
 class DJISerial
 {
 private:
@@ -84,6 +87,8 @@ private:
     static const uint8_t FRAME_HEADER_LENGTH = 7;
     static const uint8_t FRAME_TYPE_OFFSET = 5;
     static const uint8_t FRAME_CRC16_LENGTH = 2;
+    static constexpr uint16_t SERIAL_RX_FRAME_HEADER_AND_BUF_SIZE =
+        SERIAL_RX_BUFF_SIZE + FRAME_HEADER_LENGTH;
 
 public:
     /**
@@ -105,7 +110,7 @@ public:
      * @param[in] port serial port to work on.
      * @param[in] isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement.
      */
-    DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcementEnabled);
+    DJISerial(Drivers *drivers, Uart::UartPort port);
 
     mockable ~DJISerial() = default;
 
@@ -173,9 +178,6 @@ private:
      */
     uint8_t frameHeader[FRAME_HEADER_LENGTH];
 
-    ///< Whether or not to handle electrical noise.
-    bool rxCRCEnforcementEnabled;
-
     // TX related information.
 
     ///< TX buffer.
@@ -213,6 +215,8 @@ protected:
      * for modification.
      */
     SerialMessage txMessage;
+
+    uint8_t rxCrcEnforcementBuff[RxCrcEnabled ? SERIAL_RX_FRAME_HEADER_AND_BUF_SIZE : 1];
 
     /**
      * Send a Message. This constructs a message from the `txMessage`,

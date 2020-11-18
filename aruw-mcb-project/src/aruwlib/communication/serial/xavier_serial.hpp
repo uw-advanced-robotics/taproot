@@ -35,7 +35,7 @@ namespace serial
  *
  * @note use the static function in Drivers to interact with this class.
  */
-class XavierSerial : public DJISerial
+class XavierSerial : public DJISerial<>
 {
 private:
     // TX message headers.

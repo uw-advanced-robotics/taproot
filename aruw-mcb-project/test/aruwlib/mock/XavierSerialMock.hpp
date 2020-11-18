@@ -35,7 +35,7 @@ public:
     MOCK_METHOD(
         void,
         messageReceiveCallback,
-        (const aruwlib::serial::DJISerial::SerialMessage& completeMessage),
+        (const aruwlib::serial::DJISerial<>::SerialMessage& completeMessage),
         (override));
     MOCK_METHOD(
         void,
