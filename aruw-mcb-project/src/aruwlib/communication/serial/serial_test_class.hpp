@@ -34,7 +34,7 @@ namespace serial
  *      TX to RX. You should be able to check if messages are being received.
  *      Additionally, watch `i` to check if you are dropping messages.
  */
-class SerialTestClass : public DJISerial
+class SerialTestClass : public DJISerial<true>
 {
 public:
     ///< Attaches this test class to `Uart2`.

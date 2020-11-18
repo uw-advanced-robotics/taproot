@@ -30,7 +30,7 @@ const uint8_t XavierSerial::txMsgSwitchArray[XavierSerial::CV_MESSAGE_TYPE_SIZE]
     XavierSerial::CV_MESSAGE_TYPE_AUTO_AIM_REQUEST};
 
 XavierSerial::XavierSerial(Drivers* drivers)
-    : DJISerial(drivers, Uart::UartPort::Uart2, false),
+    : DJISerial(drivers, Uart::UartPort::Uart2),
       txMsgSwitchIndex(CV_MESSAGE_TYPE_TURRET_TELEMETRY),
       autoAimRequestQueued(false),
       autoAimRequestState(false),
