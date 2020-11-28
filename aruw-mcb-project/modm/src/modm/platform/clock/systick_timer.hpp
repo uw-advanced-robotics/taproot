@@ -13,9 +13,9 @@
 #ifndef MODM_CORTEX_SYSTICK_TIMER_HPP
 #define MODM_CORTEX_SYSTICK_TIMER_HPP
 
-#include <stdint.h>
-#include <cmath>
 #include <modm/architecture/interface/peripheral.hpp>
+#include <modm/architecture/interface/clock.hpp>
+#include <modm/math/algorithm/prescaler.hpp>
 
 namespace modm::platform
 {
@@ -50,25 +50,28 @@ public:
 	static void
 	initialize()
 	{
-		constexpr float desired = float(SystemClock::Frequency) / 1000;
+		static_assert(SystemClock::Frequency < (1ull << 24)*8*4,
+		              "HLCK is too fast for the SysTick to run at 4Hz!");
+		if constexpr (SystemClock::Frequency < 8'000'000)
+		{
+			constexpr auto result = Prescaler::from_range(
+					SystemClock::Frequency, 4, 1, (1ul << 24)-1);
+			PeripheralDriver::assertBaudrateInTolerance< result.frequency, 4, tolerance >();
 
-		// calculate the possible rates above and below the requested rate
-		constexpr uint32_t rate_lower = SystemClock::Frequency / std::ceil(desired);
-		constexpr uint32_t rate_upper = SystemClock::Frequency / std::floor(desired);
+			us_per_Ncycles = ((1ull << Ncycles) * 1'000'000ull) / SystemClock::Frequency;
+			ms_per_Ncycles = ((1ull << Ncycles) * 1'000ull) / SystemClock::Frequency;
+			enable(result.index, false);
+		}
+		else
+		{
+			constexpr auto result = Prescaler::from_range(
+					SystemClock::Frequency/8, 4, 1, (1ul << 24)-1);
+			PeripheralDriver::assertBaudrateInTolerance< result.frequency, 4, tolerance >();
 
-		// calculate the half-point between the upper and lower rate
-		constexpr uint32_t rate_middle = (rate_upper + rate_lower) / 2;
-		// decide which reload value is closer to a possible rate
-		constexpr uint32_t reload = (1000 < rate_middle) ? std::ceil(desired) : std::floor(desired);
-
-		// check if within rate tolerance
-		constexpr uint32_t generated_rate = SystemClock::Frequency / reload;
-		PeripheralDriver::assertBaudrateInTolerance<
-				/* nearest possible value */ generated_rate,
-				/* desired = */ 1000,
-				tolerance >();
-
-		enable(reload - 1);
+			us_per_Ncycles = ((1ull << Ncycles) * 8'000'000ull) / SystemClock::Frequency;
+			ms_per_Ncycles = ((1ull << Ncycles) * 8'000ull) / SystemClock::Frequency;
+			enable(result.index, true);
+		}
 	}
 
 	/**
@@ -82,28 +85,27 @@ public:
 	static void
 	disable();
 
-	/**
-	 * Passed method will be called periodically on each event.
-	 * Previously passed interrupt handler will be detached.
-	 */
-	static void
-	attachInterruptHandler(InterruptHandler handler);
-
-	/**
-	 * Detaches previously attached interrupt handler.
-	 */
-	static void
-	detachInterruptHandler();
-
 private:
 	static void
-	enable(uint32_t reload);
+	enable(uint32_t reload, bool prescaler8);
+
+	// FCPU < 8MHz
+	// 536e6/4 < 27-bit, 8e6/4 < 21-bit
+	// 2^32*1e6/536e6 < 23-bit, 2^32*1e6/8e6 = 29-bit
+	// FCPU >= 8MHz
+	// 536e6/8/4 < 24-bit, 8e6/8/4 < 18-bit
+	// 2^32*8e6/536e6 < 26-bit, 2^32*8e6/8e6 = 32-bit
+	static constexpr uint8_t Ncycles{32};
+	static inline uint32_t ms_per_Ncycles{0};
+	static inline uint32_t us_per_Ncycles{0};
+	friend class modm::chrono::milli_clock;
+	friend class modm::chrono::micro_clock;
 };
 
 }
 
 namespace modm::cortex {
-	using SysTickTimer [[deprecated("Please use `modm::platform:SysTickTimer` instead")]] =
+	using SysTickTimer [[deprecated("Use `modm::platform:SysTickTimer` instead!")]] =
 		::modm::platform::SysTickTimer;
 }
 

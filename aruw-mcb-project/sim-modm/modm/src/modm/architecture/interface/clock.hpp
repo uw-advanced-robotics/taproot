@@ -1,9 +1,10 @@
 /*
  * Copyright (c) 2009-2010, Martin Rosekeit
  * Copyright (c) 2009-2011, 2013, 2015, Fabian Greif
- * Copyright (c) 2011-2018, Niklas Hauser
+ * Copyright (c) 2011-2019, Niklas Hauser
  * Copyright (c) 2013, Kevin Läufer
  * Copyright (c) 2015-2016, Sascha Schade
+ * Copyright (c) 2019, Raphael Lehmann
  *
  * This file is part of the modm project.
  *
@@ -13,57 +14,104 @@
  */
 // ----------------------------------------------------------------------------
 
-#ifndef	MODM_INTERFACE_CLOCK_HPP
-#define	MODM_INTERFACE_CLOCK_HPP
+#pragma once
 
 #include <modm/architecture/utils.hpp>
-#include <modm/processing/timer/timestamp.hpp>
+#include <cstdint>
+#include <chrono>
 
 namespace modm
 {
 
+namespace chrono
+{
+
 /**
- * Interface to the system wide tick timer.
+ * Returns a time_point in milliseconds.
  *
- * This class maintains a 32-bit counter which is incremented every 1ms.
+ * This clock is meant for measuring durations (time differences), not time
+ * since reboot. You must not depend on this clock for timekeeping, especially
+ * not over long periods of time, since:
  *
- * Example:
- * @code
- * // Interrupt every 1ms
- * ISR(TIMER)
- * {
- *     modm::Clock::increment();
- * }
- * @endcode
+ * 1. the clock is NOT STEADY! The 32-bit millisecond counter will wrap around
+ *    after ~49 days!
+ * 2. the clock may have quite some drift and is not synchable to an external
+ *    reference. You must therefore not rely on this clock for very long
+ *    durations that need to be *accurate*.
+ *
+ * You must use an actual calendar implementation for proper time keeping!
+ *
  * @ingroup modm_architecture_clock
  */
-class Clock
+struct milli_clock
 {
-public:
-	using Type = uint32_t;
+	using duration = std::chrono::duration<uint32_t, std::milli>;
+	using rep = duration::rep;
+	using period = duration::period;
+	using time_point = std::chrono::time_point<milli_clock, duration>;
 
-public:
-	/// Get the current time, either as `Timestamp` or `LongTimestamp`.
-	/// Provides an atomic access to the current time
-	template< typename TimestampType = Timestamp >
-	static TimestampType
-	now();
+	static constexpr bool is_steady = false;
 
-	static inline ShortTimestamp
-	nowShort()
-	{
-		return now<ShortTimestamp>();
-	}
-
-public:
-	/// Update the current time
-	static void
-	increment(uint_fast16_t step = 1);
-
-protected:
-	static Type time;
+	static time_point
+	now() noexcept;
 };
+
+/**
+ * Returns a time_point in microseconds.
+ *
+ * This clock is meant for measuring durations (time differences), not time
+ * since reboot. You must not depend on this clock for timekeeping, especially
+ * not over long periods of time, since:
+ *
+ * 1. the clock is NOT STEADY! The 32-bit microsecond counter will wrap around
+ *    after 71 minutes!
+ * 2. the clock may have quite some drift and is not synchable to an external
+ *    reference. You must therefore not rely on this clock for very long
+ *    durations that need to be *accurate*.
+ *
+ * You must use an actual calendar implementation for proper time keeping!
+ *
+ * @ingroup modm_architecture_clock
+ */
+struct micro_clock
+{
+	using duration = std::chrono::duration<uint32_t, std::micro>;
+	using rep = duration::rep;
+	using period = duration::period;
+	using time_point = std::chrono::time_point<micro_clock, duration>;
+
+	static constexpr bool is_steady = false;
+
+	static time_point
+	now() noexcept;
+};
+
+} // namespace chrono
+
+using Clock = chrono::milli_clock;
+using PreciseClock = chrono::micro_clock;
+using namespace ::std::chrono_literals;
 
 }	// namespace modm
 
-#endif	// MODM_INTERFACE_CLOCK_HPP
+#include <modm/io/iostream.hpp>
+
+template<class C, class D>
+modm::IOStream&
+operator << (modm::IOStream& s, const std::chrono::time_point<C, D>& m)
+{
+	s << m.time_since_epoch();
+	return s;
+}
+template<class T, class R>
+modm::IOStream&
+operator << (modm::IOStream& s, const std::chrono::duration<T, R>& m)
+{
+	s << m.count();
+	if constexpr (std::is_same_v<R, std::nano>)  s << "ns";
+	if constexpr (std::is_same_v<R, std::micro>) s << "us";
+	if constexpr (std::is_same_v<R, std::milli>) s << "ms";
+	if constexpr (std::is_same_v<R, std::ratio<60>>) s << "min";
+	if constexpr (std::is_same_v<R, std::ratio<3600>>) s << 'h';
+	return s;
+}

@@ -32,14 +32,17 @@ def detect_gcc_version(env, gcc=None):
     if gcc is None:
         gcc = env['CXX']
 
-    v = subprocess.Popen([gcc, '-dumpversion'], stdout=subprocess.PIPE).stdout.read().decode("utf-8")
-    # v = 4.5.3-or32-1
-    version = re.match("^(\d)\.(\d)\.(\d)(-(.*))$", v)
-    if version:
-        compiler_version = int(version.group(1)) * 10000 + \
-                           int(version.group(2)) * 100 + \
-                           int(version.group(3))
-    else:
+    try:
+        v = subprocess.Popen([gcc, '-dumpversion'], stdout=subprocess.PIPE).stdout.read().decode("utf-8")
+        version = re.match("^(\d)\.(\d)\.(\d)(-(.*))$", v)
+        if version:
+            compiler_version = int(version.group(1)) * 10000 + \
+                            int(version.group(2)) * 100 + \
+                            int(version.group(3))
+        else:
+            # Compiler version could not be detected
+            compiler_version = 0
+    except FileNotFoundError:
         # Compiler version could not be detected
         compiler_version = 0
 

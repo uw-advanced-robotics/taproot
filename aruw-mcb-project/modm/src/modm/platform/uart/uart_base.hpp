@@ -21,8 +21,12 @@
 
 /// @cond
 // STM has some weird ideas about continuity
+#ifndef USART_BRR_DIV_MANTISSA
 #define	USART_BRR_DIV_MANTISSA	USART_BRR_DIV_Mantissa
+#endif
+#ifndef USART_BRR_DIV_FRACTION
 #define	USART_BRR_DIV_FRACTION	USART_BRR_DIV_Fraction
+#endif
 /// @endcond
 
 
@@ -101,6 +105,19 @@ public:
 	{
 		DoNotOutput = 0b0,
 		Output = USART_CR2_LBCL,
+	};
+
+	enum class
+	WordLength : uint32_t
+	{
+#ifdef USART_CR1_M1
+		Bit7 = USART_CR1_M1,
+		Bit8 = 0,
+		Bit9 = USART_CR1_M0,
+#else
+		Bit8 = 0,
+		Bit9 = USART_CR1_M,
+#endif
 	};
 
 	enum class

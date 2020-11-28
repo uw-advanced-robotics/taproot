@@ -78,12 +78,15 @@ public:
 				OversamplingMode oversample = OversamplingMode::By16 >
 	static void
 	initialize(	Parity parity = Parity::Disabled);
+	static inline void
+	setWordLength(WordLength length);
+
 	/**
-	* Initialize Uart HAL Peripheral
-	*
-	* Enables clocks, the UART peripheral (but neither TX nor RX)
-	* Sets raw brr, parity and oversampling mode.
-	*/
+	 * Initialize Uart HAL Peripheral
+	 *
+	 * Enables clocks, the UART peripheral (but neither TX nor RX)
+	 * Sets raw brr, parity and oversampling mode.
+	 */
 	static void
 	initializeWithBrr(uint16_t brr,
 			Parity parity,

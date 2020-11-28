@@ -12,6 +12,10 @@
 #ifndef MODM_MATH_HPP
 #define	MODM_MATH_HPP
 
+#include "math/algorithm.hpp"
+#include "math/algorithm/enumerate.hpp"
+#include "math/algorithm/prescaler.hpp"
+#include "math/algorithm/range.hpp"
 #include "math/filter.hpp"
 #include "math/filter/debounce.hpp"
 #include "math/filter/fir.hpp"
@@ -46,7 +50,7 @@
 #include "math/utils/arithmetic_traits.hpp"
 #include "math/utils/bit_constants.hpp"
 #include "math/utils/bit_operation.hpp"
-#include "math/utils/crc32.hpp"
+#include "math/utils/crc.hpp"
 #include "math/utils/endianness.hpp"
 #include "math/utils/misc.hpp"
 #include "math/utils/operator.hpp"

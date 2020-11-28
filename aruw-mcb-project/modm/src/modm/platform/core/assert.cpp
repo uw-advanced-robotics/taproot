@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2016, Niklas Hauser
+ * Copyright (c) 2016-2020, Niklas Hauser
+ * Copyright (c) 2017, Sascha Schade
  *
  * This file is part of the modm project.
  *
@@ -9,58 +10,44 @@
  */
 // ----------------------------------------------------------------------------
 
-#include <string.h>
-#include <modm/architecture/interface/assert.hpp>
 #include <modm/platform/device.hpp>
+#include <modm/architecture/interface/assert.hpp>
 
 using modm::AssertionHandler;
 using modm::Abandonment;
+using modm::AbandonmentBehavior;
 
 extern AssertionHandler __assertion_table_start;
 extern AssertionHandler __assertion_table_end;
-
 extern "C"
 {
 
-modm_weak void
-modm_undefined_handler(int32_t irqn)
-{
-	// Set the currently executing interrupt to the lowest priority to allow
-	// reporting of the assertion failure and disable it from firing again.
-	NVIC_SetPriority(IRQn_Type(irqn), (1ul << __NVIC_PRIO_BITS) - 1ul);
-	NVIC_DisableIRQ(IRQn_Type(irqn));
-	modm_assert(0, "core", "nvic", "undefined", irqn);
-}
-
 void
-modm_assert_fail(const char * identifier)
+modm_assert_report(_modm_assertion_info *cinfo)
 {
-	// just forward this call
-	modm_assert_fail_context(identifier, 0);
-}
+	auto info = reinterpret_cast<modm::AssertionInfo *>(cinfo);
+	AbandonmentBehavior behavior(info->behavior);
 
-void modm_assert_fail_context(const char * identifier, uintptr_t context)
-{
-	uint8_t state(uint8_t(Abandonment::DontCare));
-	const char * module = identifier;
-	const char * location = module + strlen(module) + 1;
-	const char * failure = location + strlen(location) + 1;
-
-	AssertionHandler * handler = &__assertion_table_start;
-	for (; handler < &__assertion_table_end; handler++)
+	for (const AssertionHandler *handler = &__assertion_table_start;
+		 handler < &__assertion_table_end; handler++)
 	{
-		state |= (uint8_t) (*handler)(module, location, failure, context);
+		behavior |= (*handler)(*info);
 	}
 
-	if (state == (uint8_t) Abandonment::DontCare or
-		state & (uint8_t) Abandonment::Fail)
+	info->behavior = behavior;
+	behavior.reset(Abandonment::Debug);
+	if ((behavior == Abandonment::DontCare) or
+		(behavior & Abandonment::Fail))
 	{
-		modm_abandon(module, location, failure, context);
+		modm_abandon(*info);
 		NVIC_SystemReset();
 	}
 }
 
 modm_weak
-void modm_abandon(const char *, const char *, const char *, uintptr_t) {}
+void modm_abandon(const modm::AssertionInfo &info)
+{
+	(void)info;
+}
 
 }

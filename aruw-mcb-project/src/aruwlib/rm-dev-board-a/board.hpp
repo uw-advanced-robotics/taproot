@@ -109,12 +109,12 @@ struct SystemClock
     {
 #ifndef PLATFORM_HOSTED
         Rcc::enableExternalCrystal();  // 8 MHz
-        Rcc::enablePll(
-            Rcc::PllSource::ExternalCrystal,
+        Rcc::PllFactors pllF = {
             6,    // 12MHz / N=6 -> 2MHz
             180,  // 2MHz * M=180 -> 360MHz
             2     // 360MHz / P=2 -> 180MHz = F_cpu
-        );
+        };
+        Rcc::enablePll(Rcc::PllSource::ExternalCrystal, pllF);
 
         Rcc::setFlashLatency<Frequency>();
         Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);

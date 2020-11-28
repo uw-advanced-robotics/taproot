@@ -10,11 +10,5 @@
  */
 // ----------------------------------------------------------------------------
 
-#ifndef MODM_PLATFORM_HPP
-#define MODM_PLATFORM_HPP
+#include <modm/architecture.hpp>
 
-#include <modm/architecture/utils.hpp>
-
-#include "platform/core/delay.hpp"
-#include "platform/core/flash_reader.hpp"
-#endif // MODM_PLATFORM_HPP

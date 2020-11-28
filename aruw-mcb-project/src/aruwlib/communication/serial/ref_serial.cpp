@@ -155,7 +155,7 @@ void RefSerial::sendCustomData(const CustomData& customData)
         return;
     }
 
-    if (aruwlib::arch::clock::getTimeMilliseconds() - this->txMessage.messageTimestamp.getTime() <
+    if (arch::clock::getTimeMilliseconds() - this->txMessage.messageTimestamp <
         TIME_BETWEEN_REF_UI_DISPLAY_SEND_MS)
     {
         // not enough time has passed before next send
@@ -293,7 +293,7 @@ bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
     robotData.shooterHasPower = (message.data[14] >> 2);
 
     processReceivedDamage(
-        message.messageTimestamp.getTime(),
+        aruwlib::arch::clock::getTimeMilliseconds(),
         robotData.previousHp - robotData.currentHp);
     robotData.previousHp = robotData.currentHp;
 

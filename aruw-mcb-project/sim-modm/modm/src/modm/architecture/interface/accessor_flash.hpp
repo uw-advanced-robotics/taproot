@@ -16,7 +16,6 @@
 
 #include <modm/architecture/utils.hpp>
 #include <modm/io/iostream.hpp>
-
 #ifdef	__DOXYGEN__
 
 /// Define a flash variable
@@ -41,7 +40,7 @@
 
 #else // !__DOXYGEN__
 
-#include <modm/platform/core/flash_reader.hpp>
+#include <modm/platform/core/flash_reader_impl.hpp>
 
 #endif
 
@@ -162,7 +161,6 @@ public:
 
 private:
 	const T* address;
-
 private:
 	template <typename U>
 	friend IOStream&
@@ -182,9 +180,6 @@ asFlash(const T* ptr)
 
 }	// namespace modm
 
-// -----------------------------------------------------------------------------
-// IMPLEMENTATION
-// -----------------------------------------------------------------------------
 template<typename T>
 modm::IOStream&
 operator << (modm::IOStream& os, modm::accessor::Flash<T> ptr);
@@ -202,5 +197,4 @@ operator << (modm::IOStream& os, modm::accessor::Flash<char> ptr)
 	}
 	return os;
 }
-
 #endif	// MODM_INTERFACE_ACCESSOR_FLASH_HPP

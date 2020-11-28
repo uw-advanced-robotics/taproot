@@ -19,6 +19,8 @@
 
 #include "xavier_serial.hpp"
 
+#include <cstring>
+
 namespace aruwlib
 {
 namespace serial

@@ -2,6 +2,7 @@
  * Copyright (c) 2013, Kevin Läufer
  * Copyright (c) 2013-2017, Niklas Hauser
  * Copyright (c) 2014, Daniel Krebs
+ * Copyright (c) 2020, Mike Wolfram
  *
  * This file is part of the modm project.
  *
@@ -41,6 +42,8 @@ public:
 		RxBufferNotEmpty	= SPI_CR2_RXNEIE,
 		TxBufferEmpty		= SPI_CR2_TXEIE,
 		Error				= SPI_CR2_ERRIE,
+		RxDmaEnable         = SPI_CR2_RXDMAEN,
+		TxDmaEnable         = SPI_CR2_TXDMAEN,
 	};
 	MODM_FLAGS32(Interrupt);
 

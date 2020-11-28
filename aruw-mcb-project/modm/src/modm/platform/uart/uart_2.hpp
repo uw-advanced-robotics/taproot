@@ -44,6 +44,7 @@ private:
 	static void
 	initializeBuffered(uint32_t interruptPriority);
 public:
+	using Hal = UsartHal2;
 	// Expose jinja template parameters to be checked by e.g. drivers or application
 	static constexpr size_t RxBufferSize = 256;
 	static constexpr size_t TxBufferSize = 256;
@@ -51,7 +52,8 @@ public:
 public:
 	template< template<Peripheral _> class... Signals >
 	static void
-	connect(Gpio::InputType InputTypeRx = Gpio::InputType::PullUp)
+	connect(Gpio::InputType InputTypeRx = Gpio::InputType::PullUp,
+	        Gpio::OutputType OutputTypeTx = Gpio::OutputType::PushPull)
 	{
 		using Connector = GpioConnector<Peripheral::Usart2, Signals...>;
 		using Tx = typename Connector::template GetSignal< Gpio::Signal::Tx >;
@@ -61,7 +63,7 @@ public:
 					  "Usart2::connect() requires one Tx and/or one Rx signal!");
 
 		// Connector::disconnect();
-		Tx::setOutput(Gpio::OutputType::PushPull);
+		Tx::setOutput(OutputTypeTx);
 		Rx::setInput(InputTypeRx);
 		Connector::connect();
 	}
@@ -70,12 +72,10 @@ public:
 	static void modm_always_inline
 	initialize(uint32_t interruptPriority = 12, Parity parity = Parity::Disabled)
 	{
-		constexpr UartBase::OversamplingMode oversample =
-				UartBaudrate::getOversamplingMode(SystemClock::Usart2, baudrate);
 		UsartHal2::initializeWithBrr(
 				UartBaudrate::getBrr<SystemClock::Usart2, baudrate, tolerance>(),
 				parity,
-				oversample);
+				UartBaudrate::getOversamplingMode(SystemClock::Usart2, baudrate));
 		initializeBuffered(interruptPriority);
 		UsartHal2::setTransmitterEnable(true);
 		UsartHal2::setReceiverEnable(true);
@@ -100,6 +100,9 @@ public:
 	isWriteFinished();
 
 	static std::size_t
+	transmitBufferSize();
+
+	static std::size_t
 	discardTransmitBuffer();
 
 	static bool
@@ -109,7 +112,16 @@ public:
 	read(uint8_t *buffer, std::size_t length);
 
 	static std::size_t
+	receiveBufferSize();
+
+	static std::size_t
 	discardReceiveBuffer();
+
+	static bool
+	hasError();
+
+	static void
+	clearError();
 
 };
 

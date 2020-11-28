@@ -2,6 +2,7 @@
  * Copyright (c) 2013, Kevin Läufer
  * Copyright (c) 2013-2017, Niklas Hauser
  * Copyright (c) 2014, Daniel Krebs
+ * Copyright (c) 2020, Mike Wolfram
  *
  * This file is part of the modm project.
  *
@@ -68,7 +69,8 @@ modm::platform::SpiHal1::setDataOrder(DataOrder dataOrder)
 void inline
 modm::platform::SpiHal1::setDataSize(DataSize dataSize)
 {
-	SPI1->CR2 = (SPI1->CR2 & ~static_cast<uint32_t>(DataSize::All))
+	// TODO: implement as set/reset bit
+	SPI1->CR1 = (SPI1->CR1 & ~static_cast<uint32_t>(DataSize::All))
 										 | static_cast<uint32_t>(dataSize);
 }
 

@@ -45,11 +45,11 @@ void Mpu6500::init()
     // set power mode
     spiWriteRegister(MPU6500_PWR_MGMT_1, 0x80);
 
-    modm::delayMilliseconds(100);
+    modm::delay_ms(100);
 
     // reset gyro, accel, and temp
     spiWriteRegister(MPU6500_SIGNAL_PATH_RESET, 0x07);
-    modm::delayMilliseconds(100);
+    modm::delay_ms(100);
 
     // verify mpu register ID
     if (MPU6500_ID != spiReadRegister(MPU6500_WHO_AM_I))
@@ -81,7 +81,7 @@ void Mpu6500::init()
     for (int i = 0; i < 7; i++)
     {
         spiWriteRegister(Mpu6500InitData[i][0], Mpu6500InitData[i][1]);
-        modm::delayMilliseconds(1);
+        modm::delay_ms(1);
     }
 
     calculateAccOffset();
@@ -203,7 +203,7 @@ void Mpu6500::calculateGyroOffset()
         raw.gyroOffset.x += (rxBuff[8] << 8) | rxBuff[9];
         raw.gyroOffset.y += (rxBuff[10] << 8) | rxBuff[11];
         raw.gyroOffset.z += (rxBuff[12] << 8) | rxBuff[13];
-        modm::delayMilliseconds(2);
+        modm::delay_ms(2);
     }
 
     raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
@@ -221,7 +221,7 @@ void Mpu6500::calculateAccOffset()
         raw.accelOffset.x += (rxBuff[0] << 8) | rxBuff[1];
         raw.accelOffset.y += (rxBuff[2] << 8) | rxBuff[3];
         raw.accelOffset.z += ((rxBuff[4] << 8) | rxBuff[5]) - 4096;
-        modm::delayMilliseconds(2);
+        modm::delay_ms(2);
     }
 
     raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;

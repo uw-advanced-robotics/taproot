@@ -16,15 +16,15 @@
 // ----------------------------------------------------------------------------
 
 #include "rcc.hpp"
-#include "common.hpp"
 
-namespace modm::clock
+/// @cond
+namespace modm::platform
 {
 uint32_t modm_fastdata fcpu(8'000'000);
-uint32_t modm_fastdata fcpu_kHz(8'000);
-uint16_t modm_fastdata fcpu_MHz(8);
-uint16_t modm_fastdata ns_per_loop(375);
+uint16_t modm_fastdata delay_fcpu_MHz(8);
+uint16_t modm_fastdata delay_ns_per_loop(375);
 }
+/// @endcond
 
 // ----------------------------------------------------------------------------
 bool
@@ -87,9 +87,8 @@ modm::platform::Rcc::enableLowSpeedExternalCrystal(uint32_t waitCycles)
 	return retval;
 }
 
-// ----------------------------------------------------------------------------
 bool
-modm::platform::Rcc::enablePll(PllSource source, uint8_t pllM, uint16_t pllN, uint8_t pllP, uint32_t waitCycles)
+modm::platform::Rcc::enablePll(PllSource source, const PllFactors& pllFactors, uint32_t waitCycles)
 {
 	// Read reserved values and clear all other values
 	uint32_t tmp = RCC->PLLCFGR & ~(RCC_PLLCFGR_PLLSRC | RCC_PLLCFGR_PLLM
@@ -99,13 +98,13 @@ modm::platform::Rcc::enablePll(PllSource source, uint8_t pllM, uint16_t pllN, ui
 	tmp |= static_cast<uint32_t>(source);
 
 	// PLLM (0) = factor is user defined VCO input frequency must be configured to 2MHz
-	tmp |= ((uint32_t) pllM) & RCC_PLLCFGR_PLLM;
+	tmp |= ((uint32_t) pllFactors.pllM) & RCC_PLLCFGR_PLLM;
 
 	// PLLN (6) = factor is user defined
-	tmp |= (((uint32_t) pllN) << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN;
+	tmp |= (((uint32_t) pllFactors.pllN) << RCC_PLLCFGR_PLLN_Pos) & RCC_PLLCFGR_PLLN;
 
 	// PLLP (16) divider for CPU frequency; (00: PLLP = 2, 01: PLLP = 4, etc.)
-	tmp |= (((uint32_t) (pllP / 2) - 1) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP;
+	tmp |= (((uint32_t) (pllFactors.pllP / 2) - 1) << RCC_PLLCFGR_PLLP_Pos) & RCC_PLLCFGR_PLLP;
 
 	// PLLQ (24) divider for USB frequency; (0-15)
 	// tmp |= (((uint32_t) pllQ) << RCC_PLLCFGR_PLLQ_Pos) & RCC_PLLCFGR_PLLQ;
@@ -119,7 +118,9 @@ modm::platform::Rcc::enablePll(PllSource source, uint8_t pllM, uint16_t pllN, ui
 		;
 
 	return tmp;
+
 }
+
 // ----------------------------------------------------------------------------
 bool
 modm::platform::Rcc::enableSystemClock(SystemClockSource src, uint32_t waitCycles)

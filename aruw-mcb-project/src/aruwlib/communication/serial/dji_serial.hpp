@@ -95,8 +95,8 @@ public:
         uint16_t length;   ///< Must be less than SERIAL_RX_BUFF_SIZE or SERIAL_TX_BUFF_SIZE.
         uint16_t type;     ///< The type is specified and interpreted by a derived class.
         uint8_t data[SERIAL_RX_BUFF_SIZE];
-        modm::Timestamp messageTimestamp;  ///< The timestamp is in milliseconds.
-        uint8_t sequenceNumber;  ///< A derived class may increment this for debugging purposes.
+        uint32_t messageTimestamp;  ///< The timestamp is in milliseconds.
+        uint8_t sequenceNumber;     ///< A derived class may increment this for debugging purposes.
     };
 
     /**

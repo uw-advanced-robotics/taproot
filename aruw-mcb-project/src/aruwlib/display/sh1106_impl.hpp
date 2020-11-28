@@ -93,7 +93,7 @@ void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::initializ
 
     // reset the controller
     reset.reset();
-    modm::delayMilliseconds(20);
+    modm::delay_ms(20);
     reset.set();
 
     a0.reset();

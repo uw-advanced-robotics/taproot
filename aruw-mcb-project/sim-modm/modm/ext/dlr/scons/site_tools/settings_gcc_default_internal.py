@@ -174,7 +174,7 @@ def generate(env, **kw):
         src_suffix="")
 
     builder_listing = Builder(
-        action=Action("$OBJDUMP -x -s -S -l -w $SOURCE > $TARGET",
+        action=Action("$OBJDUMP -x -S -l -w $SOURCE > $TARGET",
         cmdstr="$LSSCOMSTR"),
         suffix=".lss",
         src_suffix="")

@@ -10,10 +10,7 @@
  */
 // ----------------------------------------------------------------------------
 
-#ifndef MODM_PLATFORM_HPP
-#define MODM_PLATFORM_HPP
-
-#include <modm/architecture/utils.hpp>
+#include <modm/architecture.hpp>
 
 #include "platform/adc/adc_1.hpp"
 #include "platform/adc/adc_interrupt_1.hpp"
@@ -21,13 +18,8 @@
 #include "platform/can/can_2.hpp"
 #include "platform/can/can_bit_timings.hpp"
 #include "platform/can/can_filter.hpp"
-#include "platform/can/error_code.hpp"
-#include "platform/clock/common.hpp"
 #include "platform/clock/rcc.hpp"
 #include "platform/clock/systick_timer.hpp"
-#include "platform/core/atomic_lock.hpp"
-#include "platform/core/delay.hpp"
-#include "platform/core/flash_reader.hpp"
 #include "platform/core/hardware_init.hpp"
 #include "platform/core/heap_table.hpp"
 #include "platform/core/peripherals.hpp"
@@ -198,4 +190,3 @@
 #include "platform/uart/uart_hal_1.hpp"
 #include "platform/uart/uart_hal_2.hpp"
 #include "platform/uart/uart_hal_6.hpp"
-#endif // MODM_PLATFORM_HPP

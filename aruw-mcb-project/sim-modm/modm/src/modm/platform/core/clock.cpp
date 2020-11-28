@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018, Niklas Hauser
+ * Copyright (c) 2020, Niklas Hauser
  *
  * This file is part of the modm project.
  *
@@ -11,27 +11,16 @@
 
 #include <modm/architecture/interface/clock.hpp>
 
-modm::Clock::Type modm::Clock::time = 0;
-
-#include <sys/time.h>
-
-template< typename TimestampType >
-TimestampType
-modm::Clock::now()
+modm::chrono::milli_clock::time_point modm_weak
+modm::chrono::milli_clock::now() noexcept
 {
-	struct timeval now;
-	gettimeofday(&now, 0);
-
-	time = typename TimestampType::Type( (now.tv_sec * 1'000) + (now.tv_usec / 1'000) );
-	return time;
+	const auto time = std::chrono::steady_clock::now().time_since_epoch();
+	return time_point{std::chrono::duration_cast<duration>(time)};
 }
 
-void
-modm::Clock::increment(uint_fast16_t step)
+modm::chrono::micro_clock::time_point modm_weak
+modm::chrono::micro_clock::now() noexcept
 {
-	time += step;
+	const auto time = std::chrono::high_resolution_clock::now().time_since_epoch();
+	return time_point{std::chrono::duration_cast<duration>(time)};
 }
-
-// explicit declaration of what member function templates we need to generate
-template modm::ShortTimestamp modm::Clock::now();
-template modm::Timestamp modm::Clock::now();

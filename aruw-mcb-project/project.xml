@@ -8,7 +8,7 @@
   <options>
     <!-- give this project a custom name -->
     <option name="modm:build:project.name">test</option>
-    <option name="modm:target">stm32f427iih</option>
+    <option name="modm:target">stm32f427iih6</option>
     <option name="modm:build:openocd.cfg">openocd.cfg</option>
     <option name="modm:build:scons:include_sconstruct">False</option>
     <option name="modm:platform:uart:1:buffer.rx">256</option>
@@ -20,6 +20,7 @@
 
   </options>
   <modules>
+    <module>modm:platform:heap</module>
     <module>modm:architecture:delay</module>
     <module>modm:architecture:clock</module>
     <module>modm:processing:timer</module>

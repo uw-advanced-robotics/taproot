@@ -77,10 +77,10 @@ public:
     // AutoAim Data
     typedef struct
     {
-        bool hasTarget;             ///< Whether or not the xavier has a target.
-        float pitch;                ///< The pitch angle in degrees, rounded to two decimals.
-        float yaw;                  ///< The yaw angle in degrees, rounded to two decimals.
-        modm::Timestamp timestamp;  ///< A timestamp in milliseconds.
+        bool hasTarget;      ///< Whether or not the xavier has a target.
+        float pitch;         ///< The pitch angle in degrees, rounded to two decimals.
+        float yaw;           ///< The yaw angle in degrees, rounded to two decimals.
+        uint32_t timestamp;  ///< A timestamp in milliseconds.
     } TurretAimData;
 
     /**

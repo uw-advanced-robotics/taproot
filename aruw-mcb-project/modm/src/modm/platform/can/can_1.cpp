@@ -14,13 +14,13 @@
  */
 // ----------------------------------------------------------------------------
 
-#include <modm/debug/error_report.hpp>
 #include <modm/architecture/driver/atomic/queue.hpp>
 #include <modm/utils.hpp>
 #include <modm/architecture/interface/assert.hpp>
 #include <modm/architecture/interface/interrupt.hpp>
 #include <modm/architecture/interface/delay.hpp>
 #include <modm/platform/clock/rcc.hpp>
+#include <cstring>
 
 #include "can_1.hpp"
 // ----------------------------------------------------------------------------
@@ -37,7 +37,7 @@ struct RxMessage {
 };
 static modm::atomic::Queue<RxMessage, 32> rxQueue;
 // ----------------------------------------------------------------------------
-void
+bool
 modm::platform::Can1::initializeWithPrescaler(
 		uint16_t prescaler, uint8_t bs1, uint8_t bs2,
 		uint32_t interruptPriority, Mode startupMode, bool overwriteOnOverrun)
@@ -71,12 +71,14 @@ modm::platform::Can1::initializeWithPrescaler(
 	CAN1->MCR |= CAN_MCR_INRQ;
 	int deadlockPreventer = 10'000; // max ~10ms
 	while (((CAN1->MSR & CAN_MSR_INAK) == 0) and (deadlockPreventer-- > 0)) {
-		modm::delayMicroseconds(1);
+		modm::delay_us(1);
 		// Wait until the initialization mode is entered.
 		// The CAN hardware waits until the current CAN activity (transmission
 		// or reception) is completed before entering the initialization mode.
 	}
-	modm_assert(deadlockPreventer > 0, "can", "init", "timeout", 1);
+	if (not modm_assert_continue_fail_debug(deadlockPreventer > 0, "can.init",
+			"CAN::initialize() timed out on entering initialization!", 1))
+		return false;
 
 	// Enable Interrupts:
 	// FIFO1 Overrun, FIFO0 Overrun
@@ -107,7 +109,8 @@ modm::platform::Can1::initializeWithPrescaler(
 	while (((CAN1->MSR & CAN_MSR_INAK) == CAN_MSR_INAK) and (deadlockPreventer-- > 0))  {
 		// wait for the normal mode
 	}
-	modm_assert(deadlockPreventer > 0, "can", "init", "timeout2", 1);
+	return modm_assert_continue_fail_debug(deadlockPreventer > 0, "can.init2",
+		"CAN::initialize() timed out on leaving initialization!", 1);
 }
 
 // ----------------------------------------------------------------------------
@@ -208,9 +211,9 @@ MODM_ISR(CAN1_TX)
  */
 MODM_ISR(CAN1_RX0)
 {
-	if (CAN1->RF0R & CAN_RF0R_FOVR0) {
-		modm::ErrorReport::report(modm::platform::CAN1_FIFO0_OVERFLOW);
-
+	if (not modm_assert_continue_ignore(not (CAN1->RF0R & CAN_RF0R_FOVR0),
+			"can.rx.hw0", "CAN receive hardware buffer overflowed!", 1))
+	{
 		// release overrun flag & access the next message
 		CAN1->RF0R = CAN_RF0R_FOVR0 | CAN_RF0R_RFOM0;
 	}
@@ -221,9 +224,8 @@ MODM_ISR(CAN1_RX0)
 	// Release FIFO (access the next message)
 	CAN1->RF0R = CAN_RF0R_RFOM0;
 
-	if (!rxQueue.push(rxMessage)) {
-		modm::ErrorReport::report(modm::platform::CAN1_FIFO0_OVERFLOW);
-	}
+	modm_assert_continue_ignore(rxQueue.push(rxMessage), "can.rx.sw0",
+		"CAN receive software buffer overflowed!", 1);
 }
 
 // ----------------------------------------------------------------------------
@@ -233,9 +235,9 @@ MODM_ISR(CAN1_RX0)
  */
 MODM_ISR(CAN1_RX1)
 {
-	if (CAN1->RF1R & CAN_RF1R_FOVR1) {
-		modm::ErrorReport::report(modm::platform::CAN1_FIFO1_OVERFLOW);
-
+	if (not modm_assert_continue_ignore(not (CAN1->RF1R & CAN_RF1R_FOVR1),
+			"can.rx.hw1", "CAN receive hardware buffer overflowed!", 1))
+	{
 		// release overrun flag & access the next message
 		CAN1->RF1R = CAN_RF1R_FOVR1 | CAN_RF1R_RFOM1;
 	}
@@ -246,9 +248,8 @@ MODM_ISR(CAN1_RX1)
 	// Release FIFO (access the next message)
 	CAN1->RF1R = CAN_RF1R_RFOM1;
 
-	if (!rxQueue.push(rxMessage)) {
-		modm::ErrorReport::report(modm::platform::CAN1_FIFO1_OVERFLOW);
-	}
+	modm_assert_continue_ignore(rxQueue.push(rxMessage), "can.rx.sw1",
+		"CAN receive software buffer overflowed!", 1);
 }
 
 // ----------------------------------------------------------------------------
@@ -325,8 +326,8 @@ modm::platform::Can1::sendMessage(const can::Message& message)
 	if ((CAN1->TSR & (CAN_TSR_TME0 | CAN_TSR_TME1 | CAN_TSR_TME2)) == 0)
 	{
 		// All mailboxes used at the moment
-		if (!txQueue.push(message)) {
-			modm::ErrorReport::report(modm::platform::CAN1_TX_OVERFLOW);
+		if (not modm_assert_continue_ignore(txQueue.push(message), "can.tx",
+				"CAN transmit software buffer overflowed!", 1)) {
 			return false;
 		}
 		return true;
