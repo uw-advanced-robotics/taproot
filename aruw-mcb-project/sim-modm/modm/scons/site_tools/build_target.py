@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2018-2019, Niklas Hauser
+# Copyright (c) 2019, Raphael Lehmann
 #
 # This file is part of the modm project.
 #
@@ -9,13 +10,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 # -----------------------------------------------------------------------------
 
-from os.path import abspath
+from os.path import abspath, relpath
 
 def build_target(env, sources):
 	# Building application
 	program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
 
-	# SCons functions
 	env.Alias("qtcreator", env.QtCreatorProject(sources))
 	env.Alias("symbols", env.Symbols(program))
 	env.Alias("listing", env.Listing(program))

@@ -20,6 +20,7 @@
 #include "dji_serial.hpp"
 
 #include "aruwlib/algorithms/crc.hpp"
+#include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
@@ -105,7 +106,7 @@ bool DJISerial<RxCrcEnabled>::send()
             aruwlib::errors::Location::DJI_SERIAL,
             aruwlib::errors::ErrorType::INVALID_MESSAGE_LENGTH);
     }
-    txMessage.messageTimestamp = modm::Clock::now();
+    txMessage.messageTimestamp = arch::clock::getTimeMilliseconds();
     return true;
 }
 
@@ -235,7 +236,7 @@ void DJISerial<RxCrcEnabled>::updateSerial()
                 }
 
                 // update the time and copy over the message to the most recent message
-                newMessage.messageTimestamp = modm::Clock::now();
+                newMessage.messageTimestamp = arch::clock::getTimeMilliseconds();
 
                 mostRecentMessage = newMessage;
 

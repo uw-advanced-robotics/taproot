@@ -43,6 +43,7 @@ public:
 	static constexpr bool isInverted = false;
 	static constexpr Port port = Port::A; ///< Port name
 	static constexpr uint8_t pin = 4; ///< Pin number
+	static constexpr IRQn_Type ExternalInterruptIRQ = EXTI4_IRQn;
 
 protected:
 	/// Bitmask for registers that contain a 1bit value for every pin.
@@ -57,8 +58,6 @@ protected:
 	static constexpr uint8_t af_offset = (pin * 4) % 32;
 	/// Alternate Function register mask.
 	static constexpr uint32_t af_mask  = 0xf << af_offset;
-	/// ExternalInterruptIRQ
-	static constexpr IRQn_Type ExternalInterruptIRQ = EXTI4_IRQn;
 
 public:
 	/// @cond
@@ -235,6 +234,8 @@ public:
 private:
 	template< Peripheral peripheral >
 	static constexpr int8_t AdcChannel = -1;
+	template< Peripheral peripheral >
+	static constexpr int8_t DacChannel = -1;
 };
 
 /// @cond
@@ -339,6 +340,9 @@ struct GpioA4::Out1<Peripheral::Dac>
 		setAnalogInput();
 	}
 };
+template<>
+constexpr int8_t
+GpioA4::DacChannel<Peripheral::Dac> = 1;
 template<>
 struct GpioA4::Sof<Peripheral::UsbOtgHs>
 {

@@ -441,13 +441,6 @@ public:
 		static void connect() {}
 	};
 	template< Peripheral _ >
-	struct CrsDv
-	{
-		using Gpio = GpioUnused;
-		static constexpr Gpio::Signal Signal = Gpio::Signal::CrsDv;
-		static void connect() {}
-	};
-	template< Peripheral _ >
 	struct Cts
 	{
 		using Gpio = GpioUnused;
@@ -1260,10 +1253,10 @@ public:
 		static void connect() {}
 	};
 	template< Peripheral _ >
-	struct Pixck
+	struct Pixclk
 	{
 		using Gpio = GpioUnused;
-		static constexpr Gpio::Signal Signal = Gpio::Signal::Pixck;
+		static constexpr Gpio::Signal Signal = Gpio::Signal::Pixclk;
 		static void connect() {}
 	};
 	template< Peripheral _ >
@@ -1271,6 +1264,13 @@ public:
 	{
 		using Gpio = GpioUnused;
 		static constexpr Gpio::Signal Signal = Gpio::Signal::PpsOut;
+		static void connect() {}
+	};
+	template< Peripheral _ >
+	struct RccCrsDv
+	{
+		using Gpio = GpioUnused;
+		static constexpr Gpio::Signal Signal = Gpio::Signal::RccCrsDv;
 		static void connect() {}
 	};
 	template< Peripheral _ >

@@ -44,8 +44,8 @@ public:
 		CaptureCompare2 = TIM_DIER_CC2IE,
 		CaptureCompare3 = TIM_DIER_CC3IE,
 		CaptureCompare4= TIM_DIER_CC4IE,
-		COM = TIM_DIER_COMIE,
 		Trigger = TIM_DIER_TIE,
+		COM = TIM_DIER_COMIE,
 		Break = TIM_DIER_BIE,
 	};
 	MODM_FLAGS32(Interrupt);
@@ -57,13 +57,13 @@ public:
 		CaptureCompare2 = TIM_SR_CC2IF,
 		CaptureCompare3 = TIM_SR_CC3IF,
 		CaptureCompare4 = TIM_SR_CC4IF,
-		COM = TIM_SR_COMIF,
 		Trigger = TIM_SR_TIF,
-		Break = TIM_SR_BIF,
 		Overcapture1 = TIM_SR_CC1OF,
 		Overcapture2 = TIM_SR_CC2OF,
 		Overcapture3 = TIM_SR_CC3OF,
 		Overcapture4 = TIM_SR_CC4OF,
+		COM = TIM_SR_COMIF,
+		Break = TIM_SR_BIF,
 	};
 	MODM_FLAGS32(InterruptFlag);
 
@@ -192,7 +192,17 @@ public:
 		From64usWith2usStep  = TIM_BDTR_DTG_7 | TIM_BDTR_DTG_6	//111
 											| TIM_BDTR_DTG_5,
 	};
+	enum class OffStateForRunMode : uint32_t
+	{
+		Disable = 0,
+		Enable  = TIM_BDTR_OSSR,
+	};
 
+	enum class OffStateForIdleMode : uint32_t
+	{
+		Disable = 0,
+		Enable  = TIM_BDTR_OSSI,
+	};
 public:
 	/**
 	 * Set operation mode of the timer
@@ -203,6 +213,8 @@ public:
 	static void
 	setMode(Mode mode, SlaveMode slaveMode = SlaveMode::Disabled,
 			SlaveModeTrigger slaveModeTrigger = (SlaveModeTrigger) 0);
+
+
 
 public:
 	/**

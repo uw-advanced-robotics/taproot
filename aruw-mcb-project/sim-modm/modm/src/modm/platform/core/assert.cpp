@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018, Niklas Hauser
+ * Copyright (c) 2016-2020, Niklas Hauser
  * Copyright (c) 2017, Sascha Schade
  *
  * This file is part of the modm project.
@@ -11,62 +11,53 @@
 // ----------------------------------------------------------------------------
 
 #include <stdlib.h>
+#include <cstdint>
 #include <modm/debug/logger.hpp>
 #include <modm/architecture/interface/assert.hpp>
 
 using modm::AssertionHandler;
 using modm::Abandonment;
+using modm::AbandonmentBehavior;
 
 extern AssertionHandler __assertion_table_start __asm("__start_modm_assertion");
 extern AssertionHandler __assertion_table_end __asm("__stop_modm_assertion");
 // Since we use the default linker script on hosted, the above linker section are
 // only included if something is put into these sections. Therefore we are placing
 // an empty assertion handler here, which does not influence assertion handling.
-
-Abandonment
-empty_assertion_handler(const char *, const char *, const char *, uintptr_t)
-{
-	return Abandonment::DontCare;
-}
-MODM_ASSERTION_HANDLER(empty_assertion_handler);
-
+Abandonment _modm_empty_assertion_handler(const modm::AssertionInfo &)
+{ return Abandonment::DontCare; }
+MODM_ASSERTION_HANDLER(_modm_empty_assertion_handler);
 extern "C"
 {
 
 void
-modm_assert_fail(const char * identifier)
+modm_assert_report(_modm_assertion_info *cinfo)
 {
-	// just forward this call
-	modm_assert_fail_context(identifier, 0);
-}
+	auto info = reinterpret_cast<modm::AssertionInfo *>(cinfo);
+	AbandonmentBehavior behavior(info->behavior);
 
-void modm_assert_fail_context(const char * identifier, uintptr_t context)
-{
-	const char * module = identifier;
-	const char * location = module + strlen(module) + 1;
-	const char * failure = location + strlen(location) + 1;
-	uint8_t state((uint8_t) Abandonment::DontCare);
-
-	AssertionHandler * handler = &__assertion_table_start;
-	for (; handler < &__assertion_table_end; handler++)
+	for (const AssertionHandler *handler = &__assertion_table_start;
+		 handler < &__assertion_table_end; handler++)
 	{
-		state |= (uint8_t) (*handler)(module, location, failure, context);
+		behavior |= (*handler)(*info);
 	}
 
-	if (state == (uint8_t) Abandonment::DontCare or
-		state & (uint8_t) Abandonment::Fail)
+	info->behavior = behavior;
+	behavior.reset(Abandonment::Debug);
+	if ((behavior == Abandonment::DontCare) or
+		(behavior & Abandonment::Fail))
 	{
-		modm_abandon(module, location, failure, context);
-		exit(1);
+		modm_abandon(*info);
+		abort();
 	}
 }
 
 modm_weak
-void modm_abandon(const char * module, const char * location, const char * failure, uintptr_t context)
+void modm_abandon(const modm::AssertionInfo &info)
 {
-	MODM_LOG_ERROR.printf("Assertion '%s.%s.%s'", module, location, failure);
-	if (context) { MODM_LOG_ERROR.printf(" @ %p (%lu)", (void *) context, (unsigned long)context); }
-	MODM_LOG_ERROR.printf(" failed! Abandoning...\n");
+	MODM_LOG_ERROR.printf("Assertion '%s'", info.name);
+	if (info.context != uintptr_t(-1)) { MODM_LOG_ERROR.printf(" @ %p (%" PRIuPTR ")", (void *)info.context, info.context); }
+	MODM_LOG_ERROR.printf(" failed!\n  %s\nAbandoning...\n", info.description) << modm::flush;
 }
 
 }

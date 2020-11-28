@@ -39,8 +39,8 @@ namespace xpcc
 	class Dispatcher
 	{
 	public:
-		static const uint16_t acknowledgeTimeout = 100;
-		static const uint16_t responseTimeout = 200;
+		static constexpr std::chrono::milliseconds acknowledgeTimeout{ 100 };
+		static constexpr std::chrono::milliseconds responseTimeout{ 200 };
 
 	public:
 		Dispatcher(BackendInterface *backend, Postman* postman);

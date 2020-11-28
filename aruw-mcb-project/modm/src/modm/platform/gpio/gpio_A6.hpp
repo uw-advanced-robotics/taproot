@@ -43,6 +43,7 @@ public:
 	static constexpr bool isInverted = false;
 	static constexpr Port port = Port::A; ///< Port name
 	static constexpr uint8_t pin = 6; ///< Pin number
+	static constexpr IRQn_Type ExternalInterruptIRQ = EXTI9_5_IRQn;
 
 protected:
 	/// Bitmask for registers that contain a 1bit value for every pin.
@@ -57,8 +58,6 @@ protected:
 	static constexpr uint8_t af_offset = (pin * 4) % 32;
 	/// Alternate Function register mask.
 	static constexpr uint32_t af_mask  = 0xf << af_offset;
-	/// ExternalInterruptIRQ
-	static constexpr IRQn_Type ExternalInterruptIRQ = EXTI9_5_IRQn;
 
 public:
 	/// @cond
@@ -173,7 +172,7 @@ public:
 	/// Connect to Spi1
 	using Miso = GpioSignal;
 	/// Connect to Dcmi
-	using Pixck = GpioSignal;
+	using Pixclk = GpioSignal;
 	/// @}
 #endif
 	/// @cond
@@ -211,15 +210,17 @@ public:
 			"GpioA6::Miso only connects to Spi1!");
 	};
 	template< Peripheral peripheral >
-	struct Pixck { static void connect();
+	struct Pixclk { static void connect();
 		static_assert(
 			(peripheral == Peripheral::Dcmi),
-			"GpioA6::Pixck only connects to Dcmi!");
+			"GpioA6::Pixclk only connects to Dcmi!");
 	};
 	/// @endcond
 private:
 	template< Peripheral peripheral >
 	static constexpr int8_t AdcChannel = -1;
+	template< Peripheral peripheral >
+	static constexpr int8_t DacChannel = -1;
 };
 
 /// @cond
@@ -324,10 +325,10 @@ struct GpioA6::Miso<Peripheral::Spi1>
 	}
 };
 template<>
-struct GpioA6::Pixck<Peripheral::Dcmi>
+struct GpioA6::Pixclk<Peripheral::Dcmi>
 {
 	using Gpio = GpioA6;
-	static constexpr Gpio::Signal Signal = Gpio::Signal::Pixck;
+	static constexpr Gpio::Signal Signal = Gpio::Signal::Pixclk;
 	static constexpr int af = 13;
 	inline static void
 	connect()

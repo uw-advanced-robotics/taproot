@@ -9,10 +9,15 @@
  */
 // ----------------------------------------------------------------------------
 
-#include "common.hpp"
+#include <cmath>
 
 namespace modm::platform
 {
+/// @cond
+extern uint32_t fcpu;
+extern uint16_t delay_fcpu_MHz;
+extern uint16_t delay_ns_per_loop;
+/// @endcond
 
 constexpr Rcc::flash_latency
 Rcc::computeFlashLatency(uint32_t Core_Hz, uint16_t Core_mV)
@@ -101,6 +106,7 @@ Rcc::setFlashLatency()
 	// enable flash prefetch and data and instruction cache
 	acr |= FLASH_ACR_PRFTEN | FLASH_ACR_DCEN | FLASH_ACR_ICEN;
 	FLASH->ACR = acr;
+	__DSB(); __ISB();
 	return fl.max_frequency;
 }
 
@@ -108,10 +114,9 @@ template< uint32_t Core_Hz >
 void
 Rcc::updateCoreFrequency()
 {
-	modm::clock::fcpu     = Core_Hz;
-	modm::clock::fcpu_kHz = Core_Hz / 1'000;
-	modm::clock::fcpu_MHz = Core_Hz / 1'000'000;
-	modm::clock::ns_per_loop = ::round(3000.f / (Core_Hz / 1'000'000));
+	delay_fcpu_MHz = Core_Hz / 1'000'000;
+	fcpu = Core_Hz;
+	delay_ns_per_loop = std::round(3000.f / (Core_Hz / 1'000'000));
 }
 
 constexpr bool
@@ -129,6 +134,7 @@ rcc_check_enable(Peripheral peripheral)
 		case Peripheral::Dma1:
 		case Peripheral::Dma2:
 		case Peripheral::Dma2d:
+		case Peripheral::Eth:
 		case Peripheral::Fmc:
 		case Peripheral::I2c1:
 		case Peripheral::I2c2:
@@ -239,6 +245,14 @@ Rcc::enable()
 			RCC->AHB1ENR |= RCC_AHB1ENR_DMA2DEN; __DSB();
 			RCC->AHB1RSTR |= RCC_AHB1RSTR_DMA2DRST; __DSB();
 			RCC->AHB1RSTR &= ~RCC_AHB1RSTR_DMA2DRST;
+		}
+	if constexpr (peripheral == Peripheral::Eth)
+		if (not Rcc::isEnabled<peripheral>()) {
+			RCC->AHB1ENR |= RCC_AHB1ENR_ETHMACEN; __DSB();
+			RCC->AHB1RSTR |= RCC_AHB1RSTR_ETHMACRST; __DSB();
+			RCC->AHB1RSTR &= ~RCC_AHB1RSTR_ETHMACRST; __DSB();
+			RCC->AHB1ENR |= RCC_AHB1ENR_ETHMACRXEN; __DSB();
+			RCC->AHB1ENR |= RCC_AHB1ENR_ETHMACTXEN;
 		}
 	if constexpr (peripheral == Peripheral::Fmc)
 		if (not Rcc::isEnabled<peripheral>()) {
@@ -493,6 +507,10 @@ Rcc::disable()
 		RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2EN;
 	if constexpr (peripheral == Peripheral::Dma2d)
 		RCC->AHB1ENR &= ~RCC_AHB1ENR_DMA2DEN;
+	if constexpr (peripheral == Peripheral::Eth)
+		RCC->AHB1ENR &= ~RCC_AHB1ENR_ETHMACEN; __DSB();
+		RCC->AHB1ENR &= ~RCC_AHB1ENR_ETHMACRXEN; __DSB();
+		RCC->AHB1ENR &= ~RCC_AHB1ENR_ETHMACTXEN;
 	if constexpr (peripheral == Peripheral::Fmc)
 		RCC->AHB3ENR &= ~RCC_AHB3ENR_FMCEN;
 	if constexpr (peripheral == Peripheral::I2c1)
@@ -599,6 +617,8 @@ Rcc::isEnabled()
 		return RCC->AHB1ENR & RCC_AHB1ENR_DMA2EN;
 	if constexpr (peripheral == Peripheral::Dma2d)
 		return RCC->AHB1ENR & RCC_AHB1ENR_DMA2DEN;
+	if constexpr (peripheral == Peripheral::Eth)
+		return RCC->AHB1ENR & RCC_AHB1ENR_ETHMACEN;
 	if constexpr (peripheral == Peripheral::Fmc)
 		return RCC->AHB3ENR & RCC_AHB3ENR_FMCEN;
 	if constexpr (peripheral == Peripheral::I2c1)

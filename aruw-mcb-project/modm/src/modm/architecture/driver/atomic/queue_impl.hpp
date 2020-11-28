@@ -29,12 +29,12 @@ template<typename T, std::size_t N>
 modm_always_inline bool
 modm::atomic::Queue<T, N>::isFull() const
 {
-	Index tmphead = modm::accessor::asVolatile(this->head) + 1;
+	Index tmphead = this->head + 1;
 	if (tmphead >= (N+1)) {
 		tmphead = 0;
 	}
 
-	return (tmphead == modm::accessor::asVolatile(this->tail));
+	return (tmphead == this->tail);
 }
 
 template<typename T, std::size_t N>
@@ -42,26 +42,14 @@ bool
 modm::atomic::Queue<T, N>::isNearlyFull() const
 {
 	static_assert(N > 3, "Not possible the check for 'nearly full' of such a small queue.");
-
-	Index tmphead = modm::accessor::asVolatile(this->head);
-	Index tmptail = modm::accessor::asVolatile(this->tail);
-
-	Index free;
-	if (tmphead >= tmptail) {
-		free = (N + 1) - tmphead + tmptail;
-	}
-	else {
-		free = tmptail - tmphead;
-	}
-
-	return (free < 3);
+	return (getSize() > (N - 3));
 }
 
 template<typename T, std::size_t N>
 modm_always_inline bool
 modm::atomic::Queue<T, N>::isEmpty() const
 {
-	return (modm::accessor::asVolatile(this->head) == modm::accessor::asVolatile(this->tail));
+	return (this->head == this->tail);
 }
 
 template<typename T, std::size_t N>
@@ -69,9 +57,23 @@ bool
 modm::atomic::Queue<T, N>::isNearlyEmpty() const
 {
 	static_assert(N > 3, "Not possible the check for 'nearly empty' of such a small queue. ");
+	return (getSize() < 3);
+}
 
-	Index tmphead = modm::accessor::asVolatile(this->head);
-	Index tmptail = modm::accessor::asVolatile(this->tail);
+
+template<typename T, std::size_t N>
+modm_always_inline typename modm::atomic::Queue<T, N>::Size
+modm::atomic::Queue<T, N>::getMaxSize() const
+{
+	return N;
+}
+
+template<typename T, std::size_t N>
+typename modm::atomic::Queue<T, N>::Size
+modm::atomic::Queue<T, N>::getSize() const
+{
+	Index tmphead = this->head;
+	Index tmptail = this->tail;
 
 	Index stored;
 	if (tmphead >= tmptail) {
@@ -81,15 +83,7 @@ modm::atomic::Queue<T, N>::isNearlyEmpty() const
 		stored = (N + 1) - tmptail + tmphead;
 	}
 
-	return (stored < 3);
-}
-
-
-template<typename T, std::size_t N>
-modm_always_inline typename modm::atomic::Queue<T, N>::Size
-modm::atomic::Queue<T, N>::getMaxSize() const
-{
-	return N;
+	return stored;
 }
 
 template<typename T, std::size_t N>
@@ -107,7 +101,7 @@ modm::atomic::Queue<T, N>::push(const T& value)
 	if (tmphead >= (N+1)) {
 		tmphead = 0;
 	}
-	if (tmphead == modm::accessor::asVolatile(this->tail)) {
+	if (tmphead == this->tail) {
 		return false;
 	}
 	else {

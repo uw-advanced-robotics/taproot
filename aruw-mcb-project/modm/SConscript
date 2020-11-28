@@ -11,7 +11,7 @@
 from os.path import join, abspath
 Import("env")
 
-profile = ARGUMENTS.get("profile", "release")
+profile = env["CONFIG_PROFILE"]
 env["BUILDPATH"] = join(env["CONFIG_BUILD_BASE"], profile)
 env["BASEPATH"] = abspath(".")
 # SCons tools
@@ -20,19 +20,20 @@ env.Append(toolpath=[
     abspath(r"scons/site_tools"),
 ])
 env.Tool("artifact")
-env.Tool("black_magic_probe")
+env.Tool("bmp")
 env.Tool("build_target")
 env.Tool("compiler_arm_none_eabi_gcc")
+env.Tool("crashdebug")
+env.Tool("dfu")
 env.Tool("find_files")
-env.Tool("gdb")
 env.Tool("log_itm")
-env.Tool("postmortem_gdb")
-env.Tool("program_openocd")
+env.Tool("openocd")
+env.Tool("openocd_remote")
 env.Tool("qtcreator")
 env.Tool("settings_buildpath")
+env.Tool("size")
 env.Tool("template")
 env.Tool("utils_buildformat")
-env.Tool("utils_buildsize")
 # Toolchain configuration
 if profile == "debug":
     env.Append(CPPDEFINES = [
@@ -49,7 +50,7 @@ env["CCFLAGS"] = [
     "-funsigned-char",
     "-fwrapv",
     "-g3",
-    "-gdwarf",
+    "-gdwarf-3",
     "-W",
     "-Wall",
     "-Wdouble-promotion",
@@ -86,7 +87,6 @@ env["CFLAGS"] = [
 env["CXXFLAGS"] = [
     "-fno-exceptions",
     "-fno-rtti",
-    "-fno-threadsafe-statics",
     "-fno-unwind-tables",
     "-fstrict-enums",
     "-fuse-cxa-atexit",
@@ -96,15 +96,15 @@ env["CXXFLAGS"] = [
 
 env["ASFLAGS"] = [
     "-g3",
-    "-gdwarf",
+    "-gdwarf-3",
 ]
 
 env["LINKFLAGS"] = [
     "--specs=nano.specs",
     "--specs=nosys.specs",
-    "-L{linkdir}".format(linkdir=abspath("link")),
+    "-L{project_source_dir}",
     "-nostartfiles",
-    "-Tlinkerscript.ld",
+    "-Tmodm/link/linkerscript.ld",
     "-Wl,--build-id=sha1",
     "-Wl,--fatal-warnings",
     "-Wl,--gc-sections",
@@ -145,7 +145,7 @@ env["_LIBFLAGS"] = "-Wl,--whole-archive " + env["_LIBFLAGS"] + " -Wl,--no-whole-
 
 
 # Device configuration
-env["CONFIG_DEVICE_NAME"] = "stm32f427iih"
+env["CONFIG_DEVICE_NAME"] = "stm32f427iih6"
 env["CONFIG_DEVICE_MEMORY"] = [
     {'name': 'flash', 'access': 'rx', 'start': 134217728, 'size': 2097152},
     {'name': 'ccm', 'access': 'rw', 'start': 268435456, 'size': 65536},
@@ -168,6 +168,10 @@ env.AppendUnique(CPPPATH=[
 ])
 
 files = [
+    env.File(r"ext/gcc/cabi.c"),
+    env.File(r"ext/gcc/cxxabi.cpp"),
+    env.File(r"ext/gcc/new_delete.cpp"),
+    env.File(r"ext/tlsf/tlsf.c"),
     env.File(r"src/modm/architecture/driver/atomic/flag.cpp"),
     env.File(r"src/modm/architecture/interface/can.cpp"),
     env.File(r"src/modm/architecture/interface/can_message.cpp"),
@@ -179,7 +183,6 @@ files = [
     env.File(r"src/modm/communication/xpcc/postman/dynamic_postman/dynamic_postman.cpp"),
     env.File(r"src/modm/communication/xpcc/postman/postman.cpp"),
     env.File(r"src/modm/container/smart_pointer.cpp"),
-    env.File(r"src/modm/debug/error_report.cpp"),
     env.File(r"src/modm/io/iostream.cpp"),
     env.File(r"src/modm/io/iostream_printf.cpp"),
     env.File(r"src/modm/math/geometry/angle.cpp"),
@@ -193,16 +196,14 @@ files = [
     env.File(r"src/modm/platform/clock/rcc.cpp"),
     env.File(r"src/modm/platform/clock/systick_timer.cpp"),
     env.File(r"src/modm/platform/core/assert.cpp"),
-    env.File(r"src/modm/platform/core/clock.cpp"),
-    env.File(r"src/modm/platform/core/cxxabi.cpp"),
     env.File(r"src/modm/platform/core/delay.cpp"),
-    env.File(r"src/modm/platform/core/heap_newlib.cpp"),
     env.File(r"src/modm/platform/core/heap_table.cpp"),
     env.File(r"src/modm/platform/core/reset_handler.sx"),
     env.File(r"src/modm/platform/core/startup.c"),
     env.File(r"src/modm/platform/core/startup_platform.c"),
     env.File(r"src/modm/platform/core/vectors.c"),
     env.File(r"src/modm/platform/gpio/enable.cpp"),
+    env.File(r"src/modm/platform/heap/heap_tlsf.cpp"),
     env.File(r"src/modm/platform/i2c/i2c_master_2.cpp"),
     env.File(r"src/modm/platform/spi/spi_master_1.cpp"),
     env.File(r"src/modm/platform/spi/spi_master_5.cpp"),
@@ -246,4 +247,20 @@ env.AppendUnique(LIBS=[
 env.AppendUnique(LIBPATH=[
     abspath(str(library[0].get_dir())),
 ])
+for flags in ["CCFLAGS", "CFLAGS", "CXXFLAGS", "ASFLAGS", "ARCHFLAGS", "LINKFLAGS"]:
+	flags_str = ARGUMENTS.get(flags)
+	if flags_str is not None:
+		flags_list = flags_str.split(",")
+		for flag in flags_list:
+			if len(flag) > 1 and flag[0] == "~":
+				try:
+					env[flags].remove(flag[1:])
+				except ValueError:
+					print("'" + flag[1:] + "' does not exist in " + flags +
+						" and therefore can not be removed.")
+					print("Info: " + flags + ": " + ", ".join(env[flags]))
+					exit(1)
+			else:
+				env[flags].append(flag)
+
 Return("library")

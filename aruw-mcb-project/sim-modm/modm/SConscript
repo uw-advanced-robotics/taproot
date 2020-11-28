@@ -11,7 +11,7 @@
 from os.path import join, abspath
 Import("env")
 
-profile = ARGUMENTS.get("profile", "release")
+profile = env["CONFIG_PROFILE"]
 env["BUILDPATH"] = join(env["CONFIG_BUILD_BASE"], profile)
 env["BASEPATH"] = abspath(".")
 # SCons tools
@@ -19,12 +19,9 @@ env.Append(toolpath=[
     abspath(r"ext/dlr/scons/site_tools"),
     abspath(r"scons/site_tools"),
 ])
-env.Tool("artifact")
 env.Tool("build_target")
 env.Tool("compiler_hosted_gcc")
 env.Tool("find_files")
-env.Tool("gdb")
-env.Tool("log_itm")
 env.Tool("qtcreator")
 env.Tool("settings_buildpath")
 env.Tool("template")
@@ -39,12 +36,11 @@ env["CCFLAGS"] = [
     "-fdata-sections",
     "-ffunction-sections",
     "-finline-limit=10000",
-    "-fshort-wchar",
     "-funsigned-bitfields",
     "-funsigned-char",
     "-fwrapv",
     "-g3",
-    "-gdwarf",
+    "-gdwarf-3",
     "-W",
     "-Wall",
     "-Wduplicated-cond",
@@ -85,11 +81,10 @@ env["CXXFLAGS"] = [
 
 env["ASFLAGS"] = [
     "-g3",
-    "-gdwarf",
+    "-gdwarf-3",
 ]
 
 env["LINKFLAGS"] = [
-    "-Wl,--build-id=sha1",
     "-Wl,--fatal-warnings",
     "-Wl,--gc-sections",
     "-Wl,--relax",
@@ -126,7 +121,6 @@ files = [
     env.File(r"src/modm/communication/xpcc/postman/dynamic_postman/dynamic_postman.cpp"),
     env.File(r"src/modm/communication/xpcc/postman/postman.cpp"),
     env.File(r"src/modm/container/smart_pointer.cpp"),
-    env.File(r"src/modm/debug/error_report.cpp"),
     env.File(r"src/modm/debug/logger/hosted/default_style.cpp"),
     env.File(r"src/modm/driver/io/terminal.cpp"),
     env.File(r"src/modm/io/iostream.cpp"),
@@ -174,4 +168,20 @@ env.AppendUnique(LIBS=[
 env.AppendUnique(LIBPATH=[
     abspath(str(library[0].get_dir())),
 ])
+for flags in ["CCFLAGS", "CFLAGS", "CXXFLAGS", "ASFLAGS", "ARCHFLAGS", "LINKFLAGS"]:
+	flags_str = ARGUMENTS.get(flags)
+	if flags_str is not None:
+		flags_list = flags_str.split(",")
+		for flag in flags_list:
+			if len(flag) > 1 and flag[0] == "~":
+				try:
+					env[flags].remove(flag[1:])
+				except ValueError:
+					print("'" + flag[1:] + "' does not exist in " + flags +
+						" and therefore can not be removed.")
+					print("Info: " + flags + ": " + ", ".join(env[flags]))
+					exit(1)
+			else:
+				env[flags].append(flag)
+
 Return("library")

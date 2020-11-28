@@ -14,13 +14,9 @@
 #define MODM_CAN_MESSAGE_HPP
 
 #include <stdint.h>
-#include <modm/io/iostream.hpp>
 #include <modm/architecture/utils.hpp>
 
-namespace modm
-{
-
-namespace can
+namespace modm::can
 {
 
 /// Representation of a CAN message
@@ -100,11 +96,10 @@ public:
 	operator == (const modm::can::Message& rhs) const;
 };
 
+}	// namespace modm::can
+
+#include <modm/io/iostream.hpp>
+
 modm::IOStream&
 operator << (modm::IOStream& s, const modm::can::Message m);
-
-}	// namespace can
-
-}	// namespace modm
-
 #endif // MODM_CAN_MESSAGE_HPP

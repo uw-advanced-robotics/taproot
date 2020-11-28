@@ -20,7 +20,6 @@
 #include <cstdint>
 #include <type_traits>
 #include <modm/architecture/utils.hpp>
-#include <modm/architecture/interface/accessor.hpp>
 
 namespace modm
 {
@@ -83,6 +82,9 @@ namespace modm
 			modm_always_inline Size
 			getMaxSize() const;
 
+			Size
+			getSize() const;
+
 			const T&
 			get() const;
 
@@ -93,8 +95,8 @@ namespace modm
 			pop();
 
 		private:
-			Index head;
-			Index tail;
+			volatile Index head;
+			volatile Index tail;
 
 			T buffer[N+1];
 		};

@@ -120,7 +120,8 @@ protected:
 	bool inline
 	nestingOkRf() const
 	{
-		return (rfLevel < Levels);
+		return modm_assert_continue_fail_debug(rfLevel < Levels, "rf.nest",
+		    	"Called too many nested ResumableFunctions of the same class!", this);
 	}
 
 	/// @return	`true` if `stopRf()` has been called before

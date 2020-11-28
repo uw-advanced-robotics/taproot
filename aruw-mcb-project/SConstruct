@@ -64,6 +64,8 @@ else:
 env = DefaultEnvironment(tools=[], ENV=os.environ)
 env["CONFIG_BUILD_BASE"] = abspath(join(build_path, target_env))
 env["CONFIG_PROJECT_NAME"] = project_name
+env["CONFIG_ARTIFACT_PATH"] = join(env["CONFIG_BUILD_BASE"], "artifact")
+env["CONFIG_PROFILE"] = ARGUMENTS.get("profile", "release")
 
 # Configure build jobs
 if GetOption('num_jobs') == 1:
@@ -163,9 +165,9 @@ if target_env == "hardware":
     # The executable depends on the linkerscript
     env.Depends(target=program, dependency=abspath("modm/link/linkerscript.ld"))
     env.Alias("size", env.Size(program))
-    env.Alias("gdb", env.OpenOcdGdb(program))
+    env.Alias("gdb", env.DebugGdbRemote(program))
 
-    env.Alias("run", env.OpenOcd(program, commands=["modm_program {$SOURCE}"]))
+    env.Alias("run", [env.ProgramOpenOcd(program)])
     env.Alias("all", ["build", "size"])
     env.Default("all")
 elif target_env == "tests":

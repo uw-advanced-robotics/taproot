@@ -2,39 +2,55 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013, 2016-2017, German Aerospace Center (DLR)
-# Copyright (c) 2017-2018, Niklas Hauser
+# Copyright (c) 2017-2018, 2020, Niklas Hauser
 # Copyright (c) 2018, Fabian Greif
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
-#
-# Authors:
-# - 2013, 2016-2017, Fabian Greif (DLR RY-AVS)
-# - 2017-2018, Niklas Hauser
-# - 2018, Fabian Greif
 
-# USAGE:
-#
-# Reads and matches ELF sections and segments to the physical memories
-# passed in CONFIG_DEVICE_MEMORY which needs to be a list of dictionaries:
-#
-#     env["CONFIG_DEVICE_MEMORY"] = [
-#         {"name": "flash", "start": 0x08000000, "size": 2097152, "access": "rx"},
-#         {"name": "ccm", "start": 0x10000000, "size": 65536, "access": "rw"},
-#         {"name": "sram1", "start": 0x20000000, "size": 163840, "access": "rwx"}
-#     ]
+"""
+### Size Report
+
+Inspects the ELF file and generates a size report of the static usage of the
+device's memories. You must pass the available memory segments as a Python
+dictionary:
+
+```sh
+python3 modm/modm_tools/size.py path/to/project.elf \\
+    "[{'name': 'flash', 'access': 'rx', 'start': 134217728, 'size': 65536}, \\
+    {'name': 'sram1', 'access': 'rwx', 'start': 536870912, 'size': 20480}]"
+
+Program:   1.4 KiB (2.2% used)
+(.build_id + .fastcode + .fastdata + .hardware_init + .rodata +
+ .table.copy.intern + .table.heap + .table.zero.intern + .text + .vector_rom)
+
+Data:      3.0 KiB (15.1% used) = 20 B static (0.1%) + 3072 B stack (15.0%)
+(.bss + .fastdata + .stack)
+
+Heap:     17.0 KiB (84.9% available)
+(.heap1)
+```
+
+(\* *only ARM Cortex-M targets*)
+"""
 
 import textwrap
-
-from SCons.Script import *
 from collections import defaultdict
+from pathlib import Path
+from elftools.elf.elffile import ELFFile
 
-try:
-    from elftools.elf.elffile import ELFFile
-except:
-    print("elftools are missing, you need to `pip install pyelftools`!")
-    exit(1)
+
+TEMPLATE_SIZE = """\
+Program: {rom_fmt:>9s} ({rom_p:2.1f}% used)
+({rom_s})
+
+Data:    {ram_fmt:>9s} ({ram_p:2.1f}% used) = {static} B static ({static_p:2.1f}%) + {stack} B stack ({stack_p:2.1f}%)
+({ram_s})
+
+Heap:  {heap_fmt:>11s} ({heap_p:2.1f}% available)
+({heap_s})
+"""
 
 
 def human_readable_format(num, unit='B'):
@@ -49,16 +65,16 @@ def human_readable_format(num, unit='B'):
     return "%.1f %s%s" % (num, 'Pi', unit)
 
 
-def size_action(target, source, env):
+def format(source, device_memories):
     memories = defaultdict(list)
-    for memory in env["CONFIG_DEVICE_MEMORY"]:
+    for memory in device_memories:
         if "w" in memory["access"]:
             memories["ram"].append(memory)
         else:
             memories["rom"].append(memory)
 
     memory_sections = []
-    with open(source[0].path, "rb") as src:
+    with open(source, "rb") as src:
         elffile = ELFFile(src)
         for section in elffile.iter_sections():
             s = {
@@ -67,9 +83,6 @@ def size_action(target, source, env):
                 "paddr": section["sh_addr"],
                 "size": section["sh_size"],
             }
-            # if using python 2 there is a need for .decode
-            if (sys.version_info[0] == 2):
-                s["name"] = s["name"].decode('ASCII')
             if s["vaddr"] == 0 or s["size"] == 0: continue;
             for segment in elffile.iter_segments():
                 if (segment["p_vaddr"] == s["vaddr"] and segment["p_filesz"] == s["size"]):
@@ -122,38 +135,24 @@ def size_action(target, source, env):
     }
     subs.update(totals)
 
-    print("""
-Program: {rom_fmt:>9s} ({rom_p:2.1f}% used)
-({rom_s})
-
-Data:    {ram_fmt:>9s} ({ram_p:2.1f}% used) = {static} B static ({static_p:2.1f}%) + {stack} B stack ({stack_p:2.1f}%)
-({ram_s})
-
-Heap:  {heap_fmt:>11s} ({heap_p:2.1f}% available)
-({heap_s})
-""".format(ram_fmt=human_readable_format(subs["ram"]),
-           rom_fmt=human_readable_format(subs["rom"]),
-           heap_fmt=human_readable_format(subs["heap"]),
-           **subs))
+    output = TEMPLATE_SIZE.format(ram_fmt=human_readable_format(subs["ram"]),
+                                  rom_fmt=human_readable_format(subs["rom"]),
+                                  heap_fmt=human_readable_format(subs["heap"]),
+                                  **subs)
+    return output
 
 
-def show_size(env, source, alias='__size'):
-    if env.has_key('CONFIG_DEVICE_MEMORY'):
-        action = Action(size_action, cmdstr="$SIZECOMSTR")
-    elif env.has_key('CONFIG_DEVICE_NAME'):
-        action = Action("$SIZE -C --mcu=$CONFIG_DEVICE_NAME %s" % source[0].path,
-                        cmdstr="$SIZECOMSTR")
-    else:
-        # use the raw output of the size tool
-        action = Action("$SIZE %s" % source[0].path,
-                        cmdstr="$SIZECOMSTR")
+# -----------------------------------------------------------------------------
+if __name__ == "__main__":
+    import argparse
 
-    return env.AlwaysBuild(env.Alias(alias, source, action))
+    parser = argparse.ArgumentParser(description='Generate a size report.')
+    parser.add_argument(
+            dest="source",
+            metavar="ELF")
+    parser.add_argument(
+            dest="memories")
 
-
-def generate(env, **kw):
-    env.AddMethod(show_size, 'Size')
-
-
-def exists(env):
-    return True
+    args = parser.parse_args()
+    output = format(args.source, eval(args.memories))
+    print(output)

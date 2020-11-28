@@ -53,9 +53,7 @@ template<class SystemClock, modm::baudrate_t baudrate,
 void modm_always_inline
 modm::platform::UsartHal2::initialize(Parity parity)
 {
-	initializeWithBrr(UartBaudrate::getBrr<SystemClock::Usart2, baudrate>(),
-			parity,
-			oversample);
+	initializeWithBrr(UartBaudrate::getBrr<SystemClock::Usart2, baudrate>(), parity, oversample);
 }
 template<class SystemClock, modm::baudrate_t baudrate>
 void modm_always_inline
@@ -107,6 +105,19 @@ modm::platform::UsartHal2::setSpiDataMode(SpiDataMode mode)
 	USART2->CR2 =
 		(USART2->CR2 & ~static_cast<uint32_t>(SpiDataMode::Mode3))
 		| static_cast<uint32_t>(mode);
+
+}
+
+void
+modm::platform::UsartHal2::setWordLength(WordLength length)
+{
+	USART2->CR1 =
+#ifdef USART_CR1_M1
+		(USART2->CR1 & ~(USART_CR1_M0 | USART_CR1_M1))
+#else
+		(USART2->CR1 & ~USART_CR1_M)
+#endif
+		| static_cast<uint32_t>(length);
 
 }
 

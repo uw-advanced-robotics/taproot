@@ -33,7 +33,7 @@ ENTRY(Reset_Handler)
 /* the thread stack is used only for reporting hard fault conditions! It may therefore be small. */
 PROCESS_STACK_SIZE  = 0;
 /* the handler stack is used for main program as well as interrupts */
-MAIN_STACK_SIZE     = 3040;
+MAIN_STACK_SIZE     = 3072;
 /* combined stack size */
 TOTAL_STACK_SIZE = MAIN_STACK_SIZE + PROCESS_STACK_SIZE;
 
@@ -92,6 +92,8 @@ SECTIONS
 
 	.heap0 (NOLOAD) :
 	{
+		*(.heap0)
+		. = ALIGN(4);
 		__heap0_start = .;
 		. = ORIGIN(CCM) + LENGTH(CCM);
 		__heap0_end = .;
@@ -166,7 +168,12 @@ SECTIONS
 		__data_load = LOADADDR(.data);
 		__data_start = .;
 		*(.data .data.* .gnu.linkonce.d.*)
-		. = ALIGN(4);
+	} >RAM AT >FLASH
+
+	/* code routines in RAM */
+	.ramcode : ALIGN(4)
+	{
+		*(.ramcode .ramcode*)
 		__data_end = .;
 	} >RAM AT >FLASH
 
@@ -191,6 +198,8 @@ SECTIONS
 
 	.heap1 (NOLOAD) :
 	{
+		*(.heap1)
+		. = ALIGN(4);
 		__heap1_start = .;
 		. = ORIGIN(SRAM1) + LENGTH(SRAM1);
 		__heap1_end = .;
@@ -199,6 +208,8 @@ SECTIONS
 
 	.heap2 (NOLOAD) :
 	{
+		*(.heap2)
+		. = ALIGN(4);
 		__heap2_start = .;
 		. = ORIGIN(SRAM2) + LENGTH(SRAM2);
 		__heap2_end = .;
@@ -206,6 +217,8 @@ SECTIONS
 
 	.heap3 (NOLOAD) :
 	{
+		*(.heap3)
+		. = ALIGN(4);
 		__heap3_start = .;
 		. = ORIGIN(SRAM3) + LENGTH(SRAM3);
 		__heap3_end = .;

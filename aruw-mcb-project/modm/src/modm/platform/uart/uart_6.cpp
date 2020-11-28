@@ -90,6 +90,12 @@ modm::platform::Usart6::isWriteFinished()
 }
 
 std::size_t
+modm::platform::Usart6::transmitBufferSize()
+{
+	return txBuffer.getSize();
+}
+
+std::size_t
 modm::platform::Usart6::discardTransmitBuffer()
 {
 	std::size_t count = 0;
@@ -131,6 +137,12 @@ modm::platform::Usart6::read(uint8_t *data, std::size_t length)
 }
 
 std::size_t
+modm::platform::Usart6::receiveBufferSize()
+{
+	return rxBuffer.getSize();
+}
+
+std::size_t
 modm::platform::Usart6::discardReceiveBuffer()
 {
 	std::size_t count = 0;
@@ -139,6 +151,27 @@ modm::platform::Usart6::discardReceiveBuffer()
 		rxBuffer.pop();
 	}
 	return count;
+}
+
+bool
+modm::platform::Usart6::hasError()
+{
+	return UsartHal6::getInterruptFlags().any(
+		UsartHal6::InterruptFlag::ParityError |
+#ifdef USART_ISR_NE
+		UsartHal6::InterruptFlag::NoiseError |
+#endif
+		UsartHal6::InterruptFlag::OverrunError | UsartHal6::InterruptFlag::FramingError);
+}
+void
+modm::platform::Usart6::clearError()
+{
+	return UsartHal6::acknowledgeInterruptFlags(
+		UsartHal6::InterruptFlag::ParityError |
+#ifdef USART_ISR_NE
+		UsartHal6::InterruptFlag::NoiseError |
+#endif
+		UsartHal6::InterruptFlag::OverrunError | UsartHal6::InterruptFlag::FramingError);
 }
 
 
@@ -160,4 +193,5 @@ MODM_ISR(USART6)
 			txBuffer.pop();
 		}
 	}
+	modm::platform::UsartHal6::acknowledgeInterruptFlags(modm::platform::UsartHal6::InterruptFlag::OverrunError);
 }

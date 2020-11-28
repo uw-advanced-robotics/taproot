@@ -9,11 +9,7 @@
  */
 // ----------------------------------------------------------------------------
 
-// Including stdio conflicts with the other include above, and multiple
-// definition errors occur. The following error occurs:
-// conflicting declaration of C function 'int _vsnprintf(out_fct_type, char*, size_t, const char*, va_list)'
-// #include <stdio.h>
-
+#include <stdio.h>
 #include <stdarg.h>
 #include <modm/architecture/interface/accessor.hpp>
 #include <cmath>

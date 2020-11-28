@@ -16,61 +16,26 @@
 #endif
 
 #include <modm/platform/clock/rcc.hpp>
+#include <modm/math/algorithm/prescaler.hpp>
 
 template< class SystemClock, modm::frequency_t frequency, modm::percent_t tolerance >
 void
 modm::platform::Adc1::initialize()
 {
-	constexpr float desired = float(SystemClock::Adc) / (frequency > 36000000 ? 36000000 : frequency);
-
-	// respect the prescaler range of 2, 4, 6, 8
-	constexpr uint8_t pre_ceil = (
-			std::ceil(desired) > 6 ? 8 : (
-			std::ceil(desired) > 4 ? 6 : (
-			std::ceil(desired) > 2 ? 4 :
-									 2
-			)));
-	constexpr uint8_t pre_floor = (
-			std::floor(desired) < 4 ? 2 : (
-			std::floor(desired) < 6 ? 4 : (
-			std::floor(desired) < 8 ? 6 :
-									  8
-			)));
-
-	// calculate the possible baudrates above and below the requested baudrate
-	constexpr uint32_t baud_lower = SystemClock::Adc / pre_ceil;
-	constexpr uint32_t baud_upper = SystemClock::Adc / pre_floor;
-
-	// calculate the half-point between the upper and lower baudrate
-	constexpr uint32_t baud_middle = (baud_upper + baud_lower) / 2;
-	// decide which divisor is closer to a possible baudrate
-	// lower baudrate means higher divisor!
-	constexpr uint8_t pre = (frequency < baud_middle) ? pre_ceil : pre_floor;
-
-	// check if within baudrate tolerance
-	assertBaudrateInTolerance<
-			SystemClock::Adc / pre,
-			frequency,
-			tolerance >();
-
-	// translate the prescaler into the bitmapping
-	constexpr Prescaler prescaler = (
-			(pre >= 8) ? Prescaler::Div8 : (
-			(pre >= 6) ? Prescaler::Div6 : (
-			(pre >= 4) ? Prescaler::Div4 :
-						 Prescaler::Div2
-			)));
+	constexpr auto result = modm::Prescaler::from_list(SystemClock::Adc, frequency, {2,4,6,8});
+	static_assert(result.frequency <= 36000000, "Generated ADC frequency is above maximum frequency!");
+	assertBaudrateInTolerance<result.frequency, frequency, tolerance >();
 
 	Rcc::enable<Peripheral::Adc1>();
 	ADC1->CR2 |= ADC_CR2_ADON;			// switch on ADC
 
-	setPrescaler(prescaler);
+	setPrescaler(Prescaler{result.index});
 }
 
 void
 modm::platform::Adc1::setPrescaler(const Prescaler prescaler)
 {
-	ADC->CCR = (ADC->CCR & ~(0b11 << 17)) | (uint32_t(prescaler) << 17);
+	ADC->CCR = (ADC->CCR & ~ADC_CCR_ADCPRE) | (uint32_t(prescaler) << ADC_CCR_ADCPRE_Pos);
 }
 
 void
@@ -211,36 +176,14 @@ modm::platform::Adc1::readChannel(Channel channel)
 }
 
 // ----------------------------------------------------------------------------
-// TODO: move this to some shared header for all cortex m3 platforms
-// Re-implemented here to save some code space. As all arguments in the calls
-// below are constant the compiler is able to calculate everything at
-// compile time.
-
-#ifndef MODM_CUSTOM_NVIC_FUNCTIONS
-#define MODM_CUSTOM_NVIC_FUNCTIONS
-
-static modm_always_inline void
-nvicEnableInterrupt(const IRQn_Type IRQn)
-{
-	NVIC->ISER[(uint32_t(IRQn) >> 5)] = (1 << (uint32_t(IRQn) & 0x1F));
-}
-
-static modm_always_inline void
-nvicDisableInterrupt(IRQn_Type IRQn)
-{
-	NVIC_DisableIRQ(IRQn);
-}
-
-#endif // MODM_CUSTOM_NVIC_FUNCTIONS
-
 void
 modm::platform::Adc1::enableInterruptVector(const uint32_t priority,
-												const bool enable)
+												   const bool enable)
 {
 	const IRQn_Type InterruptVector = ADC_IRQn;
 	if (enable) {
 		NVIC_SetPriority(InterruptVector, priority);
-		nvicEnableInterrupt(InterruptVector);
+		NVIC_EnableIRQ(InterruptVector);
 	} else {
 		NVIC_DisableIRQ(InterruptVector);
 	}

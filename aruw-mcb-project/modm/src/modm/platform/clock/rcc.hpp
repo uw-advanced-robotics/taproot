@@ -42,9 +42,9 @@ public:
 	{
 		/// High speed internal clock (16 MHz)
 		Hsi = RCC_PLLCFGR_PLLSRC_HSI,
+		InternalClock = Hsi,
 		/// High speed external clock (see HseConfig)
 		Hse = RCC_PLLCFGR_PLLSRC_HSE,
-		InternalClock = Hsi,
 		ExternalClock = Hse,
 		ExternalCrystal = Hse,
 	};
@@ -66,7 +66,6 @@ public:
 		Lsi = RCC_BDCR_RTCSEL_1,
 		Lse = RCC_BDCR_RTCSEL_0,
 		Hse = RCC_BDCR_RTCSEL_0 | RCC_BDCR_RTCSEL_1,
-
 		ExternalClock = Hse,
 		ExternalCrystal = Hse,
 		LowSpeedInternalClock = Lsi,
@@ -150,7 +149,52 @@ public:
 	static bool
 	enableLowSpeedExternalCrystal(uint32_t waitCycles = 2048);
 
-	// plls
+	/**
+	 * \code
+	 * VCO input frequency = PLL input clock frequency / PLLM [with 2 <= PLLM <= 63]
+	 * VCO output frequency = VCO input frequency × PLLN [with 64 <= PLLN <= 432]
+	 * \endcode
+	 *
+	 * \param	pllM
+	 * 		Division factor for the main PLL (PLL) and
+	 * 		audio PLL (PLLI2S) input clock (with 2 <= pllM <= 63).
+	 *		The software has to set these bits correctly to ensure
+	 *		that frequency of selected source divided by pllM
+	 *		is in ranges from 1 to 2 MHz.
+	 *
+	 * \param	pllN
+	 * 		Main PLL (PLL) multiplication factor for VCO (with 64 <= pllN <= 432).
+	 * 		The software has to set these bits correctly to ensure
+	 * 		that the VCO output frequency is
+	 * 		 - 336 MHz for ST32F4. Core will run at 168 MHz.
+	 *		 - 240 MHz for ST32F2. Core will run at 120 MHz.
+	 *
+	 * \param	pllP
+	 *
+	 */
+	struct PllFactors
+	{
+		const uint8_t pllM;
+		const uint16_t pllN;
+		const uint8_t pllP;
+	};
+
+	/**
+	 * Enable PLL.
+	 *
+	 * \param	source
+	 * 		Source select for PLL. If you are using HSE you must
+	 * 		enable it first (see enableHse()).
+	 *
+	 * \param	factors
+	 * 		Struct with all pll factors. \see PllFactors.
+	 *
+	 * \param	waitCycles
+	 * 		Number of cycles to wait for the pll to stabilise. Default: 2048.
+	 */
+	static bool
+	enablePll(PllSource source, const PllFactors& pllFactors, uint32_t waitCycles = 2048);
+
 	/**
 	 * Enable PLL.
 	 *
@@ -180,10 +224,18 @@ public:
 	 * Example:
 	 *
 	 */
-	static bool
+	[[deprecated("Use PllFactors as argument instead")]] static bool
 	enablePll(PllSource source, uint8_t pllM, uint16_t pllN,
 			  uint8_t pllP,
-			  uint32_t waitCycles = 2048);
+			  uint32_t waitCycles = 2048)
+	{
+		PllFactors pllFactors{
+			.pllM = pllM,
+			.pllN = pllN,
+			  .pllP = pllP,
+		};
+		return enablePll(source, pllFactors, waitCycles);
+	}
 	// sinks
 	static bool
 	enableSystemClock(SystemClockSource src, uint32_t waitCycles = 2048);
