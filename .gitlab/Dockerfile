@@ -44,7 +44,7 @@ FROM python:3.8.0-slim-buster
 # Install misc basic dependencies
 # Installing gnupg2 for "apt-key add"
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget bzip2 git gcc g++ gnupg2 \
+    && apt-get install -y --no-install-recommends wget bzip2 git gcc g++ gnupg2 valgrind \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

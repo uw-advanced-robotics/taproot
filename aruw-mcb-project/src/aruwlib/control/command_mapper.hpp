@@ -80,7 +80,7 @@ public:
     CommandMapper(Drivers* drivers) : drivers(drivers) {}
     CommandMapper(const CommandMapper&) = delete;
     CommandMapper& operator=(const CommandMapper&) = delete;
-    mockable ~CommandMapper() = default;
+    mockable ~CommandMapper();
 
     /**
      * Attaches a Command to a remote control mapping which is added to the

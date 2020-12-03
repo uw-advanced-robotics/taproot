@@ -16,12 +16,13 @@
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2020-09-10.1
+  image: aruw/mcb-2020-gitlab-ci:2020-11-24.1
 
 variables:
   ARTIFACT_PATH: isolated-deploy
   GIT_SUBMODULE_STRATEGY: recursive
   DEFAULT_BUILD_ELF_FILE: build/hardware/release/aruw-mcb.elf
+  DEFAULT_TESTS_BUILD_ELF_FILE: build/tests/release/aruw-mcb-tests.elf
   NUM_JOBS: 4
 
 .default_only: &default_only
@@ -59,7 +60,7 @@ Drone Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_DRONE -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_DRONE -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_DRONE -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_DRONE -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-drone.elf
   only: *default_only
   artifacts:
@@ -74,7 +75,7 @@ Engineer Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_ENGINEER -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_ENGINEER -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_ENGINEER -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_ENGINEER -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-engineer.elf
   only: *default_only
   artifacts:
@@ -89,7 +90,7 @@ Hero Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_HERO -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_HERO -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_HERO -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_HERO -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-hero.elf
   only: *default_only
   artifacts:
@@ -104,7 +105,7 @@ Old Soldier Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_OLD_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_OLD_SOLDIER -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-old-soldier.elf
   only: *default_only
   artifacts:
@@ -119,7 +120,7 @@ Soldier Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_SOLDIER -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_SOLDIER -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_SOLDIER -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-soldier.elf
   only: *default_only
   artifacts:
@@ -134,7 +135,7 @@ Sentinel Build:
     - cd aruw-mcb-project
     - python3 $(which scons) build robot=TARGET_SENTINEL -j${NUM_JOBS} additional-ccflags=-Werror
     - python3 $(which scons) build-sim robot=TARGET_SENTINEL -j${NUM_JOBS}
-    - python3 $(which scons) run-tests robot=TARGET_SENTINEL -j${NUM_JOBS}
+    - python3 $(which scons) build-tests robot=TARGET_SENTINEL -j${NUM_JOBS} && valgrind --leak-check=full --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-sentinel.elf
   only: *default_only
   artifacts:

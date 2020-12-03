@@ -65,6 +65,19 @@
             }
         },
         {
+            "label": "Run Sim - Valgrind Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/sim/debug/aruw-mcb.elf",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
+            }
+        },
+        {
             "label": "Build Tests - Debug",
             "type": "shell",
             "presentation": {
@@ -84,6 +97,19 @@
                 "panel": "new"
             },
             "command": "/usr/bin/env python3 $(which scons) run-tests profile=debug",
+            "group": "build",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
+            }
+        },
+        {
+            "label": "Run Tests - Valgrind Debug",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/tests/debug/aruw-mcb-tests.elf",
             "group": "build",
             "problemMatcher": [],
             "options": {
