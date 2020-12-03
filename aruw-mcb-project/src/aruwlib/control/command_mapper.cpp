@@ -28,6 +28,15 @@ namespace aruwlib
 {
 namespace control
 {
+CommandMapper::~CommandMapper()
+{
+    for (auto& mapping : remoteMappings)
+    {
+        delete mapping.first;
+        delete mapping.second;
+    }
+}
+
 void CommandMapper::handleKeyStateChange(
     uint16_t key,
     Remote::SwitchState leftSwitch,
@@ -125,6 +134,8 @@ void CommandMapper::addMap(RemoteMap* mapping, MapInfo* mapInfo)
 {
     if (remoteMappings.insert(std::pair<RemoteMap*, MapInfo*>(mapping, mapInfo)).second == false)
     {
+        delete mapping;
+        delete mapInfo;
         RAISE_ERROR(
             drivers,
             "failed to insert io mapping",
