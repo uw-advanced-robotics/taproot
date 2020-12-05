@@ -32,7 +32,7 @@ class ErrorControllerMock : public aruwlib::errors::ErrorController
 public:
     ErrorControllerMock(aruwlib::Drivers* drivers) : aruwlib::errors::ErrorController(drivers) {}
     MOCK_METHOD(void, addToErrorList, (const aruwlib::errors::SystemError& error), (override));
-    MOCK_METHOD(void, update, (), (override));
+    MOCK_METHOD(void, updateLedDisplay, (), (override));
 };  // class ErrorControllerMock
 }  // namespace mock
 }  // namespace aruwlib

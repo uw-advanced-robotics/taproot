@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ERROR_CONTROLLER_HPP
-#define ERROR_CONTROLLER_HPP
+#ifndef ERROR_CONTROLLER_HPP_
+#define ERROR_CONTROLLER_HPP_
 
 #include <aruwlib/architecture/timeout.hpp>
 #include <modm/container.hpp>
@@ -32,32 +32,55 @@ class Drivers;
 namespace errors
 {
 /**
- * Protocol description:
- * The 8 leds on the mcb are used to indicate a location and error type. LEDs A-D transmit
- * the error location and E-H the error type.
- * For location, the LSB is D, and for error type, the LSB is H
- * The other green led (next to the red led) comes on
- * when you have added an invalid error. The red led is always on (not used). Default, leds
- * A-H are always off if no errors are detected
+ * The ErrorController stores the errors that are currently active and displays errors
+ * via the MCB's LEDs.
+ *
+ * Use the `RAISE_ERROR` macro to add errors to the main ErrorController.
+ *
+ * LED blink Protocol description:
+ * - The 8 LEDs on the MCB are used to indicate the location of an error. LED A is the LSB
+ *   and LED H is the MSB.
+ * - The other green LED (next to the red LED) comes on when you have added an error that
+ *   is invalid. The red LED is not used by the ErrorController.
+ * - By default, LEDs A-H are always off if no errors are detected.
  */
 class ErrorController
 {
 public:
-    ErrorController(Drivers* drivers) : drivers(drivers), prevLedErrorChangeWait(ERROR_ROTATE_TIME)
+    static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
+    using error_index_t = modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE>::Index;
+
+    /**
+     * Constrcuts an ErrorController with a display time for each error specified
+     * by `ERROR_ROTATE_TIME`.
+     */
+    ErrorController(Drivers* drivers)
+        : drivers(drivers),
+          prevLedErrorChangeWait(ERROR_ROTATE_TIME),
+          currentDisplayIndex(0)
     {
     }
     ErrorController(const ErrorController&) = delete;
     ErrorController& operator=(const ErrorController&) = delete;
     mockable ~ErrorController() = default;
 
+    /**
+     * Adds the passed in error to the ErrorController if no identical errors are already in
+     * the ErrorController.
+     *
+     * @param[in] error The SystemError to add to the ErrorController.
+     */
     mockable void addToErrorList(const SystemError& error);
 
-    mockable void update();
+    /**
+     * Updates the errors displayed via the LEDs. Cycles through the `SystemErrors` in the
+     * queue of errors, switching to a new error every `ERROR_ROTATE_TIME`.
+     */
+    mockable void updateLedDisplay();
 
 private:
-    static const int ERROR_ROTATE_TIME = 5000;
-
-    static const unsigned ERROR_LIST_MAX_SIZE = 16;
+    static constexpr int ERROR_ROTATE_TIME = 5000;
+    static constexpr error_index_t NUM_LEDS = 8;
 
     Drivers* drivers;
 
@@ -65,17 +88,16 @@ private:
 
     aruwlib::arch::MilliTimeout prevLedErrorChangeWait;
 
-    int currentDisplayIndex = 0;
+    error_index_t currentDisplayIndex;
 
-    bool getLedErrorCodeBits(Location location, ErrorType errorType, uint8_t* number);
+    /**
+     * Displays the `binaryRep` with the LEDs A-H, with LED A as the LSB and LED H as the MSB.
+     */
+    void displayBinaryNumberViaLeds(uint8_t binaryRep);
 
-    void setLedError(uint8_t binaryRep);
-
-    void ledSwitch(uint8_t ledOnBoard, bool displayOnBoard);
-};
-
+    bool validateErrorTypeAndLocation(const SystemError& error);
+};  // class ErrorController
 }  // namespace errors
-
 }  // namespace aruwlib
 
-#endif
+#endif  // ERROR_CONTROLLER_HPP_

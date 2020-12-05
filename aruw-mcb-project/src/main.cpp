@@ -75,7 +75,7 @@ int main()
         if (sendMotorTimeout.execute())
         {
             drivers->mpu6500.read();
-            drivers->errorController.update();
+            drivers->errorController.updateLedDisplay();
             drivers->commandScheduler.run();
             drivers->djiMotorTxHandler.processCanSendData();
             drivers->oledDisplay.update();
