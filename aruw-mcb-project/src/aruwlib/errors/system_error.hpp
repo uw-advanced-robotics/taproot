@@ -17,18 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * example for how to create and add an error to the ErrorController:
- * use macro in create_errors.hpp
- *
- *     RAISE_ERROR(drivers, "Error in DJI Serial", aruwlib::errors::Location::DJI_SERIAL,
- *     aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
- *
- * then call ErrorController::update() to update the list of errors
- */
-
-#ifndef __SYSTEM_ERROR_HPP__
-#define __SYSTEM_ERROR_HPP__
+#ifndef SYSTEM_ERROR_HPP_
+#define SYSTEM_ERROR_HPP_
 
 #include <string>
 
@@ -36,11 +26,7 @@ namespace aruwlib
 {
 namespace errors
 {
-static const uint8_t ERROR_LOCATION_SIZE = 4;
-
-static const uint8_t ERROR_TYPE_SIZE = 8 - ERROR_LOCATION_SIZE;
-
-// Location of errors; subject to change
+///< Location of errors; subject to change
 enum Location
 {
     CAN_RX = 0,
@@ -55,7 +41,7 @@ enum Location
     LOCATION_AMOUNT,
 };
 
-// Type of errors; subject to change
+///< Type of errors; subject to change
 enum ErrorType
 {
     IMU_DATA_NOT_INITIALIZED = 0,
@@ -80,19 +66,49 @@ enum ErrorType
 class SystemError
 {
 public:
-    SystemError();
+    static const uint8_t ERROR_LOCATION_SIZE = 4;
 
-    SystemError(const char *desc, int line, const char *file, Location l, ErrorType et);
+    static const uint8_t ERROR_TYPE_SIZE = 8 - ERROR_LOCATION_SIZE;
 
-    int getLineNumber() const;
+    constexpr SystemError()
+        : lineNumber(0),
+          description("default"),
+          filename("none"),
+          location(LOCATION_AMOUNT),
+          errorType(ERROR_TYPE_AMOUNT)
+    {
+        static_assert(
+            LOCATION_AMOUNT <= ERROR_LOCATION_SIZE * ERROR_LOCATION_SIZE,
+            "You have declared too many locations!");
+        static_assert(
+            ERROR_TYPE_AMOUNT <= ERROR_TYPE_SIZE * ERROR_TYPE_SIZE,
+            "You have declared too many error types!");
+    }
 
-    const char *getDescription() const;
+    constexpr SystemError(const char *desc, int line, const char *file, Location l, ErrorType et)
+        : lineNumber(line),
+          description(desc),
+          filename(file),
+          location(l),
+          errorType(et)
+    {
+        static_assert(
+            LOCATION_AMOUNT <= ERROR_LOCATION_SIZE * ERROR_LOCATION_SIZE,
+            "You have declared too many locations!");
+        static_assert(
+            ERROR_TYPE_AMOUNT <= ERROR_TYPE_SIZE * ERROR_TYPE_SIZE,
+            "You have declared too many error types!");
+    }
 
-    const char *getFilename() const;
+    constexpr int getLineNumber() const { return lineNumber; }
 
-    Location getLocation() const;
+    const char *getDescription() const { return description; }
 
-    ErrorType getErrorType() const;
+    const char *getFilename() const { return filename; }
+
+    constexpr Location getLocation() const { return location; }
+
+    constexpr ErrorType getErrorType() const { return errorType; }
 
 private:
     int lineNumber;
@@ -104,10 +120,8 @@ private:
     Location location;
 
     ErrorType errorType;
-};
-
+};  // class SystemError
 }  // namespace errors
-
 }  // namespace aruwlib
 
-#endif
+#endif  // SYSTEM_ERROR_HPP_
