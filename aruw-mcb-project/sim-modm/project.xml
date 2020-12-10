@@ -13,6 +13,7 @@
   </options>
   <modules>
     <module>modm:build:scons</module>
+    <module>modm:architecture:atomic</module>
     <module>modm:platform:core</module>
     <module>modm:container</module>
     <module>modm:math:utils</module>

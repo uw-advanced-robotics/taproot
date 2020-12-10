@@ -112,6 +112,7 @@ env.AppendUnique(CPPPATH=[
 ])
 
 files = [
+    env.File(r"src/modm/architecture/driver/atomic/flag.cpp"),
     env.File(r"src/modm/architecture/interface/can.cpp"),
     env.File(r"src/modm/architecture/interface/can_message.cpp"),
     env.File(r"src/modm/communication/xpcc/backend/can/connector.cpp"),
