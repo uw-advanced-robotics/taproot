@@ -50,7 +50,7 @@
 #include "communication/serial/ref_serial.hpp"
 #include "communication/serial/uart.hpp"
 #include "communication/serial/xavier_serial.hpp"
-#include "control/command_mapper.hpp"
+#include "control/CommandMapper.hpp"
 #include "control/command_scheduler.hpp"
 #include "control/control_operator_interface.hpp"
 #include "display/OledDisplay.hpp"

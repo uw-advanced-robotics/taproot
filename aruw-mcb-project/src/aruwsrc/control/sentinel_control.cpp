@@ -18,7 +18,7 @@
  */
 
 #include <aruwlib/DriversSingleton.hpp>
-#include <aruwlib/control/command_mapper.hpp>
+#include <aruwlib/control/CommandMapper.hpp>
 
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
@@ -152,24 +152,22 @@ void startSentinelCommands(aruwlib::Drivers *drivers)
 void registerSentinelIoMappings(aruwlib::Drivers *drivers)
 {
     drivers->commandMapper.addHoldRepeatMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
-        &agitatorShootSlowCommand);
-
-    drivers->commandMapper.addHoldRepeatMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
-        &agitatorKickerCommand);
-
-    drivers->commandMapper.addHoldRepeatMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
-        &sentinelAutoDrive);
+        aruwlib::control::RemoteMapState(
+            aruwlib::Remote::Switch::LEFT_SWITCH,
+            aruwlib::Remote::SwitchState::UP),
+        {&agitatorShootSlowCommand, &agitatorKickerCommand});
 
     drivers->commandMapper.addHoldMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
-        &stopLowerFrictionWheels);
+        aruwlib::control::RemoteMapState(
+            aruwlib::Remote::Switch::LEFT_SWITCH,
+            aruwlib::Remote::SwitchState::DOWN),
+        {&stopLowerFrictionWheels, &stopUpperFrictionWheels});
 
-    drivers->commandMapper.addHoldMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN),
-        &stopUpperFrictionWheels);
+    drivers->commandMapper.addHoldRepeatMapping(
+        aruwlib::control::RemoteMapState(
+            aruwlib::Remote::Switch::RIGHT_SWITCH,
+            aruwlib::Remote::SwitchState::DOWN),
+        {&sentinelAutoDrive});
 }
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)

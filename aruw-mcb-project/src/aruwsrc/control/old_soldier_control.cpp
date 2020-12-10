@@ -18,7 +18,7 @@
  */
 
 #include <aruwlib/DriversSingleton.hpp>
-#include <aruwlib/control/command_mapper.hpp>
+#include <aruwlib/control/CommandMapper.hpp>
 
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
@@ -41,6 +41,7 @@ using namespace aruwsrc::turret;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 using aruwlib::control::CommandMapper;
+using aruwlib::control::RemoteMapState;
 
 /*
  * NOTE: We are using the DoNotUse_getDrivers() function here
@@ -127,25 +128,25 @@ void startOldSoldierCommands(aruwlib::Drivers *drivers)
 /* register io mappings here ------------------------------------------------*/
 void registerOldSoldierIoMappings(aruwlib::Drivers *drivers)
 {
+    drivers->commandMapper.addHoldMapping(
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
+        {&chassisDriveCommand});
+
+    drivers->commandMapper.addHoldMapping(
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
+        {&wiggleDriveCommand});
+
     drivers->commandMapper.addHoldRepeatMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
-        &agitatorShootFastCommand);
+        RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP),
+        {&agitatorShootFastCommand});
+
+    drivers->commandMapper.addToggleMapping(
+        RemoteMapState({Remote::Key::F}),
+        {&wiggleDriveCommand});
 
     drivers->commandMapper.addHoldRepeatMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID),
-        &chassisAutorotateCommand);
-
-    drivers->commandMapper.addHoldMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
-        &chassisDriveCommand);
-
-    drivers->commandMapper.addHoldMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
-        &openHopperCommand);
-
-    drivers->commandMapper.addHoldMapping(
-        drivers->commandMapper.newKeyMap(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP),
-        &wiggleDriveCommand);
+        RemoteMapState(RemoteMapState::MouseButton::LEFT),
+        {&agitatorShootFastCommand});
 }
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
