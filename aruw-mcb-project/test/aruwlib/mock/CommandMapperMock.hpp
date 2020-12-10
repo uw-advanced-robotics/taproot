@@ -20,8 +20,8 @@
 #ifndef COMMAND_MAPPER_MOCK_HPP_
 #define COMMAND_MAPPER_MOCK_HPP_
 
+#include <aruwlib/control/CommandMapper.hpp>
 #include <aruwlib/control/command.hpp>
-#include <aruwlib/control/command_mapper.hpp>
 #include <gmock/gmock.h>
 
 namespace aruwlib
@@ -31,27 +31,42 @@ namespace mock
 class CommandMapperMock : public aruwlib::control::CommandMapper
 {
 public:
-    CommandMapperMock(aruwlib::Drivers* drivers) : aruwlib::control::CommandMapper(drivers) {}
+    CommandMapperMock(aruwlib::Drivers *drivers) : aruwlib::control::CommandMapper(drivers) {}
+
     MOCK_METHOD(
         void,
-        addPressMapping,
-        (aruwlib::control::CommandMapper::RemoteMap * mapping, aruwlib::control::Command* Command),
+        handleKeyStateChange,
+        (uint16_t key,
+         Remote::SwitchState leftSwitch,
+         Remote::SwitchState rightSwitch,
+         bool mouseL,
+         bool mouseR),
         (override));
     MOCK_METHOD(
         void,
         addHoldMapping,
-        (aruwlib::control::CommandMapper::RemoteMap * mapping, aruwlib::control::Command* Command),
+        (const aruwlib::control::RemoteMapState &mapping,
+         const std::vector<aruwlib::control::Command *> commands),
         (override));
     MOCK_METHOD(
         void,
         addHoldRepeatMapping,
-        (aruwlib::control::CommandMapper::RemoteMap * mapping, aruwlib::control::Command* Command),
+        (const aruwlib::control::RemoteMapState &mapping,
+         const std::vector<aruwlib::control::Command *> commands),
         (override));
     MOCK_METHOD(
         void,
         addToggleMapping,
-        (aruwlib::control::CommandMapper::RemoteMap * mapping, aruwlib::control::Command* Command),
+        (const aruwlib::control::RemoteMapState &mapping,
+         const std::vector<aruwlib::control::Command *> commands),
         (override));
+    MOCK_METHOD(
+        void,
+        addPressMapping,
+        (const aruwlib::control::RemoteMapState &mapping,
+         const std::vector<aruwlib::control::Command *> commands),
+        (override));
+    MOCK_METHOD(std::size_t, getSize, (), (const override));
 };  // class CommandMapperMock
 }  // namespace mock
 }  // namespace aruwlib
