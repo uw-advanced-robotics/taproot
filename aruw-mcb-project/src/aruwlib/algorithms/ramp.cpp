@@ -27,14 +27,9 @@ namespace aruwlib
 {
 namespace algorithms
 {
-Ramp::Ramp(const float& initialValue)
-    : target(initialValue),
-      value(initialValue),
-      targetReached(true)
-{
-}
+Ramp::Ramp(float initialValue) : target(initialValue), value(initialValue), targetReached(true) {}
 
-void Ramp::setTarget(const float& target)
+void Ramp::setTarget(float target)
 {
     if (!compareFloatClose(target, this->target, RAMP_EPSILON))
     {
@@ -51,11 +46,11 @@ void Ramp::update(float increment)
     targetReached = compareFloatClose(value, target, RAMP_EPSILON);
 }
 
-const float& Ramp::getValue() const { return this->value; }
+float Ramp::getValue() const { return this->value; }
 
 bool Ramp::isTargetReached() const { return targetReached; }
 
-const float& Ramp::getTarget() const { return target; }
+float Ramp::getTarget() const { return target; }
 
 }  // namespace algorithms
 

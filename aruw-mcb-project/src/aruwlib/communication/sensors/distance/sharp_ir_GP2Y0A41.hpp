@@ -42,21 +42,23 @@ public:
      */
     SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin);
 
-    ///< Init not needed for Sharp IR.
+    /**
+     * Init not needed for Sharp IR.
+     */
     void init() override {}
 
 private:
-    ///< Min distance boundary value (in cm).
+    /// Min distance boundary value (in cm).
     static constexpr float SHARP_IR_MIN = 4.0f;
-    ///< Max distance boundary value (in cm).
+    /// Max distance boundary value (in cm).
     static constexpr float SHARP_IR_MAX = 30.0f;
 
     // Subject to change.
-    ///< Distance calculation values for SHARP 0A41SK F IR Sensor.
+    /// Distance calculation values for SHARP 0A41SK F IR Sensor.
     static constexpr float SHARP_IR_M = 0.072f;
-    ///< Distance calculation values for SHARP 0A41SK F IR Sensor.
+    /// Distance calculation values for SHARP 0A41SK F IR Sensor.
     static constexpr float SHARP_IR_B = -0.008f;
-    ///< Distance calculation values for SHARP 0A41SK F IR Sensor.
+    /// Distance calculation values for SHARP 0A41SK F IR Sensor.
     static constexpr float SHARP_IR_OFFSET = -0.42f;
 };  // class SharpIrGP2Y0A41
 

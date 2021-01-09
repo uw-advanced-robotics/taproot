@@ -168,13 +168,13 @@ public:
     mockable uint32_t getUpdateCounter() const;
 
 private:
-    static const int REMOTE_BUF_LEN = 18;              ///< Length of the remote recieve buffer.
-    static const int REMOTE_READ_TIMEOUT = 6;          ///< Timeout delay between valid packets.
-    static const int REMOTE_DISCONNECT_TIMEOUT = 100;  ///< Timeout delay for remote disconnect.
-    static const int REMOTE_INT_PRI = 12;              ///< Interrupt priority.
-    static constexpr float STICK_MAX_VALUE = 660.0f;   ///< Max value received by one of the sticks.
+    static const int REMOTE_BUF_LEN = 18;              /// Length of the remote recieve buffer.
+    static const int REMOTE_READ_TIMEOUT = 6;          /// Timeout delay between valid packets.
+    static const int REMOTE_DISCONNECT_TIMEOUT = 100;  /// Timeout delay for remote disconnect.
+    static const int REMOTE_INT_PRI = 12;              /// Interrupt priority.
+    static constexpr float STICK_MAX_VALUE = 660.0f;   /// Max value received by one of the sticks.
 
-    ///< The current remote information
+    /// The current remote information
     struct RemoteInfo
     {
         uint32_t updateCounter = 0;
@@ -185,40 +185,40 @@ private:
         SwitchState leftSwitch = SwitchState::UNKNOWN;
         SwitchState rightSwitch = SwitchState::UNKNOWN;
         struct
-        {  ///< Mouse information
+        {  /// Mouse information
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
             bool l = false;
             bool r = false;
         } mouse;
-        uint16_t key = 0;   ///< Keyboard information
-        int16_t wheel = 0;  ///< Remote wheel information
+        uint16_t key = 0;   /// Keyboard information
+        int16_t wheel = 0;  /// Remote wheel information
     };
 
     Drivers *drivers;
 
     RemoteInfo remote;
 
-    ///< Remote connection state.
+    /// Remote connection state.
     bool connected = false;
 
-    ///< UART recieve buffer.
+    /// UART recieve buffer.
     uint8_t rxBuffer[REMOTE_BUF_LEN]{0};
 
-    ///< Timestamp when last byte was read (milliseconds).
+    /// Timestamp when last byte was read (milliseconds).
     uint32_t lastRead = 0;
 
-    ///< Current count of bytes read.
+    /// Current count of bytes read.
     uint8_t currentBufferIndex = 0;
 
-    ///< Parses the current rxBuffer.
+    /// Parses the current rxBuffer.
     void parseBuffer();
 
-    ///< Clears the current rxBuffer.
+    /// Clears the current rxBuffer.
     void clearRxBuffer();
 
-    ///< Resets the current remote info.
+    /// Resets the current remote info.
     void reset();
 };  // class Remote
 

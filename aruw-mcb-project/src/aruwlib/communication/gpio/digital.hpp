@@ -49,7 +49,9 @@ public:
     Digital &operator=(const Digital &) = delete;
     mockable ~Digital() = default;
 
-    ///< Currently enabled digital input pins.
+    /**
+     * Currently enabled digital input pins.
+     */
     enum InputPin
     {
         A,
@@ -58,7 +60,9 @@ public:
         D
     };
 
-    ///< Currently enabled digital output pins.
+    /**
+     * Currently enabled digital output pins.
+     */
     enum OutputPin
     {
         E,
@@ -75,7 +79,9 @@ public:
         PullDown
     };
 #else
-    ///< This references a struct defined by modm.  Can either be floating, pull-up, or pull-down.
+    /**
+     * This references a struct defined by modm.  Can either be floating, pull-up, or pull-down.
+     */
     using InputPullMode = modm::platform::Gpio::InputType;
 #endif
 

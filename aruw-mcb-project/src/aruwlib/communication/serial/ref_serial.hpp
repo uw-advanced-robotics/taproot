@@ -69,19 +69,19 @@ private:
 public:
     typedef enum
     {
-        PREMATCH = 0,        ///< Pre-competition. stage
-        SETUP = 1,           ///< Setup stage.
-        INITIALIZATION = 2,  ///< Initialization stage.
-        COUNTDOWN = 3,       ///< 5-second countdown.
-        IN_GAME = 4,         ///< In middle of the game.
-        END_GAME = 5,        ///< Calculating competition results.
+        PREMATCH = 0,        /// Pre-competition. stage
+        SETUP = 1,           /// Setup stage.
+        INITIALIZATION = 2,  /// Initialization stage.
+        COUNTDOWN = 3,       /// 5-second countdown.
+        IN_GAME = 4,         /// In middle of the game.
+        END_GAME = 5,        /// Calculating competition results.
     } GameStages;
 
     typedef enum
     {
-        DRAW = 0,  ///< Match was a draw.
-        RED = 1,   ///< Red team won the match.
-        BLUE = 2,  ///< Blue team won the match.
+        DRAW = 0,  /// Match was a draw.
+        RED = 1,   /// Red team won the match.
+        BLUE = 2,  /// Blue team won the match.
     } GameWinner;
 
     typedef enum
@@ -105,65 +105,65 @@ public:
 
     typedef enum
     {
-        FRONT = 0,  ///< armor #0 (front).
-        LEFT = 1,   ///< armor #1 (left).
-        REAR = 2,   ///< armor #2 (rear).
-        RIGHT = 3,  ///< armor #3 (right).
-        TOP = 4,    ///< armor #4 (top).
+        FRONT = 0,  /// armor #0 (front).
+        LEFT = 1,   /// armor #1 (left).
+        REAR = 2,   /// armor #2 (rear).
+        RIGHT = 3,  /// armor #3 (right).
+        TOP = 4,    /// armor #4 (top).
     } ArmorId;
 
     typedef enum
     {
         NO_DAMAGE_RECEIVED = 0,
-        MODULE_OFFLINE = 1,         ///< Module offline.
-        ARMOR_DAMAGE = 2,           ///< Armor damage.
-        BARREL_OVERHEAT = 3,        ///< Barrel overheat.
-        CHASSIS_POWER_OVERRUN = 4,  ///< Chassis power overrun.
-        COLLISION = 5,              ///< Chassis collision.
+        MODULE_OFFLINE = 1,         /// Module offline.
+        ARMOR_DAMAGE = 2,           /// Armor damage.
+        BARREL_OVERHEAT = 3,        /// Barrel overheat.
+        CHASSIS_POWER_OVERRUN = 4,  /// Chassis power overrun.
+        COLLISION = 5,              /// Chassis collision.
     } DamageType;
 
     typedef struct
     {
-        uint16_t damageAmount;  ///< Amount of damage received
-        uint32_t timestampMs;   ///< Time when damage was received (in milliseconds).
+        uint16_t damageAmount;  /// Amount of damage received
+        uint32_t timestampMs;   /// Time when damage was received (in milliseconds).
     } DamageEvent;
 
     typedef enum
     {
-        AMMO_17 = 1,  ///< 17 mm projectile ammo.
-        AMMO_42 = 2,  ///< 42 mm projectile ammo.
+        AMMO_17 = 1,  /// 17 mm projectile ammo.
+        AMMO_42 = 2,  /// 42 mm projectile ammo.
     } BulletType;
 
     typedef struct
     {
-        GameStages gameStage : 4;     ///< Current stage in the game.
-        uint16_t stageTimeRemaining;  ///< Remaining time in the current stage (in seconds).
-        GameWinner gameWinner;        ///< Results of the match.
+        GameStages gameStage : 4;     /// Current stage in the game.
+        uint16_t stageTimeRemaining;  /// Remaining time in the current stage (in seconds).
+        GameWinner gameWinner;        /// Results of the match.
     } GameData;
 
     typedef struct
     {
-        uint16_t volt;         ///< Output voltage to the chassis (in mV).
-        uint16_t current;      ///< Output current to the chassis (in mA).
-        float power;           ///< Output power to the chassis (in W).
-        uint16_t powerBuffer;  ///< Chassis power buffer (in J).
-        float x, y, z;         ///< x, y, z coordinate of the chassis.
+        uint16_t volt;         /// Output voltage to the chassis (in mV).
+        uint16_t current;      /// Output current to the chassis (in mA).
+        float power;           /// Output power to the chassis (in W).
+        uint16_t powerBuffer;  /// Chassis power buffer (in J).
+        float x, y, z;         /// x, y, z coordinate of the chassis.
     } ChassisData;
 
     typedef struct
     {
-        BulletType bulletType;                ///< 17mm or 42mm last projectile shot.
-        uint8_t firing_freq;                  ///< Firing frequency (in Hz).
-        uint16_t heat17;                      ///< Current 17mm turret heat.
-        uint16_t heatCoolingRate17;           ///< 17mm turret cooling value per second.
-        uint16_t heatLimit17;                 ///< 17mm turret heat limit.
-        uint16_t heat42;                      ///< Current 42mm turret heat.
-        uint16_t heatCoolingRate42;           ///< 42mm turret cooling value per second.
-        uint16_t heatLimit42;                 ///< 42mm turret heat limit.
-        uint16_t sentinelDroneBulletsRemain;  ///< Number of bullets remaining in sentinel
-                                              ///< and drone only (500 max).
-        float bulletSpeed;                    ///< Last bullet speed (in m/s).
-        float yaw;                            ///< Barrel yaw position (degree).
+        BulletType bulletType;                /// 17mm or 42mm last projectile shot.
+        uint8_t firing_freq;                  /// Firing frequency (in Hz).
+        uint16_t heat17;                      /// Current 17mm turret heat.
+        uint16_t heatCoolingRate17;           /// 17mm turret cooling value per second.
+        uint16_t heatLimit17;                 /// 17mm turret heat limit.
+        uint16_t heat42;                      /// Current 42mm turret heat.
+        uint16_t heatCoolingRate42;           /// 42mm turret cooling value per second.
+        uint16_t heatLimit42;                 /// 42mm turret heat limit.
+        uint16_t sentinelDroneBulletsRemain;  /// Number of bullets remaining in sentinel
+                                              /// and drone only (500 max).
+        float bulletSpeed;                    /// Last bullet speed (in m/s).
+        float yaw;                            /// Barrel yaw position (degree).
     } TurretData;
 
     typedef struct
@@ -187,26 +187,28 @@ public:
 
     typedef struct
     {
-        RobotId robotId;              ///< Robot type and team.
-        uint8_t robotLevel;           ///< Current level of this robot (1-3).
-        uint16_t previousHp;          ///< Health of this robot before damage was
-                                      ///< received, used to calculate receivedDps
-                                      ///< if no damage was received recently,
-                                      ///< previousHp = currentHp.
-        uint16_t currentHp;           ///< Current health of this robot.
-        uint16_t maxHp;               ///< Max health of this robot.
-        uint8_t gimbalHasPower : 1;   ///< 1 if there is 24V output to gimbal, 0 for 0V.
-        uint8_t chassisHasPower : 1;  ///< 1 if there is 24V output to chassis, 0 for 0V.
-        uint8_t shooterHasPower : 1;  ///< 1 if there is 24V output to shooter, 0 for 0V.
-        ArmorId damagedArmorId : 4;   ///< Armor ID that was damaged.
-        DamageType damageType : 4;    ///< Cause of damage.
-        float receivedDps;            ///< Damage per second received.
-        ChassisData chassis;          ///< Chassis power draw and position data.
-        TurretData turret;            ///< Turret firing and heat data.
-        RobotHpData allRobotHp;       ///< Current HP of all the robots.
+        RobotId robotId;              /// Robot type and team.
+        uint8_t robotLevel;           /// Current level of this robot (1-3).
+        uint16_t previousHp;          /// Health of this robot before damage was
+                                      /// received, used to calculate receivedDps
+                                      /// if no damage was received recently,
+                                      /// previousHp = currentHp.
+        uint16_t currentHp;           /// Current health of this robot.
+        uint16_t maxHp;               /// Max health of this robot.
+        uint8_t gimbalHasPower : 1;   /// 1 if there is 24V output to gimbal, 0 for 0V.
+        uint8_t chassisHasPower : 1;  /// 1 if there is 24V output to chassis, 0 for 0V.
+        uint8_t shooterHasPower : 1;  /// 1 if there is 24V output to shooter, 0 for 0V.
+        ArmorId damagedArmorId : 4;   /// Armor ID that was damaged.
+        DamageType damageType : 4;    /// Cause of damage.
+        float receivedDps;            /// Damage per second received.
+        ChassisData chassis;          /// Chassis power draw and position data.
+        TurretData turret;            /// Turret firing and heat data.
+        RobotHpData allRobotHp;       /// Current HP of all the robots.
     } RobotData;
 
-    ///< Information that is sent to the UI when the ref system is connected to a server.
+    /**
+     * Information that is sent to the UI when the ref system is connected to a server.
+     */
     typedef struct
     {
         float float1;
@@ -250,13 +252,19 @@ public:
      */
     void messageReceiveCallback(const SerialMessage& completeMessage) override;
 
-    ///< Returns a reference to the most up to date robot data struct.
+    /**
+     * Returns a reference to the most up to date robot data struct.
+     */
     mockable const RobotData& getRobotData() const;
 
-    ///< Returns a reference to the most up to date game data struct.
+    /**
+     * Returns a reference to the most up to date game data struct.
+     */
     mockable const GameData& getGameData() const;
 
-    ///< Packages the display data in a `CustomData` struct and then sends it via `sendCustomData`.
+    /**
+     * Packages the display data in a `CustomData` struct and then sends it via `sendCustomData`.
+     */
     mockable void sendDisplayData(const DisplayData& displayData);
 
 private:
