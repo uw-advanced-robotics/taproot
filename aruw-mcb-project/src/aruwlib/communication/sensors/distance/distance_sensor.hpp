@@ -35,35 +35,43 @@ public:
      */
     DistanceSensor(float minDistance, float maxDistance);
 
-    ///< Default destructor
     virtual ~DistanceSensor() = default;
 
-    ///< Initialize the sensor.
     virtual void init() = 0;
 
-    ///< Read sensor and updates current distance.
+    /**
+     * Read sensor and updates current distance.
+     */
     virtual float read() = 0;
 
-    ///< Checks if current reading is within bounds.
+    /**
+     * Checks if current reading is within bounds.
+     */
     virtual bool validReading() const = 0;
 
-    ///< Get minumum distance boundary.
+    /**
+     * Get minumum distance boundary.
+     */
     float getMinDistance() const;
 
-    ///< Get maximun distance boundary.
+    /**
+     * Get maximun distance boundary.
+     */
     float getMaxDistance() const;
 
-    ///< Get the current distance.
+    /**
+     * Get the current distance.
+     */
     float getDistance() const;
 
 protected:
-    // Distance from sensor
+    /// Distance from sensor
     float distance;
 
-    // Lower boundary for reliable readings
+    /// Lower boundary for reliable readings
     float minDistance;
 
-    // Upper boundary for reliable readings
+    /// Upper boundary for reliable readings
     float maxDistance;
 };  // class DistanceSensor
 

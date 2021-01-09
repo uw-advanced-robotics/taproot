@@ -26,7 +26,7 @@ namespace aruwlib
 {
 namespace errors
 {
-///< Location of errors; subject to change
+/// Location of errors; subject to change
 enum Location
 {
     CAN_RX = 0,
@@ -41,7 +41,7 @@ enum Location
     LOCATION_AMOUNT,
 };
 
-///< Type of errors; subject to change
+/// Type of errors; subject to change
 enum ErrorType
 {
     IMU_DATA_NOT_INITIALIZED = 0,

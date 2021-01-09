@@ -128,28 +128,47 @@ public:
 
     // Getters/Setters ----------------
 
-    ///< Returns the wrapped value.
+    /**
+     * Returns the wrapped value.
+     */
     float getValue() const;
 
     void setValue(const float& newValue);
 
-    ///< Returns the value's upper bound.
+    /**
+     * Returns the value's upper bound.
+     */
     float getUpperBound() const;
 
-    ///< Sets the upper bound to newValue.
+    /**
+     * Sets the upper bound to newValue.
+     */
     void setUpperBound(const float& newValue);
 
-    ///< Returns the value's lower bound.
+    /**
+     * Returns the value's lower bound.
+     */
     float getLowerBound() const;
 
-    ///< Sets the lower bound to newValue.
+    /**
+     * Sets the lower bound to newValue.
+     */
     void setLowerBound(const float& newValue);
 
 private:
-    float value;  ///< The wrapped value.
+    /**
+     * The wrapped value.
+     */
+    float value;
 
-    float lowerBound;  ///< The lower bound to wrap around.
-    float upperBound;  ///< The upper bound to wrap around.
+    /**
+     * The lower bound to wrap around.
+     */
+    float lowerBound;
+    /**
+     * The upper bound to wrap around.
+     */
+    float upperBound;
 
     /**
      * Flips the lower and upper bounds if the lower bound is larger than the

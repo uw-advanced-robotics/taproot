@@ -168,12 +168,12 @@ public:
     mockable void addCommand(Command* commandToAdd);
 
 private:
-    ///< Maximum time before we start erroring, in microseconds.
+    /// Maximum time before we start erroring, in microseconds.
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
 
     Drivers* drivers;
 
-    ///< a map containing keys of subsystems, pairs of Commands.
+    /// a map containing keys of subsystems, pairs of Commands.
     std::map<Subsystem*, Command*> subsystemToCommandMap;
 
     /**

@@ -133,16 +133,16 @@ public:
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
-    ///< Use for converting from gyro values we receive to more conventional degrees / second.
+    /// Use for converting from gyro values we receive to more conventional degrees / second.
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
 
-    ///< Use to convert the raw acceleration into more conventional degrees / second^2
+    /// Use to convert the raw acceleration into more conventional degrees / second^2
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-    ///< The number of samples we take in order to determine the mpu offsets.
+    /// The number of samples we take in order to determine the mpu offsets.
     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
-    ///< The number of bytes read to read acceleration, gyro, and temp.
+    /// The number of bytes read to read acceleration, gyro, and temp.
     static const uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
     /**
@@ -151,7 +151,7 @@ private:
      */
     struct RawData
     {
-        ///< Raw acceleration data.
+        /// Raw acceleration data.
         struct Accel
         {
             int16_t x = 0;
@@ -159,7 +159,7 @@ private:
             int16_t z = 0;
         };
 
-        ///< Raw gyroscope data.
+        /// Raw gyroscope data.
         struct Gyro
         {
             int16_t x = 0;
@@ -167,7 +167,7 @@ private:
             int16_t z = 0;
         };
 
-        ///< Acceleration offset calculated in init.
+        /// Acceleration offset calculated in init.
         struct AccelOffset
         {
             int16_t x = 0;
@@ -175,7 +175,7 @@ private:
             int16_t z = 0;
         };
 
-        ///< Gyroscope offset calculated in init.
+        /// Gyroscope offset calculated in init.
         struct GyroOffset
         {
             int16_t x = 0;
@@ -186,7 +186,7 @@ private:
         Accel accel;
         Gyro gyro;
 
-        ///< Raw temperature.
+        /// Raw temperature.
         uint16_t temp = 0;
 
         AccelOffset accelOffset;
@@ -208,18 +208,18 @@ private:
 
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
-    ///< Compute the gyro offset values. @note this function blocks.
+    /// Compute the gyro offset values. @note this function blocks.
     void calculateGyroOffset();
 
-    ///< Calibrate accelerometer offset values. @note this function blocks.
+    /// Calibrate accelerometer offset values. @note this function blocks.
     void calculateAccOffset();
 
     // Functions for interacting with hardware directly.
 
-    ///< Pull the NSS pin low to initiate contact with the imu.
+    /// Pull the NSS pin low to initiate contact with the imu.
     void mpuNssLow();
 
-    ///< Pull the NSS pin high to end contact with the imu.
+    /// Pull the NSS pin high to end contact with the imu.
     void mpuNssHigh();
 
     /**

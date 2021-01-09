@@ -57,10 +57,14 @@ public:
         OLED_JOYSTICK,
     };
 
-    ///< Initializes the ADC and connects the configured analog pins to it.
+    /**
+     * Initializes the ADC and connects the configured analog pins to it.
+     */
     mockable void init();
 
-    ///< Reads voltage across the specified pin. Units in mV.
+    /**
+     * Reads voltage across the specified pin. Units in mV.
+     */
     mockable uint16_t read(Analog::Pin pin) const;
 };  // class Analog
 }  // namespace gpio

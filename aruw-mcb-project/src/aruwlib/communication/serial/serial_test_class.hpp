@@ -37,13 +37,19 @@ namespace serial
 class SerialTestClass : public DJISerial<true>
 {
 public:
-    ///< Attaches this test class to `Uart2`.
+    /**
+     * Attaches this test class to `Uart2`.
+     */
     SerialTestClass(Drivers* drivers);
 
-    ///< Stores the sequenceNumber in `messageId`.
+    /**
+     * Stores the sequenceNumber in `messageId`.
+     */
     void messageReceiveCallback(const SerialMessage& completeMessage) override;
 
-    ///< Sends a message of length 1, the byte `60`, with the `sequenceNumber` incremented.
+    /**
+     * Sends a message of length 1, the byte `60`, with the `sequenceNumber` incremented.
+     */
     void sendMessage();
 
 private:

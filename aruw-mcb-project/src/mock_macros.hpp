@@ -21,9 +21,10 @@
 #define MOCK_MACROS_HPP_
 
 #ifdef PLATFORM_HOSTED
-///< Wrap class functions that are not already virtual in this function if you wish to mock them.
+/// Wrap class functions that are not already virtual in this function if you wish to mock them.
 #define mockable virtual
 #else
+/// Wrap class functions that are not already virtual in this function if you wish to mock them.
 #define mockable
 #endif
 

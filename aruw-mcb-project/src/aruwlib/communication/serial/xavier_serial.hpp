@@ -40,30 +40,30 @@ class XavierSerial : public DJISerial<>
 private:
     // TX message headers.
 
-    ///< @note CV_MESSAGE_TYPEs for transmission should be defined incrementally from 0x01.
+    /// @note CV_MESSAGE_TYPEs for transmission should be defined incrementally from 0x01.
 
-    ///< Indicates you will send pitch and yaw turret data.
+    /// Indicates you will send pitch and yaw turret data.
     static const uint8_t CV_MESSAGE_TYPE_TURRET_TELEMETRY = 0x01;
-    ///< Indicates you will send imu angle, gyro, and acceleration data.
+    /// Indicates you will send imu angle, gyro, and acceleration data.
     static const uint8_t CV_MESSAGE_TYPE_IMU = 0x02;
-    ///< Indicates you will send robot id.
+    /// Indicates you will send robot id.
     static const uint8_t CV_MESSAGE_TYPE_ROBOT_ID = 0x04;
-    ///< Indicates you will send a request for turret aim data.
+    /// Indicates you will send a request for turret aim data.
     static const uint8_t CV_MESSAGE_TYPE_AUTO_AIM_REQUEST = 0x05;
 
-    ///< The number of message types listed above.
+    /// The number of message types listed above.
     static const uint8_t CV_MESSAGE_TYPE_SIZE = 4;
 
     // Rx related constants.
 
-    static const int16_t TIME_OFFLINE_CV_AIM_DATA_MS = 5000;  ///< Time in ms since last CV aim data
-                                                              ///< was received before deciding CV
-                                                              ///< is offline.
+    static const int16_t TIME_OFFLINE_CV_AIM_DATA_MS = 5000;  /// Time in ms since last CV aim data
+                                                              /// was received before deciding CV
+                                                              /// is offline.
 
-    ///< Indicates you will receive a turret aim request from the xavier.
+    /// Indicates you will receive a turret aim request from the xavier.
     static const uint8_t CV_MESSAGE_TYPE_TURRET_AIM = 0x01;
 
-    ///< Time between each robot id send to CV in milliseconds.
+    /// Time between each robot id send to CV in milliseconds.
     static const int16_t TIME_BETWEEN_ROBOT_ID_SEND_MS = 5000;
 
     // RX message constants for decoding an aim data message. These are zero indexed byte offsets.
@@ -77,10 +77,10 @@ public:
     // AutoAim Data
     typedef struct
     {
-        bool hasTarget;      ///< Whether or not the xavier has a target.
-        float pitch;         ///< The pitch angle in degrees, rounded to two decimals.
-        float yaw;           ///< The yaw angle in degrees, rounded to two decimals.
-        uint32_t timestamp;  ///< A timestamp in milliseconds.
+        bool hasTarget;      /// Whether or not the xavier has a target.
+        float pitch;         /// The pitch angle in degrees, rounded to two decimals.
+        float yaw;           /// The yaw angle in degrees, rounded to two decimals.
+        uint32_t timestamp;  /// A timestamp in milliseconds.
     } TurretAimData;
 
     /**
@@ -91,15 +91,15 @@ public:
      */
     typedef struct
     {
-        float ax;  ///< acceleration in \f$\frac{m}{s^2}\f$.
+        float ax;  /// acceleration in \f$\frac{m}{s^2}\f$.
         float ay;
         float az;
 
-        float wx;  ///< gyro values in \f$\frac{degrees}{second}\f$.
+        float wx;  /// gyro values in \f$\frac{degrees}{second}\f$.
         float wy;
         float wz;
 
-        float rol;  ///< Measured in degrees.
+        float rol;  /// Measured in degrees.
         float pit;
         float yaw;
     } IMUData;
@@ -141,10 +141,14 @@ public:
         const TurretAimData& turretData,
         uint8_t robotId);
 
-    ///< Start Requesting Xavier to Track Target.
+    /**
+     * Start Requesting Xavier to Track Target.
+     */
     mockable void beginTargetTracking();
 
-    ///< Stop Requesting Xavier to Track Target.
+    /**
+     * Stop Requesting Xavier to Track Target.
+     */
     mockable void stopTargetTracking();
 
     /**
@@ -159,10 +163,14 @@ public:
 private:
     // TX variables.
 
-    ///< Used to increment through message send types.
+    /**
+     * Used to increment through message send types.
+     */
     uint8_t txMsgSwitchIndex;
 
-    ///< Used for determining when to send robot id.
+    /**
+     * Used for determining when to send robot id.
+     */
     aruwlib::arch::MilliTimeout txRobotIdTimeout;
 
     /**
@@ -171,12 +179,16 @@ private:
      */
     bool autoAimRequestQueued;
 
-    ///< `true` if we are currently requesting aim data, `false` otherwise.
+    /**
+     * `true` if we are currently requesting aim data, `false` otherwise.
+     */
     bool autoAimRequestState;
 
     // rx variables
 
-    ///< The last aim data received from the xavier, used in `getLastAimData`.
+    /**
+     * The last aim data received from the xavier, used in `getLastAimData`.
+     */
     TurretAimData lastAimData;
 
     /**
@@ -190,10 +202,14 @@ private:
 
     // CV online variables.
 
-    ///< Timer for determining if serial is offline.
+    /**
+     * Timer for determining if serial is offline.
+     */
     aruwlib::arch::MilliTimeout cvOfflineTimeout;
 
-    ///< A flag set to `true` if the timeout is not expired, and `false` otherwise.
+    /**
+     * A flag set to `true` if the timeout is not expired, and `false` otherwise.
+     */
     bool isCvOnline;
 
     /**
@@ -244,7 +260,9 @@ private:
      */
     bool sendRobotID(uint8_t robotId);
 
-    ///< Increments `txMsgSwitchIndex`.
+    /**
+     * Increments `txMsgSwitchIndex`.
+     */
     void incRxMsgSwitchIndex();
 };
 
