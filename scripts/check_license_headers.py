@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# Copyright (c) 2020 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of aruw-mcb.
 #
@@ -35,7 +35,7 @@ options:\n\
     --update Adds licenses to files that don't have a license header (optional)"
 LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h']
 LICENSE_HEADER = '/*\n\
- * Copyright (c) 2020 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
  *\n\
  * This file is part of aruw-mcb.\n\
  *\n\
