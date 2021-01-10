@@ -66,5 +66,11 @@ bool TowSubsystem::getRightLeftLimitSwitchTriggered() const
 {
     return drivers->digital.read(RIGHT_TOW_LIMIT_SWITCH_PIN);
 }
+
+void TowSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace engineer
 }  // namespace aruwsrc

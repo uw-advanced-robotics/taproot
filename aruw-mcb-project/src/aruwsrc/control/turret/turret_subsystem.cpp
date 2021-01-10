@@ -272,6 +272,12 @@ float TurretSubsystem::yawFeedForwardCalculation(float desiredChassisRotation)
     }
     return chassisRotationFeedForward;
 }
+
+void TurretSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace turret
 
 }  // namespace aruwsrc

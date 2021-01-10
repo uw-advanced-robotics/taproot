@@ -44,6 +44,12 @@ void FrictionWheelSubsystem::refresh()
     velocityPidRightWheel.update(desiredRpmRamp.getValue() - rightWheel.getShaftRPM());
     rightWheel.setDesiredOutput(static_cast<int32_t>(velocityPidRightWheel.getValue()));
 }
+
+void FrictionWheelSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace launcher
 
 }  // namespace aruwsrc

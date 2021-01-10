@@ -32,6 +32,12 @@ void GrabberSubsystem::setSqueezed(bool isGrabberSqueezed)
 }
 
 bool GrabberSubsystem::isSqueezed() const { return isGrabberSqueezed; }
+
+void GrabberSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace engineer
 
 }  // namespace aruwsrc

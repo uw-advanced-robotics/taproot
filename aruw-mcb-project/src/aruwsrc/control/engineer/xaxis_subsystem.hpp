@@ -46,6 +46,10 @@ public:
 
     bool isExtended() const;
 
+    void runHardwareTests() override;
+
+    const char *getName() override { return "X-Axis Subsystem"; }
+
 private:
     aruwlib::gpio::Digital::OutputPin pin;
 

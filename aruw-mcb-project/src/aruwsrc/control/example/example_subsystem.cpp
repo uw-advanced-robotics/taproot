@@ -48,6 +48,12 @@ void ExampleSubsystem::updateMotorRpmPid(
     pid->update(desiredRpm - motor->getShaftRPM());
     motor->setDesiredOutput(static_cast<int32_t>(pid->getValue()));
 }
+
+void ExampleSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace control
 
 }  // namespace aruwsrc

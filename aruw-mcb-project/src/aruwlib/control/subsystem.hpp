@@ -89,8 +89,18 @@ public:
      */
     virtual void refresh();
 
+    virtual bool isHardwareTestComplete() { return hardwareTestsComplete; }
+
+    virtual void setHardwareTestsComplete() { hardwareTestsComplete = true; }
+
+    virtual void runHardwareTests();
+
+    virtual const char* getName();
+
 protected:
     Drivers* drivers;
+
+    bool hardwareTestsComplete = false;
 
 private:
     Command* defaultCommand;
@@ -98,6 +108,7 @@ private:
     friend class CommandScheduler;
 
     uint32_t prevSchedulerExecuteTimestamp;
+
 };  // class Subsystem
 
 }  // namespace control

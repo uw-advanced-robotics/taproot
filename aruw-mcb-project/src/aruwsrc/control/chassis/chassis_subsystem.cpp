@@ -155,6 +155,12 @@ float ChassisSubsystem::calculateRotationTranslationalGain(float chassisRotation
 }
 
 float ChassisSubsystem::getChassisDesiredRotation() const { return chassisDesiredR; }
+
+void ChassisSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace chassis
 
 }  // namespace aruwsrc

@@ -67,6 +67,10 @@ public:
      */
     void refresh() override;
 
+    void runHardwareTests() override;
+
+    const char *getName() override { return "Friction Wheel Subsystem"; }
+
 private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
     static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;

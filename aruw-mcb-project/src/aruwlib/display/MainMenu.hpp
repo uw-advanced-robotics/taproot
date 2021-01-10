@@ -43,6 +43,7 @@ private:
     Drivers *drivers;
 
     void addErrorMenuCallback();
+    void addHardwareTestMenuCallback();
     void addMotorMenuCallback();
     void addPropertyTableCallback();
 };  // class MainMenu
