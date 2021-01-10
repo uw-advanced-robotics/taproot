@@ -17,37 +17,50 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_MENU_HPP_
-#define MAIN_MENU_HPP_
+#ifndef HARDWARE_TEST_MENU_HPP_
+#define HARDWARE_TEST_MENU_HPP_
 
-#include <modm/ui/menu/standard_menu.hpp>
+#include <modm/ui/menu/abstract_menu.hpp>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/rm-dev-board-a/board.hpp"
+
+#include "modm/processing/timer/periodic_timer.hpp"
 
 namespace aruwlib
 {
-class Drivers;
 namespace display
 {
-class MainMenu : public modm::StandardMenu
+class HardwareTestMenu : public modm::AbstractMenu
 {
 public:
-    MainMenu(modm::ViewStack *stack, uint8_t identifier, Drivers *drivers);
+    HardwareTestMenu(modm::ViewStack *vs, Drivers *drivers);
 
-    virtual ~MainMenu() = default;
+    void draw() override;
 
-    /**
-     * Adds entries to the menu to the necessary submenus.
-     */
-    void initialize();
+    void update() override;
+
+    void shortButtonPress(modm::MenuButtons::Button button) override;
+
+    bool hasChanged() override;
+
+    static const char *getMenuName() { return "Hardware Test Menu"; }
 
 private:
     Drivers *drivers;
 
-    void addErrorMenuCallback();
-    void addHardwareTestMenuCallback();
-    void addMotorMenuCallback();
-    void addPropertyTableCallback();
-};  // class MainMenu
+    int selectedSubsystem = 0;
+
+    int bottomIndex = 0;
+    int topIndex = 8;  // TODO: unhardcode this eventually
+
+    bool changed = false;
+
+    uint64_t completeSubsystems = 0;
+
+    bool updateHasChanged();
+};  // class HardwareTestMenu
 }  // namespace display
 }  // namespace aruwlib
 
-#endif  // MAIN_MENU_HPP_
+#endif  // HARDWARE_TEST_MENU_HPP_

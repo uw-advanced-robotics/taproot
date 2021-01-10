@@ -34,6 +34,12 @@ void XAxisSubsystem::setExtended(bool isExtended)
 }
 
 bool XAxisSubsystem::isExtended() const { return extended; }
+
+void XAxisSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace engineer
 
 }  // namespace aruwsrc

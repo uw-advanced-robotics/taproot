@@ -32,6 +32,12 @@ void HopperSubsystem::refresh() { hopper.updateSendPwmRamp(); }
 float HopperSubsystem::getOpenPWM() { return hopper.getMaxPWM(); }
 
 float HopperSubsystem::getClosePWM() { return hopper.getMinPWM(); }
+
+void HopperSubsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace control
 
 }  // namespace aruwsrc

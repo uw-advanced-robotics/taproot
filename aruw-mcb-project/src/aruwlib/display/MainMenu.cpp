@@ -20,6 +20,7 @@
 #include "MainMenu.hpp"
 
 #include "ErrorMenu.hpp"
+#include "HardwareTestMenu.hpp"
 
 namespace aruwlib
 {
@@ -36,6 +37,11 @@ void MainMenu::initialize()
     addEntry(
         ErrorMenu::getMenuName(),
         modm::MenuEntryCallback(this, &MainMenu::addErrorMenuCallback));
+
+    addEntry(
+        HardwareTestMenu::getMenuName(),
+        modm::MenuEntryCallback(this, &MainMenu::addHardwareTestMenuCallback));
+
     addEntry("Motor Menu", modm::MenuEntryCallback(this, &MainMenu::addMotorMenuCallback));
     addEntry(
         "Property Table Menu",
@@ -46,6 +52,11 @@ void MainMenu::initialize()
 void MainMenu::addErrorMenuCallback()
 {
     getViewStack()->push(new ErrorMenu(getViewStack(), drivers));
+}
+
+void MainMenu::addHardwareTestMenuCallback()
+{
+    getViewStack()->push(new HardwareTestMenu(getViewStack(), drivers));
 }
 
 void MainMenu::addMotorMenuCallback()

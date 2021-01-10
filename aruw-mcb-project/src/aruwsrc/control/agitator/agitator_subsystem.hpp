@@ -184,6 +184,12 @@ public:
      */
     float getAgitatorVelocity() const;
 
+    bool isHardwareTestComplete() override { return hardwareTestsComplete; }
+
+    void runHardwareTests() override;
+
+    const char* getName() override { return "Agitator Subsystem"; }
+
 private:
     /**
      * We add on this amount of "tolerance" to the predicted rotate time since some times it
@@ -236,6 +242,7 @@ private:
     void agitatorRunPositionPid();
 
     float getUncalibratedAgitatorAngle() const;
+
 };  // class AgitatorSubsystem
 
 }  // namespace agitator

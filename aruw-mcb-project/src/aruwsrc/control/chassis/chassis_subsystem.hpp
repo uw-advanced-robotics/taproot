@@ -366,6 +366,10 @@ public:
      */
     float getChassisDesiredRotation() const;
 
+    void runHardwareTests() override;
+
+    const char* getName() override { return "Chassis Subsystem"; }
+
 private:
     /**
      * When you input desired x, y, an r values, this function translates
@@ -377,6 +381,7 @@ private:
         modm::Pid<float>* pid,
         aruwlib::motor::DjiMotor* const motor,
         float desiredRpm);
+
 };  // class ChassisSubsystem
 
 }  // namespace chassis

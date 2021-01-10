@@ -37,6 +37,16 @@ uint32_t CommandScheduler::commandSchedulerTimestamp = 0;
 
 void CommandScheduler::addCommand(Command* commandToAdd)
 {
+    if (this->runningHardwareTests)
+    {
+        RAISE_ERROR(
+            drivers,
+            "attempting to add command while running tests",
+            aruwlib::errors::Location::COMMAND_SCHEDULER,
+            aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+        return;
+    }
+
     if (commandToAdd == nullptr)
     {
         RAISE_ERROR(
@@ -112,6 +122,19 @@ void CommandScheduler::run()
     {
         commandSchedulerTimestamp++;
     }
+
+    if (this->runningHardwareTests)
+    {
+        for (auto& subsystemToCommand : subsystemToCommandMap)
+        {
+            if (!subsystemToCommand.first->isHardwareTestComplete())
+            {
+                subsystemToCommand.first->runHardwareTests();
+            }
+        }
+        return;
+    }
+
     // refresh all and run all commands
     for (auto& currSubsystemCommandPair : subsystemToCommandMap)
     {
@@ -218,6 +241,32 @@ bool CommandScheduler::isSubsystemRegistered(Subsystem* subsystem) const
         return false;
     }
     return subsystemToCommandMap.find(subsystem) != subsystemToCommandMap.end();
+}
+
+void CommandScheduler::runSubsystemTests()
+{
+    this->runningHardwareTests = true;
+    for (auto& pair : this->subsystemToCommandMap)
+    {
+        pair.first->hardwareTestsComplete = false;
+        if (pair.second != nullptr)
+        {
+            pair.second->end(true);
+            pair.second = nullptr;
+        }
+    }
+}
+
+void CommandScheduler::stopHardwareTests()
+{
+    this->runningHardwareTests = false;
+    for (auto& pair : this->subsystemToCommandMap)
+    {
+        if (pair.first->isHardwareTestComplete())
+        {
+            pair.first->setHardwareTestsComplete();
+        }
+    }
 }
 }  // namespace control
 

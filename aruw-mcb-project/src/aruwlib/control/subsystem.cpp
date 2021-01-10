@@ -46,6 +46,13 @@ Command* Subsystem::getDefaultCommand() const { return defaultCommand; }
 
 void Subsystem::refresh() {}
 
+const char* Subsystem::getName() { return "Subsystem"; }
+
+void Subsystem::runHardwareTests()
+{
+    // TODO
+}
+
 }  // namespace control
 
 }  // namespace aruwlib

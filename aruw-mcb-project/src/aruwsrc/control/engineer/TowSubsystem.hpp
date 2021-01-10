@@ -78,6 +78,10 @@ public:
 
     void refresh() override {}
 
+    void runHardwareTests() override;
+
+    const char *getName() override { return "Tow Subsystem"; }
+
 private:
     /**
      * Keeps track of the state of the subsystem - if the tower clamp is open or not.
