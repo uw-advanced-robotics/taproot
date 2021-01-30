@@ -116,7 +116,7 @@ void SentinelDriveSubsystem::resetOffsetFromLimitSwitch()
 // Here we get the radius from the getEncoderUnwrapped function
 float SentinelDriveSubsystem::distanceFromEncoder(aruwlib::motor::DjiMotor* motor)
 {
-    float unwrappedAngle = motor->encStore.getEncoderUnwrapped();
+    float unwrappedAngle = motor->getEncoderUnwrapped();
     float numberOfRotations = unwrappedAngle / (aruwlib::motor::DjiMotor::ENC_RESOLUTION);
     return numberOfRotations * 2.0f * aruwlib::algorithms::PI * WHEEL_RADIUS / GEAR_RATIO;
 }

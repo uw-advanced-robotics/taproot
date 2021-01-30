@@ -139,7 +139,7 @@ float AgitatorSubsystem::getUncalibratedAgitatorAngle() const
     // position is equal to the following equation:
     // position = 2 * PI / encoder resolution * unwrapped encoder value / gear ratio
     return (2.0f * aruwlib::algorithms::PI / static_cast<float>(DjiMotor::ENC_RESOLUTION)) *
-           agitatorMotor.encStore.getEncoderUnwrapped() / gearRatio;
+           agitatorMotor.getEncoderUnwrapped() / gearRatio;
 }
 
 void AgitatorSubsystem::setAgitatorDesiredAngle(float newAngle) { desiredAgitatorAngle = newAngle; }

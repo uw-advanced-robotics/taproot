@@ -33,9 +33,11 @@ DjiMotor::DjiMotor(
     MotorId desMotorIdentifier,
     aruwlib::can::CanBus motorCanBus,
     bool isInverted,
-    const char* name)
+    const char* name,
+    uint16_t encWrapped,
+    int64_t encRevolutions)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
-      encStore(),
+      motorName(name),
       drivers(drivers),
       motorIdentifier(desMotorIdentifier),
       motorCanBus(motorCanBus),
@@ -44,7 +46,8 @@ DjiMotor::DjiMotor(
       temperature(0),
       torque(0),
       motorInverted(isInverted),
-      motorName(name)
+      encoderWrapped(encWrapped),
+      encoderRevolutions(encRevolutions)
 {
     motorDisconnectTimeout.stop();
 }
@@ -74,7 +77,7 @@ void DjiMotor::parseCanRxData(const modm::can::Message& message)
 
     // invert motor if necessary
     encoderActual = motorInverted ? ENC_RESOLUTION - 1 - encoderActual : encoderActual;
-    encStore.updateValue(encoderActual);
+    updateEncoderValue(encoderActual);
 }
 
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)
@@ -122,15 +125,15 @@ aruwlib::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
 
-int64_t DjiMotor::EncoderStore::getEncoderUnwrapped() const
+int64_t DjiMotor::getEncoderUnwrapped() const
 {
     return static_cast<int64_t>(encoderWrapped) +
            static_cast<int64_t>(ENC_RESOLUTION) * encoderRevolutions;
 }
 
-uint16_t DjiMotor::EncoderStore::getEncoderWrapped() const { return encoderWrapped; }
+uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
 
-void DjiMotor::EncoderStore::updateValue(uint16_t newEncWrapped)
+void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
 {
     int16_t enc_dif = newEncWrapped - encoderWrapped;
     if (enc_dif < -ENC_RESOLUTION / 2)
