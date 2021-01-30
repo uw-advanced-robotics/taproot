@@ -63,7 +63,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "chassis wiggle drive command"; }
+    const char* getName() const override { return "chassis wiggle drive"; }
 
 private:
     static constexpr float WIGGLE_PERIOD = 1600.0f;

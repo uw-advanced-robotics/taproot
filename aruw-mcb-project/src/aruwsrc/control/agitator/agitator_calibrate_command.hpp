@@ -44,7 +44,7 @@ public:
      */
     explicit AgitatorCalibrateCommand(AgitatorSubsystem* agitator);
 
-    const char* getName() const override { return "agitator calibrate command"; }
+    const char* getName() const override { return "agitator calibrate"; }
 
     void initialize() override;
 

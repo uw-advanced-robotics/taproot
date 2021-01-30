@@ -80,7 +80,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char *getName() override { return "Tow Subsystem"; }
+    const char *getName() override { return "Tow"; }
 
 private:
     /**

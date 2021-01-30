@@ -68,7 +68,7 @@ public:
      */
     bool isFinished() const override;
 
-    const char* getName() const override { return "example command"; }
+    const char* getName() const override { return "example"; }
 
     static const int16_t DEFAULT_WHEEL_RPM = 6000;
 

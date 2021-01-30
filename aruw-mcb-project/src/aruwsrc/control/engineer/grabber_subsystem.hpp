@@ -48,7 +48,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char *getName() override { return "Grabber Subsystem"; }
+    const char *getName() override { return "Grabber"; }
 
 private:
     aruwlib::gpio::Digital::OutputPin pin;

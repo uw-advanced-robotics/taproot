@@ -42,7 +42,7 @@ public:
 
     bool isFinished() const override { return false; }
 
-    const char* getName() const override { return "example comprised command"; }
+    const char* getName() const override { return "example comprised"; }
 
 private:
     ExampleCommand exampleCommand;

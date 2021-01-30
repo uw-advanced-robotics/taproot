@@ -368,7 +368,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Chassis Subsystem"; }
+    const char* getName() override { return "Chassis"; }
 
 private:
     /**

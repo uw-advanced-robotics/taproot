@@ -67,7 +67,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Sentinel Drive Subsystem"; }
+    const char* getName() override { return "Sentinel Drive"; }
 
 private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR6;

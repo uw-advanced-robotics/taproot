@@ -46,7 +46,7 @@ public:
 
     void end(bool) override {}
 
-    const char *getName() const override { return "turret init command"; }
+    const char *getName() const override { return "turret init"; }
 
 private:
     static constexpr float YAW_P = 300.0f;

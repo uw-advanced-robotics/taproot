@@ -48,7 +48,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char *getName() override { return "X-Axis Subsystem"; }
+    const char *getName() override { return "X-Axis"; }
 
 private:
     aruwlib::gpio::Digital::OutputPin pin;

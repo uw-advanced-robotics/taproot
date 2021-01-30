@@ -45,7 +45,7 @@ public:
 
     void end(bool) override {}
 
-    const char *getName() const override { return "turret manual command"; }
+    const char *getName() const override { return "turret manual"; }
 
 private:
     static constexpr float USER_INPUT_SCALAR = 50.0f;
