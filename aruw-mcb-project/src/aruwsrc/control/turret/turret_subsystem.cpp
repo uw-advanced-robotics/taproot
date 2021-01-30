@@ -125,8 +125,8 @@ void TurretSubsystem::updateCurrentYawAngle()
     if (yawMotor.isMotorOnline())
     {
         currYawAngle.setValue(
-            DjiMotor::encoderToDegrees(static_cast<uint16_t>(
-                yawMotor.encStore.getEncoderWrapped() - YAW_START_ENCODER_POSITION)) +
+            DjiMotor::encoderToDegrees(
+                static_cast<uint16_t>(yawMotor.getEncoderWrapped() - YAW_START_ENCODER_POSITION)) +
             TURRET_START_ANGLE);
     }
     else
@@ -141,7 +141,7 @@ void TurretSubsystem::updateCurrentPitchAngle()
     {
         currPitchAngle.setValue(
             DjiMotor::encoderToDegrees(static_cast<uint16_t>(
-                pitchMotor.encStore.getEncoderWrapped() - PITCH_START_ENCODER_POSITION)) +
+                pitchMotor.getEncoderWrapped() - PITCH_START_ENCODER_POSITION)) +
             TURRET_START_ANGLE);
     }
     else
