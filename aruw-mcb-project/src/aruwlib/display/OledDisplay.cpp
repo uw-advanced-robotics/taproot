@@ -55,7 +55,19 @@ void OledDisplay::initialize()
     viewStack.push(&mainMenu);
 }
 
-void OledDisplay::update()
+bool OledDisplay::updateDisplay()
+{
+    PT_BEGIN();
+    while (true)
+    {
+        PT_CALL(display.updateNonblocking());
+        PT_WAIT_UNTIL(displayThreadTimer.execute());
+    }
+    PT_END();
+    return false;
+}
+
+void OledDisplay::updateMenu()
 {
     OledButtonHandler::Button buttonPressed = buttonHandler.getCurrentButtonState();
     if (buttonPressed != OledButtonHandler::NONE && buttonPressed != prevButton)

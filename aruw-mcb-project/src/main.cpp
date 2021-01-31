@@ -34,6 +34,8 @@
 /* error handling includes --------------------------------------------------*/
 
 /* control includes ---------------------------------------------------------*/
+#include <aruwlib/architecture/clock.hpp>
+
 #include "aruwsrc/control/robot_control.hpp"
 
 using aruwlib::Drivers;
@@ -78,7 +80,7 @@ int main()
             drivers->errorController.updateLedDisplay();
             drivers->commandScheduler.run();
             drivers->djiMotorTxHandler.processCanSendData();
-            drivers->oledDisplay.update();
+            drivers->oledDisplay.updateMenu();
         }
         modm::delay_us(10);
     }
@@ -105,4 +107,5 @@ void updateIo(aruwlib::Drivers *drivers)
     drivers->xavierSerial.updateSerial();
     drivers->refSerial.updateSerial();
     drivers->remote.read();
+    drivers->oledDisplay.updateDisplay();
 }

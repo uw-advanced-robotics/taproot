@@ -30,31 +30,50 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
+modm::ResumableResult<bool> aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::
+    updateNonblocking()
 {
-    for (uint8_t y = 0; y < (Height / 8); ++y)
+    RF_BEGIN(0);
+
+    if (!writeToDisplay.testAndSet(false)) RF_RETURN(false);
+
+    for (y = 0; y < (Height / 8); ++y)
     {
         // command mode
         a0.reset();
-        spi.transferBlocking(SH1106_PAGE_ADDRESS | y);  // Row select
-        spi.transferBlocking(SH1106_COL_ADDRESS_MSB);   // Column select high
+        RF_CALL(spi.transfer(SH1106_PAGE_ADDRESS | y));  // Row select
+        RF_CALL(spi.transfer(SH1106_COL_ADDRESS_MSB));   // Column select high
 
         if (Flipped)
         {
-            spi.transferBlocking(SH1106_COL_ADDRESS_LSB | 4);  // Column select low
+            RF_CALL(spi.transfer(SH1106_COL_ADDRESS_LSB | 4));  // Column select low
         }
         else
         {
-            spi.transferBlocking(SH1106_COL_ADDRESS_LSB | SH1106_COL_OFFSET);  // Column select low
+            RF_CALL(spi.transfer(SH1106_COL_ADDRESS_LSB | SH1106_COL_OFFSET));  // Column select low
         }
 
         // switch to data mode
         a0.set();
-        for (uint8_t x = 0; x < Width; ++x)
+        for (x = 0; x < Width; ++x)
         {
-            spi.transferBlocking(this->display_buffer[x][y]);
+            RF_CALL(spi.transfer(this->display_buffer[x][y]));
         }
     }
+
+    RF_END_RETURN(true);
+}
+
+template <
+    typename SPI,
+    typename A0,
+    typename Reset,
+    unsigned int Width,
+    unsigned int Height,
+    bool Flipped>
+void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
+{
+    writeToDisplay.testAndSet(true);
 }
 
 template <

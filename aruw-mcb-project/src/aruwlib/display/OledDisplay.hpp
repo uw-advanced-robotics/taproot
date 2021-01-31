@@ -20,8 +20,10 @@
 #ifndef OLED_DISPLAY_HPP_
 #define OLED_DISPLAY_HPP_
 
+#include <modm/processing/protothread.hpp>
 #include <modm/ui/menu/view_stack.hpp>
 
+#include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
 #include "MainMenu.hpp"
@@ -34,7 +36,7 @@ namespace aruwlib
 class Drivers;
 namespace display
 {
-class OledDisplay
+class OledDisplay : public ::modm::pt::Protothread
 {
 public:
     explicit OledDisplay(Drivers *drivers);
@@ -44,7 +46,21 @@ public:
 
     mockable void initialize();
 
-    mockable void update();
+    /**
+     * Updates the display in a nonblocking fashion. This function uses protothreads
+     * to call the sh1106's updateNonblocking function at a rate of 2 hz.
+     *
+     * @note This function uses protothreads (http://dunkels.com/adam/pt/).
+     *      Local variables *do not* necessarily behave correctly and this
+     *      function should be edited with care.
+     */
+    mockable bool updateDisplay();
+
+    /**
+     * Checks button state and updates the view stack responsible for determining what
+     * should be displayed on the OLED.
+     */
+    mockable void updateMenu();
 
 private:
     OledButtonHandler::Button prevButton = OledButtonHandler::NONE;
@@ -67,6 +83,8 @@ private:
     MainMenu mainMenu;
 
     Drivers *drivers;
+
+    aruwlib::arch::PeriodicMilliTimer displayThreadTimer{500};
 };  // class OledDisplay
 }  // namespace display
 }  // namespace aruwlib
