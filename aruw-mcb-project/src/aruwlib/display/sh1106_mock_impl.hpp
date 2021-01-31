@@ -22,6 +22,14 @@
 #endif
 
 template <unsigned int Width, unsigned int Height, bool Flipped>
+modm::ResumableResult<bool> aruwlib::display::Sh1106<Width, Height, Flipped>::updateNonblocking()
+{
+    RF_BEGIN(0);
+    // no-op
+    RF_END_RETURN(false);
+}
+
+template <unsigned int Width, unsigned int Height, bool Flipped>
 void aruwlib::display::Sh1106<Width, Height, Flipped>::update()
 {
     // no-op

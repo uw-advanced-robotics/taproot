@@ -20,11 +20,8 @@
 #ifndef SH1106_HPP
 #define SH1106_HPP
 
-#ifndef PLATFORM_HOSTED
-#include <modm/architecture/interface/accessor_flash.hpp>
-#include <modm/architecture/interface/delay.hpp>
-#endif
-
+#include <modm/architecture/driver/atomic/flag.hpp>
+#include <modm/processing/resumable.hpp>
 #include <modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp>
 
 namespace aruwlib
@@ -43,7 +40,8 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-class Sh1106 : public modm::MonochromeGraphicDisplayBufferedVertical<Width, Height>
+class Sh1106 : public modm::MonochromeGraphicDisplayBufferedVertical<Width, Height>,
+               modm::Resumable<1>
 {
 public:
     virtual ~Sh1106() {}
@@ -51,11 +49,22 @@ public:
     void initializeBlocking();
 
     /**
-     * Update the display with the content of the RAM buffer
+     * Requests that the display begin a re-paint from the in-memory buffer.
      */
     virtual void update();
 
-    // Invert the display content
+    /**
+     * Update the display with the content of the RAM buffer.
+     *
+     * @note This function uses protothreads (http://dunkels.com/adam/pt/).
+     *      Local variables *do not* necessarily behave correctly and this
+     *      function should be edited with care.
+     */
+    modm::ResumableResult<bool> updateNonblocking();
+
+    /**
+     * Invert the display content.
+     */
     void setInvert(bool invert);
 
 protected:
@@ -67,6 +76,14 @@ protected:
 
 private:
     static constexpr uint8_t SH1106_COL_OFFSET = 2;
+
+    /**
+     * Variables used in `updateNonblocking`. Since it is generally not a good idea
+     * to have local variables in protothreads these are stored by this class.
+     */
+    uint8_t x, y;
+
+    modm::atomic::Flag writeToDisplay;
 };
 
 }  // namespace display
