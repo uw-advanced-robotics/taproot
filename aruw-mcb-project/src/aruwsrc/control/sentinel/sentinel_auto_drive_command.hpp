@@ -44,7 +44,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "sentinel auto drive command"; }
+    const char* getName() const override { return "sentinel auto drive"; }
 
 private:
     static const int16_t MIN_RPM = 5000;

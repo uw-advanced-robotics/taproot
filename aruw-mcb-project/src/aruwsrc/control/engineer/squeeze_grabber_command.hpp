@@ -41,7 +41,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "squeeze grabber command"; }
+    const char* getName() const override { return "squeeze grabber"; }
 
 private:
     GrabberSubsystem* grabber;

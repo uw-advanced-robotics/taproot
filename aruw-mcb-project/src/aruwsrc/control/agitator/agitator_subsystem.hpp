@@ -188,7 +188,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Agitator Subsystem"; }
+    const char* getName() override { return "Agitator"; }
 
 private:
     /**

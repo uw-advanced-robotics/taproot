@@ -66,7 +66,7 @@ public:
         bool agitatorSetToFinalAngle,
         float setpointTolerance = AGITATOR_SETPOINT_TOLERANCE);
 
-    const char* getName() const override { return "agitator rotate command"; }
+    const char* getName() const override { return "agitator rotate"; }
 
     void initialize() override;
 

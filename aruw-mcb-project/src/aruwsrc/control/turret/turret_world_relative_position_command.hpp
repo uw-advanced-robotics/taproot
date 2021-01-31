@@ -57,7 +57,7 @@ public:
 
     void end(bool) override;
 
-    const char *getName() const override { return "turret world relative position command"; }
+    const char *getName() const override { return "turret world relative position"; }
 
 private:
     static constexpr float YAW_P = 4500.0f;

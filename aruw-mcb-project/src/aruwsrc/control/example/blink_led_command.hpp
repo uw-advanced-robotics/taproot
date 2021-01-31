@@ -55,7 +55,7 @@ public:
      */
     bool isFinished() const override;
 
-    const char* getName() const override { return "blink led command"; }
+    const char* getName() const override { return "blink led"; }
 
     aruwlib::Drivers* drivers;
 

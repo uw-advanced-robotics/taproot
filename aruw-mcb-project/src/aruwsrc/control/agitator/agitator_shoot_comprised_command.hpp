@@ -62,7 +62,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "agitator shoot command"; }
+    const char* getName() const override { return "agitator shoot"; }
 
 private:
     AgitatorSubsystem* connectedAgitator;

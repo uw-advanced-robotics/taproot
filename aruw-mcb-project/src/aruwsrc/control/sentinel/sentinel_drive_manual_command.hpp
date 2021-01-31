@@ -44,7 +44,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "sentinel drive manual command"; }
+    const char* getName() const override { return "sentinel drive manual"; }
 
 private:
     aruwlib::Drivers* drivers;

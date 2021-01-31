@@ -66,7 +66,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Example Subsystem"; }
+    const char* getName() override { return "Example"; }
 
 private:
     static const aruwlib::motor::MotorId LEFT_MOTOR_ID;

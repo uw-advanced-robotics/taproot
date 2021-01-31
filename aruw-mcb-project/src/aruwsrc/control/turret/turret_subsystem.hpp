@@ -127,7 +127,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Turret Subsystem"; }
+    const char* getName() override { return "Turret"; }
 
 private:
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 8160;

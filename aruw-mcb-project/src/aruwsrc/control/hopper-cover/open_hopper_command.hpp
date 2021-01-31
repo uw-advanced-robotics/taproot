@@ -43,7 +43,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "open hopper command"; }
+    const char* getName() const override { return "open hopper"; }
 
 private:
     HopperSubsystem* subsystemHopper;

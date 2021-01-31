@@ -45,7 +45,7 @@ public:
 
     bool isFinished() const override { return false; }
 
-    const char* getName() const override { return "manual tow command"; }
+    const char* getName() const override { return "manual tow"; }
 
 private:
     TowSubsystem* towSubsystem;

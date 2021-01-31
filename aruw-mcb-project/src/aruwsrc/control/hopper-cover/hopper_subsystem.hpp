@@ -84,7 +84,7 @@ public:
 
     void runHardwareTests() override;
 
-    const char *getName() override { return "Hopper Subsystem"; }
+    const char *getName() override { return "Hopper"; }
 
 private:
     aruwlib::motor::Servo hopper;

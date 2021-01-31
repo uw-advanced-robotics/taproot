@@ -65,7 +65,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "chassis autorotate command"; }
+    const char* getName() const override { return "chassis autorotate"; }
 
 private:
     static constexpr float CHASSIS_AUTOROTATE_PID_KP = -85.0f;
