@@ -38,6 +38,8 @@ void Ramp::setTarget(float target)
     }
 }
 
+void Ramp::setValue(float value) { this->value = value; }
+
 void Ramp::update(float increment)
 {
     increment = copysign(increment, target - value);

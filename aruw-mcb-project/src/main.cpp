@@ -80,7 +80,8 @@ int main()
             drivers->errorController.updateLedDisplay();
             drivers->commandScheduler.run();
             drivers->djiMotorTxHandler.processCanSendData();
-            drivers->oledDisplay.updateMenu();
+            // TODO uncomment out when splash screen has been introduced
+            // drivers->oledDisplay.updateMenu();
         }
         modm::delay_us(10);
     }

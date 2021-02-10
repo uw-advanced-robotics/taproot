@@ -50,6 +50,8 @@ public:
      */
     void setTarget(float target);
 
+    void setValue(float value);
+
     /**
      * Updates the ramp by incrementing or decrementing the target
      * by the increment

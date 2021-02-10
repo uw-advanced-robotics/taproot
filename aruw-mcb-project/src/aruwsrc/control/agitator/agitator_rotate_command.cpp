@@ -51,6 +51,8 @@ void AgitatorRotateCommand::initialize()
     rampToTargetAngle.setTarget(
         connectedAgitator->getAgitatorDesiredAngle() + agitatorTargetAngleChange);
 
+    rampToTargetAngle.setValue(connectedAgitator->getAgitatorAngle());
+
     // reset unjam and min rotate timeouts
     connectedAgitator->armAgitatorUnjamTimer(agitatorMinRotatePeriod);
     agitatorMinRotateTimeout.restart(agitatorMinRotatePeriod);
@@ -75,17 +77,13 @@ void AgitatorRotateCommand::end(bool)
     // (i.e. reached the desired angle) and is not jammed. If it is
     // jammed we thus want to set the agitator angle to the current angle,
     // so the motor does not attempt to keep rotating forward (and possible stalling)
-    if (connectedAgitator->isAgitatorJammed())
+    if (connectedAgitator->isAgitatorJammed() || !agitatorSetToFinalAngle)
     {
         connectedAgitator->setAgitatorDesiredAngle(connectedAgitator->getAgitatorAngle());
-    }
-    else if (agitatorSetToFinalAngle)
-    {
-        connectedAgitator->setAgitatorDesiredAngle(rampToTargetAngle.getTarget());
     }
     else
     {
-        connectedAgitator->setAgitatorDesiredAngle(connectedAgitator->getAgitatorAngle());
+        connectedAgitator->setAgitatorDesiredAngle(rampToTargetAngle.getTarget());
     }
     connectedAgitator->disarmAgitatorUnjamTimer();
 }
