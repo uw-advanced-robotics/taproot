@@ -29,7 +29,7 @@ valid_robot_types = ["TARGET_SOLDIER", "TARGET_OLD_SOLDIER", "TARGET_DRONE", "TA
 hosted_libs = ["pthread"]
 gtest_libs = ["gtest", "gtest_main", "gmock", "gmock_main"]
 
-usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>]\n\
+usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>] [profiling=<true|false>]\n\
     \"<target>\" is one of:\n\
         - \"build\": build all code for the hardware platform.\n\
         - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
@@ -45,7 +45,7 @@ usage = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TY
 ignored_dirs = [".lbuild_cache", build_path, sim_modm_path, hardware_modm_path, aruwlib_path]
 ignored_files = [robot_type_file]
 
-if len(COMMAND_LINE_TARGETS) not in [1, 2]:
+if len(COMMAND_LINE_TARGETS) not in [1, 2, 3]:
     raise Exception("You did not enter the correct number of arguments.\n" + usage)
 
 
@@ -123,6 +123,13 @@ if profile == "debug":
         "-fno-inline",
     ])
 
+profiling = ARGUMENTS.get("profiling", "false")
+
+if profiling == "true":
+    env.Append(CPPFLAGS = [
+        "-DRUN_WITH_PROFILING"
+    ])
+
 if target_env == "sim" or target_env == "tests":
     env.Append(CPPFLAGS = [
         "-DPLATFORM_HOSTED"
@@ -152,6 +159,7 @@ if target_env == "tests":
     ])
 
     env.AppendUnique(LIBS=gtest_libs)
+
     env.AppendUnique(LIBS=hosted_libs)
 elif target_env == "sim":
     env.AppendUnique(LIBS=hosted_libs)

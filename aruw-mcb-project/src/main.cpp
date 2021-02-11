@@ -26,6 +26,7 @@
 
 /* arch includes ------------------------------------------------------------*/
 #include <aruwlib/architecture/periodic_timer.hpp>
+#include <aruwlib/architecture/profiler.hpp>
 
 /* communication includes ---------------------------------------------------*/
 #include <aruwlib/DriversSingleton.hpp>
@@ -72,16 +73,17 @@ int main()
     while (1)
     {
         // do this as fast as you can
-        updateIo(drivers);
+
+        PROFILE(drivers->profiler, updateIo, (drivers));
 
         if (sendMotorTimeout.execute())
         {
-            drivers->mpu6500.read();
-            drivers->errorController.updateLedDisplay();
-            drivers->commandScheduler.run();
-            drivers->djiMotorTxHandler.processCanSendData();
+            PROFILE(drivers->profiler, drivers->mpu6500.read, ());
+            PROFILE(drivers->profiler, drivers->errorController.updateLedDisplay, ());
+            PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
+            PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
             // TODO uncomment out when splash screen has been introduced
-            // drivers->oledDisplay.updateMenu();
+            // PROFILE(drivers->profiler, drivers->oledDisplay.updateMenu, ());
         }
         modm::delay_us(10);
     }
