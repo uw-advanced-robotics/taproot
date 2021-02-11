@@ -122,7 +122,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build profile=debug",
+            "command": "/usr/bin/env python3 $(which scons) build profile=debug profiling=true",
             "windows": {
                 "command": "conda run -n modm scons build profile=debug"
             },

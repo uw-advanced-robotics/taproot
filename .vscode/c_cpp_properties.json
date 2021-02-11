@@ -2,13 +2,13 @@
     "configurations": [
         {
             "name": "Test",
-            "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED"],
+            "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64"
         },
         {
             "name": "Sim",
-            "defines": ["${default}", "PLATFORM_HOSTED"],
+            "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64"
         },
