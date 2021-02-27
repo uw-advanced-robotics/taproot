@@ -55,7 +55,7 @@ if build_target in ["build-tests", "run-tests"]:
     target_env = "tests"
 elif build_target in ["build-sim", "run-sim"]:
     target_env = "sim"
-elif build_target in ["build", "run"]:
+elif build_target in ["build", "run", "size"]:
     target_env = "hardware"
 else:
     raise Exception("You did not select a valid target.\n" + usage)
