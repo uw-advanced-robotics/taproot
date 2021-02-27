@@ -31,7 +31,7 @@ OledDisplay::OledDisplay(Drivers *drivers)
     : display(),
       viewStack(&display),
       buttonHandler(drivers),
-      mainMenu(&viewStack, 0, drivers),
+      splashScreen(&viewStack, drivers),
       drivers(drivers)
 {
 }
@@ -50,9 +50,7 @@ void OledDisplay::initialize()
     display.initializeBlocking();
     display.setFont(modm::font::ScriptoNarrow);
 
-    mainMenu.initialize();
-
-    viewStack.push(&mainMenu);
+    viewStack.push(&splashScreen);
 }
 
 bool OledDisplay::updateDisplay()
@@ -75,7 +73,7 @@ void OledDisplay::updateMenu()
         // Seperate from above for ease of readability.
         // For now the main menu should never be removed from the stack (which is what the left
         // button does in a StandardMenu).
-        if (buttonPressed != OledButtonHandler::LEFT || viewStack.get() != &mainMenu)
+        if (buttonPressed != OledButtonHandler::LEFT || viewStack.get() != &splashScreen)
         {
             viewStack.shortButtonPress(static_cast<modm::MenuButtons::Button>(buttonPressed));
         }
