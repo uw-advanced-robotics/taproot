@@ -22,6 +22,8 @@
 
 #include <cstdint>
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 class Drivers;
@@ -65,7 +67,7 @@ public:
      *
      * @param defaultCommand the default Command to associate with this subsystem
      */
-    void setDefaultCommand(Command* defaultCommand);
+    mockable void setDefaultCommand(Command* defaultCommand);
 
     /**
      * Gets the default command for this subsystem. Returns `nullptr` if no default
@@ -73,7 +75,7 @@ public:
      *
      * @return the default command associated with this subsystem
      */
-    Command* getDefaultCommand() const;
+    mockable Command* getDefaultCommand() const;
 
     /**
      * Called in the scheduler's run function assuming this command

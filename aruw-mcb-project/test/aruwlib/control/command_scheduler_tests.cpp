@@ -24,16 +24,9 @@
 #include <aruwsrc/control/example/example_subsystem.hpp>
 #include <gtest/gtest.h>
 
-// Will be replaced when !18 is merged in
-class ExampleCommandMock : public aruwsrc::control::ExampleCommand
-{
-public:
-    ExampleCommandMock(aruwsrc::control::ExampleSubsystem* subsystem, int speed)
-        : ExampleCommand(subsystem, speed)
-    {
-    }
-    MOCK_METHOD(void, initialize, (), (override));
-};  // class ExampleCommandMock
+#include "aruwlib/mock/CommandMock.hpp"
+
+using aruwlib::mock::CommandMock;
 
 TEST(CommandScheduler, NullAddedCommandRaisesError)
 {
@@ -69,10 +62,17 @@ TEST(CommandScheduler, CommandIsAddedProperly)
     EXPECT_CALL(drivers.djiMotorTxHandler, removeFromMotorManager).Times(2);
     aruwlib::control::CommandScheduler instance(&drivers);
     aruwsrc::control::ExampleSubsystem s(&drivers);
-    ExampleCommandMock c(&s, 100);
+    CommandMock c;
+
+    // Set up another command that we can set an expectation on the `initialize` function.
+    std::set<aruwlib::control::Subsystem*> cmdMockRequirements{&s};
+    EXPECT_CALL(c, getRequirements)
+        .Times(1)
+        .WillRepeatedly(testing::ReturnRef(cmdMockRequirements));
+    EXPECT_CALL(c, initialize);
+
     instance.registerSubsystem(&s);
 
     // Expect no errors, and the method initalize is called on the command
-    EXPECT_CALL(c, initialize);
     instance.addCommand(&c);
 }
