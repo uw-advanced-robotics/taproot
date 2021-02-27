@@ -23,7 +23,7 @@
 #include <modm/container/deque.hpp>
 
 #include "dji_serial.hpp"
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -243,8 +243,7 @@ public:
      * @see `DjiSerial`
      */
     RefSerial(Drivers* drivers);
-    RefSerial(const RefSerial&) = delete;
-    RefSerial& operator=(const RefSerial&) = delete;
+    DISALLOW_COPY_AND_ASSIGN(RefSerial)
     mockable ~RefSerial() = default;
 
     /**

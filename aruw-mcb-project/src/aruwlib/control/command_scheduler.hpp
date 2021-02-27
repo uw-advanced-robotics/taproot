@@ -25,8 +25,8 @@
 #include <modm/container/linked_list.hpp>
 
 #include "command.hpp"
-#include "mock_macros.hpp"
 #include "subsystem.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -86,8 +86,7 @@ class CommandScheduler
 {
 public:
     CommandScheduler(Drivers* drivers) : drivers(drivers), subsystemToCommandMap() {}
-    CommandScheduler(const CommandScheduler&) = delete;
-    CommandScheduler& operator=(const CommandScheduler&) = delete;
+    DISALLOW_COPY_AND_ASSIGN(CommandScheduler)
     mockable ~CommandScheduler() = default;
 
     /**

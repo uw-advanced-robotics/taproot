@@ -23,8 +23,8 @@
 #include <aruwlib/architecture/timeout.hpp>
 #include <modm/container.hpp>
 
-#include "mock_macros.hpp"
 #include "system_error.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -60,8 +60,7 @@ public:
           currentDisplayIndex(0)
     {
     }
-    ErrorController(const ErrorController&) = delete;
-    ErrorController& operator=(const ErrorController&) = delete;
+    DISALLOW_COPY_AND_ASSIGN(ErrorController)
     mockable ~ErrorController() = default;
 
     /**

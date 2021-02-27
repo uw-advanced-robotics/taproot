@@ -29,8 +29,8 @@
 #include "MainMenu.hpp"
 #include "OledButtonHandler.hpp"
 #include "SplashScreen.hpp"
-#include "mock_macros.hpp"
 #include "sh1106.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -41,8 +41,7 @@ class OledDisplay : public ::modm::pt::Protothread
 {
 public:
     explicit OledDisplay(Drivers *drivers);
-    OledDisplay(const OledDisplay &) = delete;
-    OledDisplay &operator=(const OledDisplay &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(OledDisplay)
     mockable ~OledDisplay() = default;
 
     mockable void initialize();

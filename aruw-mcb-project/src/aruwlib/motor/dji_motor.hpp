@@ -73,8 +73,7 @@ public:
     // formerly encoderstore
     mockable uint16_t getEncoderWrapped() const;
 
-    // delete copy constructor
-    DjiMotor(const DjiMotor&) = delete;
+    DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
     // overrides virtual method in the can class, called every time a message is
     // received by the can receive handler

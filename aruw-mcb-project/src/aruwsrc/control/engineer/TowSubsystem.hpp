@@ -23,7 +23,7 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwsrc
 {

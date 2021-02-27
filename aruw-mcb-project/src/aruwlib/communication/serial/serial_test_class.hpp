@@ -42,6 +42,8 @@ public:
      */
     SerialTestClass(Drivers* drivers);
 
+    DISALLOW_COPY_AND_ASSIGN(SerialTestClass)
+
     /**
      * Stores the sequenceNumber in `messageId`.
      */

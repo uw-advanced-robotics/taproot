@@ -22,7 +22,7 @@
 
 #include <set>
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {

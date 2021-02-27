@@ -26,7 +26,7 @@
 
 #include "aruwlib/communication/serial/uart.hpp"
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -111,7 +111,7 @@ public:
      * @param[in] isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement.
      */
     DJISerial(Drivers *drivers, Uart::UartPort port);
-
+    DISALLOW_COPY_AND_ASSIGN(DJISerial)
     mockable ~DJISerial() = default;
 
     /**

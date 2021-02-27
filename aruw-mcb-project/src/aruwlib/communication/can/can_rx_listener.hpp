@@ -91,14 +91,12 @@ public:
      */
     CanRxListener(Drivers* drivers, uint32_t id, CanBus cB);
 
-    CanRxListener(const CanRxListener&) = delete;
-
-    CanRxListener& operator=(const CanRxListener& other) = delete;
-
     /**
      * Here we remove the listener from receive interface.
      */
     ~CanRxListener();
+
+    DISALLOW_COPY_AND_ASSIGN(CanRxListener)
 
     /**
      * Adds itself to the CanRxHandler.

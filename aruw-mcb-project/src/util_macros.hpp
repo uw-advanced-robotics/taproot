@@ -17,8 +17,12 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MOCK_MACROS_HPP_
-#define MOCK_MACROS_HPP_
+#ifndef UTIL_MACROS_HPP_
+#define UTIL_MACROS_HPP_
+
+#define DISALLOW_COPY_AND_ASSIGN(Typename) \
+    Typename(const Typename &) = delete;   \
+    Typename &operator=(const Typename &) = delete;
 
 #ifdef PLATFORM_HOSTED
 /// Wrap class functions that are not already virtual in this function if you wish to mock them.
@@ -28,4 +32,4 @@
 #define mockable
 #endif
 
-#endif  // MOCK_MACROS_HPP_
+#endif  // UTIL_MACROS_HPP_

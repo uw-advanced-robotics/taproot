@@ -26,7 +26,7 @@
 #include <modm/platform.hpp>
 #endif
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -40,8 +40,7 @@ class Remote
 {
 public:
     Remote(Drivers *drivers) : drivers(drivers) {}
-    Remote(const Remote &) = delete;
-    Remote &operator=(const Remote &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Remote)
     mockable ~Remote() = default;
 
     /**
