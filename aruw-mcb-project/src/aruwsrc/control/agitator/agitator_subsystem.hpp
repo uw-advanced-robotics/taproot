@@ -22,7 +22,12 @@
 
 #include <aruwlib/architecture/timeout.hpp>
 #include <aruwlib/control/subsystem.hpp>
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
+
 #include <modm/math/filter/pid.hpp>
 
 #include "aruwsrc/algorithms/turret_pid.hpp"
@@ -203,8 +208,6 @@ private:
      */
     aruwsrc::algorithms::TurretPid agitatorPositionPid;
 
-    aruwlib::motor::DjiMotor agitatorMotor;
-
     /**
      * The user desired angle, measured in radians.
      * The agitator uses unwrapped angle.
@@ -242,6 +245,15 @@ private:
     void agitatorRunPositionPid();
 
     float getUncalibratedAgitatorAngle() const;
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+    aruwlib::mock::DjiMotorMock agitatorMotor;
+
+private:
+#else
+    aruwlib::motor::DjiMotor agitatorMotor;
+#endif
 
 };  // class AgitatorSubsystem
 

@@ -22,7 +22,13 @@
 
 #include <aruwlib/algorithms/extended_kalman.hpp>
 #include <aruwlib/control/subsystem.hpp>
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
+
 #include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
@@ -243,12 +249,6 @@ private:
     static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS2;
 #endif
 
-    // motors
-    aruwlib::motor::DjiMotor leftFrontMotor;
-    aruwlib::motor::DjiMotor leftBackMotor;
-    aruwlib::motor::DjiMotor rightFrontMotor;
-    aruwlib::motor::DjiMotor rightBackMotor;
-
     // wheel velocity PID variables
     modm::Pid<float> leftFrontVelocityPid;
     modm::Pid<float> leftBackVelocityPid;
@@ -265,6 +265,22 @@ private:
 
     aruwlib::algorithms::ExtendedKalman chassisRotationErrorKalman;
 
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+    aruwlib::mock::DjiMotorMock leftFrontMotor;
+    aruwlib::mock::DjiMotorMock leftBackMotor;
+    aruwlib::mock::DjiMotorMock rightFrontMotor;
+    aruwlib::mock::DjiMotorMock rightBackMotor;
+
+private:
+#else
+    // motors
+    aruwlib::motor::DjiMotor leftFrontMotor;
+    aruwlib::motor::DjiMotor leftBackMotor;
+    aruwlib::motor::DjiMotor rightFrontMotor;
+    aruwlib::motor::DjiMotor rightBackMotor;
+#endif
+
 public:
     ChassisSubsystem(
         aruwlib::Drivers* drivers,
@@ -273,25 +289,6 @@ public:
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID)
         : aruwlib::control::Subsystem(drivers),
-          leftFrontMotor(
-              drivers,
-              leftFrontMotorId,
-              CAN_BUS_MOTORS,
-              false,
-              "left front drive motor"),
-          leftBackMotor(drivers, leftBackMotorId, CAN_BUS_MOTORS, false, "left back drive motor"),
-          rightFrontMotor(
-              drivers,
-              rightFrontMotorId,
-              CAN_BUS_MOTORS,
-              false,
-              "right front drive motor"),
-          rightBackMotor(
-              drivers,
-              rightBackMotorId,
-              CAN_BUS_MOTORS,
-              false,
-              "right back drive motor"),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
               VELOCITY_PID_KI,
@@ -320,7 +317,21 @@ public:
           leftBackRpm(0),
           rightFrontRpm(0),
           rightBackRpm(0),
-          chassisRotationErrorKalman(1.0f, 0.0f)
+          chassisRotationErrorKalman(1.0f, 0.0f),
+          leftFrontMotor(
+              drivers,
+              leftFrontMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "left front drive motor"),
+          leftBackMotor(drivers, leftBackMotorId, CAN_BUS_MOTORS, false, "left back drive motor"),
+          rightFrontMotor(
+              drivers,
+              rightFrontMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "right front drive motor"),
+          rightBackMotor(drivers, rightBackMotorId, CAN_BUS_MOTORS, false, "right back drive motor")
     {
     }
 
