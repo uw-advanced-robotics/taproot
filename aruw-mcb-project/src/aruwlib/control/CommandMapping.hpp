@@ -56,15 +56,7 @@ public:
      */
     CommandMapping(Drivers *drivers, const std::vector<Command *> cmds, const RemoteMapState &rms);
 
-    /**
-     * Copy construction disallowed.
-     */
-    CommandMapping(const CommandMapping &) = delete;
-
-    /**
-     * Copying disallowed.
-     */
-    CommandMapping &operator=(const CommandMapping &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(CommandMapping)
 
     /**
      * Straight equality of the mapState and mappedCommands between cm1 and cm2.

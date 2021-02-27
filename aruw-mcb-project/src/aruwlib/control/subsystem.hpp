@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {

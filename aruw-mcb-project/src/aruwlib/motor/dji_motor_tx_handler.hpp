@@ -52,7 +52,7 @@
 #include <limits.h>
 
 #include "dji_motor.hpp"
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -65,9 +65,8 @@ class DjiMotorTxHandler
 {
 public:
     DjiMotorTxHandler(Drivers* drivers) : drivers(drivers) {}
-    DjiMotorTxHandler(const DjiMotorTxHandler&) = delete;
-    DjiMotorTxHandler& operator=(const DjiMotorTxHandler&) = delete;
     mockable ~DjiMotorTxHandler() = default;
+    DISALLOW_COPY_AND_ASSIGN(DjiMotorTxHandler)
 
     // Called when a motor is created, adds to the motor manager
     // and checks to make sure the motor is not already being used.

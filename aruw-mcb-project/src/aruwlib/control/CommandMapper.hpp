@@ -25,7 +25,7 @@
 #include "aruwlib/communication/remote.hpp"
 
 #include "CommandMapping.hpp"
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -55,8 +55,7 @@ class CommandMapper
 {
 public:
     explicit CommandMapper(Drivers *drivers) : drivers(drivers) {}
-    CommandMapper(const CommandMapper &) = delete;
-    CommandMapper &operator=(const CommandMapper &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
 
     /**
      * `delete`s the `CommandMapping`s that are in `commandsToRun`.

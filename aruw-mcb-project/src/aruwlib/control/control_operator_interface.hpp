@@ -22,7 +22,7 @@
 
 #include "aruwlib/algorithms/linear_interpolation.hpp"
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -39,8 +39,7 @@ class ControlOperatorInterface
 {
 public:
     ControlOperatorInterface(Drivers *drivers) : drivers(drivers) {}
-    ControlOperatorInterface(const ControlOperatorInterface &) = delete;
-    ControlOperatorInterface &operator=(const ControlOperatorInterface &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(ControlOperatorInterface)
     mockable ~ControlOperatorInterface() = default;
 
     /// @return the value used for chassis movement forward and backward, between -1 and 1.

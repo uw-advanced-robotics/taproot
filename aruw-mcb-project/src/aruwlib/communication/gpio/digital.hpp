@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -45,8 +45,7 @@ class Digital
 {
 public:
     Digital() = default;
-    Digital(const Digital &) = delete;
-    Digital &operator=(const Digital &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Digital)
     mockable ~Digital() = default;
 
     /**

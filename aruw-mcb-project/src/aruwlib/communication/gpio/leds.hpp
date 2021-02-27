@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -36,8 +36,7 @@ class Leds
 {
 public:
     Leds() = default;
-    Leds(const Leds &) = delete;
-    Leds &operator=(const Leds &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Leds)
     mockable ~Leds() = default;
 
     /**

@@ -26,7 +26,7 @@
 #include <modm/platform/adc/adc_1.hpp>
 #endif
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -43,8 +43,7 @@ class Analog
 {
 public:
     Analog() = default;
-    Analog(const Analog &) = delete;
-    Analog &operator=(const Analog &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Analog)
     mockable ~Analog() = default;
 
     // Analog pins

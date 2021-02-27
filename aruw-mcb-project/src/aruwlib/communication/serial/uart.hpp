@@ -30,7 +30,7 @@
 
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -65,8 +65,7 @@ public:
 #endif
 
     Uart() = default;
-    Uart(const Uart &) = delete;
-    Uart &operator=(const Uart &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Uart)
     mockable ~Uart() = default;
 
     /**

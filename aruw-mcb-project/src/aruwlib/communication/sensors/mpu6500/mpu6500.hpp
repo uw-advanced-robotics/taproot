@@ -24,7 +24,7 @@
 
 #include "aruwlib/algorithms/MahonyAHRS.h"
 
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -45,8 +45,7 @@ class Mpu6500
 {
 public:
     Mpu6500(Drivers *drivers) : drivers(drivers) {}
-    Mpu6500(const Mpu6500 &) = delete;
-    Mpu6500 &operator=(const Mpu6500 &) = delete;
+    DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
 
     /**

@@ -23,7 +23,7 @@
 #include <aruwlib/architecture/timeout.hpp>
 
 #include "dji_serial.hpp"
-#include "mock_macros.hpp"
+#include "util_macros.hpp"
 
 namespace aruwlib
 {
@@ -117,8 +117,7 @@ public:
     } ChassisData;
 
     XavierSerial(Drivers* drivers);
-    XavierSerial(const XavierSerial&) = delete;
-    XavierSerial& operator=(const XavierSerial&) = delete;
+    DISALLOW_COPY_AND_ASSIGN(XavierSerial)
     mockable ~XavierSerial() = default;
 
     /**
