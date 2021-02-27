@@ -28,6 +28,7 @@
 
 #include "MainMenu.hpp"
 #include "OledButtonHandler.hpp"
+#include "SplashScreen.hpp"
 #include "mock_macros.hpp"
 #include "sh1106.hpp"
 
@@ -80,7 +81,7 @@ private:
 
     OledButtonHandler buttonHandler;
 
-    MainMenu mainMenu;
+    SplashScreen splashScreen;
 
     Drivers *drivers;
 
