@@ -22,6 +22,8 @@
 
 #include <set>
 
+#include "mock_macros.hpp"
+
 namespace aruwlib
 {
 namespace control
@@ -53,7 +55,7 @@ public:
      * @see CommandScheduler
      * @return the set of subsystems that are required.
      */
-    const std::set<Subsystem*>& getRequirements() const;
+    mockable const std::set<Subsystem*>& getRequirements() const;
 
     /**
      * Returns whether the command requires a given subsystem.
@@ -61,7 +63,7 @@ public:
      * @param[in] requirement the subsystem to inquire about.
      * @return `true` if the subsystem is required for this Command, `false` otherwise.
      */
-    bool hasRequirement(Subsystem* requirement) const;
+    mockable bool hasRequirement(Subsystem* requirement) const;
 
     /**
      * Adds the required subsystem to a list of required subsystems.
@@ -70,7 +72,7 @@ public:
      *      If the requirement is nullptr or if the requirement is already in the
      *      set, nothing is added.
      */
-    void addSubsystemRequirement(Subsystem* requirement);
+    mockable void addSubsystemRequirement(Subsystem* requirement);
 
     /**
      * @return the name of the command, to be implemented by derived classes.
