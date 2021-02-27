@@ -23,7 +23,13 @@
 #include <aruwlib/algorithms/ramp.hpp>
 #include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
+
 #include <modm/math/filter/pid.hpp>
 
 #include "mock_macros.hpp"
@@ -47,11 +53,11 @@ public:
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
         : aruwlib::control::Subsystem(drivers),
-          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
-          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right example motor"),
           velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-          desiredRpmRamp(0)
+          desiredRpmRamp(0),
+          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, true, "left example motor"),
+          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right example motor")
     {
     }
 
@@ -85,10 +91,6 @@ private:
     static constexpr float PID_MAX_ERROR_SUM = 0.0f;
     static constexpr float PID_MAX_OUTPUT = 16000.0f;
 
-    aruwlib::motor::DjiMotor leftWheel;
-
-    aruwlib::motor::DjiMotor rightWheel;
-
     modm::Pid<float> velocityPidLeftWheel;
 
     modm::Pid<float> velocityPidRightWheel;
@@ -96,6 +98,17 @@ private:
     aruwlib::algorithms::Ramp desiredRpmRamp;
 
     uint32_t prevTime = 0;
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+    aruwlib::mock::DjiMotorMock leftWheel;
+    aruwlib::mock::DjiMotorMock rightWheel;
+
+private:
+#else
+    aruwlib::motor::DjiMotor leftWheel;
+    aruwlib::motor::DjiMotor rightWheel;
+#endif
 };
 
 }  // namespace launcher

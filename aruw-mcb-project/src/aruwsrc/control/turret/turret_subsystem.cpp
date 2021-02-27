@@ -37,12 +37,12 @@ namespace turret
 {
 TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers)
     : aruwlib::control::Subsystem(drivers),
-      pitchMotor(drivers, PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
-      yawMotor(drivers, YAW_MOTOR_ID, CAN_BUS_MOTORS, false, "yaw motor"),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
-      pitchTarget(TURRET_START_ANGLE, 0.0f, 360.0f)
+      pitchTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
+      pitchMotor(drivers, PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
+      yawMotor(drivers, YAW_MOTOR_ID, CAN_BUS_MOTORS, false, "yaw motor")
 {
 }
 

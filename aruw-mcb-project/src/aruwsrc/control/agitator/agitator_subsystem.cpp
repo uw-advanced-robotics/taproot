@@ -22,7 +22,13 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/control/subsystem.hpp>
 #include <aruwlib/errors/create_errors.hpp>
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
+
 #include <modm/math/filter/pid.hpp>
 
 #include "agitator_rotate_command.hpp"
@@ -46,18 +52,18 @@ AgitatorSubsystem::AgitatorSubsystem(
     bool isAgitatorInverted)
     : aruwlib::control::Subsystem(drivers),
       agitatorPositionPid(kp, ki, kd, maxIAccum, maxOutput, 1.0f, 0.0f, 1.0f, 0.0f),
-      agitatorMotor(
-          drivers,
-          agitatorMotorId,
-          agitatorCanBusId,
-          isAgitatorInverted,
-          "agitator motor"),
       desiredAgitatorAngle(0.0f),
       agitatorCalibratedZeroAngle(0.0f),
       agitatorIsCalibrated(false),
       agitatorJammedTimeout(0),
       agitatorJammedTimeoutPeriod(0),
-      gearRatio(agitatorGearRatio)
+      gearRatio(agitatorGearRatio),
+      agitatorMotor(
+          drivers,
+          agitatorMotorId,
+          agitatorCanBusId,
+          isAgitatorInverted,
+          "agitator motor")
 {
     agitatorJammedTimeout.stop();
 }

@@ -21,7 +21,12 @@
 
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/errors/create_errors.hpp>
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
 
 using namespace aruwlib::gpio;
 

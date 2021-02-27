@@ -23,7 +23,13 @@
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/algorithms/linear_interpolation.hpp>
 #include <aruwlib/control/subsystem.hpp>
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <aruwlib/mock/DJIMotorMock.hpp>
+#else
 #include <aruwlib/motor/dji_motor.hpp>
+#endif
+
 #include <modm/math/filter/pid.hpp>
 
 namespace aruwsrc
@@ -148,9 +154,6 @@ private:
     float feedforwardChassisRotateDerivative = 0.0f;
     float feedforwardPrevChassisRotationDesired = 0.0f;
 
-    aruwlib::motor::DjiMotor pitchMotor;
-    aruwlib::motor::DjiMotor yawMotor;
-
     aruwlib::algorithms::ContiguousFloat currPitchAngle;
     aruwlib::algorithms::ContiguousFloat currYawAngle;
 
@@ -161,6 +164,18 @@ private:
     void updateCurrentPitchAngle();
 
     int32_t getVelocity(const aruwlib::motor::DjiMotor& motor) const;
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+    aruwlib::mock::DjiMotorMock pitchMotor;
+    aruwlib::mock::DjiMotorMock yawMotor;
+
+private:
+#else
+    aruwlib::motor::DjiMotor pitchMotor;
+    aruwlib::motor::DjiMotor yawMotor;
+#endif
+
 };  // class TurretSubsystem
 
 }  // namespace turret
