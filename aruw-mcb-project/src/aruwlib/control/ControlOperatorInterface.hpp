@@ -38,6 +38,12 @@ namespace control
 class ControlOperatorInterface
 {
 public:
+    static constexpr int16_t USER_MOUSE_YAW_MAX = 1000;
+    static constexpr int16_t USER_MOUSE_PITCH_MAX = 1000;
+    static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
+    static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
+    static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
+
     ControlOperatorInterface(Drivers *drivers) : drivers(drivers) {}
     ControlOperatorInterface(const ControlOperatorInterface &) = delete;
     ControlOperatorInterface &operator=(const ControlOperatorInterface &) = delete;
@@ -56,8 +62,6 @@ public:
      * @return the value used for turret yaw rotation, between about -1 and 1
      *      this value can be greater or less than (-1, 1) since the mouse input has no
      *      clear lower and upper bound.
-     *
-     * @todo(matthew) should I limit this?
      */
     mockable float getTurretYawInput();
 
@@ -65,8 +69,6 @@ public:
      * @returns the value used for turret pitch rotation, between about -1 and 1
      *      this value can be greater or less than (-1, 1) since the mouse input has no
      *      clear lower and upper bound.
-     *
-     * @todo(matthew) should I limit this?
      */
     mockable float getTurretPitchInput();
 
@@ -77,11 +79,6 @@ public:
     mockable float getSentinelSpeedInput();
 
 private:
-    static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / 1000.0f);
-    static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / 1000.0f);
-
-    static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
-
     Drivers *drivers;
 
     uint32_t prevUpdateCounterX = 0;
