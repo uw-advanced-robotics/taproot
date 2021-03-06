@@ -242,14 +242,16 @@ float TurretSubsystem::yawFeedForwardCalculation(float desiredChassisRotation)
              sinf(getYawAngleFromCenter() * aruwlib::algorithms::PI / 180.0f)) +
          1.0f);
 
+    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
     if (drivers->remote.getUpdateCounter() != prevUpdateCounterChassisRotateDerivative)
     {
         chassisRotateDerivativeInterpolation.update(
-            desiredChassisRotation - feedforwardPrevChassisRotationDesired);
+            desiredChassisRotation - feedforwardPrevChassisRotationDesired,
+            currTime);
     }
     prevUpdateCounterChassisRotateDerivative = drivers->remote.getUpdateCounter();
-    float derivativeInterpolated = chassisRotateDerivativeInterpolation.getInterpolatedValue(
-        aruwlib::arch::clock::getTimeMilliseconds());
+    float derivativeInterpolated =
+        chassisRotateDerivativeInterpolation.getInterpolatedValue(currTime);
 
     feedforwardChassisRotateDerivative = aruwlib::algorithms::lowPassFilter(
         feedforwardChassisRotateDerivative,

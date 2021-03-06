@@ -58,8 +58,9 @@ public:
      *      counter to tell when there is new data from the remote, for
      *      example).
      * @param[in] newValue the new data used in the interpolation.
+     * @param[in] currTime The time that this function was called.
      */
-    void update(float newValue);
+    void update(float newValue, uint32_t currTime);
 
     /**
      * Returns the current value, that is: \f$y\f$ in the equation

@@ -29,9 +29,12 @@ LinearInterpolation::LinearInterpolation() : lastUpdateCallTime(0), previousValu
 {
 }
 
-void LinearInterpolation::update(float newValue)
+void LinearInterpolation::update(float newValue, uint32_t currTime)
 {
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    if (currTime == lastUpdateCallTime)
+    {
+        return;
+    }
     slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);
     previousValue = newValue;
     lastUpdateCallTime = currTime;

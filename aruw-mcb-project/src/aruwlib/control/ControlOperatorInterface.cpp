@@ -17,7 +17,7 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "control_operator_interface.hpp"
+#include "ControlOperatorInterface.hpp"
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
@@ -32,13 +32,15 @@ namespace control
 {
 float ControlOperatorInterface::getChassisXInput()
 {
-    if (prevUpdateCounterX != drivers->remote.getUpdateCounter())
+    uint32_t updateCounter = drivers->remote.getUpdateCounter();
+    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    if (prevUpdateCounterX != updateCounter)
     {
-        chassisXInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL));
+        chassisXInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL), currTime);
+        prevUpdateCounterX = updateCounter;
     }
-    prevUpdateCounterX = drivers->remote.getUpdateCounter();
-    return aruwlib::algorithms::limitVal<float>(
-        chassisXInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds()) +
+    return limitVal<float>(
+        chassisXInput.getInterpolatedValue(currTime) +
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::W)) -
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::S)),
         -1.0f,
@@ -47,13 +49,17 @@ float ControlOperatorInterface::getChassisXInput()
 
 float ControlOperatorInterface::getChassisYInput()
 {
-    if (prevUpdateCounterY != drivers->remote.getUpdateCounter())
+    uint32_t updateCounter = drivers->remote.getUpdateCounter();
+    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    if (prevUpdateCounterY != updateCounter)
     {
-        chassisYInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_HORIZONTAL));
+        chassisYInput.update(
+            drivers->remote.getChannel(Remote::Channel::LEFT_HORIZONTAL),
+            currTime);
+        prevUpdateCounterY = updateCounter;
     }
-    prevUpdateCounterY = drivers->remote.getUpdateCounter();
-    return aruwlib::algorithms::limitVal<float>(
-        chassisYInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds()) +
+    return limitVal<float>(
+        chassisYInput.getInterpolatedValue(currTime) +
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::A)) -
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::D)),
         -1.0f,
@@ -62,13 +68,17 @@ float ControlOperatorInterface::getChassisYInput()
 
 float ControlOperatorInterface::getChassisRInput()
 {
-    if (prevUpdateCounterZ != drivers->remote.getUpdateCounter())
+    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t updateCounter = drivers->remote.getUpdateCounter();
+    if (prevUpdateCounterZ != updateCounter)
     {
-        chassisRInput.update(drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL));
+        chassisRInput.update(
+            drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL),
+            currTime);
     }
-    prevUpdateCounterZ = drivers->remote.getUpdateCounter();
-    return aruwlib::algorithms::limitVal<float>(
-        chassisRInput.getInterpolatedValue(aruwlib::arch::clock::getTimeMilliseconds()) +
+    prevUpdateCounterZ = updateCounter;
+    return limitVal<float>(
+        chassisRInput.getInterpolatedValue(currTime) +
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::Q)) -
             static_cast<float>(drivers->remote.keyPressed(Remote::Key::E)),
         -1.0f,
@@ -77,14 +87,22 @@ float ControlOperatorInterface::getChassisRInput()
 
 float ControlOperatorInterface::getTurretYawInput()
 {
-    return -static_cast<float>(drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL)) +
-           static_cast<float>(drivers->remote.getMouseX()) * USER_MOUSE_YAW_SCALAR;
+    return -drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL) +
+           static_cast<float>(limitVal<int16_t>(
+               drivers->remote.getMouseX(),
+               -USER_MOUSE_YAW_MAX,
+               USER_MOUSE_YAW_MAX)) *
+               USER_MOUSE_YAW_SCALAR;
 }
 
 float ControlOperatorInterface::getTurretPitchInput()
 {
-    return static_cast<float>(drivers->remote.getChannel(Remote::Channel::RIGHT_VERTICAL)) +
-           static_cast<float>(drivers->remote.getMouseY()) * USER_MOUSE_PITCH_SCALAR;
+    return drivers->remote.getChannel(Remote::Channel::RIGHT_VERTICAL) +
+           static_cast<float>(limitVal<int16_t>(
+               drivers->remote.getMouseY(),
+               -USER_MOUSE_PITCH_MAX,
+               USER_MOUSE_PITCH_MAX)) *
+               USER_MOUSE_PITCH_SCALAR;
 }
 
 float ControlOperatorInterface::getSentinelSpeedInput()

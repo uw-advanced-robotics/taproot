@@ -17,15 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __ARUW_CLOCK_HPP__
-#define __ARUW_CLOCK_HPP__
-#include <stdint.h>
-
-#ifndef PLATFORM_HOSTED
-#include <modm/platform.hpp>
-#else
-#include <modm/architecture/interface/clock.hpp>
-#endif
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include "clock.hpp"
 
 namespace aruwlib
 {
@@ -33,24 +26,15 @@ namespace arch
 {
 namespace clock
 {
-#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-void setTime(uint32_t timeMilliseconds);
-uint32_t getTimeMilliseconds();
-uint32_t getTimeMicroseconds();
-#else
-inline uint32_t getTimeMilliseconds() { return modm::Clock().now().time_since_epoch().count(); }
+uint32_t currTimeMilliseconds = 0;
 
-/**
- * @warning This clock time will wrap every 72 minutes. Do not use unless absolutely necessary.
- */
-inline uint32_t getTimeMicroseconds()
-{
-    return modm::PreciseClock().now().time_since_epoch().count();
-}
-#endif
+void setTime(uint32_t timeMilliseconds) { currTimeMilliseconds = timeMilliseconds; }
+
+uint32_t getTimeMilliseconds() { return currTimeMilliseconds; }
+
+uint32_t getTimeMicroseconds() { return currTimeMilliseconds * 1000; }
 }  // namespace clock
-
 }  // namespace arch
-
 }  // namespace aruwlib
+
 #endif
