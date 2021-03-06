@@ -82,8 +82,7 @@ int main()
             PROFILE(drivers->profiler, drivers->errorController.updateLedDisplay, ());
             PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
-            // TODO uncomment out when splash screen has been introduced
-            // PROFILE(drivers->profiler, drivers->oledDisplay.updateMenu, ());
+            PROFILE(drivers->profiler, drivers->oledDisplay.updateMenu, ());
         }
         modm::delay_us(10);
     }
