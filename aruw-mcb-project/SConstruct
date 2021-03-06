@@ -118,6 +118,9 @@ elif args["TARGET_ENV"] == "tests":
 else:  # hardware target env
     pass
 
+# Append little endian flag to all
+env.AppendUnique(CPPFLAGS=["-DLITTLE_ENDIAN"])
+
 # Add any additional flags the user chooses specify
 if "additional-ccflags" in ARGUMENTS:
     env.AppendUnique(CCFLAGS=[*ARGUMENTS["additional-ccflags"].split(",")])
