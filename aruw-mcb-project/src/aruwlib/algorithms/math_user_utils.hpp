@@ -70,7 +70,7 @@ inline bool compareFloatClose(float val1, float val2, float epsilon)
 template <typename T>
 T limitVal(T val, T min, T max)
 {
-    if (min >= max)
+    if (min > max)
     {
         return val;
     }

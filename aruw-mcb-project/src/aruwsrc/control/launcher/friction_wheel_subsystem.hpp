@@ -44,6 +44,10 @@ namespace launcher
 class FrictionWheelSubsystem : public aruwlib::control::Subsystem
 {
 public:
+    static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
+    static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;
+    static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
+
     /**
      * Creates a new friction wheel subsystem with DJI motor1 and motor2
      * unless otherwise specified on CAN bus 1.
@@ -78,10 +82,6 @@ public:
     const char *getName() override { return "Friction Wheel"; }
 
 private:
-    static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
-    static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;
-    static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
-
     // speed of ramp when you set a new desired ramp speed [rpm / ms]
     static constexpr float FRICTION_WHEEL_RAMP_SPEED = 1.0f;
 
