@@ -19,6 +19,10 @@
 
 #include "can.hpp"
 
+#ifdef PLATFORM_HOSTED
+#include <aruwlib/motor/motorsim/sim_handler.hpp>
+#endif
+
 #include <aruwlib/rm-dev-board-a/board.hpp>
 #include <modm/platform.hpp>
 
@@ -54,7 +58,7 @@ void aruwlib::can::Can::initialize()
 bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
-    return false;
+    return aruwlib::motorsim::SimHandler::readyToSend(bus);
 #else
     switch (bus)
     {
@@ -71,7 +75,7 @@ bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
 bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message* message)
 {
 #ifdef PLATFORM_HOSTED
-    return false;
+    return aruwlib::motorsim::SimHandler::sendMessage(bus, message);
 #else
     switch (bus)
     {
@@ -88,7 +92,7 @@ bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message*
 bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
-    return false;
+    return true;
 #else
     switch (bus)
     {
@@ -105,7 +109,7 @@ bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
 bool aruwlib::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
 {
 #ifdef PLATFORM_HOSTED
-    return false;
+    return aruwlib::motorsim::SimHandler::getMessage(bus, message);
 #else
     switch (bus)
     {

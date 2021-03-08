@@ -35,10 +35,11 @@ namespace chassis
 {
 void ChassisSubsystem::initialize()
 {
-    leftBackMotor.initialize();
-    leftFrontMotor.initialize();
-    rightBackMotor.initialize();
-    rightFrontMotor.initialize();
+    // All of these DjiMotors are registered on CAN_BUS2
+    leftBackMotor.initialize();    // Motor3: 0x203 = 515
+    leftFrontMotor.initialize();   // Motor2: 0x202 = 514
+    rightBackMotor.initialize();   // Motor4: 0x204 = 516
+    rightFrontMotor.initialize();  // Motor1: 0x201 = 513
 }
 
 void ChassisSubsystem::setDesiredOutput(float x, float y, float r)

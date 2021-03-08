@@ -43,6 +43,10 @@ namespace turret
 class TurretSubsystem : public aruwlib::control::Subsystem
 {
 public:
+    static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
+    static constexpr aruwlib::motor::MotorId PITCH_MOTOR_ID = aruwlib::motor::MOTOR6;
+    static constexpr aruwlib::motor::MotorId YAW_MOTOR_ID = aruwlib::motor::MOTOR5;
+
     static constexpr float TURRET_START_ANGLE = 90.0f;
     static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
     static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
@@ -144,10 +148,6 @@ private:
     static constexpr float FEED_FORWARD_KD = 1.0f;
     static constexpr float FEED_FORWARD_MAX_OUTPUT = 20000.0f;
     static constexpr float FEED_FORWARD_DERIVATIVE_LOW_PASS = 0.8f;
-
-    static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
-    static constexpr aruwlib::motor::MotorId PITCH_MOTOR_ID = aruwlib::motor::MOTOR6;
-    static constexpr aruwlib::motor::MotorId YAW_MOTOR_ID = aruwlib::motor::MOTOR5;
 
     uint32_t prevUpdateCounterChassisRotateDerivative = 0;
     aruwlib::algorithms::LinearInterpolation chassisRotateDerivativeInterpolation;

@@ -64,6 +64,8 @@ namespace motor
 class DjiMotorTxHandler
 {
 public:
+    static const int DJI_MOTORS_PER_CAN = 8;
+
     DjiMotorTxHandler(Drivers* drivers) : drivers(drivers) {}
     mockable ~DjiMotorTxHandler() = default;
     DISALLOW_COPY_AND_ASSIGN(DjiMotorTxHandler)
@@ -81,8 +83,6 @@ public:
     mockable DjiMotor const* getCan2MotorData(MotorId motorId);
 
 private:
-    static const int DJI_MOTORS_PER_CAN = 8;
-
     Drivers* drivers;
 
     DjiMotor* can1MotorStore[DJI_MOTORS_PER_CAN] = {0};

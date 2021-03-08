@@ -18,7 +18,11 @@
  */
 
 #ifdef PLATFORM_HOSTED
+/* hosted environment (simulator) includes --------------------------------- */
 #include <iostream>
+
+#include <aruwlib/communication/tcp-server/TCPServer.hpp>
+#include <aruwlib/motor/motorsim/sim_handler.hpp>
 #endif
 
 #include <aruwlib/rm-dev-board-a/board.hpp>
@@ -70,6 +74,12 @@ int main()
     initializeIo(drivers);
     aruwsrc::control::initSubsystemCommands(drivers);
 
+#ifdef PLATFORM_HOSTED
+    aruwlib::motorsim::SimHandler::resetMotorSims();
+    // Blocking call, waits until Windows Simulator connects.
+    aruwlib::communication::TCPServer::MainServer()->getConnection();
+#endif
+
     while (1)
     {
         // do this as fast as you can
@@ -105,6 +115,10 @@ void initializeIo(aruwlib::Drivers *drivers)
 
 void updateIo(aruwlib::Drivers *drivers)
 {
+#ifdef PLATFORM_HOSTED
+    aruwlib::motorsim::SimHandler::updateSims();
+#endif
+
     drivers->canRxHandler.pollCanData();
     drivers->xavierSerial.updateSerial();
     drivers->refSerial.updateSerial();
