@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef CREATE_ERRORS_HPP_
 #define CREATE_ERRORS_HPP_
 
@@ -28,6 +27,58 @@ namespace aruwlib
 {
 namespace errors
 {
+enum class CanRxErrorType : uint8_t
+{
+    MOTOR_ID_OUT_OF_BOUNDS = 0,
+    INVALID_REMOVE
+};
+
+enum class MotorControlErrorType : uint8_t
+{
+    NULL_MOTOR_ID = 0
+};
+
+enum class Mpu6500ErrorType : uint8_t
+{
+    IMU_DATA_NOT_INITIALIZED = 0,
+    IMU_NOT_RECEIVING_PROPERLY
+};
+
+enum class DjiSerialErrorType : uint8_t
+{
+    MESSAGE_LENGTH_OVERFLOW = 0,
+    INVALID_MESSAGE_LENGTH,
+    CRC_FAILURE
+};
+
+enum class CommandSchedulerErrorType : uint8_t
+{
+    ADDING_NULLPTR_COMMAND = 0,
+    RUN_TIME_OVERFLOW
+};
+
+enum class SubsystemErrorType : uint8_t
+{
+    MOTOR_OFFLINE = 0,
+    ZERO_DESIRED_AGITATOR_ROTATE_TIME
+};
+
+enum class ControllerMapperErrorType : uint8_t
+{
+    INVALID_ADD = 0
+};
+
+enum class TurretErrorType : uint8_t
+{
+    MOTOR_OFFLINE = 0,
+    INVALID_MOTOR_OUTPUT
+};
+
+enum class ServoErrorType : uint8_t
+{
+    INVALID_ADD = 0
+};
+
 /**
  * Example for how to create and add an error. `drivers` is a pointer to an
  * `aruwlib::Drivers`, which contains an instance of an `ErrorController`.
@@ -43,11 +94,16 @@ namespace errors
  *     aruwlib::errors::ErrorType::INVALID_CRC);
  * ```
  */
-#define RAISE_ERROR(drivers, desc, l, et)                                          \
-    do                                                                             \
-    {                                                                              \
-        aruwlib::errors::SystemError stringError(desc, __LINE__, __FILE__, l, et); \
-        drivers->errorController.addToErrorList(stringError);                      \
+#define RAISE_ERROR(drivers, desc, l, et)                     \
+    do                                                        \
+    {                                                         \
+        aruwlib::errors::SystemError stringError(             \
+            desc,                                             \
+            __LINE__,                                         \
+            __FILE__,                                         \
+            l,                                                \
+            static_cast<uint8_t>(et));                        \
+        drivers->errorController.addToErrorList(stringError); \
     } while (0);
 
 }  // namespace errors

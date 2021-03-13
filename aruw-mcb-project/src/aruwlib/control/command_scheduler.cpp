@@ -43,7 +43,7 @@ void CommandScheduler::addCommand(Command* commandToAdd)
             drivers,
             "attempting to add command while running tests",
             aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
         return;
     }
 
@@ -53,7 +53,7 @@ void CommandScheduler::addCommand(Command* commandToAdd)
             drivers,
             "attempting to add nullptr command",
             aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
         return;
     }
 
@@ -72,7 +72,7 @@ void CommandScheduler::addCommand(Command* commandToAdd)
                 drivers,
                 "Attempting to add a command without subsystem in the scheduler",
                 aruwlib::errors::Location::COMMAND_SCHEDULER,
-                aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
+                aruwlib::errors::CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
             return;
         }
     }
@@ -181,7 +181,7 @@ void CommandScheduler::run()
             drivers,
             "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME",
             aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::ErrorType::RUN_TIME_OVERFLOW);
+            aruwlib::errors::CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
     }
 }
 
@@ -230,7 +230,7 @@ void CommandScheduler::registerSubsystem(Subsystem* subsystem)
             drivers,
             "subsystem is already added or trying to add nullptr subsystem",
             aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::ErrorType::ADDING_NULLPTR_COMMAND);
+            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
     }
 }
 

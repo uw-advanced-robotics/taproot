@@ -41,34 +41,12 @@ enum Location
     LOCATION_AMOUNT,
 };
 
-/// Type of errors; subject to change
-enum ErrorType
-{
-    IMU_DATA_NOT_INITIALIZED = 0,
-    IMU_NOT_RECEIVING_PROPERLY,
-    INVALID_MESSAGE_LENGTH,
-    NULL_MOTOR_ID,
-    CRC_FAILURE,
-    MESSAGE_LENGTH_OVERFLOW,
-    RUN_TIME_OVERFLOW,
-    MOTOR_ID_OUT_OF_BOUNDS,
-    ADDING_NULLPTR_COMMAND,
-    ADDING_COMMAND_WITH_NULL_SUBSYSTEM_DEPENDENCIES,
-    ZERO_DESIRED_AGITATOR_ROTATE_TIME,
-    INVALID_REMOVE,
-    INVALID_KEY_MAP_TYPE,
-    INVALID_ADD,
-    MOTOR_OFFLINE,
-    INVALID_MOTOR_OUTPUT,
-    ERROR_TYPE_AMOUNT
-};
-
 class SystemError
 {
 public:
-    static const uint8_t ERROR_LOCATION_SIZE = 4;
+    static const uint8_t ERROR_LOCATION_SIZE = 5;
 
-    static const uint8_t ERROR_TYPE_SIZE = 8 - ERROR_LOCATION_SIZE;
+    static const uint8_t ERROR_TYPE_SIZE = 3;
 
     constexpr SystemError()
         : lineNumber(0),
@@ -85,7 +63,7 @@ public:
             "You have declared too many error types!");
     }
 
-    constexpr SystemError(const char *desc, int line, const char *file, Location l, ErrorType et)
+    constexpr SystemError(const char *desc, int line, const char *file, Location l, uint8_t et)
         : lineNumber(line),
           description(desc),
           filename(file),
@@ -108,7 +86,7 @@ public:
 
     constexpr Location getLocation() const { return location; }
 
-    constexpr ErrorType getErrorType() const { return errorType; }
+    constexpr uint8_t getErrorType() const { return errorType; }
 
 private:
     int lineNumber;
@@ -117,9 +95,11 @@ private:
 
     const char *filename;
 
+    static const uint8_t ERROR_TYPE_AMOUNT = 8;
+
     Location location;
 
-    ErrorType errorType;
+    uint8_t errorType;
 };  // class SystemError
 }  // namespace errors
 }  // namespace aruwlib

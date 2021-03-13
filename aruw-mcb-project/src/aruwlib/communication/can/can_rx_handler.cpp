@@ -89,7 +89,7 @@ inline void CanRxHandler::processReceivedCanData(
             drivers,
             "Invalid can id received - not between 0x200 and 0x208",
             aruwlib::errors::Location::CAN_RX,
-            aruwlib::errors::ErrorType::MOTOR_ID_OUT_OF_BOUNDS);
+            aruwlib::errors::CanRxErrorType::MOTOR_ID_OUT_OF_BOUNDS);
     }
 }
 
@@ -117,7 +117,7 @@ void CanRxHandler::removeReceiveHandler(
             drivers,
             "index out of bounds",
             aruwlib::errors::CAN_RX,
-            aruwlib::errors::INVALID_REMOVE);
+            aruwlib::errors::CanRxErrorType::INVALID_REMOVE);
         return;
     }
     messageHandlerStore[id] = nullptr;
