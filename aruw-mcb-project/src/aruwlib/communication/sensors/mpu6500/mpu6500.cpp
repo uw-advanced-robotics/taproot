@@ -58,7 +58,7 @@ void Mpu6500::init()
             drivers,
             "failed to initialize the imu properly",
             aruwlib::errors::Location::MPU6500,
-            aruwlib::errors::ErrorType::IMU_NOT_RECEIVING_PROPERLY);
+            aruwlib::errors::Mpu6500ErrorType::IMU_NOT_RECEIVING_PROPERLY);
         return;
     }
 
@@ -114,7 +114,7 @@ void Mpu6500::read()
             drivers,
             "failed to initialize the imu properly",
             aruwlib::errors::Location::MPU6500,
-            aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
+            aruwlib::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     }
 #endif
 }
@@ -188,7 +188,7 @@ float Mpu6500::validateReading(float reading) const
         drivers,
         "failed to initialize the imu properly",
         aruwlib::errors::Location::MPU6500,
-        aruwlib::errors::ErrorType::IMU_DATA_NOT_INITIALIZED);
+        aruwlib::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     return 0.0f;
 }
 

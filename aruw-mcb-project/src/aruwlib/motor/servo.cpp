@@ -50,7 +50,7 @@ Servo::Servo(
             drivers,
             "min servo PWM > max servo PWM",
             errors::Location::SERVO,
-            errors::ErrorType::INVALID_ADD);
+            errors::ServoErrorType::INVALID_ADD);
     }
 }
 

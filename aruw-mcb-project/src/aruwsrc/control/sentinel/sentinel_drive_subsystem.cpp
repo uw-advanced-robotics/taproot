@@ -73,7 +73,7 @@ float SentinelDriveSubsystem::absolutePosition()
             drivers,
             "right sentinel drive motor offline",
             aruwlib::errors::Location::SUBSYSTEM,
-            aruwlib::errors::ErrorType::MOTOR_OFFLINE);
+            aruwlib::errors::SubsystemErrorType::MOTOR_OFFLINE);
         average = leftPosition;
     }
     else if (rightWheel.isMotorOnline())
@@ -82,7 +82,7 @@ float SentinelDriveSubsystem::absolutePosition()
             drivers,
             "left sentinel drive motor offline",
             aruwlib::errors::Location::SUBSYSTEM,
-            aruwlib::errors::ErrorType::MOTOR_OFFLINE);
+            aruwlib::errors::SubsystemErrorType::MOTOR_OFFLINE);
         average = rightPosition;
     }
     else
@@ -91,7 +91,7 @@ float SentinelDriveSubsystem::absolutePosition()
             drivers,
             "both sentinel drive motors offline",
             aruwlib::errors::Location::SUBSYSTEM,
-            aruwlib::errors::ErrorType::MOTOR_OFFLINE);
+            aruwlib::errors::SubsystemErrorType::MOTOR_OFFLINE);
         average = 0.0f;
     }
     return aruwlib::algorithms::limitVal<float>(average, 0.0f, SentinelDriveSubsystem::RAIL_LENGTH);

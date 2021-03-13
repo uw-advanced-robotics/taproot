@@ -78,7 +78,7 @@ int32_t TurretSubsystem::getYawVelocity() const
             drivers,
             "trying to get velocity and yaw motor offline",
             aruwlib::errors::TURRET,
-            aruwlib::errors::MOTOR_OFFLINE);
+            aruwlib::errors::TurretErrorType::MOTOR_OFFLINE);
         // throw error
         return 0;
     }
@@ -94,7 +94,7 @@ int32_t TurretSubsystem::getPitchVelocity() const
             drivers,
             "trying to get velocity and pitch motor offline",
             aruwlib::errors::TURRET,
-            aruwlib::errors::MOTOR_OFFLINE);
+            aruwlib::errors::TurretErrorType::MOTOR_OFFLINE);
         return 0;
     }
 
@@ -158,7 +158,7 @@ void TurretSubsystem::setPitchMotorOutput(float out)
             drivers,
             "pitch motor output invalid",
             aruwlib::errors::TURRET,
-            aruwlib::errors::INVALID_MOTOR_OUTPUT);
+            aruwlib::errors::TurretErrorType::INVALID_MOTOR_OUTPUT);
         return;
     }
     if (pitchMotor.isMotorOnline())
@@ -183,7 +183,7 @@ void TurretSubsystem::setYawMotorOutput(float out)
             drivers,
             "yaw motor output invalid",
             aruwlib::errors::TURRET,
-            aruwlib::errors::INVALID_MOTOR_OUTPUT);
+            aruwlib::errors::TurretErrorType::INVALID_MOTOR_OUTPUT);
         return;
     }
     if (yawMotor.isMotorOnline())
