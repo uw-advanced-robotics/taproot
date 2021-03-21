@@ -31,6 +31,4 @@ env.AppendUnique(LIBPATH=[
     abspath(str(library[0].get_dir())),
 ])
 
-profile = ARGUMENTS.get("profile", "release")
-
 Return("library")

@@ -1,3 +1,6 @@
+[![pipeline status](https://gitlab.com/aruw/controls/aruw-mcb/badges/develop/pipeline.svg)](https://gitlab.com/aruw/controls/aruw-mcb/-/commits/develop)
+[![coverage report](https://gitlab.com/aruw/controls/aruw-mcb/badges/develop/coverage.svg)](https://gitlab.com/aruw/controls/aruw-mcb/-/commits/develop)
+
 # aruw-mcb
 
 ARUW's "Main Control Board" (MCB) code for the RoboMaster competition.

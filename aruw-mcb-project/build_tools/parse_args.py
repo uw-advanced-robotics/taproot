@@ -20,7 +20,7 @@ from . import extract_robot_type
 
 
 CMD_LINE_ARGS                       = 1
-TEST_BUILD_TARGET_ACCEPTED_ARGS     = ["build-tests", "run-tests"]
+TEST_BUILD_TARGET_ACCEPTED_ARGS     = ["build-tests", "run-tests", "run-tests-gcov"]
 SIM_BUILD_TARGET_ACCEPTED_ARGS      = ["build-sim", "run-sim"]
 HARDWARE_BUILD_TARGET_ACCEPTED_ARGS = ["build", "run", "size", "gdb", "all"]
 VALID_BUILD_PROFILES                = ["debug", "release"]
@@ -32,6 +32,7 @@ USAGE = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TY
         - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\
         - \"build-tests\": build core code and tests for the current host platform.\n\
         - \"run-tests\": build core code and tests for the current host platform, and execute them locally with the test runner.\n\
+        - \"run-tests-gcov\": builds core code and tests, executes them locally, and captures and prints code coverage information\n\
         - \"build-sim\": build all code for the simulated environment, for the current host platform.\n\
         - \"run-sim\": build all code for the simulated environment, for the current host platform, and execute the simulator locally.\n\
     \"TARGET_<ROBOT_TYPE>\" is an optional argument that can override whatever robot type has been specified in robot_type.hpp.\n\

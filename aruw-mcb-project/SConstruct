@@ -33,6 +33,7 @@ TEST_PATH           = "test"
 # Define libraries
 HOSTED_LIBS         = ["pthread"]
 GTEST_LIBS          = ["gtest", "gtest_main", "gmock", "gmock_main"]
+COVERAGE_LIBS       = ["-lgcov"]
 
 # Don't compile this stuff
 ignored_dirs        = [".lbuild_cache", BUILD_PATH, HOSTED_MODM_PATH, HARDWARE_MODM_PATH, ARUWLIB_PATH]
@@ -115,6 +116,13 @@ elif args["TARGET_ENV"] == "tests":
     env.AppendUnique(CPPPATH=[abspath(TEST_PATH)])
     env.AppendUnique(LIBS=GTEST_LIBS)
     env.AppendUnique(LIBS=HOSTED_LIBS)
+
+    # Add flags necessary for coverage
+    if COMMAND_LINE_TARGETS[0] == "run-tests-gcov":
+        env.AppendUnique(CPPFLAGS=[
+            "-fprofile-arcs",
+            "-ftest-coverage"])
+        env.AppendUnique(LIBS=COVERAGE_LIBS)
 else:  # hardware target env
     pass
 
@@ -146,12 +154,17 @@ if args["TARGET_ENV"] == "hardware":
     env.Default("all")  # For the hardware target env, "all" runs if you don't
                         # specify anything (i.e. just type "scons")
 elif args["TARGET_ENV"] == "tests":
+    env.Append(toolpath=[abspath(r"build_tools")])
+    env.Tool("run_gcov")
+
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
 
     # Add target environment-specific SCons aliases
     # WARNING: all aliases must be checked during argument validation
     env.Alias("build-tests", program)
     env.Alias("run-tests", env.Run(program))
+    env.Alias("run-tests-gcov", [env.RunGCOV(program)])
+
 else:
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
 
