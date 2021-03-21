@@ -49,6 +49,11 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# lcov
+RUN apt-get update \
+    && apt-get install -y lcov gcovr \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Now that we have wget, install clang-format
 # clang-format-10 depends on the python apt package, but Python is installed
 # from source, not apt, so apt doesn't see it. Hack around it to avoid the dep.

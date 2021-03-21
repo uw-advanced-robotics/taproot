@@ -8,3 +8,4 @@ aruw-mcb-project/**/project.xml.log
 docs/_build
 docs/api
 docs/doxyoutput
+gcov-result

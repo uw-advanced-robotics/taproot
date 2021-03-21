@@ -16,7 +16,7 @@
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2020-11-24.1
+  image: aruw/mcb-2020-gitlab-ci:2021-03-20.1
 
 variables:
   ARTIFACT_PATH: isolated-deploy
@@ -62,7 +62,8 @@ Drone Build:
     - python3 $(which scons) size robot=TARGET_DRONE -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py Drone
     - python3 $(which scons) build-sim robot=TARGET_DRONE -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_DRONE -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) build-tests robot=TARGET_DRONE -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-drone.elf
   only: *default_only
   artifacts:
@@ -81,7 +82,8 @@ Engineer Build:
     - python3 $(which scons) size robot=TARGET_ENGINEER -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py Engineer
     - python3 $(which scons) build-sim robot=TARGET_ENGINEER -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_ENGINEER -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) build-tests robot=TARGET_ENGINEER -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-engineer.elf
   only: *default_only
   artifacts:
@@ -100,7 +102,8 @@ Hero Build:
     - python3 $(which scons) size robot=TARGET_HERO -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py Hero
     - python3 $(which scons) build-sim robot=TARGET_HERO -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_HERO -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) build-tests robot=TARGET_HERO -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-hero.elf
   only: *default_only
   artifacts:
@@ -119,7 +122,8 @@ Old Soldier Build:
     - python3 $(which scons) size robot=TARGET_OLD_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py OldSoldier
     - python3 $(which scons) build-sim robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_OLD_SOLDIER -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) build-tests robot=TARGET_OLD_SOLDIER -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-old-soldier.elf
   only: *default_only
   artifacts:
@@ -138,8 +142,12 @@ Soldier Build:
     - python3 $(which scons) size robot=TARGET_SOLDIER -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py Soldier
     - python3 $(which scons) build-sim robot=TARGET_SOLDIER -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_SOLDIER -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) run-tests-gcov robot=TARGET_SOLDIER -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-soldier.elf
+    - cd .. && gcovr -g --xml > cobertura.xml
+    - 'sed -i "s=<source>.</source>=<source>./aruw-mcb-project</source>=g" cobertura.xml'
+    - 'sed -i "s;filename=\";filename=\"aruw-mcb-project/;g" cobertura.xml'
   only: *default_only
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-soldier"
@@ -148,6 +156,7 @@ Soldier Build:
     expire_in: 2 weeks
     reports:
       metrics: metrics.txt
+      cobertura: cobertura.xml
 
 Sentinel Build:
   stage: Build all Other Targets
@@ -157,7 +166,8 @@ Sentinel Build:
     - python3 $(which scons) size robot=TARGET_SENTINEL -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
     - python3 ../scripts/parse_metrics.py Sentinel
     - python3 $(which scons) build-sim robot=TARGET_SENTINEL -j${NUM_JOBS}
-    - python3 $(which scons) build-tests robot=TARGET_SENTINEL -j${NUM_JOBS} && valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
+    - python3 $(which scons) build-tests robot=TARGET_SENTINEL -j${NUM_JOBS}
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-sentinel.elf
   only: *default_only
   artifacts:
