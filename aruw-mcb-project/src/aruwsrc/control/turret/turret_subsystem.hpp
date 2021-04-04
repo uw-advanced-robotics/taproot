@@ -55,9 +55,9 @@ public:
 
     explicit TurretSubsystem(aruwlib::Drivers* drivers);
 
-    void initialize() override;
+    mockable void initialize() override;
 
-    void refresh() override;
+    mockable void refresh() override;
 
     /**
      * @return `true` if both pitch and yaw gimbals are connected.
@@ -71,7 +71,7 @@ public:
      * @return An angle between [-180, 180] that is the angle difference of the yaw gimbal
      *      from center (90 degrees).
      */
-    float getYawAngleFromCenter() const;
+    mockable float getYawAngleFromCenter() const;
     /**
      * @return An angle between [-180, 180] that is the angle difference of the pitch gimbal
      *      from center (90 degrees).

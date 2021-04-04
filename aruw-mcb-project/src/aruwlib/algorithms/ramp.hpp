@@ -45,6 +45,8 @@ public:
      */
     explicit Ramp(float initialValue = 0.0f);
 
+    void reset(float val);
+
     /**
      * Sets a new target ramp value.
      */

@@ -29,6 +29,13 @@ namespace algorithms
 {
 Ramp::Ramp(float initialValue) : target(initialValue), value(initialValue), targetReached(true) {}
 
+void Ramp::reset(float val)
+{
+    target = val;
+    value = val;
+    targetReached = true;
+}
+
 void Ramp::setTarget(float target)
 {
     if (!compareFloatClose(target, this->target, RAMP_EPSILON))
