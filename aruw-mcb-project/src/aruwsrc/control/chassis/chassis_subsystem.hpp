@@ -31,6 +31,8 @@
 
 #include <modm/math/filter/pid.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace chassis
@@ -350,7 +352,7 @@ public:
      * @param[in] r The desired velocity of the wheels to rotate the chassis.
      *      See x param for further description.
      */
-    void setDesiredOutput(float x, float y, float r);
+    mockable void setDesiredOutput(float x, float y, float r);
 
     /**
      * Run chassis rotation PID on some actual turret angle offset.
