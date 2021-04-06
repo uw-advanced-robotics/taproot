@@ -42,9 +42,10 @@ public:
     static constexpr float MAX_POWER_CONSUMPTION = 30.0f;
     static constexpr float MAX_ENERGY_BUFFER = 200.0f;
 
-    // length of the rail we own, in mm
-    // the competition rail length is actually 4650mm
-    static constexpr float RAIL_LENGTH = 1900;
+    // RMUL length of the rail, in mm
+    static constexpr float RAIL_LENGTH = 2130;
+    // Our length of the rail, in mm
+    // static constexpr float RAIL_LENGTH = 1900;
 
     SentinelDriveSubsystem(
         aruwlib::Drivers* drivers,
