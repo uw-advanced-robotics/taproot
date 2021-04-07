@@ -85,7 +85,8 @@ void ShootComprisedCommand::end(bool interrupted)
 bool ShootComprisedCommand::isFinished() const
 {
     return (agitatorRotateCommand.isFinished() && !unjamSequenceCommencing) ||
-           (agitatorUnjamCommand.isFinished() && unjamSequenceCommencing);
+           (agitatorUnjamCommand.isFinished() && unjamSequenceCommencing) ||
+           (!connectedAgitator->isAgitatorCalibrated());
 }
 
 }  // namespace agitator
