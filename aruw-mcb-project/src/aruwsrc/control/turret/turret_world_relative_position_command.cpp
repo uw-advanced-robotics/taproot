@@ -105,8 +105,8 @@ void TurretWorldRelativePositionCommand::runYawPositionController(float dt)
         turretSubsystem->getYawVelocity() + drivers->mpu6500.getGz(),
         dt);
 
-    pidOutput +=
-        turretSubsystem->yawFeedForwardCalculation(chassisSubsystem->getChassisDesiredRotation());
+    pidOutput += turretSubsystem->yawFeedForwardCalculation(
+        *chassisSubsystem->getDesiredVelocityChassisRelative()[chassis::ChassisSubsystem::R]);
 
     turretSubsystem->setYawMotorOutput(pidOutput);
 }
