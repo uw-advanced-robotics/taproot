@@ -22,13 +22,17 @@
 
 #include <stdint.h>
 
+#include "clock.hpp"
+
 namespace aruwlib
 {
 namespace arch
 {
-class MilliTimeout
+template <uint32_t (*T)()>
+class Timeout
 {
-    friend class PeriodicMilliTimer;
+    template <typename H>
+    friend class PeriodicTimer;
 
 private:
     bool isRunning;
@@ -36,20 +40,47 @@ private:
     uint32_t expireTime;
 
 public:
-    MilliTimeout();
-    explicit MilliTimeout(uint32_t timeout_millis);
+    static constexpr auto TimeFunc = T;
 
-    void restart(uint32_t timeout_millis);
+    Timeout()
+    {
+        stop();
+        this->expireTime = 0;
+    }
 
-    void stop();
+    explicit Timeout(uint32_t timeout) { restart(timeout); }
 
-    bool isStopped() const;
+    void restart(uint32_t timeout)
+    {
+        this->isRunning = true;
+        this->isExecuted = false;
+        this->expireTime = TimeFunc() + timeout;
+    }
 
-    bool isExpired() const;
+    void stop()
+    {
+        this->isRunning = false;
+        this->isExecuted = false;
+    }
 
-    bool execute();
+    bool isStopped() const { return !this->isRunning; }
+
+    bool isExpired() const { return this->isRunning && TimeFunc() >= this->expireTime; }
+
+    bool execute()
+    {
+        if (!isExecuted && isExpired())
+        {
+            isExecuted = true;
+            return true;
+        }
+
+        return false;
+    }
 };
 
+using MicroTimeout = Timeout<aruwlib::arch::clock::getTimeMicroseconds>;
+using MilliTimeout = Timeout<aruwlib::arch::clock::getTimeMilliseconds>;
 }  // namespace arch
 }  // namespace aruwlib
 

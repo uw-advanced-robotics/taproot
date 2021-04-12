@@ -22,7 +22,10 @@
 
 #include <cstdint>
 
+#include <modm/processing/protothread.hpp>
+
 #include "aruwlib/algorithms/MahonyAHRS.h"
+#include "aruwlib/architecture/timeout.hpp"
 
 #include "util_macros.hpp"
 
@@ -41,7 +44,7 @@ namespace sensors
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500
+class Mpu6500 : public ::modm::pt::Protothread
 {
 public:
     Mpu6500(Drivers *drivers) : drivers(drivers) {}
@@ -57,9 +60,18 @@ public:
     mockable void init();
 
     /**
-     * Read data from the imu. Call at 500 hz for best performance.
+     * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
+     * Call at 500 hz for best performance.
      */
-    mockable void read();
+    mockable void calcIMUAngles();
+
+    /**
+     * Read data from the imu. This is a protothread that reads the SPI bus using
+     * nonblocking I/O.
+     *
+     * @return `true` if the function is not done, `false` otherwise
+     */
+    mockable bool read();
 
     /**
      * To be safe, whenever you call the functions below, call this function to insure
@@ -142,7 +154,13 @@ private:
     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
     /// The number of bytes read to read acceleration, gyro, and temp.
-    static const uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
+    static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
+
+    /**
+     * The delay between calculation of imu angles and the start of reading new raw IMU data,
+     * in microseconds.
+     */
+    static constexpr int DELAY_BTWN_CALC_AND_READ_REG = 1550;
 
     /**
      * Storage for the raw data we receive from the mpu6500, as well as offsets
@@ -195,6 +213,10 @@ private:
     Drivers *drivers;
 
     bool imuInitialized = false;
+
+    aruwlib::arch::MicroTimeout readRegistersTimeout;
+    uint8_t tx = 0;  // Byte used for reading data in the read protothread
+    uint8_t rx = 0;  // Byte used for reading data in the read protothread
 
     RawData raw;
 
