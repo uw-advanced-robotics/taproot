@@ -127,8 +127,8 @@ float ChassisSubsystem::chassisSpeedRotationPID(float currentAngleError, float k
 
     float wheelRotationSpeed = aruwlib::algorithms::limitVal<float>(
         currRotationPidP + currentRotationPidD,
-        -MAX_WHEEL_SPEED_SINGLE_MOTOR,
-        MAX_WHEEL_SPEED_SINGLE_MOTOR);
+        -MAX_OUTPUT_ROTATION_PID,
+        MAX_OUTPUT_ROTATION_PID);
 
     return wheelRotationSpeed;
 }

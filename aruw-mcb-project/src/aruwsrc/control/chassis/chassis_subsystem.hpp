@@ -111,6 +111,11 @@ private:
      */
     static const int MIN_ERROR_ROTATION_D = 0;
 
+    /**
+     * The maximum output allowed out of the rotation PID controller.
+     */
+    static constexpr float MAX_OUTPUT_ROTATION_PID = 5000.0f;
+
     // mechanical chassis constants, all in mm
     /**
      * Radius of the wheels (mm).
@@ -158,6 +163,10 @@ private:
      * The maximum revolve error before we start using the derivative term.
      */
     static const int MIN_ERROR_ROTATION_D = 0;
+    /**
+     * The maximum output allowed out of the rotation PID controller.
+     */
+    static constexpr float MAX_OUTPUT_ROTATION_PID = 5000.0f;
     /**
      * Derivative max term.
      */
@@ -213,6 +222,10 @@ private:
      * The maximum revolve error before we start using the derivative term.
      */
     static const int MIN_ERROR_ROTATION_D = 0;
+    /**
+     * The maximum output allowed out of the rotation PID controller.
+     */
+    static constexpr float MAX_OUTPUT_ROTATION_PID = 5000.0f;
 
     // mechanical chassis constants
     /**

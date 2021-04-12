@@ -143,11 +143,8 @@ private:
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 8160;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;
 
-    static constexpr float FEED_FORWARD_KP = 2.0f;
-    static constexpr float FEED_FORWARD_SIN_GAIN = 2.0f;
-    static constexpr float FEED_FORWARD_KD = 1.0f;
+    static constexpr float FEED_FORWARD_KP = 0.0f;  // TODO tune this value
     static constexpr float FEED_FORWARD_MAX_OUTPUT = 20000.0f;
-    static constexpr float FEED_FORWARD_DERIVATIVE_LOW_PASS = 0.8f;
 
     uint32_t prevUpdateCounterChassisRotateDerivative = 0;
     aruwlib::algorithms::LinearInterpolation chassisRotateDerivativeInterpolation;
