@@ -87,9 +87,11 @@ private:
 
     aruwlib::arch::MilliTimeout sendRequestTimer;
 
-    void runYawPositionController();
+    uint32_t prevTime;
 
-    void runPitchPositionController();
+    void runYawPositionController(float dt);
+
+    void runPitchPositionController(float dt);
 };  // class TurretCvCommand
 
 }  // namespace turret

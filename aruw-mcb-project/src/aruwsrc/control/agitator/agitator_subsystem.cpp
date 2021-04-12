@@ -113,9 +113,12 @@ void AgitatorSubsystem::agitatorRunPositionPid()
     }
     else
     {
+        // dt doesn't need to be exact since we don't use an integral term and we calculate
+        // the velocity ourselves, so it currently isn't used.
         agitatorPositionPid.runController(
             desiredAgitatorAngle - getAgitatorAngle(),
-            getAgitatorVelocity());
+            getAgitatorVelocity(),
+            2.0f);
         agitatorMotor.setDesiredOutput(agitatorPositionPid.getOutput());
     }
 }
