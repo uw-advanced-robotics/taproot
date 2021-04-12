@@ -26,26 +26,50 @@ namespace aruwlib
 {
 namespace arch
 {
-class PeriodicMilliTimer
+template <typename T>
+class PeriodicTimer
 {
 public:
-    PeriodicMilliTimer();
+    PeriodicTimer() : period(0) {}
 
-    explicit PeriodicMilliTimer(uint32_t period);
+    explicit PeriodicTimer(uint32_t period) : period(period), timeout(period) {}
 
-    void restart();
-    void restart(uint32_t period);
+    void restart() { timeout.restart(period); }
+    void restart(uint32_t period)
+    {
+        this->period = period;
+        restart();
+    }
 
-    void stop();
+    void stop() { timeout.stop(); }
 
-    bool execute();
+    bool execute()
+    {
+        if (timeout.execute())
+        {
+            uint32_t now = T::TimeFunc();
 
-    bool isStopped() const;
+            do
+            {
+                timeout.expireTime += period;
+            } while (timeout.expireTime <= now);
+
+            timeout.isRunning = true;
+            timeout.isExecuted = false;
+            return true;
+        }
+        return false;
+    }
+
+    bool isStopped() const { return timeout.isStopped(); }
 
 private:
     uint32_t period;
-    aruwlib::arch::MilliTimeout timeout;
+    T timeout;
 };
+
+using PeriodicMilliTimer = PeriodicTimer<MilliTimeout>;
+using PeriodicMicroTimer = PeriodicTimer<MicroTimeout>;
 
 }  // namespace arch
 }  // namespace aruwlib

@@ -83,12 +83,11 @@ int main()
     while (1)
     {
         // do this as fast as you can
-
         PROFILE(drivers->profiler, updateIo, (drivers));
 
         if (sendMotorTimeout.execute())
         {
-            PROFILE(drivers->profiler, drivers->mpu6500.read, ());
+            PROFILE(drivers->profiler, drivers->mpu6500.calcIMUAngles, ());
             PROFILE(drivers->profiler, drivers->errorController.updateLedDisplay, ());
             PROFILE(drivers->profiler, drivers->commandScheduler.run, ());
             PROFILE(drivers->profiler, drivers->djiMotorTxHandler.processCanSendData, ());
@@ -124,4 +123,5 @@ void updateIo(aruwlib::Drivers *drivers)
     drivers->refSerial.updateSerial();
     drivers->remote.read();
     drivers->oledDisplay.updateDisplay();
+    drivers->mpu6500.read();
 }

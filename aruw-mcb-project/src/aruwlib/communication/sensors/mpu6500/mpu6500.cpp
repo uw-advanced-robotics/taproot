@@ -86,27 +86,19 @@ void Mpu6500::init()
 
     calculateAccOffset();
     calculateGyroOffset();
+
+    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
 #endif
 }
 
-void Mpu6500::read()
+void Mpu6500::calcIMUAngles()
 {
-#ifndef PLATFORM_HOSTED
     if (imuInitialized)
     {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
-        raw.accel.x = (rxBuff[0] << 8 | rxBuff[1]) - raw.accelOffset.x;
-        raw.accel.y = (rxBuff[2] << 8 | rxBuff[3]) - raw.accelOffset.y;
-        raw.accel.z = (rxBuff[4] << 8 | rxBuff[5]) - raw.accelOffset.z;
-
-        raw.temp = rxBuff[6] << 8 | rxBuff[7];
-
-        raw.gyro.x = ((rxBuff[8] << 8 | rxBuff[9]) - raw.gyroOffset.x);
-        raw.gyro.y = ((rxBuff[10] << 8 | rxBuff[11]) - raw.gyroOffset.y);
-        raw.gyro.z = ((rxBuff[12] << 8 | rxBuff[13]) - raw.gyroOffset.z);
-
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
         tiltAngleCalculated = false;
+        // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
+        readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
     }
     else
     {
@@ -116,6 +108,37 @@ void Mpu6500::read()
             aruwlib::errors::Location::MPU6500,
             aruwlib::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     }
+}
+
+bool Mpu6500::read()
+{
+#ifndef PLATFORM_HOSTED
+    PT_BEGIN();
+    while (true)
+    {
+        PT_WAIT_UNTIL(readRegistersTimeout.execute());
+
+        mpuNssLow();
+        tx = MPU6500_ACCEL_XOUT_H | 0x80;
+        rx = 0;
+        txBuff[0] = tx;
+        PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
+        PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
+        mpuNssHigh();
+
+        raw.accel.x = (rxBuff[0] << 8 | rxBuff[1]) - raw.accelOffset.x;
+        raw.accel.y = (rxBuff[2] << 8 | rxBuff[3]) - raw.accelOffset.y;
+        raw.accel.z = (rxBuff[4] << 8 | rxBuff[5]) - raw.accelOffset.z;
+
+        raw.temp = rxBuff[6] << 8 | rxBuff[7];
+
+        raw.gyro.x = ((rxBuff[8] << 8 | rxBuff[9]) - raw.gyroOffset.x);
+        raw.gyro.y = ((rxBuff[10] << 8 | rxBuff[11]) - raw.gyroOffset.y);
+        raw.gyro.z = ((rxBuff[12] << 8 | rxBuff[13]) - raw.gyroOffset.z);
+    }
+    PT_END();
+#else
+    return false;
 #endif
 }
 
@@ -230,7 +253,7 @@ void Mpu6500::calculateAccOffset()
 #endif
 }
 
-// Hardware interface functions.
+// Hardware interface functions (blocking functions, for initialization only)
 
 uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 {
