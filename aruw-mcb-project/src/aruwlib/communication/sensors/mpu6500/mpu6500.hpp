@@ -38,7 +38,7 @@ namespace sensors
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
  *
  * To use this class, call Remote::init() to properly initialize and calibrate
- * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temp
+ * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temperature
  * values from the imu. Use the getter methods to access imu information.
  *
  * @note if you are shaking the imu while it is initializing, the offsets will likely
@@ -47,7 +47,7 @@ namespace sensors
 class Mpu6500 : public ::modm::pt::Protothread
 {
 public:
-    Mpu6500(Drivers *drivers) : drivers(drivers) {}
+    Mpu6500(Drivers *drivers) : drivers(drivers), raw() {}
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
 
@@ -153,7 +153,7 @@ private:
     /// The number of samples we take in order to determine the mpu offsets.
     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
-    /// The number of bytes read to read acceleration, gyro, and temp.
+    /// The number of bytes read to read acceleration, gyro, and temperature.
     static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
     /**
@@ -168,46 +168,25 @@ private:
      */
     struct RawData
     {
+        struct Vector
+        {
+            int16_t x = 0;
+            int16_t y = 0;
+            int16_t z = 0;
+        };
+
         /// Raw acceleration data.
-        struct Accel
-        {
-            int16_t x = 0;
-            int16_t y = 0;
-            int16_t z = 0;
-        };
-
+        Vector accel;
         /// Raw gyroscope data.
-        struct Gyro
-        {
-            int16_t x = 0;
-            int16_t y = 0;
-            int16_t z = 0;
-        };
-
-        /// Acceleration offset calculated in init.
-        struct AccelOffset
-        {
-            int16_t x = 0;
-            int16_t y = 0;
-            int16_t z = 0;
-        };
-
-        /// Gyroscope offset calculated in init.
-        struct GyroOffset
-        {
-            int16_t x = 0;
-            int16_t y = 0;
-            int16_t z = 0;
-        };
-
-        Accel accel;
-        Gyro gyro;
+        Vector gyro;
 
         /// Raw temperature.
-        uint16_t temp = 0;
+        uint16_t temperature = 0;
 
-        AccelOffset accelOffset;
-        GyroOffset gyroOffset;
+        /// Acceleration offset calculated in init.
+        Vector accelOffset;
+        /// Gyroscope offset calculated in init.
+        Vector gyroOffset;
     };
 
     Drivers *drivers;
