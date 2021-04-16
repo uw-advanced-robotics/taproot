@@ -47,7 +47,7 @@ void Mpu6500::init()
 
     modm::delay_ms(100);
 
-    // reset gyro, accel, and temp
+    // reset gyro, accel, and temperature
     spiWriteRegister(MPU6500_SIGNAL_PATH_RESET, 0x07);
     modm::delay_ms(100);
 
@@ -130,7 +130,7 @@ bool Mpu6500::read()
         raw.accel.y = (rxBuff[2] << 8 | rxBuff[3]) - raw.accelOffset.y;
         raw.accel.z = (rxBuff[4] << 8 | rxBuff[5]) - raw.accelOffset.z;
 
-        raw.temp = rxBuff[6] << 8 | rxBuff[7];
+        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
         raw.gyro.x = ((rxBuff[8] << 8 | rxBuff[9]) - raw.gyroOffset.x);
         raw.gyro.y = ((rxBuff[10] << 8 | rxBuff[11]) - raw.gyroOffset.y);
@@ -181,7 +181,7 @@ float Mpu6500::getGz() const
 
 float Mpu6500::getTemp() const
 {
-    return validateReading(21.0f + static_cast<float>(raw.temp) / 333.87f);
+    return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
 }
 
 float Mpu6500::getYaw() { return validateReading(mahonyAlgorithm.getYaw()); }
