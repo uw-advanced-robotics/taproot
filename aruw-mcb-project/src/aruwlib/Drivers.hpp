@@ -82,7 +82,11 @@ public:
           uart(),
           xavierSerial(this),
           refSerial(this),
+#ifdef ENV_UNIT_TESTS
           commandScheduler(this),
+#else
+          commandScheduler(this, true),
+#endif
           controlOperatorInterface(this),
           commandMapper(this),
           errorController(this),

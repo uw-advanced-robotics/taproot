@@ -33,14 +33,6 @@ namespace aruwlib
 {
 namespace control
 {
-CommandMapper::~CommandMapper()
-{
-    for (CommandMapping *cmdMap : commandsToRun)
-    {
-        delete cmdMap;
-    }
-}
-
 void CommandMapper::handleKeyStateChange(
     uint16_t key,
     Remote::SwitchState leftSwitch,
@@ -75,7 +67,6 @@ void CommandMapper::addMap(CommandMapping *mapping)
     {
         if (mapStateEqual(*cmap, *mapping))
         {
-            delete mapping;
             RAISE_ERROR(
                 drivers,
                 "failed to insert io mapping",
@@ -85,34 +76,6 @@ void CommandMapper::addMap(CommandMapping *mapping)
         }
     }
     commandsToRun.push_back(mapping);
-}
-
-void CommandMapper::addHoldMapping(
-    const RemoteMapState &mapping,
-    const std::vector<Command *> commands)
-{
-    addMap(new HoldCommandMapping(drivers, commands, mapping));
-}
-
-void CommandMapper::addHoldRepeatMapping(
-    const RemoteMapState &mapping,
-    std::vector<Command *> commands)
-{
-    addMap(new HoldRepeatCommandMapping(drivers, commands, mapping));
-}
-
-void CommandMapper::addToggleMapping(
-    const RemoteMapState &mapping,
-    const std::vector<Command *> commands)
-{
-    addMap(new ToggleCommandMapping(drivers, commands, mapping));
-}
-
-void CommandMapper::addPressMapping(
-    const RemoteMapState &mapping,
-    const std::vector<Command *> commands)
-{
-    addMap(new PressCommandMapping(drivers, commands, mapping));
 }
 
 const CommandMapping *CommandMapper::getAtIndex(std::size_t index) const

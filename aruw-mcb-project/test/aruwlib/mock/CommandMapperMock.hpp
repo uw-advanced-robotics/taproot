@@ -36,36 +36,9 @@ public:
     MOCK_METHOD(
         void,
         handleKeyStateChange,
-        (uint16_t key,
-         Remote::SwitchState leftSwitch,
-         Remote::SwitchState rightSwitch,
-         bool mouseL,
-         bool mouseR),
+        (uint16_t, Remote::SwitchState, Remote::SwitchState, bool, bool),
         (override));
-    MOCK_METHOD(
-        void,
-        addHoldMapping,
-        (const aruwlib::control::RemoteMapState &mapping,
-         const std::vector<aruwlib::control::Command *> commands),
-        (override));
-    MOCK_METHOD(
-        void,
-        addHoldRepeatMapping,
-        (const aruwlib::control::RemoteMapState &mapping,
-         const std::vector<aruwlib::control::Command *> commands),
-        (override));
-    MOCK_METHOD(
-        void,
-        addToggleMapping,
-        (const aruwlib::control::RemoteMapState &mapping,
-         const std::vector<aruwlib::control::Command *> commands),
-        (override));
-    MOCK_METHOD(
-        void,
-        addPressMapping,
-        (const aruwlib::control::RemoteMapState &mapping,
-         const std::vector<aruwlib::control::Command *> commands),
-        (override));
+    MOCK_METHOD(void, addMap, (aruwlib::control::CommandMapping *), (override));
     MOCK_METHOD(std::size_t, getSize, (), (const override));
 };  // class CommandMapperMock
 }  // namespace mock

@@ -56,11 +56,7 @@ class CommandMapper
 public:
     explicit CommandMapper(Drivers *drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-
-    /**
-     * `delete`s the `CommandMapping`s that are in `commandsToRun`.
-     */
-    mockable ~CommandMapper();
+    mockable ~CommandMapper() = default;
 
     /**
      * The heart of the CommandMapper.
@@ -77,56 +73,14 @@ public:
         bool mouseR);
 
     /**
-     * Attaches a Command to a remote control mapping which is added to the
-     * CommandScheduler once when the mapping is satisfied and is removed
-     * when the mapping is stopped being satisfied.
+     * Verifies the mapping passed in can be added to `commandsToRun`
+     * and if possible adds the mapping.
      *
-     * @see HoldCommandMapping
-     * @param[in] mapping A particular remote mapping associated with the Command.
-     * @param[in] Command The Command to be triggered by this mapping.
+     * @param[in] mapping A pointer to the CommandMapping to be added. The
+     *      command mapper is not responsible for memory deallocation of this
+     *      command mapping.
      */
-    mockable void addHoldMapping(
-        const RemoteMapState &mapping,
-        const std::vector<Command *> commands);
-
-    /**
-     * Attaches a Command to a remote control mapping which is added to
-     * the CommandScheduler when the remote state matches the passed in
-     * mapping, starting the Command over while the mapping is still met
-     * if it ever finishes.
-     *
-     * @see HoldRepeatCommandMapping
-     * @param[in] mapping A particular remote mapping associated with the Command.
-     * @param[in] Command The Command to be triggered by this mapping.
-     */
-    mockable void addHoldRepeatMapping(
-        const RemoteMapState &mapping,
-        const std::vector<Command *> commands);
-
-    /**
-     * Attaches a Command to a remote control mapping which adds the command
-     * to the CommandScheduler whenever a mapping is toggled.
-     *
-     * @see ToggleCommandMapping
-     * @param[in] mapping A particular remote mapping associated with the Command.
-     * @param[in] Command The Command to be triggered by this mapping.
-     * @note A toggle mapping is interrupted when the key is untoggled.
-     */
-    mockable void addToggleMapping(
-        const RemoteMapState &mapping,
-        const std::vector<Command *> commands);
-
-    /**
-     * Attaches a Command to a remote control mapping which is added to the
-     * CommandScheduler once each time the mapping is satisfied.
-     *
-     * @see PressCommandMapping
-     * @param[in] mapping a particular remote mapping associated with the Command.
-     * @param[in] Command the Command to be triggered by this mapping.
-     */
-    mockable void addPressMapping(
-        const RemoteMapState &mapping,
-        const std::vector<Command *> commands);
+    mockable void addMap(CommandMapping *mapping);
 
     /**
      * @return the number of command mappings in the mapper.
@@ -140,12 +94,6 @@ public:
     mockable const CommandMapping *getAtIndex(std::size_t index) const;
 
 private:
-    /**
-     * A helper function that verifies the mapping passed in can be added to `commandsToRun`
-     * and if possible adds the mapping.
-     */
-    void addMap(CommandMapping *mapping);
-
     /**
      * We use a vector because it is slightly faster for iteration than an `std::set` or
      * `std::map` (which would facilitate a different structure than a `CommandMapping` class).

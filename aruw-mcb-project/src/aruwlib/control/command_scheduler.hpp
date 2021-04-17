@@ -20,11 +20,10 @@
 #ifndef COMMAND_SCHEDULER_HPP_
 #define COMMAND_SCHEDULER_HPP_
 
-#include <map>
-
-#include <modm/container/linked_list.hpp>
+#include <iterator>
 
 #include "command.hpp"
+#include "command_scheduler_types.hpp"
 #include "subsystem.hpp"
 #include "util_macros.hpp"
 
@@ -85,9 +84,9 @@ namespace control
 class CommandScheduler
 {
 public:
-    CommandScheduler(Drivers* drivers) : drivers(drivers), subsystemToCommandMap() {}
+    CommandScheduler(Drivers* drivers, bool masterScheduler = false);
     DISALLOW_COPY_AND_ASSIGN(CommandScheduler)
-    mockable ~CommandScheduler() = default;
+    mockable ~CommandScheduler();
 
     /**
      * Calls the `refresh()` function for all Subsystems and the associated
@@ -112,40 +111,6 @@ public:
     mockable void run();
 
     /**
-     * Removes the given Command completely from the CommandScheduler. This
-     * means removing all instances of the command pointer from the Subsystem ->
-     * Command map (since a single Subsystem can map to multiple Commands).
-     *
-     * @param[in] command the Command to remove. Must not be `nullptr`. If the
-     *      Command is not in the scheduler, nothing is removed.
-     * @param[in] interrupted an argument passed in to the Command's `end()`
-     *      function when removing the desired Command.
-     */
-    mockable void removeCommand(Command* command, bool interrupted);
-
-    /**
-     * Adds the given Subsystem to the CommandScheduler.  The subsystem is
-     * added with the currently scheduled Command as `nullptr`.
-     *
-     * @param[in] subsystem the Subsystem to add. Must be not `nullptr` and not
-     *      registered already (check via `isSubsystemRegistered()`), otherwise
-     *      an error is added to the error handler.
-     */
-    mockable void registerSubsystem(Subsystem* subsystem);
-
-    /**
-     * @param[in] subsystem the subsystem to check
-     * @return `true` if the Subsystem is already scheduled, `false` otherwise.
-     */
-    mockable bool isSubsystemRegistered(Subsystem* subsystem) const;
-
-    /**
-     * @return `true` if the CommandScheduler contains the requrested Command.
-     *      `false` otherwise.
-     */
-    mockable bool isCommandScheduled(Command* command) const;
-
-    /**
      * Attempts to add a Command to the scheduler. There are a number of ways this
      * function can fail. If failure does occur, an error will be added to the
      * error handler.
@@ -166,30 +131,183 @@ public:
      */
     mockable void addCommand(Command* commandToAdd);
 
-    mockable const std::map<Subsystem*, Command*>& getSubsystemToCommandMap() const
-    {
-        return subsystemToCommandMap;
-    }
+    /**
+     * Removes the given Command completely from the CommandScheduler. This
+     * means removing all instances of the command pointer from the Subsystem ->
+     * Command map (since a single Subsystem can map to multiple Commands).
+     *
+     * @param[in] command the Command to remove. Must not be `nullptr`. If the
+     *      Command is not in the scheduler, nothing is removed.
+     * @param[in] interrupted an argument passed in to the Command's `end()`
+     *      function when removing the desired Command.
+     */
+    mockable void removeCommand(Command* command, bool interrupted);
 
-    mockable void runSubsystemTests();
+    /**
+     * @return `true` if the CommandScheduler contains the requrested Command.
+     *      `false` otherwise.
+     */
+    mockable bool isCommandScheduled(Command* command) const;
+
+    /**
+     * Adds the given Subsystem to the CommandScheduler.  The subsystem is
+     * added with the currently scheduled Command as `nullptr`.
+     *
+     * @param[in] subsystem the Subsystem to add. Must be not `nullptr` and not
+     *      registered already (check via `isSubsystemRegistered()`), otherwise
+     *      an error is added to the error handler.
+     */
+    mockable void registerSubsystem(Subsystem* subsystem);
+
+    /**
+     * @param[in] subsystem the subsystem to check
+     * @return `true` if the Subsystem is already scheduled, `false` otherwise.
+     */
+    mockable bool isSubsystemRegistered(Subsystem* subsystem) const;
+
+    mockable void startHardwareTests();
     mockable void stopHardwareTests();
+
+    /**
+     * @return The number of subsystems registered with the scheduler.
+     */
+    mockable int subsystemListSize() const;
+
+    /**
+     * @return The number of commands added in the scheduler.
+     */
+    mockable int commandListSize() const;
+
+    /**
+     * Iterator used for looking through the commands added to the scheduler
+     */
+    struct CommandIterator
+    {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = Command;
+        using pointer = Command*;
+        using reference = Command&;
+
+        CommandIterator(CommandScheduler* scheduler, int i);
+
+        pointer operator*();
+
+        // Prefix increment
+        CommandIterator& operator++();
+
+        // Postfix increment
+        CommandIterator operator++(int);
+
+        friend bool operator==(const CommandIterator& a, const CommandIterator& b);
+        friend bool operator!=(const CommandIterator& a, const CommandIterator& b);
+
+    private:
+        CommandScheduler* scheduler;
+        int currIndex;
+    };
+
+    /**
+     * Iterator used for looking through the subsystems registered in the scheduler
+     */
+    struct SubsystemIterator
+    {
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = std::ptrdiff_t;
+        using value_type = Subsystem;
+        using pointer = Subsystem*;
+        using reference = Subsystem&;
+
+        SubsystemIterator(CommandScheduler* scheduler, int i);
+
+        pointer operator*();
+
+        // Prefix increment
+        SubsystemIterator& operator++();
+
+        // Postfix increment
+        SubsystemIterator operator++(int);
+
+        friend bool operator==(const SubsystemIterator& a, const SubsystemIterator& b);
+        friend bool operator!=(const SubsystemIterator& a, const SubsystemIterator& b);
+
+    private:
+        CommandScheduler* scheduler;
+        int currIndex;
+    };
+
+    mockable CommandIterator cmdMapBegin();
+    mockable CommandIterator cmdMapEnd();
+    mockable SubsystemIterator subMapBegin();
+    mockable SubsystemIterator subMapEnd();
+
+    static int constructCommand(Command* command);
+    static int constructSubsystem(Subsystem* subsystem);
+    static void destructCommand(Command* command);
+    static void destructSubsystem(Subsystem* subsystem);
 
 private:
     /// Maximum time before we start erroring, in microseconds.
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
+    static constexpr int MAX_SUBSYSTEM_COUNT = sizeof(subsystem_scheduler_bitmap_t) * 8;
+    static constexpr int MAX_COMMAND_COUNT = sizeof(command_scheduler_bitmap_t) * 8;
+    static constexpr int INVALID_ITER_INDEX = -1;
+
+    /**
+     * The smallest index such that all indices in the globalSubsystemRegistrar >= to them are
+     * nullptr.
+     *
+     * To loop through the globalCommandRegistrar, use this value as the max value, i.e.
+     * for (int i = 0; i < maxSubsystemIndex; i++) {...}
+     */
+    static int maxSubsystemIndex;
+
+    /**
+     * A global array of all constructed subsystems. When a subsystem is constructed it is given an
+     * index in the registrar. When a subsystem is destructed it is removed from the registrar.
+     */
+    static Subsystem* globalSubsystemRegistrar[MAX_SUBSYSTEM_COUNT];
+
+    /**
+     * The smallest index such that all indices in the globalCommandRegistrar >= to them are
+     * nullptr.
+     */
+    static int maxCommandIndex;
+
+    /**
+     * A global array of all constructed commands. When a command is constructed it is given an
+     * index in the registrar. When a command is destructed it is removed from the registrar.
+     */
+    static Command* globalCommandRegistrar[MAX_COMMAND_COUNT];
+
+    /**
+     * A global flag indicating whether or not a "master" scheduler has been constructed.
+     */
+    static bool masterSchedulerExists;
 
     Drivers* drivers;
 
-    /// a map containing keys of subsystems, pairs of Commands.
-    std::map<Subsystem*, Command*> subsystemToCommandMap;
+    /**
+     * Each bit in the bitmap represents a unique subsystem that has been constructed
+     * in the codebase. If a subsystem is registered, the associated bit in this bitmap
+     * will be set to 1.
+     */
+    subsystem_scheduler_bitmap_t registeredSubsystemBitmap = 0;
 
     /**
-     * @note this is not a true timestamp. Rather, we use this such that
-     *      with multiple CommandSchedulers running with the same Subsystems,
-     *      the Subsystems and Commands will be updated only once each time
-     *      the `mainScheduler` is ran.
+     * Each bit in the bitmap corresponds to an index into the subsystem registrar. If a
+     * bit is set, it means that the subsystem in the registrar has a command associated
+     * in in this scheduler.
      */
-    static uint32_t commandSchedulerTimestamp;
+    subsystem_scheduler_bitmap_t subsystemsAssociatedWithCommandBitmap = 0;
+
+    /**
+     * If a command has been added and is running, the associated bit in this bitmap will
+     * be set to 1.
+     */
+    command_scheduler_bitmap_t addedCommandBitmap = 0;
+
+    bool isMasterScheduler = false;
 
     bool runningHardwareTests = false;
 };  // class CommandScheduler

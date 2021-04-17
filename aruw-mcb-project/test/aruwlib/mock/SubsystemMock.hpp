@@ -31,12 +31,14 @@ class SubsystemMock : public control::Subsystem
 {
 public:
     SubsystemMock(Drivers *drivers) : control::Subsystem(drivers) {}
+    virtual ~SubsystemMock() = default;
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, setDefaultCommand, (control::Command * defaultCommand), (override));
     MOCK_METHOD(control::Command *, getDefaultCommand, (), (const override));
     MOCK_METHOD(void, refresh, (), (override));
-    MOCK_METHOD(bool, isHardwareTestComplete, (), (override));
+    MOCK_METHOD(bool, isHardwareTestComplete, (), (const override));
     MOCK_METHOD(void, setHardwareTestsComplete, (), (override));
+    MOCK_METHOD(void, setHardwareTestsIncomplete, (), (override));
     MOCK_METHOD(void, runHardwareTests, (), (override));
     MOCK_METHOD(const char *, getName, (), (override));
 };  // class SubsystemMock

@@ -19,6 +19,8 @@
 
 #include "HardwareTestMenu.hpp"
 
+#include <algorithm>
+
 #include "aruwlib/control/command_scheduler.hpp"
 #include "aruwlib/control/subsystem.hpp"
 
@@ -30,7 +32,7 @@ HardwareTestMenu::HardwareTestMenu(modm::ViewStack* vs, Drivers* drivers)
     : AbstractMenu(vs, 2),
       drivers(drivers)
 {
-    drivers->commandScheduler.runSubsystemTests();
+    drivers->commandScheduler.startHardwareTests();
 }
 
 void HardwareTestMenu::update()
@@ -46,8 +48,8 @@ void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
     switch (button)
     {
         case modm::MenuButtons::LEFT:
-            this->getViewStack()->pop();
             drivers->commandScheduler.stopHardwareTests();
+            this->getViewStack()->pop();
             break;
         case modm::MenuButtons::RIGHT:
             break;
@@ -69,26 +71,30 @@ void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
             break;
         case modm::MenuButtons::OK:
             int subsystemIndex = 0;
-            for (auto& subsystemToCommand : drivers->commandScheduler.getSubsystemToCommandMap())
+            for (auto it = drivers->commandScheduler.subMapBegin();
+                 it != drivers->commandScheduler.subMapEnd();
+                 it++)
             {
                 if (subsystemIndex++ == selectedSubsystem)
                 {
-                    subsystemToCommand.first->setHardwareTestsComplete();
+                    if (!(*it)->isHardwareTestComplete())
+                    {
+                        (*it)->setHardwareTestsComplete();
+                    }
                     break;
                 }
             }
             break;
     }
 
+    int numSubsystems = drivers->commandScheduler.subsystemListSize();
     if (selectedSubsystem < 0)
     {
         selectedSubsystem = 0;
     }
-    else if (
-        selectedSubsystem >=
-        static_cast<int>(drivers->commandScheduler.getSubsystemToCommandMap().size()))
+    else if (selectedSubsystem >= numSubsystems)
     {
-        selectedSubsystem = drivers->commandScheduler.getSubsystemToCommandMap().size() - 1;
+        selectedSubsystem = numSubsystems - 1;
     }
 
     changed = true;
@@ -104,13 +110,17 @@ bool HardwareTestMenu::hasChanged()
 bool HardwareTestMenu::updateHasChanged()
 {
     int i = 0;
-    uint64_t changedSubsystems = 0;
-    for (auto& subsystemToCommand : drivers->commandScheduler.getSubsystemToCommandMap())
-    {
-        changedSubsystems += (subsystemToCommand.first->isHardwareTestComplete() ? 1 : 0) << i;
-    }
+    aruwlib::control::subsystem_scheduler_bitmap_t changedSubsystems = 0;
 
-    changed = changed || changedSubsystems != completeSubsystems;
+    std::for_each(
+        drivers->commandScheduler.subMapBegin(),
+        drivers->commandScheduler.subMapEnd(),
+        [&](control::Subsystem* sub) {
+            changedSubsystems += (sub->isHardwareTestComplete() ? 1UL : 0UL) << i;
+            i++;
+        });
+
+    changed |= (changedSubsystems != completeSubsystems);
     completeSubsystems = changedSubsystems;
     return changed;
 }
@@ -123,15 +133,17 @@ void HardwareTestMenu::draw()
     display << HardwareTestMenu::getMenuName() << modm::endl;
 
     int subsystemIndex = 0;
-    for (auto& subsystemToCommand : drivers->commandScheduler.getSubsystemToCommandMap())
-    {
-        aruwlib::control::Subsystem* subsystem = subsystemToCommand.first;
-        if (subsystemIndex <= topIndex && subsystemIndex >= bottomIndex)
-            display << ((subsystemIndex == selectedSubsystem) ? ">" : " ")
-                    << (subsystem->isHardwareTestComplete() ? "[done] " : "[not]  ")
-                    << subsystem->getName() << modm::endl;
-        subsystemIndex++;
-    }
+
+    std::for_each(
+        drivers->commandScheduler.subMapBegin(),
+        drivers->commandScheduler.subMapEnd(),
+        [&](control::Subsystem* sub) {
+            if (subsystemIndex <= topIndex && subsystemIndex >= bottomIndex)
+                display << ((subsystemIndex == selectedSubsystem) ? ">" : " ")
+                        << (sub->isHardwareTestComplete() ? "[done] " : "[not]  ") << sub->getName()
+                        << modm::endl;
+            subsystemIndex++;
+        });
 }
 }  // namespace display
 }  // namespace aruwlib

@@ -31,8 +31,12 @@ class CommandMock : public control::Command
 {
 public:
     CommandMock() = default;
-    MOCK_METHOD(const std::set<control::Subsystem*>&, getRequirements, (), (const override));
-    MOCK_METHOD(bool, hasRequirement, (control::Subsystem * requirement), (const override));
+    virtual ~CommandMock() = default;
+    MOCK_METHOD(
+        control::subsystem_scheduler_bitmap_t,
+        getRequirementsBitwise,
+        (),
+        (const override));
     MOCK_METHOD(void, addSubsystemRequirement, (control::Subsystem * requirement), (override));
     MOCK_METHOD(const char*, getName, (), (const override));
     MOCK_METHOD(void, initialize, (), (override));

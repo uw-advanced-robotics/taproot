@@ -54,7 +54,13 @@ enum class DjiSerialErrorType : uint8_t
 enum class CommandSchedulerErrorType : uint8_t
 {
     ADDING_NULLPTR_COMMAND = 0,
-    RUN_TIME_OVERFLOW
+    ADDING_NULLPTR_SUBSYSTEM,
+    ADDING_ALREADY_ADDED_SUBSYSTEM,
+    MASTER_SCHEDULER_ALREADY_EXISTS,
+    ADD_COMMAND_WHILE_TESTING,
+    ADD_COMMAND_WITHOUT_REGISTERED_SUB,
+    RUN_TIME_OVERFLOW,
+    REMOVE_NULLPTR_COMMAND
 };
 
 enum class SubsystemErrorType : uint8_t

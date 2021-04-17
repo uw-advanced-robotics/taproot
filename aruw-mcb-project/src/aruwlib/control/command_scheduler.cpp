@@ -20,254 +20,537 @@
 #include "command_scheduler.hpp"
 
 #include <algorithm>
-#include <set>
 #include <utility>
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
-using namespace std;
+using namespace aruwlib::errors;
 
 namespace aruwlib
 {
 namespace control
 {
-uint32_t CommandScheduler::commandSchedulerTimestamp = 0;
+bool CommandScheduler::masterSchedulerExists = false;
+Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBSYSTEM_COUNT];
+Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
+int CommandScheduler::maxSubsystemIndex = 0;
+int CommandScheduler::maxCommandIndex = 0;
 
-void CommandScheduler::addCommand(Command* commandToAdd)
+int CommandScheduler::constructCommand(Command *command)
 {
-    if (this->runningHardwareTests)
+    modm_assert(command != nullptr, "CommandScheduer::constructCommand", "called with nullptr cmd");
+
+    modm_assert(
+        maxCommandIndex < MAX_COMMAND_COUNT,
+        "CommandScheduler::constructCommand",
+        "Too many commands constructed!");
+
+    // Loop through the globalCommandRegistrar, find the lowest nullptr index
+    for (int i = 0; i < MAX_COMMAND_COUNT; i++)
     {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add command while running tests",
-            aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
-        return;
-    }
-
-    if (commandToAdd == nullptr)
-    {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add nullptr command",
-            aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
-        return;
-    }
-
-    bool commandAdded = false;
-
-    const set<Subsystem*>& commandRequirements = commandToAdd->getRequirements();
-
-    // Check to see if all the requirements are in the subsytemToCommandMap
-    for (auto& requirement : commandRequirements)
-    {
-        if (subsystemToCommandMap.find(requirement) == subsystemToCommandMap.end())
+        if (globalCommandRegistrar[i] == nullptr)
         {
-            // the command you are trying to add has a subsystem that is not in the
-            // scheduler, so you cannot add it (will lead to undefined control behavior)
-            RAISE_ERROR(
-                drivers,
-                "Attempting to add a command without subsystem in the scheduler",
-                aruwlib::errors::Location::COMMAND_SCHEDULER,
-                aruwlib::errors::CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
-            return;
+            // Update max index if need be
+            maxCommandIndex = std::max(maxCommandIndex, i + 1);
+            globalCommandRegistrar[i] = command;
+            return i;
         }
     }
 
-    // end all commands running on the subsystem requirements.
-    // They were interrupted.
-    // Additionally, replace the current command with the commandToAdd
-    for (auto& requirement : commandRequirements)
-    {
-        map<Subsystem*, Command*>::iterator subsystemRequirementCommandPair =
-            subsystemToCommandMap.find(requirement);
+    // Will never happen
+    return -1;
+}
 
-        if (subsystemRequirementCommandPair->second != nullptr)
+int CommandScheduler::constructSubsystem(Subsystem *subsystem)
+{
+    modm_assert(
+        subsystem != nullptr,
+        "CommandScheduer::constructSubsystem",
+        "called with nullptr sub");
+
+    modm_assert(
+        maxSubsystemIndex < MAX_SUBSYSTEM_COUNT,
+        "CommandScheduler::constructSubsystem",
+        "Too many subsystems constructed!");
+
+    // Loop through the globalSubsystemRegistrar, find the lowest nullptr index
+    for (int i = 0; i < MAX_SUBSYSTEM_COUNT; i++)
+    {
+        if (globalSubsystemRegistrar[i] == nullptr)
         {
-            Command* commandToCancel = subsystemRequirementCommandPair->second;
-            // end the command
-            commandToCancel->end(true);
-            // Loop through all the subsystems, and if they use this command,
-            // remove it to make sure it doesnt continue running.
-            // This also prevents end from being called twice on the same command.
-            for (auto& subsystemToCommandEntry : subsystemToCommandMap)
-            {
-                if (subsystemToCommandEntry.second == commandToCancel)
-                {
-                    subsystemToCommandEntry.second = nullptr;
-                }
-            }
+            // Update max index if need be
+            maxSubsystemIndex = std::max(maxSubsystemIndex, i + 1);
+            globalSubsystemRegistrar[i] = subsystem;
+            return i;
         }
-        subsystemRequirementCommandPair->second = commandToAdd;
-        commandAdded = true;
     }
 
-    // initialize the commandToAdd. Only do this once even though potentially
-    // multiple subsystems rely on this command.
-    if (commandAdded)
+    // This will never happen
+    return -1;
+}
+
+void CommandScheduler::destructCommand(Command *command)
+{
+    modm_assert(command != nullptr, "CommandScheduer::destructCommand", "called with nullptr cmd");
+
+    auto cmdId = command->getGlobalIdentifier();
+
+    modm_assert(
+        cmdId >= 0 && cmdId < MAX_COMMAND_COUNT,
+        "CommandScheduler::destructCommand",
+        "Trying to destruct command with invalid identifier");
+
+    globalCommandRegistrar[cmdId] = nullptr;
+    if (cmdId == maxCommandIndex - 1)
     {
-        commandToAdd->initialize();
+        maxCommandIndex--;
+    }
+}
+
+void CommandScheduler::destructSubsystem(Subsystem *subsystem)
+{
+    modm_assert(
+        subsystem != nullptr,
+        "CommandScheduer::destructSubsystem",
+        "called with nullptr sub");
+
+    auto subId = subsystem->getGlobalIdentifier();
+    modm_assert(
+        subId >= 0 && subId < MAX_SUBSYSTEM_COUNT,
+        "CommandScheduler::destructSubsystem",
+        "Trying to destruct subsystem with invalid identifier");
+
+    globalSubsystemRegistrar[subId] = nullptr;
+    if (subId == maxSubsystemIndex - 1)
+    {
+        maxSubsystemIndex--;
+    }
+}
+
+CommandScheduler::CommandScheduler(Drivers *drivers, bool masterScheduler) : drivers(drivers)
+{
+    if (masterScheduler && masterSchedulerExists)
+    {
+        RAISE_ERROR(
+            drivers,
+            "master scheduler already exists",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::MASTER_SCHEDULER_ALREADY_EXISTS);
+    }
+    else
+    {
+        isMasterScheduler = masterScheduler;
+        if (masterScheduler)
+        {
+            masterSchedulerExists = true;
+        }
+    }
+}
+
+CommandScheduler::~CommandScheduler()
+{
+    if (isMasterScheduler)
+    {
+        masterSchedulerExists = false;
     }
 }
 
 void CommandScheduler::run()
 {
-    uint32_t runStart = aruwlib::arch::clock::getTimeMicroseconds();
-    // Timestamp for reference and for disallowing a command from running
-    // multiple times during the same call to run.
-    if (this == &drivers->commandScheduler)
-    {
-        commandSchedulerTimestamp++;
-    }
+#ifndef PLATFORM_HOSTED
+    uint32_t runStart = arch::clock::getTimeMicroseconds();
+#endif
 
-    if (this->runningHardwareTests)
+    if (runningHardwareTests)
     {
-        for (auto& subsystemToCommand : subsystemToCommandMap)
+        // Call runHardwareTests on all subsystems in the registeredSubsystemBitmap
+        // if a hardware test is not already complete
+        for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            if (!subsystemToCommand.first->isHardwareTestComplete())
+            if (!(*it)->isHardwareTestComplete())
             {
-                subsystemToCommand.first->runHardwareTests();
+                (*it)->runHardwareTests();
             }
         }
         return;
     }
 
-    // refresh all and run all commands
-    for (auto& currSubsystemCommandPair : subsystemToCommandMap)
+    // Execute commands in the addedCommandBitmap, remove any that are finished
+    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
     {
-        // add default command if no command is currently being run
-        if (currSubsystemCommandPair.second == nullptr &&
-            currSubsystemCommandPair.first->getDefaultCommand() != nullptr)
+        (*it)->execute();
+        if ((*it)->isFinished())
         {
-            addCommand(currSubsystemCommandPair.first->getDefaultCommand());
-        }
-        // only run the command if it hasn't been run this time run has been called
-        if (currSubsystemCommandPair.second != nullptr)
-        {
-            Command* currCommand = currSubsystemCommandPair.second;
-
-            if (currCommand->prevSchedulerExecuteTimestamp != commandSchedulerTimestamp)
-            {
-                currCommand->execute();
-                currCommand->prevSchedulerExecuteTimestamp = commandSchedulerTimestamp;
-            }
-            // remove command if finished running
-            if (currCommand->isFinished())
-            {
-                currCommand->end(false);
-                currSubsystemCommandPair.second = nullptr;
-            }
-        }
-        // refresh subsystem
-        if (currSubsystemCommandPair.first->prevSchedulerExecuteTimestamp !=
-            commandSchedulerTimestamp)
-        {
-            currSubsystemCommandPair.first->refresh();
-            currSubsystemCommandPair.first->prevSchedulerExecuteTimestamp =
-                commandSchedulerTimestamp;
+            removeCommand(*it, false);
         }
     }
+
+    // Refresh subsystems in the registeredSubsystemBitmap
+    for (auto it = subMapBegin(); it != subMapEnd(); it++)
+    {
+        // Only subsystems in the master scheduler shall be refreshed
+        if (isMasterScheduler)
+        {
+            (*it)->refresh();
+        }
+        Command *defaultCmd;
+        // If the current subsystem does not have an associated command and the current
+        // subsystem has a default command, add it
+        if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
+            ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
+        {
+            addCommand(defaultCmd);
+        }
+    }
+
+#ifndef PLATFORM_HOSTED
     // make sure we are not going over tolerable runtime, otherwise something is really
     // wrong with the code
-    uint32_t runEnd = aruwlib::arch::clock::getTimeMicroseconds();
-    if (runEnd - runStart > MAX_ALLOWABLE_SCHEDULER_RUNTIME)
+    if (arch::clock::getTimeMicroseconds() - runStart > MAX_ALLOWABLE_SCHEDULER_RUNTIME)
     {
-        // shouldn't take more than 1 ms to complete all this stuff, if it does something
-        // is seriously wrong (i.e. you are adding subsystems unchecked)
+        // shouldn't take more than MAX_ALLOWABLE_SCHEDULER_RUNTIME microseconds
+        // to complete all this stuff, if it does something
+        // is seriously wrong (i.e. you are adding subsystems unchecked or the scheduler
+        // itself is broken).
         RAISE_ERROR(
             drivers,
             "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME",
-            aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
     }
+#endif
 }
 
-void CommandScheduler::removeCommand(Command* command, bool interrupted)
+void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    if (command == nullptr)
-    {
-        return;
-    }
-    bool commandFound = false;
-    for (auto& subsystemCommandPair : subsystemToCommandMap)
-    {
-        if (subsystemCommandPair.second == command)
-        {
-            if (!commandFound)
-            {
-                subsystemCommandPair.second->end(interrupted);
-                commandFound = true;
-            }
-            subsystemCommandPair.second = nullptr;
-        }
-    }
-}
-
-bool CommandScheduler::isCommandScheduled(Command* command) const
-{
-    if (command == nullptr)
-    {
-        return false;
-    }
-    return std::any_of(
-        subsystemToCommandMap.begin(),
-        subsystemToCommandMap.end(),
-        [command](pair<Subsystem*, Command*> p) { return p.second == command; });
-}
-
-void CommandScheduler::registerSubsystem(Subsystem* subsystem)
-{
-    if (subsystem != nullptr && !isSubsystemRegistered(subsystem))
-    {
-        subsystemToCommandMap[subsystem] = nullptr;
-    }
-    else
+    if (runningHardwareTests)
     {
         RAISE_ERROR(
             drivers,
-            "subsystem is already added or trying to add nullptr subsystem",
-            aruwlib::errors::Location::COMMAND_SCHEDULER,
-            aruwlib::errors::CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
+            "attempting to add command while running tests",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::ADD_COMMAND_WHILE_TESTING);
+        return;
     }
+    else if (commandToAdd == nullptr)
+    {
+        RAISE_ERROR(
+            drivers,
+            "attempting to add nullptr command",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
+        return;
+    }
+
+    subsystem_scheduler_bitmap_t requirementsBitwise = commandToAdd->getRequirementsBitwise();
+
+    // Check to see if all the requirements are in the subsytemToCommandMap
+    if ((requirementsBitwise & registeredSubsystemBitmap) != requirementsBitwise ||
+        requirementsBitwise == 0)
+    {
+        // the command you are trying to add has a subsystem that is not in the
+        // scheduler, so you cannot add it (will lead to undefined control behavior)
+        RAISE_ERROR(
+            drivers,
+            "Attempting to add a command without subsystem in the scheduler",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::ADD_COMMAND_WITHOUT_REGISTERED_SUB);
+        return;
+    }
+
+    // End all commands running that used the subsystem requirements. They were interrupted.
+    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+    {
+        // Does this command's requierments intersect the new command?
+        if (((*it)->getRequirementsBitwise() & requirementsBitwise) != 0)
+        {
+            removeCommand(*it, true);
+        }
+    }
+
+    // Add the subsystem requirements to the subsystems associated with command bitmap
+    subsystemsAssociatedWithCommandBitmap |= requirementsBitwise;
+    commandToAdd->initialize();
+    // Add the command to the command bitmap
+    addedCommandBitmap |= (1UL << commandToAdd->getGlobalIdentifier());
 }
 
-bool CommandScheduler::isSubsystemRegistered(Subsystem* subsystem) const
+bool CommandScheduler::isCommandScheduled(Command *command) const
+{
+    return command != nullptr && (addedCommandBitmap & (1UL << command->getGlobalIdentifier()));
+}
+
+void CommandScheduler::removeCommand(Command *command, bool interrupted)
+{
+    if (command == nullptr)
+    {
+        RAISE_ERROR(
+            drivers,
+            "trying to remove nullptr command",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::REMOVE_NULLPTR_COMMAND);
+        return;
+    }
+    else if (!isCommandScheduled(command))
+    {
+        return;
+    }
+
+    command->end(interrupted);
+
+    // Remove all subsystem requirements from the subsystem associated with command bitmap
+    subsystemsAssociatedWithCommandBitmap &= ~command->getRequirementsBitwise();
+
+    // Remove the command from the command bitmap
+    addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
+}
+
+void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {
     if (subsystem == nullptr)
     {
-        return false;
+        RAISE_ERROR(
+            drivers,
+            "trying to register nullptr subsystem",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::ADDING_NULLPTR_SUBSYSTEM);
     }
-    return subsystemToCommandMap.find(subsystem) != subsystemToCommandMap.end();
+    else if (isSubsystemRegistered(subsystem))
+    {
+        RAISE_ERROR(
+            drivers,
+            "subsystem is already added",
+            Location::COMMAND_SCHEDULER,
+            CommandSchedulerErrorType::ADDING_ALREADY_ADDED_SUBSYSTEM);
+    }
+    else
+    {
+        // Add the subsystem to the registered subsystem bitmap
+        registeredSubsystemBitmap |= (1UL << subsystem->getGlobalIdentifier());
+    }
 }
 
-void CommandScheduler::runSubsystemTests()
+bool CommandScheduler::isSubsystemRegistered(Subsystem *subsystem) const
 {
-    this->runningHardwareTests = true;
-    for (auto& pair : this->subsystemToCommandMap)
+    return subsystem != nullptr &&
+           ((1ul << subsystem->getGlobalIdentifier()) & registeredSubsystemBitmap);
+}
+
+void CommandScheduler::startHardwareTests()
+{
+    // End all commands that are currently being run
+    runningHardwareTests = true;
+    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
     {
-        pair.first->hardwareTestsComplete = false;
-        if (pair.second != nullptr)
-        {
-            pair.second->end(true);
-            pair.second = nullptr;
-        }
+        (*it)->end(true);
+    }
+
+    // Clear command bitmap (now all commands are removed)
+    addedCommandBitmap = 0;
+
+    // Start hardware tests
+    for (auto it = subMapBegin(); it != subMapEnd(); it++)
+    {
+        (*it)->setHardwareTestsIncomplete();
     }
 }
 
 void CommandScheduler::stopHardwareTests()
 {
-    this->runningHardwareTests = false;
-    for (auto& pair : this->subsystemToCommandMap)
+    // Stop all hardware tests
+    for (auto it = subMapBegin(); it != subMapEnd(); it++)
     {
-        if (pair.first->isHardwareTestComplete())
+        (*it)->setHardwareTestsComplete();
+    }
+    runningHardwareTests = false;
+}
+
+int CommandScheduler::subsystemListSize() const
+{
+    int size = 0;
+    for (int i = 0; i < maxSubsystemIndex; i++)
+    {
+        if (registeredSubsystemBitmap & (1UL << i))
         {
-            pair.first->setHardwareTestsComplete();
+            size++;
+        }
+    }
+    return size;
+}
+
+int CommandScheduler::commandListSize() const
+{
+    int size = 0;
+    for (int i = 0; i < maxCommandIndex; i++)
+    {
+        if (addedCommandBitmap & (1UL << i))
+        {
+            size++;
+        }
+    }
+    return size;
+}
+
+CommandScheduler::CommandIterator CommandScheduler::cmdMapBegin()
+{
+    return CommandIterator(this, 0);
+}
+
+CommandScheduler::CommandIterator CommandScheduler::cmdMapEnd()
+{
+    return CommandIterator(this, INVALID_ITER_INDEX);
+}
+
+CommandScheduler::SubsystemIterator CommandScheduler::subMapBegin()
+{
+    return SubsystemIterator(this, 0);
+}
+
+CommandScheduler::SubsystemIterator CommandScheduler::subMapEnd()
+{
+    return SubsystemIterator(this, INVALID_ITER_INDEX);
+}
+
+CommandScheduler::CommandIterator::CommandIterator(CommandScheduler *scheduler, int i)
+    : scheduler(scheduler),
+      currIndex(i)
+{
+    // Set to invalid iterator if the index passed in is invalid
+    if (i < 0 || i >= maxCommandIndex)
+    {
+        currIndex = INVALID_ITER_INDEX;
+    }
+    else
+    {
+        // If the curr index is pointing somewhere in the valid range of commands but the command
+        // associated with the index is not in the current added commands bitmap, increment the
+        // iterator to find the next valid index
+        if (!(scheduler->addedCommandBitmap & (1UL << currIndex)))
+        {
+            (*this)++;
         }
     }
 }
-}  // namespace control
 
+CommandScheduler::CommandIterator::pointer CommandScheduler::CommandIterator::operator*()
+{
+    return currIndex == INVALID_ITER_INDEX ? nullptr : globalCommandRegistrar[currIndex];
+}
+
+CommandScheduler::CommandIterator &CommandScheduler::CommandIterator::operator++()
+{
+    if (currIndex == INVALID_ITER_INDEX)
+    {
+        return *this;
+    }
+
+    currIndex++;
+    while (currIndex < maxCommandIndex)
+    {
+        // Is the current index in the bitmap of added commands?
+        if (scheduler->addedCommandBitmap & (1UL << currIndex))
+        {
+            // We found the correct index
+            return *this;
+        }
+        currIndex++;
+    }
+    // We didn't find the correct index, set currindex to invalid index
+    currIndex = INVALID_ITER_INDEX;
+    return *this;
+}
+
+CommandScheduler::CommandIterator CommandScheduler::CommandIterator::operator++(int)
+{
+    CommandIterator tmp = *this;
+    ++(*this);
+    return tmp;
+}
+
+bool operator==(
+    const CommandScheduler::CommandIterator &a,
+    const CommandScheduler::CommandIterator &b)
+{
+    return a.currIndex == b.currIndex && a.scheduler == b.scheduler;
+};
+
+bool operator!=(
+    const CommandScheduler::CommandIterator &a,
+    const CommandScheduler::CommandIterator &b)
+{
+    return !(a == b);
+};
+
+CommandScheduler::SubsystemIterator::SubsystemIterator(CommandScheduler *scheduler, int i)
+    : scheduler(scheduler),
+      currIndex(i)
+{
+    // Set to invalid iterator if the index passed in is invalid
+    if (currIndex < 0 || currIndex >= maxSubsystemIndex)
+    {
+        currIndex = INVALID_ITER_INDEX;
+    }
+    else
+    {
+        // If the curr index is pointing somewhere in the valid range of subsystems but the
+        // subsystem associated with the index is not in the current registered subsystem bitmap,
+        // increment the iterator to find the next valid index
+        if (!(scheduler->registeredSubsystemBitmap & (1UL << currIndex)))
+        {
+            (*this)++;
+        }
+    }
+}
+
+CommandScheduler::SubsystemIterator::pointer CommandScheduler::SubsystemIterator::operator*()
+{
+    return currIndex == INVALID_ITER_INDEX ? nullptr : globalSubsystemRegistrar[currIndex];
+}
+
+CommandScheduler::SubsystemIterator &CommandScheduler::SubsystemIterator::operator++()
+{
+    if (currIndex == INVALID_ITER_INDEX)
+    {
+        return *this;
+    }
+
+    currIndex++;
+    while (currIndex < maxSubsystemIndex)
+    {
+        // Is the current index in the bitmap of added commands?
+        if (scheduler->registeredSubsystemBitmap & (1UL << currIndex))
+        {
+            // We found the correct index
+            return *this;
+        }
+        currIndex++;
+    }
+    // We didn't find the correct index, set currindex to invalid index
+    currIndex = INVALID_ITER_INDEX;
+    return *this;
+}
+
+CommandScheduler::SubsystemIterator CommandScheduler::SubsystemIterator::operator++(int)
+{
+    CommandScheduler::SubsystemIterator tmp = *this;
+    ++(*this);
+    return tmp;
+}
+
+bool operator==(
+    const CommandScheduler::SubsystemIterator &a,
+    const CommandScheduler::SubsystemIterator &b)
+{
+    return a.currIndex == b.currIndex && a.scheduler == b.scheduler;
+}
+
+bool operator!=(
+    const CommandScheduler::SubsystemIterator &a,
+    const CommandScheduler::SubsystemIterator &b)
+{
+    return !(a == b);
+}
+}  // namespace control
 }  // namespace aruwlib
