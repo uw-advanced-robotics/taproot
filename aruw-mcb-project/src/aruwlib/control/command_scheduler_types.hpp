@@ -17,28 +17,15 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "command.hpp"
+#ifndef COMMAND_SCHEDULER_TYPES_HPP_
+#define COMMAND_SCHEDULER_TYPES_HPP_
 
-#include "command_scheduler.hpp"
-#include "subsystem.hpp"
+#include <cinttypes>
 
-using namespace std;
-
-namespace aruwlib
+namespace aruwlib::control
 {
-namespace control
-{
-Command::Command() : globalIdentifier(CommandScheduler::constructCommand(this)) {}
+typedef uint64_t command_scheduler_bitmap_t;
+typedef uint64_t subsystem_scheduler_bitmap_t;
+}  // namespace aruwlib::control
 
-Command::~Command() { CommandScheduler::destructCommand(this); }
-
-void Command::addSubsystemRequirement(Subsystem* requirement)
-{
-    if (requirement == nullptr)
-    {
-        return;
-    }
-    commandRequirementsBitwise |= (1UL << requirement->getGlobalIdentifier());
-}
-}  // namespace control
-}  // namespace aruwlib
+#endif  // COMMAND_SCHEDULER_TYPES_HPP_

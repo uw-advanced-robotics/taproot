@@ -29,24 +29,24 @@ namespace aruwlib
 {
 namespace mock
 {
-class CommandSchedulerMock : public aruwlib::control::CommandScheduler
+class CommandSchedulerMock : public control::CommandScheduler
 {
 public:
-    CommandSchedulerMock(aruwlib::Drivers *drivers) : aruwlib::control::CommandScheduler(drivers) {}
+    CommandSchedulerMock(Drivers *drivers) : control::CommandScheduler(drivers) {}
     MOCK_METHOD(void, run, (), (override));
-    MOCK_METHOD(
-        void,
-        removeCommand,
-        (aruwlib::control::Command * command, bool interrupted),
-        (override));
-    MOCK_METHOD(void, registerSubsystem, (aruwlib::control::Subsystem * subsystem), (override));
-    MOCK_METHOD(
-        bool,
-        isSubsystemRegistered,
-        (aruwlib::control::Subsystem * subsystem),
-        (const override));
-    MOCK_METHOD(bool, isCommandScheduled, (aruwlib::control::Command * command), (const override));
-    MOCK_METHOD(void, addCommand, (aruwlib::control::Command * commandToAdd), (override));
+    MOCK_METHOD(void, addCommand, (control::Command *), (override));
+    MOCK_METHOD(void, removeCommand, (control::Command *, bool), (override));
+    MOCK_METHOD(bool, isCommandScheduled, (control::Command *), (const override));
+    MOCK_METHOD(void, registerSubsystem, (control::Subsystem *), (override));
+    MOCK_METHOD(bool, isSubsystemRegistered, (control::Subsystem *), (const override));
+    MOCK_METHOD(void, startHardwareTests, (), (override));
+    MOCK_METHOD(void, stopHardwareTests, (), (override));
+    MOCK_METHOD(int, subsystemListSize, (), (const override));
+    MOCK_METHOD(int, commandListSize, (), (const override));
+    MOCK_METHOD(CommandIterator, cmdMapBegin, (), (override));
+    MOCK_METHOD(CommandIterator, cmdMapEnd, (), (override));
+    MOCK_METHOD(SubsystemIterator, subMapBegin, (), (override));
+    MOCK_METHOD(SubsystemIterator, subMapEnd, (), (override));
 };  // class CommandSchedulerMock
 }  // namespace mock
 }  // namespace aruwlib

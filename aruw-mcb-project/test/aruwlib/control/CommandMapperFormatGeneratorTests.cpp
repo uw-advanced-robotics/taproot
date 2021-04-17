@@ -20,6 +20,7 @@
 #include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/CommandMapper.hpp>
 #include <aruwlib/control/CommandMapperFormatGenerator.hpp>
+#include <aruwlib/control/HoldCommandMapping.hpp>
 #include <gtest/gtest.h>
 
 #include "aruwsrc/control/robot_control.hpp"
@@ -48,9 +49,11 @@ TEST(CommandMapperFormatGenerator, generateMappings_single_switch_mapping_with_s
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
-        {&tc});
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -65,9 +68,11 @@ TEST(CommandMapperFormatGenerator, generateMappings_single_switch_mapping_with_m
     TestCommand tc2(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN),
-        {&tc1, &tc2});
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc1, &tc2},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -81,7 +86,11 @@ TEST(CommandMapperFormatGenerator, generateMappings_two_switch_mapping_with_sing
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(RemoteMapState(Remote::SwitchState::DOWN, Remote::SwitchState::UP), {&tc});
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState(Remote::SwitchState::DOWN, Remote::SwitchState::UP));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -95,7 +104,8 @@ TEST(CommandMapperFormatGenerator, generateMappings_multiple_keys_with_single_co
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(RemoteMapState({Remote::Key::A, Remote::Key::B}), {&tc});
+    HoldCommandMapping hcm(&drivers, {&tc}, RemoteMapState({Remote::Key::A, Remote::Key::B}));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -109,9 +119,11 @@ TEST(CommandMapperFormatGenerator, generateMappings_multiple_keys_and_neg_keys_w
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(
-        RemoteMapState({Remote::Key::A, Remote::Key::B}, {Remote::Key::C, Remote::Key::D}),
-        {&tc});
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState({Remote::Key::A, Remote::Key::B}, {Remote::Key::C, Remote::Key::D}));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -125,7 +137,8 @@ TEST(CommandMapperFormatGenerator, generateMappings_left_mouse_with_single_comma
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(RemoteMapState(RemoteMapState::MouseButton::LEFT), {&tc});
+    HoldCommandMapping hcm(&drivers, {&tc}, RemoteMapState(RemoteMapState::MouseButton::LEFT));
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -142,7 +155,8 @@ TEST(CommandMapperFormatGenerator, generateMappings_left_and_right_mouse_with_si
     RemoteMapState ms;
     ms.initLMouseButton();
     ms.initRMouseButton();
-    cm.addHoldMapping(ms, {&tc});
+    HoldCommandMapping hcm(&drivers, {&tc}, ms);
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());
@@ -154,7 +168,8 @@ TEST(CommandMapperFormatGenerator, generateMappings_default_mapping_no_commands)
     Drivers drivers;
     CommandMapper cm(&drivers);
     CommandMapperFormatGenerator formatGenerator(cm);
-    cm.addHoldMapping(RemoteMapState(), {});
+    HoldCommandMapping hcm(&drivers, {}, RemoteMapState());
+    cm.addMap(&hcm);
 
     std::vector<std::string> mappings = formatGenerator.generateMappings();
     EXPECT_EQ(1, mappings.size());

@@ -22,6 +22,7 @@
 
 #include <set>
 
+#include "command_scheduler_types.hpp"
 #include "util_macros.hpp"
 
 namespace aruwlib
@@ -39,10 +40,12 @@ class Subsystem;
 class Command
 {
 public:
-    Command() : prevSchedulerExecuteTimestamp(0) {}
+    Command();
+
+    virtual ~Command();
 
     /**
-     * Specifies the set of subsystems used by this command. Two commands cannot
+     * Specifies the encoded set of subsystems used by this command. Two commands cannot
      * use the same subsystem at the same time.  If another command is scheduled
      * that shares a requirement, the command will be interrupted. If no subsystems
      * are required, return an empty set.
@@ -55,15 +58,13 @@ public:
      * @see CommandScheduler
      * @return the set of subsystems that are required.
      */
-    mockable const std::set<Subsystem*>& getRequirements() const;
+    mockable inline subsystem_scheduler_bitmap_t getRequirementsBitwise() const
+    {
+        return commandRequirementsBitwise;
+    }
 
-    /**
-     * Returns whether the command requires a given subsystem.
-     *
-     * @param[in] requirement the subsystem to inquire about.
-     * @return `true` if the subsystem is required for this Command, `false` otherwise.
-     */
-    mockable bool hasRequirement(Subsystem* requirement) const;
+    // This shouldn't be mockable
+    inline int getGlobalIdentifier() const { return globalIdentifier; }
 
     /**
      * Adds the required subsystem to a list of required subsystems.
@@ -112,12 +113,13 @@ public:
     virtual bool isFinished() const = 0;
 
 private:
-    friend class CommandScheduler;
+    /**
+     * An identifier unique to a command that will be assigned to it automatically upon
+     * construction and unassigned during destruction.
+     */
+    const int globalIdentifier;
 
-    uint32_t prevSchedulerExecuteTimestamp;
-
-    // contains pointers to const Subsystem pointers that this command requires
-    std::set<Subsystem*> commandRequirements;
+    command_scheduler_bitmap_t commandRequirementsBitwise = 0;
 };  // class Command
 
 }  // namespace control
