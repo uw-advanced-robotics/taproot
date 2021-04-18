@@ -19,6 +19,7 @@
 
 #include "MainMenu.hpp"
 
+#include "CommandSchedulerMenu.hpp"
 #include "ErrorMenu.hpp"
 #include "HardwareTestMenu.hpp"
 
@@ -46,6 +47,9 @@ void MainMenu::initialize()
     addEntry(
         "Property Table Menu",
         modm::MenuEntryCallback(this, &MainMenu::addPropertyTableCallback));
+    addEntry(
+        CommandSchedulerMenu::getMenuName(),
+        modm::MenuEntryCallback(this, &MainMenu::addCommandSchedulerCallback));
     setTitle("Main Menu");
 }
 
@@ -67,6 +71,11 @@ void MainMenu::addMotorMenuCallback()
 void MainMenu::addPropertyTableCallback()
 {
     // TODO, see issue #221
+}
+
+void MainMenu::addCommandSchedulerCallback()
+{
+    getViewStack()->push(new CommandSchedulerMenu(getViewStack(), drivers));
 }
 }  // namespace display
 

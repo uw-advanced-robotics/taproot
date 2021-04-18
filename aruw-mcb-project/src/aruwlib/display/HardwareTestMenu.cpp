@@ -30,88 +30,48 @@ namespace display
 {
 HardwareTestMenu::HardwareTestMenu(modm::ViewStack* vs, Drivers* drivers)
     : AbstractMenu(vs, 2),
-      drivers(drivers)
+      drivers(drivers),
+      vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED)
 {
     drivers->commandScheduler.startHardwareTests();
 }
 
-void HardwareTestMenu::update()
-{
-    if (this->updateHasChanged())
-    {
-        this->draw();
-    }
-}
+void HardwareTestMenu::update() {}
 
 void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
-    switch (button)
+    if (button == modm::MenuButtons::LEFT)
     {
-        case modm::MenuButtons::LEFT:
-            drivers->commandScheduler.stopHardwareTests();
-            this->getViewStack()->pop();
-            break;
-        case modm::MenuButtons::RIGHT:
-            break;
-        case modm::MenuButtons::DOWN:
-            selectedSubsystem++;
-            if (selectedSubsystem == topIndex)
+        this->getViewStack()->pop();
+        drivers->commandScheduler.stopHardwareTests();
+    }
+    else if (button == modm::MenuButtons::OK)
+    {
+        int subsystemIndex = 0;
+        for (auto it = drivers->commandScheduler.subMapBegin();
+             it != drivers->commandScheduler.subMapEnd();
+             it++)
+        {
+            if (subsystemIndex++ == vertScrollHandler.getCursorIndex())
             {
-                bottomIndex++;
-                topIndex++;
-            }
-            break;
-        case modm::MenuButtons::UP:
-            selectedSubsystem--;
-            if (selectedSubsystem == bottomIndex)
-            {
-                bottomIndex--;
-                topIndex--;
-            }
-            break;
-        case modm::MenuButtons::OK:
-            int subsystemIndex = 0;
-            for (auto it = drivers->commandScheduler.subMapBegin();
-                 it != drivers->commandScheduler.subMapEnd();
-                 it++)
-            {
-                if (subsystemIndex++ == selectedSubsystem)
+                if (!(*it)->isHardwareTestComplete())
                 {
-                    if (!(*it)->isHardwareTestComplete())
-                    {
-                        (*it)->setHardwareTestsComplete();
-                    }
-                    break;
+                    (*it)->setHardwareTestsComplete();
                 }
+                break;
             }
-            break;
+        }
     }
-
-    int numSubsystems = drivers->commandScheduler.subsystemListSize();
-    if (selectedSubsystem < 0)
+    else
     {
-        selectedSubsystem = 0;
+        vertScrollHandler.onShortButtonPress(button);
     }
-    else if (selectedSubsystem >= numSubsystems)
-    {
-        selectedSubsystem = numSubsystems - 1;
-    }
-
-    changed = true;
 }
 
 bool HardwareTestMenu::hasChanged()
 {
-    bool temp = changed;
-    changed = false;
-    return temp;
-}
-
-bool HardwareTestMenu::updateHasChanged()
-{
+    control::subsystem_scheduler_bitmap_t changedSubsystems = 0;
     int i = 0;
-    aruwlib::control::subsystem_scheduler_bitmap_t changedSubsystems = 0;
-
     std::for_each(
         drivers->commandScheduler.subMapBegin(),
         drivers->commandScheduler.subMapEnd(),
@@ -120,28 +80,38 @@ bool HardwareTestMenu::updateHasChanged()
             i++;
         });
 
-    changed |= (changedSubsystems != completeSubsystems);
+    bool changed =
+        vertScrollHandler.acknowledgeCursorChanged() || (changedSubsystems != completeSubsystems);
     completeSubsystems = changedSubsystems;
     return changed;
 }
 
 void HardwareTestMenu::draw()
 {
+    // Only do this once because it is assumed that all subsystems will be registered once
+    // at the beginning of the program and subsystemListSize is not free
+    if (vertScrollHandler.getSize() == 0)
+    {
+        vertScrollHandler.setSize(drivers->commandScheduler.subsystemListSize());
+    }
+
     modm::GraphicDisplay& display = getViewStack()->getDisplay();
     display.clear();
     display.setCursor(0, 2);
     display << HardwareTestMenu::getMenuName() << modm::endl;
 
     int subsystemIndex = 0;
-
     std::for_each(
         drivers->commandScheduler.subMapBegin(),
         drivers->commandScheduler.subMapEnd(),
         [&](control::Subsystem* sub) {
-            if (subsystemIndex <= topIndex && subsystemIndex >= bottomIndex)
-                display << ((subsystemIndex == selectedSubsystem) ? ">" : " ")
+            if (subsystemIndex <= vertScrollHandler.getLargestIndexDisplayed() &&
+                subsystemIndex >= vertScrollHandler.getSmallestIndexDisplayed())
+            {
+                display << ((subsystemIndex == vertScrollHandler.getCursorIndex()) ? ">" : " ")
                         << (sub->isHardwareTestComplete() ? "[done] " : "[not]  ") << sub->getName()
                         << modm::endl;
+            }
             subsystemIndex++;
         });
 }

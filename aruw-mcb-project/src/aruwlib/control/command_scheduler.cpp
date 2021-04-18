@@ -349,6 +349,8 @@ void CommandScheduler::startHardwareTests()
 
     // Clear command bitmap (now all commands are removed)
     addedCommandBitmap = 0;
+    // No more subsystems associated with commands, so clear this bitmap as well
+    subsystemsAssociatedWithCommandBitmap = 0;
 
     // Start hardware tests
     for (auto it = subMapBegin(); it != subMapEnd(); it++)

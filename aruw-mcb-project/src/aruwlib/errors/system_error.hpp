@@ -38,6 +38,7 @@ enum Location
     CONTROLLER_MAPPER,
     TURRET,
     SERVO,
+    OLED_DISPLAY,
     LOCATION_AMOUNT,
 };
 

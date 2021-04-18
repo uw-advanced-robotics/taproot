@@ -27,6 +27,13 @@ namespace aruwlib
 {
 namespace errors
 {
+enum class OLEDErrors : uint8_t
+{
+    INVALID_VERT_SCROLL_SIZE = 0,
+    INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX = 1,
+    INVALID_VERT_SCROLL_MAX_ENTRIES = 2
+};
+
 enum class CanRxErrorType : uint8_t
 {
     MOTOR_ID_OUT_OF_BOUNDS = 0,

@@ -17,26 +17,35 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HARDWARE_TEST_MENU_HPP_
-#define HARDWARE_TEST_MENU_HPP_
+#ifndef COMMAND_SCHEDULER_MENU_HPP_
+#define COMMAND_SCHEDULER_MENU_HPP_
 
 #include <modm/ui/menu/abstract_menu.hpp>
+#include <modm/ui/menu/scrollable_text.hpp>
 
-#include "aruwlib/Drivers.hpp"
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
-#include "modm/processing/timer/periodic_timer.hpp"
+#include "aruwlib/architecture/periodic_timer.hpp"
+#include "aruwlib/control/command_scheduler_types.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 
 namespace aruwlib
 {
+class Drivers;
+
+namespace control
+{
+class Command;
+class Subsystem;
+}  // namespace control
+
 namespace display
 {
-class HardwareTestMenu : public modm::AbstractMenu
+class CommandSchedulerMenu : public modm::AbstractMenu
 {
 public:
-    HardwareTestMenu(modm::ViewStack *vs, Drivers *drivers);
+    CommandSchedulerMenu(modm::ViewStack *stack, Drivers *drivers);
+
+    ~CommandSchedulerMenu() = default;
 
     void draw() override;
 
@@ -46,18 +55,18 @@ public:
 
     bool hasChanged() override;
 
-    static const char *getMenuName() { return "Hardware Test Menu"; }
+    static const char *getMenuName() { return "Command Scheduler"; }
 
 private:
-    static constexpr int MAX_ENTRIES_DISPLAYED = 6;
+    static constexpr int MAX_ENTRIES_DISPLAYED = 5;
 
     Drivers *drivers;
-
-    control::subsystem_scheduler_bitmap_t completeSubsystems = 0;
-
     VerticalScrollLogicHandler vertScrollHandler;
-};  // class HardwareTestMenu
+    bool firstDrawTime;
+    control::subsystem_scheduler_bitmap_t prevRegisteredSubsystems = 0;
+    control::command_scheduler_bitmap_t prevAddedCommands = 0;
+};  // class CommandSchedulerMenu
 }  // namespace display
 }  // namespace aruwlib
 
-#endif  // HARDWARE_TEST_MENU_HPP_
+#endif  // COMMAND_SCHEDULER_MENU_HPP_

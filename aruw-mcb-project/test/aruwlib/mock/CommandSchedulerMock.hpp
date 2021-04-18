@@ -47,6 +47,12 @@ public:
     MOCK_METHOD(CommandIterator, cmdMapEnd, (), (override));
     MOCK_METHOD(SubsystemIterator, subMapBegin, (), (override));
     MOCK_METHOD(SubsystemIterator, subMapEnd, (), (override));
+    MOCK_METHOD(
+        control::subsystem_scheduler_bitmap_t,
+        getRegisteredSubsystemBitmap,
+        (),
+        (const override));
+    MOCK_METHOD(control::command_scheduler_bitmap_t, getAddedCommandBitmap, (), (const override));
 };  // class CommandSchedulerMock
 }  // namespace mock
 }  // namespace aruwlib
