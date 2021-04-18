@@ -46,6 +46,7 @@ private:
     void addHardwareTestMenuCallback();
     void addMotorMenuCallback();
     void addPropertyTableCallback();
+    void addCommandSchedulerCallback();
 };  // class MainMenu
 }  // namespace display
 }  // namespace aruwlib

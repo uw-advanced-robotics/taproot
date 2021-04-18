@@ -241,6 +241,12 @@ public:
     mockable SubsystemIterator subMapBegin();
     mockable SubsystemIterator subMapEnd();
 
+    mockable subsystem_scheduler_bitmap_t getRegisteredSubsystemBitmap() const
+    {
+        return registeredSubsystemBitmap;
+    }
+    mockable command_scheduler_bitmap_t getAddedCommandBitmap() const { return addedCommandBitmap; }
+
     static int constructCommand(Command* command);
     static int constructSubsystem(Subsystem* subsystem);
     static void destructCommand(Command* command);
