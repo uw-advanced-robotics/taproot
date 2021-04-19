@@ -85,20 +85,28 @@ public:
     static constexpr float PID_HERO1_I = 500.0f;
     static constexpr float PID_HERO1_D = 7000.0f;
     static constexpr float PID_HERO1_MAX_ERR_SUM = 0.0f;
+    // max out added by Tenzin since it wasn't here. This should
+    // also be changed by someone who know's what they're doing!
+    static constexpr float PID_HERO1_MAX_OUT = 16000.0f;
 
     // PID terms for hero agitator 2
     static constexpr float PID_HERO2_P = 1500.0f;
     static constexpr float PID_HERO2_I = 500.0f;
     static constexpr float PID_HERO2_D = 7000.0f;
     static constexpr float PID_HERO2_MAX_ERR_SUM = 0.0f;
+    // max out added by Tenzin since it wasn't here. This should
+    // also be changed by someone who know's what they're doing!
+    static constexpr float PID_HERO2_MAX_OUT = 16000.0f;
 
     static constexpr aruwlib::motor::MotorId HERO1_AGITATOR_MOTOR_ID = aruwlib::motor::MOTOR7;
     static constexpr aruwlib::can::CanBus HERO1_AGITATOR_MOTOR_CAN_BUS =
         aruwlib::can::CanBus::CAN_BUS1;
+    static constexpr bool HERO1_AGITATOR_INVERTED = false;
 
-    static constexpr aruwlib::motor::MotorId HERO2_AGITATOR_MOTOR_ID = aruwlib::motor::MOTOR6;
+    static constexpr aruwlib::motor::MotorId HERO2_AGITATOR_MOTOR_ID = aruwlib::motor::MOTOR8;
     static constexpr aruwlib::can::CanBus HERO2_AGITATOR_MOTOR_CAN_BUS =
         aruwlib::can::CanBus::CAN_BUS1;
+    static constexpr bool HERO2_AGITATOR_INVERTED = false;
 #endif
 
     /**

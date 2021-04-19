@@ -39,7 +39,7 @@ void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor* co
     bool motorOverloaded = canMotorStore[idIndex] != nullptr;
     bool motorOutOfBounds = (idIndex < 0) || (idIndex >= DJI_MOTORS_PER_CAN);
     // kill start
-    modm_assert(!motorOverloaded && !motorOutOfBounds, "can", "overloading", 1);
+    modm_assert(!motorOverloaded && !motorOutOfBounds, "DjiMotorTxHandler:can", "overloading", 1);
     canMotorStore[idIndex] = motor;
 }
 
