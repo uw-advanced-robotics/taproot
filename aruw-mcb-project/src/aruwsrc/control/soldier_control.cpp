@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
+#if defined(TARGET_SOLDIER)
 
 #include <aruwlib/DriversSingleton.hpp>
 #include <aruwlib/control/CommandMapper.hpp>
@@ -44,8 +45,6 @@
 #include "aruwlib/motor/motorsim/motor_sim.hpp"
 #include "aruwlib/motor/motorsim/sim_handler.hpp"
 #endif
-
-#if defined(TARGET_SOLDIER)
 
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
@@ -102,6 +101,8 @@ WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
 
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
+TurretCVCommand turretCVCommand(drivers(), &turret);
+
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
 
 ShootFastComprisedCommand agitatorShootFastCommand(drivers(), &agitator);
@@ -116,22 +117,20 @@ FrictionWheelRotateCommand spinFrictionWheels(
 
 FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
 
-/// \todo add cv turret
-
 /* define command mappings --------------------------------------------------*/
 // Remote related mappings
-HoldCommandMapping bothSwitchesDown(
+HoldCommandMapping rightSwitchDown(
     drivers(),
     {&openHopperCommand, &stopFrictionWheels},
-    RemoteMapState(Remote::SwitchState::DOWN, Remote::SwitchState::DOWN));
-HoldCommandMapping leftSwitchDown(
-    drivers(),
-    {&chassisDriveCommand},
-    RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping leftSwitchUp(
     drivers(),
-    {&wiggleDriveCommand},
+    {&chassisDriveCommand, &turretCVCommand},
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+HoldCommandMapping leftSwitchDown(
+    drivers(),
+    {&wiggleDriveCommand},
+    RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldRepeatCommandMapping rightSwitchUp(
     drivers(),
     {&agitatorShootFastCommand},
@@ -151,6 +150,10 @@ HoldCommandMapping leftMousePressedShiftPressed(
     drivers(),
     {&agitatorshootSlowCommand},
     RemoteMapState(RemoteMapState::MouseButton::LEFT, {Remote::Key::SHIFT}));
+HoldCommandMapping rightMousePressed(
+    drivers(),
+    {&turretCVCommand},
+    RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 
 /* register subsystems here -------------------------------------------------*/
 void registerSoldierSubsystems(aruwlib::Drivers *drivers)
@@ -239,14 +242,16 @@ void startSoldierCommands(aruwlib::Drivers *drivers)
 /* register io mappings here ------------------------------------------------*/
 void registerSoldierIoMappings(aruwlib::Drivers *drivers)
 {
-    drivers->commandMapper.addMap(&bothSwitchesDown);
-    drivers->commandMapper.addMap(&leftSwitchDown);
+    drivers->commandMapper.addMap(&rightSwitchDown);
     drivers->commandMapper.addMap(&leftSwitchUp);
+    drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rToggled);
     drivers->commandMapper.addMap(&fToggled);
     drivers->commandMapper.addMap(&leftMousePressedShiftNotPressed);
     drivers->commandMapper.addMap(&leftMousePressedShiftPressed);
+    drivers->commandMapper.addMap(&rightMousePressed);
+
     /// \todo left switch up is cv command
 }
 
