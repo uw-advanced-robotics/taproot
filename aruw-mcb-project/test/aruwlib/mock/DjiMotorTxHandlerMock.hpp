@@ -36,12 +36,12 @@ public:
     MOCK_METHOD(void, removeFromMotorManager, (const aruwlib::motor::DjiMotor &motor), (override));
     MOCK_METHOD(
         const aruwlib::motor::DjiMotor *,
-        getCan1MotorData,
+        getCan1Motor,
         (aruwlib::motor::MotorId motorId),
         (override));
     MOCK_METHOD(
         const aruwlib::motor::DjiMotor *,
-        getCan2MotorData,
+        getCan2Motor,
         (aruwlib::motor::MotorId motorId),
         (override));
 };  // class DjiMotorTxHandlerMock

@@ -17,48 +17,56 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HARDWARE_TEST_MENU_HPP_
-#define HARDWARE_TEST_MENU_HPP_
+#ifndef MOTOR_MENU_HPP_
+#define MOTOR_MENU_HPP_
 
 #include <modm/ui/menu/abstract_menu.hpp>
+#include <modm/ui/menu/scrollable_text.hpp>
 
-#include "aruwlib/Drivers.hpp"
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
-#include "modm/processing/timer/periodic_timer.hpp"
+#include "aruwlib/communication/can/can.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 
 namespace aruwlib
 {
+namespace motor
+{
+class DjiMotor;
+}
+class Drivers;
+
 namespace display
 {
-class HardwareTestMenu : public modm::AbstractMenu
+class MotorMenu : public modm::AbstractMenu
 {
 public:
-    HardwareTestMenu(modm::ViewStack *vs, Drivers *drivers);
+    MotorMenu(modm::ViewStack *stack, Drivers *drivers);
+
+    virtual ~MotorMenu() = default;
 
     void draw() override;
 
     void update() override;
 
-    void shortButtonPress(modm::MenuButtons::Button button) override;
-
     bool hasChanged() override;
 
-    static const char *getMenuName() { return "Hardware Test Menu"; }
+    void shortButtonPress(modm::MenuButtons::Button button) override;
+
+    static const char *getMenuName() { return "Motor Menu"; }
 
 private:
-    static constexpr int HARDWARE_TEST_MENU_ID = 4;
-    static constexpr int MAX_ENTRIES_DISPLAYED = 6;
+    static constexpr int MOTOR_MENU_ID = 5;
+    static constexpr int DISPLAY_MAX_ENTRIES = 7;
 
     Drivers *drivers;
 
-    control::subsystem_scheduler_bitmap_t completeSubsystems = 0;
+    VerticalScrollLogicHandler verticalScroll;
 
-    VerticalScrollLogicHandler vertScrollHandler;
-};  // class HardwareTestMenu
+    uint8_t can1PrevDisplayedStatus;
+    uint8_t can2PrevDisplayedStatus;
+
+    void drawMotor(aruwlib::can::CanBus canBus, int normalizedMotorId);
+};
 }  // namespace display
 }  // namespace aruwlib
-
-#endif  // HARDWARE_TEST_MENU_HPP_
+#endif  // MOTOR_MENU_HPP_

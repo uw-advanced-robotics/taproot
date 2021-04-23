@@ -49,6 +49,8 @@ public:
     static const char *getMenuName() { return "Error Menu"; }
 
 private:
+    static constexpr int ERROR_MENU_ID = 3;
+
     Drivers *drivers;
 };  // class ErrorMenu
 }  // namespace display

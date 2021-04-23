@@ -29,7 +29,7 @@ namespace aruwlib
 namespace display
 {
 HardwareTestMenu::HardwareTestMenu(modm::ViewStack* vs, Drivers* drivers)
-    : AbstractMenu(vs, 2),
+    : AbstractMenu(vs, HARDWARE_TEST_MENU_ID),
       drivers(drivers),
       vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED)
 {
@@ -42,8 +42,8 @@ void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
     if (button == modm::MenuButtons::LEFT)
     {
-        this->getViewStack()->pop();
         drivers->commandScheduler.stopHardwareTests();
+        this->remove();
     }
     else if (button == modm::MenuButtons::OK)
     {
