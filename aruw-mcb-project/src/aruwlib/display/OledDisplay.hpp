@@ -84,7 +84,7 @@ private:
 
     Drivers *drivers;
 
-    aruwlib::arch::PeriodicMilliTimer displayThreadTimer{500};
+    aruwlib::arch::PeriodicMilliTimer displayThreadTimer{100};
 };  // class OledDisplay
 }  // namespace display
 }  // namespace aruwlib

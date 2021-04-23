@@ -82,7 +82,7 @@ FLASH_STORAGE(uint8_t aruwImage[]) = {
     7,   7,   7,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0};
 
 SplashScreen::SplashScreen(modm::ViewStack* vs, aruwlib::Drivers* drivers)
-    : modm::AbstractMenu(vs, 2),
+    : modm::AbstractMenu(vs, SPLASH_SCREEN_MENU_ID),
       drivers(drivers)
 {
 }
@@ -106,7 +106,7 @@ void SplashScreen::shortButtonPress(modm::MenuButtons::Button button)
             break;
         case modm::MenuButtons::RIGHT:
         {
-            MainMenu* mm = new MainMenu(getViewStack(), 2, drivers);
+            MainMenu* mm = new MainMenu(getViewStack(), drivers);
             mm->initialize();
             getViewStack()->push(mm);
             break;

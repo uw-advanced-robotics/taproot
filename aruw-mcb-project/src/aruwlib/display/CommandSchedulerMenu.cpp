@@ -42,7 +42,7 @@ void CommandSchedulerMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
     if (button == modm::MenuButtons::LEFT)
     {
-        this->getViewStack()->pop();
+        this->remove();
     }
     else
     {

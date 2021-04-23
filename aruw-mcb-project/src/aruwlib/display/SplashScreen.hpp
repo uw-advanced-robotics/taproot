@@ -43,6 +43,8 @@ public:
     inline void resetHasChanged() { drawn = false; }
 
 private:
+    static constexpr int SPLASH_SCREEN_MENU_ID = 1;
+
     bool drawn = false;
     aruwlib::Drivers *drivers;
 };

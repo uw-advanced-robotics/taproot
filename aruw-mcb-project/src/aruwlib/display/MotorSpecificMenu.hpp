@@ -17,49 +17,46 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "ErrorMenu.hpp"
+#ifndef MOTOR_SPECIFIC_MENU_HPP_
+#define MOTOR_SPECIFIC_MENU_HPP_
+
+#include <modm/ui/menu/abstract_menu.hpp>
 
 namespace aruwlib
 {
+namespace motor
+{
+class DjiMotor;
+}
+class Drivers;
 namespace display
 {
-ErrorMenu::ErrorMenu(modm::ViewStack *vs, Drivers *drivers)
-    : AbstractMenu(vs, ERROR_MENU_ID),
-      drivers(drivers)
+class MotorSpecificMenu : public modm::AbstractMenu
 {
-}
+public:
+    MotorSpecificMenu(
+        modm::ViewStack* stack,
+        Drivers* drivers,
+        const aruwlib::motor::DjiMotor* motor);
 
-void ErrorMenu::update()
-{
-    if (this->hasChanged())
-    {
-        this->draw();
-    }
-}
+    void draw() override;
 
-void ErrorMenu::shortButtonPress(modm::MenuButtons::Button button)
-{
-    if (button == modm::MenuButtons::LEFT)
-    {
-        this->remove();
-    }
-}
+    void shortButtonPress(modm::MenuButtons::Button button) override;
 
-bool ErrorMenu::hasChanged()
-{
-    // TODO implement, see issue #222
-    // This should return true only when the state of the ErrorMenu has changed
-    // (the stuff on the display has changed) to minimize I/O usage.
-    return true;
-}
+    void update() override;
 
-void ErrorMenu::draw()
-{
-    modm::GraphicDisplay &display = getViewStack()->getDisplay();
-    display.clear();
-    display.setCursor(0, 2);
-    display << ErrorMenu::getMenuName();
-    // TODO implement, see issue #222
-}
+    bool hasChanged() override;
+
+private:
+    Drivers* drivers;
+    const aruwlib::motor::DjiMotor* associatedMotor;
+
+    int16_t currDesiredOutput = 0;
+    bool currIsInverted = false;
+    uint16_t currEncoderWrapped;
+    int16_t currRPM = 0;
+};
 }  // namespace display
 }  // namespace aruwlib
+
+#endif  // MOTOR_SPECIFIC_MENU_HPP_
