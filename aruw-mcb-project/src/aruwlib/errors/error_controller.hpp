@@ -21,6 +21,7 @@
 #define ERROR_CONTROLLER_HPP_
 
 #include <aruwlib/architecture/timeout.hpp>
+#include <aruwlib/communication/serial/TerminalSerial.hpp>
 #include <modm/container.hpp>
 
 #include "system_error.hpp"
@@ -44,7 +45,7 @@ namespace errors
  *   is invalid. The red LED is not used by the ErrorController.
  * - By default, LEDs A-H are always off if no errors are detected.
  */
-class ErrorController
+class ErrorController : public aruwlib::communication::serial::ITerminalSerialCallback
 {
 public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
@@ -77,7 +78,20 @@ public:
      */
     mockable void updateLedDisplay();
 
+    void init();
+
+    /**
+     * @param[in] inputLine The user input to be processed.
+     * @param[out] outputStream The stream to write information to.
+     * @return `true` if the inputLine was valid and was parsed correctly, `false` otherwise.
+     */
+    bool terminalSerialCallback(char* inputLine, modm::IOStream& outputStream, bool) override;
+
+    void terminalSerialStreamCallback(modm::IOStream&) override {}
+
 private:
+    friend class ErrorControllerTester;
+
     static constexpr int ERROR_ROTATE_TIME = 5000;
     static constexpr error_index_t NUM_LEDS = 8;
 
@@ -88,6 +102,18 @@ private:
     aruwlib::arch::MilliTimeout prevLedErrorChangeWait;
 
     error_index_t currentDisplayIndex;
+
+    bool removeSystemErrorAtIndex(error_index_t index);
+
+    void removeAllSystemErrors();
+
+    void displayAllErrors(modm::IOStream& outputStream);
+
+    void removeTerminalError(int index, modm::IOStream& outputStream);
+
+    void clearAllTerminalErrors(modm::IOStream& outputStream);
+
+    void help(modm::IOStream& outputStream);
 
     /**
      * Displays the `binaryRep` with the LEDs A-H, with LED A as the LSB and LED H as the MSB.
