@@ -114,10 +114,10 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
     if (printAll)
     {
         outputStream << "CAN 1:" << modm::endl;
-        printAllMotorInfo(&DjiMotorTxHandler::getCan1MotorData, outputStream);
+        printAllMotorInfo(&DjiMotorTxHandler::getCan1Motor, outputStream);
         outputStream.flush();
         outputStream << "CAN 2:" << modm::endl;
-        printAllMotorInfo(&DjiMotorTxHandler::getCan2MotorData, outputStream);
+        printAllMotorInfo(&DjiMotorTxHandler::getCan2Motor, outputStream);
     }
     else if (!canBusValid && !motorIdValid)
     {
@@ -128,11 +128,11 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
     {
         if (canBus == 1)
         {
-            printAllMotorInfo(&DjiMotorTxHandler::getCan1MotorData, outputStream);
+            printAllMotorInfo(&DjiMotorTxHandler::getCan1Motor, outputStream);
         }
         else if (canBus == 2)
         {
-            printAllMotorInfo(&DjiMotorTxHandler::getCan2MotorData, outputStream);
+            printAllMotorInfo(&DjiMotorTxHandler::getCan2Motor, outputStream);
         }
         else
         {
@@ -144,12 +144,12 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
     {
         outputStream << "CAN 1:" << modm::endl;
         getMotorInfoToString(
-            drivers->djiMotorTxHandler.getCan1MotorData(
+            drivers->djiMotorTxHandler.getCan1Motor(
                 static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
             outputStream);
         outputStream << "CAN 2:" << modm::endl;
         getMotorInfoToString(
-            drivers->djiMotorTxHandler.getCan2MotorData(
+            drivers->djiMotorTxHandler.getCan2Motor(
                 static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
             outputStream);
     }
@@ -158,14 +158,14 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
         if (canBus == 1)
         {
             getMotorInfoToString(
-                drivers->djiMotorTxHandler.getCan1MotorData(
+                drivers->djiMotorTxHandler.getCan1Motor(
                     static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
                 outputStream);
         }
         else
         {
             getMotorInfoToString(
-                drivers->djiMotorTxHandler.getCan2MotorData(
+                drivers->djiMotorTxHandler.getCan2Motor(
                     static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
                 outputStream);
         }
