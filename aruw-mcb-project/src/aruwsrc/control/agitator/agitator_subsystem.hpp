@@ -188,9 +188,14 @@ public:
 
     /**
      * @return `true` if the agitator has been calibrated (`agitatorCalibrateHere` has been
-     *      called and the agitator motor is online.
+     *      called and the agitator motor is online).
      */
     bool isAgitatorCalibrated() const;
+
+    /**
+     * @return `true` if the agitator motor is online (i.e.: is connected)
+     */
+    bool isAgitatorOnline() const;
 
     /**
      * @return The velocity of the agitator in units of degrees per second.

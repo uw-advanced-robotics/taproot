@@ -47,7 +47,8 @@ ShootComprisedCommand::ShootComprisedCommand(
           false,
           minAgitatorRotateTime),
       agitatorUnjamCommand(agitator, maxUnjamAngle),
-      unjamSequenceCommencing(false)
+      unjamSequenceCommencing(false),
+      agitatorDisconnectFault(false)
 {
     this->comprisedCommandScheduler.registerSubsystem(agitator);
     this->addSubsystemRequirement(dynamic_cast<Subsystem*>(agitator));
@@ -61,19 +62,37 @@ void ShootComprisedCommand::initialize()
 
 void ShootComprisedCommand::execute()
 {
-    if (connectedAgitator->isAgitatorJammed() && !unjamSequenceCommencing)
+    // If agitator has disconnected, set flag to remember this when isFinished() and end()
+    // are called. (This check can't be done in isFinished() because it's const function)
+    if (!connectedAgitator->isAgitatorOnline())
     {
-        // when the agitator is jammed, add the agitatorUnjamCommand
-        // the to scheduler. The rotate forward command will be automatically
-        // unscheduled.
-        unjamSequenceCommencing = true;
-        this->comprisedCommandScheduler.addCommand(dynamic_cast<Command*>(&agitatorUnjamCommand));
+        agitatorDisconnectFault = true;
     }
-    this->comprisedCommandScheduler.run();
+    else
+    {
+        // If agitator isn't disconnected run our normal logic
+        if (connectedAgitator->isAgitatorJammed() && !unjamSequenceCommencing)
+        {
+            // when the agitator is jammed, add the agitatorUnjamCommand
+            // the to scheduler. The rotate forward command will be automatically
+            // unscheduled.
+            unjamSequenceCommencing = true;
+            this->comprisedCommandScheduler.addCommand(
+                dynamic_cast<Command*>(&agitatorUnjamCommand));
+        }
+        this->comprisedCommandScheduler.run();
+    }
 }
 
 void ShootComprisedCommand::end(bool interrupted)
 {
+    // The command could have also been interrupted by loss of agitator
+    // connection. Account for that by OR'ing them.
+    interrupted |= agitatorDisconnectFault;
+    // agitatorDisconnect has been acknowledged, regardless of previous state
+    // set it back to false
+    agitatorDisconnectFault = false;
+
     this->comprisedCommandScheduler.removeCommand(
         dynamic_cast<Command*>(&agitatorUnjamCommand),
         interrupted);
@@ -86,7 +105,7 @@ bool ShootComprisedCommand::isFinished() const
 {
     return (agitatorRotateCommand.isFinished() && !unjamSequenceCommencing) ||
            (agitatorUnjamCommand.isFinished() && unjamSequenceCommencing) ||
-           (!connectedAgitator->isAgitatorCalibrated());
+           agitatorDisconnectFault;
 }
 
 }  // namespace agitator
