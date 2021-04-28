@@ -50,6 +50,7 @@ public:
     {
         Uart1,
         Uart2,
+        Uart3,
         Uart6
     };
 
@@ -91,6 +92,11 @@ public:
         {
             modm::platform::Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
             modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(12, parity);
+        }
+        else if constexpr (port == UartPort::Uart3)
+        {
+            modm::platform::Usart3::connect<GpioD8::Tx, GpioD9::Rx>();
+            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(12, parity);
         }
         else if constexpr (port == UartPort::Uart6)
         {
@@ -157,6 +163,8 @@ public:
      * @return `true` if the buffer is empty and the last byte has been sent.
      */
     mockable bool isWriteFinished(UartPort port) const;
+
+    mockable void flushWriteBuffer(UartPort port);
 };
 
 }  // namespace serial

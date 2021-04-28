@@ -109,6 +109,7 @@ if args["PROFILING"] == "true":
 # Add target-specific flags
 if args["TARGET_ENV"] == "sim":
     env.AppendUnique(CPPFLAGS=["-DPLATFORM_HOSTED"])
+    env.AppendUnique(LIBS=HOSTED_LIBS)
 elif args["TARGET_ENV"] == "tests":
     env.AppendUnique(CPPFLAGS=[
         "-DPLATFORM_HOSTED",

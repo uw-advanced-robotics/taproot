@@ -22,8 +22,10 @@
 #include <modm/container/linked_list.hpp>
 
 #include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/strtok.hpp"
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/communication/gpio/leds.hpp"
+#include "aruwlib/communication/serial/TerminalSerial.hpp"
 
 namespace aruwlib
 {
@@ -76,6 +78,11 @@ void ErrorController::updateLedDisplay()
     }
 }
 
+void ErrorController::init()
+{
+    drivers->terminalSerial.addHeader("error", &drivers->errorController);
+}
+
 void ErrorController::displayBinaryNumberViaLeds(uint8_t binaryRep)
 {
     // Mask number and determine if it is a 0 or a 1
@@ -85,6 +92,151 @@ void ErrorController::displayBinaryNumberViaLeds(uint8_t binaryRep)
         bool display = (binaryRep >> i) & 1;
         drivers->leds.set(static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
     }
+}
+
+bool ErrorController::removeSystemErrorAtIndex(error_index_t index)
+{
+    if (index >= errorList.getSize())
+    {
+        return false;
+    }
+    if (index == 0)
+    {
+        if (currentDisplayIndex != 0)
+        {
+            currentDisplayIndex--;
+        }
+        errorList.removeFront();
+        return true;
+    }
+    else if (index == errorList.getSize() - 1)
+    {
+        errorList.removeBack();
+        if (currentDisplayIndex == index)
+        {
+            currentDisplayIndex = 0;
+        }
+        return true;
+    }
+    error_index_t size = errorList.getSize();
+    for (error_index_t i = 0; i < size; i++)
+    {
+        SystemError se = errorList.get(0);
+        errorList.removeFront();
+        if (i != index)
+        {
+            errorList.append(se);
+        }
+    }
+    if (currentDisplayIndex > index)
+    {
+        currentDisplayIndex = (currentDisplayIndex - 1) % errorList.getSize();
+    }
+    return true;
+}
+
+void ErrorController::removeAllSystemErrors()
+{
+    while (errorList.getSize() > 0)
+    {
+        errorList.removeBack();
+    }
+}
+
+bool ErrorController::terminalSerialCallback(
+    char* inputLine,
+    modm::IOStream& outputStream,
+    bool streamingEnabled)
+{
+    if (streamingEnabled)
+    {
+        outputStream << "Error Controller: streaming is not supported" << modm::endl;
+        return false;
+    }
+    char* arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
+    if (arg == nullptr || strcmp(arg, "-H") == 0)
+    {
+        help(outputStream);
+        return arg != nullptr;
+    }
+    else if (strcmp(arg, "PrintErrors") == 0)
+    {
+        outputStream << "printing errors" << modm::endl;
+        displayAllErrors(outputStream);
+    }
+    else if (strcmp(arg, "RemoveAllTerminalErrors") == 0)
+    {
+        clearAllTerminalErrors(outputStream);
+    }
+    else if (strcmp(arg, "RemoveTerminalError") == 0)
+    {
+        arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
+        if (arg == nullptr)
+        {
+            outputStream << "Error Controller: must specify an index" << modm::endl;
+            return false;
+        }
+        char* indexEnd;
+        int index = strtol(arg, &indexEnd, 10);
+        if (indexEnd != arg + strlen(arg))
+        {
+            outputStream << "Error Controller: invalid index: " << arg << modm::endl;
+            return false;
+        }
+        removeTerminalError(index, outputStream);
+    }
+    else
+    {
+        outputStream << "Command not found, try again, type \"error -H\" for more." << modm::endl;
+        return false;
+    }
+    return true;
+}
+
+void ErrorController::help(modm::IOStream& outputStream)
+{
+    outputStream << "Usage: error <target> [index]\n"
+                    "  Where\"<target>\" is one of:\n"
+                    "    - \"-H\": displays possible commands.\n"
+                    "    - \"PrintErrors\": prints all errors in errorList, displaying their"
+                    "description, lineNumber, fileName, and index.\n"
+                    "    - \"RemoveTerminalError [Index]\": removes the error at the given "
+                    "index. Example: Error RemoveTerminalError 1.\n"
+                    "    - \"RemoveAllTerminalErrors\": removes all errors from the errorList.\n";
+}
+
+void ErrorController::displayAllErrors(modm::IOStream& outputStream)
+{
+    int index = 0;
+    if (errorList.getSize() == 0)
+    {
+        outputStream << "No Errors Found" << modm::endl;
+    }
+    else
+    {
+        for (SystemError sysErr : errorList)
+        {
+            outputStream << index++ << ") " << sysErr.getDescription() << " ["
+                         << sysErr.getFilename() << ':' << sysErr.getLineNumber() << ']'
+                         << modm::endl;
+        }
+    }
+}
+
+// Syntax: Error RemoveTerminalError [Index]
+void ErrorController::removeTerminalError(int index, modm::IOStream& outputStream)
+{
+    outputStream << "Removing Terminal Error at index..." << index << modm::endl;
+    if (!removeSystemErrorAtIndex(index))
+    {
+        outputStream << "Invalid index" << modm::endl;
+    }
+}
+
+void ErrorController::clearAllTerminalErrors(modm::IOStream& outputStream)
+{
+    outputStream << "Clearing all terminal errors..." << modm::endl;
+    removeAllSystemErrors();
 }
 
 bool ErrorController::validateErrorTypeAndLocation(const SystemError& error)

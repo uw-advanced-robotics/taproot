@@ -28,6 +28,7 @@
 #include "aruwlib/mock/CommandSchedulerMock.hpp"
 #include "aruwlib/mock/ControlOperatorInterfaceMock.hpp"
 #include "aruwlib/mock/DigitalMock.hpp"
+#include "aruwlib/mock/DjiMotorTerminalSerialHandlerMock.hpp"
 #include "aruwlib/mock/DjiMotorTxHandlerMock.hpp"
 #include "aruwlib/mock/ErrorControllerMock.hpp"
 #include "aruwlib/mock/LedsMock.hpp"
@@ -36,6 +37,8 @@
 #include "aruwlib/mock/PwmMock.hpp"
 #include "aruwlib/mock/RefSerialMock.hpp"
 #include "aruwlib/mock/RemoteMock.hpp"
+#include "aruwlib/mock/SchedulerTerminalHandlerMock.hpp"
+#include "aruwlib/mock/TerminalSerialMock.hpp"
 #include "aruwlib/mock/UartMock.hpp"
 #include "aruwlib/mock/XavierSerialMock.hpp"
 
@@ -50,14 +53,17 @@
 #include "communication/gpio/pwm.hpp"
 #include "communication/remote.hpp"
 #include "communication/sensors/mpu6500/mpu6500.hpp"
+#include "communication/serial/TerminalSerial.hpp"
 #include "communication/serial/ref_serial.hpp"
 #include "communication/serial/uart.hpp"
 #include "communication/serial/xavier_serial.hpp"
 #include "control/CommandMapper.hpp"
 #include "control/ControlOperatorInterface.hpp"
+#include "control/SchedulerTerminalHandler.hpp"
 #include "control/command_scheduler.hpp"
 #include "display/OledDisplay.hpp"
 #include "errors/error_controller.hpp"
+#include "motor/DjiMotorTerminalSerialHandler.hpp"
 #include "motor/dji_motor_tx_handler.hpp"
 #endif
 
@@ -90,9 +96,12 @@ public:
           controlOperatorInterface(this),
           commandMapper(this),
           errorController(this),
+          terminalSerial(this),
           djiMotorTxHandler(this),
           oledDisplay(this),
-          profiler()
+          profiler(),
+          djiMotorTerminalSerialHandler(this),
+          schedulerTerminalHandler(this)
     {
     }
 
@@ -112,9 +121,12 @@ public:
     mock::ControlOperatorInterfaceMock controlOperatorInterface;
     mock::CommandMapperMock commandMapper;
     mock::ErrorControllerMock errorController;
+    mock::TerminalSerialMock terminalSerial;
     mock::DjiMotorTxHandlerMock djiMotorTxHandler;
     mock::OledDisplayMock oledDisplay;
     arch::Profiler profiler;
+    mock::DjiMotorTerminalSerialHandlerMock djiMotorTerminalSerialHandler;
+    mock::SchedulerTerminalHandlerMock schedulerTerminalHandler;
 #else
 public:
     can::Can can;
@@ -132,9 +144,12 @@ public:
     control::ControlOperatorInterface controlOperatorInterface;
     control::CommandMapper commandMapper;
     errors::ErrorController errorController;
+    communication::serial::TerminalSerial terminalSerial;
     motor::DjiMotorTxHandler djiMotorTxHandler;
     display::OledDisplay oledDisplay;
     arch::Profiler profiler;
+    motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
+    control::SchedulerTerminalHandler schedulerTerminalHandler;
 #endif
 };  // class Drivers
 
