@@ -125,7 +125,7 @@ void AgitatorSubsystem::agitatorRunPositionPid()
 
 bool AgitatorSubsystem::agitatorCalibrateHere()
 {
-    if (!agitatorMotor.isMotorOnline())
+    if (!isAgitatorOnline())
     {
         return false;
     }
@@ -161,6 +161,8 @@ float AgitatorSubsystem::getAgitatorVelocity() const
 }
 
 bool AgitatorSubsystem::isAgitatorCalibrated() const { return agitatorIsCalibrated; }
+
+bool AgitatorSubsystem::isAgitatorOnline() const { return agitatorMotor.isMotorOnline(); }
 
 void AgitatorSubsystem::runHardwareTests()
 {

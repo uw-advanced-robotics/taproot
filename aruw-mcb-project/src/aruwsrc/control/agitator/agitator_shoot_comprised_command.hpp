@@ -72,6 +72,8 @@ private:
     AgitatorUnjamCommand agitatorUnjamCommand;
 
     bool unjamSequenceCommencing;
+
+    bool agitatorDisconnectFault;
 };  // class AgitatorShootComprisedCommand
 
 }  // namespace agitator
