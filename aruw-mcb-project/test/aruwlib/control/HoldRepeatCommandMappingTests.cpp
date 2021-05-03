@@ -188,7 +188,7 @@ TEST(
     EXPECT_CALL(drivers.commandScheduler, isCommandScheduled).Times(2);
 
     commandMapping.executeCommandMapping(ms2);
-    ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault([](const Command *) {
         return true;
     });
     ms2.initRMouseButton();
@@ -210,7 +210,7 @@ TEST(
     EXPECT_CALL(drivers.commandScheduler, isCommandScheduled).Times(2);
 
     commandMapping.executeCommandMapping(ms2);
-    ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault([](const Command *) {
         return true;
     });
     ms2 = ms1;
@@ -251,7 +251,7 @@ TEST(
     EXPECT_CALL(drivers.commandScheduler, isCommandScheduled(&tc)).Times(2);
 
     commandMapping.executeCommandMapping(ms2);
-    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc)).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc)).WillByDefault([](const Command *) {
         return true;
     });
     ms2 = RemoteMapState({Remote::Key::A, Remote::Key::B, Remote::Key::F});
@@ -332,15 +332,15 @@ TEST(
 
     commandMapping.executeCommandMapping(ms2);
     // tc1 command added, tc2 not added
-    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc1)).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc1)).WillByDefault([](const Command *) {
         return true;
     });
     commandMapping.executeCommandMapping(ms2);
     // tc1 not added, tc2 added
-    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc1)).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc1)).WillByDefault([](const Command *) {
         return false;
     });
-    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc2)).WillByDefault([](Command *) {
+    ON_CALL(drivers.commandScheduler, isCommandScheduled(&tc2)).WillByDefault([](const Command *) {
         return true;
     });
     commandMapping.executeCommandMapping(ms2);

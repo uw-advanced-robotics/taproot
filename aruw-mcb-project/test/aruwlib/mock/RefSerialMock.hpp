@@ -27,22 +27,64 @@ namespace aruwlib
 {
 namespace mock
 {
-class RefSerialMock : public aruwlib::serial::RefSerial
+class RefSerialMock : public serial::RefSerial
 {
 public:
-    RefSerialMock(aruwlib::Drivers* drivers) : aruwlib::serial::RefSerial(drivers) {}
+    RefSerialMock(Drivers* drivers) : serial::RefSerial(drivers) {}
     MOCK_METHOD(
         void,
         messageReceiveCallback,
-        (const aruwlib::serial::DJISerial<true>::SerialMessage& completeMessage),
+        (const serial::DJISerial<true>::SerialMessage&),
         (override));
-    MOCK_METHOD(const aruwlib::serial::RefSerial::RobotData&, getRobotData, (), (const override));
-    MOCK_METHOD(const aruwlib::serial::RefSerial::GameData&, getGameData, (), (const override));
+    MOCK_METHOD(const RobotData&, getRobotData, (), (const override));
+    MOCK_METHOD(const GameData&, getGameData, (), (const override));
     MOCK_METHOD(
         void,
-        sendDisplayData,
-        (const aruwlib::serial::RefSerial::DisplayData& displayData),
+        configGraphicGenerics,
+        (GraphicData*, const uint8_t*, AddGraphicOperation, uint8_t, GraphicColor),
         (override));
+    MOCK_METHOD(
+        void,
+        configLine,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configRectangle,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configCircle,
+        (uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configEllipse,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configArc,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configFloatingNumber,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, float, GraphicData*),
+        (override));
+    MOCK_METHOD(
+        void,
+        configInteger,
+        (uint16_t, uint16_t, uint16_t, uint16_t, int32_t, GraphicData*),
+        (override));
+    MOCK_METHOD(void, updateInteger, (int32_t, GraphicData*), (override));
+    MOCK_METHOD(
+        void,
+        configCharacterMsg,
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, const char*, GraphicCharacterMessage*),
+        (override));
+    MOCK_METHOD(void, deleteGraphicLayer, (DeleteGraphicOperation, uint8_t), (override));
 };  // class RefSerialMock
 }  // namespace mock
 }  // namespace aruwlib

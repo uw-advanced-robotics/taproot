@@ -19,8 +19,13 @@
 
 #include "ref_serial.hpp"
 
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/architecture/endianness_wrappers.hpp"
+
+using namespace aruwlib::arch;
 
 namespace aruwlib
 {
@@ -80,9 +85,9 @@ void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
             decodeToProjectileLaunch(completeMessage);
             break;
         }
-        case REF_MESSAGE_TYPE_SENTINEL_DRONE_BULLETS_REMAIN:
+        case REF_MESSAGE_TYPE_BULLETS_REMAIN:
         {
-            decodeToSentinelDroneBulletsRemain(completeMessage);
+            decodeToBulletsRemain(completeMessage);
             break;
         }
         default:
@@ -90,154 +95,22 @@ void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
     }
 }
 
-// tx stuff
-void RefSerial::sendDisplayData(const DisplayData& displayData)
-{
-    CustomData customData;
-    customData.type = REF_CUSTOM_DATA_TYPE_UI_INDICATOR;
-    customData.senderId = getRobotClientID(robotData.robotId);
-
-    // 3 float variables to display on the referee client UI
-    const uint32_t ref_comms_float_to_display1 =
-        aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float1);
-    const uint32_t ref_comms_float_to_display2 =
-        aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float2);
-    const uint32_t ref_comms_float_to_display3 =
-        aruwlib::algorithms::reinterpretCopy<float, uint32_t>(displayData.float3);
-
-    // 3 custom floats to display
-    uint8_t data[13] = {
-        static_cast<uint8_t>(ref_comms_float_to_display1),
-        static_cast<uint8_t>(ref_comms_float_to_display1 >> 8),
-        static_cast<uint8_t>(ref_comms_float_to_display1 >> 16),
-        static_cast<uint8_t>(ref_comms_float_to_display1 >> 24),
-
-        static_cast<uint8_t>(ref_comms_float_to_display2),
-        static_cast<uint8_t>(ref_comms_float_to_display2 >> 8),
-        static_cast<uint8_t>(ref_comms_float_to_display2 >> 16),
-        static_cast<uint8_t>(ref_comms_float_to_display2 >> 24),
-
-        static_cast<uint8_t>(ref_comms_float_to_display3),
-        static_cast<uint8_t>(ref_comms_float_to_display3 >> 8),
-        static_cast<uint8_t>(ref_comms_float_to_display3 >> 16),
-        static_cast<uint8_t>(ref_comms_float_to_display3 >> 24),
-
-        // 6 custom boolean indicators to display in a single 8-bit value
-        static_cast<uint8_t>(packBoolMask(
-            displayData.bool1,
-            displayData.bool2,
-            displayData.bool3,
-            displayData.bool4,
-            displayData.bool5,
-            displayData.bool6))};
-    customData.data = data;
-    customData.length = 13;
-    return sendCustomData(customData);
-}
-
-void RefSerial::sendCustomData(const CustomData& customData)
-{
-    // Exceed max length
-    if (customData.length > CUSTOM_DATA_MAX_LENGTH)
-    {
-        return;
-    }
-    // Check if sender and recipient is from our alliance
-    // trying to send to red and robot is actually blue
-    if (customData.senderId < BLUE_HERO && customData.recipientId > BLUE_HERO)
-    {
-        return;
-    }
-    // Check if sender and recipient is from our alliance
-    // trying to send to a blue robot and robot is actually red
-    if (robotData.robotId >= BLUE_HERO && customData.recipientId < BLUE_HERO)
-    {
-        return;
-    }
-
-    if (arch::clock::getTimeMilliseconds() - this->txMessage.messageTimestamp <
-        TIME_BETWEEN_REF_UI_DISPLAY_SEND_MS)
-    {
-        // not enough time has passed before next send
-        // send at max every 100 ms (max frequency 10Hz)
-        return;
-    }
-
-    this->txMessage.type = REF_MESSAGE_TYPE_CUSTOM_DATA;
-    this->txMessage.length = customData.length + CUSTOM_DATA_TYPE_LENGTH +
-                             CUSTOM_DATA_SENDER_ID_LENGTH + CUSTOM_DATA_RECIPIENT_ID_LENGTH;
-
-    // this message consists of the following:
-    // - custom data type
-    // - custom data sender id
-    // - custom data receipent id
-    // this is all stored in the message itself, in addition to the message data
-    this->txMessage.data[0] = static_cast<uint8_t>(customData.type);
-    this->txMessage.data[1] = static_cast<uint8_t>(customData.type >> 8);
-    this->txMessage.data[CUSTOM_DATA_TYPE_LENGTH] = static_cast<uint8_t>(customData.senderId);
-    this->txMessage.data[CUSTOM_DATA_TYPE_LENGTH + 1] =
-        static_cast<uint8_t>(customData.senderId >> 8);
-    this->txMessage.data[CUSTOM_DATA_TYPE_LENGTH + CUSTOM_DATA_SENDER_ID_LENGTH] =
-        static_cast<uint8_t>(customData.recipientId);
-    this->txMessage.data[CUSTOM_DATA_TYPE_LENGTH + CUSTOM_DATA_SENDER_ID_LENGTH + 1] =
-        static_cast<uint8_t>(customData.recipientId >> 8);
-    memcpy(
-        this->txMessage.data + CUSTOM_DATA_TYPE_LENGTH + CUSTOM_DATA_SENDER_ID_LENGTH +
-            CUSTOM_DATA_RECIPIENT_ID_LENGTH,
-        customData.data,
-        customData.length);
-
-    this->send();
-}
-
-uint8_t RefSerial::packBoolMask(
-    bool bool1,
-    bool bool2,
-    bool bool3,
-    bool bool4,
-    bool bool5,
-    bool bool6)
-{
-    return static_cast<uint8_t>(bool1) | static_cast<uint8_t>(bool2) << 1 |
-           static_cast<uint8_t>(bool3) << 2 | static_cast<uint8_t>(bool4) << 3 |
-           static_cast<uint8_t>(bool5) << 4 |
-           static_cast<uint8_t>(bool6) << 5;  // bits 6 and 7 are reserved by the ref system
-}
-
-uint16_t RefSerial::getRobotClientID(RobotId robotId)
-{
-    // there are no client_id for sentinel robots because there are no ui display for them
-    if (robotId == RED_SENTINEL || robotId == BLUE_SENTINEL)
-    {
-        return 0;
-    }
-    uint16_t convertedRobotId = 0x100;
-    if (robotId > 10)
-    {  // if robotId is a blue robot
-        convertedRobotId += 6;
-    }
-    return convertedRobotId + (uint16_t)robotId;
-}
+uint16_t RefSerial::getRobotClientID(uint16_t robotId) { return 0x100 + robotId; }
 
 const RefSerial::RobotData& RefSerial::getRobotData() const { return robotData; }
 
 const RefSerial::GameData& RefSerial::getGameData() const { return gameData; }
 
-float RefSerial::decodeTofloat(const uint8_t* startByte)
-{
-    uint32_t unsigned_value =
-        (startByte[3] << 24) | (startByte[2] << 16) | (startByte[1] << 8) | startByte[0];
-    return aruwlib::algorithms::reinterpretCopy<uint32_t, float>(unsigned_value);
-}
-
 bool RefSerial::decodeToGameStatus(const SerialMessage& message)
 {
-    if (message.length != 3)
+    if (message.length != 11)
     {
         return false;
     }
+    // Ignore competition type, bits [0-3] of the first byte
     gameData.gameStage = static_cast<GameStages>(message.data[0] >> 4);
-    gameData.stageTimeRemaining = (message.data[2] << 8) | message.data[1];
+    convertFromLittleEndian(&gameData.stageTimeRemaining, message.data + 1);
+    // Ignore Unix time sent
     return true;
 }
 
@@ -253,48 +126,52 @@ bool RefSerial::decodeToGameResult(const SerialMessage& message)
 
 bool RefSerial::decodeToAllRobotHP(const SerialMessage& message)
 {
-    if (message.length != 28)  // todo
+    if (message.length != 28)
     {
         return false;
     }
-    robotData.allRobotHp.redHero = (message.data[1] << 8) | message.data[0];
-    robotData.allRobotHp.redEngineer = (message.data[3] << 8) | message.data[2];
-    robotData.allRobotHp.redSoldier1 = (message.data[5] << 8) | message.data[4];
-    robotData.allRobotHp.redSoldier2 = (message.data[7] << 8) | message.data[6];
-    robotData.allRobotHp.redSoldier3 = (message.data[9] << 8) | message.data[8];
-    robotData.allRobotHp.redSentinel = (message.data[11] << 8) | message.data[10];
-    robotData.allRobotHp.redBase = (message.data[13] << 8) | message.data[12];
-    robotData.allRobotHp.blueHero = (message.data[15] << 8) | message.data[14];
-    robotData.allRobotHp.blueEngineer = (message.data[17] << 8) | message.data[16];
-    robotData.allRobotHp.blueSoldier1 = (message.data[19] << 8) | message.data[18];
-    robotData.allRobotHp.blueSoldier2 = (message.data[21] << 8) | message.data[20];
-    robotData.allRobotHp.blueSoldier3 = (message.data[23] << 8) | message.data[22];
-    robotData.allRobotHp.blueSentinel = (message.data[25] << 8) | message.data[24];
-    robotData.allRobotHp.blueBase = (message.data[27] << 8) | message.data[26];
+    convertFromLittleEndian(&robotData.allRobotHp.redHero, message.data);
+    convertFromLittleEndian(&robotData.allRobotHp.redEngineer, message.data + 2);
+    convertFromLittleEndian(&robotData.allRobotHp.redSoldier1, message.data + 4);
+    convertFromLittleEndian(&robotData.allRobotHp.redSoldier2, message.data + 6);
+    convertFromLittleEndian(&robotData.allRobotHp.redSoldier3, message.data + 8);
+    convertFromLittleEndian(&robotData.allRobotHp.redSentinel, message.data + 10);
+    convertFromLittleEndian(&robotData.allRobotHp.redBase, message.data + 12);
+    convertFromLittleEndian(&robotData.allRobotHp.blueHero, message.data + 14);
+    convertFromLittleEndian(&robotData.allRobotHp.blueEngineer, message.data + 16);
+    convertFromLittleEndian(&robotData.allRobotHp.blueSoldier1, message.data + 18);
+    convertFromLittleEndian(&robotData.allRobotHp.blueSoldier2, message.data + 20);
+    convertFromLittleEndian(&robotData.allRobotHp.blueSoldier3, message.data + 22);
+    convertFromLittleEndian(&robotData.allRobotHp.blueSentinel, message.data + 24);
+    convertFromLittleEndian(&robotData.allRobotHp.blueBase, message.data + 26);
     return true;
 }
 
 bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
 {
-    if (message.length != 15)
+    if (message.length != 27)
     {
         return false;
     }
-    robotData.robotId = (RobotId)message.data[0];
+    robotData.robotId = static_cast<RobotId>(message.data[0]);
     robotData.robotLevel = message.data[1];
-    robotData.currentHp = (message.data[3] << 8) | message.data[2];
-    robotData.maxHp = (message.data[5] << 8) | message.data[4];
-    robotData.turret.heatCoolingRate17 = (message.data[7] << 8) | message.data[6];
-    robotData.turret.heatLimit17 = (message.data[9] << 8) | message.data[8];
-    robotData.turret.heatCoolingRate42 = (message.data[11] << 8) | message.data[10];
-    robotData.turret.heatLimit42 = (message.data[13] << 8) | message.data[12];
-    robotData.gimbalHasPower = message.data[14];
-    robotData.chassisHasPower = (message.data[14] >> 1);
-    robotData.shooterHasPower = (message.data[14] >> 2);
+    convertFromLittleEndian(&robotData.currentHp, message.data + 2);
+    convertFromLittleEndian(&robotData.maxHp, message.data + 4);
+    convertFromLittleEndian(&robotData.turret.heatCoolingRate17ID1, message.data + 6);
+    convertFromLittleEndian(&robotData.turret.heatLimit17ID1, message.data + 8);
+    convertFromLittleEndian(&robotData.turret.barrelSpeedLimit17ID1, message.data + 10);
+    convertFromLittleEndian(&robotData.turret.heatCoolingRate17ID2, message.data + 12);
+    convertFromLittleEndian(&robotData.turret.heatLimit17ID2, message.data + 14);
+    convertFromLittleEndian(&robotData.turret.barrelSpeedLimit17ID2, message.data + 16);
+    convertFromLittleEndian(&robotData.turret.heatCoolingRate42, message.data + 18);
+    convertFromLittleEndian(&robotData.turret.heatLimit42, message.data + 20);
+    convertFromLittleEndian(&robotData.turret.barrelSpeedLimit42, message.data + 22);
+    convertFromLittleEndian(&robotData.chassis.powerConsumptionLimit, message.data + 24);
+    robotData.gimbalHasPower = message.data[26];
+    robotData.chassisHasPower = (message.data[26] >> 1);
+    robotData.shooterHasPower = (message.data[26] >> 2);
 
-    processReceivedDamage(
-        aruwlib::arch::clock::getTimeMilliseconds(),
-        robotData.previousHp - robotData.currentHp);
+    processReceivedDamage(clock::getTimeMilliseconds(), robotData.previousHp - robotData.currentHp);
     robotData.previousHp = robotData.currentHp;
 
     return true;
@@ -302,16 +179,17 @@ bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
 
 bool RefSerial::decodeToPowerAndHeat(const SerialMessage& message)
 {
-    if (message.length != 14)
+    if (message.length != 16)
     {
         return false;
     }
-    robotData.chassis.volt = (message.data[1] << 8) | message.data[0];
-    robotData.chassis.current = (message.data[3] << 8) | message.data[2];
-    robotData.chassis.power = RefSerial::decodeTofloat(&message.data[4]);
-    robotData.chassis.powerBuffer = (message.data[9] << 8) | message.data[8];
-    robotData.turret.heat17 = (message.data[11] << 8) | message.data[10];
-    robotData.turret.heat42 = (message.data[13] << 8) | message.data[12];
+    convertFromLittleEndian(&robotData.chassis.volt, message.data);
+    convertFromLittleEndian(&robotData.chassis.current, message.data + 2);
+    convertFromLittleEndian(&robotData.chassis.power, message.data + 4);
+    convertFromLittleEndian(&robotData.chassis.powerBuffer, message.data + 8);
+    convertFromLittleEndian(&robotData.turret.heat17ID1, message.data + 10);
+    convertFromLittleEndian(&robotData.turret.heat17ID2, message.data + 12);
+    convertFromLittleEndian(&robotData.turret.heat42, message.data + 14);
     return true;
 }
 
@@ -321,10 +199,10 @@ bool RefSerial::decodeToRobotPosition(const SerialMessage& message)
     {
         return false;
     }
-    robotData.chassis.x = RefSerial::decodeTofloat(&message.data[0]);
-    robotData.chassis.y = RefSerial::decodeTofloat(&message.data[4]);
-    robotData.chassis.z = RefSerial::decodeTofloat(&message.data[8]);
-    robotData.turret.yaw = RefSerial::decodeTofloat(&message.data[12]);
+    convertFromLittleEndian(&robotData.chassis.x, message.data);
+    convertFromLittleEndian(&robotData.chassis.y, message.data + 4);
+    convertFromLittleEndian(&robotData.chassis.z, message.data + 8);
+    convertFromLittleEndian(&robotData.turret.yaw, message.data + 12);
     return true;
 }
 
@@ -334,31 +212,33 @@ bool RefSerial::decodeToReceiveDamage(const SerialMessage& message)
     {
         return false;
     }
-    robotData.damagedArmorId = (ArmorId)message.data[0];
-    robotData.damageType = (DamageType)(message.data[0] >> 4);
-    robotData.previousHp = robotData.currentHp;
+    robotData.damagedArmorId = static_cast<ArmorId>(message.data[0]);
+    robotData.damageType = static_cast<DamageType>(message.data[0] >> 4);
     return true;
 }
 
 bool RefSerial::decodeToProjectileLaunch(const SerialMessage& message)
 {
+    if (message.length != 7)
+    {
+        return false;
+    }
+    robotData.turret.bulletType = static_cast<BulletType>(message.data[0]);
+    robotData.turret.launchMechanismID = static_cast<MechanismID>(message.data[1]);
+    robotData.turret.firing_freq = message.data[2];
+    convertFromLittleEndian(&robotData.turret.bulletSpeed, message.data + 3);
+    return true;
+}
+
+bool RefSerial::decodeToBulletsRemain(const SerialMessage& message)
+{
     if (message.length != 6)
     {
         return false;
     }
-    robotData.turret.bulletType = (BulletType)message.data[0];
-    robotData.turret.firing_freq = message.data[1];
-    robotData.turret.bulletSpeed = RefSerial::decodeTofloat(&message.data[2]);
-    return true;
-}
-
-bool RefSerial::decodeToSentinelDroneBulletsRemain(const SerialMessage& message)
-{
-    if (message.length != 2)
-    {
-        return false;
-    }
-    robotData.turret.sentinelDroneBulletsRemain = (message.data[1] << 8) | message.data[0];
+    convertFromLittleEndian(&robotData.turret.bulletsRemaining17, message.data);
+    convertFromLittleEndian(&robotData.turret.bulletsRemaining42, message.data + 2);
+    convertFromLittleEndian(&robotData.remainingCoins, message.data + 4);
     return true;
 }
 
@@ -384,14 +264,284 @@ void RefSerial::updateReceivedDamage()
     // if current damage at head of circular array occurred more than a second ago,
     // decrease receivedDps by that amount of damage and increment head index
     while (receivedDpsTracker.getSize() > 0 &&
-           aruwlib::arch::clock::getTimeMilliseconds() - receivedDpsTracker.getFront().timestampMs >
-               1000)
+           clock::getTimeMilliseconds() - receivedDpsTracker.getFront().timestampMs > 1000)
     {
         robotData.receivedDps -= receivedDpsTracker.getFront().damageAmount;
         receivedDpsTracker.removeFront();
     }
 }
 
-}  // namespace serial
+void RefSerial::configGraphicGenerics(
+    GraphicData* graphicData,
+    const uint8_t* name,
+    AddGraphicOperation operation,
+    uint8_t layer,
+    GraphicColor color)
+{
+    memcpy(graphicData->name, name, 3);
+    graphicData->operation = operation;
+    graphicData->layer = layer;
+    graphicData->color = color;
+}
 
+void RefSerial::configLine(
+    uint16_t width,
+    uint16_t startX,
+    uint16_t startY,
+    uint16_t endX,
+    uint16_t endY,
+    GraphicData* sharedData)
+{
+    sharedData->type = STRAIGHT_LINE;
+    sharedData->lineWidth = width;
+    sharedData->startX = startX;
+    sharedData->startY = startY;
+    sharedData->endX = endX;
+    sharedData->endY = endY;
+}
+
+void RefSerial::configRectangle(
+    uint16_t width,
+    uint16_t startX,
+    uint16_t startY,
+    uint16_t endX,
+    uint16_t endY,
+    GraphicData* sharedData)
+{
+    sharedData->type = RECTANGLE;
+    sharedData->lineWidth = width;
+    sharedData->startX = startX;
+    sharedData->startY = startY;
+    sharedData->endX = endX;
+    sharedData->endY = endY;
+}
+
+void RefSerial::configCircle(
+    uint16_t width,
+    uint16_t centerX,
+    uint16_t centerY,
+    uint16_t radius,
+    GraphicData* sharedData)
+{
+    sharedData->type = CIRCLE;
+    sharedData->lineWidth = width;
+    sharedData->startX = centerX;
+    sharedData->startY = centerY;
+    sharedData->radius = radius;
+}
+
+void RefSerial::configEllipse(
+    uint16_t width,
+    uint16_t centerX,
+    uint16_t centerY,
+    uint16_t xLen,
+    uint16_t yLen,
+    GraphicData* sharedData)
+{
+    sharedData->type = ELLIPSE;
+    sharedData->lineWidth = width;
+    sharedData->startX = centerX;
+    sharedData->startY = centerY;
+    sharedData->endX = xLen;
+    sharedData->endY = yLen;
+}
+
+void RefSerial::configArc(
+    uint16_t startAngle,
+    uint16_t endAngle,
+    uint16_t width,
+    uint16_t centerX,
+    uint16_t centerY,
+    uint16_t xLen,
+    uint16_t yLen,
+    GraphicData* sharedData)
+{
+    sharedData->type = ARC;
+    sharedData->startAngle = startAngle;
+    sharedData->endAngle = endAngle;
+    sharedData->lineWidth = width;
+    sharedData->startX = centerX;
+    sharedData->startY = centerY;
+    sharedData->endX = xLen;
+    sharedData->endY = yLen;
+}
+
+void RefSerial::configFloatingNumber(
+    uint16_t fontSize,
+    uint16_t decimalPrecision,
+    uint16_t width,
+    uint16_t startX,
+    uint16_t startY,
+    float value,
+    GraphicData* sharedData)
+{
+    sharedData->type = FLOATING_NUM;
+    sharedData->startAngle = fontSize;
+    sharedData->endAngle = decimalPrecision;
+    sharedData->lineWidth = width;
+    sharedData->startX = startX;
+    sharedData->startY = startY;
+    // Do this janky stuff to get an int in a bitfield
+    int32_t valueInt = 1000 * value;
+    sharedData->radius = valueInt & 0x3fff;
+    sharedData->endX = (valueInt >> 10) & 0x7ff;
+    sharedData->endY = (valueInt >> 21) & 0x7ff;
+}
+
+void RefSerial::configInteger(
+    uint16_t fontSize,
+    uint16_t width,
+    uint16_t startX,
+    uint16_t startY,
+    int32_t value,
+    GraphicData* sharedData)
+{
+    sharedData->type = INTEGER;
+    sharedData->startAngle = fontSize;
+    sharedData->lineWidth = width;
+    sharedData->startX = startX;
+    sharedData->startY = startY;
+    // Do this janky stuff to get an int in a bitfield
+    sharedData->radius = value & 0x3fff;
+    sharedData->endX = (value >> 10) & 0x7ff;
+    sharedData->endY = (value >> 21) & 0x7ff;
+}
+
+void RefSerial::updateInteger(int32_t value, GraphicData* sharedData)
+{
+    sharedData->radius = value & 0x3fff;
+    sharedData->endX = (value >> 10) & 0x7ff;
+    sharedData->endY = (value >> 21) & 0x7ff;
+}
+
+void RefSerial::configCharacterMsg(
+    uint16_t fontSize,
+    uint16_t charLen,
+    uint16_t width,
+    uint16_t startX,
+    uint16_t startY,
+    const char* dataToPrint,
+    GraphicCharacterMessage* sharedData)
+{
+    sharedData->graphicData.type = CHARACTER;
+    sharedData->graphicData.startAngle = fontSize;
+    sharedData->graphicData.endAngle = charLen;
+    sharedData->graphicData.lineWidth = width;
+    sharedData->graphicData.startX = startX;
+    sharedData->graphicData.startY = startY;
+    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS);
+}
+
+void RefSerial::deleteGraphicLayer(DeleteGraphicOperation graphicOperation, uint8_t graphicLayer)
+{
+    DeleteGraphicLayerMessage msg;
+    msg.deleteOperation = graphicOperation;
+    msg.layer = graphicLayer;
+
+    configFrameHeader(
+        &msg.frameHead,
+        sizeof(msg.graphicHead) + sizeof(msg.deleteOperation) + sizeof(msg.layer));
+
+    msg.cmdId = 0x301;
+
+    configGraphicHeader(&msg.graphicHead, 0x100, robotData.robotId);
+
+    msg.crc16 = algorithms::calculateCRC16(
+        reinterpret_cast<uint8_t*>(&msg),
+        sizeof(DeleteGraphicLayerMessage) - 2);
+
+    drivers->uart.write(
+        Uart::Uart6,
+        reinterpret_cast<uint8_t*>(&msg),
+        sizeof(DeleteGraphicLayerMessage));
+}
+
+/**
+ * A helper function used by the RefSerial's sendGraphic functions to send some GraphicType
+ * to the referee system. The user may specify whether or not to configure the message header
+ * and whether or not the actually send the message. This helper function is needed because the
+ * sendGraphic functions all send messages the same way with only minor differences.
+ */
+template <typename GraphicType>
+static void sendGraphicHelper(
+    GraphicType* graphicMsg,
+    uint16_t cmdId,
+    bool configMsgHeader,
+    bool sendMsg,
+    uint16_t robotId,
+    Drivers* drivers,
+    int extraDataLength = 0)
+{
+    if (configMsgHeader)
+    {
+        RefSerial::configFrameHeader(
+            &graphicMsg->msgHeader,
+            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->graphicHeader) + extraDataLength);
+
+        graphicMsg->cmdId = 0x301;
+
+        RefSerial::configGraphicHeader(&graphicMsg->graphicHeader, cmdId, robotId);
+
+        graphicMsg->crc16 = algorithms::calculateCRC16(
+            reinterpret_cast<uint8_t*>(graphicMsg),
+            sizeof(GraphicType) - 2);
+    }
+
+    if (sendMsg)
+    {
+        drivers->uart.write(
+            Uart::Uart6,
+            reinterpret_cast<uint8_t*>(graphicMsg),
+            sizeof(GraphicType));
+    }
+}
+void RefSerial::sendGraphic(Graphic1Message* graphicMsg, bool configMsgHeader, bool sendMsg)
+{
+    sendGraphicHelper(graphicMsg, 0x101, configMsgHeader, sendMsg, robotData.robotId, drivers);
+}
+
+void RefSerial::sendGraphic(Graphic2Message* graphicMsg, bool configMsgHeader, bool sendMsg)
+{
+    sendGraphicHelper(graphicMsg, 0x102, configMsgHeader, sendMsg, robotData.robotId, drivers);
+}
+
+void RefSerial::sendGraphic(Graphic5Message* graphicMsg, bool configMsgHeader, bool sendMsg)
+{
+    sendGraphicHelper(graphicMsg, 0x103, configMsgHeader, sendMsg, robotData.robotId, drivers);
+}
+
+void RefSerial::sendGraphic(Graphic7Message* graphicMsg, bool configMsgHeader, bool sendMsg)
+{
+    sendGraphicHelper(graphicMsg, 0x104, configMsgHeader, sendMsg, robotData.robotId, drivers);
+}
+
+void RefSerial::sendGraphic(GraphicCharacterMessage* graphicMsg, bool configMsgHeader, bool sendMsg)
+{
+    sendGraphicHelper(
+        graphicMsg,
+        0x110,
+        configMsgHeader,
+        sendMsg,
+        robotData.robotId,
+        drivers,
+        GRAPHIC_MAX_CHARACTERS);
+}
+
+void RefSerial::configFrameHeader(FrameHeader* header, uint16_t msgLen)
+{
+    header->SOF = 0xa5;
+    header->dataLength = msgLen;
+    header->seq = 0;
+    header->CRC8 = algorithms::calculateCRC8(
+        reinterpret_cast<const uint8_t*>(header),
+        sizeof(FrameHeader) - 1);
+}
+
+void RefSerial::configGraphicHeader(GraphicHeader* header, uint16_t cmdId, uint16_t robotId)
+{
+    header->dataCmdId = cmdId;
+    header->senderId = robotId;
+    header->receiverId = getRobotClientID(robotId);
+}
+}  // namespace serial
 }  // namespace aruwlib
