@@ -147,7 +147,7 @@ public:
      * @return `true` if the CommandScheduler contains the requrested Command.
      *      `false` otherwise.
      */
-    mockable bool isCommandScheduled(Command* command) const;
+    mockable bool isCommandScheduled(const Command* command) const;
 
     /**
      * Adds the given Subsystem to the CommandScheduler.  The subsystem is
@@ -163,7 +163,7 @@ public:
      * @param[in] subsystem the subsystem to check
      * @return `true` if the Subsystem is already scheduled, `false` otherwise.
      */
-    mockable bool isSubsystemRegistered(Subsystem* subsystem) const;
+    mockable bool isSubsystemRegistered(const Subsystem* subsystem) const;
 
     mockable void startHardwareTests();
     mockable void stopHardwareTests();

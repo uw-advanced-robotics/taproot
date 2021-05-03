@@ -277,7 +277,7 @@ void CommandScheduler::addCommand(Command *commandToAdd)
     addedCommandBitmap |= (1UL << commandToAdd->getGlobalIdentifier());
 }
 
-bool CommandScheduler::isCommandScheduled(Command *command) const
+bool CommandScheduler::isCommandScheduled(const Command *command) const
 {
     return command != nullptr && (addedCommandBitmap & (1UL << command->getGlobalIdentifier()));
 }
@@ -332,7 +332,7 @@ void CommandScheduler::registerSubsystem(Subsystem *subsystem)
     }
 }
 
-bool CommandScheduler::isSubsystemRegistered(Subsystem *subsystem) const
+bool CommandScheduler::isSubsystemRegistered(const Subsystem *subsystem) const
 {
     return subsystem != nullptr &&
            ((1ul << subsystem->getGlobalIdentifier()) & registeredSubsystemBitmap);

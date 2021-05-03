@@ -32,6 +32,8 @@
 #include "chassis/chassis_drive_command.hpp"
 #include "chassis/chassis_subsystem.hpp"
 #include "chassis/wiggle_drive_command.hpp"
+#include "cilent-display/client_display_command.hpp"
+#include "cilent-display/client_display_subsystem.hpp"
 #include "hopper-cover/hopper_subsystem.hpp"
 #include "hopper-cover/open_hopper_command.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
@@ -51,6 +53,7 @@ using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::turret;
 using namespace aruwlib::control;
+using namespace aruwsrc::display;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 
@@ -92,6 +95,8 @@ HopperSubsystem hopperCover(
 
 FrictionWheelSubsystem frictionWheels(drivers());
 
+ClientDisplaySubsystem clientDisplay(drivers());
+
 /* define commands ----------------------------------------------------------*/
 ChassisDriveCommand chassisDriveCommand(drivers(), &chassis);
 
@@ -116,6 +121,14 @@ FrictionWheelRotateCommand spinFrictionWheels(
     FrictionWheelRotateCommand::DEFAULT_WHEEL_RPM);
 
 FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
+
+ClientDisplayCommand clientDisplayCommand(
+    drivers(),
+    &clientDisplay,
+    &wiggleDriveCommand,
+    &chassisAutorotateCommand,
+    nullptr,
+    &chassisDriveCommand);
 
 /* define command mappings --------------------------------------------------*/
 // Remote related mappings
@@ -163,6 +176,7 @@ void registerSoldierSubsystems(aruwlib::Drivers *drivers)
     drivers->commandScheduler.registerSubsystem(&turret);
     drivers->commandScheduler.registerSubsystem(&hopperCover);
     drivers->commandScheduler.registerSubsystem(&frictionWheels);
+    drivers->commandScheduler.registerSubsystem(&clientDisplay);
 
 #ifdef PLATFORM_HOSTED
     // Register the motor sims for the Agitator subsystem
@@ -223,6 +237,7 @@ void initializeSubsystems()
     agitator.initialize();
     frictionWheels.initialize();
     hopperCover.initialize();
+    clientDisplay.initialize();
 }
 
 /* set any default commands to subsystems here ------------------------------*/
@@ -231,6 +246,7 @@ void setDefaultSoldierCommands(aruwlib::Drivers *)
     chassis.setDefaultCommand(&chassisAutorotateCommand);
     turret.setDefaultCommand(&turretWorldRelativeCommand);
     frictionWheels.setDefaultCommand(&spinFrictionWheels);
+    clientDisplay.setDefaultCommand(&clientDisplayCommand);
 }
 
 /* add any starting commands to the scheduler here --------------------------*/
