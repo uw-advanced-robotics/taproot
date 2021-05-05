@@ -31,6 +31,8 @@
 #include <aruwlib/motor/servo.hpp>
 #include <modm/math/filter/pid.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace control
@@ -73,12 +75,12 @@ public:
     /*
      * set servo to the open angle
      */
-    void setOpen();
+    mockable void setOpen();
 
     /*
      * set servo to the close angle
      */
-    void setClose();
+    mockable void setClose();
 
     void refresh() override;
 

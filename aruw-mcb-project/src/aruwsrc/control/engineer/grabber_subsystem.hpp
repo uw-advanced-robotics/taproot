@@ -23,6 +23,8 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace engineer
@@ -42,9 +44,9 @@ public:
     {
     }
 
-    void setSqueezed(bool isGrabberSqueezed);
+    mockable void setSqueezed(bool isGrabberSqueezed);
 
-    bool isSqueezed() const;
+    mockable bool isSqueezed() const;
 
     void runHardwareTests() override;
 
