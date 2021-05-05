@@ -32,6 +32,8 @@
 
 #include <modm/math/filter/pid.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace control
@@ -66,9 +68,9 @@ public:
      * Returns absolute position of the sentinel, relative to the left end of the rail (when rail
      * is viewed from the front)
      */
-    float absolutePosition();
+    mockable float absolutePosition();
 
-    void setDesiredRpm(float desRpm);
+    mockable void setDesiredRpm(float desRpm);
 
     void refresh() override;
 

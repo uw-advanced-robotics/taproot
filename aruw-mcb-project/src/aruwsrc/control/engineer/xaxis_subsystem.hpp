@@ -23,6 +23,8 @@
 #include <aruwlib/communication/gpio/digital.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace engineer
@@ -42,9 +44,9 @@ public:
     {
     }
 
-    void setExtended(bool isExtended);
+    mockable void setExtended(bool isExtended);
 
-    bool isExtended() const;
+    mockable bool isExtended() const;
 
     void runHardwareTests() override;
 
