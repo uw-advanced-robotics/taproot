@@ -43,18 +43,27 @@ public:
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
     static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
+    static constexpr float CHASSIS_X_KEY_INPUT_FILTER_ALPHA = 0.05f;
+    static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_ALPHA = 0.05f;
+    static constexpr float CHASSIS_R_KEY_INPUT_FILTER_ALPHA = 0.05f;
 
     ControlOperatorInterface(Drivers *drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(ControlOperatorInterface)
     mockable ~ControlOperatorInterface() = default;
 
-    /// @return the value used for chassis movement forward and backward, between -1 and 1.
+    /**
+     * @return the value used for chassis movement forward and backward, between -1 and 1.
+     */
     mockable float getChassisXInput();
 
-    /// @return the value used for chassis movement side to side, between -1 and 1.
+    /**
+     * @return the value used for chassis movement side to side, between -1 and 1.
+     */
     mockable float getChassisYInput();
 
-    /// @return the value used for chassis rotation, between -1 and 1.
+    /**
+     * @return the value used for chassis rotation, between -1 and 1.
+     */
     mockable float getChassisRInput();
 
     /**
@@ -82,11 +91,15 @@ private:
 
     uint32_t prevUpdateCounterX = 0;
     uint32_t prevUpdateCounterY = 0;
-    uint32_t prevUpdateCounterZ = 0;
+    uint32_t prevUpdateCounterR = 0;
 
-    aruwlib::algorithms::LinearInterpolation chassisXInput;
-    aruwlib::algorithms::LinearInterpolation chassisYInput;
-    aruwlib::algorithms::LinearInterpolation chassisRInput;
+    algorithms::LinearInterpolation chassisXInput;
+    algorithms::LinearInterpolation chassisYInput;
+    algorithms::LinearInterpolation chassisRInput;
+
+    float chassisXKeyInputFiltered = 0;
+    float chassisYKeyInputFiltered = 0;
+    float chassisRKeyInputFiltered = 0;
 };  // class ControlOperatorInterface
 
 }  // namespace control

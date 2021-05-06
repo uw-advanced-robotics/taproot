@@ -26,6 +26,7 @@
  */
 
 #include <aruwlib/Drivers.hpp>
+#include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/architecture/clock.hpp>
 #include <aruwlib/control/ControlOperatorInterface.hpp>
 #include <gtest/gtest.h>
@@ -35,6 +36,7 @@ using aruwlib::Remote;
 using aruwlib::control::ControlOperatorInterface;
 using namespace testing;
 using namespace aruwlib::arch::clock;
+using namespace aruwlib::algorithms;
 
 static constexpr float MAX_REMOTE = 1.0f;
 
@@ -135,18 +137,30 @@ TEST(ControlOperatorInterface, getChassisInput_min_key_user_input_limited)
 {
     INIT_TEST
     setTime(1);
-    EXPECT_FLOAT_EQ(-1, runChassisXInputTest(drivers, operatorInterface, 0, false, true));
-    EXPECT_FLOAT_EQ(-1, runChassisYInputTest(drivers, operatorInterface, 0, false, true));
-    EXPECT_FLOAT_EQ(-1, runChassisRInputTest(drivers, operatorInterface, 0, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        runChassisXInputTest(drivers, operatorInterface, 0, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        runChassisYInputTest(drivers, operatorInterface, 0, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
+        runChassisRInputTest(drivers, operatorInterface, 0, false, true));
 }
 
 TEST(ControlOperatorInterface, getChassisInput_max_key_user_input_limited)
 {
     INIT_TEST
     setTime(1);
-    EXPECT_FLOAT_EQ(1, runChassisXInputTest(drivers, operatorInterface, 0, true, false));
-    EXPECT_FLOAT_EQ(1, runChassisYInputTest(drivers, operatorInterface, 0, true, false));
-    EXPECT_FLOAT_EQ(1, runChassisRInputTest(drivers, operatorInterface, 0, true, false));
+    EXPECT_FLOAT_EQ(
+        ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        runChassisXInputTest(drivers, operatorInterface, 0, true, false));
+    EXPECT_FLOAT_EQ(
+        ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        runChassisYInputTest(drivers, operatorInterface, 0, true, false));
+    EXPECT_FLOAT_EQ(
+        ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
+        runChassisRInputTest(drivers, operatorInterface, 0, true, false));
 }
 
 TEST(ControlOperatorInterface, getChassisInput_min_and_max_keys_cancel)
@@ -223,9 +237,15 @@ TEST(ControlOperatorInterface, getChassisInput_max_remote_and_min_key_pressed_ca
 {
     INIT_TEST
     setTime(1);
-    EXPECT_FLOAT_EQ(0, runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
-    EXPECT_FLOAT_EQ(0, runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
-    EXPECT_FLOAT_EQ(0, runChassisRInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
+    EXPECT_FLOAT_EQ(
+        -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        runChassisRInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
 }
 
 TEST(ControlOperatorInterface, getChassisInput_half_max_remote_and_max_and_min_key_pressed_cancels)

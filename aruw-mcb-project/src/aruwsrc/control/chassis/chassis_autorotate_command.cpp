@@ -37,9 +37,18 @@ void ChassisAutorotateCommand::execute()
 {
     // calculate pid for chassis rotation
     // returns a chassis rotation speed
-    float chassisRotationDesiredWheelspeed = chassis->chassisSpeedRotationPID(
-        turret->getYawAngleFromCenter(),
-        CHASSIS_AUTOROTATE_PID_KP);
+    float chassisRotationDesiredWheelspeed;
+    if (turret->isTurretOnline())
+    {
+        chassisRotationDesiredWheelspeed = chassis->chassisSpeedRotationPID(
+            turret->getYawAngleFromCenter(),
+            CHASSIS_AUTOROTATE_PID_KP);
+    }
+    else
+    {
+        chassisRotationDesiredWheelspeed = drivers->controlOperatorInterface.getChassisRInput() *
+                                           ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
+    }
 
     // what we will multiply x and y speed by to take into account rotation
     float rTranslationalGain =

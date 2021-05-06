@@ -39,10 +39,14 @@ float ControlOperatorInterface::getChassisXInput()
         chassisXInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL), currTime);
         prevUpdateCounterX = updateCounter;
     }
+
+    chassisXKeyInputFiltered = algorithms::lowPassFilter(
+        chassisXKeyInputFiltered,
+        drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S),
+        CHASSIS_X_KEY_INPUT_FILTER_ALPHA);
+
     return limitVal<float>(
-        chassisXInput.getInterpolatedValue(currTime) +
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::W)) -
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::S)),
+        chassisXInput.getInterpolatedValue(currTime) + chassisXKeyInputFiltered,
         -1.0f,
         1.0f);
 }
@@ -58,10 +62,14 @@ float ControlOperatorInterface::getChassisYInput()
             currTime);
         prevUpdateCounterY = updateCounter;
     }
+
+    chassisYKeyInputFiltered = algorithms::lowPassFilter(
+        chassisYKeyInputFiltered,
+        drivers->remote.keyPressed(Remote::Key::A) - drivers->remote.keyPressed(Remote::Key::D),
+        CHASSIS_Y_KEY_INPUT_FILTER_ALPHA);
+
     return limitVal<float>(
-        chassisYInput.getInterpolatedValue(currTime) +
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::A)) -
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::D)),
+        chassisYInput.getInterpolatedValue(currTime) + chassisYKeyInputFiltered,
         -1.0f,
         1.0f);
 }
@@ -70,17 +78,21 @@ float ControlOperatorInterface::getChassisRInput()
 {
     uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
     uint32_t updateCounter = drivers->remote.getUpdateCounter();
-    if (prevUpdateCounterZ != updateCounter)
+    if (prevUpdateCounterR != updateCounter)
     {
         chassisRInput.update(
             drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL),
             currTime);
+        prevUpdateCounterR = updateCounter;
     }
-    prevUpdateCounterZ = updateCounter;
+
+    chassisRKeyInputFiltered = algorithms::lowPassFilter(
+        chassisRKeyInputFiltered,
+        drivers->remote.keyPressed(Remote::Key::Q) - drivers->remote.keyPressed(Remote::Key::E),
+        CHASSIS_R_KEY_INPUT_FILTER_ALPHA);
+
     return limitVal<float>(
-        chassisRInput.getInterpolatedValue(currTime) +
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::Q)) -
-            static_cast<float>(drivers->remote.keyPressed(Remote::Key::E)),
+        chassisRInput.getInterpolatedValue(currTime) + chassisRKeyInputFiltered,
         -1.0f,
         1.0f);
 }

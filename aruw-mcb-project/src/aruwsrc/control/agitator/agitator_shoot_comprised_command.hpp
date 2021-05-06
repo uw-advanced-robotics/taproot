@@ -42,17 +42,18 @@ public:
      * @param[in] agitatorChangeAngle The angle in radians that the agitator should rotate.
      * @param[in] maxUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
-     * @param[in] agitatorDesiredRotateTime The desired time it takes to rotate, in milliseconds.
-     * @param[in] minAgitatorRotateTime The minimum expected rotation time, in milliseconds.
-     *      See `AgitatorRotateCommand`'s constructorfor more details.
+     * @param[in] agitatorRotateTime The time it takes to rotate the agitator to the desired angle
+     *      in milliseconds.
+     * @param[in] agitatorPauseAfterRotateTime The time that the command will wait after rotating to
+     *      the desired angle before the command is considered complete.
      */
     ShootComprisedCommand(
         aruwlib::Drivers* drivers,
         AgitatorSubsystem* agitator,
         float agitatorChangeAngle,
         float maxUnjamAngle,
-        uint32_t agitatorDesiredRotateTime,
-        uint32_t minAgitatorRotateTime);
+        uint32_t agitatorRotateTime,
+        uint32_t agitatorPauseAfterRotateTime);
 
     void initialize() override;
 
