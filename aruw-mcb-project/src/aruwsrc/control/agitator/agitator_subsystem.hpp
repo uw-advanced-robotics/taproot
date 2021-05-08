@@ -141,18 +141,18 @@ public:
      *
      * @param[in] newAngle The desired angle.
      */
-    void setAgitatorDesiredAngle(float newAngle);
+    mockable void setAgitatorDesiredAngle(float newAngle);
 
     /**
      * @return The calibrated agitator angle, in radians. If the agitator is uncalibrated, 0
      *      radians is returned.
      */
-    float getAgitatorAngle() const;
+    mockable float getAgitatorAngle() const;
 
     /**
      * @return The angle set in `setAgitatorDesiredAngle`.
      */
-    float getAgitatorDesiredAngle() const;
+    mockable float getAgitatorDesiredAngle() const;
 
     /**
      * Attempts to calibrate the agitator at the current position, such that
@@ -161,7 +161,7 @@ public:
      * @return `true` if the agitator has been successfully calibrated, `false`
      *      otherwise.
      */
-    bool agitatorCalibrateHere();
+    mockable bool agitatorCalibrateHere();
 
     /**
      * A timer system may be used for determining if an agitator is jammed. This function
@@ -173,38 +173,38 @@ public:
      *      to the timer's timeout.
      * @param[in] predictedRotateTime The time that you expect that agitator to rotate.
      */
-    void armAgitatorUnjamTimer(uint32_t predictedRotateTime);
+    mockable void armAgitatorUnjamTimer(uint32_t predictedRotateTime);
 
     /**
      * Stops the agitator unjam timer.
      */
-    void disarmAgitatorUnjamTimer();
+    mockable void disarmAgitatorUnjamTimer();
 
     /**
      * @return `true` if the agitator unjam timer has expired, signaling that the agitator
      *      has jammed, `false` otherwise.
      */
-    bool isAgitatorJammed() const;
+    mockable bool isAgitatorJammed() const;
 
     /**
      * @return `true` if the agitator has been calibrated (`agitatorCalibrateHere` has been
      *      called and the agitator motor is online).
      */
-    bool isAgitatorCalibrated() const;
+    mockable bool isAgitatorCalibrated() const;
 
     /**
      * @return `true` if the agitator motor is online (i.e.: is connected)
      */
-    bool isAgitatorOnline() const;
+    mockable bool isAgitatorOnline() const;
 
     /**
      * @return The velocity of the agitator in units of degrees per second.
      */
-    float getAgitatorVelocity() const;
+    mockable float getAgitatorVelocity() const;
 
     void runHardwareTests() override;
 
-    const char* getName() override { return "Agitator"; }
+    mockable const char* getName() override { return "Agitator"; }
 
 private:
     /**
