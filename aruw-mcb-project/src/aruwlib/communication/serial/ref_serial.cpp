@@ -37,11 +37,19 @@ RefSerial::RefSerial(Drivers* drivers)
       gameData(),
       receivedDpsTracker()
 {
+    refSerialOfflineTimeout.stop();
+}
+
+bool RefSerial::getRefSerialReceivingData() const
+{
+    return !(refSerialOfflineTimeout.isStopped() || refSerialOfflineTimeout.isExpired());
 }
 
 // rx stuff
 void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
 {
+    refSerialOfflineTimeout.restart(TIME_OFFLINE_REF_DATA_MS);
+
     updateReceivedDamage();
     switch (completeMessage.type)
     {

@@ -32,6 +32,8 @@
 
 #include "aruwsrc/algorithms/turret_pid.hpp"
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace agitator
@@ -141,7 +143,10 @@ public:
      *
      * @param[in] newAngle The desired angle.
      */
-    mockable void setAgitatorDesiredAngle(float newAngle);
+    mockable inline void setAgitatorDesiredAngle(float newAngle)
+    {
+        desiredAgitatorAngle = newAngle;
+    }
 
     /**
      * @return The calibrated agitator angle, in radians. If the agitator is uncalibrated, 0
@@ -152,7 +157,7 @@ public:
     /**
      * @return The angle set in `setAgitatorDesiredAngle`.
      */
-    mockable float getAgitatorDesiredAngle() const;
+    mockable inline float getAgitatorDesiredAngle() const { return desiredAgitatorAngle; }
 
     /**
      * Attempts to calibrate the agitator at the current position, such that
@@ -190,17 +195,20 @@ public:
      * @return `true` if the agitator has been calibrated (`agitatorCalibrateHere` has been
      *      called and the agitator motor is online).
      */
-    mockable bool isAgitatorCalibrated() const;
+    mockable inline bool isAgitatorCalibrated() const { return agitatorIsCalibrated; }
 
     /**
      * @return `true` if the agitator motor is online (i.e.: is connected)
      */
-    mockable bool isAgitatorOnline() const;
+    mockable inline bool isAgitatorOnline() const { return agitatorMotor.isMotorOnline(); }
 
     /**
      * @return The velocity of the agitator in units of degrees per second.
      */
-    mockable float getAgitatorVelocity() const;
+    mockable inline float getAgitatorVelocity() const
+    {
+        return 6.0f * static_cast<float>(agitatorMotor.getShaftRPM()) / gearRatio;
+    }
 
     void runHardwareTests() override;
 

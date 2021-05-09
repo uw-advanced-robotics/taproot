@@ -93,7 +93,7 @@ FrictionWheelSubsystem upperFrictionWheels(
 FrictionWheelSubsystem lowerFrictionWheels(drivers());
 
 /* define commands ----------------------------------------------------------*/
-ShootFastComprisedCommand agitatorShootSlowCommand(drivers(), &agitator);
+ShootFastComprisedCommand17MM agitatorShootSlowCommand(drivers(), &agitator);
 
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
 

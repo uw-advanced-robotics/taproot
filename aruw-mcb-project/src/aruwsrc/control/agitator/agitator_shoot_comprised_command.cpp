@@ -103,8 +103,9 @@ void ShootComprisedCommand::end(bool interrupted)
 
 bool ShootComprisedCommand::isFinished() const
 {
-    return (agitatorRotateCommand.isFinished() && !unjamSequenceCommencing) ||
-           (agitatorUnjamCommand.isFinished() && unjamSequenceCommencing) ||
+    return (!unjamSequenceCommencing && agitatorRotateCommand.isFinished()) ||
+           ((unjamSequenceCommencing && agitatorUnjamCommand.isFinished()) ||
+            !this->comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
            agitatorDisconnectFault;
 }
 

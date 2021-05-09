@@ -24,23 +24,21 @@
 
 #include "aruwsrc/control/agitator/agitator_subsystem.hpp"
 
-using aruwsrc::agitator::AgitatorSubsystem;
-
 namespace aruwsrc
 {
 namespace mock
 {
-class AgitatorSubsystemMock : public AgitatorSubsystem
+class AgitatorSubsystemMock : public agitator::AgitatorSubsystem
 {
 public:
     AgitatorSubsystemMock(
         aruwlib::Drivers* drivers,
-        float kp = PID_17MM_P,
-        float ki = PID_17MM_I,
-        float kd = PID_17MM_D,
-        float maxIAccum = PID_17MM_MAX_ERR_SUM,
-        float maxOutput = PID_17MM_MAX_OUT,
-        float agitatorGearRatio = AGITATOR_GEAR_RATIO_GM3508,
+        float kp = 0,
+        float ki = 0,
+        float kd = 0,
+        float maxIAccum = 0,
+        float maxOutput = 0,
+        float agitatorGearRatio = 0,
         aruwlib::motor::MotorId agitatorMotorId = aruwlib::motor::MOTOR7,
         aruwlib::can::CanBus agitatorCanBusId = aruwlib::can::CanBus::CAN_BUS1,
         bool isAgitatorInverted = false)
@@ -83,7 +81,6 @@ public:
     MOCK_METHOD(float, getAgitatorVelocity, (), (const, override));
 
     MOCK_METHOD(const char*, getName, (), (override));
-
 };  // class AgitatorSubsystemMock
 
 }  // namespace mock

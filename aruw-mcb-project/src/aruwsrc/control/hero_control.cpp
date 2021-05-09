@@ -103,12 +103,12 @@ TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret
 TurretCVCommand turretCVCommand(drivers(), &turret);
 
 AgitatorCalibrateCommand waterWheelAgitatorCalibrateCommand(&waterWheelAgitator);
-ShootFastComprisedCommand waterWheelAgitatorShootFastCommand(drivers(), &waterWheelAgitator);
-ShootSlowComprisedCommand waterWheelAgitatorShootSlowCommand(drivers(), &waterWheelAgitator);
+ShootFastComprisedCommand17MM waterWheelAgitatorShootFastCommand(drivers(), &waterWheelAgitator);
+ShootSlowComprisedCommand17MM waterWheelAgitatorShootSlowCommand(drivers(), &waterWheelAgitator);
 
 AgitatorCalibrateCommand kickerAgitatorCalibrateCommand(&kickerAgitator);
-ShootFastComprisedCommand kickerAgitatorShootFastCommand(drivers(), &kickerAgitator);
-ShootSlowComprisedCommand kickerAgitatorShootSlowCommand(drivers(), &kickerAgitator);
+ShootFastComprisedCommand17MM kickerAgitatorShootFastCommand(drivers(), &kickerAgitator);
+ShootSlowComprisedCommand17MM kickerAgitatorShootSlowCommand(drivers(), &kickerAgitator);
 
 FrictionWheelRotateCommand spinFrictionWheels(
     &frictionWheels,
