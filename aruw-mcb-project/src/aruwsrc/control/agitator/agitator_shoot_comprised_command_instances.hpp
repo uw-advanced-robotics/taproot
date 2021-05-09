@@ -33,19 +33,34 @@ namespace agitator
  * comprised command. The constants are choosen for fast rotation speed for a soldier robot's
  * agitator.
  */
-class ShootFastComprisedCommand : public ShootComprisedCommand
+class ShootFastComprisedCommand17MM : public ShootComprisedCommand
 {
 public:
-    ShootFastComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
+    ShootFastComprisedCommand17MM(
+        aruwlib::Drivers* drivers,
+        AgitatorSubsystem* agitator17mm,
+        bool heatLimiting = true)
         : ShootComprisedCommand(
               drivers,
               agitator17mm,
               aruwlib::algorithms::PI / 5.0f,
               aruwlib::algorithms::PI / 2.0f,
               50,
-              20)
+              20),
+          drivers(drivers),
+          heatLimiting(heatLimiting)
     {
     }
+
+    void initialize() override;
+
+private:
+    /// Buffer from max heat limit in which limiting occurs (3 bullet buffer)
+    static constexpr uint16_t HEAT_LIMIT_BUFFER = 30;
+
+    aruwlib::Drivers* drivers;
+
+    const bool heatLimiting;
 };  // class ShootFastComprisedCommand
 
 /**
@@ -53,19 +68,34 @@ public:
  * comprised command. The constants are choosen for slow rotation speed for a soldier robot's
  * agitator.
  */
-class ShootSlowComprisedCommand : public ShootComprisedCommand
+class ShootSlowComprisedCommand17MM : public ShootComprisedCommand
 {
 public:
-    ShootSlowComprisedCommand(aruwlib::Drivers* drivers, AgitatorSubsystem* agitator17mm)
+    ShootSlowComprisedCommand17MM(
+        aruwlib::Drivers* drivers,
+        AgitatorSubsystem* agitator17mm,
+        bool heatLimiting = true)
         : ShootComprisedCommand(
               drivers,
               agitator17mm,
               aruwlib::algorithms::PI / 5.0f,
               aruwlib::algorithms::PI / 2.0f,
               300,
-              100)
+              100),
+          drivers(drivers),
+          heatLimiting(heatLimiting)
     {
     }
+
+    void initialize() override;
+
+private:
+    /// Buffer from max heat limit in which limiting occurs (2 bullet buffer)
+    static constexpr uint16_t HEAT_LIMIT_BUFFER = 20;
+
+    aruwlib::Drivers* drivers;
+
+    const bool heatLimiting;
 };  // class ShootSlowComprisedCommand
 
 }  // namespace agitator

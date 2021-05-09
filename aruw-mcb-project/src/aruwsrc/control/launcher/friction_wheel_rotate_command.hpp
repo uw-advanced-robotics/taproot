@@ -46,7 +46,7 @@ public:
 
     const char* getName() const override { return "friction wheel rotate"; }
 
-    static const int16_t DEFAULT_WHEEL_RPM = 6000;
+    static const int16_t DEFAULT_WHEEL_RPM = 5000;
 
 private:
     FrictionWheelSubsystem* frictionWheelSubsystem;

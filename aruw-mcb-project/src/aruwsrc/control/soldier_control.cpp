@@ -110,9 +110,9 @@ TurretCVCommand turretCVCommand(drivers(), &turret);
 
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
 
-ShootFastComprisedCommand agitatorShootFastCommand(drivers(), &agitator);
+ShootFastComprisedCommand17MM agitatorShootFastLimited(drivers(), &agitator);
 
-ShootSlowComprisedCommand agitatorshootSlowCommand(drivers(), &agitator);
+ShootFastComprisedCommand17MM agitatorShootFastNotLimited(drivers(), &agitator, false);
 
 OpenHopperCommand openHopperCommand(&hopperCover);
 
@@ -146,7 +146,7 @@ HoldCommandMapping leftSwitchDown(
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldRepeatCommandMapping rightSwitchUp(
     drivers(),
-    {&agitatorShootFastCommand},
+    {&agitatorShootFastLimited},
     RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 // Keyboard/Mouse related mappings
@@ -157,11 +157,11 @@ ToggleCommandMapping rToggled(
 ToggleCommandMapping fToggled(drivers(), {&wiggleDriveCommand}, RemoteMapState({Remote::Key::F}));
 HoldRepeatCommandMapping leftMousePressedShiftNotPressed(
     drivers(),
-    {&agitatorShootFastCommand},
+    {&agitatorShootFastLimited},
     RemoteMapState(RemoteMapState::MouseButton::LEFT, {}, {Remote::Key::SHIFT}));
 HoldCommandMapping leftMousePressedShiftPressed(
     drivers(),
-    {&agitatorshootSlowCommand},
+    {&agitatorShootFastNotLimited},
     RemoteMapState(RemoteMapState::MouseButton::LEFT, {Remote::Key::SHIFT}));
 HoldCommandMapping rightMousePressed(
     drivers(),

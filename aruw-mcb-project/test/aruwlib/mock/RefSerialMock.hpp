@@ -36,6 +36,7 @@ public:
         messageReceiveCallback,
         (const serial::DJISerial<true>::SerialMessage&),
         (override));
+    MOCK_METHOD(bool, getRefSerialReceivingData, (), (const override));
     MOCK_METHOD(const RobotData&, getRobotData, (), (const override));
     MOCK_METHOD(const GameData&, getGameData, (), (const override));
     MOCK_METHOD(

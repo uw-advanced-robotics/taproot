@@ -24,6 +24,8 @@
 
 #include <modm/container/deque.hpp>
 
+#include "aruwlib/architecture/timeout.hpp"
+
 #include "dji_serial.hpp"
 #include "util_macros.hpp"
 
@@ -46,6 +48,8 @@ namespace serial
 class RefSerial : public DJISerial<true>
 {
 private:
+    static constexpr uint32_t TIME_OFFLINE_REF_DATA_MS = 1000;
+
     // RX message constants
     static constexpr uint16_t REF_DAMAGE_EVENT_SIZE = 20;
 
@@ -399,6 +403,8 @@ public:
      */
     void messageReceiveCallback(const SerialMessage& completeMessage) override;
 
+    mockable bool getRefSerialReceivingData() const;
+
     /**
      * Returns a reference to the most up to date robot data struct.
      */
@@ -586,6 +592,7 @@ private:
     RobotData robotData;
     GameData gameData;
     modm::BoundedDeque<DamageEvent, REF_DAMAGE_EVENT_SIZE> receivedDpsTracker;
+    arch::MilliTimeout refSerialOfflineTimeout;
 
     /**
      * Given RobotId, returns the client_id that the referee system uses to display

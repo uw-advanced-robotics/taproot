@@ -65,7 +65,7 @@ public:
 
     const char* getName() const override { return "agitator shoot"; }
 
-private:
+protected:
     AgitatorSubsystem* connectedAgitator;
 
     AgitatorRotateCommand agitatorRotateCommand;
