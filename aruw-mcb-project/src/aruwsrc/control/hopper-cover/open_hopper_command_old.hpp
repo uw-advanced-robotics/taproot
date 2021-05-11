@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __OPEN_HOPPER_COMMAND_HPP__
-#define __OPEN_HOPPER_COMMAND_HPP__
+#ifndef __OPEN_HOPPER_COMMAND_OLD_HPP__
+#define __OPEN_HOPPER_COMMAND_OLD_HPP__
 
 #include <aruwlib/control/command.hpp>
 
