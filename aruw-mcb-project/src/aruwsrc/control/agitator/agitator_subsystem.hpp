@@ -61,6 +61,14 @@ public:
 
     static constexpr bool isAgitatorInverted = false;
 
+    // The motor that controls the hopper lid is an agitator_subsystem instance, so
+    // I'm adding its constants here as well.
+    static constexpr aruwlib::motor::MotorId HOPPER_COVER_MOTOR_ID = aruwlib::motor::MOTOR8;
+    static constexpr aruwlib::can::CanBus HOPPER_COVER_MOTOR_CAN_BUS =
+        aruwlib::can::CanBus::CAN_BUS1;
+
+    static constexpr bool IS_HOPPER_COVER_INVERTED = false;
+
 #elif defined(TARGET_SENTINEL)
     // position PID terms
     // PID terms for sentinel
@@ -172,11 +180,12 @@ public:
      * A timer system may be used for determining if an agitator is jammed. This function
      * starts the agitator unjam timer. Call when starting to rotate to a position. Use
      * `isAgitatorJammed` to check the timer. When the agitator has reached a the desired
-     * position, stop the unjam timer by calling `armAgitatorUnjamTimer`.
+     * position, stop the unjam timer by calling `disarmAgitatorUnjamTimer`.
      *
      * @note In addition to the `predictedRotateTime`, an `JAMMED_TOLERANCE_PERIOD` is added
      *      to the timer's timeout.
-     * @param[in] predictedRotateTime The time that you expect that agitator to rotate.
+     * @param[in] predictedRotateTime The time that you expect that agitator to rotate in
+     *      milliseconds.
      */
     mockable void armAgitatorUnjamTimer(uint32_t predictedRotateTime);
 

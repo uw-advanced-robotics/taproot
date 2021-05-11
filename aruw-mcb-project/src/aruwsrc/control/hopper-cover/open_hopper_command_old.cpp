@@ -17,7 +17,7 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "open_hopper_command.hpp"
+#include "open_hopper_command_old.hpp"
 
 namespace aruwsrc
 {

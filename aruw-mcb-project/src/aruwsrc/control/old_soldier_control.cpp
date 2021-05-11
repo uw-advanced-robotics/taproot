@@ -32,7 +32,7 @@
 #include "chassis/chassis_subsystem.hpp"
 #include "chassis/wiggle_drive_command.hpp"
 #include "hopper-cover/hopper_subsystem.hpp"
-#include "hopper-cover/open_hopper_command.hpp"
+#include "hopper-cover/open_hopper_command_old.hpp"
 #include "turret/turret_cv_command.hpp"
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
