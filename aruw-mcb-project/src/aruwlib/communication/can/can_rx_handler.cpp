@@ -29,6 +29,13 @@ namespace aruwlib
 {
 namespace can
 {
+CanRxHandler::CanRxHandler(Drivers* drivers)
+    : drivers(drivers),
+      messageHandlerStoreCan1(),
+      messageHandlerStoreCan2()
+{
+}
+
 void CanRxHandler::attachReceiveHandler(CanRxListener* const listener)
 {
     if (listener->canBus == can::CanBus::CAN_BUS1)
@@ -70,7 +77,7 @@ void CanRxHandler::pollCanData()
     }
 }
 
-inline void CanRxHandler::processReceivedCanData(
+void CanRxHandler::processReceivedCanData(
     const modm::can::Message& rxMessage,
     CanRxListener* const* messageHandlerStore,
     int messageHandlerStoreSize)
