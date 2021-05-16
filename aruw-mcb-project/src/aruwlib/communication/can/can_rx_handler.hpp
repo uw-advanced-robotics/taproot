@@ -57,7 +57,7 @@ namespace can
 class CanRxHandler
 {
 public:
-    CanRxHandler(Drivers* drivers) : drivers(drivers) {}
+    CanRxHandler(Drivers* drivers);
     mockable ~CanRxHandler() = default;
     DISALLOW_COPY_AND_ASSIGN(CanRxHandler)
 
@@ -123,7 +123,7 @@ public:
         CanRxListener** messageHandlerStore,
         int messageHandlerStoreSize);
 
-    inline void processReceivedCanData(
+    void processReceivedCanData(
         const modm::can::Message& rxMessage,
         CanRxListener* const* messageHandlerStore,
         int messageHandlerStoreSize);
