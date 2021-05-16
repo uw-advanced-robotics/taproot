@@ -26,6 +26,7 @@
 namespace aruwlib
 {
 class Drivers;
+
 namespace can
 {
 /**
@@ -113,12 +114,10 @@ private:
      */
     CanRxListener* messageHandlerStoreCan2[MAX_RECEIVE_UNIQUE_HEADER_CAN2];
 
-    /**
-     * Does the work of the public `attachReceiveHandler` function, but
-     * handles a particular CAN bus.
-     *
-     * @see `attachReceiveHandler`
-     */
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+#endif
+
     void attachReceiveHandler(
         CanRxListener* const CanRxHndl,
         CanRxListener** messageHandlerStore,
@@ -133,6 +132,16 @@ private:
         const CanRxListener& listener,
         CanRxListener** messageHandlerStore,
         int messageHandlerStoreSize);
+
+    aruwlib::can::CanRxListener** getHandlerStore(aruwlib::can::CanBus bus)
+    {
+        if (bus == aruwlib::can::CanBus::CAN_BUS1)
+        {
+            return this->messageHandlerStoreCan1;
+        }
+        return this->messageHandlerStoreCan2;
+    }
+
 };  // class CanRxHandler
 
 }  // namespace can

@@ -101,7 +101,7 @@ public:
     /**
      * Adds itself to the CanRxHandler.
      */
-    void attachSelfToRxHandler();
+    mockable void attachSelfToRxHandler();
 
     /**
      * Called when a message is received with the particular id and
