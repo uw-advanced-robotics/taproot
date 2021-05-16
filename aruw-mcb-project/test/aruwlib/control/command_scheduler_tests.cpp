@@ -198,7 +198,7 @@ TEST(CommandScheduler, addCommand_with_hardware_tests_running_raises_error)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
-    CommandMock cmd;
+    NiceMock<CommandMock> cmd;
 
     EXPECT_CALL(drivers.errorController, addToErrorList);
     EXPECT_CALL(sub, setHardwareTestsIncomplete);
@@ -214,7 +214,7 @@ TEST(CommandScheduler, addCommand_with_no_subsystem_registered_raises_error)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
     SubsystemMock s(&drivers);
-    CommandMock c;
+    NiceMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
 
     // Expect an error with no subsystem in the command scheduler.
@@ -232,7 +232,7 @@ TEST(CommandScheduler, addCommand_with_not_all_subsystems_registered_raises_erro
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
-    CommandMock c;
+    NiceMock<CommandMock> c;
     set<Subsystem *> subsystemRequirements{&s1, &s2, &s3};
 
     EXPECT_CALL(c, getRequirementsBitwise)
@@ -274,7 +274,7 @@ TEST(
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
     SubsystemMock s(&drivers);
-    CommandMock c;
+    NiceMock<CommandMock> c;
 
     // Set up another command that we can set an expectation on the `initialize` function.
     set<Subsystem *> cmdMockRequirements{&s};
@@ -298,7 +298,7 @@ TEST(
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
-    CommandMock c;
+    NiceMock<CommandMock> c;
     set<Subsystem *> subsystemRequirements{&s1, &s2, &s3};
 
     EXPECT_CALL(c, getRequirementsBitwise)
@@ -318,8 +318,8 @@ TEST(CommandScheduler, addCommand_successfully_removes_previously_added_command_
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
     SubsystemMock s(&drivers);
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     set<Subsystem *> cmdMockRequirement{&s};
     EXPECT_CALL(c1, getRequirementsBitwise)
@@ -354,8 +354,8 @@ TEST(
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     set<Subsystem *> subRequirementsC1{&s1, &s2};
     set<Subsystem *> subRequirementsC2{&s1, &s2, &s3};
@@ -398,8 +398,8 @@ TEST(
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     set<Subsystem *> subRequirementsC1{&s1, &s2};
     set<Subsystem *> subRequirementsC2{&s2, &s3};
@@ -443,9 +443,9 @@ TEST(
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
-    CommandMock c3;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    NiceMock<CommandMock> c3;
 
     set<Subsystem *> subRequirementsC1{&s1, &s2};
     set<Subsystem *> subRequirementsC2{&s2, &s3};
@@ -494,8 +494,8 @@ TEST(
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     set<Subsystem *> subRequirementsC1{&s1, &s2, &s3};
     set<Subsystem *> subRequirementsC2{&s1, &s2};
@@ -540,10 +540,10 @@ TEST(CommandScheduler, addCommand_add_multiple_commands_with_overlapping_sub_req
     SubsystemMock s4(&drivers);
     SubsystemMock s5(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
-    CommandMock c3;
-    CommandMock c4;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    NiceMock<CommandMock> c3;
+    NiceMock<CommandMock> c4;
 
     set<Subsystem *> subRequirementsC1{&s1, &s2, &s3};
     set<Subsystem *> subRequirementsC2{&s1, &s2};
@@ -621,8 +621,8 @@ TEST(CommandScheduler, startHardwareTests_removes_all_commands_in_scheduler)
     SubsystemMock s2(&drivers);
     set<Subsystem *> subRequirementsC1{&s1};
     set<Subsystem *> subRequirementsC2{&s2};
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     EXPECT_CALL(c1, getRequirementsBitwise)
         .Times(2)
@@ -657,7 +657,7 @@ TEST(
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     set<Subsystem *> subRequirementsC1{&s1, &s2};
-    CommandMock c1;
+    NiceMock<CommandMock> c1;
 
     EXPECT_CALL(c1, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirementsC1)));
@@ -686,8 +686,8 @@ TEST(
     SubsystemMock s2(&drivers);
     set<Subsystem *> subRequirementsC1{&s1};
     set<Subsystem *> subRequirementsC2{&s2};
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
 
     EXPECT_CALL(s1, setHardwareTestsIncomplete);
     EXPECT_CALL(s2, setHardwareTestsIncomplete);
@@ -764,7 +764,7 @@ TEST(
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock s1(&drivers);
-    CommandMock c1;
+    NiceMock<CommandMock> c1;
     set<Subsystem *> subRequirementsC1{&s1};
 
     EXPECT_CALL(s1, refresh).Times(RUN_TIMES);
@@ -793,13 +793,13 @@ TEST(CommandScheduler, run_with_many_registered_subsystems_and_commands_calls_re
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock *subs[CMDS_AND_SUBS_TO_ADD];
-    CommandMock *cmds[CMDS_AND_SUBS_TO_ADD];
+    NiceMock<CommandMock> *cmds[CMDS_AND_SUBS_TO_ADD];
     set<Subsystem *> cmdRequirements[CMDS_AND_SUBS_TO_ADD];
 
     for (int i = 0; i < CMDS_AND_SUBS_TO_ADD; i++)
     {
         subs[i] = new SubsystemMock(&drivers);
-        cmds[i] = new CommandMock;
+        cmds[i] = new NiceMock<CommandMock>;
         cmdRequirements[i].emplace(subs[i]);
 
         EXPECT_CALL(*subs[i], refresh).Times(RUN_TIMES);
@@ -846,9 +846,9 @@ TEST(CommandScheduler, addCommand_disjoint_required_subsystems_successfully_adde
     SubsystemMock s5(&drivers);
     SubsystemMock s6(&drivers);
 
-    CommandMock c1;
-    CommandMock c2;
-    CommandMock c3;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    NiceMock<CommandMock> c3;
 
     set<Subsystem *> subRequirementsC1{&s1, &s5};
     set<Subsystem *> subRequirementsC2{&s2, &s3};
@@ -905,7 +905,7 @@ TEST(CommandScheduler, run_large_number_of_subsystem_requirements_successful)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock c;
+    NiceMock<CommandMock> c;
     SubsystemMock *subs[NUM_DEPENDENT_SUBS];
     set<Subsystem *> subRequirementsC;
 
@@ -941,7 +941,7 @@ TEST(
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock s(&drivers);
-    CommandMock c;
+    NiceMock<CommandMock> c;
 
     EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c));
     EXPECT_CALL(s, refresh).Times(2);
@@ -966,7 +966,7 @@ TEST(
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock c;
+    NiceMock<CommandMock> c;
     SubsystemMock *subs[NUM_DEPENDENT_SUBS];
     set<Subsystem *> subRequirementsC;
 
@@ -1005,8 +1005,8 @@ TEST(
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     set<Subsystem *> subRequirementsC1{&s1};
@@ -1046,8 +1046,8 @@ TEST(
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock c1;
-    CommandMock c2;
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
     SubsystemMock s(&drivers);
     set<Subsystem *> subRequirements{&s};
 
@@ -1081,7 +1081,7 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock c;
+    NiceMock<CommandMock> c;
     SubsystemMock s(&drivers);
     set<Subsystem *> subRequirements{&s};
     EXPECT_CALL(c, getRequirementsBitwise)
@@ -1113,7 +1113,7 @@ TEST(CommandScheduler, removeCommand_single_cmd_in_scheduler_removed_and_end_cal
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
-    CommandMock cmd;
+    NiceMock<CommandMock> cmd;
     EXPECT_CALL(cmd, getRequirementsBitwise)
         .Times(4)
         .WillRepeatedly(Return(calcRequirementsBitwise({&sub})));
@@ -1137,7 +1137,7 @@ TEST(CommandScheduler, removeCommand_single_cmd_removed_from_big_batch)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    CommandMock cmds[SUBS_CMDS_TO_CREATE];
+    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
@@ -1169,7 +1169,7 @@ TEST(CommandScheduler, subsystemListSize_commandListSize_returns_number_of_subs_
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    CommandMock cmds[SUBS_CMDS_TO_CREATE];
+    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
@@ -1221,8 +1221,8 @@ TEST(CommandScheduler, iterators_couple_cmd_sub_iterated_through)
     CommandScheduler scheduler(&drivers, true);
 
     // Add a couple subs and cmds to the scheduler
-    CommandMock cmd1;
-    CommandMock cmd2;
+    NiceMock<CommandMock> cmd1;
+    NiceMock<CommandMock> cmd2;
     SubsystemMock sub1(&drivers);
     SubsystemMock sub2(&drivers);
 
@@ -1259,7 +1259,7 @@ TEST(CommandScheduler, iterators_many_cmds_subs_iterated_through_using_foreach)
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    CommandMock cmds[SUBS_CMDS_TO_CREATE];
+    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
@@ -1300,7 +1300,7 @@ TEST(CommandScheduler, iterators_work_properly_with_gaps_in_global_registrar)
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    CommandMock cmds[SUBS_CMDS_TO_CREATE];
+    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
@@ -1353,4 +1353,19 @@ TEST(CommandScheduler, subsystem_iterator_iterator_begin_with_invalid_index)
     auto it = scheduler.subMapBegin();
     EXPECT_EQ(&sub2, *it);
     EXPECT_EQ(scheduler.subMapEnd(), ++it);
+}
+
+TEST(CommandScheduler, addCommand_doesnt_add_if_command_not_ready)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    NiceMock<CommandMock> c1;
+
+    EXPECT_CALL(c1, isReady).WillOnce(Return(false));
+
+    scheduler.addCommand(&c1);
+    bool isScheduled = scheduler.isCommandScheduled(&c1);
+
+    EXPECT_EQ(isScheduled, false);
 }
