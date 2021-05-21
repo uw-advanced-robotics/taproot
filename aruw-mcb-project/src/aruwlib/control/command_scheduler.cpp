@@ -243,6 +243,11 @@ void CommandScheduler::addCommand(Command *commandToAdd)
             CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
         return;
     }
+    else if (!commandToAdd->isReady())
+    {
+        // Do not add command if it is not ready to be scheduled.
+        return;
+    }
 
     subsystem_scheduler_bitmap_t requirementsBitwise = commandToAdd->getRequirementsBitwise();
 

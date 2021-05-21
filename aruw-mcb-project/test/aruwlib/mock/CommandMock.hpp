@@ -30,7 +30,12 @@ namespace mock
 class CommandMock : public control::Command
 {
 public:
-    CommandMock() = default;
+    CommandMock() : Command()
+    {
+        // Most of the time tests expect that we are adding commands that
+        // are ready to be added. This makes tests cleaner
+        ON_CALL(*this, isReady).WillByDefault(testing::Return(true));
+    }
     virtual ~CommandMock() = default;
     MOCK_METHOD(
         control::subsystem_scheduler_bitmap_t,
@@ -39,6 +44,7 @@ public:
         (const override));
     MOCK_METHOD(void, addSubsystemRequirement, (control::Subsystem * requirement), (override));
     MOCK_METHOD(const char*, getName, (), (const override));
+    MOCK_METHOD(bool, isReady, (), (override));
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, execute, (), (override));
     MOCK_METHOD(void, end, (bool interrupted), (override));
