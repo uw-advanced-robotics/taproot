@@ -51,9 +51,13 @@ public:
 
     SentinelDriveSubsystem(
         aruwlib::Drivers* drivers,
+        aruwlib::gpio::Digital::InputPin leftLimitSwitch,
+        aruwlib::gpio::Digital::InputPin rightLimitSwitch,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
         aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
         : aruwlib::control::Subsystem(drivers),
+          leftLimitSwitch(leftLimitSwitch),
+          rightLimitSwitch(rightLimitSwitch),
           velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
           desiredRpm(0),
@@ -81,19 +85,20 @@ public:
 private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR6;
     static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR5;
-    const aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
-    const aruwlib::gpio::Digital::InputPin leftLimitSwitch = aruwlib::gpio::Digital::InputPin::A;
-    const aruwlib::gpio::Digital::InputPin rightLimitSwitch = aruwlib::gpio::Digital::InputPin::B;
+    static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
 
-    const float PID_P = 5.0f;
-    const float PID_I = 0.0f;
-    const float PID_D = 0.1f;
-    const float PID_MAX_ERROR_SUM = 0.0f;
-    const float PID_MAX_OUTPUT = 16000;
+    static constexpr float PID_P = 5.0f;
+    static constexpr float PID_I = 0.0f;
+    static constexpr float PID_D = 0.1f;
+    static constexpr float PID_MAX_ERROR_SUM = 0.0f;
+    static constexpr float PID_MAX_OUTPUT = 16000;
 
     // radius of the wheel in mm
     static constexpr float WHEEL_RADIUS = 35.0f;
     static constexpr float GEAR_RATIO = 19.0f;
+
+    aruwlib::gpio::Digital::InputPin leftLimitSwitch;
+    aruwlib::gpio::Digital::InputPin rightLimitSwitch;
 
     modm::Pid<float> velocityPidLeftWheel;
 
