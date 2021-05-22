@@ -21,6 +21,8 @@
 
 #include <aruwlib/Drivers.hpp>
 
+#include "client_display_subsystem.hpp"
+
 using namespace aruwlib::control;
 using namespace aruwlib::serial;
 using aruwlib::Drivers;
@@ -151,7 +153,7 @@ modm::ResumableResult<bool> ClientDisplayCommand::updateDriveCommandMsg()
     // No delay necessary since didn't send anything
     RF_END();
 }
-int t1, t2;
+
 modm::ResumableResult<bool> ClientDisplayCommand::updateCapBankMsg()
 {
     RF_BEGIN(2);

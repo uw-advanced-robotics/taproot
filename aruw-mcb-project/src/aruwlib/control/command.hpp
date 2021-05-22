@@ -20,8 +20,6 @@
 #ifndef COMMAND_HPP_
 #define COMMAND_HPP_
 
-#include <set>
-
 #include "command_scheduler_types.hpp"
 #include "util_macros.hpp"
 

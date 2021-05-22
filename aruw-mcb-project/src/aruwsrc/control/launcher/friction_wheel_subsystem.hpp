@@ -21,7 +21,6 @@
 #define __FRICTION_WHEEL_SUBSYSTEM_HPP__
 
 #include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)

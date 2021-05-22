@@ -23,8 +23,6 @@
 
 #include "aruwlib/Drivers.hpp"
 
-#include "command.hpp"
-
 namespace aruwlib
 {
 namespace control

@@ -22,8 +22,6 @@
 #include "command_scheduler.hpp"
 #include "subsystem.hpp"
 
-using namespace std;
-
 namespace aruwlib
 {
 namespace control

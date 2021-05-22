@@ -24,7 +24,7 @@
 
 #include <aruwlib/architecture/timeout.hpp>
 
-#include "aruwlib/communication/can/can_rx_handler.hpp"
+#include "aruwlib/communication/can/can_rx_listener.hpp"
 
 namespace aruwlib
 {
@@ -47,7 +47,7 @@ enum MotorId : int32_t
 // extend the CanRxListener class, which allows one to connect a
 // motor to the receive handler and use the class's built in
 // receive handler
-class DjiMotor : public aruwlib::can::CanRxListener
+class DjiMotor : public can::CanRxListener
 {
 public:
     // 0 - 8191 for dji motors

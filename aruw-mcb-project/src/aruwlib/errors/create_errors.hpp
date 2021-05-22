@@ -19,8 +19,6 @@
 #ifndef CREATE_ERRORS_HPP_
 #define CREATE_ERRORS_HPP_
 
-#include "aruwlib/Drivers.hpp"
-
 #include "system_error.hpp"
 
 namespace aruwlib

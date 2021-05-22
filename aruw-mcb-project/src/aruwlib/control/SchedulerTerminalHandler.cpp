@@ -24,6 +24,9 @@
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/strtok.hpp"
 
+#include "command.hpp"
+#include "subsystem.hpp"
+
 namespace aruwlib
 {
 namespace control

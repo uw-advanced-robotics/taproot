@@ -22,8 +22,6 @@
 
 #include <vector>
 
-#include "aruwlib/control/command_scheduler.hpp"
-
 #include "RemoteMapState.hpp"
 
 namespace aruwlib

@@ -20,12 +20,14 @@
 #include "beyblade_command.hpp"
 
 #include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/algorithms/ramp.hpp>
 #include <aruwlib/architecture/clock.hpp>
 #include <aruwlib/communication/remote.hpp>
 #include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
+
+#include "aruwsrc/control/turret/turret_subsystem.hpp"
+
+#include "chassis_subsystem.hpp"
 
 using namespace aruwlib::algorithms;
 using namespace aruwlib::sensors;
@@ -35,6 +37,17 @@ namespace aruwsrc
 {
 namespace chassis
 {
+BeybladeCommand::BeybladeCommand(
+    aruwlib::Drivers* drivers,
+    ChassisSubsystem* chassis,
+    aruwsrc::turret::TurretSubsystem* turret)
+    : drivers(drivers),
+      chassis(chassis),
+      turret(turret)
+{
+    addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
+}
+
 // Resets ramp
 void BeybladeCommand::initialize() { rotateSpeedRamp.reset(0); }
 

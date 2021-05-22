@@ -24,6 +24,7 @@
 
 #include <aruwlib/communication/can/can_rx_listener.hpp>
 #include <gmock/gmock.h>
+#include <modm/architecture/interface/can_message.hpp>
 
 namespace aruwlib
 {

@@ -21,6 +21,10 @@
 
 #include "can_serializer.hpp"
 
+#include <modm/architecture/interface/can_message.hpp>
+
+#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+
 namespace aruwlib
 {
 namespace motorsim

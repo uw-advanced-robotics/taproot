@@ -22,6 +22,7 @@
 #include "HostedTerminalDevice.hpp"
 
 #include <iostream>
+#include <thread>
 
 namespace aruwlib
 {

@@ -24,8 +24,7 @@
 #include <aruwlib/communication/serial/ref_serial.hpp>
 #include <aruwlib/control/command.hpp>
 #include <modm/processing/protothread.hpp>
-
-#include "client_display_subsystem.hpp"
+#include <modm/processing/resumable.hpp>
 
 namespace aruwlib::control
 {
@@ -39,6 +38,8 @@ class Drivers;
 
 namespace aruwsrc::display
 {
+class ClientDisplaySubsystem;
+
 class ClientDisplayCommand : public aruwlib::control::Command,
                              ::modm::pt::Protothread,
                              modm::Resumable<4>
@@ -124,8 +125,8 @@ private:
     int capMsgAdded = 0;
     int32_t capicatance = 0;
 
-    bool run();
     modm::ResumableResult<bool> initializeNonblocking();
+    bool run();
 
     void initDriveCommandMsg();
     modm::ResumableResult<bool> updateDriveCommandMsg();

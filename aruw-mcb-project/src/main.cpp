@@ -34,9 +34,6 @@
 
 /* communication includes ---------------------------------------------------*/
 #include <aruwlib/DriversSingleton.hpp>
-#include <aruwlib/control/SchedulerTerminalHandler.hpp>
-#include <aruwlib/display/sh1106.hpp>
-#include <aruwlib/motor/DjiMotorTerminalSerialHandler.hpp>
 
 /* error handling includes --------------------------------------------------*/
 #include <aruwlib/errors/create_errors.hpp>

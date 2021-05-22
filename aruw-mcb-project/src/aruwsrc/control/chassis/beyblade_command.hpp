@@ -20,19 +20,25 @@
 #ifndef BEYBLADE_COMMAND_HPP_
 #define BEYBLADE_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
+#include <aruwlib/algorithms/ramp.hpp>
 #include <aruwlib/control/command.hpp>
 
-#include "aruwlib/algorithms/ramp.hpp"
-
-#include "aruwsrc/control/turret/turret_subsystem.hpp"
-
-#include "chassis_subsystem.hpp"
+namespace aruwlib
+{
+class Drivers;
+}
 
 namespace aruwsrc
 {
+namespace turret
+{
+class TurretSubsystem;
+}
+
 namespace chassis
 {
+class ChassisSubsystem;
+
 /**
  * A command that automatically rotates the chassis while maintaining turret angle
  */
@@ -42,13 +48,7 @@ public:
     BeybladeCommand(
         aruwlib::Drivers* drivers,
         ChassisSubsystem* chassis,
-        aruwsrc::turret::TurretSubsystem* turret)
-        : drivers(drivers),
-          chassis(chassis),
-          turret(turret)
-    {
-        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
-    }
+        aruwsrc::turret::TurretSubsystem* turret);
 
     // fractional multiplier for user input and maximum motor speed to calculate desired x and y
     // speeds

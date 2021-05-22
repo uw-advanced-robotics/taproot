@@ -22,9 +22,7 @@
 
 #include <iterator>
 
-#include "command.hpp"
 #include "command_scheduler_types.hpp"
-#include "subsystem.hpp"
 #include "util_macros.hpp"
 
 namespace aruwlib
@@ -32,6 +30,9 @@ namespace aruwlib
 class Drivers;
 namespace control
 {
+class Command;
+class Subsystem;
+
 /**
  * Class for handling all the commands you would like to currently run.
  * Interfaces with the Subsystem and Command classes to provide a means

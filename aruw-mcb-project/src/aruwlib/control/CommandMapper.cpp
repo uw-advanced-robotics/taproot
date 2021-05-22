@@ -19,13 +19,11 @@
 
 #include "CommandMapper.hpp"
 
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
-#include "HoldCommandMapping.hpp"
-#include "HoldRepeatCommandMapping.hpp"
-#include "PressCommandMapping.hpp"
+#include "CommandMapping.hpp"
 #include "RemoteMapState.hpp"
-#include "ToggleCommandMapping.hpp"
 
 using namespace aruwlib::errors;
 

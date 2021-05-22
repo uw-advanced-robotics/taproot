@@ -20,20 +20,18 @@
 #ifndef CAN_HPP_
 #define CAN_HPP_
 
-#include <modm/architecture/interface/can_message.hpp>
-
+#include "CanBus.hpp"
 #include "util_macros.hpp"
+
+namespace modm::can
+{
+class Message;
+}
 
 namespace aruwlib
 {
 namespace can
 {
-enum class CanBus
-{
-    CAN_BUS1,
-    CAN_BUS2,
-};
-
 /**
  * A simple CAN wrapper class that handles I/O from both CAN bus 1 and 2.
  */

@@ -22,6 +22,7 @@
 
 #include <aruwlib/communication/can/can.hpp>
 #include <gmock/gmock.h>
+#include <modm/architecture/interface/can_message.hpp>
 
 namespace aruwlib
 {

@@ -19,12 +19,14 @@
 
 #include "can.hpp"
 
+#include <modm/architecture/interface/can_message.hpp>
+#include <modm/platform.hpp>
+
 #ifdef PLATFORM_HOSTED
-#include <aruwlib/motor/motorsim/sim_handler.hpp>
+#include "aruwlib/motor/motorsim/sim_handler.hpp"
 #endif
 
-#include <aruwlib/rm-dev-board-a/board.hpp>
-#include <modm/platform.hpp>
+#include "aruwlib/rm-dev-board-a/board.hpp"
 
 #ifndef PLATFORM_HOSTED
 using namespace modm::platform;

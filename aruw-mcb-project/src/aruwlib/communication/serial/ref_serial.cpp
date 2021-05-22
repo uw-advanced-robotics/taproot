@@ -21,7 +21,6 @@
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/crc.hpp"
-#include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/architecture/endianness_wrappers.hpp"
 

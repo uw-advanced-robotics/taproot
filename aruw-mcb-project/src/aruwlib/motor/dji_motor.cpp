@@ -25,6 +25,8 @@
 #ifdef PLATFORM_HOSTED
 #include <iostream>
 
+#include <modm/architecture/interface/can_message.hpp>
+
 #include "aruwlib/communication/tcp-server/JSONMessages.hpp"
 #include "aruwlib/communication/tcp-server/TCPServer.hpp"
 #endif

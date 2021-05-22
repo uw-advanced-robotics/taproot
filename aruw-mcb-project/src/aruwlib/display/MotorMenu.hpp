@@ -21,9 +21,8 @@
 #define MOTOR_MENU_HPP_
 
 #include <modm/ui/menu/abstract_menu.hpp>
-#include <modm/ui/menu/scrollable_text.hpp>
 
-#include "aruwlib/communication/can/can.hpp"
+#include "aruwlib/communication/can/CanBus.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 

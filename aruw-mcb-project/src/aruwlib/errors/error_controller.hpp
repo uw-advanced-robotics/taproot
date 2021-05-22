@@ -20,9 +20,10 @@
 #ifndef ERROR_CONTROLLER_HPP_
 #define ERROR_CONTROLLER_HPP_
 
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/communication/serial/TerminalSerial.hpp>
 #include <modm/container.hpp>
+
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/communication/serial/TerminalSerial.hpp"
 
 #include "system_error.hpp"
 #include "util_macros.hpp"

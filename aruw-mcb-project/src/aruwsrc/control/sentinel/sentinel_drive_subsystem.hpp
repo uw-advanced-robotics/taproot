@@ -21,7 +21,6 @@
 #define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 
 #include <aruwlib/communication/gpio/digital.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)

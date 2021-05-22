@@ -101,6 +101,10 @@ env.AppendUnique(CCFLAGS=["-D " + args["ROBOT_TYPE"]])
 # Add build-specific flags
 if args["BUILD_PROFILE"] == "debug":
     env.AppendUnique(CCFLAGS=["-fno-inline"])
+elif args["BUILD_PROFILE"] == "fast":
+    if "-g3" in env["CCFLAGS"]:
+        env["CCFLAGS"].remove("-g3")
+    env.AppendUnique(CCFLAGS=["-O0"])
 
 # Add profiling-specific flags
 if args["PROFILING"] == "true":

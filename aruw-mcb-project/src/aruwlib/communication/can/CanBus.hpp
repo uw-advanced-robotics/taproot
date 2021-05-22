@@ -17,31 +17,16 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "linear_interpolation.hpp"
+#ifndef CAN_BUS_HPP_
+#define CAN_BUS_HPP_
 
-namespace aruwlib
+namespace aruwlib::can
 {
-namespace algorithms
+enum class CanBus
 {
-LinearInterpolation::LinearInterpolation() : lastUpdateCallTime(0), previousValue(0.0f), slope(0.0f)
-{
+    CAN_BUS1,
+    CAN_BUS2,
+};
 }
 
-void LinearInterpolation::update(float newValue, uint32_t currTime)
-{
-    if (currTime == lastUpdateCallTime)
-    {
-        return;
-    }
-    slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);
-    previousValue = newValue;
-    lastUpdateCallTime = currTime;
-}
-
-float LinearInterpolation::getInterpolatedValue(uint32_t currTime)
-{
-    return slope * static_cast<float>(currTime - lastUpdateCallTime) + previousValue;
-}
-}  // namespace algorithms
-
-}  // namespace aruwlib
+#endif  // CAN_BUS_HPP_

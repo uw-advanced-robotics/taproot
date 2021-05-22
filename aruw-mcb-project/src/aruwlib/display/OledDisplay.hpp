@@ -26,7 +26,6 @@
 #include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
 
-#include "MainMenu.hpp"
 #include "OledButtonHandler.hpp"
 #include "SplashScreen.hpp"
 #include "sh1106.hpp"

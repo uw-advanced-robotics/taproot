@@ -40,7 +40,7 @@ char *strtokR(char *s, const char *delim, char **savePtr)
     if (*s == '\0')
     {
         *savePtr = s;
-        return NULL;
+        return nullptr;
     }
 
     end = s + strcspn(s, delim);

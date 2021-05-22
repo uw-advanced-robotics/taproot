@@ -20,6 +20,7 @@
 #include "dji_motor_tx_handler.hpp"
 
 #include <modm/architecture/interface/assert.h>
+#include <modm/architecture/interface/can_message.hpp>
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"

@@ -23,12 +23,21 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/communication/remote.hpp>
 
+#include "chassis_subsystem.hpp"
+
 using aruwlib::Drivers;
 
 namespace aruwsrc
 {
 namespace chassis
 {
+ChassisDriveCommand::ChassisDriveCommand(aruwlib::Drivers* drivers, ChassisSubsystem* chassis)
+    : drivers(drivers),
+      chassis(chassis)
+{
+    addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
+}
+
 void ChassisDriveCommand::initialize() {}
 
 void ChassisDriveCommand::execute()

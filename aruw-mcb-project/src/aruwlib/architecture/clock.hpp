@@ -19,7 +19,7 @@
 
 #ifndef __ARUW_CLOCK_HPP__
 #define __ARUW_CLOCK_HPP__
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef PLATFORM_HOSTED
 #include <modm/platform.hpp>

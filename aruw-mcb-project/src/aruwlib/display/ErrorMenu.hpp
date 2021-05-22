@@ -20,13 +20,7 @@
 #ifndef ERROR_MENU_HPP_
 #define ERROR_MENU_HPP_
 
-#include <list>
-
 #include <modm/ui/menu/abstract_menu.hpp>
-
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
-#include "modm/processing/timer/periodic_timer.hpp"
 
 namespace aruwlib
 {

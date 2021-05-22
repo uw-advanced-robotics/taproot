@@ -19,6 +19,11 @@
 
 #include "CommandMapperFormatGenerator.hpp"
 
+#include "CommandMapper.hpp"
+#include "CommandMapping.hpp"
+#include "RemoteMapState.hpp"
+#include "command.hpp"
+
 namespace aruwlib
 {
 namespace control

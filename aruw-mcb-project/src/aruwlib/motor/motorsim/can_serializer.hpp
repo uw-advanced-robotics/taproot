@@ -25,10 +25,12 @@
 #include <array>
 #include <cstdint>
 
-#include "aruwlib/communication/can/can.hpp"
-#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+#include "aruwlib/motor/dji_motor.hpp"
 
-#include "modm/architecture/interface/can_message.hpp"
+namespace modm::can
+{
+class Message;
+}
 
 namespace aruwlib
 {

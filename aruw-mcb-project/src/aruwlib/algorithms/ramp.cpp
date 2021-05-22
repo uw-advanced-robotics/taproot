@@ -19,7 +19,7 @@
 
 #include "ramp.hpp"
 
-#include <math.h>
+#include <cmath>
 
 #include "math_user_utils.hpp"
 

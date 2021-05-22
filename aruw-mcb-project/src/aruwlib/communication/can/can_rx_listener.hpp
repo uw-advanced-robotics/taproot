@@ -22,9 +22,13 @@
 
 #include <cstdint>
 
-#include <modm/architecture/interface/can_message.hpp>
-
+#include "CanBus.hpp"
 #include "can.hpp"
+
+namespace modm::can
+{
+class Message;
+}
 
 namespace aruwlib
 {

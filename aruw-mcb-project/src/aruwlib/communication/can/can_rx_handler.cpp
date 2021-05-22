@@ -20,10 +20,12 @@
 #include "can_rx_handler.hpp"
 
 #include <modm/architecture/interface/assert.h>
+#include <modm/architecture/interface/can.hpp>
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
-#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+
+#include "can_rx_listener.hpp"
 
 namespace aruwlib
 {
@@ -128,6 +130,15 @@ void CanRxHandler::removeReceiveHandler(
         return;
     }
     messageHandlerStore[id] = nullptr;
+}
+
+aruwlib::can::CanRxListener** CanRxHandler::getHandlerStore(aruwlib::can::CanBus bus)
+{
+    if (bus == aruwlib::can::CanBus::CAN_BUS1)
+    {
+        return this->messageHandlerStoreCan1;
+    }
+    return this->messageHandlerStoreCan2;
 }
 }  // namespace can
 

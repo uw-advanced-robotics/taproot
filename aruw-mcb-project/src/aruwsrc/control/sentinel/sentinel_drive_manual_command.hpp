@@ -20,10 +20,12 @@
 #ifndef __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
 #define __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
 
-#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 
-#include "sentinel_drive_subsystem.hpp"
+namespace aruwlib
+{
+class Drivers;
+}
 
 namespace aruwsrc
 {

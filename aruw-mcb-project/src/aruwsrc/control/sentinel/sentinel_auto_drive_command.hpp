@@ -29,8 +29,6 @@ namespace aruwsrc
 {
 namespace control
 {
-class SentinelDriveSubsystem;
-
 class SentinelAutoDriveCommand : public aruwlib::control::Command
 {
 public:

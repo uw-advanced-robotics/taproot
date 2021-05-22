@@ -20,19 +20,24 @@
 #ifndef CHASSIS_AUTOROTATE_COMMAND_HPP_
 #define CHASSIS_AUTOROTATE_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
-#include <aruwlib/control/subsystem.hpp>
-#include <aruwlib/motor/dji_motor.hpp>
 
-#include "aruwsrc/control/turret/turret_subsystem.hpp"
-
-#include "chassis_subsystem.hpp"
+namespace aruwlib
+{
+class Drivers;
+}
 
 namespace aruwsrc
 {
+namespace turret
+{
+class TurretSubsystem;
+}
+
 namespace chassis
 {
+class ChassisSubsystem;
+
 /**
  * A command that continuously attempts to rotate the chasis so that the turret is
  * aligned with the center of the chassis.
@@ -43,13 +48,7 @@ public:
     ChassisAutorotateCommand(
         aruwlib::Drivers* drivers,
         ChassisSubsystem* chassis,
-        aruwsrc::turret::TurretSubsystem const* turret)
-        : drivers(drivers),
-          chassis(chassis),
-          turret(turret)
-    {
-        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
-    }
+        aruwsrc::turret::TurretSubsystem const* turret);
 
     void initialize() override;
 

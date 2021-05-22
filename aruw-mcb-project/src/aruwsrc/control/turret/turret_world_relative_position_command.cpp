@@ -23,6 +23,9 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/architecture/clock.hpp>
 
+#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
+#include "aruwsrc/control/turret/turret_subsystem.hpp"
+
 using namespace aruwlib::sensors;
 
 namespace aruwsrc

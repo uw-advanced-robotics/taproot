@@ -21,7 +21,6 @@
 #define COMMAND_SCHEDULER_MENU_HPP_
 
 #include <modm/ui/menu/abstract_menu.hpp>
-#include <modm/ui/menu/scrollable_text.hpp>
 
 #include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/control/command_scheduler_types.hpp"
