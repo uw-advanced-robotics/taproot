@@ -43,6 +43,8 @@
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
 using namespace aruwlib::control;
+using namespace aruwlib::gpio;
+using namespace aruwsrc::control;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 
@@ -58,6 +60,9 @@ namespace aruwsrc
 {
 namespace control
 {
+static constexpr Digital::InputPin LEFT_LIMIT_SWITCH = Digital::InputPin::A;
+static constexpr Digital::InputPin RIGHT_LIMIT_SWITCH = Digital::InputPin::B;
+
 /* define subsystems --------------------------------------------------------*/
 AgitatorSubsystem agitator(
     drivers(),
@@ -83,7 +88,7 @@ AgitatorSubsystem kickerMotor(
     AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
     false);
 
-aruwsrc::control::SentinelDriveSubsystem sentinelDrive(drivers());
+SentinelDriveSubsystem sentinelDrive(drivers(), LEFT_LIMIT_SWITCH, RIGHT_LIMIT_SWITCH);
 
 FrictionWheelSubsystem upperFrictionWheels(
     drivers(),
