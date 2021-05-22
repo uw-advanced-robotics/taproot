@@ -106,27 +106,27 @@ public:
     }
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-    mock::CanMock can;
-    mock::CanRxHandlerMock canRxHandler;
-    mock::AnalogMock analog;
-    mock::DigitalMock digital;
-    mock::LedsMock leds;
-    mock::PwmMock pwm;
-    mock::RemoteMock remote;
-    mock::Mpu6500Mock mpu6500;
-    mock::UartMock uart;
-    mock::XavierSerialMock xavierSerial;
-    mock::RefSerialMock refSerial;
-    mock::CommandSchedulerMock commandScheduler;
-    mock::ControlOperatorInterfaceMock controlOperatorInterface;
-    mock::CommandMapperMock commandMapper;
+    testing::NiceMock<mock::CanMock> can;
+    testing::NiceMock<mock::CanRxHandlerMock> canRxHandler;
+    testing::NiceMock<mock::AnalogMock> analog;
+    testing::NiceMock<mock::DigitalMock> digital;
+    testing::NiceMock<mock::LedsMock> leds;
+    testing::NiceMock<mock::PwmMock> pwm;
+    testing::NiceMock<mock::RemoteMock> remote;
+    testing::NiceMock<mock::Mpu6500Mock> mpu6500;
+    testing::NiceMock<mock::UartMock> uart;
+    testing::NiceMock<mock::XavierSerialMock> xavierSerial;
+    testing::NiceMock<mock::RefSerialMock> refSerial;
+    testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
+    testing::NiceMock<mock::ControlOperatorInterfaceMock> controlOperatorInterface;
+    testing::NiceMock<mock::CommandMapperMock> commandMapper;
     mock::ErrorControllerMock errorController;
-    mock::TerminalSerialMock terminalSerial;
-    mock::DjiMotorTxHandlerMock djiMotorTxHandler;
-    mock::OledDisplayMock oledDisplay;
+    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
+    testing::NiceMock<mock::DjiMotorTxHandlerMock> djiMotorTxHandler;
+    testing::NiceMock<mock::OledDisplayMock> oledDisplay;
     arch::Profiler profiler;
-    mock::DjiMotorTerminalSerialHandlerMock djiMotorTerminalSerialHandler;
-    mock::SchedulerTerminalHandlerMock schedulerTerminalHandler;
+    testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
+    testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
 #else
 public:
     can::Can can;
