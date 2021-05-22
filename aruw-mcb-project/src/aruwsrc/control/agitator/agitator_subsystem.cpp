@@ -51,10 +51,10 @@ AgitatorSubsystem::AgitatorSubsystem(
     aruwlib::can::CanBus agitatorCanBusId,
     bool isAgitatorInverted)
     : aruwlib::control::Subsystem(drivers),
+      agitatorIsCalibrated(false),
       agitatorPositionPid(kp, ki, kd, maxIAccum, maxOutput, 1.0f, 0.0f, 1.0f, 0.0f),
       desiredAgitatorAngle(0.0f),
       agitatorCalibratedZeroAngle(0.0f),
-      agitatorIsCalibrated(false),
       agitatorJammedTimeout(0),
       agitatorJammedTimeoutPeriod(0),
       gearRatio(agitatorGearRatio),

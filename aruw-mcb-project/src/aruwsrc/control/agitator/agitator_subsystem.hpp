@@ -223,6 +223,15 @@ public:
 
     mockable const char* getName() override { return "Agitator"; }
 
+protected:
+    /**
+     * Whether or not the agitator has been calibrated yet. You should calibrate the agitator
+     * before using it.
+     */
+    bool agitatorIsCalibrated;
+
+    void agitatorRunPositionPid();
+
 private:
     /**
      * We add on this amount of "tolerance" to the predicted rotate time since some times it
@@ -248,12 +257,6 @@ private:
     float agitatorCalibratedZeroAngle;
 
     /**
-     * Whether or not the agitator has been calibrated yet. You should calibrate the agitator
-     * before using it.
-     */
-    bool agitatorIsCalibrated;
-
-    /**
      * A timeout that is used to determine whether or not the agitator is jammed. If the
      * agitator has not reached the desired position in a certain time, the agitator is
      * considered jammed. units: milliseconds
@@ -269,8 +272,6 @@ private:
      * Motor gear ratio, so we use shaft angle rather than encoder angle.
      */
     float gearRatio;
-
-    void agitatorRunPositionPid();
 
     float getUncalibratedAgitatorAngle() const;
 
