@@ -22,7 +22,7 @@ variables:
   ARTIFACT_PATH: isolated-deploy
   GIT_SUBMODULE_STRATEGY: recursive
   DEFAULT_BUILD_ELF_FILE: build/hardware/release/aruw-mcb.elf
-  DEFAULT_TESTS_BUILD_ELF_FILE: build/tests/release/aruw-mcb-tests.elf
+  DEFAULT_TESTS_BUILD_ELF_FILE: build/tests/fast/aruw-mcb-tests.elf
   NUM_JOBS: 4
 
 .default_only: &default_only
@@ -90,14 +90,14 @@ Policy Checks:
   only: *default_only
   script:
     - cd aruw-mcb-project
-    - python3 $(which scons) build-sim robot=TARGET_$ROBOT -j${NUM_JOBS}
+    - python3 $(which scons) build-sim profile=fast robot=TARGET_$ROBOT -j${NUM_JOBS}
 
 .test build:
   stage: Build all Targets
   only: *default_only
   script:
     - cd aruw-mcb-project
-    - python3 $(which scons) build-tests robot=TARGET_$ROBOT -j${NUM_JOBS}
+    - python3 $(which scons) build-tests profile=fast robot=TARGET_$ROBOT -j${NUM_JOBS}
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
 
 # Soldier build
@@ -119,7 +119,7 @@ Soldier Test Build:
   only: *default_only
   script:
     - cd aruw-mcb-project
-    - python3 $(which scons) run-tests-gcov robot=TARGET_SOLDIER -j${NUM_JOBS}
+    - python3 $(which scons) run-tests-gcov profile=fast robot=TARGET_SOLDIER -j${NUM_JOBS}
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s=<source>.</source>=<source>./aruw-mcb-project</source>=g" cobertura.xml'

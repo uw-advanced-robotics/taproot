@@ -22,6 +22,7 @@
 
 #include <aruwlib/motor/dji_motor_tx_handler.hpp>
 #include <gmock/gmock.h>
+#include <modm/architecture/interface/can_message.hpp>
 
 namespace aruwlib
 {

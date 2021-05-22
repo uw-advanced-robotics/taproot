@@ -18,6 +18,7 @@
  */
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+
 #include "clock.hpp"
 
 namespace aruwlib

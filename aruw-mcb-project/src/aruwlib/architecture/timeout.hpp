@@ -20,7 +20,7 @@
 #ifndef TIMEOUT_HPP
 #define TIMEOUT_HPP
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "clock.hpp"
 

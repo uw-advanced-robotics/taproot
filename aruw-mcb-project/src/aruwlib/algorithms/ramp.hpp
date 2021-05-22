@@ -20,7 +20,7 @@
 #ifndef RAMP_HPP_
 #define RAMP_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace aruwlib
 {

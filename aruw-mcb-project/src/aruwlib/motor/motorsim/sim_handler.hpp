@@ -20,13 +20,14 @@
 #ifdef PLATFORM_HOSTED
 #ifndef SIM_HANDLER_HPP_
 #define SIM_HANDLER_HPP_
+
 #include <array>
 
-#include "aruwlib/communication/can/can.hpp"
+#include "aruwlib/communication/can/CanBus.hpp"
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
 
-#include "can_serializer.hpp"
 #include "motor_sim.hpp"
+
 namespace aruwlib
 {
 namespace motorsim

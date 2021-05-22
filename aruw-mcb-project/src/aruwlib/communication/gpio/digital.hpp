@@ -24,7 +24,7 @@
 #include <modm/platform.hpp>
 #endif
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "util_macros.hpp"
 

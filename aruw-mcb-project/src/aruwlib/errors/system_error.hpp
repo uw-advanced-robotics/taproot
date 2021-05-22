@@ -20,8 +20,6 @@
 #ifndef SYSTEM_ERROR_HPP_
 #define SYSTEM_ERROR_HPP_
 
-#include <string>
-
 namespace aruwlib
 {
 namespace errors

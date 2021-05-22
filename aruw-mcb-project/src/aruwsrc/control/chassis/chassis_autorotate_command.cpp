@@ -23,7 +23,9 @@
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/communication/remote.hpp>
 
-#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
+#include "aruwsrc/control/turret/turret_subsystem.hpp"
+
+#include "chassis_subsystem.hpp"
 
 using aruwlib::Drivers;
 
@@ -31,6 +33,17 @@ namespace aruwsrc
 {
 namespace chassis
 {
+ChassisAutorotateCommand::ChassisAutorotateCommand(
+    aruwlib::Drivers* drivers,
+    ChassisSubsystem* chassis,
+    aruwsrc::turret::TurretSubsystem const* turret)
+    : drivers(drivers),
+      chassis(chassis),
+      turret(turret)
+{
+    addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
+}
+
 void ChassisAutorotateCommand::initialize() {}
 
 void ChassisAutorotateCommand::execute()

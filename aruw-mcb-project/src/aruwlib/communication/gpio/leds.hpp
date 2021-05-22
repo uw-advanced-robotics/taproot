@@ -20,7 +20,7 @@
 #ifndef LEDS_HPP_
 #define LEDS_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "util_macros.hpp"
 

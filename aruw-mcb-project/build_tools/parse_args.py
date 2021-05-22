@@ -23,10 +23,10 @@ CMD_LINE_ARGS                       = 1
 TEST_BUILD_TARGET_ACCEPTED_ARGS     = ["build-tests", "run-tests", "run-tests-gcov"]
 SIM_BUILD_TARGET_ACCEPTED_ARGS      = ["build-sim", "run-sim"]
 HARDWARE_BUILD_TARGET_ACCEPTED_ARGS = ["build", "run", "size", "gdb", "all"]
-VALID_BUILD_PROFILES                = ["debug", "release"]
+VALID_BUILD_PROFILES                = ["debug", "release", "fast"]
 VALID_PROFILING_TYPES               = ["true", "false"]
 
-USAGE = "Usage: scons <target> [profile=<debug|release>] [robot=TARGET_<ROBOT_TYPE>] [profiling=<true|false>]\n\
+USAGE = "Usage: scons <target> [profile=<debug|release|fast>] [robot=TARGET_<ROBOT_TYPE>] [profiling=<true|false>]\n\
     \"<target>\" is one of:\n\
         - \"build\": build all code for the hardware platform.\n\
         - \"run\": build all code for the hardware platform, and deploy it to the board via a connected ST-Link.\n\

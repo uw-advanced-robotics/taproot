@@ -20,11 +20,8 @@
 #ifndef ENDIANNESS_WRAPPERS
 #define ENDIANNESS_WRAPPERS
 
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <iostream>
+#include <cstdint>
+#include <cstring>
 
 namespace aruwlib
 {

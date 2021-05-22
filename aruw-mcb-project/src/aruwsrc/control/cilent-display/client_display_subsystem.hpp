@@ -23,6 +23,8 @@
 #include <aruwlib/control/command.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
+namespace aruwsrc::display
+{
 /**
  * A placeholder subsystem for running the client display command
  */
@@ -33,5 +35,6 @@ public:
     virtual ~ClientDisplaySubsystem() {}
     const char* getName() override { return "client display"; }
 };
+}  // namespace aruwsrc::display
 
 #endif  // CLIENT_DISPLAY_HPP_

@@ -22,15 +22,14 @@
 
 #include <modm/ui/menu/abstract_menu.hpp>
 
-#include "aruwlib/Drivers.hpp"
-#include "aruwlib/rm-dev-board-a/board.hpp"
-
-#include "modm/processing/timer/periodic_timer.hpp"
+#include "aruwlib/control/command_scheduler_types.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 
 namespace aruwlib
 {
+class Drivers;
+
 namespace display
 {
 class HardwareTestMenu : public modm::AbstractMenu

@@ -24,7 +24,6 @@
 
 #include "aruwlib/communication/remote.hpp"
 
-#include "CommandMapping.hpp"
 #include "util_macros.hpp"
 
 namespace aruwlib
@@ -32,6 +31,8 @@ namespace aruwlib
 class Drivers;
 namespace control
 {
+class CommandMapping;
+
 /**
  * Class that controls mapping remote state to actions. All the remote
  * mappings will be handled here. One passes a RemoteMapState and a set

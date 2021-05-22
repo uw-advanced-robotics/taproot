@@ -19,12 +19,12 @@
 
 #include "command_scheduler.hpp"
 
-#include <algorithm>
-#include <utility>
-
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+
+#include "command.hpp"
+#include "subsystem.hpp"
 
 using namespace aruwlib::errors;
 

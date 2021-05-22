@@ -68,7 +68,7 @@ inline bool compareFloatClose(float val1, float val2, float epsilon)
  * @return the limited value.
  */
 template <typename T>
-T limitVal(T val, T min, T max)
+inline T limitVal(T val, T min, T max)
 {
     if (min > max)
     {

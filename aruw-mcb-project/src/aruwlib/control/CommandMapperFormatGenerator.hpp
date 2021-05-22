@@ -26,12 +26,14 @@
 
 #include "aruwlib/communication/remote.hpp"
 
-#include "CommandMapper.hpp"
-
 namespace aruwlib
 {
 namespace control
 {
+class CommandMapper;
+class RemoteMapState;
+class Command;
+
 /**
  * A utility for generating a readable format of the current command mappings in a particular
  * CommandMapper.

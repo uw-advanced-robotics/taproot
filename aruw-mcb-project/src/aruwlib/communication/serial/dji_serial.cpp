@@ -19,6 +19,7 @@
 
 #include "dji_serial.hpp"
 
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/communication/serial/uart.hpp"

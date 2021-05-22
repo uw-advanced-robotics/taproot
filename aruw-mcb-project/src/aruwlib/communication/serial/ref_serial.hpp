@@ -20,7 +20,7 @@
 #ifndef __REF_SERIAL_HPP__
 #define __REF_SERIAL_HPP__
 
-#include <stdint.h>
+#include <cstdint>
 
 #include <modm/container/deque.hpp>
 

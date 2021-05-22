@@ -22,7 +22,9 @@
 #include <algorithm>
 
 #include "aruwlib/Drivers.hpp"
+#include "aruwlib/control/command.hpp"
 #include "aruwlib/control/command_scheduler.hpp"
+#include "aruwlib/control/subsystem.hpp"
 
 namespace aruwlib
 {

@@ -20,7 +20,7 @@
 #ifndef CRC_HPP_
 #define CRC_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace aruwlib
 {

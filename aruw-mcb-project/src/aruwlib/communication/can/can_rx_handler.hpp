@@ -20,8 +20,13 @@
 #ifndef CAN_RX_HANDLER_HPP_
 #define CAN_RX_HANDLER_HPP_
 
-#include "can_rx_listener.hpp"
+#include "CanBus.hpp"
 #include "util_macros.hpp"
+
+namespace modm::can
+{
+class Message;
+}
 
 namespace aruwlib
 {
@@ -29,6 +34,8 @@ class Drivers;
 
 namespace can
 {
+class CanRxListener;
+
 /**
  * A handler that stores pointers to CanRxListener and that watches
  * CAN 1 and CAN 2 for messages. If messages are received, it checks
@@ -133,15 +140,7 @@ public:
         CanRxListener** messageHandlerStore,
         int messageHandlerStoreSize);
 
-    aruwlib::can::CanRxListener** getHandlerStore(aruwlib::can::CanBus bus)
-    {
-        if (bus == aruwlib::can::CanBus::CAN_BUS1)
-        {
-            return this->messageHandlerStoreCan1;
-        }
-        return this->messageHandlerStoreCan2;
-    }
-
+    aruwlib::can::CanRxListener** getHandlerStore(aruwlib::can::CanBus bus);
 };  // class CanRxHandler
 
 }  // namespace can

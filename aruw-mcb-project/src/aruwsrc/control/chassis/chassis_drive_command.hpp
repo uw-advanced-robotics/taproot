@@ -20,27 +20,26 @@
 #ifndef CHASSIS_DRIVE_COMMAND_HPP_
 #define CHASSIS_DRIVE_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <aruwlib/control/command.hpp>
 
-#include "chassis_subsystem.hpp"
+namespace aruwlib
+{
+class Drivers;
+}
 
 namespace aruwsrc
 {
 namespace chassis
 {
+class ChassisSubsystem;
+
 /**
  * A command that applies classic chassis-relative mecanum drive.
  */
 class ChassisDriveCommand : public aruwlib::control::Command
 {
 public:
-    ChassisDriveCommand(aruwlib::Drivers* drivers, ChassisSubsystem* chassis)
-        : drivers(drivers),
-          chassis(chassis)
-    {
-        addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
-    }
+    ChassisDriveCommand(aruwlib::Drivers* drivers, ChassisSubsystem* chassis);
 
     void initialize() override;
 

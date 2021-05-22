@@ -20,7 +20,7 @@
 #ifndef ANALOG_HPP_
 #define ANALOG_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #ifndef PLATFORM_HOSTED
 #include <modm/platform/adc/adc_1.hpp>

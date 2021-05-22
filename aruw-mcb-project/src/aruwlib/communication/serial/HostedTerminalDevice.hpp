@@ -23,12 +23,16 @@
 #ifdef PLATFORM_HOSTED
 
 #include <mutex>
-#include <thread>
 
 #include <modm/container/deque.hpp>
 #include <modm/io/iodevice.hpp>
 
 #include "util_macros.hpp"
+
+namespace std
+{
+class thread;
+}
 
 namespace aruwlib
 {

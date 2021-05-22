@@ -23,9 +23,7 @@
 
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/strtok.hpp"
-#include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/communication/gpio/leds.hpp"
-#include "aruwlib/communication/serial/TerminalSerial.hpp"
 
 namespace aruwlib
 {

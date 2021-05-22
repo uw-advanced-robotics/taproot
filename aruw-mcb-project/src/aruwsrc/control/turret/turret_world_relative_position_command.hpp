@@ -20,18 +20,27 @@
 #ifndef TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP_
 #define TURRET_WORLD_RELATIVE_POSITION_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/contiguous_float.hpp>
 #include <aruwlib/control/command.hpp>
 
 #include "aruwsrc/algorithms/turret_pid.hpp"
-#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
-#include "aruwsrc/control/turret/turret_subsystem.hpp"
+
+namespace aruwlib
+{
+class Drivers;
+}
 
 namespace aruwsrc
 {
+namespace chassis
+{
+class ChassisSubsystem;
+}
+
 namespace turret
 {
+class TurretSubsystem;
+
 /**
  * Turret control, with the yaw gimbal using the world relative frame, such that the
  * desired turret angle is independent of the direction that the chassis is facing

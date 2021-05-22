@@ -23,6 +23,7 @@
 #include <cfloat>
 #include <random>
 
+#include <aruwlib/Drivers.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
 #include <aruwlib/architecture/clock.hpp>
 #include <aruwlib/control/CommandMapper.hpp>
