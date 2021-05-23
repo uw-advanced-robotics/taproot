@@ -70,6 +70,8 @@ The recommended way to develop is with our pre-built development Docker containe
       **Credential Manager** app and go to **Windows Credentials**. Then correct your git
       credentials stored under `git:https://gitlab.com` before trying to clone again.
 
+11. Open a terminal, navigate to `aruw-mcb`, and type `./scripts/git-pre-commit-format install`.
+
 Now that you have the environment, let's test it out! Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>,
 type "Focus Next Terminal", and press <kbd>Enter</kbd>. In this terminal, type
 `cd aruw-mcb-project && scons run-tests` and press <kbd>Enter</kbd>. After building our
