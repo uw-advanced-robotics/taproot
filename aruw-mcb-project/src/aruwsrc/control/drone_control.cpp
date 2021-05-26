@@ -17,9 +17,9 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/DriversSingleton.hpp>
-
 #if defined(TARGET_DRONE)
+
+#include <aruwlib/DriversSingleton.hpp>
 
 using aruwlib::DoNotUse_getDrivers;
 

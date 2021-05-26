@@ -17,6 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#if defined(TARGET_SENTINEL)
+
 #include <aruwlib/DriversSingleton.hpp>
 #include <aruwlib/control/CommandMapper.hpp>
 #include <aruwlib/control/HoldCommandMapping.hpp>
@@ -37,8 +39,6 @@
 #include "turret/turret_manual_command.hpp"
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
-
-#if defined(TARGET_SENTINEL)
 
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
