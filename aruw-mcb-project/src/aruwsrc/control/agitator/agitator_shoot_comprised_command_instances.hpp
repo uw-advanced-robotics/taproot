@@ -45,8 +45,8 @@ public:
               agitator17mm,
               aruwlib::algorithms::PI / 5.0f,
               aruwlib::algorithms::PI / 2.0f,
-              50,
-              20),
+              40,
+              10),
           drivers(drivers),
           heatLimiting(heatLimiting)
     {
