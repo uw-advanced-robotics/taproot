@@ -80,6 +80,10 @@ public:
 
     void runHardwareTests() override;
 
+    void onHardwareTestStart() override;
+
+    void onHardwareTestComplete() override;
+
     const char *getName() override { return "Tow"; }
 
 private:
@@ -93,6 +97,8 @@ private:
     const aruwlib::gpio::Digital::OutputPin RIGHT_TOW_PIN;
     const aruwlib::gpio::Digital::InputPin LEFT_TOW_LIMIT_SWITCH;
     const aruwlib::gpio::Digital::InputPin RIGHT_TOW_LIMIT_SWITCH_PIN;
+
+    uint64_t testTime;
 };  // class TowSubsystem
 }  // namespace engineer
 }  // namespace aruwsrc

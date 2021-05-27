@@ -154,8 +154,21 @@ float AgitatorSubsystem::getUncalibratedAgitatorAngle() const
 
 void AgitatorSubsystem::runHardwareTests()
 {
-    // TODO
+    if (aruwlib::algorithms::compareFloatClose(
+            this->getAgitatorDesiredAngle(),
+            this->getAgitatorAngle(),
+            aruwlib::algorithms::PI / 16))
+    {
+        this->setHardwareTestsComplete();
+    }
 }
+
+void AgitatorSubsystem::onHardwareTestStart()
+{
+    this->setAgitatorDesiredAngle(this->getAgitatorAngle() + aruwlib::algorithms::PI / 2);
+}
+
+void AgitatorSubsystem::onHardwareTestComplete() {}
 
 }  // namespace agitator
 

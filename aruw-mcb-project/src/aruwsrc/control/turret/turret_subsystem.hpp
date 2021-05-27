@@ -135,9 +135,9 @@ public:
      */
     void updateCurrentTurretAngles();
 
-    void runHardwareTests() override;
-
     const char* getName() override { return "Turret"; }
+
+    void onHardwareTestStart() override;
 
 private:
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 8160;

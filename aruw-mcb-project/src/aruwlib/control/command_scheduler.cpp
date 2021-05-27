@@ -169,10 +169,12 @@ void CommandScheduler::run()
         // if a hardware test is not already complete
         for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            if (!(*it)->isHardwareTestComplete())
+            Subsystem *sub = *it;
+            if (!sub->isHardwareTestComplete())
             {
-                (*it)->runHardwareTests();
+                sub->runHardwareTests();
             }
+            sub->refresh();
         }
         return;
     }

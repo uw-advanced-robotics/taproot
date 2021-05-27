@@ -129,8 +129,12 @@ float SentinelDriveSubsystem::distanceFromEncoder(aruwlib::motor::DjiMotor* moto
 
 void SentinelDriveSubsystem::runHardwareTests()
 {
-    // TODO
+    if (abs(rightWheel.getShaftRPM()) > 50.0f) this->setHardwareTestsComplete();
 }
+
+void SentinelDriveSubsystem::onHardwareTestStart() { this->setDesiredRpm(100.0f); }
+
+void SentinelDriveSubsystem::onHardwareTestComplete() { this->setDesiredRpm(0.0f); }
 
 }  // namespace control
 

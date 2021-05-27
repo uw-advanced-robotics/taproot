@@ -86,6 +86,10 @@ public:
 
     void runHardwareTests() override;
 
+    void onHardwareTestStart() override;
+
+    void onHardwareTestComplete() override;
+
     const char *getName() override { return "Hopper"; }
 
 private:
@@ -100,6 +104,8 @@ private:
      * return the angle defined as close as a PWM value
      */
     float getClosePWM();
+
+    uint64_t testTime;
 };
 
 }  // namespace control

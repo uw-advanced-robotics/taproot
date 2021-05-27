@@ -19,6 +19,8 @@
 
 #include "hopper_subsystem.hpp"
 
+#include <aruwlib/architecture/clock.hpp>
+
 namespace aruwsrc
 {
 namespace control
@@ -35,8 +37,17 @@ float HopperSubsystem::getClosePWM() { return hopper.getMinPWM(); }
 
 void HopperSubsystem::runHardwareTests()
 {
-    // TODO
+    if (aruwlib::arch::clock::getTimeMicroseconds() - testTime > 1000000)
+        this->setHardwareTestsComplete();
 }
+
+void HopperSubsystem::onHardwareTestStart()
+{
+    testTime = aruwlib::arch::clock::getTimeMicroseconds();
+    this->setOpen();
+}
+
+void HopperSubsystem::onHardwareTestComplete() { this->setClose(); }
 
 }  // namespace control
 
