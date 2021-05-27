@@ -157,11 +157,6 @@ float ChassisSubsystem::calculateRotationTranslationalGain(float chassisRotation
     return rTranslationalGain;
 }
 
-void ChassisSubsystem::runHardwareTests()
-{
-    // TODO
-}
-
 modm::Matrix<float, 3, 1> ChassisSubsystem::getDesiredVelocityChassisRelative() const
 {
     return wheelVelToChassisVelMat * convertRawRPM(desiredWheelRPM);
@@ -198,6 +193,9 @@ void ChassisSubsystem::getVelocityWorldRelative(
     transform[2][2] = 1;
     chassisRelativeVelocity = transform * chassisRelativeVelocity;
 }
+
+void ChassisSubsystem::onHardwareTestStart() { setDesiredOutput(0, 0, 0); }
+
 }  // namespace chassis
 
 }  // namespace aruwsrc

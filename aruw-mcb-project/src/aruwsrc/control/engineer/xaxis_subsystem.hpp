@@ -50,12 +50,18 @@ public:
 
     void runHardwareTests() override;
 
+    void onHardwareTestStart() override;
+
+    void onHardwareTestComplete() override;
+
     const char *getName() override { return "X-Axis"; }
 
 private:
     aruwlib::gpio::Digital::OutputPin pin;
 
     bool extended;
+
+    uint64_t testTime;
 };  // class XAxisSubsystem
 
 }  // namespace engineer

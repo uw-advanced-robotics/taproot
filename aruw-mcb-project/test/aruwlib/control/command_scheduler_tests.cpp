@@ -714,9 +714,7 @@ TEST(
     EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
 }
 
-TEST(
-    CommandScheduler,
-    run_with_hardware_tests_enabled_calls_runHardwareTests_for_all_subsystems_and_not_refresh)
+TEST(CommandScheduler, run_with_hardware_tests_enabled_calls_runHardwareTests_and_refresh)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -727,12 +725,15 @@ TEST(
     EXPECT_CALL(s1, setHardwareTestsIncomplete);
     EXPECT_CALL(s1, isHardwareTestComplete).WillOnce(Return(false));
     EXPECT_CALL(s1, runHardwareTests);
+    EXPECT_CALL(s1, refresh);
     EXPECT_CALL(s2, setHardwareTestsIncomplete);
     EXPECT_CALL(s2, isHardwareTestComplete).WillOnce(Return(false));
     EXPECT_CALL(s2, runHardwareTests);
+    EXPECT_CALL(s2, refresh);
     // Won't call runHardwareTests for this subsystem since the test is complete.
     EXPECT_CALL(s3, setHardwareTestsIncomplete);
     EXPECT_CALL(s3, isHardwareTestComplete).WillOnce(Return(true));
+    EXPECT_CALL(s3, refresh);
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);

@@ -221,6 +221,10 @@ public:
 
     void runHardwareTests() override;
 
+    void onHardwareTestStart() override;
+
+    void onHardwareTestComplete() override;
+
     mockable const char* getName() override { return "Agitator"; }
 
 protected:

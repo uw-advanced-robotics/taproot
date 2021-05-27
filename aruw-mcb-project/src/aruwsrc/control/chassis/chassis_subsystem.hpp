@@ -425,8 +425,6 @@ public:
      */
     float calculateRotationTranslationalGain(float chassisRotationDesiredWheelspeed);
 
-    void runHardwareTests() override;
-
     const char* getName() override { return "Chassis"; }
 
     /**
@@ -453,6 +451,8 @@ public:
     void getVelocityWorldRelative(
         modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
         float chassisHeading) const;
+
+    void onHardwareTestStart() override;
 
 private:
     /**

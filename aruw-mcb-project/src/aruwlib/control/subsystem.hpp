@@ -107,7 +107,7 @@ public:
         onHardwareTestComplete();
     }
 
-    virtual void runHardwareTests() {}
+    virtual void runHardwareTests() { setHardwareTestsComplete(); }
 
     virtual const char* getName();
 

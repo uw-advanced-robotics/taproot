@@ -250,9 +250,10 @@ float TurretSubsystem::yawFeedForwardCalculation(float desiredChassisRotation)
         FEED_FORWARD_MAX_OUTPUT);
 }
 
-void TurretSubsystem::runHardwareTests()
+void TurretSubsystem::onHardwareTestStart()
 {
-    // TODO
+    pitchMotor.setDesiredOutput(0);
+    yawMotor.setDesiredOutput(0);
 }
 
 }  // namespace turret

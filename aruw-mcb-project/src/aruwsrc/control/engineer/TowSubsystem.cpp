@@ -69,7 +69,21 @@ bool TowSubsystem::getRightLeftLimitSwitchTriggered() const
 
 void TowSubsystem::runHardwareTests()
 {
-    // TODO
+    if (aruwlib::arch::clock::getTimeMicroseconds() - testTime > 1000000)
+        this->setHardwareTestsComplete();
+}
+
+void TowSubsystem::onHardwareTestStart()
+{
+    testTime = aruwlib::arch::clock::getTimeMicroseconds();
+    this->setLeftClamped(!getLeftClamped());
+    this->setRightClamped(!getRightClamped());
+}
+
+void TowSubsystem::onHardwareTestComplete()
+{
+    this->setLeftClamped(!getLeftClamped());
+    this->setRightClamped(!getRightClamped());
 }
 
 }  // namespace engineer
