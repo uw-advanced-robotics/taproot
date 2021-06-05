@@ -20,9 +20,10 @@
 #ifndef AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
 #define AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
 
-#include <aruwlib/Drivers.hpp>
+#include "aruwlib/Drivers.hpp"
 
 #include "agitator_shoot_comprised_command.hpp"
+#include "limited_agitator_subsystem.hpp"
 
 namespace aruwsrc
 {
@@ -97,6 +98,64 @@ private:
 
     const bool heatLimiting;
 };  // class ShootSlowComprisedCommand
+
+class WaterwheelLoadCommand42mm : public ShootComprisedCommand
+{
+public:
+    // Angle the command tries to move the agitator whenever it is scheduled
+    static constexpr float WATERWHEEL_42MM_CHANGE_ANGLE = aruwlib::algorithms::PI / 6;
+    // Max angle the agitator will move while unjamming
+    static constexpr float WATERWHEEL_42MM_MAX_UNJAM_ANGLE = aruwlib::algorithms::PI / 6;
+    // Expected time for the water wheel to rotate the specified angle in ms
+    static constexpr uint32_t WATERWHEEL_42MM_ROTATE_TIME = 1000;
+    // How long the command should wait after reaching the target angle
+    static constexpr uint32_t WATERWHEEL_42MM_PAUSE_AFTER_ROTATE_TIME = 10;
+
+    WaterwheelLoadCommand42mm(
+        aruwlib::Drivers* drivers,
+        aruwsrc::agitator::LimitedAgitatorSubsystem* waterwheel);
+
+    bool isReady() override;
+
+    bool isFinished() const override;
+
+private:
+    // Store instance of drivers to be able to access digital
+    aruwlib::Drivers* drivers;
+
+    // Store pointer to limited agitator subsystem with derived class type
+    aruwsrc::agitator::LimitedAgitatorSubsystem* waterwheel;
+
+};  // class Waterwheel42mmLoadCommand
+
+class ShootComprisedCommand42mm : public ShootComprisedCommand
+{
+public:
+    // Angle the command tries to move the agitator whenever it is scheduled
+    static constexpr float KICKER_42MM_CHANGE_ANGLE = aruwlib::algorithms::PI / 6;
+    // Max angle the agitator will move while unjamming
+    static constexpr float KICKER_42MM_MAX_UNJAM_ANGLE = aruwlib::algorithms::PI / 6;
+    // Expected time for the water wheel to rotate the specified angle in ms
+    static constexpr uint32_t KICKER_42MM_ROTATE_TIME = 300;
+    // How long the command should wait after reaching the target angle
+    static constexpr uint32_t KICKER_42MM_PAUSE_AFTER_ROTATE_TIME = 10;
+
+    ShootComprisedCommand42mm(
+        aruwlib::Drivers* drivers,
+        aruwsrc::agitator::AgitatorSubsystem* kicker,
+        bool heatLimiting = true);
+
+    // Override for heat limiting logic
+    bool isReady() override;
+
+private:
+    // Buffer from max heat limit in which limiting occurs, for hero 100 is one shot.
+    static constexpr uint16_t HEAT_LIMIT_BUFFER = 100;
+
+    aruwlib::Drivers* drivers;
+
+    bool heatLimiting;
+};
 
 }  // namespace agitator
 

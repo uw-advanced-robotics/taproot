@@ -25,7 +25,7 @@
 #include "aruwsrc/control/agitator/agitator_subsystem.hpp"
 #include "modm/math/filter/debounce.hpp"
 
-namespace
+namespace aruwlib
 {
 class Drivers;
 }
@@ -41,6 +41,18 @@ namespace agitator
 class LimitedAgitatorSubsystem : public AgitatorSubsystem
 {
 public:
+#if defined(TARGET_HERO)
+    /**
+     * The pin to check for the limit switch input, needs to be set by someone who
+     * knows what they're doing.
+     */
+    static constexpr aruwlib::gpio::Digital::InputPin WATERWHEEL_LIMIT_PIN =
+        aruwlib::gpio::Digital::InputPin::A;
+    static constexpr uint8_t WATERWHEEL_DEBOUNCE_MAX_SUM = 100;
+    static constexpr uint8_t WATERWHEEL_DEBOUNCE_LOWER_BOUND = 30;
+    static constexpr uint8_t WATERWHEEL_DEBOUNCE_UPPER_BOUND = 70;
+#endif
+
     /**
      * @param[in] limitSwitchPin the pin to be checked for limit switch input.
      * @note for all params before `limitSwitchPin` see `AgitatorSubsystem.hpp`
@@ -67,7 +79,7 @@ public:
     /**
      * Get the debounced state of the limit switch
      */
-    bool getLimitSwitchPressed() const;
+    bool isLimitSwitchPressed() const;
 
 private:
     /**

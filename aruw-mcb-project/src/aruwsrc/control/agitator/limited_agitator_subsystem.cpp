@@ -72,7 +72,7 @@ void LimitedAgitatorSubsystem::refresh()
     debounceFilter.update(limitSwitchPressed);
 }
 
-bool LimitedAgitatorSubsystem::getLimitSwitchPressed() const { return debounceFilter.getValue(); }
+bool LimitedAgitatorSubsystem::isLimitSwitchPressed() const { return debounceFilter.getValue(); }
 
 }  // namespace agitator
 
