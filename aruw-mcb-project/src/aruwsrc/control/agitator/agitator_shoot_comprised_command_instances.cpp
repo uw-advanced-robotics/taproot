@@ -62,5 +62,59 @@ void ShootSlowComprisedCommand17MM::initialize()
         &comprisedCommandScheduler,
         &unjamSequenceCommencing);
 }
+
+WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
+    aruwlib::Drivers *drivers,
+    aruwsrc::agitator::LimitedAgitatorSubsystem *waterwheel)
+    : ShootComprisedCommand(
+          drivers,
+          waterwheel,
+          WATERWHEEL_42MM_CHANGE_ANGLE,
+          WATERWHEEL_42MM_MAX_UNJAM_ANGLE,
+          WATERWHEEL_42MM_ROTATE_TIME,
+          WATERWHEEL_42MM_PAUSE_AFTER_ROTATE_TIME),
+      drivers(drivers),
+      waterwheel(waterwheel)
+{
+}
+
+bool WaterwheelLoadCommand42mm::isReady()
+{
+    return (waterwheel->isAgitatorOnline() && !waterwheel->isLimitSwitchPressed());
+}
+
+bool WaterwheelLoadCommand42mm::isFinished() const
+{
+    return (!unjamSequenceCommencing && agitatorRotateCommand.isFinished()) ||
+           ((unjamSequenceCommencing && agitatorUnjamCommand.isFinished()) ||
+            !this->comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
+           agitatorDisconnectFault || waterwheel->isLimitSwitchPressed();
+}
+
+ShootComprisedCommand42mm::ShootComprisedCommand42mm(
+    aruwlib::Drivers *drivers,
+    aruwsrc::agitator::AgitatorSubsystem *kicker,
+    bool heatLimiting)
+    : ShootComprisedCommand(
+          drivers,
+          kicker,
+          KICKER_42MM_CHANGE_ANGLE,
+          KICKER_42MM_MAX_UNJAM_ANGLE,
+          KICKER_42MM_ROTATE_TIME,
+          KICKER_42MM_PAUSE_AFTER_ROTATE_TIME),
+      drivers(drivers),
+      heatLimiting(heatLimiting)
+{
+}
+
+bool ShootComprisedCommand42mm::isReady()
+{
+    const auto &robotData = drivers->refSerial.getRobotData();
+
+    return !drivers->refSerial.getRefSerialReceivingData() || !heatLimiting ||
+           (robotData.turret.heat42 + HEAT_LIMIT_BUFFER <= robotData.turret.heatLimit42);
+}
+
 }  // namespace agitator
+
 }  // namespace aruwsrc
