@@ -28,10 +28,8 @@ namespace aruwsrc::mock
 {
 class GrabberSubsystemMock : public engineer::GrabberSubsystem
 {
-    GrabberSubsystemMock(aruwlib::Drivers *drivers, aruwlib::gpio::Digital::OutputPin pin)
-        : engineer::GrabberSubsystem(drivers, pin)
-    {
-    }
+    GrabberSubsystemMock(aruwlib::Drivers *drivers, aruwlib::gpio::Digital::OutputPin pin);
+    virtual ~GrabberSubsystemMock();
 
     MOCK_METHOD(void, setSqueezed, (bool), (override));
     MOCK_METHOD(bool, isSqueezed, (), (const override));

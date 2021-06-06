@@ -30,6 +30,9 @@ namespace mock
 class DigitalMock : public aruwlib::gpio::Digital
 {
 public:
+    DigitalMock();
+    virtual ~DigitalMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(
         void,

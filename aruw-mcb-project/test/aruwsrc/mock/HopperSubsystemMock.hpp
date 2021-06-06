@@ -33,10 +33,8 @@ class HopperSubsystemMock : public control::HopperSubsystem
         aruwlib::gpio::Pwm::Pin pwmPin,
         float open,
         float close,
-        float pwmRampSpeed)
-        : control::HopperSubsystem(drivers, pwmPin, open, close, pwmRampSpeed)
-    {
-    }
+        float pwmRampSpeed);
+    virtual ~HopperSubsystemMock();
 
     MOCK_METHOD(void, setOpen, (), (override));
     MOCK_METHOD(void, setClose, (), (override));

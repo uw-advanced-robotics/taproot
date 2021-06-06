@@ -30,6 +30,9 @@ namespace mock
 class PwmMock : public aruwlib::gpio::Pwm
 {
 public:
+    PwmMock();
+    virtual ~PwmMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(void, writeAll, (float duty), (override));
     MOCK_METHOD(void, write, (float duty, aruwlib::gpio::Pwm::Pin pin), (override));

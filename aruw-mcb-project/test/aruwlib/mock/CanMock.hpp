@@ -31,6 +31,9 @@ namespace mock
 class CanMock : public aruwlib::can::Can
 {
 public:
+    CanMock();
+    virtual ~CanMock();
+
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(bool, isMessageAvailable, (aruwlib::can::CanBus bus), (const override));
     MOCK_METHOD(

@@ -30,6 +30,9 @@ namespace mock
 class AnalogMock : public aruwlib::gpio::Analog
 {
 public:
+    AnalogMock();
+    virtual ~AnalogMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(uint16_t, read, (Analog::Pin pin), (const override));
 };  // class AnalogMock

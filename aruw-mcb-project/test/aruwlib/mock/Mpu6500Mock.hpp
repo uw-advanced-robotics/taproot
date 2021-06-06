@@ -30,7 +30,9 @@ namespace mock
 class Mpu6500Mock : public aruwlib::sensors::Mpu6500
 {
 public:
-    Mpu6500Mock(aruwlib::Drivers *drivers) : aruwlib::sensors::Mpu6500(drivers) {}
+    Mpu6500Mock(aruwlib::Drivers *drivers);
+    virtual ~Mpu6500Mock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(void, calcIMUAngles, (), (override));
     MOCK_METHOD(bool, read, (), (override));

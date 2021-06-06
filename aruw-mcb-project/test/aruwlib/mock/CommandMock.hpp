@@ -30,13 +30,9 @@ namespace mock
 class CommandMock : public control::Command
 {
 public:
-    CommandMock() : Command()
-    {
-        // Most of the time tests expect that we are adding commands that
-        // are ready to be added. This makes tests cleaner
-        ON_CALL(*this, isReady).WillByDefault(testing::Return(true));
-    }
-    virtual ~CommandMock() = default;
+    CommandMock();
+    virtual ~CommandMock();
+
     MOCK_METHOD(
         control::subsystem_scheduler_bitmap_t,
         getRequirementsBitwise,

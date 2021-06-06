@@ -28,16 +28,18 @@ namespace aruwsrc::mock
 {
 class SentinelDriveSubsystemMock : public control::SentinelDriveSubsystem
 {
-    SentinelDriveSubsystemMock(aruwlib::Drivers* drivers) : control::SentinelDriveSubsystem(drivers)
-    {
-    }
+    SentinelDriveSubsystemMock(
+        aruwlib::Drivers *drivers,
+        aruwlib::gpio::Digital::InputPin leftLimitSwitch,
+        aruwlib::gpio::Digital::InputPin rightLimitSwitch);
+    virtual ~SentinelDriveSubsystemMock();
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(float, absolutePosition, (), (override));
     MOCK_METHOD(void, setDesiredRpm, (float), (override));
     MOCK_METHOD(void, refresh, (), (override));
     MOCK_METHOD(void, runHardwareTests, (), (override));
-    MOCK_METHOD(const char*, getName, (), (override));
+    MOCK_METHOD(const char *, getName, (), (override));
 };
 }  // namespace aruwsrc::mock
 

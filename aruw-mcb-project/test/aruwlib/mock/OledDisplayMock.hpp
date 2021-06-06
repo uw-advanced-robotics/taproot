@@ -30,7 +30,8 @@ namespace mock
 class OledDisplayMock : public display::OledDisplay
 {
 public:
-    explicit OledDisplayMock(Drivers *drivers) : display::OledDisplay(drivers) {}
+    explicit OledDisplayMock(Drivers *drivers);
+    virtual ~OledDisplayMock();
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(bool, updateDisplay, (), (override));
     MOCK_METHOD(void, updateMenu, (), (override));

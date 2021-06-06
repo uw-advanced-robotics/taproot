@@ -32,7 +32,9 @@ namespace mock
 class CommandSchedulerMock : public control::CommandScheduler
 {
 public:
-    CommandSchedulerMock(Drivers *drivers) : control::CommandScheduler(drivers) {}
+    CommandSchedulerMock(Drivers *drivers);
+    virtual ~CommandSchedulerMock();
+
     MOCK_METHOD(void, run, (), (override));
     MOCK_METHOD(void, addCommand, (control::Command *), (override));
     MOCK_METHOD(void, removeCommand, (control::Command *, bool), (override));

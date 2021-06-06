@@ -30,10 +30,9 @@ namespace mock
 class DjiMotorTerminalSerialHandlerMock : public motor::DjiMotorTerminalSerialHandler
 {
 public:
-    DjiMotorTerminalSerialHandlerMock(Drivers *drivers)
-        : motor::DjiMotorTerminalSerialHandler(drivers)
-    {
-    }
+    DjiMotorTerminalSerialHandlerMock(Drivers *drivers);
+    virtual ~DjiMotorTerminalSerialHandlerMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(bool, terminalSerialCallback, (char *, modm::IOStream &, bool), (override));
     MOCK_METHOD(void, terminalSerialStreamCallback, (modm::IOStream &), (override));

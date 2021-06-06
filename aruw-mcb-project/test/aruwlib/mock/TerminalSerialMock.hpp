@@ -30,8 +30,9 @@ namespace mock
 class TerminalSerialMock : public communication::serial::TerminalSerial
 {
 public:
-    TerminalSerialMock(Drivers *drivers) : communication::serial::TerminalSerial(drivers) {}
-    virtual ~TerminalSerialMock() = default;
+    TerminalSerialMock(Drivers *drivers);
+    virtual ~TerminalSerialMock();
+
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, update, (), (override));
     MOCK_METHOD(

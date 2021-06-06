@@ -33,15 +33,9 @@ public:
         aruwlib::gpio::Digital::OutputPin leftTowPin,
         aruwlib::gpio::Digital::OutputPin rightTowPin,
         aruwlib::gpio::Digital::InputPin leftTowLimitSwitchPin,
-        aruwlib::gpio::Digital::InputPin rightTowLimitSwitchPin)
-        : aruwsrc::engineer::TowSubsystem(
-              drivers,
-              leftTowPin,
-              rightTowPin,
-              leftTowLimitSwitchPin,
-              rightTowLimitSwitchPin)
-    {
-    }
+        aruwlib::gpio::Digital::InputPin rightTowLimitSwitchPin);
+    virtual ~TowSubsystemMock();
+
     MOCK_METHOD(void, setLeftClamped, (bool isClamped), (override));
     MOCK_METHOD(bool, getLeftClamped, (), (const override));
     MOCK_METHOD(void, setRightClamped, (bool isClamped), (override));
