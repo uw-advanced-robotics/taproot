@@ -30,6 +30,9 @@ namespace mock
 class UartMock : public aruwlib::serial::Uart
 {
 public:
+    UartMock();
+    virtual ~UartMock();
+
     MOCK_METHOD(bool, read, (aruwlib::serial::Uart::UartPort port, uint8_t *data), (override));
     MOCK_METHOD(
         std::size_t,

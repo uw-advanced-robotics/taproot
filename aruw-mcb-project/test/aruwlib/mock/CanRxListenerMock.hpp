@@ -33,10 +33,9 @@ namespace mock
 class CanRxListenerMock : public aruwlib::can::CanRxListener
 {
 public:
-    CanRxListenerMock(aruwlib::Drivers* drivers, uint32_t id, aruwlib::can::CanBus bus)
-        : aruwlib::can::CanRxListener(drivers, id, bus)
-    {
-    }
+    CanRxListenerMock(aruwlib::Drivers* drivers, uint32_t id, aruwlib::can::CanBus bus);
+    ~CanRxListenerMock();
+
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));
 
 };  // class CanRxListenerMock

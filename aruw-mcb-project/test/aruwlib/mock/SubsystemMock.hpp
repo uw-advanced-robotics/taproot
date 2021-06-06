@@ -30,8 +30,9 @@ namespace mock
 class SubsystemMock : public control::Subsystem
 {
 public:
-    SubsystemMock(Drivers *drivers) : control::Subsystem(drivers) {}
-    virtual ~SubsystemMock() = default;
+    SubsystemMock(Drivers *drivers);
+    virtual ~SubsystemMock();
+
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, setDefaultCommand, (control::Command * defaultCommand), (override));
     MOCK_METHOD(control::Command *, getDefaultCommand, (), (const override));

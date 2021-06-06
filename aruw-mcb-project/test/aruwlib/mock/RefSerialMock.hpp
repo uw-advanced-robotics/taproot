@@ -30,7 +30,9 @@ namespace mock
 class RefSerialMock : public serial::RefSerial
 {
 public:
-    RefSerialMock(Drivers* drivers) : serial::RefSerial(drivers) {}
+    RefSerialMock(Drivers* drivers);
+    virtual ~RefSerialMock();
+
     MOCK_METHOD(
         void,
         messageReceiveCallback,

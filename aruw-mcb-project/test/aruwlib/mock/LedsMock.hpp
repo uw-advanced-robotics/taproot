@@ -30,6 +30,9 @@ namespace mock
 class LedsMock : public aruwlib::gpio::Leds
 {
 public:
+    LedsMock();
+    virtual ~LedsMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(void, set, (LedPin pin, bool isSet), (override));
 };  // class LedsMock

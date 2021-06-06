@@ -30,7 +30,9 @@ namespace mock
 class SchedulerTerminalHandlerMock : public control::SchedulerTerminalHandler
 {
 public:
-    SchedulerTerminalHandlerMock(Drivers *drivers) : control::SchedulerTerminalHandler(drivers) {}
+    SchedulerTerminalHandlerMock(Drivers *drivers);
+    virtual ~SchedulerTerminalHandlerMock();
+
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(bool, terminalSerialCallback, (char *, modm::IOStream &, bool), (override));
     MOCK_METHOD(void, terminalSerialStreamCallback, (modm::IOStream &), (override));

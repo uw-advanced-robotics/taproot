@@ -31,7 +31,9 @@ namespace mock
 class DjiMotorTxHandlerMock : public aruwlib::motor::DjiMotorTxHandler
 {
 public:
-    DjiMotorTxHandlerMock(aruwlib::Drivers *drivers) : aruwlib::motor::DjiMotorTxHandler(drivers) {}
+    DjiMotorTxHandlerMock(aruwlib::Drivers *drivers);
+    virtual ~DjiMotorTxHandlerMock();
+
     MOCK_METHOD(void, addMotorToManager, (aruwlib::motor::DjiMotor * motor), (override));
     MOCK_METHOD(void, processCanSendData, (), (override));
     MOCK_METHOD(void, removeFromMotorManager, (const aruwlib::motor::DjiMotor &motor), (override));

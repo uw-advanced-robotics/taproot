@@ -32,10 +32,9 @@ namespace mock
 class ControlOperatorInterfaceMock : public aruwlib::control::ControlOperatorInterface
 {
 public:
-    ControlOperatorInterfaceMock(aruwlib::Drivers *drivers)
-        : aruwlib::control::ControlOperatorInterface(drivers)
-    {
-    }
+    ControlOperatorInterfaceMock(aruwlib::Drivers *drivers);
+    virtual ~ControlOperatorInterfaceMock();
+
     MOCK_METHOD(float, getChassisXInput, (), (override));
     MOCK_METHOD(float, getChassisYInput, (), (override));
     MOCK_METHOD(float, getChassisRInput, (), (override));

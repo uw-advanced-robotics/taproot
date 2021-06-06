@@ -38,10 +38,8 @@ public:
         aruwlib::motor::MotorId desMotorIdentifier,
         aruwlib::can::CanBus motorCanBus,
         bool isInverted,
-        const char* name)
-        : DjiMotor(drivers, desMotorIdentifier, motorCanBus, isInverted, name)
-    {
-    }
+        const char* name);
+    virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(int64_t, getEncoderUnwrapped, (), (const override));

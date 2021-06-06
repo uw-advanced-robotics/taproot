@@ -30,7 +30,9 @@ namespace mock
 class XavierSerialMock : public aruwlib::serial::XavierSerial
 {
 public:
-    XavierSerialMock(aruwlib::Drivers* drivers) : aruwlib::serial::XavierSerial(drivers) {}
+    XavierSerialMock(aruwlib::Drivers* drivers);
+    virtual ~XavierSerialMock();
+
     MOCK_METHOD(void, initializeCV, (), (override));
     MOCK_METHOD(
         void,

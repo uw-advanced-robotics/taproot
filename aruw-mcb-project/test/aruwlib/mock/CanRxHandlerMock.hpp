@@ -32,7 +32,9 @@ namespace mock
 class CanRxHandlerMock : public aruwlib::can::CanRxHandler
 {
 public:
-    CanRxHandlerMock(aruwlib::Drivers* drivers) : aruwlib::can::CanRxHandler(drivers) {}
+    CanRxHandlerMock(aruwlib::Drivers* drivers);
+    virtual ~CanRxHandlerMock();
+
     MOCK_METHOD(
         void,
         attachReceiveHandler,

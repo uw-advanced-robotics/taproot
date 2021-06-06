@@ -31,7 +31,8 @@ namespace mock
 class CommandMapperMock : public aruwlib::control::CommandMapper
 {
 public:
-    CommandMapperMock(aruwlib::Drivers *drivers) : aruwlib::control::CommandMapper(drivers) {}
+    CommandMapperMock(aruwlib::Drivers *drivers);
+    virtual ~CommandMapperMock();
 
     MOCK_METHOD(
         void,

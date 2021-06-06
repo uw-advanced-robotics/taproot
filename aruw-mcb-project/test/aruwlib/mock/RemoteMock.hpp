@@ -30,7 +30,9 @@ namespace mock
 class RemoteMock : public aruwlib::Remote
 {
 public:
-    RemoteMock(aruwlib::Drivers *drivers) : aruwlib::Remote(drivers) {}
+    RemoteMock(aruwlib::Drivers *drivers);
+    virtual ~RemoteMock();
+
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, read, (), (override));
     MOCK_METHOD(bool, isConnected, (), (const override));

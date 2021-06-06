@@ -23,7 +23,7 @@
 #include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
 
-#include "aruwsrc/control/launcher/friction_wheel_subsystem.hpp"
+#include "aruwsrc/control/chassis/beyblade_command.hpp"
 
 namespace aruwsrc
 {
@@ -32,7 +32,13 @@ namespace mock
 class BeybladeCommandMock : public aruwsrc::chassis::BeybladeCommand
 {
 public:
-    BeybladeCommandMock(aruwlib::Drivers *drivers) : BeybladeCommand(drivers) {}
+    BeybladeCommandMock(
+        aruwlib::Drivers *drivers,
+        chassis::ChassisSubsystem *chassis,
+        turret::TurretSubsystem *turret);
+
+    virtual ~BeybladeCommandMock();
+
     MOCK_METHOD(void, initialize, (), ());
     MOCK_METHOD(void, execute, (), ());
 };  // class BeybladeCommandMock
