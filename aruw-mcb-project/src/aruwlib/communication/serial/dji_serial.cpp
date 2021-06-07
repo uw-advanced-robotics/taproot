@@ -20,34 +20,48 @@
 #include "dji_serial.hpp"
 
 #include "aruwlib/Drivers.hpp"
-#include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/architecture/endianness_wrappers.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+
+/**
+ * Macro that wraps uart read for ease of readability in code.
+ * @param[in] data Byte array where the data should be read into.
+ * @param[in] length The number of bytes to read.
+ * @return The number of bytes read into data.
+ */
+#define READ(data, length) drivers->uart.read(this->port, data, length)
+
+/**
+ * Macro that wraps uart write for ease of readability in code.
+ * @param[in] data Byte array from which data will be write.
+ * @param[in] length The number of bytes to write.
+ * @return 0 if writing is currently in progress (meaning we can't write to the bus currently), or
+ *      the number of bytes successfully written.
+ */
+#define WRITE(data, length) \
+    (drivers->uart.isWriteFinished(this->port) ? drivers->uart.write(this->port, data, length) : 0)
 
 namespace aruwlib
 {
 namespace serial
 {
-template class DJISerial<false>;
-template class DJISerial<true>;
-
-template <bool RxCrcEnabled>
-DJISerial<RxCrcEnabled>::DJISerial(Drivers *drivers, Uart::UartPort port)
+DJISerial::DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcementEnabled)
     : port(port),
       djiSerialRxState(SERIAL_HEADER_SEARCH),
+      newMessage(),
+      mostRecentMessage(),
       frameCurrReadByte(0),
       frameHeader(),
+      rxCrcEnabled(isRxCRCEnforcementEnabled),
       txBuffer(),
-      drivers(drivers)
+      drivers(drivers),
+      txMessage()
 {
-    txMessage.length = 0;
-    newMessage.length = 0;
-    mostRecentMessage.length = 0;
 }
 
-template <bool RxCrcEnabled>
-void DJISerial<RxCrcEnabled>::initialize()
+void DJISerial::initialize()
 {
     switch (this->port)
     {
@@ -65,8 +79,7 @@ void DJISerial<RxCrcEnabled>::initialize()
     }
 }
 
-template <bool RxCrcEnabled>
-bool DJISerial<RxCrcEnabled>::send()
+bool DJISerial::send()
 {
     txBuffer[0] = SERIAL_HEAD_BYTE;
     txBuffer[FRAME_DATA_LENGTH_OFFSET] = txMessage.length & 0xFF;
@@ -96,7 +109,7 @@ bool DJISerial<RxCrcEnabled>::send()
     txBuffer[FRAME_HEADER_LENGTH + txMessage.length + 1] = CRC16Val >> 8;
 
     uint32_t totalSize = FRAME_HEADER_LENGTH + txMessage.length + FRAME_CRC16_LENGTH;
-    uint32_t messageLengthSent = this->write(txBuffer, totalSize);
+    uint32_t messageLengthSent = WRITE(txBuffer, totalSize);
     if (messageLengthSent != totalSize)
     {
         return false;
@@ -111,8 +124,7 @@ bool DJISerial<RxCrcEnabled>::send()
     return true;
 }
 
-template <bool RxCrcEnabled>
-void DJISerial<RxCrcEnabled>::updateSerial()
+void DJISerial::updateSerial()
 {
     switch (djiSerialRxState)
     {
@@ -120,7 +132,7 @@ void DJISerial<RxCrcEnabled>::updateSerial()
         {
             // keep scanning for the head byte as long as you are here and have not yet found it.
             uint8_t serialHeadCheck = 0;
-            while (djiSerialRxState == SERIAL_HEADER_SEARCH && read(&serialHeadCheck, 1))
+            while (djiSerialRxState == SERIAL_HEADER_SEARCH && READ(&serialHeadCheck, 1))
             {
                 // we found it, store the head byte
                 if (serialHeadCheck == SERIAL_HEAD_BYTE)
@@ -138,7 +150,7 @@ void DJISerial<RxCrcEnabled>::updateSerial()
             // Read from the buffer. Keep track of the index in the frameHeader array using the
             // frameCurrReadByte. +1 at beginning and -1 on the end since the serial head
             // byte is part of the frame but has already been processed.
-            frameCurrReadByte += read(
+            frameCurrReadByte += READ(
                 frameHeader + frameCurrReadByte + 1,
                 FRAME_HEADER_LENGTH - frameCurrReadByte - 1);
 
@@ -169,7 +181,7 @@ void DJISerial<RxCrcEnabled>::updateSerial()
                 }
 
                 // check crc8 on header
-                if (RxCrcEnabled)
+                if (rxCrcEnabled)
                 {
                     uint8_t CRC8 = frameHeader[FRAME_CRC8_OFFSET];
                     // don't look at crc8 or frame type when calculating crc8
@@ -185,46 +197,42 @@ void DJISerial<RxCrcEnabled>::updateSerial()
                     }
                 }
 
+                // Calculate header portion of crc16
+                currCrc16 = algorithms::calculateCRC16(frameHeader, FRAME_HEADER_LENGTH);
+
                 // move on to processing message body
                 djiSerialRxState = PROCESS_FRAME_DATA;
             }
             break;
         }
-        case PROCESS_FRAME_DATA:  // read bulk of message
+        case PROCESS_FRAME_DATA:  // READ bulk of message
         {
-            // add on extra 2 bytes for crc enforcement, and read bytes until
+            // add on extra 2 bytes for crc enforcement, and READ bytes until
             // the length has been reached
-            if (RxCrcEnabled)
+            if (rxCrcEnabled)
             {
-                frameCurrReadByte += read(
+                frameCurrReadByte += READ(
                     newMessage.data + frameCurrReadByte,
                     newMessage.length + 2 - frameCurrReadByte);
             }
             else
             {
-                frameCurrReadByte += read(
+                frameCurrReadByte += READ(
                     newMessage.data + frameCurrReadByte,
                     newMessage.length - frameCurrReadByte);
             }
 
-            if ((frameCurrReadByte == newMessage.length && !RxCrcEnabled) ||
-                (frameCurrReadByte == newMessage.length + 2 && RxCrcEnabled))
+            if ((frameCurrReadByte == newMessage.length && !rxCrcEnabled) ||
+                (frameCurrReadByte == newMessage.length + 2 && rxCrcEnabled))
             {
                 frameCurrReadByte = 0;
-                if (RxCrcEnabled)
+                if (rxCrcEnabled)
                 {
-                    memcpy(rxCrcEnforcementBuff, frameHeader, FRAME_HEADER_LENGTH);
-                    memcpy(
-                        rxCrcEnforcementBuff + FRAME_HEADER_LENGTH,
-                        newMessage.data,
-                        newMessage.length);
-
-                    uint16_t CRC16 = (newMessage.data[newMessage.length + 1] << 8) |
-                                     newMessage.data[newMessage.length];
-                    if (!verifyCRC16(
-                            rxCrcEnforcementBuff,
-                            FRAME_HEADER_LENGTH + newMessage.length,
-                            CRC16))
+                    uint16_t CRC16;
+                    arch::convertFromLittleEndian(&CRC16, newMessage.data + newMessage.length);
+                    currCrc16 =
+                        algorithms::calculateCRC16(newMessage.data, newMessage.length, currCrc16);
+                    if (currCrc16 != CRC16)
                     {
                         djiSerialRxState = SERIAL_HEADER_SEARCH;
                         RAISE_ERROR(
@@ -246,8 +254,8 @@ void DJISerial<RxCrcEnabled>::updateSerial()
                 djiSerialRxState = SERIAL_HEADER_SEARCH;
             }
             else if (
-                (frameCurrReadByte > newMessage.length && !RxCrcEnabled) ||
-                (frameCurrReadByte > newMessage.length + 2 && RxCrcEnabled))
+                (frameCurrReadByte > newMessage.length && !rxCrcEnabled) ||
+                (frameCurrReadByte > newMessage.length + 2 && rxCrcEnabled))
             {
                 frameCurrReadByte = 0;
                 RAISE_ERROR(
@@ -259,49 +267,6 @@ void DJISerial<RxCrcEnabled>::updateSerial()
             }
             break;
         }
-    }
-}
-
-template <bool RxCrcEnabled>
-bool DJISerial<RxCrcEnabled>::verifyCRC8(uint8_t *data, uint32_t length, uint8_t expectedCRC8)
-{
-    uint8_t actualCRC8 = 0;
-    if (data == NULL)
-    {
-        return false;
-    }
-    actualCRC8 = algorithms::calculateCRC8(data, length);
-    return actualCRC8 == expectedCRC8;
-}
-
-template <bool RxCrcEnabled>
-bool DJISerial<RxCrcEnabled>::verifyCRC16(uint8_t *data, uint32_t length, uint16_t expectedCRC16)
-{
-    uint16_t actualCRC16 = 0;
-    if (data == NULL)
-    {
-        return false;
-    }
-    actualCRC16 = algorithms::calculateCRC16(data, length);
-    return actualCRC16 == expectedCRC16;
-}
-
-template <bool RxCrcEnabled>
-uint32_t DJISerial<RxCrcEnabled>::read(uint8_t *data, uint16_t length)
-{
-    return drivers->uart.read(this->port, data, length);
-}
-
-template <bool RxCrcEnabled>
-uint32_t DJISerial<RxCrcEnabled>::write(const uint8_t *data, uint16_t length)
-{
-    if (drivers->uart.isWriteFinished(this->port))
-    {
-        return drivers->uart.write(this->port, data, length);
-    }
-    else
-    {
-        return 0;
     }
 }
 

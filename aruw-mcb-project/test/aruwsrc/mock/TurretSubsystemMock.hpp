@@ -20,7 +20,6 @@
 #ifndef TURRET_SUBSYSTEM_MOCK_HPP_
 #define TURRET_SUBSYSTEM_MOCK_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
 
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
@@ -37,7 +36,23 @@ public:
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, refresh, (), (override));
+    MOCK_METHOD(bool, isTurretOnline, (), (const override));
+    MOCK_METHOD(int32_t, getYawVelocity, (), (const override));
+    MOCK_METHOD(int32_t, getPitchVelocity, (), (const override));
     MOCK_METHOD(float, getYawAngleFromCenter, (), (const override));
+    MOCK_METHOD(float, getPitchAngleFromCenter, (), (const override));
+    MOCK_METHOD(const aruwlib::algorithms::ContiguousFloat &, getYawAngle, (), (const override));
+    MOCK_METHOD(const aruwlib::algorithms::ContiguousFloat &, getPitchAngle, (), (const override));
+    MOCK_METHOD(void, setYawMotorOutput, (float out), (override));
+    MOCK_METHOD(void, setPitchMotorOutput, (float out), (override));
+    MOCK_METHOD(float, yawFeedForwardCalculation, (float desiredChassisRotation), (override));
+    MOCK_METHOD(void, setYawTarget, (float target), (override));
+    MOCK_METHOD(void, setPitchTarget, (float target), (override));
+    MOCK_METHOD(float, getYawTarget, (), (const override));
+    MOCK_METHOD(float, getPitchTarget, (), (const override));
+    MOCK_METHOD(void, updateCurrentTurretAngles, (), (override));
+    MOCK_METHOD(void, runHardwareTests, (), (override));
+    MOCK_METHOD(const char *, getName, (), (override));
 };  // class TurretSubsystemMock
 }  // namespace mock
 }  // namespace aruwsrc

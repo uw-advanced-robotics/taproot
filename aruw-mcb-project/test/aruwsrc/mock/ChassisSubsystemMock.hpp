@@ -20,7 +20,6 @@
 #ifndef CHASSIS_SUBSYSTEM_MOCK_HPP_
 #define CHASSIS_SUBSYSTEM_MOCK_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
 
 #include "aruwsrc/control/chassis/chassis_subsystem.hpp"
@@ -36,15 +35,19 @@ public:
     virtual ~ChassisSubsystemMock();
 
     MOCK_METHOD(void, initialize, (), (override));
-    MOCK_METHOD(void, setDesiredOutput, (float x, float y, float z), ());
-    MOCK_METHOD(float, chassisSpeedRotationPID, (float currentAngleError, float kp), ());
+    MOCK_METHOD(void, setDesiredOutput, (float x, float y, float z), (override));
+    MOCK_METHOD(float, chassisSpeedRotationPID, (float currentAngleError, float kp), (override));
     MOCK_METHOD(void, refresh, (), (override));
     MOCK_METHOD(
         float,
         calculateRotationTranslationalGain,
         (float chassisRotationDesiredWheelspeed),
         ());
-    MOCK_METHOD(float, getChassisDesiredRotation, (), (const));
+    MOCK_METHOD(float, getChassisDesiredRotation, (), (const override));
+    MOCK_METHOD(int16_t, getLeftFrontRpmActual, (), (const override));
+    MOCK_METHOD(int16_t, getLeftBackRpmActual, (), (const override));
+    MOCK_METHOD(int16_t, getRightFrontRpmActual, (), (const override));
+    MOCK_METHOD(int16_t, getRightBackRpmActual, (), (const override));
 };  // class ChassisSubsystemMock
 }  // namespace mock
 }  // namespace aruwsrc
