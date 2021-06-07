@@ -201,20 +201,6 @@ void TurretSubsystem::setYawMotorOutput(float out)
     }
 }
 
-const aruwlib::algorithms::ContiguousFloat& TurretSubsystem::getYawAngle() const
-{
-    return currYawAngle;
-}
-
-const aruwlib::algorithms::ContiguousFloat& TurretSubsystem::getPitchAngle() const
-{
-    return currPitchAngle;
-}
-
-float TurretSubsystem::getYawTarget() const { return yawTarget.getValue(); }
-
-float TurretSubsystem::getPitchTarget() const { return pitchTarget.getValue(); }
-
 void TurretSubsystem::setYawTarget(float target)
 {
     yawTarget.setValue(target);

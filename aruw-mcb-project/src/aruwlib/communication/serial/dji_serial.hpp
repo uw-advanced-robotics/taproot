@@ -22,6 +22,7 @@
 
 #include <cstdint>
 
+#include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 
 #include "util_macros.hpp"
@@ -69,10 +70,7 @@ namespace serial
  * | 8 + Data Length | CRC16 of header and frame, MSB                             |
  * +-----------------+------------------------------------------------------------+
  * \endrst
- *
- * @tparam RxCrcEnabled `true` if crc8 and crc16 enforcement are enabled.
  */
-template <bool RxCrcEnabled = false>
 class DJISerial
 {
 private:
@@ -106,9 +104,9 @@ public:
      * Construct a Serial object.
      *
      * @param[in] port serial port to work on.
-     * @param[in] isRxCRCEnforcementEnabled if to enable Rx CRC Enforcement.
+     * @param[in] isRxCRCEnforcementEnabled `true` to enable Rx CRC Enforcement.
      */
-    DJISerial(Drivers *drivers, Uart::UartPort port);
+    DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcementEnabled = true);
     DISALLOW_COPY_AND_ASSIGN(DJISerial)
     mockable ~DJISerial() = default;
 
@@ -176,20 +174,19 @@ private:
      */
     uint8_t frameHeader[FRAME_HEADER_LENGTH];
 
+    bool rxCrcEnabled;
+
+    /**
+     * Currently calculated crc16 value. The crc16 is computed it two parts - the header and
+     * the main body. Between receiving the header and the body, we store the intermediate
+     * crc value here.
+     */
+    uint16_t currCrc16 = 0;
+
     // TX related information.
 
     /// TX buffer.
     uint8_t txBuffer[SERIAL_TX_BUFF_SIZE];
-
-    /**
-     * Calculate CRC16 of given array and compare against expectedCRC16.
-     *
-     * @param[in] data array to calculate CRC16.
-     * @param[in] length length of array to check.
-     * @param[in] expectedCRC16 expected CRC16.
-     * @return if the calculated CRC16 matches CRC16 given.
-     */
-    bool verifyCRC16(uint8_t *message, uint32_t messageLength, uint16_t expectedCRC16);
 
     /**
      * Calculate CRC8 of given array and compare against expectedCRC8.
@@ -199,11 +196,10 @@ private:
      * @param[in] expectedCRC8 expected CRC8.
      * @return if the calculated CRC8 matches CRC8 given.
      */
-    bool verifyCRC8(uint8_t *message, uint32_t messageLength, uint8_t expectedCRC8);
-
-    uint32_t read(uint8_t *data, uint16_t length);
-
-    uint32_t write(const uint8_t *data, uint16_t length);
+    inline bool verifyCRC8(uint8_t *message, uint32_t messageLength, uint8_t expectedCRC8)
+    {
+        return aruwlib::algorithms::calculateCRC8(message, messageLength) == expectedCRC8;
+    }
 
 protected:
     Drivers *drivers;
@@ -213,8 +209,6 @@ protected:
      * for modification.
      */
     SerialMessage txMessage;
-
-    uint8_t rxCrcEnforcementBuff[RxCrcEnabled ? SERIAL_RX_FRAME_HEADER_AND_BUF_SIZE : 1];
 
     /**
      * Send a Message. This constructs a message from the `txMessage`,

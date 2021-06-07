@@ -415,7 +415,7 @@ public:
      *
      * @retval a desired rotation speed (wheel speed)
      */
-    float chassisSpeedRotationPID(float currentAngleError, float kp);
+    mockable float chassisSpeedRotationPID(float currentAngleError, float kp);
 
     void refresh() override;
 
@@ -423,7 +423,7 @@ public:
      * @return A number between 0 and 1 that is the ratio between the rotationRpm and
      *      the max rotation speed.
      */
-    float calculateRotationTranslationalGain(float chassisRotationDesiredWheelspeed);
+    mockable float calculateRotationTranslationalGain(float chassisRotationDesiredWheelspeed);
 
     const char* getName() override { return "Chassis"; }
 
@@ -451,6 +451,11 @@ public:
     void getVelocityWorldRelative(
         modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
         float chassisHeading) const;
+
+    mockable inline int16_t getLeftFrontRpmActual() const { return leftFrontMotor.getShaftRPM(); }
+    mockable inline int16_t getLeftBackRpmActual() const { return leftBackMotor.getShaftRPM(); }
+    mockable inline int16_t getRightFrontRpmActual() const { return rightFrontMotor.getShaftRPM(); }
+    mockable inline int16_t getRightBackRpmActual() const { return rightBackMotor.getShaftRPM(); }
 
     void onHardwareTestStart() override;
 

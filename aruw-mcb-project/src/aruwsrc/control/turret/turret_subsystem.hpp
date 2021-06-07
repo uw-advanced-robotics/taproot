@@ -32,6 +32,8 @@
 
 #include <modm/math/filter/pid.hpp>
 
+#include "util_macros.hpp"
+
 namespace aruwsrc
 {
 namespace turret
@@ -62,30 +64,42 @@ public:
     /**
      * @return `true` if both pitch and yaw gimbals are connected.
      */
-    bool isTurretOnline() const;
+    mockable bool isTurretOnline() const;
 
-    int32_t getYawVelocity() const;
-    int32_t getPitchVelocity() const;
+    /**
+     * @return The velocity, in degrees / second, of the turret's pitch yaw
+     */
+    mockable int32_t getYawVelocity() const;
+    /**
+     * @return The velocity, in degrees / second, of the turret's pitch motor
+     */
+    mockable int32_t getPitchVelocity() const;
 
     /**
      * @return An angle between [-180, 180] that is the angle difference of the yaw gimbal
-     *      from center (90 degrees).
+     *      from center (90 degrees), in degrees.
      */
     mockable float getYawAngleFromCenter() const;
     /**
      * @return An angle between [-180, 180] that is the angle difference of the pitch gimbal
-     *      from center (90 degrees).
+     *      from center (90 degrees), in degrees.
      */
-    float getPitchAngleFromCenter() const;
+    mockable float getPitchAngleFromCenter() const;
 
-    /**
-     * @return The wrapped yaw angle of the actual yaw gimbal.
+    /*
+     * @return The wrapped yaw angle of the actual yaw gimbal, in degrees
      */
-    const aruwlib::algorithms::ContiguousFloat& getYawAngle() const;
+    mockable inline const aruwlib::algorithms::ContiguousFloat& getYawAngle() const
+    {
+        return currYawAngle;
+    }
     /**
-     * @return The wrapped pitch angle of the actual pitch gimbal.
+     * @return The wrapped pitch angle of the actual pitch gimbal, in degrees.
      */
-    const aruwlib::algorithms::ContiguousFloat& getPitchAngle() const;
+    mockable inline const aruwlib::algorithms::ContiguousFloat& getPitchAngle() const
+    {
+        return currPitchAngle;
+    }
 
     /**
      * Attempts to set desired yaw output to the passed in value. If the turret is out of
@@ -93,47 +107,47 @@ public:
      *
      * @param[in] out The desired yaw output, limited to `[-30000, 30000]`.
      */
-    void setYawMotorOutput(float out);
+    mockable void setYawMotorOutput(float out);
     /**
      * Attempts to set desired pitch output to the passed in value. If the turret is out of
      * bounds, the output is limited.
      *
      * @param[in] out The desired pitch output, limited to `[-30000, 30000]`.
      */
-    void setPitchMotorOutput(float out);
+    mockable void setPitchMotorOutput(float out);
 
     /**
      * Calculates a yaw output that uses the desired chassis rotation as a feed forward gain.
      *
      * @param[in] desiredChassisRotation The chassis rotation in RPM (before gearing).
      */
-    float yawFeedForwardCalculation(float desiredChassisRotation);
+    mockable float yawFeedForwardCalculation(float desiredChassisRotation);
 
     /**
      * Set a target angle in chassis frame, the angle is accordingly limited.
      * Note that since there is no controller in this subsystem, this target
      * angle merely acts as a safe way to set angles when using a position controller.
      */
-    void setYawTarget(float target);
+    mockable void setYawTarget(float target);
     /**
      * @see setYawTarget
      */
-    void setPitchTarget(float target);
+    mockable void setPitchTarget(float target);
 
     /**
      * @return The yaw target as set by the user in `setYawTarget`.
      */
-    float getYawTarget() const;
+    mockable inline float getYawTarget() const { return yawTarget.getValue(); }
     /**
      * @return The pitch target as set by the user in `setPitchTarget`.
      */
-    float getPitchTarget() const;
+    mockable inline float getPitchTarget() const { return pitchTarget.getValue(); }
 
     /**
      * Reads the raw pitch and yaw angles and updates the wrapped versions of
      * these angles.
      */
-    void updateCurrentTurretAngles();
+    mockable void updateCurrentTurretAngles();
 
     const char* getName() override { return "Turret"; }
 

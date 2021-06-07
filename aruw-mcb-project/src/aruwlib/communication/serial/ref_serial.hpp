@@ -45,7 +45,7 @@ namespace serial
  * @note use the instance stored in the `Drivers` to interact with this class
  *      (you shouldn't be declaring your own `RefSerial` object).
  */
-class RefSerial : public DJISerial<true>
+class RefSerial : public DJISerial
 {
 private:
     static constexpr uint32_t TIME_OFFLINE_REF_DATA_MS = 1000;
