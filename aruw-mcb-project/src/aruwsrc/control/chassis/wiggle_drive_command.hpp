@@ -22,6 +22,8 @@
 
 #include <aruwlib/control/command.hpp>
 
+#include "aruwlib/algorithms/ramp.hpp"
+
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
 
 namespace aruwlib
@@ -64,11 +66,12 @@ public:
     const char* getName() const override { return "chassis wiggle drive"; }
 
 private:
-    static constexpr float WIGGLE_PERIOD = 1600.0f;
-    static constexpr float WIGGLE_MAX_ROTATE_ANGLE = 60.0f;
+    static constexpr float WIGGLE_PERIOD = 2000.0f;
+    static constexpr float WIGGLE_MAX_ROTATE_ANGLE = 45.0f;
     static constexpr float WIGGLE_ROTATE_KP = -250.0f;
     static constexpr float TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING = 0.5f;
     static constexpr float WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR = 10.0f;
+    static constexpr float TURRET_YAW_TARGET_RAMP_INCREMENT = 0.5f;
 
     aruwlib::Drivers* drivers;
     ChassisSubsystem* chassis;
@@ -77,6 +80,7 @@ private:
     uint32_t timeOffset = 0;
     float startTimeForAngleOffset = 0.0f;
     bool outOfCenter = false;
+    aruwlib::algorithms::Ramp turretYawRamp;
 
     // sin curve to determine angle to rotate to based on current "time"
     float wiggleSin(float time);

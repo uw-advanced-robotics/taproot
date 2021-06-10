@@ -42,7 +42,8 @@ WiggleDriveCommand::WiggleDriveCommand(
     aruwsrc::turret::TurretSubsystem* turret)
     : drivers(drivers),
       chassis(chassis),
-      turret(turret)
+      turret(turret),
+      turretYawRamp(0)
 {
     addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
 }
@@ -68,6 +69,10 @@ void WiggleDriveCommand::initialize()
     // The offset so when we start calculating a rotation angle, the initial
     // time is zero.
     timeOffset = aruwlib::arch::clock::getTimeMilliseconds();
+
+    float turretYaw = turret->getYawAngleFromCenter();
+    turretYawRamp.setTarget(turretYaw);
+    turretYawRamp.setValue(turretYaw);
 }
 
 float WiggleDriveCommand::wiggleSin(float t)
@@ -90,11 +95,15 @@ void WiggleDriveCommand::execute()
             static_cast<float>(aruwlib::arch::clock::getTimeMilliseconds() - timeOffset) -
             startTimeForAngleOffset;
         float desiredAngleError;
-        float turretYawAngle = turret->getYawAngleFromCenter();
+
+        float turretYaw = turret->getYawAngleFromCenter();
+        turretYawRamp.setTarget(turretYaw);
+        turretYawRamp.update(TURRET_YAW_TARGET_RAMP_INCREMENT);
+        float turretYawFiltered = turretYawRamp.getValue();
 
         if (outOfCenter)
         {
-            outOfCenter = fabsf(turretYawAngle) > WIGGLE_MAX_ROTATE_ANGLE;
+            outOfCenter = fabsf(turretYaw) > WIGGLE_MAX_ROTATE_ANGLE;
             if (!outOfCenter)
             {
                 initialize();
@@ -103,12 +112,12 @@ void WiggleDriveCommand::execute()
 
         if (!outOfCenter)
         {
-            desiredAngleError = wiggleSin(curTime) + turretYawAngle;
+            desiredAngleError = wiggleSin(curTime) + turretYawFiltered;
         }
         else
         {
             desiredAngleError = aruwlib::algorithms::limitVal(
-                turretYawAngle,
+                turretYawFiltered,
                 -WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR,
                 WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR);
         }
@@ -120,7 +129,7 @@ void WiggleDriveCommand::execute()
         y *= TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING;
         // Apply a rotation matrix to the user input so you drive turret
         // relative while wiggling.
-        aruwlib::algorithms::rotateVector(&x, &y, -degreesToRadians(turretYawAngle));
+        aruwlib::algorithms::rotateVector(&x, &y, -degreesToRadians(turretYaw));
     }
     else
     {
