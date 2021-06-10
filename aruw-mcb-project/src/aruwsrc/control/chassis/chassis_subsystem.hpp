@@ -99,7 +99,7 @@ private:
      *
      * The P gain is specified by the user and thus is not specified below.
      */
-    static constexpr float CHASSIS_REVOLVE_PID_MAX_P = MAX_WHEEL_SPEED_SINGLE_MOTOR;
+    static constexpr float CHASSIS_REVOLVE_PID_MAX_P = 3000;
     /**
      * Derivative term used in chassis PID.
      */
