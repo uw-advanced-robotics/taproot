@@ -34,6 +34,8 @@
 #include "sentinel/sentinel_auto_drive_command.hpp"
 #include "sentinel/sentinel_drive_manual_command.hpp"
 #include "sentinel/sentinel_drive_subsystem.hpp"
+#include "sentinel/sentinel_rotate_agitator_command.hpp"
+#include "sentinel/sentinel_switcher_subsystem.hpp"
 #include "turret/turret_cv_command.hpp"
 #include "turret/turret_init_command.hpp"
 #include "turret/turret_manual_command.hpp"
@@ -42,9 +44,11 @@
 
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
-using namespace aruwlib::control;
+using namespace aruwsrc::sentinel;
 using namespace aruwlib::gpio;
 using namespace aruwsrc::control;
+using namespace aruwlib::control;
+using namespace aruwlib::motor;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 
@@ -60,6 +64,7 @@ namespace aruwsrc
 {
 namespace control
 {
+static constexpr Pwm::Pin SWITCHER_SERVO_PIN = Pwm::Pin::W;
 static constexpr Digital::InputPin LEFT_LIMIT_SWITCH = Digital::InputPin::A;
 static constexpr Digital::InputPin RIGHT_LIMIT_SWITCH = Digital::InputPin::B;
 
@@ -76,35 +81,18 @@ AgitatorSubsystem agitator(
     AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
     false);
 
-AgitatorSubsystem kickerMotor(
-    drivers(),
-    AgitatorSubsystem::PID_17MM_KICKER_P,
-    AgitatorSubsystem::PID_17MM_KICKER_I,
-    AgitatorSubsystem::PID_17MM_KICKER_D,
-    AgitatorSubsystem::PID_17MM_KICKER_MAX_ERR_SUM,
-    AgitatorSubsystem::PID_17MM_KICKER_MAX_OUT,
-    AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
-    AgitatorSubsystem::SENTINEL_KICKER_MOTOR_ID,
-    AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
-    false);
-
 SentinelDriveSubsystem sentinelDrive(drivers(), LEFT_LIMIT_SWITCH, RIGHT_LIMIT_SWITCH);
 
-FrictionWheelSubsystem upperFrictionWheels(
-    drivers(),
-    aruwlib::motor::MOTOR3,
-    aruwlib::motor::MOTOR4);
+FrictionWheelSubsystem upperFrictionWheels(drivers(), MOTOR4, MOTOR3);
 
-FrictionWheelSubsystem lowerFrictionWheels(drivers());
+FrictionWheelSubsystem lowerFrictionWheels(drivers(), MOTOR1, MOTOR2);
+
+SentinelSwitcherSubsystem switcher(drivers(), SWITCHER_SERVO_PIN);
 
 /* define commands ----------------------------------------------------------*/
-ShootFastComprisedCommand17MM agitatorShootSlowCommand(drivers(), &agitator);
+SentinelRotateAgitatorCommand rotateAgitatorManual(drivers(), &agitator, &switcher);
 
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
-
-AgitatorRotateCommand agitatorKickerCommand(&kickerMotor, 3.0f, 1, 0, false);
-
-AgitatorCalibrateCommand agitatorCalibrateKickerCommand(&kickerMotor);
 
 SentinelAutoDriveCommand sentinelAutoDrive(&sentinelDrive);
 
@@ -123,43 +111,38 @@ FrictionWheelRotateCommand stopUpperFrictionWheels(&upperFrictionWheels, 0);
 FrictionWheelRotateCommand stopLowerFrictionWheels(&lowerFrictionWheels, 0);
 
 /* define command mappings --------------------------------------------------*/
-HoldRepeatCommandMapping leftSwitchUp(
-    drivers(),
-    {&agitatorShootSlowCommand, &agitatorKickerCommand},
-    aruwlib::control::RemoteMapState(
-        aruwlib::Remote::Switch::LEFT_SWITCH,
-        aruwlib::Remote::SwitchState::UP));
+
 HoldCommandMapping leftSwitchDown(
     drivers(),
     {&stopLowerFrictionWheels, &stopUpperFrictionWheels},
-    aruwlib::control::RemoteMapState(
-        aruwlib::Remote::Switch::LEFT_SWITCH,
-        aruwlib::Remote::SwitchState::DOWN));
-HoldRepeatCommandMapping rightSwitchDown(
+    RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+HoldRepeatCommandMapping leftSwitchUp(
     drivers(),
     {&sentinelAutoDrive},
-    aruwlib::control::RemoteMapState(
-        aruwlib::Remote::Switch::RIGHT_SWITCH,
-        aruwlib::Remote::SwitchState::DOWN));
+    RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+HoldRepeatCommandMapping rightSwitchUp(
+    drivers(),
+    {&rotateAgitatorManual},
+    RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 /* initialize subsystems ----------------------------------------------------*/
 void initializeSubsystems()
 {
     agitator.initialize();
-    kickerMotor.initialize();
     sentinelDrive.initialize();
     upperFrictionWheels.initialize();
     lowerFrictionWheels.initialize();
+    switcher.initialize();
 }
 
 /* register subsystems here -------------------------------------------------*/
 void registerSentinelSubsystems(aruwlib::Drivers *drivers)
 {
     drivers->commandScheduler.registerSubsystem(&agitator);
-    drivers->commandScheduler.registerSubsystem(&kickerMotor);
     drivers->commandScheduler.registerSubsystem(&sentinelDrive);
     drivers->commandScheduler.registerSubsystem(&upperFrictionWheels);
     drivers->commandScheduler.registerSubsystem(&lowerFrictionWheels);
+    drivers->commandScheduler.registerSubsystem(&switcher);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
@@ -174,7 +157,6 @@ void setDefaultSentinelCommands(aruwlib::Drivers *)
 void startSentinelCommands(aruwlib::Drivers *drivers)
 {
     drivers->commandScheduler.addCommand(&agitatorCalibrateCommand);
-    drivers->commandScheduler.addCommand(&agitatorCalibrateKickerCommand);
 }
 
 /* register io mappings here ------------------------------------------------*/
@@ -182,7 +164,7 @@ void registerSentinelIoMappings(aruwlib::Drivers *drivers)
 {
     drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
-    drivers->commandMapper.addMap(&rightSwitchDown);
+    drivers->commandMapper.addMap(&rightSwitchUp);
 }
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
