@@ -33,30 +33,28 @@ using namespace aruwsrc::mock;
 using namespace testing;
 using namespace aruwlib::serial;
 
-#define SETUP_TEST(ComprisedCommand, ...)                              \
-    Drivers drivers;                                                   \
-    AgitatorSubsystemMock agitator(&drivers);                          \
-    ComprisedCommand shootCommand(&drivers, &agitator, ##__VA_ARGS__); \
-    EXPECT_CALL(drivers.djiMotorTxHandler, removeFromMotorManager);    \
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
+#define SETUP_TEST(ComprisedCommand, ...)               \
+    Drivers drivers;                                    \
+    NiceMock<AgitatorSubsystemMock> agitator(&drivers); \
+    ComprisedCommand shootCommand(&drivers, &agitator, ##__VA_ARGS__);
 
-#define SETUP_EXPECTATIONS_SHARED(startingAngle, receivingRefSerial)             \
-    EXPECT_CALL(drivers.refSerial, getRobotData).WillOnce(ReturnRef(robotData)); \
-    EXPECT_CALL(drivers.refSerial, getRefSerialReceivingData).WillOnce(Return(receivingRefSerial));
+#define SETUP_EXPECTATIONS_SHARED(startingAngle, receivingRefSerial)              \
+    ON_CALL(drivers.refSerial, getRobotData).WillByDefault(ReturnRef(robotData)); \
+    ON_CALL(drivers.refSerial, getRefSerialReceivingData).WillByDefault(Return(receivingRefSerial));
 
-#define SETUP_EXPECTATIONS_NORMAL(startingAngle, receivingRefSerial)                        \
-    SETUP_EXPECTATIONS_SHARED(startingAngle, receivingRefSerial);                           \
-    EXPECT_CALL(agitator, getAgitatorAngle).Times(2).WillRepeatedly(Return(startingAngle)); \
-    EXPECT_CALL(agitator, getAgitatorDesiredAngle).WillOnce(Return(startingAngle));         \
-    EXPECT_CALL(agitator, armAgitatorUnjamTimer);
+#define SETUP_EXPECTATIONS_NORMAL(startingAngle, receivingRefSerial)                 \
+    SETUP_EXPECTATIONS_SHARED(startingAngle, receivingRefSerial);                    \
+    ON_CALL(agitator, getAgitatorAngle).WillByDefault(Return(startingAngle));        \
+    ON_CALL(agitator, getAgitatorDesiredAngle).WillByDefault(Return(startingAngle)); \
+    ON_CALL(agitator, armAgitatorUnjamTimer).WillByDefault(Return());
 
 #define SETUP_EXPECTATIONS_OVERHEAT(startingAngle)  \
     SETUP_EXPECTATIONS_SHARED(startingAngle, true); \
-    EXPECT_CALL(agitator, getAgitatorAngle).WillOnce(Return(startingAngle));
+    ON_CALL(agitator, getAgitatorAngle).WillByDefault(Return(startingAngle));
 
-#define RUN_TEST(expectedFinished, finalDesiredAngle, overHeatLimit)                    \
-    shootCommand.initialize();                                                          \
-    EXPECT_CALL(agitator, getAgitatorDesiredAngle).WillOnce(Return(finalDesiredAngle)); \
+#define RUN_TEST(expectedFinished, finalDesiredAngle, overHeatLimit)                     \
+    shootCommand.initialize();                                                           \
+    ON_CALL(agitator, getAgitatorDesiredAngle).WillByDefault(Return(finalDesiredAngle)); \
     EXPECT_EQ(expectedFinished, shootCommand.isFinished());
 
 // Validation for heat limiting confirmed by whether or not the command reports it is finished

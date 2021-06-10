@@ -50,8 +50,9 @@ void AgitatorUnjamCommand::initialize()
     agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
 
     // define a random unjam angle between [MIN_AGITATOR_UNJAM_ANGLE, agitatorUnjamAngleMax]
-    float randomUnjamAngle =
-        fmodf(rand(), agitatorUnjamAngleMax - MIN_AGITATOR_UNJAM_ANGLE) + MIN_AGITATOR_UNJAM_ANGLE;
+    const float minUnjamAngle =
+        agitatorUnjamAngleMax <= MIN_AGITATOR_UNJAM_ANGLE ? 0 : MIN_AGITATOR_UNJAM_ANGLE;
+    float randomUnjamAngle = fmodf(rand(), agitatorUnjamAngleMax - minUnjamAngle) + minUnjamAngle;
 
     // subtract this angle from the current angle to rotate agitator backwards
     currAgitatorUnjamAngle = connectedAgitator->getAgitatorAngle() - randomUnjamAngle;
