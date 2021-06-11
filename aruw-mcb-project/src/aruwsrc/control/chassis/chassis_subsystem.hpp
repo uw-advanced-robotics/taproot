@@ -22,6 +22,7 @@
 
 #include <aruwlib/algorithms/extended_kalman.hpp>
 #include <aruwlib/algorithms/math_user_utils.hpp>
+#include <aruwlib/communication/gpio/analog.hpp>
 #include <aruwlib/control/subsystem.hpp>
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
@@ -33,6 +34,9 @@
 #include <modm/math/filter/pid.hpp>
 #include <modm/math/matrix.hpp>
 
+#include "aruwlib/motor/m3508_constants.hpp"
+
+#include "power_limiter.hpp"
 #include "util_macros.hpp"
 
 namespace aruwsrc
@@ -65,15 +69,27 @@ public:
      */
     static constexpr float MIN_ROTATION_THRESHOLD = 800.0f;
 
+    /**
+     * Pin to use for current sensing
+     */
+    static constexpr aruwlib::gpio::Analog::Pin CURRENT_SENSOR_PIN = aruwlib::gpio::Analog::Pin::S;
+
+    /// @see power_limiter.hpp for what these mean
+    static constexpr float MAX_ENERGY_BUFFER = 60.0f;
+    static constexpr float ENERGY_BUFFER_LIMIT_THRESHOLD = 40.0f;
+    static constexpr float ENERGY_BUFFER_CRIT_THRESHOLD = 5;
+    static constexpr uint16_t POWER_CONSUMPTION_THRESHOLD = 20;
+    static constexpr float CURRENT_ALLOCATED_FOR_ENERGY_BUFFER_LIMITING = 30000;
+
 private:
 #if defined(TARGET_SOLDIER) || defined(TARGET_OLD_SOLDIER)
     /**
      * Velocity PID gains and constants.
      */
-    const float VELOCITY_PID_KP = 20.0f;
-    const float VELOCITY_PID_KI = 0.0f;
-    const float VELOCITY_PID_KD = 0.0f;
-    const float VELOCITY_PID_MAX_ERROR_SUM = 0.0f;
+    static constexpr float VELOCITY_PID_KP = 20.0f;
+    static constexpr float VELOCITY_PID_KI = 0.0f;
+    static constexpr float VELOCITY_PID_KD = 0.0f;
+    static constexpr float VELOCITY_PID_MAX_ERROR_SUM = 0.0f;
     /**
      * This max output is measured in the c620 robomaster translated current.
      * Per the datasheet, the controllable current range is -16384 ~ 0 ~ 16384.
@@ -107,16 +123,16 @@ private:
     /**
      * Derivative max term.
      */
-    static constexpr float CHASSIS_REVOLVE_PID_MAX_D = 0.0f;
+    static constexpr float CHASSIS_REVOLVE_PID_MAX_D = 3500.0f;
     /**
      * The maximum revolve error before we start using the derivative term.
      */
-    static const int MIN_ERROR_ROTATION_D = 0;
+    static constexpr int MIN_ERROR_ROTATION_D = 0;
 
     /**
      * The maximum output allowed out of the rotation PID controller.
      */
-    static constexpr float MAX_OUTPUT_ROTATION_PID = 5000.0f;
+    static constexpr float MAX_OUTPUT_ROTATION_PID = 4000.0f;
 
     // mechanical chassis constants, all in m
     /**
@@ -323,13 +339,18 @@ private:
     aruwlib::motor::DjiMotor rightBackMotor;
 #endif
 
+    aruwlib::motor::DjiMotor* motors[4];
+    PowerLimiter chassisPowerLimiter;
+    const aruwlib::motor::M3508Constants motorConstants;
+
 public:
     ChassisSubsystem(
         aruwlib::Drivers* drivers,
         aruwlib::motor::MotorId leftFrontMotorId = LEFT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId leftBackMotorId = LEFT_BACK_MOTOR_ID,
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
-        aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID)
+        aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID,
+        aruwlib::gpio::Analog::Pin currentPin = CURRENT_SENSOR_PIN)
         : aruwlib::control::Subsystem(drivers),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
@@ -369,7 +390,21 @@ public:
               CAN_BUS_MOTORS,
               false,
               "right front drive motor"),
-          rightBackMotor(drivers, rightBackMotorId, CAN_BUS_MOTORS, false, "right back drive motor")
+          rightBackMotor(
+              drivers,
+              rightBackMotorId,
+              CAN_BUS_MOTORS,
+              false,
+              "right back drive motor"),
+          chassisPowerLimiter(
+              drivers,
+              currentPin,
+              MAX_ENERGY_BUFFER,
+              ENERGY_BUFFER_LIMIT_THRESHOLD,
+              ENERGY_BUFFER_CRIT_THRESHOLD,
+              POWER_CONSUMPTION_THRESHOLD,
+              CURRENT_ALLOCATED_FOR_ENERGY_BUFFER_LIMITING,
+              motorConstants)
     {
         constexpr float A = (WIDTH_BETWEEN_WHEELS_X + WIDTH_BETWEEN_WHEELS_Y == 0)
                                 ? 1
@@ -387,6 +422,11 @@ public:
         wheelVelToChassisVelMat[2][2] = 1.0 / A;
         wheelVelToChassisVelMat[2][3] = 1.0 / A;
         wheelVelToChassisVelMat *= (WHEEL_RADIUS / 4);
+
+        motors[LF] = &leftFrontMotor;
+        motors[LB] = &leftBackMotor;
+        motors[RF] = &rightFrontMotor;
+        motors[RB] = &rightBackMotor;
     }
 
     void initialize() override;

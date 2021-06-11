@@ -70,9 +70,9 @@ public:
 
 private:
     static constexpr float YAW_P = 4000.0f;
-    static constexpr float YAW_I = 0.0f;
+    static constexpr float YAW_I = 50.0f;
     static constexpr float YAW_D = 180.0f;
-    static constexpr float YAW_MAX_ERROR_SUM = 0.0f;
+    static constexpr float YAW_MAX_ERROR_SUM = 1000.0f;
     static constexpr float YAW_MAX_OUTPUT = 30000.0f;
     static constexpr float YAW_Q_DERIVATIVE_KALMAN = 1.0f;
     static constexpr float YAW_R_DERIVATIVE_KALMAN = 20.0f;

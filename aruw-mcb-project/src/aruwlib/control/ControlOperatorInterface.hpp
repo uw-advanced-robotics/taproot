@@ -38,8 +38,8 @@ namespace control
 class ControlOperatorInterface
 {
 public:
-    static constexpr int16_t USER_MOUSE_YAW_MAX = 1000;
-    static constexpr int16_t USER_MOUSE_PITCH_MAX = 1000;
+    static constexpr int16_t USER_MOUSE_YAW_MAX = 5000;
+    static constexpr int16_t USER_MOUSE_PITCH_MAX = 5000;
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
     static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;

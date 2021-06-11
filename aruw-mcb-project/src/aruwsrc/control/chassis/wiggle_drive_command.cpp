@@ -63,7 +63,7 @@ void WiggleDriveCommand::initialize()
     // We use the limited current turret angle to calculate a time offset in
     // a angle vs. time graph so when we start at some angle from center we
     // are still in phase.
-    startTimeForAngleOffset = asinf(turretCurAngle / WIGGLE_MAX_ROTATE_ANGLE) * WIGGLE_PERIOD /
+    startTimeForAngleOffset = asinf(turretCurAngle / WIGGLE_MAX_ROTATE_ANGLE) * getPeriod() /
                               (2.0f * aruwlib::algorithms::PI);
 
     // The offset so when we start calculating a rotation angle, the initial
@@ -77,7 +77,7 @@ void WiggleDriveCommand::initialize()
 
 float WiggleDriveCommand::wiggleSin(float t)
 {
-    return WIGGLE_MAX_ROTATE_ANGLE * sinf((2.0f * aruwlib::algorithms::PI / WIGGLE_PERIOD) * t);
+    return WIGGLE_MAX_ROTATE_ANGLE * sinf((2.0f * aruwlib::algorithms::PI / getPeriod()) * t);
 }
 
 void WiggleDriveCommand::execute()
@@ -137,12 +137,40 @@ void WiggleDriveCommand::execute()
             ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
     }
 
+    float rTranslationalGain = chassis->calculateRotationTranslationalGain(r) *
+                               ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
+
+    x = aruwlib::algorithms::limitVal<float>(x, -rTranslationalGain, rTranslationalGain);
+    y = aruwlib::algorithms::limitVal<float>(y, -rTranslationalGain, rTranslationalGain);
+
     chassis->setDesiredOutput(x, y, r);
 }
 
 void WiggleDriveCommand::end(bool) { chassis->setDesiredOutput(0.0f, 0.0f, 0.0f); }
 
 bool WiggleDriveCommand::isFinished() const { return false; }
+
+float WiggleDriveCommand::getPeriod() const
+{
+    uint16_t powerConsumptionLimit =
+        drivers->refSerial.getRobotData().chassis.powerConsumptionLimit;
+    if (powerConsumptionLimit <= 45 || !drivers->refSerial.getRefSerialReceivingData())
+    {
+        return WIGGLE_PERIOD_45W_CUTOFF;
+    }
+    else if (powerConsumptionLimit <= 60)
+    {
+        return WIGGLE_PERIOD_60W_CUTOFF;
+    }
+    else if (powerConsumptionLimit <= 80)
+    {
+        return WIGGLE_PERIOD_80W_CUTOFF;
+    }
+    else
+    {
+        return WIGGLE_PERIOD_MAX_CUTOFF;
+    }
+}
 
 }  // namespace chassis
 

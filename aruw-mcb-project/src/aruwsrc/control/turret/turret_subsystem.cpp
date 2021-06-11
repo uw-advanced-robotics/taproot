@@ -108,10 +108,7 @@ int32_t TurretSubsystem::getVelocity(const DjiMotor& motor) const
     return 360 / 60 * motor.getShaftRPM();
 }
 
-bool TurretSubsystem::isTurretOnline() const
-{
-    return pitchMotor.isMotorOnline() && yawMotor.isMotorOnline();
-}
+bool TurretSubsystem::isTurretOnline() const { return yawMotor.isMotorOnline(); }
 
 void TurretSubsystem::refresh() { updateCurrentTurretAngles(); }
 

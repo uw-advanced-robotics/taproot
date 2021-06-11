@@ -35,6 +35,35 @@ namespace aruwsrc
 {
 namespace control
 {
+SentinelDriveSubsystem::SentinelDriveSubsystem(
+    aruwlib::Drivers* drivers,
+    aruwlib::gpio::Digital::InputPin leftLimitSwitch,
+    aruwlib::gpio::Digital::InputPin rightLimitSwitch,
+    aruwlib::motor::MotorId leftMotorId,
+    aruwlib::motor::MotorId rightMotorId,
+    aruwlib::gpio::Analog::Pin currentSensorPin)
+    : aruwlib::control::Subsystem(drivers),
+      leftLimitSwitch(leftLimitSwitch),
+      rightLimitSwitch(rightLimitSwitch),
+      velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+      velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
+      desiredRpm(0),
+      leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, false, "left sentinel drive motor"),
+      rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor"),
+      powerLimiter(
+          drivers,
+          currentSensorPin,
+          MAX_ENERGY_BUFFER,
+          ENERGY_BUFFER_LIMIT_THRESHOLD,
+          ENERGY_BUFFER_CRIT_THRESHOLD,
+          POWER_CONSUMPTION_THRESHOLD,
+          CURRENT_ALLOCATED_FOR_ENERGY_BUFFER_LIMITING,
+          motorConstants)
+{
+    chassisMotors[0] = &leftWheel;
+    chassisMotors[1] = &rightWheel;
+}
+
 void SentinelDriveSubsystem::initialize()
 {
     drivers->digital.configureInputPullMode(
@@ -55,6 +84,7 @@ void SentinelDriveSubsystem::refresh()
     leftWheel.setDesiredOutput(velocityPidLeftWheel.getValue());
     velocityPidRightWheel.update(desiredRpm - rightWheel.getShaftRPM());
     rightWheel.setDesiredOutput(velocityPidRightWheel.getValue());
+    powerLimiter.performPowerLimiting(chassisMotors, MODM_ARRAY_SIZE(chassisMotors));
     // constantly poll the limit switches, resetting offset if needed
     resetOffsetFromLimitSwitch();
 }
