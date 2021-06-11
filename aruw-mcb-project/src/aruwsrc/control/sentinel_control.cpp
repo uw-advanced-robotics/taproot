@@ -133,6 +133,7 @@ void initializeSubsystems()
     upperFrictionWheels.initialize();
     lowerFrictionWheels.initialize();
     switcher.initialize();
+    drivers()->xavierSerial.attachChassis(&sentinelDrive);
 }
 
 /* register subsystems here -------------------------------------------------*/

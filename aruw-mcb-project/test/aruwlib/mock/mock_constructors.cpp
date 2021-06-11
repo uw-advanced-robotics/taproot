@@ -40,6 +40,7 @@
 #include "SubsystemMock.hpp"
 #include "TerminalSerialMock.hpp"
 #include "UartMock.hpp"
+#include "XavierSerialMock.hpp"
 
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors
@@ -151,4 +152,7 @@ TerminalSerialMock::~TerminalSerialMock() {}
 
 UartMock::UartMock() {}
 UartMock::~UartMock() {}
+
+XavierSerialMock::XavierSerialMock(Drivers *drivers) : serial::XavierSerial(drivers) {}
+XavierSerialMock::~XavierSerialMock() {}
 }  // namespace aruwlib::mock

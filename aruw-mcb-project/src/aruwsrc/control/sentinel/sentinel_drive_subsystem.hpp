@@ -21,7 +21,7 @@
 #define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 
 #include <aruwlib/communication/gpio/digital.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include <aruwlib/control/chassis/i_chassis_subsystem.hpp>
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include <aruwlib/mock/DJIMotorMock.hpp>
@@ -41,7 +41,7 @@ namespace aruwsrc
 {
 namespace control
 {
-class SentinelDriveSubsystem : public aruwlib::control::Subsystem
+class SentinelDriveSubsystem : public aruwlib::control::chassis::IChassisSubsystem
 {
 public:
     /// @see power_limiter.hpp for what these mean
@@ -83,6 +83,13 @@ public:
     void onHardwareTestComplete() override;
 
     const char* getName() override { return "Sentinel Drive"; }
+
+    inline int getNumChassisMotors() const override { return 2; }
+
+    inline int16_t getLeftFrontRpmActual() const override { return leftWheel.getShaftRPM(); }
+    inline int16_t getLeftBackRpmActual() const override { return 0; }
+    inline int16_t getRightFrontRpmActual() const override { return rightWheel.getShaftRPM(); }
+    inline int16_t getRightBackRpmActual() const override { return 0; }
 
 private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;

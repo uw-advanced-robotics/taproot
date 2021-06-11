@@ -33,18 +33,15 @@ class XavierSerialTester;
 namespace aruwlib
 {
 class Drivers;
+
+namespace control::turret
+{
+class ITurretSubsystem;
 }
 
-namespace aruwsrc
+namespace control::chassis
 {
-namespace turret
-{
-class TurretSubsystem;
-}
-
-namespace chassis
-{
-class ChassisSubsystem;
+class IChassisSubsystem;
 }
 
 namespace serial
@@ -81,10 +78,7 @@ public:
         CV_NUM_MESSAGE_TYPES,
     };
 
-    XavierSerial(
-        aruwlib::Drivers* drivers,
-        const turret::TurretSubsystem* turretSub,
-        const chassis::ChassisSubsystem* chassisSub);
+    XavierSerial(aruwlib::Drivers* drivers);
     DISALLOW_COPY_AND_ASSIGN(XavierSerial);
     mockable ~XavierSerial() = default;
 
@@ -120,8 +114,14 @@ public:
 
     mockable inline bool lastAimDataValid() const { return aimDataValid; }
 
-    mockable inline void attachTurret(turret::TurretSubsystem* turret) { turretSub = turret; }
-    mockable inline void attachChassis(chassis::ChassisSubsystem* chassis) { chassisSub = chassis; }
+    mockable inline void attachTurret(control::turret::ITurretSubsystem* turret)
+    {
+        turretSub = turret;
+    }
+    mockable inline void attachChassis(control::chassis::IChassisSubsystem* chassis)
+    {
+        chassisSub = chassis;
+    }
 
 private:
     friend class ::XavierSerialTester;
@@ -183,8 +183,8 @@ private:
     /// A flag set to `true` if the timeout is not expired, and `false` otherwise.
     bool isCvOnline;
 
-    const turret::TurretSubsystem* turretSub;
-    const chassis::ChassisSubsystem* chassisSub;
+    const control::turret::ITurretSubsystem* turretSub;
+    const control::chassis::IChassisSubsystem* chassisSub;
 
     /**
      * Interprets a raw `SerialMessage`'s `data` field to extract yaw, pitch, and other aim
@@ -213,6 +213,6 @@ public:
     modm::ResumableResult<bool> sendAutoAimRequest();
 };
 }  // namespace serial
-}  // namespace aruwsrc
+}  // namespace aruwlib
 
 #endif  // XAVIER_SERIAL_HPP_

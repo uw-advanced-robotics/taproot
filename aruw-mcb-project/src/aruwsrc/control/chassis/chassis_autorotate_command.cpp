@@ -51,7 +51,7 @@ void ChassisAutorotateCommand::execute()
     // calculate pid for chassis rotation
     // returns a chassis rotation speed
     float chassisRotationDesiredWheelspeed;
-    if (turret->isTurretOnline())
+    if (turret->isOnline())
     {
         chassisRotationDesiredWheelspeed = chassis->chassisSpeedRotationPID(
             turret->getYawAngleFromCenter(),

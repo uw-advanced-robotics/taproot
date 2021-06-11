@@ -89,7 +89,7 @@ void WiggleDriveCommand::execute()
               ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
     // We only wiggle when the turret is online.
-    if (turret->isTurretOnline())
+    if (turret->isOnline())
     {
         float curTime =
             static_cast<float>(aruwlib::arch::clock::getTimeMilliseconds() - timeOffset) -

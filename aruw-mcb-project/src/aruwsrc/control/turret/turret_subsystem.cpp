@@ -37,7 +37,7 @@ namespace aruwsrc
 namespace turret
 {
 TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers)
-    : aruwlib::control::Subsystem(drivers),
+    : aruwlib::control::turret::ITurretSubsystem(drivers),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
@@ -70,45 +70,6 @@ float TurretSubsystem::getPitchAngleFromCenter() const
         180.0f);
     return yawAngleFromCenter.getValue();
 }
-
-int32_t TurretSubsystem::getYawVelocity() const
-{
-    if (!yawMotor.isMotorOnline())
-    {
-        RAISE_ERROR(
-            drivers,
-            "trying to get velocity and yaw motor offline",
-            aruwlib::errors::TURRET,
-            aruwlib::errors::TurretErrorType::MOTOR_OFFLINE);
-        // throw error
-        return 0;
-    }
-
-    return getVelocity(yawMotor);
-}
-
-int32_t TurretSubsystem::getPitchVelocity() const
-{
-    if (!pitchMotor.isMotorOnline())
-    {
-        RAISE_ERROR(
-            drivers,
-            "trying to get velocity and pitch motor offline",
-            aruwlib::errors::TURRET,
-            aruwlib::errors::TurretErrorType::MOTOR_OFFLINE);
-        return 0;
-    }
-
-    return getVelocity(pitchMotor);
-}
-
-// units: degrees per second
-int32_t TurretSubsystem::getVelocity(const DjiMotor& motor) const
-{
-    return 360 / 60 * motor.getShaftRPM();
-}
-
-bool TurretSubsystem::isTurretOnline() const { return yawMotor.isMotorOnline(); }
 
 void TurretSubsystem::refresh() { updateCurrentTurretAngles(); }
 
@@ -198,7 +159,7 @@ void TurretSubsystem::setYawMotorOutput(float out)
     }
 }
 
-void TurretSubsystem::setYawTarget(float target)
+void TurretSubsystem::setYawSetpoint(float target)
 {
     yawTarget.setValue(target);
     yawTarget.setValue(aruwlib::algorithms::ContiguousFloat::limitValue(
@@ -207,7 +168,7 @@ void TurretSubsystem::setYawTarget(float target)
         TURRET_YAW_MAX_ANGLE));
 }
 
-void TurretSubsystem::setPitchTarget(float target)
+void TurretSubsystem::setPitchSetpoint(float target)
 {
     pitchTarget.setValue(target);
     pitchTarget.setValue(aruwlib::algorithms::ContiguousFloat::limitValue(
@@ -221,9 +182,9 @@ float TurretSubsystem::yawFeedForwardCalculation(float desiredChassisRotation)
     float chassisRotationFeedForward = FEED_FORWARD_KP * desiredChassisRotation;
 
     if ((chassisRotationFeedForward > 0.0f &&
-         getYawAngle().getValue() > TurretSubsystem::TURRET_YAW_MAX_ANGLE) ||
+         getCurrentYawValue().getValue() > TurretSubsystem::TURRET_YAW_MAX_ANGLE) ||
         (chassisRotationFeedForward < 0.0f &&
-         getYawAngle().getValue() < TurretSubsystem::TURRET_YAW_MIN_ANGLE))
+         getCurrentYawValue().getValue() < TurretSubsystem::TURRET_YAW_MIN_ANGLE))
     {
         chassisRotationFeedForward = 0.0f;
     }

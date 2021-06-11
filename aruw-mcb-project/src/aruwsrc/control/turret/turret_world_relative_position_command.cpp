@@ -71,7 +71,7 @@ void TurretWorldRelativePositionCommand::initialize()
     imuInitialYaw = drivers->mpu6500.getYaw();
     yawPid.reset();
     pitchPid.reset();
-    yawTargetAngle.setValue(turretSubsystem->getYawTarget());
+    yawTargetAngle.setValue(turretSubsystem->getYawSetpoint());
 }
 
 void TurretWorldRelativePositionCommand::execute()
@@ -90,15 +90,15 @@ void TurretWorldRelativePositionCommand::runYawPositionController(float dt)
         USER_YAW_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretYawInput());
 
     // project target angle in world relative to chassis relative to limit the value
-    turretSubsystem->setYawTarget(
+    turretSubsystem->setYawSetpoint(
         projectWorldRelativeYawToChassisFrame(yawTargetAngle.getValue(), imuInitialYaw));
 
     // project angle that is limited by the subsystem to world relative again to run the controller
     yawTargetAngle.setValue(
-        projectChassisRelativeYawToWorldRelative(turretSubsystem->getYawTarget(), imuInitialYaw));
+        projectChassisRelativeYawToWorldRelative(turretSubsystem->getYawSetpoint(), imuInitialYaw));
 
     currValueImuYawGimbal.setValue(projectChassisRelativeYawToWorldRelative(
-        turretSubsystem->getYawAngle().getValue(),
+        turretSubsystem->getCurrentYawValue().getValue(),
         imuInitialYaw));
 
     // position controller based on imu and yaw gimbal angle
@@ -117,13 +117,13 @@ void TurretWorldRelativePositionCommand::runYawPositionController(float dt)
 void TurretWorldRelativePositionCommand::runPitchPositionController(float dt)
 {
     // limit the yaw min and max angles
-    turretSubsystem->setPitchTarget(
-        turretSubsystem->getPitchTarget() +
+    turretSubsystem->setPitchSetpoint(
+        turretSubsystem->getPitchSetpoint() +
         USER_PITCH_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretPitchInput());
 
     // position controller based on turret pitch gimbal and imu data
     float positionControllerError =
-        turretSubsystem->getPitchAngle().difference(turretSubsystem->getPitchTarget());
+        turretSubsystem->getCurrentPitchValue().difference(turretSubsystem->getPitchSetpoint());
 
     float pidOutput =
         pitchPid.runController(positionControllerError, turretSubsystem->getPitchVelocity(), dt);
@@ -138,7 +138,7 @@ void TurretWorldRelativePositionCommand::runPitchPositionController(float dt)
 
 void TurretWorldRelativePositionCommand::end(bool)
 {
-    turretSubsystem->setYawTarget(
+    turretSubsystem->setYawSetpoint(
         projectWorldRelativeYawToChassisFrame(yawTargetAngle.getValue(), imuInitialYaw));
 }
 

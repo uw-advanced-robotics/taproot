@@ -29,7 +29,6 @@
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/limited_agitator_subsystem.hpp"
-#include "aruwsrc/serial/xavier_serial.hpp"
 #include "chassis/chassis_autorotate_command.hpp"
 #include "chassis/chassis_drive_command.hpp"
 #include "chassis/chassis_subsystem.hpp"
@@ -57,12 +56,6 @@ using aruwlib::control::RemoteMapState;
  *      Drivers class to all of these objects.
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
-
-/*
- * The xavier serial object is declared in main.cpp but is required by cv commands
- * and depends upon the chassis and turret subsystems, so declare it extern here.
- */
-extern aruwsrc::serial::XavierSerial xavierSerial;
 
 namespace aruwsrc
 {
@@ -111,7 +104,7 @@ ChassisAutorotateCommand chassisAutorotateCommand(drivers(), &chassis, &turret);
 WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
-TurretCVCommand turretCVCommand(&xavierSerial, &turret);
+TurretCVCommand turretCVCommand(drivers(), &turret);
 
 WaterwheelLoadCommand42mm waterwheelLoadCommand(drivers(), &waterWheelAgitator);
 
@@ -170,8 +163,8 @@ void initializeSubsystems()
     waterWheelAgitator.initialize();
     kickerAgitator.initialize();
     frictionWheels.initialize();
-    xavierSerial.attachChassis(&chassis);
-    xavierSerial.attachTurret(&turret);
+    drivers()->xavierSerial.attachChassis(&chassis);
+    drivers()->xavierSerial.attachTurret(&turret);
 }
 
 /* register subsystems here -------------------------------------------------*/
