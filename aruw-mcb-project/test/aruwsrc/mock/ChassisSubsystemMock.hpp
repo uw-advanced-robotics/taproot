@@ -43,7 +43,6 @@ public:
         calculateRotationTranslationalGain,
         (float chassisRotationDesiredWheelspeed),
         ());
-    MOCK_METHOD(float, getChassisDesiredRotation, (), (const override));
     MOCK_METHOD(int16_t, getLeftFrontRpmActual, (), (const override));
     MOCK_METHOD(int16_t, getLeftBackRpmActual, (), (const override));
     MOCK_METHOD(int16_t, getRightFrontRpmActual, (), (const override));

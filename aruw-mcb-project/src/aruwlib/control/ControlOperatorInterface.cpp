@@ -65,7 +65,7 @@ float ControlOperatorInterface::getChassisYInput()
 
     chassisYKeyInputFiltered = algorithms::lowPassFilter(
         chassisYKeyInputFiltered,
-        drivers->remote.keyPressed(Remote::Key::A) - drivers->remote.keyPressed(Remote::Key::D),
+        drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A),
         CHASSIS_Y_KEY_INPUT_FILTER_ALPHA);
 
     return limitVal<float>(
@@ -101,7 +101,7 @@ float ControlOperatorInterface::getTurretYawInput()
 {
     return -drivers->remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL) +
            static_cast<float>(limitVal<int16_t>(
-               drivers->remote.getMouseX(),
+               -drivers->remote.getMouseX(),
                -USER_MOUSE_YAW_MAX,
                USER_MOUSE_YAW_MAX)) *
                USER_MOUSE_YAW_SCALAR;

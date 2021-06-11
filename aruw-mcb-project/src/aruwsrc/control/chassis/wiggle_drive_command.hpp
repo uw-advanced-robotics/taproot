@@ -66,11 +66,27 @@ public:
     const char* getName() const override { return "chassis wiggle drive"; }
 
 private:
-    static constexpr float WIGGLE_PERIOD = 2000.0f;
+    /**
+     * Use this perido if power consumption limit is <= 45 W
+     */
+    static constexpr float WIGGLE_PERIOD_45W_CUTOFF = 2000.0f;
+    /**
+     * Use this period if power consumption limit is <= 60 W and > 45 W
+     */
+    static constexpr float WIGGLE_PERIOD_60W_CUTOFF = 1700.0f;
+    /**
+     * Use this period if power consumption limit is <= 80 W and > 60 W
+     */
+    static constexpr float WIGGLE_PERIOD_80W_CUTOFF = 1400.0f;
+    /**
+     * Use this period if power consumption limit is > 80 W
+     */
+    static constexpr float WIGGLE_PERIOD_MAX_CUTOFF = 1400.0f;
+
     static constexpr float WIGGLE_MAX_ROTATE_ANGLE = 45.0f;
-    static constexpr float WIGGLE_ROTATE_KP = -250.0f;
+    static constexpr float WIGGLE_ROTATE_KP = -300.0f;
     static constexpr float TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING = 0.5f;
-    static constexpr float WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR = 10.0f;
+    static constexpr float WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR = 4.0f;
     static constexpr float TURRET_YAW_TARGET_RAMP_INCREMENT = 0.5f;
 
     aruwlib::Drivers* drivers;
@@ -84,6 +100,8 @@ private:
 
     // sin curve to determine angle to rotate to based on current "time"
     float wiggleSin(float time);
+
+    float getPeriod() const;
 };  // class WiggleDriveCommand
 
 }  // namespace chassis

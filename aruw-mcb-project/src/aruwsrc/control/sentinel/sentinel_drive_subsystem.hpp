@@ -31,6 +31,10 @@
 
 #include <modm/math/filter/pid.hpp>
 
+#include "aruwlib/motor/m3508_constants.hpp"
+
+#include "aruwsrc/control/chassis/power_limiter.hpp"
+
 #include "util_macros.hpp"
 
 namespace aruwsrc
@@ -40,8 +44,12 @@ namespace control
 class SentinelDriveSubsystem : public aruwlib::control::Subsystem
 {
 public:
-    static constexpr float MAX_POWER_CONSUMPTION = 30.0f;
+    /// @see power_limiter.hpp for what these mean
     static constexpr float MAX_ENERGY_BUFFER = 200.0f;
+    static constexpr float ENERGY_BUFFER_LIMIT_THRESHOLD = 100.0f;
+    static constexpr float ENERGY_BUFFER_CRIT_THRESHOLD = 0;
+    static constexpr uint16_t POWER_CONSUMPTION_THRESHOLD = 5;
+    static constexpr float CURRENT_ALLOCATED_FOR_ENERGY_BUFFER_LIMITING = 15000;
 
     // RMUL length of the rail, in mm
     static constexpr float RAIL_LENGTH = 2130;
@@ -53,17 +61,8 @@ public:
         aruwlib::gpio::Digital::InputPin leftLimitSwitch,
         aruwlib::gpio::Digital::InputPin rightLimitSwitch,
         aruwlib::motor::MotorId leftMotorId = LEFT_MOTOR_ID,
-        aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID)
-        : aruwlib::control::Subsystem(drivers),
-          leftLimitSwitch(leftLimitSwitch),
-          rightLimitSwitch(rightLimitSwitch),
-          velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-          velocityPidRightWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),
-          desiredRpm(0),
-          leftWheel(drivers, leftMotorId, CAN_BUS_MOTORS, false, "left sentinel drive motor"),
-          rightWheel(drivers, rightMotorId, CAN_BUS_MOTORS, false, "right sentinel drive motor")
-    {
-    }
+        aruwlib::motor::MotorId rightMotorId = RIGHT_MOTOR_ID,
+        aruwlib::gpio::Analog::Pin currentSensorPin = CURRENT_SENSOR_PIN);
 
     void initialize() override;
 
@@ -89,12 +88,13 @@ private:
     static constexpr aruwlib::motor::MotorId LEFT_MOTOR_ID = aruwlib::motor::MOTOR2;
     static constexpr aruwlib::motor::MotorId RIGHT_MOTOR_ID = aruwlib::motor::MOTOR1;
     static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS2;
+    static constexpr aruwlib::gpio::Analog::Pin CURRENT_SENSOR_PIN = aruwlib::gpio::Analog::Pin::S;
 
     static constexpr float PID_P = 5.0f;
     static constexpr float PID_I = 0.0f;
     static constexpr float PID_D = 0.1f;
     static constexpr float PID_MAX_ERROR_SUM = 0.0f;
-    static constexpr float PID_MAX_OUTPUT = 16000;
+    static constexpr float PID_MAX_OUTPUT = 10000;
 
     // radius of the wheel in mm
     static constexpr float WHEEL_RADIUS = 35.0f;
@@ -125,6 +125,12 @@ private:
     aruwlib::motor::DjiMotor leftWheel;
     aruwlib::motor::DjiMotor rightWheel;
 #endif
+
+    aruwlib::motor::DjiMotor* chassisMotors[2];
+
+    const aruwlib::motor::M3508Constants motorConstants;
+
+    aruwsrc::chassis::PowerLimiter powerLimiter;
 };
 
 }  // namespace control
