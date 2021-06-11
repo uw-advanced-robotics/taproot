@@ -39,14 +39,13 @@ TurretInitCommand::TurretInitCommand(TurretSubsystem *subsystem)
 bool TurretInitCommand::isFinished() const
 {
     return fabsf(turretSubsystem->getPitchAngleFromCenter()) < 5.0f &&
-           fabsf(turretSubsystem->getYawAngleFromCenter()) < 5.0f &&
-           turretSubsystem->isTurretOnline();
+           fabsf(turretSubsystem->getYawAngleFromCenter()) < 5.0f && turretSubsystem->isOnline();
 }
 
 void TurretInitCommand::execute()
 {
-    initPitchPid.update(turretSubsystem->getPitchAngle().difference(PITCH_TARGET_ANGLE));
-    initYawPid.update(turretSubsystem->getYawAngle().difference(YAW_TARGET_ANGLE));
+    initPitchPid.update(turretSubsystem->getCurrentPitchValue().difference(PITCH_TARGET_ANGLE));
+    initYawPid.update(turretSubsystem->getCurrentYawValue().difference(YAW_TARGET_ANGLE));
     turretSubsystem->setPitchMotorOutput(initPitchPid.getValue());
     turretSubsystem->setYawMotorOutput(initYawPid.getValue());
 }

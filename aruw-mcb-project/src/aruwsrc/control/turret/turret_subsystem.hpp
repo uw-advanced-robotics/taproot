@@ -20,9 +20,9 @@
 #ifndef TURRET_SUBSYSTEM_HPP_
 #define TURRET_SUBSYSTEM_HPP_
 
-#include <aruwlib/algorithms/contiguous_float.hpp>
-#include <aruwlib/algorithms/linear_interpolation.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/algorithms/contiguous_float.hpp"
+#include "aruwlib/algorithms/linear_interpolation.hpp"
+#include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include <aruwlib/mock/DJIMotorMock.hpp>
@@ -42,7 +42,7 @@ namespace turret
  * Stores software necessary for interacting with two gimbals that control the pitch and
  * yaw of a turret. Provides a convenient API for other commands to interact with a turret.
  */
-class TurretSubsystem : public aruwlib::control::Subsystem
+class TurretSubsystem : public aruwlib::control::turret::ITurretSubsystem
 {
 public:
     static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
@@ -57,49 +57,81 @@ public:
 
     explicit TurretSubsystem(aruwlib::Drivers* drivers);
 
-    mockable void initialize() override;
+    void initialize() override;
 
-    mockable void refresh() override;
+    void refresh() override;
+
+    const char* getName() override { return "Turret"; }
+
+    void onHardwareTestStart() override;
 
     /**
      * @return `true` if both pitch and yaw gimbals are connected.
      */
-    mockable bool isTurretOnline() const;
+    inline bool isOnline() const override
+    {
+        return yawMotor.isMotorOnline() && pitchMotor.isMotorOnline();
+    }
+
+    /**
+     * @return The wrapped yaw angle of the actual yaw gimbal, in degrees
+     */
+    inline const aruwlib::algorithms::ContiguousFloat& getCurrentYawValue() const override
+    {
+        return currYawAngle;
+    }
+
+    /**
+     * @return The wrapped pitch angle of the actual pitch gimbal, in degrees.
+     */
+    inline const aruwlib::algorithms::ContiguousFloat& getCurrentPitchValue() const override
+    {
+        return currPitchAngle;
+    }
+
+    /**
+     * @return The yaw target as set by the user in `setYawSetpoint`.
+     */
+    inline float getYawSetpoint() const override { return yawTarget.getValue(); }
+
+    /**
+     * @return The pitch target as set by the user in `setPitchSetpoint`.
+     */
+    inline float getPitchSetpoint() const override { return pitchTarget.getValue(); }
 
     /**
      * @return The velocity, in degrees / second, of the turret's pitch yaw
      */
-    mockable int32_t getYawVelocity() const;
+    inline float getYawVelocity() const override { return getVelocity(yawMotor); }
+
     /**
      * @return The velocity, in degrees / second, of the turret's pitch motor
      */
-    mockable int32_t getPitchVelocity() const;
+    inline float getPitchVelocity() const override { return getVelocity(pitchMotor); }
+
+    /**
+     * Set a target angle in chassis frame, the angle is accordingly limited.
+     * Note that since there is no controller in this subsystem, this target
+     * angle merely acts as a safe way to set angles when using a position controller.
+     */
+    void setYawSetpoint(float target) override;
+
+    /**
+     * @see setYawSetpoint
+     */
+    void setPitchSetpoint(float target) override;
 
     /**
      * @return An angle between [-180, 180] that is the angle difference of the yaw gimbal
      *      from center (90 degrees), in degrees.
      */
     mockable float getYawAngleFromCenter() const;
+
     /**
      * @return An angle between [-180, 180] that is the angle difference of the pitch gimbal
      *      from center (90 degrees), in degrees.
      */
     mockable float getPitchAngleFromCenter() const;
-
-    /*
-     * @return The wrapped yaw angle of the actual yaw gimbal, in degrees
-     */
-    mockable inline const aruwlib::algorithms::ContiguousFloat& getYawAngle() const
-    {
-        return currYawAngle;
-    }
-    /**
-     * @return The wrapped pitch angle of the actual pitch gimbal, in degrees.
-     */
-    mockable inline const aruwlib::algorithms::ContiguousFloat& getPitchAngle() const
-    {
-        return currPitchAngle;
-    }
 
     /**
      * Attempts to set desired yaw output to the passed in value. If the turret is out of
@@ -108,6 +140,7 @@ public:
      * @param[in] out The desired yaw output, limited to `[-30000, 30000]`.
      */
     mockable void setYawMotorOutput(float out);
+
     /**
      * Attempts to set desired pitch output to the passed in value. If the turret is out of
      * bounds, the output is limited.
@@ -124,34 +157,10 @@ public:
     mockable float yawFeedForwardCalculation(float desiredChassisRotation);
 
     /**
-     * Set a target angle in chassis frame, the angle is accordingly limited.
-     * Note that since there is no controller in this subsystem, this target
-     * angle merely acts as a safe way to set angles when using a position controller.
-     */
-    mockable void setYawTarget(float target);
-    /**
-     * @see setYawTarget
-     */
-    mockable void setPitchTarget(float target);
-
-    /**
-     * @return The yaw target as set by the user in `setYawTarget`.
-     */
-    mockable inline float getYawTarget() const { return yawTarget.getValue(); }
-    /**
-     * @return The pitch target as set by the user in `setPitchTarget`.
-     */
-    mockable inline float getPitchTarget() const { return pitchTarget.getValue(); }
-
-    /**
      * Reads the raw pitch and yaw angles and updates the wrapped versions of
      * these angles.
      */
     mockable void updateCurrentTurretAngles();
-
-    const char* getName() override { return "Turret"; }
-
-    void onHardwareTestStart() override;
 
 private:
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 8160;
@@ -174,7 +183,13 @@ private:
     void updateCurrentYawAngle();
     void updateCurrentPitchAngle();
 
-    int32_t getVelocity(const aruwlib::motor::DjiMotor& motor) const;
+    /**
+     * @return velocity of 6020 motor, in degrees / sec
+     */
+    static inline float getVelocity(const aruwlib::motor::DjiMotor& motor)
+    {
+        return 360 / 60 * motor.getShaftRPM();
+    }
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 public:

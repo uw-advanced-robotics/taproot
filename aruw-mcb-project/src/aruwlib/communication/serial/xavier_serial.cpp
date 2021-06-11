@@ -21,29 +21,25 @@
 
 #include <cstring>
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/architecture/endianness_wrappers.hpp>
-
-#include "aruwsrc/control/chassis/chassis_subsystem.hpp"
-#include "aruwsrc/control/turret/turret_subsystem.hpp"
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/architecture/endianness_wrappers.hpp"
+#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
+#include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
 using namespace aruwlib::arch;
 using namespace aruwlib::serial;
 
-namespace aruwsrc
+namespace aruwlib
 {
 namespace serial
 {
-XavierSerial::XavierSerial(
-    aruwlib::Drivers* drivers,
-    const turret::TurretSubsystem* turretSub,
-    const chassis::ChassisSubsystem* chassisSub)
+XavierSerial::XavierSerial(Drivers* drivers)
     : DJISerial(drivers, Uart::UartPort::Uart2),
       lastAimData(),
       aimDataValid(false),
       isCvOnline(false),
-      turretSub(turretSub),
-      chassisSub(chassisSub)
+      turretSub(nullptr),
+      chassisSub(nullptr)
 {
 }
 
@@ -115,9 +111,9 @@ modm::ResumableResult<bool> XavierSerial::sendRobotMeasurements()
 {
     RF_BEGIN(0);
 
-    if (chassisSub != nullptr)
+    int numMotors;
+    if (chassisSub != nullptr && (numMotors = chassisSub->getNumChassisMotors()) <= 4)
     {
-        // Chassis data
         convertToLittleEndian(chassisSub->getRightFrontRpmActual(), txMessage.data);
         convertToLittleEndian(
             chassisSub->getLeftFrontRpmActual(),
@@ -134,10 +130,12 @@ modm::ResumableResult<bool> XavierSerial::sendRobotMeasurements()
     {
         // Turret data
         convertToLittleEndian(
-            static_cast<uint16_t>(turretSub->getPitchAngle().getValue() / FIXED_POINT_PRECISION),
+            static_cast<uint16_t>(
+                turretSub->getCurrentPitchValue().getValue() / FIXED_POINT_PRECISION),
             txMessage.data + TURRET_DATA_OFFSET);
         convertToLittleEndian(
-            static_cast<uint16_t>(turretSub->getYawAngle().getValue() / FIXED_POINT_PRECISION),
+            static_cast<uint16_t>(
+                turretSub->getCurrentYawValue().getValue() / FIXED_POINT_PRECISION),
             txMessage.data + TURRET_DATA_OFFSET + sizeof(uint16_t));
     }
 
@@ -236,4 +234,4 @@ modm::ResumableResult<bool> XavierSerial::sendRobotID()
     RF_END();
 }
 }  // namespace serial
-}  // namespace aruwsrc
+}  // namespace aruwlib

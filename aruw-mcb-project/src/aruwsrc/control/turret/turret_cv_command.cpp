@@ -19,11 +19,10 @@
 
 #include "turret_cv_command.hpp"
 
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/architecture/clock.hpp>
-#include <aruwlib/communication/remote.hpp>
-
-#include "aruwsrc/serial/xavier_serial.hpp"
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/communication/remote.hpp"
 
 using namespace aruwlib::arch::clock;
 
@@ -31,8 +30,8 @@ namespace aruwsrc
 {
 namespace turret
 {
-TurretCVCommand::TurretCVCommand(serial::XavierSerial *xavierSerial, TurretSubsystem *subsystem)
-    : xavierSerial(xavierSerial),
+TurretCVCommand::TurretCVCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem)
+    : drivers(drivers),
       turretSubsystem(subsystem),
       yawTargetAngle(TurretSubsystem::TURRET_START_ANGLE, 0.0f, 360.0f),
       pitchTargetAngle(TurretSubsystem::TURRET_START_ANGLE, 0.0f, 360.0f),
@@ -62,20 +61,20 @@ TurretCVCommand::TurretCVCommand(serial::XavierSerial *xavierSerial, TurretSubsy
 
 void TurretCVCommand::initialize()
 {
-    xavierSerial->beginAutoAim();
+    drivers->xavierSerial.beginAutoAim();
     yawPid.reset();
     pitchPid.reset();
 }
 
 void TurretCVCommand::execute()
 {
-    if (xavierSerial->lastAimDataValid())
+    if (drivers->xavierSerial.lastAimDataValid())
     {
-        const aruwsrc::serial::XavierSerial::TurretAimData &cvData = xavierSerial->getLastAimData();
+        const auto &cvData = drivers->xavierSerial.getLastAimData();
         if (cvData.hasTarget)
         {
-            turretSubsystem->setYawTarget(cvData.yaw);
-            turretSubsystem->setPitchTarget(cvData.pitch);
+            turretSubsystem->setYawSetpoint(cvData.yaw);
+            turretSubsystem->setPitchSetpoint(cvData.pitch);
         }
     }
 
@@ -86,13 +85,13 @@ void TurretCVCommand::execute()
     runPitchPositionController(dt);
 }
 
-void TurretCVCommand::end(bool) { xavierSerial->stopAutoAim(); }
+void TurretCVCommand::end(bool) { drivers->xavierSerial.stopAutoAim(); }
 
 void TurretCVCommand::runYawPositionController(float dt)
 {
     // position controller based on gimbal angle
     float positionControllerError =
-        turretSubsystem->getYawAngle().difference(turretSubsystem->getYawTarget());
+        turretSubsystem->getCurrentYawValue().difference(turretSubsystem->getYawSetpoint());
     float pidOutput =
         yawPid.runController(positionControllerError, turretSubsystem->getYawVelocity(), dt);
 
@@ -103,7 +102,7 @@ void TurretCVCommand::runPitchPositionController(float dt)
 {
     // position controller based on turret pitch gimbal
     float positionControllerError =
-        turretSubsystem->getPitchAngle().difference(turretSubsystem->getPitchTarget());
+        turretSubsystem->getCurrentPitchValue().difference(turretSubsystem->getPitchSetpoint());
     float pidOutput =
         pitchPid.runController(positionControllerError, turretSubsystem->getPitchVelocity(), dt);
 

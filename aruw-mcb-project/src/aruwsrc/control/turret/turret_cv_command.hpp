@@ -44,7 +44,7 @@ namespace turret
 class TurretCVCommand : public aruwlib::control::Command
 {
 public:
-    TurretCVCommand(serial::XavierSerial *xavierSerial, TurretSubsystem *subsystem);
+    TurretCVCommand(aruwlib::Drivers *xavierSerial, TurretSubsystem *subsystem);
 
     void initialize() override;
 
@@ -77,7 +77,7 @@ private:
     static constexpr float PITCH_Q_PROPORTIONAL_KALMAN = 1.0f;
     static constexpr float PITCH_R_PROPORTIONAL_KALMAN = 2.0f;
 
-    serial::XavierSerial *xavierSerial;
+    aruwlib::Drivers *drivers;
 
     TurretSubsystem *turretSubsystem;
 

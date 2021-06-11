@@ -20,10 +20,10 @@
 #ifndef CHASSIS_SUBSYSTEM_HPP_
 #define CHASSIS_SUBSYSTEM_HPP_
 
-#include <aruwlib/algorithms/extended_kalman.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/communication/gpio/analog.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/algorithms/extended_kalman.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/communication/gpio/analog.hpp"
+#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include <aruwlib/mock/DJIMotorMock.hpp>
@@ -54,7 +54,7 @@ namespace chassis
  *     - In other words, 'x' is the bow/stern and 'y' is starboard/
  *       port in boat terms.
  */
-class ChassisSubsystem : public aruwlib::control::Subsystem
+class ChassisSubsystem : public aruwlib::control::chassis::IChassisSubsystem
 {
 public:
     /**
@@ -351,7 +351,7 @@ public:
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID,
         aruwlib::gpio::Analog::Pin currentPin = CURRENT_SENSOR_PIN)
-        : aruwlib::control::Subsystem(drivers),
+        : aruwlib::control::chassis::IChassisSubsystem(drivers),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
               VELOCITY_PID_KI,
@@ -424,10 +424,14 @@ public:
         wheelVelToChassisVelMat *= (WHEEL_RADIUS / 4);
 
         motors[LF] = &leftFrontMotor;
-        motors[LB] = &leftBackMotor;
         motors[RF] = &rightFrontMotor;
+        motors[LB] = &leftBackMotor;
         motors[RB] = &rightBackMotor;
     }
+
+    inline int getNumChassisMotors() const override { return 4; }
+
+    inline const aruwlib::motor::DjiMotor* const* getChassisMotorArray() const { return motors; }
 
     void initialize() override;
 
@@ -492,10 +496,10 @@ public:
         modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
         float chassisHeading) const;
 
-    mockable inline int16_t getLeftFrontRpmActual() const { return leftFrontMotor.getShaftRPM(); }
-    mockable inline int16_t getLeftBackRpmActual() const { return leftBackMotor.getShaftRPM(); }
-    mockable inline int16_t getRightFrontRpmActual() const { return rightFrontMotor.getShaftRPM(); }
-    mockable inline int16_t getRightBackRpmActual() const { return rightBackMotor.getShaftRPM(); }
+    inline int16_t getLeftFrontRpmActual() const override { return leftFrontMotor.getShaftRPM(); }
+    inline int16_t getLeftBackRpmActual() const override { return leftBackMotor.getShaftRPM(); }
+    inline int16_t getRightFrontRpmActual() const override { return rightFrontMotor.getShaftRPM(); }
+    inline int16_t getRightBackRpmActual() const override { return rightBackMotor.getShaftRPM(); }
 
     void onHardwareTestStart() override;
 

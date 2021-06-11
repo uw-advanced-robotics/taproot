@@ -35,8 +35,6 @@
 /* communication includes ---------------------------------------------------*/
 #include <aruwlib/DriversSingleton.hpp>
 
-#include "aruwsrc/serial/xavier_serial.hpp"
-
 /* error handling includes --------------------------------------------------*/
 #include <aruwlib/errors/create_errors.hpp>
 
@@ -50,8 +48,6 @@ using aruwlib::Drivers;
 /* define timers here -------------------------------------------------------*/
 aruwlib::arch::PeriodicMilliTimer sendMotorTimeout(2);
 aruwlib::arch::PeriodicMilliTimer sendXavierTimeout(3);
-
-aruwsrc::serial::XavierSerial xavierSerial(aruwlib::DoNotUse_getDrivers(), nullptr, nullptr);
 
 // Place any sort of input/output initialization here. For example, place
 // serial init stuff here.
@@ -92,7 +88,7 @@ int main()
 
         if (sendXavierTimeout.execute())
         {
-            PROFILE(drivers->profiler, xavierSerial.sendMessage, ());
+            PROFILE(drivers->profiler, drivers->xavierSerial.sendMessage, ());
             // TODO try faster baude rate so we can send more frequently (currently mcb's serial
             // buffers are overflowing if you try and send faster than 3 ms).
         }
@@ -126,7 +122,7 @@ static void initializeIo(aruwlib::Drivers *drivers)
     drivers->oledDisplay.initialize();
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
-    xavierSerial.initializeCV();
+    drivers->xavierSerial.initializeCV();
 }
 
 static void updateIo(aruwlib::Drivers *drivers)
@@ -140,5 +136,5 @@ static void updateIo(aruwlib::Drivers *drivers)
     drivers->remote.read();
     drivers->oledDisplay.updateDisplay();
     drivers->mpu6500.read();
-    xavierSerial.updateSerial();
+    drivers->xavierSerial.updateSerial();
 }

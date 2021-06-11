@@ -28,7 +28,6 @@
 #include "TowSubsystemMock.hpp"
 #include "TurretSubsystemMock.hpp"
 #include "XAxisSubsystemMock.hpp"
-#include "XavierSerialMock.hpp"
 
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors
@@ -139,10 +138,4 @@ XAxisSubsystemMock::XAxisSubsystemMock(
 {
 }
 XAxisSubsystemMock::~XAxisSubsystemMock() {}
-
-XavierSerialMock::XavierSerialMock(aruwlib::Drivers *drivers)
-    : aruwsrc::serial::XavierSerial(drivers, nullptr, nullptr)
-{
-}
-XavierSerialMock::~XavierSerialMock() {}
 }  // namespace aruwsrc::mock

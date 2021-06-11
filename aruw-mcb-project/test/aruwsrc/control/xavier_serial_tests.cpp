@@ -19,20 +19,19 @@
 
 #include <iostream>
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/architecture/clock.hpp>
-#include <aruwlib/architecture/endianness_wrappers.hpp>
-#include <gtest/gtest.h>
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/architecture/endianness_wrappers.hpp"
+#include "aruwlib/communication/serial/xavier_serial.hpp"
 
 #include "aruwsrc/mock/ChassisSubsystemMock.hpp"
 #include "aruwsrc/mock/TurretSubsystemMock.hpp"
-#include "aruwsrc/mock/XavierSerialMock.hpp"
-#include "aruwsrc/serial/xavier_serial.hpp"
+#include "gtest/gtest.h"
 
 using aruwlib::Drivers;
 using aruwlib::serial::DJISerial;
-using aruwsrc::serial::XavierSerial;
+using aruwlib::serial::XavierSerial;
 using namespace aruwsrc::mock;
 using namespace testing;
 using namespace aruwlib::arch;
@@ -61,7 +60,7 @@ private:
 static void initAndRunAutoAimRxTest(float pitchDesired, float yawDesired, bool hasTarget)
 {
     Drivers drivers;
-    XavierSerial serial(&drivers, nullptr, nullptr);
+    XavierSerial serial(&drivers);
     DJISerial::SerialMessage message;
     message.headByte = 0xA5;
     message.type = 0;
@@ -123,7 +122,7 @@ TEST(XavierSerial, messageReceiveCallback_turret_aim_messages_single_decimals)
 TEST(XavierSerial, messageReceiveCallback_tracking_request_ackn)
 {
     Drivers drivers;
-    XavierSerial serial(&drivers, nullptr, nullptr);
+    XavierSerial serial(&drivers);
     XavierSerialTester serialTester(&serial);
     DJISerial::SerialMessage message;
     message.headByte = 0xA5;
@@ -172,7 +171,9 @@ TEST(XavierSerial, sendMessage_validate_robot_data)
     Drivers drivers;
     TurretSubsystemMock ts(&drivers);
     ChassisSubsystemMock cs(&drivers);
-    XavierSerial xs(&drivers, &ts, &cs);
+    XavierSerial xs(&drivers);
+    xs.attachChassis(&cs);
+    xs.attachTurret(&ts);
     XavierSerialTester xst(&xs);
 
     static constexpr int16_t rfWheelRPMToTest[] = {0, -16000, -12345, 231, 12331, 14098, 16000};
@@ -204,8 +205,8 @@ TEST(XavierSerial, sendMessage_validate_robot_data)
         EXPECT_CALL(cs, getRightFrontRpmActual).WillRepeatedly(Return(rfWheelRPMToTest[i]));
         aruwlib::algorithms::ContiguousFloat pit(turretPitchValsToTest[i], -1000, 1000);
         aruwlib::algorithms::ContiguousFloat yaw(turretYawValsToTest[i], -1000, 1000);
-        EXPECT_CALL(ts, getPitchAngle).WillRepeatedly(ReturnRef(pit));
-        EXPECT_CALL(ts, getYawAngle).WillRepeatedly(ReturnRef(yaw));
+        EXPECT_CALL(ts, getCurrentPitchValue).WillRepeatedly(ReturnRef(pit));
+        EXPECT_CALL(ts, getCurrentYawValue).WillRepeatedly(ReturnRef(yaw));
         EXPECT_CALL(drivers.mpu6500, getGx).WillRepeatedly(Return(gxValsToTest[i]));
         EXPECT_CALL(drivers.mpu6500, getGy).WillRepeatedly(Return(gyValsToTest[i]));
         EXPECT_CALL(drivers.mpu6500, getGz).WillRepeatedly(Return(gzValsToTest[i]));
@@ -312,7 +313,7 @@ TEST(XavierSerial, sendMessage_validate_robot_ID)
         aruwlib::serial::RefSerial::BLUE_SENTINEL - aruwlib::serial::RefSerial::RED_HERO + 1;
 
     Drivers drivers;
-    XavierSerial xs(&drivers, nullptr, nullptr);
+    XavierSerial xs(&drivers);
     XavierSerialTester xst(&xs);
     aruwlib::serial::RefSerial::RobotData robotData;
 
@@ -347,7 +348,7 @@ TEST(XavierSerial, sendMessage_validate_robot_ID)
 TEST(XavierSerial, beginAutoAim_starts_aim_request)
 {
     Drivers drivers;
-    XavierSerial xs(&drivers, nullptr, nullptr);
+    XavierSerial xs(&drivers);
     XavierSerialTester xst(&xs);
 
     xs.beginAutoAim();
@@ -370,7 +371,7 @@ TEST(XavierSerial, beginAutoAim_starts_aim_request)
 TEST(XavierSerial, stopAutoAim_stops_auto_aim_req)
 {
     Drivers drivers;
-    XavierSerial xs(&drivers, nullptr, nullptr);
+    XavierSerial xs(&drivers);
     XavierSerialTester xst(&xs);
 
     xs.stopAutoAim();
@@ -393,7 +394,7 @@ TEST(XavierSerial, stopAutoAim_stops_auto_aim_req)
 TEST(XavierSerial, sendMessage_validate_begin_target_tracking_request)
 {
     Drivers drivers;
-    XavierSerial xs(&drivers, nullptr, nullptr);
+    XavierSerial xs(&drivers);
     XavierSerialTester xst(&xs);
     bool autoAimRequest = true;
 
@@ -456,7 +457,7 @@ TEST(XavierSerial, sendMessage_resend_if_msg_not_acknowledged)
     aruwlib::arch::clock::setTime(0);
 
     Drivers drivers;
-    XavierSerial xs(&drivers, nullptr, nullptr);
+    XavierSerial xs(&drivers);
     XavierSerialTester xst(&xs);
     bool autoAimRequest = true;
 
