@@ -436,7 +436,7 @@ void RefSerial::configCharacterMsg(
     sharedData->graphicData.lineWidth = width;
     sharedData->graphicData.startX = startX;
     sharedData->graphicData.startY = startY;
-    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS);
+    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS - 1);
 }
 
 void RefSerial::deleteGraphicLayer(DeleteGraphicOperation graphicOperation, uint8_t graphicLayer)
