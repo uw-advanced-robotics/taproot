@@ -17,8 +17,9 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __COMMAND_SENTINEL_DRIVE_RANDOM_HPP__
-#define __COMMAND_SENTINEL_DRIVE_RANDOM_HPP__
+#if defined(TARGET_SENTINEL)
+#ifndef SENTINEL_RANDOM_DRIVE_COMMAND_HPP_
+#define SENTINEL_RANDOM_DRIVE_COMMAND_HPP_
 
 #include <aruwlib/architecture/timeout.hpp>
 #include <aruwlib/control/command.hpp>
@@ -29,10 +30,10 @@ namespace aruwsrc
 {
 namespace control
 {
-class SentinelAutoDriveCommand : public aruwlib::control::Command
+class SentinelRandomDriveCommand : public aruwlib::control::Command
 {
 public:
-    explicit SentinelAutoDriveCommand(SentinelDriveSubsystem* subsystem);
+    explicit SentinelRandomDriveCommand(SentinelDriveSubsystem* subsystem);
 
     void initialize() override;
 
@@ -42,13 +43,13 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "sentinel auto drive"; }
+    const char* getName() const override { return "sentinel random drive"; }
 
 private:
     static const int16_t MIN_RPM = 5000;
     static const int16_t MAX_RPM = 7000;
     static const int16_t CHANGE_TIME_INTERVAL = 750;
-    static constexpr float RAIL_BUFFER = 0.1f * SentinelDriveSubsystem::RAIL_LENGTH;
+    static constexpr float TURNAROUND_BUFFER = 0.25f * SentinelDriveSubsystem::RAIL_LENGTH;
 
     float currentRPM = 0;
     bool chosenNewRPM = false;
@@ -61,4 +62,5 @@ private:
 
 }  // namespace aruwsrc
 
+#endif  // SENTINEL_RANDOM_DRIVE_COMMAND_HPP_
 #endif

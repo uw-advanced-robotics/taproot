@@ -56,6 +56,11 @@ public:
     // Our length of the rail, in mm
     // static constexpr float RAIL_LENGTH = 1900;
 
+    /**
+     * Length of the sentinel, in mm
+     */
+    static constexpr float SENTINEL_LENGTH = 480;
+
     SentinelDriveSubsystem(
         aruwlib::Drivers* drivers,
         aruwlib::gpio::Digital::InputPin leftLimitSwitch,
@@ -115,8 +120,8 @@ private:
     modm::Pid<float> velocityPidRightWheel;
 
     float desiredRpm;
-    float leftZeroRailOffset = 0;
-    float rightZeroRailOffset = 0;
+    float leftWheelZeroRailOffset = 0;
+    float rightWheelZeroRailOffset = 0;
 
     void resetOffsetFromLimitSwitch();
 

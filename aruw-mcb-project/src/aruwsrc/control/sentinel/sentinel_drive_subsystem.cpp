@@ -91,8 +91,8 @@ void SentinelDriveSubsystem::refresh()
 
 float SentinelDriveSubsystem::absolutePosition()
 {
-    float leftPosition = distanceFromEncoder(&leftWheel) - leftZeroRailOffset;
-    float rightPosition = distanceFromEncoder(&rightWheel) - rightZeroRailOffset;
+    float leftPosition = distanceFromEncoder(&leftWheel) - leftWheelZeroRailOffset;
+    float rightPosition = distanceFromEncoder(&rightWheel) - rightWheelZeroRailOffset;
     float average = 0.0f;
     if (leftWheel.isMotorOnline() && rightWheel.isMotorOnline())
     {
@@ -125,7 +125,7 @@ float SentinelDriveSubsystem::absolutePosition()
             aruwlib::errors::SubsystemErrorType::MOTOR_OFFLINE);
         average = 0.0f;
     }
-    return aruwlib::algorithms::limitVal<float>(average, 0.0f, SentinelDriveSubsystem::RAIL_LENGTH);
+    return average;
 }
 
 // Resets the encoder offset used to determine position of the sentinel on the rail depending on
@@ -134,15 +134,17 @@ float SentinelDriveSubsystem::absolutePosition()
 void SentinelDriveSubsystem::resetOffsetFromLimitSwitch()
 {
     // DigitalPin where limit switch is placed
-    if (drivers->digital.read(leftLimitSwitch))
+
+    // Note: the left limit switch is active low
+    if (!drivers->digital.read(leftLimitSwitch))
     {
-        leftZeroRailOffset = distanceFromEncoder(&leftWheel);
-        rightZeroRailOffset = distanceFromEncoder(&rightWheel);
+        leftWheelZeroRailOffset = distanceFromEncoder(&leftWheel);
+        rightWheelZeroRailOffset = distanceFromEncoder(&rightWheel);
     }
     else if (drivers->digital.read(rightLimitSwitch))
     {
-        leftZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&leftWheel);
-        rightZeroRailOffset = RAIL_LENGTH - distanceFromEncoder(&rightWheel);
+        leftWheelZeroRailOffset = distanceFromEncoder(&leftWheel) - RAIL_LENGTH + SENTINEL_LENGTH;
+        rightWheelZeroRailOffset = distanceFromEncoder(&rightWheel) - RAIL_LENGTH + SENTINEL_LENGTH;
     }
 }
 
