@@ -17,12 +17,14 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#if defined(TARGET_SENTINEL)
+
 #ifndef PLATFORM_HOSTED
 #include <modm/platform/random/random_number_generator.hpp>
 #endif
 
-#include "sentinel_auto_drive_command.hpp"
 #include "sentinel_drive_subsystem.hpp"
+#include "sentinel_random_drive_command.hpp"
 
 #ifndef PLATFORM_HOSTED
 using modm::platform::RandomNumberGenerator;
@@ -33,7 +35,7 @@ namespace aruwsrc
 {
 namespace control
 {
-SentinelAutoDriveCommand::SentinelAutoDriveCommand(SentinelDriveSubsystem* subsystem)
+SentinelRandomDriveCommand::SentinelRandomDriveCommand(SentinelDriveSubsystem* subsystem)
     : subsystemSentinelDrive(subsystem),
       changeVelocityTimer(CHANGE_TIME_INTERVAL)
 {
@@ -43,9 +45,9 @@ SentinelAutoDriveCommand::SentinelAutoDriveCommand(SentinelDriveSubsystem* subsy
 #endif
 }
 
-void SentinelAutoDriveCommand::initialize() { chosenNewRPM = false; }
+void SentinelRandomDriveCommand::initialize() { chosenNewRPM = false; }
 
-void SentinelAutoDriveCommand::execute()
+void SentinelRandomDriveCommand::execute()
 {
     if (this->changeVelocityTimer.isExpired() || !chosenNewRPM)
     {
@@ -72,8 +74,10 @@ void SentinelAutoDriveCommand::execute()
 
     // reverse direction if close to the end of the rail
     float curPos = subsystemSentinelDrive->absolutePosition();
-    if ((currentRPM < 0 && curPos < RAIL_BUFFER) ||
-        (currentRPM > 0 && curPos > SentinelDriveSubsystem::RAIL_LENGTH - RAIL_BUFFER))
+    if ((currentRPM < 0 && curPos < TURNAROUND_BUFFER) ||
+        (currentRPM > 0 && curPos > SentinelDriveSubsystem::RAIL_LENGTH -
+                                        SentinelDriveSubsystem::SENTINEL_LENGTH -
+                                        TURNAROUND_BUFFER))
     {
         currentRPM = -currentRPM;
     }
@@ -81,9 +85,11 @@ void SentinelAutoDriveCommand::execute()
     subsystemSentinelDrive->setDesiredRpm(currentRPM);
 }
 
-void SentinelAutoDriveCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0); }
+void SentinelRandomDriveCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0); }
 
-bool SentinelAutoDriveCommand::isFinished() const { return false; }
+bool SentinelRandomDriveCommand::isFinished() const { return false; }
 }  // namespace control
 
 }  // namespace aruwsrc
+
+#endif

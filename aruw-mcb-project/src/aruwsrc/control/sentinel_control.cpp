@@ -31,7 +31,7 @@
 #include "agitator/agitator_subsystem.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
 #include "launcher/friction_wheel_subsystem.hpp"
-#include "sentinel/sentinel_auto_drive_command.hpp"
+#include "sentinel/sentinel_auto_drive_comprised_command.hpp"
 #include "sentinel/sentinel_drive_manual_command.hpp"
 #include "sentinel/sentinel_drive_subsystem.hpp"
 #include "sentinel/sentinel_rotate_agitator_command.hpp"
@@ -94,7 +94,7 @@ SentinelRotateAgitatorCommand rotateAgitatorManual(drivers(), &agitator, &switch
 
 AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
 
-SentinelAutoDriveCommand sentinelAutoDrive(&sentinelDrive);
+SentinelAutoDriveComprisedCommand sentinelAutoDrive(drivers(), &sentinelDrive);
 
 SentinelDriveManualCommand sentinelDriveManual(drivers(), &sentinelDrive);
 
@@ -112,27 +112,31 @@ FrictionWheelRotateCommand stopLowerFrictionWheels(&lowerFrictionWheels, 0);
 
 /* define command mappings --------------------------------------------------*/
 
-HoldCommandMapping leftSwitchDown(
+HoldCommandMapping rightSwitchDown(
     drivers(),
     {&stopLowerFrictionWheels, &stopUpperFrictionWheels},
+    RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
+HoldRepeatCommandMapping rightSwitchUp(
+    drivers(),
+    {&rotateAgitatorManual},
+    RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
+HoldCommandMapping leftSwitchDown(
+    drivers(),
+    {&sentinelDriveManual},
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldRepeatCommandMapping leftSwitchUp(
     drivers(),
     {&sentinelAutoDrive},
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
-HoldRepeatCommandMapping rightSwitchUp(
-    drivers(),
-    {&rotateAgitatorManual},
-    RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 /* initialize subsystems ----------------------------------------------------*/
 void initializeSubsystems()
 {
-    agitator.initialize();
+    // agitator.initialize();
     sentinelDrive.initialize();
-    upperFrictionWheels.initialize();
-    lowerFrictionWheels.initialize();
-    switcher.initialize();
+    // upperFrictionWheels.initialize();
+    // lowerFrictionWheels.initialize();
+    // switcher.initialize();
     drivers()->xavierSerial.attachChassis(&sentinelDrive);
 }
 
@@ -149,7 +153,7 @@ void registerSentinelSubsystems(aruwlib::Drivers *drivers)
 /* set any default commands to subsystems here ------------------------------*/
 void setDefaultSentinelCommands(aruwlib::Drivers *)
 {
-    sentinelDrive.setDefaultCommand(&sentinelDriveManual);
+    sentinelDrive.setDefaultCommand(&sentinelAutoDrive);
     upperFrictionWheels.setDefaultCommand(&spinUpperFrictionWheels);
     lowerFrictionWheels.setDefaultCommand(&spinLowerFrictionWheels);
 }
