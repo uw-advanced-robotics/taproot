@@ -36,6 +36,9 @@
     EXPECT_CALL(d.controlOperatorInterface, getChassisYInput()).WillOnce([&] {    \
         return baseInput;                                                         \
     });                                                                           \
+    ON_CALL(d.refSerial, getRefSerialReceivingData).WillByDefault(Return(false)); \
+    RefSerial::RobotData rd{};                                                    \
+    ON_CALL(d.refSerial, getRobotData).WillByDefault(ReturnRef(rd));              \
     EXPECT_CALL(cs, setDesiredOutput(FloatEq(baseX), FloatEq(baseY), FloatEq(baseR)));
 
 using namespace aruwsrc::chassis;
@@ -45,23 +48,22 @@ using namespace testing;
 using aruwlib::algorithms::Ramp;
 using aruwsrc::mock::ChassisSubsystemMock;
 using aruwsrc::mock::TurretSubsystemMock;
+using namespace aruwlib::serial;
 
 static constexpr float BASE_DESIRED_OUT = 3500;
-static constexpr float BASE_DESIRED_R = 875;
-
-static void setDefaultExpectations(Drivers *drivers)
-{
-    EXPECT_CALL(drivers->canRxHandler, removeReceiveHandler).Times(6);
-    EXPECT_CALL(drivers->djiMotorTxHandler, removeFromMotorManager).Times(6);
-}
+static constexpr float BASE_DESIRED_R_TRANSLATIONAL =
+    BeybladeCommand::ROTATION_TARGET_45W_CUTOFF * BeybladeCommand::RAMP_TARGET_TRANSLATIONAL_FRAC *
+    BeybladeCommand::RAMP_UPDATE_FRAC;
+static constexpr float BASE_DESIRED_R_NON_TRANSLATIONAL =
+    BeybladeCommand::ROTATION_TARGET_45W_CUTOFF * BeybladeCommand::RAMP_UPDATE_FRAC;
 
 void basicFrameworkTest(float baseX, float baseY, float baseR, float yawAngle, float baseInput)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     TurretSubsystemMock t(&d);
-    ChassisSubsystemMock cs(&d);
+    NiceMock<ChassisSubsystemMock> cs(&d);
     BeybladeCommand bc(&d, &cs, &t);
+    ON_CALL(cs, getDesiredRotation).WillByDefault(Return(0));
 
     bc.initialize();
 
@@ -73,10 +75,10 @@ void basicFrameworkTest(float baseX, float baseY, float baseR, float yawAngle, f
 void basicBigFrameworkTest(float baseX, float baseY, float baseR, float yawAngle, float baseInput)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     TurretSubsystemMock t(&d);
-    ChassisSubsystemMock cs(&d);
+    NiceMock<ChassisSubsystemMock> cs(&d);
     BeybladeCommand bc(&d, &cs, &t);
+    ON_CALL(cs, getDesiredRotation).WillByDefault(Return(0));
 
     bc.initialize();
 
@@ -89,22 +91,37 @@ void basicBigFrameworkTest(float baseX, float baseY, float baseR, float yawAngle
 
 TEST(BeybladeCommand, execute_all_zeroes_no_ramp)
 {
-    basicFrameworkTest(0, 0, BASE_DESIRED_R, 0, 0);
+    basicFrameworkTest(0, 0, BASE_DESIRED_R_NON_TRANSLATIONAL, 0, 0);
 }
 
 TEST(BeybladeCommand, execute_fullxy_no_ramp)
 {
-    basicFrameworkTest(BASE_DESIRED_OUT, BASE_DESIRED_OUT, BASE_DESIRED_R / 2, 0, 1);
+    basicFrameworkTest(BASE_DESIRED_OUT, BASE_DESIRED_OUT, BASE_DESIRED_R_TRANSLATIONAL, 0, 1);
 }
 
 TEST(BeybladeCommand, execute_fullxy_fullr_180_ramp)
 {
-    basicFrameworkTest(-BASE_DESIRED_OUT, -BASE_DESIRED_OUT, BASE_DESIRED_R / 2, 180, 1);
-    basicBigFrameworkTest(-BASE_DESIRED_OUT, -BASE_DESIRED_OUT, BASE_DESIRED_R / 2, 180, 1);
+    basicFrameworkTest(-BASE_DESIRED_OUT, -BASE_DESIRED_OUT, BASE_DESIRED_R_TRANSLATIONAL, 180, 1);
+    basicBigFrameworkTest(
+        -BASE_DESIRED_OUT,
+        -BASE_DESIRED_OUT,
+        BASE_DESIRED_R_TRANSLATIONAL,
+        180,
+        1);
 }
 
 TEST(BeybladeCommand, execute_halfxy_halfr_270_ramp)
 {
-    basicFrameworkTest((-BASE_DESIRED_OUT / 2), (BASE_DESIRED_OUT / 2), (BASE_DESIRED_R), 270, 0.5);
-    basicBigFrameworkTest(-BASE_DESIRED_OUT, -BASE_DESIRED_OUT, BASE_DESIRED_R / 2, 180, 1);
+    basicFrameworkTest(
+        -BASE_DESIRED_OUT / 2,
+        BASE_DESIRED_OUT / 2,
+        BASE_DESIRED_R_NON_TRANSLATIONAL,
+        270,
+        0.5);
+    basicBigFrameworkTest(
+        -BASE_DESIRED_OUT,
+        -BASE_DESIRED_OUT,
+        BASE_DESIRED_R_TRANSLATIONAL,
+        180,
+        1);
 }

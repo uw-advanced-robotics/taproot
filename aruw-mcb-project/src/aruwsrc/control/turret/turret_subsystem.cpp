@@ -36,12 +36,13 @@ namespace aruwsrc
 {
 namespace turret
 {
-TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers)
+TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers, bool limitYaw)
     : aruwlib::control::turret::ITurretSubsystem(drivers),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
       pitchTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
+      limitYaw(limitYaw),
       pitchMotor(drivers, PITCH_MOTOR_ID, CAN_BUS_MOTORS, true, "pitch motor"),
       yawMotor(drivers, YAW_MOTOR_ID, CAN_BUS_MOTORS, false, "yaw motor")
 {
@@ -147,8 +148,9 @@ void TurretSubsystem::setYawMotorOutput(float out)
     }
     if (yawMotor.isMotorOnline())
     {
-        if ((getYawAngleFromCenter() + TURRET_START_ANGLE > TURRET_YAW_MAX_ANGLE && out > 0) ||
-            (getYawAngleFromCenter() + TURRET_START_ANGLE < TURRET_YAW_MIN_ANGLE && out < 0))
+        if (limitYaw &&
+            ((getYawAngleFromCenter() + TURRET_START_ANGLE > TURRET_YAW_MAX_ANGLE && out > 0) ||
+             (getYawAngleFromCenter() + TURRET_START_ANGLE < TURRET_YAW_MIN_ANGLE && out < 0)))
         {
             yawMotor.setDesiredOutput(0);
         }
@@ -162,10 +164,13 @@ void TurretSubsystem::setYawMotorOutput(float out)
 void TurretSubsystem::setYawSetpoint(float target)
 {
     yawTarget.setValue(target);
-    yawTarget.setValue(aruwlib::algorithms::ContiguousFloat::limitValue(
-        yawTarget,
-        TURRET_YAW_MIN_ANGLE,
-        TURRET_YAW_MAX_ANGLE));
+    if (limitYaw)
+    {
+        yawTarget.setValue(aruwlib::algorithms::ContiguousFloat::limitValue(
+            yawTarget,
+            TURRET_YAW_MIN_ANGLE,
+            TURRET_YAW_MAX_ANGLE));
+    }
 }
 
 void TurretSubsystem::setPitchSetpoint(float target)

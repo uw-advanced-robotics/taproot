@@ -92,6 +92,8 @@ void ChassisSubsystem::mecanumDriveCalculate(float x, float y, float r, float ma
         -y - x + chassisRotateTranslated * rightBackRotationRatio,
         -maxWheelSpeed,
         maxWheelSpeed);
+
+    desiredRotation = r;
 }
 
 void ChassisSubsystem::updateMotorRpmPid(

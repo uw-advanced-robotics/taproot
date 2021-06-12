@@ -53,9 +53,17 @@ public:
     static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
     static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
     static constexpr float TURRET_PITCH_MIN_ANGLE = TURRET_START_ANGLE - 13.0f;
-    static constexpr float TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 20.0f;
+    static constexpr float TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 30.0f;
 
-    explicit TurretSubsystem(aruwlib::Drivers* drivers);
+    /**
+     * Constructs a TurretSubsystem.
+     *
+     * @param[in] drivers Pointer to a drivers singleton object
+     * @param[in] limitYaw `true` if the yaw should be limited between `TURRET_YAW_MIN_ANGLE` and
+     *      `TURRET_YAW_MAX_ANGLE` and `false` if the yaw should not be limited (if you have a slip
+     *      ring).
+     */
+    explicit TurretSubsystem(aruwlib::Drivers* drivers, bool limitYaw = true);
 
     void initialize() override;
 
@@ -163,8 +171,13 @@ public:
     mockable void updateCurrentTurretAngles();
 
 private:
-    static constexpr uint16_t YAW_START_ENCODER_POSITION = 8160;
+#if defined(TARGET_SOLDIER)
+    static constexpr uint16_t YAW_START_ENCODER_POSITION = 6821;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;
+#else
+    static constexpr uint16_t YAW_START_ENCODER_POSITION = 0;
+    static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;
+#endif
 
     static constexpr float FEED_FORWARD_KP = 11800.0f;
     static constexpr float FEED_FORWARD_MAX_OUTPUT = 20000.0f;
@@ -179,6 +192,8 @@ private:
 
     aruwlib::algorithms::ContiguousFloat yawTarget;
     aruwlib::algorithms::ContiguousFloat pitchTarget;
+
+    bool limitYaw;
 
     void updateCurrentYawAngle();
     void updateCurrentPitchAngle();

@@ -299,8 +299,8 @@ TEST(ControlOperatorInterface, getTurretInput_range_of_remote_input_directly_map
 TEST(ControlOperatorInterface, getTurretInput_min_mouse_limited)
 {
     INIT_TEST
-    EXPECT_FLOAT_EQ(-1, runTurretYawInputTest(drivers, operatorInterface, 0, INT16_MIN));
-    EXPECT_FLOAT_EQ(-1, runTurretPitchInputTest(drivers, operatorInterface, 0, INT16_MIN));
+    EXPECT_FLOAT_EQ(1, runTurretYawInputTest(drivers, operatorInterface, 0, INT16_MIN + 1));
+    EXPECT_FLOAT_EQ(1, runTurretPitchInputTest(drivers, operatorInterface, 0, INT16_MIN + 1));
 
     EXPECT_FLOAT_EQ(
         1,
@@ -310,7 +310,7 @@ TEST(ControlOperatorInterface, getTurretInput_min_mouse_limited)
             0,
             -ControlOperatorInterface::USER_MOUSE_YAW_MAX - 100));
     EXPECT_FLOAT_EQ(
-        -1,
+        1,
         runTurretPitchInputTest(
             drivers,
             operatorInterface,
@@ -325,7 +325,7 @@ TEST(ControlOperatorInterface, getTurretInput_min_mouse_limited)
             0,
             -ControlOperatorInterface::USER_MOUSE_YAW_MAX));
     EXPECT_FLOAT_EQ(
-        -1,
+        1,
         runTurretPitchInputTest(
             drivers,
             operatorInterface,
@@ -333,11 +333,11 @@ TEST(ControlOperatorInterface, getTurretInput_min_mouse_limited)
             -ControlOperatorInterface::USER_MOUSE_PITCH_MAX));
 }
 
-TEST(ControlOperatorInterface, getTurretInput_mAX_mouse_limited)
+TEST(ControlOperatorInterface, getTurretInput_max_mouse_limited)
 {
     INIT_TEST
     EXPECT_FLOAT_EQ(-1, runTurretYawInputTest(drivers, operatorInterface, 0, INT16_MAX));
-    EXPECT_FLOAT_EQ(1, runTurretPitchInputTest(drivers, operatorInterface, 0, INT16_MAX));
+    EXPECT_FLOAT_EQ(-1, runTurretPitchInputTest(drivers, operatorInterface, 0, INT16_MAX));
 
     EXPECT_FLOAT_EQ(
         -1,
@@ -347,7 +347,7 @@ TEST(ControlOperatorInterface, getTurretInput_mAX_mouse_limited)
             0,
             ControlOperatorInterface::USER_MOUSE_YAW_MAX + 100));
     EXPECT_FLOAT_EQ(
-        1,
+        -1,
         runTurretPitchInputTest(
             drivers,
             operatorInterface,
@@ -362,7 +362,7 @@ TEST(ControlOperatorInterface, getTurretInput_mAX_mouse_limited)
             0,
             ControlOperatorInterface::USER_MOUSE_YAW_MAX));
     EXPECT_FLOAT_EQ(
-        1,
+        -1,
         runTurretPitchInputTest(
             drivers,
             operatorInterface,
@@ -388,7 +388,7 @@ TEST(
          i += 10)
     {
         EXPECT_FLOAT_EQ(
-            static_cast<float>(i) / ControlOperatorInterface::USER_MOUSE_PITCH_MAX,
+            -static_cast<float>(i) / ControlOperatorInterface::USER_MOUSE_PITCH_MAX,
             runTurretPitchInputTest(drivers, operatorInterface, 0, i));
     }
 }
@@ -409,7 +409,7 @@ TEST(ControlOperatorInterface, getTurretInput_mouse_and_remote_mappings_additive
             drivers,
             operatorInterface,
             MAX_REMOTE / 2.0f,
-            ControlOperatorInterface::USER_MOUSE_PITCH_MAX / 2.0f));
+            -ControlOperatorInterface::USER_MOUSE_PITCH_MAX / 2.0f));
 }
 
 TEST(ControlOperatorInterface, getSentinelSpeedInput_zeros)
