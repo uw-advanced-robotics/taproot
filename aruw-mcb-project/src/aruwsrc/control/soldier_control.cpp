@@ -28,10 +28,10 @@
 #include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/agitator_subsystem.hpp"
+#include "chassis/beyblade_command.hpp"
 #include "chassis/chassis_autorotate_command.hpp"
 #include "chassis/chassis_drive_command.hpp"
 #include "chassis/chassis_subsystem.hpp"
-#include "chassis/wiggle_drive_command.hpp"
 #include "cilent-display/client_display_command.hpp"
 #include "cilent-display/client_display_subsystem.hpp"
 #include "hopper-cover/hopper_commands.hpp"
@@ -69,7 +69,7 @@ namespace aruwsrc
 namespace control
 {
 /* define subsystems --------------------------------------------------------*/
-TurretSubsystem turret(drivers());
+TurretSubsystem turret(drivers(), false);
 
 ChassisSubsystem chassis(drivers());
 
@@ -108,7 +108,7 @@ ChassisDriveCommand chassisDriveCommand(drivers(), &chassis);
 
 ChassisAutorotateCommand chassisAutorotateCommand(drivers(), &chassis, &turret);
 
-WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
+BeybladeCommand beybladeCommand(drivers(), &chassis, &turret);
 
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
@@ -133,7 +133,7 @@ FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
 ClientDisplayCommand clientDisplayCommand(
     drivers(),
     &clientDisplay,
-    &wiggleDriveCommand,
+    &beybladeCommand,
     &chassisAutorotateCommand,
     nullptr,
     &chassisDriveCommand);
@@ -150,7 +150,7 @@ HoldRepeatCommandMapping rightSwitchUp(
     RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 HoldCommandMapping leftSwitchDown(
     drivers(),
-    {&wiggleDriveCommand},
+    {&beybladeCommand},
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping leftSwitchUp(
     drivers(),
@@ -162,7 +162,7 @@ ToggleCommandMapping rToggled(
     drivers(),
     {&openHopperCommand, &stopFrictionWheels},
     RemoteMapState({Remote::Key::R}));
-ToggleCommandMapping fToggled(drivers(), {&wiggleDriveCommand}, RemoteMapState({Remote::Key::F}));
+ToggleCommandMapping fToggled(drivers(), {&beybladeCommand}, RemoteMapState({Remote::Key::F}));
 HoldRepeatCommandMapping leftMousePressedShiftNotPressed(
     drivers(),
     {&agitatorShootFastLimited},

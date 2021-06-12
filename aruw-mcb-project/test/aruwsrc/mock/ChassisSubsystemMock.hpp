@@ -47,6 +47,7 @@ public:
     MOCK_METHOD(int16_t, getLeftBackRpmActual, (), (const override));
     MOCK_METHOD(int16_t, getRightFrontRpmActual, (), (const override));
     MOCK_METHOD(int16_t, getRightBackRpmActual, (), (const override));
+    MOCK_METHOD(float, getDesiredRotation, (), (const override));
 };  // class ChassisSubsystemMock
 }  // namespace mock
 }  // namespace aruwsrc

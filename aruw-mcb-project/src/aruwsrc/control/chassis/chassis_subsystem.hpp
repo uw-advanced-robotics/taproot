@@ -323,6 +323,8 @@ public:
 
     modm::Matrix<float, 3, 4> wheelVelToChassisVelMat;
 
+    float desiredRotation = 0.0f;
+
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 public:
     aruwlib::mock::DjiMotorMock leftFrontMotor;
@@ -502,6 +504,11 @@ public:
     inline int16_t getRightBackRpmActual() const override { return rightBackMotor.getShaftRPM(); }
 
     void onHardwareTestStart() override;
+
+    /**
+     * @return the desired rotation component of the chassis speed controller, in shft RPM.
+     */
+    mockable float getDesiredRotation() const { return desiredRotation; }
 
 private:
     /**

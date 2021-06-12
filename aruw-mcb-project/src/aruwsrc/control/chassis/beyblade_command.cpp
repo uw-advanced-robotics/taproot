@@ -49,7 +49,15 @@ BeybladeCommand::BeybladeCommand(
 }
 
 // Resets ramp
-void BeybladeCommand::initialize() { rotateSpeedRamp.reset(0); }
+void BeybladeCommand::initialize()
+{
+#ifdef ENV_UNIT_TESTS
+    rotationDirection = 1;
+#else
+    rotationDirection = (rand() - RAND_MAX / 2) < 0 ? -1 : 1;
+#endif
+    rotateSpeedRamp.reset(chassis->getDesiredRotation());
+}
 
 void BeybladeCommand::execute()
 {
@@ -68,18 +76,15 @@ void BeybladeCommand::execute()
                                                TRANSLATIONAL_SPEED_FRACTION_WHILE_BEYBLADE *
                                                ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
+    rampTarget = rotationDirection * getRotationTarget();
     if (x > TRANSLATION_LIMIT || y > TRANSLATION_LIMIT)
     {
-        rampTarget = RAMP_TARGET_TRANSLATIONAL;
-    }
-    else
-    {
-        rampTarget = RAMP_TARGET_NON_TRANSLATIONAL;
+        rampTarget *= RAMP_TARGET_TRANSLATIONAL_FRAC;
     }
 
     rotateSpeedRamp.setTarget(rampTarget);
     // Update the r speed by 1/8 of target (linear for each update)
-    rotateSpeedRamp.update(rampTarget * rampUpdate);
+    rotateSpeedRamp.update(rampTarget * RAMP_UPDATE_FRAC);
     float r = rotateSpeedRamp.getValue();
 
     // Rotate X and Y depending on turret angle
@@ -93,6 +98,27 @@ void BeybladeCommand::end(bool) { chassis->setDesiredOutput(0.0f, 0.0f, 0.0f); }
 
 bool BeybladeCommand::isFinished() const { return false; }
 
+float BeybladeCommand::getRotationTarget() const
+{
+    const uint16_t powerConsumptionLimit =
+        drivers->refSerial.getRobotData().chassis.powerConsumptionLimit;
+    if (!drivers->refSerial.getRefSerialReceivingData() || powerConsumptionLimit <= 45)
+    {
+        return ROTATION_TARGET_45W_CUTOFF;
+    }
+    else if (powerConsumptionLimit <= 60)
+    {
+        return ROTATION_TARGET_60W_CUTOFF;
+    }
+    else if (powerConsumptionLimit <= 80)
+    {
+        return ROTATION_TARGET_80W_CUTOFF;
+    }
+    else
+    {
+        return ROTATION_TARGET_MAX_CUTOFF;
+    }
+}
 }  // namespace chassis
 
 }  // namespace aruwsrc
