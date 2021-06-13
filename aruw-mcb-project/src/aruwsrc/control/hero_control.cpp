@@ -19,15 +19,18 @@
 
 #if defined(TARGET_HERO)
 
-#include <aruwlib/DriversSingleton.hpp>
-#include <aruwlib/control/CommandMapper.hpp>
-#include <aruwlib/control/HoldCommandMapping.hpp>
-#include <aruwlib/control/HoldRepeatCommandMapping.hpp>
-#include <aruwlib/control/PressCommandMapping.hpp>
-#include <aruwlib/control/ToggleCommandMapping.hpp>
+#include "aruwlib/DriversSingleton.hpp"
+#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/HoldCommandMapping.hpp"
+#include "aruwlib/control/HoldRepeatCommandMapping.hpp"
+#include "aruwlib/control/PressCommandMapping.hpp"
+#include "aruwlib/control/ToggleCommandMapping.hpp"
+#include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
+#include "aruwlib/control/setpoint/commands/move_absolute_command.hpp"
+#include "aruwlib/control/setpoint/commands/move_command.hpp"
 
-#include "agitator/agitator_calibrate_command.hpp"
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
+#include "agitator/double_agitator_subsystem.hpp"
 #include "agitator/limited_agitator_subsystem.hpp"
 #include "chassis/chassis_autorotate_command.hpp"
 #include "chassis/chassis_drive_command.hpp"
@@ -40,6 +43,7 @@
 #include "turret/turret_world_relative_position_command.hpp"
 
 using aruwlib::DoNotUse_getDrivers;
+using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
@@ -69,31 +73,38 @@ ChassisSubsystem chassis(drivers());
 // Hero has two agitators, one waterWheel and then a kicker
 LimitedAgitatorSubsystem waterWheelAgitator(
     drivers(),
-    AgitatorSubsystem::PID_HERO1_P,
-    AgitatorSubsystem::PID_HERO1_I,
-    AgitatorSubsystem::PID_HERO1_D,
-    AgitatorSubsystem::PID_HERO1_MAX_ERR_SUM,
-    AgitatorSubsystem::PID_HERO1_MAX_OUT,
+    AgitatorSubsystem::PID_HERO_WATERWHEEL_P,
+    AgitatorSubsystem::PID_HERO_WATERWHEEL_I,
+    AgitatorSubsystem::PID_HERO_WATERWHEEL_D,
+    AgitatorSubsystem::PID_HERO_WATERWHEEL_MAX_ERR_SUM,
+    AgitatorSubsystem::PID_HERO_WATERWHEEL_MAX_OUT,
     AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
-    AgitatorSubsystem::HERO1_AGITATOR_MOTOR_ID,
-    AgitatorSubsystem::HERO1_AGITATOR_MOTOR_CAN_BUS,
-    AgitatorSubsystem::HERO1_AGITATOR_INVERTED,
+    AgitatorSubsystem::HERO_WATERWHEEL_MOTOR_ID,
+    AgitatorSubsystem::HERO_WATERWHEEL_MOTOR_CAN_BUS,
+    AgitatorSubsystem::HERO_WATERWHEEL_INVERTED,
     LimitedAgitatorSubsystem::WATERWHEEL_LIMIT_PIN,
     LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_MAX_SUM,
     LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_LOWER_BOUND,
     LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_UPPER_BOUND);
 
-AgitatorSubsystem kickerAgitator(
+DoubleAgitatorSubsystem kickerSubsystem(
     drivers(),
-    AgitatorSubsystem::PID_HERO2_P,
-    AgitatorSubsystem::PID_HERO2_I,
-    AgitatorSubsystem::PID_HERO2_D,
-    AgitatorSubsystem::PID_HERO2_MAX_ERR_SUM,
-    AgitatorSubsystem::PID_HERO2_MAX_OUT,
+    AgitatorSubsystem::PID_HERO_KICKER_P,
+    AgitatorSubsystem::PID_HERO_KICKER_I,
+    AgitatorSubsystem::PID_HERO_KICKER_D,
+    AgitatorSubsystem::PID_HERO_KICKER_MAX_ERR_SUM,
+    AgitatorSubsystem::PID_HERO_KICKER_MAX_OUT,
     AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
-    AgitatorSubsystem::HERO2_AGITATOR_MOTOR_ID,
-    AgitatorSubsystem::HERO2_AGITATOR_MOTOR_CAN_BUS,
-    AgitatorSubsystem::HERO2_AGITATOR_INVERTED);
+    AgitatorSubsystem::HERO_KICKER1_MOTOR_ID,
+    AgitatorSubsystem::HERO_KICKER1_MOTOR_CAN_BUS,
+    AgitatorSubsystem::HERO_KICKER2_MOTOR_ID,
+    AgitatorSubsystem::HERO_KICKER2_MOTOR_CAN_BUS,
+    AgitatorSubsystem::HERO_KICKER_INVERTED,
+    DoubleAgitatorSubsystem::JAM_DISTANCE_TOLERANCE,
+    DoubleAgitatorSubsystem::JAM_TEMPORAL_TOLERANCE);
+
+// Inverted inversion (haha), because second kicker is on the
+// other end of the axle
 
 FrictionWheelSubsystem frictionWheels(drivers());
 
@@ -108,8 +119,8 @@ TurretCVCommand turretCVCommand(drivers(), &turret);
 
 WaterwheelLoadCommand42mm waterwheelLoadCommand(drivers(), &waterWheelAgitator);
 
-ShootComprisedCommand42mm kickerShootHeatLimitedCommand(drivers(), &kickerAgitator, true);
-ShootComprisedCommand42mm kickerShootUnlimitedCommand(drivers(), &kickerAgitator, false);
+ShootCommand42mm kickerShootHeatLimitedCommand(drivers(), &kickerSubsystem, true);
+ShootCommand42mm kickerShootUnlimitedCommand(drivers(), &kickerSubsystem, false);
 
 FrictionWheelRotateCommand spinFrictionWheels(
     &frictionWheels,
@@ -161,7 +172,7 @@ void initializeSubsystems()
     turret.initialize();
     chassis.initialize();
     waterWheelAgitator.initialize();
-    kickerAgitator.initialize();
+    kickerSubsystem.initialize();
     frictionWheels.initialize();
     drivers()->xavierSerial.attachChassis(&chassis);
     drivers()->xavierSerial.attachTurret(&turret);
@@ -173,7 +184,7 @@ void registerHeroSubsystems(aruwlib::Drivers *drivers)
     drivers->commandScheduler.registerSubsystem(&turret);
     drivers->commandScheduler.registerSubsystem(&chassis);
     drivers->commandScheduler.registerSubsystem(&waterWheelAgitator);
-    drivers->commandScheduler.registerSubsystem(&kickerAgitator);
+    drivers->commandScheduler.registerSubsystem(&kickerSubsystem);
     drivers->commandScheduler.registerSubsystem(&frictionWheels);
 }
 

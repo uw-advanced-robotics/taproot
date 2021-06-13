@@ -23,50 +23,35 @@ namespace aruwsrc
 {
 namespace agitator
 {
-static inline void initializeComprisedCommand(
+ShootFastComprisedCommand17MM::ShootFastComprisedCommand17MM(
     aruwlib::Drivers *drivers,
-    const float heatLimitBuffer,
-    const bool heatLimiting,
-    aruwsrc::agitator::AgitatorRotateCommand *agitatorRotateCommand,
-    aruwlib::control::CommandScheduler *comprisedCommandScheduler,
-    bool *unjamSequenceCommencing)
+    AgitatorSubsystem *agitator17mm,
+    bool heatLimiting)
+    : aruwlib::control::setpoint::MoveUnjamComprisedCommand(
+          drivers,
+          agitator17mm,
+          aruwlib::algorithms::PI / 5.0f,
+          aruwlib::algorithms::PI / 2.0f,
+          40,
+          10),
+      drivers(drivers),
+      heatLimiting(heatLimiting)
 {
-    *unjamSequenceCommencing = false;
+}
+
+bool ShootFastComprisedCommand17MM::isReady()
+{
     const auto &robotData = drivers->refSerial.getRobotData();
-    if (drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
-        robotData.turret.heat17ID1 + heatLimitBuffer > robotData.turret.heatLimit17ID1)
-    {
-        return;
-    }
-    comprisedCommandScheduler->addCommand(agitatorRotateCommand);
-}
 
-void ShootFastComprisedCommand17MM::initialize()
-{
-    initializeComprisedCommand(
-        drivers,
-        HEAT_LIMIT_BUFFER,
-        heatLimiting,
-        &agitatorRotateCommand,
-        &comprisedCommandScheduler,
-        &unjamSequenceCommencing);
-}
-
-void ShootSlowComprisedCommand17MM::initialize()
-{
-    initializeComprisedCommand(
-        drivers,
-        HEAT_LIMIT_BUFFER,
-        heatLimiting,
-        &agitatorRotateCommand,
-        &comprisedCommandScheduler,
-        &unjamSequenceCommencing);
+    return setpointSubsystem->isOnline() &&
+           !(drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
+             (robotData.turret.heat17ID1 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit17ID1));
 }
 
 WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
     aruwlib::Drivers *drivers,
     aruwsrc::agitator::LimitedAgitatorSubsystem *waterwheel)
-    : ShootComprisedCommand(
+    : MoveUnjamComprisedCommand(
           drivers,
           waterwheel,
           WATERWHEEL_42MM_CHANGE_ANGLE,
@@ -80,7 +65,7 @@ WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
 
 bool WaterwheelLoadCommand42mm::isReady()
 {
-    return (waterwheel->isAgitatorOnline() && !waterwheel->isLimitSwitchPressed());
+    return (waterwheel->isOnline() && !waterwheel->isLimitSwitchPressed());
 }
 
 bool WaterwheelLoadCommand42mm::isFinished() const
@@ -91,23 +76,22 @@ bool WaterwheelLoadCommand42mm::isFinished() const
            agitatorDisconnectFault || waterwheel->isLimitSwitchPressed();
 }
 
-ShootComprisedCommand42mm::ShootComprisedCommand42mm(
+ShootCommand42mm::ShootCommand42mm(
     aruwlib::Drivers *drivers,
-    aruwsrc::agitator::AgitatorSubsystem *kicker,
+    aruwlib::control::setpoint::SetpointSubsystem *kicker,
     bool heatLimiting)
-    : ShootComprisedCommand(
-          drivers,
+    : MoveCommand(
           kicker,
           KICKER_42MM_CHANGE_ANGLE,
-          KICKER_42MM_MAX_UNJAM_ANGLE,
           KICKER_42MM_ROTATE_TIME,
-          KICKER_42MM_PAUSE_AFTER_ROTATE_TIME),
+          KICKER_42MM_PAUSE_AFTER_ROTATE_TIME,
+          true),
       drivers(drivers),
       heatLimiting(heatLimiting)
 {
 }
 
-bool ShootComprisedCommand42mm::isReady()
+bool ShootCommand42mm::isReady()
 {
     const auto &robotData = drivers->refSerial.getRobotData();
 

@@ -17,22 +17,24 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "agitator_rotate_command.hpp"
+#include "move_command.hpp"
 
-#include <aruwlib/architecture/clock.hpp>
+#include "aruwlib/architecture/clock.hpp"
 
-namespace aruwsrc
+namespace aruwlib
 {
-namespace agitator
+namespace control
 {
-AgitatorRotateCommand::AgitatorRotateCommand(
-    AgitatorSubsystem* agitator,
+namespace setpoint
+{
+MoveCommand::MoveCommand(
+    SetpointSubsystem* agitator,
     float agitatorAngleChange,
     uint32_t agitatorRotateTime,
     uint32_t agitatorPauseAfterRotateTime,
     bool agitatorSetToFinalAngle,
     float setpointTolerance)
-    : connectedAgitator(agitator),
+    : setpointSubsystem(agitator),
       agitatorTargetAngleChange(agitatorAngleChange),
       rampToTargetAngle(0.0f),
       agitatorDesiredRotateTime(agitatorRotateTime),
@@ -45,22 +47,17 @@ AgitatorRotateCommand::AgitatorRotateCommand(
     this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(agitator));
 }
 
-void AgitatorRotateCommand::initialize()
+void MoveCommand::initialize()
 {
     // set the ramp start and target angles
-    rampToTargetAngle.setTarget(
-        connectedAgitator->getAgitatorDesiredAngle() + agitatorTargetAngleChange);
+    rampToTargetAngle.setTarget(setpointSubsystem->getSetpoint() + agitatorTargetAngleChange);
 
-    rampToTargetAngle.setValue(connectedAgitator->getAgitatorAngle());
-
-    // reset unjam and min rotate timeouts
-    connectedAgitator->armAgitatorUnjamTimer(agitatorMinRotatePeriod);
-    agitatorMinRotateTimeout.restart(agitatorMinRotatePeriod);
+    rampToTargetAngle.setValue(setpointSubsystem->getCurrentValue());
 
     agitatorPrevRotateTime = aruwlib::arch::clock::getTimeMilliseconds();
 }
 
-void AgitatorRotateCommand::execute()
+void MoveCommand::execute()
 {
     // update the agitator setpoint ramp
     uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
@@ -68,35 +65,37 @@ void AgitatorRotateCommand::execute()
         (currTime - agitatorPrevRotateTime) * agitatorTargetAngleChange /
         static_cast<float>(agitatorDesiredRotateTime));
     agitatorPrevRotateTime = currTime;
-    connectedAgitator->setAgitatorDesiredAngle(rampToTargetAngle.getValue());
+    setpointSubsystem->setSetpoint(rampToTargetAngle.getValue());
 }
 
-void AgitatorRotateCommand::end(bool)
+void MoveCommand::end(bool)
 {
     // if the agitator is not interrupted, then it exited normally
     // (i.e. reached the desired angle) and is not jammed. If it is
     // jammed we thus want to set the agitator angle to the current angle,
     // so the motor does not attempt to keep rotating forward (and possible stalling)
-    if (connectedAgitator->isAgitatorJammed() || !agitatorSetToFinalAngle)
+    if (setpointSubsystem->isJammed() || !agitatorSetToFinalAngle)
     {
-        connectedAgitator->setAgitatorDesiredAngle(connectedAgitator->getAgitatorAngle());
+        setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
     else
     {
-        connectedAgitator->setAgitatorDesiredAngle(rampToTargetAngle.getTarget());
+        setpointSubsystem->setSetpoint(rampToTargetAngle.getTarget());
     }
-    connectedAgitator->disarmAgitatorUnjamTimer();
 }
 
-bool AgitatorRotateCommand::isFinished() const
+bool MoveCommand::isFinished() const
 {
-    // The agitator is within the setpoint tolerance, the agitator ramp is
+    // The subsystem is jammed, or it is within the setpoint tolerance, the ramp is
     // finished, and the minimum rotate time is expired.
-    return fabsf(
-               connectedAgitator->getAgitatorAngle() -
-               connectedAgitator->getAgitatorDesiredAngle()) < agitatorSetpointTolerance &&
-           agitatorMinRotateTimeout.isExpired();
+    return setpointSubsystem->isJammed() ||
+           (fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
+                agitatorSetpointTolerance &&
+            rampToTargetAngle.isTargetReached() && agitatorMinRotateTimeout.isExpired());
 }
-}  // namespace agitator
 
-}  // namespace aruwsrc
+}  // namespace setpoint
+
+}  // namespace control
+
+}  // namespace aruwlib

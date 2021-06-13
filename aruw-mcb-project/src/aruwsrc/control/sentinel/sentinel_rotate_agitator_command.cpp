@@ -33,7 +33,7 @@ namespace sentinel
 {
 SentinelRotateAgitatorCommand::SentinelRotateAgitatorCommand(
     aruwlib::Drivers* drivers,
-    agitator::AgitatorSubsystem* agitator,
+    aruwlib::control::setpoint::SetpointSubsystem* agitator,
     SentinelSwitcherSubsystem* switcher)
     : ComprisedCommand(drivers),
       drivers(drivers),

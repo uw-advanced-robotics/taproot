@@ -21,8 +21,9 @@
 #define HOPPER_COMMANDS_HPP_
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/control/setpoint/commands/move_absolute_command.hpp"
 
-#include "aruwsrc/control/agitator/agitator_absolute_rotate_command.hpp"
+using aruwlib::control::setpoint::MoveAbsoluteCommand;
 
 namespace aruwsrc
 {
@@ -36,24 +37,31 @@ namespace control
  * move and set it there. With this approach regardless of disconnects
  * and recalibrations we can hope to utilize the full hopper range of motion.
  */
-class SoldierOpenHopperCommand : public AgitatorAbsoluteRotateCommand
+class SoldierOpenHopperCommand : public MoveAbsoluteCommand
 {
 public:
-    // 30 revolutions
-    static constexpr float SOLDIER_OPEN_HOPPER_TARGET_ANGLE = 30.0f * aruwlib::algorithms::PI;
+    // 3.12 revolutions
+    static constexpr float SOLDIER_OPEN_HOPPER_TARGET_ANGLE = 3.12 * aruwlib::algorithms::PI;
     // 5000 milliradians/second
     static constexpr uint32_t SOLDIER_OPEN_HOPPER_ANGULAR_SPEED =
         5.0f * aruwlib::algorithms::PI * 1000.0f;
     // Allowable error in radians within which motor will consider target angle reached.
-    static constexpr float SOLDIER_OPEN_HOPPER_TOLERANCE = 0.125f;
+    static constexpr float SOLDIER_OPEN_HOPPER_TOLERANCE = 0.05f;
     SoldierOpenHopperCommand(agitator::AgitatorSubsystem* agitator)
-        : AgitatorAbsoluteRotateCommand(
+        : MoveAbsoluteCommand(
               agitator,
               SOLDIER_OPEN_HOPPER_TARGET_ANGLE,
               SOLDIER_OPEN_HOPPER_ANGULAR_SPEED,
-              SOLDIER_OPEN_HOPPER_TOLERANCE)
+              SOLDIER_OPEN_HOPPER_TOLERANCE,
+              true)
     {
     }
+
+    /**
+     * By default, the open hopper cover subsystem should only naturally finish if there is
+     * a motor failure.
+     */
+    bool isFinished() const override { return !setpointSubsystem->isOnline(); }
 };  // class SoldierOpenHopperCommand
 
 /**
@@ -65,34 +73,38 @@ public:
  * of motion) we set desired position to current position and continuously
  * return `false` from isFinished.
  */
-class SoldierCloseHopperCommand : public AgitatorAbsoluteRotateCommand
+class SoldierCloseHopperCommand : public MoveAbsoluteCommand
 {
 public:
-    // -30 revolutions
-    static constexpr float SOLDIER_CLOSE_HOPPER_TARGET_ANGLE = -30.0f * aruwlib::algorithms::PI;
+    // 0 revolutions
+    static constexpr float SOLDIER_CLOSE_HOPPER_TARGET_ANGLE = 0;
     // 5000 milliradians/second
     static constexpr uint32_t SOLDIER_CLOSE_HOPPER_ANGULAR_SPEED =
         5.0f * aruwlib::algorithms::PI * 1000.0f;
     // Allowable error in radians within which motor will consider target angle reached.
-    static constexpr float SOLDIER_CLOSE_HOPPER_TOLERANCE = 0.125f;
+    static constexpr float SOLDIER_CLOSE_HOPPER_TOLERANCE = 0.05f;
 
-    SoldierCloseHopperCommand(agitator::AgitatorSubsystem* agitator)
-        : AgitatorAbsoluteRotateCommand(
+    SoldierCloseHopperCommand(aruwlib::control::setpoint::SetpointSubsystem* agitator)
+        : MoveAbsoluteCommand(
               agitator,
               SOLDIER_CLOSE_HOPPER_TARGET_ANGLE,
               SOLDIER_CLOSE_HOPPER_ANGULAR_SPEED,
-              SOLDIER_CLOSE_HOPPER_TOLERANCE)
+              SOLDIER_CLOSE_HOPPER_TOLERANCE,
+              true)
     {
     }
 
-    bool isFinished() const override
+    bool isReady() override
     {
-        if (jamTimeout.isExpired())
-        {
-            float currAngle = connectedAgitator->getAgitatorAngle();
-            connectedAgitator->setAgitatorDesiredAngle(currAngle);
-        }
-        return false;
+        /*
+         * By default this command is scheduled, so only add the command if
+         * the setpoint and the target don't match
+         */
+        float currAngle = setpointSubsystem->getCurrentValue();
+        return !aruwlib::algorithms::compareFloatClose(
+            currAngle,
+            SOLDIER_CLOSE_HOPPER_TARGET_ANGLE,
+            SOLDIER_CLOSE_HOPPER_TOLERANCE);
     }
 };  // class SoldierCloseHopperCommand
 

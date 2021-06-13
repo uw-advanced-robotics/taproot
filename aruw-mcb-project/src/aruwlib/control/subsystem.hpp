@@ -131,6 +131,14 @@ private:
      * construction and unassigned during destruction.
      */
     const int globalIdentifier;
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+    //> Testing Related Stuff ---
+public:
+    // Define default constructor to allow NiceMocks to call default constructor and actually
+    // construct :/, because setpoint subsystem inherits virtually from Subsystem *sigh*
+    Subsystem();
+#endif
 };  // class Subsystem
 
 }  // namespace control

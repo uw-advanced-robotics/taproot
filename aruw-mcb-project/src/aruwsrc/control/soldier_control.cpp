@@ -25,7 +25,8 @@
 #include <aruwlib/control/PressCommandMapping.hpp>
 #include <aruwlib/control/ToggleCommandMapping.hpp>
 
-#include "agitator/agitator_calibrate_command.hpp"
+#include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
+
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/agitator_subsystem.hpp"
 #include "chassis/beyblade_command.hpp"
@@ -47,6 +48,7 @@
 #include "aruwlib/motor/motorsim/sim_handler.hpp"
 #endif
 
+using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
@@ -83,13 +85,16 @@ AgitatorSubsystem agitator(
     AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
     AgitatorSubsystem::AGITATOR_MOTOR_ID,
     AgitatorSubsystem::AGITATOR_MOTOR_CAN_BUS,
-    AgitatorSubsystem::isAgitatorInverted);
+    AgitatorSubsystem::isAgitatorInverted,
+    true,
+    AgitatorSubsystem::AGITATOR_JAMMING_DISTANCE,
+    AgitatorSubsystem::JAMMING_TIME);
 
 // TODO: validate and tune these constexpr parameters for hopper lid motor
 // also find out what kind of motor hopper lid uses lol
 AgitatorSubsystem hopperCover(
     drivers(),
-    AgitatorSubsystem::PID_17MM_P,
+    AgitatorSubsystem::PID_HOPPER_P,
     AgitatorSubsystem::PID_17MM_I,
     AgitatorSubsystem::PID_17MM_D,
     AgitatorSubsystem::PID_17MM_MAX_ERR_SUM,
@@ -97,9 +102,10 @@ AgitatorSubsystem hopperCover(
     AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
     AgitatorSubsystem::HOPPER_COVER_MOTOR_ID,
     AgitatorSubsystem::HOPPER_COVER_MOTOR_CAN_BUS,
-    AgitatorSubsystem::IS_HOPPER_COVER_INVERTED);
+    AgitatorSubsystem::IS_HOPPER_COVER_INVERTED,
+    true);
 
-FrictionWheelSubsystem frictionWheels(drivers());
+FrictionWheelSubsystem frictionWheels(drivers(), aruwlib::motor::MOTOR1, aruwlib::motor::MOTOR2);
 
 ClientDisplaySubsystem clientDisplay(drivers());
 
@@ -114,7 +120,7 @@ TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret
 
 TurretCVCommand turretCVCommand(drivers(), &turret);
 
-AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
+CalibrateCommand agitatorCalibrateCommand(&agitator);
 
 ShootFastComprisedCommand17MM agitatorShootFastLimited(drivers(), &agitator);
 

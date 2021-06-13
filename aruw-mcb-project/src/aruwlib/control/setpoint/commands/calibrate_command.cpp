@@ -17,41 +17,35 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "subsystem.hpp"
+#include "calibrate_command.hpp"
 
-#include "command_scheduler.hpp"
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
+#include "aruwlib/control/subsystem.hpp"
+
+using aruwlib::control::setpoint::SetpointSubsystem;
 
 namespace aruwlib
 {
 namespace control
 {
-Subsystem::Subsystem(Drivers* drivers)
-    : drivers(drivers),
-      defaultCommand(nullptr),
-      globalIdentifier(CommandScheduler::constructSubsystem(this))
+namespace setpoint
 {
+CalibrateCommand::CalibrateCommand(SetpointSubsystem* setpointSubsystem)
+    : setpointSubsystem(setpointSubsystem)
+{
+    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
 }
 
-Subsystem::~Subsystem() { CommandScheduler::destructSubsystem(this); }
+void CalibrateCommand::initialize() { setpointSubsystem->calibrateHere(); }
 
-void Subsystem::setDefaultCommand(Command* command)
-{
-    if (command != nullptr)
-    {
-        defaultCommand = command;
-    }
-}
+void CalibrateCommand::execute() { setpointSubsystem->calibrateHere(); }
 
-const char* Subsystem::getName() { return "Subsystem"; }
+void CalibrateCommand::end(bool) {}
 
-#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-Subsystem::Subsystem()
-    : drivers(nullptr),
-      defaultCommand(nullptr),
-      globalIdentifier(CommandScheduler::constructSubsystem(this))
-{
-}
-#endif
+bool CalibrateCommand::isFinished() const { return setpointSubsystem->isCalibrated(); }
+
+}  // namespace setpoint
+
 }  // namespace control
 
 }  // namespace aruwlib

@@ -17,63 +17,66 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "agitator_shoot_comprised_command.hpp"
+#include "aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp"
 
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/control/command_scheduler.hpp"
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-#include "agitator_rotate_command.hpp"
-#include "agitator_unjam_command.hpp"
+#include "move_command.hpp"
+#include "unjam_command.hpp"
 
 using namespace aruwlib::control;
 
-namespace aruwsrc
+namespace aruwlib
 {
-namespace agitator
+namespace control
 {
-ShootComprisedCommand::ShootComprisedCommand(
+namespace setpoint
+{
+MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     aruwlib::Drivers* drivers,
-    AgitatorSubsystem* agitator,
+    SetpointSubsystem* setpointSubsystem,
     float agitatorChangeAngle,
     float maxUnjamAngle,
     uint32_t agitatorRotateTime,
     uint32_t agitatorPauseAfterRotateTime)
     : aruwlib::control::ComprisedCommand(drivers),
-      connectedAgitator(agitator),
+      setpointSubsystem(setpointSubsystem),
       agitatorRotateCommand(
-          agitator,
+          setpointSubsystem,
           agitatorChangeAngle,
           agitatorRotateTime,
           agitatorPauseAfterRotateTime,
           false),
-      agitatorUnjamCommand(agitator, maxUnjamAngle),
+      agitatorUnjamCommand(setpointSubsystem, maxUnjamAngle),
       unjamSequenceCommencing(false),
       agitatorDisconnectFault(false)
 {
-    this->comprisedCommandScheduler.registerSubsystem(agitator);
-    this->addSubsystemRequirement(dynamic_cast<Subsystem*>(agitator));
+    this->comprisedCommandScheduler.registerSubsystem(setpointSubsystem);
+    this->addSubsystemRequirement(dynamic_cast<Subsystem*>(setpointSubsystem));
 }
 
-void ShootComprisedCommand::initialize()
+void MoveUnjamComprisedCommand::initialize()
 {
     this->comprisedCommandScheduler.addCommand(dynamic_cast<Command*>(&agitatorRotateCommand));
     unjamSequenceCommencing = false;
 }
 
-void ShootComprisedCommand::execute()
+void MoveUnjamComprisedCommand::execute()
 {
-    // If agitator has disconnected, set flag to remember this when isFinished() and end()
+    // If setpointSubsystem has disconnected, set flag to remember this when isFinished() and end()
     // are called. (This check can't be done in isFinished() because it's const function)
-    if (!connectedAgitator->isAgitatorOnline())
+    if (!setpointSubsystem->isOnline())
     {
         agitatorDisconnectFault = true;
     }
     else
     {
-        // If agitator isn't disconnected run our normal logic
-        if (connectedAgitator->isAgitatorJammed() && !unjamSequenceCommencing)
+        // If setpointSubsystem isn't disconnected run our normal logic
+        if (setpointSubsystem->isJammed() && !unjamSequenceCommencing)
         {
-            // when the agitator is jammed, add the agitatorUnjamCommand
+            // when the setpointSubsystem is jammed, add the agitatorUnjamCommand
             // the to scheduler. The rotate forward command will be automatically
             // unscheduled.
             unjamSequenceCommencing = true;
@@ -84,9 +87,9 @@ void ShootComprisedCommand::execute()
     }
 }
 
-void ShootComprisedCommand::end(bool interrupted)
+void MoveUnjamComprisedCommand::end(bool interrupted)
 {
-    // The command could have also been interrupted by loss of agitator
+    // The command could have also been interrupted by loss of setpointSubsystem
     // connection. Account for that by OR'ing them.
     interrupted |= agitatorDisconnectFault;
     // agitatorDisconnect has been acknowledged, regardless of previous state
@@ -101,7 +104,7 @@ void ShootComprisedCommand::end(bool interrupted)
         interrupted);
 }
 
-bool ShootComprisedCommand::isFinished() const
+bool MoveUnjamComprisedCommand::isFinished() const
 {
     return (!unjamSequenceCommencing &&
             !comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
@@ -110,6 +113,8 @@ bool ShootComprisedCommand::isFinished() const
            agitatorDisconnectFault;
 }
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib

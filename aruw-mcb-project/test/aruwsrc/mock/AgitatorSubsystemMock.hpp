@@ -48,25 +48,21 @@ public:
 
     MOCK_METHOD(void, refresh, (), (override));
 
-    MOCK_METHOD(void, setAgitatorDesiredAngle, (float newAngle), (override));
+    MOCK_METHOD(void, setSetpoint, (float newAngle), (override));
 
-    MOCK_METHOD(float, getAgitatorAngle, (), (const, override));
+    MOCK_METHOD(float, getCurrentValue, (), (const, override));
 
-    MOCK_METHOD(float, getAgitatorDesiredAngle, (), (const, override));
+    MOCK_METHOD(float, getSetpoint, (), (const, override));
 
-    MOCK_METHOD(bool, agitatorCalibrateHere, (), (override));
+    MOCK_METHOD(bool, calibrateHere, (), (override));
 
-    MOCK_METHOD(void, armAgitatorUnjamTimer, (uint32_t predictedRotateTime), (override));
+    MOCK_METHOD(bool, isJammed, (), (override));
 
-    MOCK_METHOD(void, disarmAgitatorUnjamTimer, (), (override));
+    MOCK_METHOD(bool, isCalibrated, (), (override));
 
-    MOCK_METHOD(bool, isAgitatorJammed, (), (const, override));
+    MOCK_METHOD(bool, isOnline, (), (override));
 
-    MOCK_METHOD(bool, isAgitatorCalibrated, (), (const, override));
-
-    MOCK_METHOD(bool, isAgitatorOnline, (), (const, override));
-
-    MOCK_METHOD(float, getAgitatorVelocity, (), (const, override));
+    MOCK_METHOD(float, getVelocity, (), (override));
 
     MOCK_METHOD(const char*, getName, (), (override));
 };  // class AgitatorSubsystemMock

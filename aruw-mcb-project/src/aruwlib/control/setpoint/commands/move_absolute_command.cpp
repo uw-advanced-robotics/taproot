@@ -17,46 +17,47 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "agitator_absolute_rotate_command.hpp"
+#include "move_absolute_command.hpp"
 
-#include <aruwlib/architecture/clock.hpp>
+#include "aruwlib/architecture/clock.hpp"
 
-using aruwsrc::agitator::AgitatorSubsystem;
-
-namespace aruwsrc
+namespace aruwlib
 {
 namespace control
 {
-AgitatorAbsoluteRotateCommand::AgitatorAbsoluteRotateCommand(
-    AgitatorSubsystem* agitator,
+namespace setpoint
+{
+MoveAbsoluteCommand::MoveAbsoluteCommand(
+    SetpointSubsystem* setpointSubsystem,
     float targetAngle,
     uint32_t agitatorRotateSpeed,
-    float setpointTolerance)
-    : connectedAgitator(agitator),
+    float setpointTolerance,
+    bool automaticallyClearJam)
+    : setpointSubsystem(setpointSubsystem),
       targetAngle(targetAngle),
       agitatorRotateSpeed(agitatorRotateSpeed),
-      agitatorSetpointTolerance(setpointTolerance)
+      agitatorSetpointTolerance(setpointTolerance),
+      automaticallyClearJam(automaticallyClearJam)
 {
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(agitator));
+    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
 }
 
-void AgitatorAbsoluteRotateCommand::initialize()
+void MoveAbsoluteCommand::initialize()
 {
     rampToTargetAngle.setTarget(targetAngle);
-    rampToTargetAngle.setValue(connectedAgitator->getAgitatorAngle());
+    rampToTargetAngle.setValue(setpointSubsystem->getCurrentValue());
     agitatorPrevRotateTime = aruwlib::arch::clock::getTimeMilliseconds();
-    jamTimeout.restart(AGITATOR_JAM_TIMEOUT);
 }
 
-void AgitatorAbsoluteRotateCommand::execute()
+void MoveAbsoluteCommand::execute()
 {
-    // Reset jam timeout if agitator is within setpoint tolerance of where target from
-    // last command execution
-    float desiredAngle = rampToTargetAngle.getValue();
-    float currAngle = connectedAgitator->getAgitatorAngle();
-    if (fabsf(currAngle - desiredAngle) < AGITATOR_SETPOINT_TOLERANCE)
+    // If the agitator is jammed, set the setpoint to the current angle. Necessary since
+    // derived classes may choose to overwrite the `isFinished` function and so for motor safety
+    // we do this.
+    if (setpointSubsystem->isJammed())
     {
-        jamTimeout.restart(AGITATOR_JAM_TIMEOUT);
+        setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
+        return;
     }
 
     // We can assume that agitator is connected, otherwise end will be called.
@@ -69,27 +70,32 @@ void AgitatorAbsoluteRotateCommand::execute()
         1'000'000.0f);
     agitatorPrevRotateTime = currTime;
 
-    connectedAgitator->setAgitatorDesiredAngle(rampToTargetAngle.getValue());
+    setpointSubsystem->setSetpoint(rampToTargetAngle.getValue());
 }
 
-void AgitatorAbsoluteRotateCommand::end(bool)
+void MoveAbsoluteCommand::end(bool)
 {
     // When this command ends we want to make sure to set the agitator's target angle
     // to it's current angle so it doesn't keep trying to move, especially if it's jammed
     // or reached the end of its range of motion.
-    connectedAgitator->setAgitatorDesiredAngle(connectedAgitator->getAgitatorAngle());
+    setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
+    if (automaticallyClearJam)
+    {
+        setpointSubsystem->clearJam();
+    }
 }
 
-bool AgitatorAbsoluteRotateCommand::isFinished() const
+bool MoveAbsoluteCommand::isFinished() const
 {
     // Command is finished if we've reached target, lost connection to agitator, or
     // if our agitator is jammed.
-    return (fabsf(
-                connectedAgitator->getAgitatorAngle() -
-                connectedAgitator->getAgitatorDesiredAngle()) < agitatorSetpointTolerance) ||
-           !connectedAgitator->isAgitatorOnline() || jamTimeout.isExpired();
+    return (fabsf(setpointSubsystem->getCurrentValue() - rampToTargetAngle.getTarget()) <
+            agitatorSetpointTolerance) ||
+           !setpointSubsystem->isOnline() || setpointSubsystem->isJammed();
 }
+
+}  // namespace setpoint
 
 }  // namespace control
 
-}  // namespace aruwsrc
+}  // namespace aruwlib
