@@ -28,6 +28,13 @@ namespace aruwlib
 {
 namespace arch
 {
+/**
+ * A class for keeping track of a timer that expires. Template argument
+ * expects a function pointer that returns a uin32_t representing some absolute
+ * measure of time.
+ *
+ * Doesn't start until `restart()` is called
+ */
 template <uint32_t (*T)()>
 class Timeout
 {
@@ -50,24 +57,47 @@ public:
 
     explicit Timeout(uint32_t timeout) { restart(timeout); }
 
-    void restart(uint32_t timeout)
+    /**
+     * Set the timer to expire in `timeout` units of time.
+     *
+     * @param[in] timeout: the amount of time from when this function
+     * is called that the timer should expire.
+     */
+    inline void restart(uint32_t timeout)
     {
         this->isRunning = true;
         this->isExecuted = false;
         this->expireTime = TimeFunc() + timeout;
     }
 
-    void stop()
+    /**
+     * Stop the timer. If expired, the expiration flags are cleared.
+     */
+    inline void stop()
     {
         this->isRunning = false;
         this->isExecuted = false;
     }
 
-    bool isStopped() const { return !this->isRunning; }
+    /**
+     * @return `true` if the timer is stopped
+     */
+    inline bool isStopped() const { return !this->isRunning; }
 
-    bool isExpired() const { return this->isRunning && TimeFunc() >= this->expireTime; }
+    /**
+     * @return `true` if the timer has expired (timeout has been reached) and is NOT
+     * stopped.
+     */
+    inline bool isExpired() const { return this->isRunning && TimeFunc() >= this->expireTime; }
 
-    bool execute()
+    /**
+     * Returns `true` on the first call when timer has expired since restart. Use to
+     * only catch the timeout expiration once.
+     *
+     * @return `true` the first time the timer has expired (timeout has been reached)
+     * since last `restart()`
+     */
+    inline bool execute()
     {
         if (!isExecuted && isExpired())
         {
