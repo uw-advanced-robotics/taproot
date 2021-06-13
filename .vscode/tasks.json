@@ -163,6 +163,19 @@
             "options": {
                 "cwd": "${workspaceRoot}/aruw-mcb-project"
             }
+        },
+        {
+            "label": "Git - Remove pre-commit meta files",
+            "type": "shell",
+            "presentation": {
+                "panel": "new"
+            },
+            "command": "find | fgrep .orig | xargs rm && find | fgrep .rej | xargs rm",
+            "group": "none",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/aruw-mcb-project"
+            }
         }
     ]
 }
