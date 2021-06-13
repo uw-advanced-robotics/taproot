@@ -105,6 +105,11 @@ elif args["BUILD_PROFILE"] == "fast":
     if "-g3" in env["CCFLAGS"]:
         env["CCFLAGS"].remove("-g3")
     env.AppendUnique(CCFLAGS=["-O0"])
+elif args["BUILD_PROFILE"] == "release":
+    # Replace -Os with -O3
+    if "-Os" in env["CCFLAGS"]:
+        env["CCFLAGS"].remove("-Os")
+    env.AppendUnique(CCFLAGS=["-O3"])
 
 # Add profiling-specific flags
 if args["PROFILING"] == "true":
