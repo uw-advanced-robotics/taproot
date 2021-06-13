@@ -26,6 +26,13 @@ namespace aruwlib
 {
 namespace arch
 {
+/**
+ * A timer class which unlike the `Timeout` class will restart when execute
+ * is called and returns that the timer has expired. Keeps its expire times
+ * aligned with the given timeout period (i.e.: the timeout time will always be a
+ * multiple of the period it is constructed to timeout in +/- some constant due to
+ * program startup time)
+ */
 template <typename T>
 class PeriodicTimer
 {
@@ -34,16 +41,38 @@ public:
 
     explicit PeriodicTimer(uint32_t period) : period(period), timeout(period) {}
 
-    void restart() { timeout.restart(period); }
-    void restart(uint32_t period)
+    /**
+     * Set the timer to expire `period` units of time away from the time at which
+     * this function was called.
+     */
+    inline void restart() { timeout.restart(period); }
+
+    /**
+     * Similar to `restart()` but redefine the period of the timer.
+     *
+     * @param[in] period: the new period to use for this `PeriodicTimer`
+     */
+    inline void restart(uint32_t period)
     {
         this->period = period;
         restart();
     }
 
-    void stop() { timeout.stop(); }
+    /**
+     * Stop the timer.
+     */
+    inline void stop() { timeout.stop(); }
 
-    bool execute()
+    /**
+     * Returns `true` on the first call when timer has expired since `restart()`.
+     * If timer is checked and has expired, next expiration time is set to the closest
+     * time which is an integer product of the `period` away from the time this timer
+     * expired.
+     *
+     * @return `true` the first time the timer has expired (timeout has been reached)
+     * since last `restart()`
+     */
+    inline bool execute()
     {
         if (timeout.execute())
         {
@@ -61,7 +90,10 @@ public:
         return false;
     }
 
-    bool isStopped() const { return timeout.isStopped(); }
+    /**
+     * @return `true` if the timer is stopped
+     */
+    inline bool isStopped() const { return timeout.isStopped(); }
 
 private:
     uint32_t period;
