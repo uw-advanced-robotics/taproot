@@ -26,7 +26,8 @@
 #include <aruwlib/control/PressCommandMapping.hpp>
 #include <aruwlib/control/ToggleCommandMapping.hpp>
 
-#include "agitator/agitator_calibrate_command.hpp"
+#include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
+
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/agitator_subsystem.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
@@ -42,6 +43,7 @@
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
 
+using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::sentinel;
@@ -92,7 +94,7 @@ SentinelSwitcherSubsystem switcher(drivers(), SWITCHER_SERVO_PIN);
 /* define commands ----------------------------------------------------------*/
 SentinelRotateAgitatorCommand rotateAgitatorManual(drivers(), &agitator, &switcher);
 
-AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
+CalibrateCommand agitatorCalibrateCommand(&agitator);
 
 SentinelAutoDriveComprisedCommand sentinelAutoDrive(drivers(), &sentinelDrive);
 

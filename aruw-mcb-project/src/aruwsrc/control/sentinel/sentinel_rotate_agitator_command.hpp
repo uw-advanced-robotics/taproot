@@ -21,9 +21,8 @@
 #define SENTINEL_AGITATOR_SYSTEM_COMPRISED_COMMAND_HPP_
 
 #include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/command.hpp>
-
-#include "aruwsrc/control/agitator/agitator_shoot_comprised_command.hpp"
+#include <aruwlib/control/comprised_command.hpp>
+#include <aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp>
 
 namespace aruwsrc
 {
@@ -41,7 +40,7 @@ class SentinelRotateAgitatorCommand : public aruwlib::control::ComprisedCommand
 public:
     SentinelRotateAgitatorCommand(
         aruwlib::Drivers* drivers,
-        agitator::AgitatorSubsystem* agitator,
+        aruwlib::control::setpoint::SetpointSubsystem* agitator,
         SentinelSwitcherSubsystem* switcher);
 
     const char* getName() const override { return "sentinel rotate agitator"; }
@@ -65,10 +64,10 @@ private:
     static constexpr uint32_t AGITATOR_WAIT_AFTER_ROTATE_TIME = 0;
 
     aruwlib::Drivers* drivers;
-    agitator::AgitatorSubsystem* agitator;
+    aruwlib::control::setpoint::SetpointSubsystem* agitator;
     SentinelSwitcherSubsystem* switcher;
 
-    agitator::ShootComprisedCommand rotateAgitator;
+    aruwlib::control::setpoint::MoveUnjamComprisedCommand rotateAgitator;
 
     aruwlib::arch::MilliTimeout switchBarrelTimeout;
 

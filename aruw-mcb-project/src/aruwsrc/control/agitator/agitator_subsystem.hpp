@@ -20,15 +20,17 @@
 #ifndef AGITATOR_SUBSYSTEM_HPP_
 #define AGITATOR_SUBSYSTEM_HPP_
 
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/architecture/conditional_timer.hpp"
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/subsystem.hpp"
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
 
-#include <modm/math/filter/pid.hpp>
+#include "aruwlib/control/setpoint/algorithms/setpoint_continuous_jam_checker.hpp"
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
 #include "aruwsrc/algorithms/turret_pid.hpp"
 
@@ -44,13 +46,14 @@ namespace agitator
  * direct support for agitator control, it is generic enough to be used in a
  * wide variety of senarios.
  */
-class AgitatorSubsystem : public aruwlib::control::Subsystem
+class AgitatorSubsystem : public aruwlib::control::setpoint::SetpointSubsystem
 {
 public:
 #if defined(TARGET_SOLDIER) || defined(TARGET_OLD_SOLDIER)
     // position PID terms
     // PID terms for soldier
     static constexpr float PID_17MM_P = 170000.0f;
+    static constexpr float PID_HOPPER_P = 100000.0f;
     static constexpr float PID_17MM_I = 0.0f;
     static constexpr float PID_17MM_D = 80.0f;
     static constexpr float PID_17MM_MAX_ERR_SUM = 0.0f;
@@ -60,6 +63,8 @@ public:
     static constexpr aruwlib::can::CanBus AGITATOR_MOTOR_CAN_BUS = aruwlib::can::CanBus::CAN_BUS1;
 
     static constexpr bool isAgitatorInverted = false;
+
+    static constexpr float AGITATOR_JAMMING_DISTANCE = aruwlib::algorithms::PI / 10;
 
     // The motor that controls the hopper lid is an agitator_subsystem instance, so
     // I'm adding its constants here as well.
@@ -82,34 +87,36 @@ public:
     static constexpr aruwlib::can::CanBus AGITATOR_MOTOR_CAN_BUS = aruwlib::can::CanBus::CAN_BUS1;
 
 #elif defined(TARGET_HERO)
-    /// \todo tune all the things
-    // PID terms for hero agitator 1
-    static constexpr float PID_HERO1_P = 1500.0f;
-    static constexpr float PID_HERO1_I = 500.0f;
-    static constexpr float PID_HERO1_D = 7000.0f;
-    static constexpr float PID_HERO1_MAX_ERR_SUM = 0.0f;
+    /// @todo tune all the things
+    // Hero's waterwheel constants
+    static constexpr float PID_HERO_WATERWHEEL_P = 100000.0f;
+    static constexpr float PID_HERO_WATERWHEEL_I = 0.0f;
+    static constexpr float PID_HERO_WATERWHEEL_D = 10.0f;
+    static constexpr float PID_HERO_WATERWHEEL_MAX_ERR_SUM = 0.0f;
+    static constexpr float PID_HERO_WATERWHEEL_MAX_OUT = 16000.0f;
+
+    static constexpr aruwlib::motor::MotorId HERO_WATERWHEEL_MOTOR_ID = aruwlib::motor::MOTOR3;
+    static constexpr aruwlib::can::CanBus HERO_WATERWHEEL_MOTOR_CAN_BUS =
+        aruwlib::can::CanBus::CAN_BUS1;
+    static constexpr bool HERO_WATERWHEEL_INVERTED = false;
+
+    // PID terms for the hero kicker
+    static constexpr float PID_HERO_KICKER_P = 50000.0f;
+    static constexpr float PID_HERO_KICKER_I = 0.0f;
+    static constexpr float PID_HERO_KICKER_D = 10.0f;
+    static constexpr float PID_HERO_KICKER_MAX_ERR_SUM = 0.0f;
     // max out added by Tenzin since it wasn't here. This should
     // also be changed by someone who know's what they're doing!
-    static constexpr float PID_HERO1_MAX_OUT = 16000.0f;
+    static constexpr float PID_HERO_KICKER_MAX_OUT = 16000.0f;
 
-    // PID terms for hero agitator 2
-    static constexpr float PID_HERO2_P = 1500.0f;
-    static constexpr float PID_HERO2_I = 500.0f;
-    static constexpr float PID_HERO2_D = 7000.0f;
-    static constexpr float PID_HERO2_MAX_ERR_SUM = 0.0f;
-    // max out added by Tenzin since it wasn't here. This should
-    // also be changed by someone who know's what they're doing!
-    static constexpr float PID_HERO2_MAX_OUT = 16000.0f;
-
-    static constexpr aruwlib::motor::MotorId HERO1_AGITATOR_MOTOR_ID = aruwlib::motor::MOTOR7;
-    static constexpr aruwlib::can::CanBus HERO1_AGITATOR_MOTOR_CAN_BUS =
+    // There are two kicker motors that drive the shaft.
+    static constexpr aruwlib::motor::MotorId HERO_KICKER1_MOTOR_ID = aruwlib::motor::MOTOR7;
+    static constexpr aruwlib::motor::MotorId HERO_KICKER2_MOTOR_ID = aruwlib::motor::MOTOR8;
+    static constexpr aruwlib::can::CanBus HERO_KICKER1_MOTOR_CAN_BUS =
         aruwlib::can::CanBus::CAN_BUS1;
-    static constexpr bool HERO1_AGITATOR_INVERTED = false;
-
-    static constexpr aruwlib::motor::MotorId HERO2_AGITATOR_MOTOR_ID = aruwlib::motor::MOTOR8;
-    static constexpr aruwlib::can::CanBus HERO2_AGITATOR_MOTOR_CAN_BUS =
+    static constexpr aruwlib::can::CanBus HERO_KICKER2_MOTOR_CAN_BUS =
         aruwlib::can::CanBus::CAN_BUS1;
-    static constexpr bool HERO2_AGITATOR_INVERTED = false;
+    static constexpr bool HERO_KICKER_INVERTED = false;
 #endif
 
     /**
@@ -117,6 +124,13 @@ public:
      */
     static constexpr float AGITATOR_GEAR_RATIO_M2006 = 36.0f;
     static constexpr float AGITATOR_GEAR_RATIO_GM3508 = 19.0f;
+
+    /**
+     * The jamming constants. Agitator is considered jammed if difference between setpoint
+     * and current angle is > `JAMMING_DISTANCE` radians for >= `JAMMING_TIME` ms;
+     */
+    static constexpr float JAMMING_DISTANCE = 1.0f;
+    static constexpr uint32_t JAMMING_TIME = 150;
 
     /**
      * Construct an agitator with the passed in PID parameters, gear ratio, and motor-specific
@@ -132,11 +146,19 @@ public:
         float agitatorGearRatio,
         aruwlib::motor::MotorId agitatorMotorId,
         aruwlib::can::CanBus agitatorCanBusId,
-        bool isAgitatorInverted);
+        bool isAgitatorInverted,
+        bool jamLogicEnabled = true,
+        float jammingDistance = JAMMING_DISTANCE,
+        uint32_t jammingTime = JAMMING_TIME);
 
     void initialize() override;
 
     void refresh() override;
+
+    /**
+     * @return The angle set in `setSetpoint`.
+     */
+    mockable inline float getSetpoint() const override { return desiredAgitatorAngle; }
 
     /**
      * Sets desired angle in radians of the agitator motor, relative to where the agitator
@@ -144,70 +166,49 @@ public:
      *
      * @param[in] newAngle The desired angle.
      */
-    mockable inline void setAgitatorDesiredAngle(float newAngle)
-    {
-        desiredAgitatorAngle = newAngle;
-    }
+    mockable inline void setSetpoint(float newAngle) override { desiredAgitatorAngle = newAngle; }
 
     /**
      * @return The calibrated agitator angle, in radians. If the agitator is uncalibrated, 0
      *      radians is returned.
      */
-    mockable float getAgitatorAngle() const;
-
-    /**
-     * @return The angle set in `setAgitatorDesiredAngle`.
-     */
-    mockable inline float getAgitatorDesiredAngle() const { return desiredAgitatorAngle; }
+    mockable float getCurrentValue() const override;
 
     /**
      * Attempts to calibrate the agitator at the current position, such that
-     * `getAgitatorAngle` will return 0 radians at this position.
+     * `getCurrentValue` will return 0 radians at this position.
      *
      * @return `true` if the agitator has been successfully calibrated, `false`
      *      otherwise.
      */
-    mockable bool agitatorCalibrateHere();
-
-    /**
-     * A timer system may be used for determining if an agitator is jammed. This function
-     * starts the agitator unjam timer. Call when starting to rotate to a position. Use
-     * `isAgitatorJammed` to check the timer. When the agitator has reached a the desired
-     * position, stop the unjam timer by calling `disarmAgitatorUnjamTimer`.
-     *
-     * @note In addition to the `predictedRotateTime`, an `JAMMED_TOLERANCE_PERIOD` is added
-     *      to the timer's timeout.
-     * @param[in] predictedRotateTime The time that you expect that agitator to rotate in
-     *      milliseconds.
-     */
-    mockable void armAgitatorUnjamTimer(uint32_t predictedRotateTime);
-
-    /**
-     * Stops the agitator unjam timer.
-     */
-    mockable void disarmAgitatorUnjamTimer();
+    mockable bool calibrateHere() override;
 
     /**
      * @return `true` if the agitator unjam timer has expired, signaling that the agitator
      *      has jammed, `false` otherwise.
      */
-    mockable bool isAgitatorJammed() const;
+    mockable bool isJammed() override { return jamLogicEnabled && subsystemJamStatus; }
 
     /**
-     * @return `true` if the agitator has been calibrated (`agitatorCalibrateHere` has been
+     * Clear the jam status of the subsystem, indicating that it has been unjammed.
+     */
+    void clearJam() override { subsystemJamStatus = false; }
+
+    /**
+     * @return `true` if the agitator has been calibrated (`calibrateHere` has been
      *      called and the agitator motor is online).
      */
-    mockable inline bool isAgitatorCalibrated() const { return agitatorIsCalibrated; }
+    mockable inline bool isCalibrated() override { return agitatorIsCalibrated; }
 
     /**
      * @return `true` if the agitator motor is online (i.e.: is connected)
      */
-    mockable inline bool isAgitatorOnline() const { return agitatorMotor.isMotorOnline(); }
+    mockable inline bool isOnline() override { return agitatorMotor.isMotorOnline(); }
 
     /**
      * @return The velocity of the agitator in units of degrees per second.
      */
-    mockable inline float getAgitatorVelocity() const
+    mockable inline float getVelocity() override
     {
         return 6.0f * static_cast<float>(agitatorMotor.getShaftRPM()) / gearRatio;
     }
@@ -216,8 +217,6 @@ public:
 
     void onHardwareTestStart() override;
 
-    void onHardwareTestComplete() override;
-
     mockable const char* getName() override { return "Agitator"; }
 
 protected:
@@ -225,51 +224,52 @@ protected:
      * Whether or not the agitator has been calibrated yet. You should calibrate the agitator
      * before using it.
      */
-    bool agitatorIsCalibrated;
+    bool agitatorIsCalibrated = false;
 
     void agitatorRunPositionPid();
 
 private:
-    /**
-     * We add on this amount of "tolerance" to the predicted rotate time since some times it
-     * takes longer than predicted and we only want to unjam when we are actually jammed.
-     * Measured in ms.
-     */
-    static constexpr uint32_t JAMMED_TOLERANCE_PERIOD = 150;
-
     /**
      * PID controller for running postiion PID on unwrapped agitator angle (in radians).
      */
     aruwsrc::algorithms::TurretPid agitatorPositionPid;
 
     /**
+     * The object that runs jam detection.
+     */
+    aruwlib::control::setpoint::SetpointContinuousJamChecker jamChecker;
+
+    /**
      * The user desired angle, measured in radians.
      * The agitator uses unwrapped angle.
      */
-    float desiredAgitatorAngle;
+    float desiredAgitatorAngle = 0.0f;
 
     /**
      * You can calibrate the agitator, which will set the current agitator angle to zero radians.
      */
-    float agitatorCalibratedZeroAngle;
-
-    /**
-     * A timeout that is used to determine whether or not the agitator is jammed. If the
-     * agitator has not reached the desired position in a certain time, the agitator is
-     * considered jammed. units: milliseconds
-     */
-    aruwlib::arch::MilliTimeout agitatorJammedTimeout;
-
-    /**
-     * The current agitator timeout time, in milliseconds.
-     */
-    uint32_t agitatorJammedTimeoutPeriod;
+    float agitatorCalibratedZeroAngle = 0.0f;
 
     /**
      * Motor gear ratio, so we use shaft angle rather than encoder angle.
      */
     float gearRatio;
 
+    /**
+     * Stores the jam state of the subsystem
+     */
+    bool subsystemJamStatus = false;
+
+    /**
+     * A flag which determines whether or not jamming detection is enabled.
+     * `true` means enabled, `false` means disabled.
+     * Detailed effect: When `false`, isJammed() always return false.
+     */
+    bool jamLogicEnabled;
+
+    /**
+     * Get the raw angle of the shaft from the motor
+     */
     float getUncalibratedAgitatorAngle() const;
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
@@ -280,7 +280,6 @@ private:
 #else
     aruwlib::motor::DjiMotor agitatorMotor;
 #endif
-
 };  // class AgitatorSubsystem
 
 }  // namespace agitator

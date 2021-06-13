@@ -20,19 +20,20 @@
 #ifndef AGITATOR_ABSOLUTE_ROTATE_COMMAND_HPP_
 #define AGITATOR_ABSOLUTE_ROTATE_COMMAND_HPP_
 
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-#include "aruwsrc/control/agitator/agitator_subsystem.hpp"
-
-namespace aruwsrc
+namespace aruwlib
 {
 namespace control
 {
+namespace setpoint
+{
 /**
- * A command that uses an agitator_subsystem to rotate to the same
+ * A command that uses an `SetpointSubsystem` to rotate to the same
  * angle everytime, attemping to rotate at the given angular velocity.
  * (Consistency doesn't work across motor disconnects). This command
  * ends immediately if the agitator is jammed, and upon ending will
@@ -42,25 +43,30 @@ namespace control
  * Agitator angles are relative, and the "0"-angle is changed when
  * the agitator is calibrated.
  */
-class AgitatorAbsoluteRotateCommand : public aruwlib::control::Command
+class MoveAbsoluteCommand : public aruwlib::control::Command
 {
 public:
     /**
-     * @param[in] agitator the agitator subsystem this command depends on.
-     * @param[in] targetAngle the target absolute angle relative the agitator
+     * @param[in] setpointSubsystem the subsystem this command manipulates.
+     * @param[in] setpoint the target value the controlled variable
      *  should attempt to reach
-     * @param[in] agitatorRotateSpeed The angular speed the agitator should
+     * @param[in] speed The angular speed the agitator should
      *  attempt to move at in milliradians/second
      * @param[in] setpointTolerance the command will consider the target angle
      *  as reached when it's distance to the target is within this value
+     * @param[in] shouldAutomaticallyClearJam the command will clear the subsystem's
+     *  jam state without any unjamming performed
      */
-    explicit AgitatorAbsoluteRotateCommand(
-        aruwsrc::agitator::AgitatorSubsystem* agitator,
+    explicit MoveAbsoluteCommand(
+        aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem,
         float targetAngle,
         uint32_t agitatorRotateSpeed,
-        float setpointTolerance);
+        float setpointTolerance,
+        bool shouldAutomaticallyClearJam);
 
     const char* getName() const override { return "open hopper lid"; }
+
+    bool isReady() override { return !setpointSubsystem->isJammed(); }
 
     void initialize() override;
 
@@ -71,27 +77,9 @@ public:
     bool isFinished() const override;
 
 protected:
-    aruwsrc::agitator::AgitatorSubsystem* connectedAgitator;
-
-    /**
-     * The angle at which the agitator is considered to have reached its setpoint.
-     */
-    static constexpr float AGITATOR_SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
-
-    /**
-     * Timeout to keep track of whether or not agitator has jammed. Reset to 0 whenever
-     * execute is called and agitator is within AGITATOR_SETPOINT_TOLERANCE. Agitator
-     * is considered jammed once this timeout reaches AGITATOR_JAM_TIMEOUT
-     */
-    aruwlib::arch::MilliTimeout jamTimeout;
+    aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem;
 
 private:
-    /**
-     * Max allowable period in milliseconds for agitator distance from target to be >=
-     * AGITATOR_SETPOINT_TOLERANCE before agitator is considered jammed.
-     */
-    static constexpr uint32_t AGITATOR_JAM_TIMEOUT = 200;
-
     /* target angle for the agitator to reach when command is called.*/
     float targetAngle;
 
@@ -106,10 +94,14 @@ private:
     float agitatorSetpointTolerance;
 
     uint32_t agitatorPrevRotateTime;
-};  // class AgitatorAbsoluteRotateCommand
+
+    bool automaticallyClearJam;
+};  // class MoveAbsoluteCommand
+
+}  // namespace setpoint
 
 }  // namespace control
 
-}  // namespace aruwsrc
+}  // namespace aruwlib
 
 #endif  // AGITATOR_ABSOLUTE_ROTATE_COMMAND_HPP_

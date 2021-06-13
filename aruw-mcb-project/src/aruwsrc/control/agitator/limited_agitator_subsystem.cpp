@@ -40,7 +40,8 @@ LimitedAgitatorSubsystem::LimitedAgitatorSubsystem(
     uint8_t debounceMaxSum,
     uint8_t debounceLowerBound,
     uint8_t debounceUpperBound)
-    : AgitatorSubsystem(
+    : Subsystem(drivers),
+      AgitatorSubsystem(
           drivers,
           kp,
           ki,
@@ -65,7 +66,7 @@ void LimitedAgitatorSubsystem::refresh()
     }
     else
     {
-        agitatorCalibrateHere();
+        calibrateHere();
     }
 
     bool limitSwitchPressed = digital->read(limitSwitchPin);

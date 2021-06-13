@@ -20,21 +20,25 @@
 #ifndef AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_
 #define AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_
 
-#include <aruwlib/control/comprised_command.hpp>
+#include "aruwlib/control/comprised_command.hpp"
 
-#include "agitator_rotate_command.hpp"
-#include "agitator_subsystem.hpp"
-#include "agitator_unjam_command.hpp"
+#include "move_command.hpp"
+#include "unjam_command.hpp"
 
-namespace aruwsrc
+namespace aruwlib
 {
-namespace agitator
+namespace control
 {
+namespace setpoint
+{
+// Forward declarations
+class SetpointSubsystem;
+
 /**
  * A comprised command that combines the agitator unjam and rotate commands and provides
  * unjam monitoring to perform a single agitator rotation with unjamming if necessary.
  */
-class ShootComprisedCommand : public aruwlib::control::ComprisedCommand
+class MoveUnjamComprisedCommand : public aruwlib::control::ComprisedCommand
 {
 public:
     /**
@@ -47,9 +51,9 @@ public:
      * @param[in] agitatorPauseAfterRotateTime The time that the command will wait after rotating to
      *      the desired angle before the command is considered complete.
      */
-    ShootComprisedCommand(
+    MoveUnjamComprisedCommand(
         aruwlib::Drivers* drivers,
-        AgitatorSubsystem* agitator,
+        SetpointSubsystem* setpointSubsystem,
         float agitatorChangeAngle,
         float maxUnjamAngle,
         uint32_t agitatorRotateTime,
@@ -66,19 +70,21 @@ public:
     const char* getName() const override { return "agitator shoot"; }
 
 protected:
-    AgitatorSubsystem* connectedAgitator;
+    SetpointSubsystem* setpointSubsystem;
 
-    AgitatorRotateCommand agitatorRotateCommand;
+    MoveCommand agitatorRotateCommand;
 
-    AgitatorUnjamCommand agitatorUnjamCommand;
+    UnjamCommand agitatorUnjamCommand;
 
     bool unjamSequenceCommencing;
 
     bool agitatorDisconnectFault;
-};  // class AgitatorShootComprisedCommand
+};  // class MoveUnjamComprisedCommand
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib
 
 #endif  // AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_

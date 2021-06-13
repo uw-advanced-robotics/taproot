@@ -17,21 +17,27 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "agitator_unjam_command.hpp"
+#include "unjam_command.hpp"
 
-namespace aruwsrc
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
+
+namespace aruwlib
 {
-namespace agitator
+namespace control
 {
-AgitatorUnjamCommand::AgitatorUnjamCommand(
-    AgitatorSubsystem* agitator,
+namespace setpoint
+{
+class SetpointSubsystem;  // forward declaration
+
+UnjamCommand::UnjamCommand(
+    SetpointSubsystem* setpointSubsystem,
     float agitatorMaxUnjamAngle,
     uint32_t agitatorMaxWaitTime)
     : currUnjamstate(AGITATOR_UNJAM_BACK),
       agitatorUnjamRotateTimeout(0),
       salvationTimeout(0),
       agitatorMaxWaitTime(agitatorMaxWaitTime),
-      connectedAgitator(agitator),
+      setpointSubsystem(setpointSubsystem),
       agitatorUnjamAngleMax(agitatorMaxUnjamAngle),
       currAgitatorUnjamAngle(0.0f),
       agitatorSetpointBeforeUnjam(0.0f)
@@ -40,12 +46,12 @@ AgitatorUnjamCommand::AgitatorUnjamCommand(
     {
         agitatorUnjamAngleMax = MIN_AGITATOR_UNJAM_ANGLE;
     }
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(agitator));
+    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
     salvationTimeout.stop();
     agitatorUnjamRotateTimeout.stop();
 }
 
-void AgitatorUnjamCommand::initialize()
+void UnjamCommand::initialize()
 {
     agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
 
@@ -55,16 +61,16 @@ void AgitatorUnjamCommand::initialize()
     float randomUnjamAngle = fmodf(rand(), agitatorUnjamAngleMax - minUnjamAngle) + minUnjamAngle;
 
     // subtract this angle from the current angle to rotate agitator backwards
-    currAgitatorUnjamAngle = connectedAgitator->getAgitatorAngle() - randomUnjamAngle;
+    currAgitatorUnjamAngle = setpointSubsystem->getCurrentValue() - randomUnjamAngle;
 
     // store the current setpoint angle to be referenced later
-    agitatorSetpointBeforeUnjam = connectedAgitator->getAgitatorDesiredAngle();
+    agitatorSetpointBeforeUnjam = setpointSubsystem->getSetpoint();
     currUnjamstate = AGITATOR_UNJAM_BACK;
 
     salvationTimeout.restart(SALVATION_TIMEOUT_MS);
 }
 
-void AgitatorUnjamCommand::execute()
+void UnjamCommand::execute()
 {
     if (salvationTimeout.execute())
     {
@@ -78,11 +84,10 @@ void AgitatorUnjamCommand::execute()
     {
         case AGITATOR_SALVATION_UNJAM_BACK:
         {
-            connectedAgitator->setAgitatorDesiredAngle(currAgitatorUnjamAngle);
+            setpointSubsystem->setSetpoint(currAgitatorUnjamAngle);
             if (agitatorUnjamRotateTimeout.isExpired() ||
-                fabsf(
-                    connectedAgitator->getAgitatorAngle() -
-                    connectedAgitator->getAgitatorDesiredAngle()) < AGITATOR_SETPOINT_TOLERANCE)
+                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
+                    SETPOINT_TOLERANCE)
             {
                 currUnjamstate = FINISHED;
             }
@@ -90,11 +95,10 @@ void AgitatorUnjamCommand::execute()
         }
         case AGITATOR_UNJAM_BACK:
         {
-            connectedAgitator->setAgitatorDesiredAngle(currAgitatorUnjamAngle);
+            setpointSubsystem->setSetpoint(currAgitatorUnjamAngle);
             if (agitatorUnjamRotateTimeout.isExpired() ||
-                fabsf(
-                    connectedAgitator->getAgitatorAngle() -
-                    connectedAgitator->getAgitatorDesiredAngle()) < AGITATOR_SETPOINT_TOLERANCE)
+                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
+                    SETPOINT_TOLERANCE)
             {  // either the timeout has been triggered or the agitator has reached the setpoint
                 // define a random time that the agitator will take to rotate forwards.
                 agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
@@ -107,7 +111,7 @@ void AgitatorUnjamCommand::execute()
         case AGITATOR_UNJAM_RESET:  // this is different than just agitator_rotate_command
         {
             // reset the angle to what it was before unjamming
-            connectedAgitator->setAgitatorDesiredAngle(agitatorSetpointBeforeUnjam);
+            setpointSubsystem->setSetpoint(agitatorSetpointBeforeUnjam);
             // the agitator is still jammed
             if (agitatorUnjamRotateTimeout.isExpired())
             {
@@ -124,9 +128,8 @@ void AgitatorUnjamCommand::execute()
                 currUnjamstate = AGITATOR_UNJAM_BACK;
             }
             else if (
-                fabsf(
-                    connectedAgitator->getAgitatorAngle() -
-                    connectedAgitator->getAgitatorDesiredAngle()) < AGITATOR_SETPOINT_TOLERANCE)
+                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
+                SETPOINT_TOLERANCE)
             {
                 currUnjamstate = FINISHED;
             }
@@ -139,10 +142,12 @@ void AgitatorUnjamCommand::execute()
     }
 }
 
-void AgitatorUnjamCommand::end(bool) {}
+void UnjamCommand::end(bool) { setpointSubsystem->clearJam(); }
 
-bool AgitatorUnjamCommand::isFinished(void) const { return currUnjamstate == FINISHED; }
+bool UnjamCommand::isFinished(void) const { return currUnjamstate == FINISHED; }
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib

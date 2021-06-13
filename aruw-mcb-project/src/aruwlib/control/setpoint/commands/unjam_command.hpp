@@ -20,24 +20,27 @@
 #ifndef AGITATOR_UNJAM_COMMAND_HPP_
 #define AGITATOR_UNJAM_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/command.hpp>
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/motor/dji_motor.hpp"
 
-#include "agitator_subsystem.hpp"
+namespace aruwlib
+{
+namespace control
+{
+namespace setpoint
+{
+// Forward declarations
+class SetpointSubsystem;
 
-namespace aruwsrc
-{
-namespace agitator
-{
 /**
  * Command that takes control of an agitator motor and attempts to unjam it. Whether
  * or not the agitator is actually in a jam condition is not up for this command to
  * determine. It is assumed that unjamming must occur.
  */
-class AgitatorUnjamCommand : public aruwlib::control::Command
+class UnjamCommand : public aruwlib::control::Command
 {
 public:
     /**
@@ -48,8 +51,8 @@ public:
      * @param[in] agitatorMaxWaitTime The maximum amount of time the controller will
      *      wait for the motor to rotate backwards before commencing with a forward rotation.
      */
-    AgitatorUnjamCommand(
-        AgitatorSubsystem* agitator,
+    UnjamCommand(
+        SetpointSubsystem* agitator,
         float agitatorMaxUnjamAngle,
         uint32_t agitatorMaxWaitTime = AGITATOR_MAX_WAIT_TIME);
 
@@ -68,7 +71,7 @@ private:
 
     static constexpr uint32_t SALVATION_UNJAM_BACK_WAIT_TIME = 1000;
 
-    static constexpr float AGITATOR_SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
+    static constexpr float SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
 
     /**
      * The maximum time that the command will wait from commanding the agitator to rotate
@@ -103,17 +106,19 @@ private:
      */
     uint32_t agitatorMaxWaitTime;
 
-    AgitatorSubsystem* connectedAgitator;
+    SetpointSubsystem* setpointSubsystem;
 
     float agitatorUnjamAngleMax;
 
     float currAgitatorUnjamAngle;
 
     float agitatorSetpointBeforeUnjam;
-};  // class AgitatorUnjamCommand
+};  // class UnjamCommand
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib
 
 #endif  // AGITATOR_UNJAM_COMMAND_HPP_

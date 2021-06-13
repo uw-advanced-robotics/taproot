@@ -20,29 +20,31 @@
 #ifndef AGITATOR_ROTATE_COMMAND_HPP_
 #define AGITATOR_ROTATE_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/command.hpp>
-#include <modm/math/filter/pid.hpp>
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-#include "agitator_subsystem.hpp"
+#include "modm/math/filter/pid.hpp"
 
-namespace aruwsrc
+namespace aruwlib
 {
-namespace agitator
+namespace control
+{
+namespace setpoint
 {
 /**
  * Rotates the connected agitator some angle in some desired time. Currently
  * pass in a rotate velocity and it uses `aruwlib::arch::getTimeMilliseconds()`
  * to determine the proper ramp increment.
  */
-class AgitatorRotateCommand : public aruwlib::control::Command
+class MoveCommand : public aruwlib::control::Command
 {
 public:
     /**
-     * @param[in] agitator The agitator associated with the rotate command.
+     * @param[in] setpointSubsystem The agitator associated with the rotate command.
      * @param[in] agitatorAngleChange The desired rotation angle, in radians.
      * @param[in] agitatorRotateTime The time it takes to rotate the agitator to the desired angle
      *      in milliseconds.
@@ -50,7 +52,7 @@ public:
      *      the desired angle before the command is considered complete.
      * @param[in] setpointTolerance The angle difference between current and desired angle when the
      *      command will be considered to be completed (used in the `isFinished` function). Only set
-     *      this if you want a different tolerance. `AGITATOR_SETPOINT_TOLERANCE` is usually fine.
+     *      this if you want a different tolerance. `SETPOINT_TOLERANCE` is usually fine.
      * @param[in] agitatorSetToFinalAngle `true` if you would like the agitator on `end` to set to
      *      the final desired rotation angle, `false` otherwise (in which case the final desired
      * angle set may be slightly shorter than the true desired angle change).
@@ -58,15 +60,17 @@ public:
      *      (\f$agitatorAngleChange / agitatorRotateTime\f$), and then multiplying this by
      *      the period (how often the ramp is called)
      */
-    AgitatorRotateCommand(
-        AgitatorSubsystem* agitator,
+    MoveCommand(
+        SetpointSubsystem* setpointSubsystem,
         float agitatorAngleChange,
         uint32_t agitatorRotateTime,
         uint32_t agitatorPauseAfterRotateTime,
         bool agitatorSetToFinalAngle,
-        float setpointTolerance = AGITATOR_SETPOINT_TOLERANCE);
+        float setpointTolerance = SETPOINT_TOLERANCE);
 
     const char* getName() const override { return "agitator rotate"; }
+
+    bool isReady() override { return !setpointSubsystem->isJammed(); }
 
     void initialize() override;
 
@@ -80,9 +84,9 @@ private:
     /**
      * The angle at which the agitator is considered to have reached its setpoint.
      */
-    static constexpr float AGITATOR_SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
+    static constexpr float SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
 
-    AgitatorSubsystem* connectedAgitator;
+    SetpointSubsystem* setpointSubsystem;
 
     float agitatorTargetAngleChange;
 
@@ -102,10 +106,12 @@ private:
     uint32_t agitatorPrevRotateTime;
 
     bool agitatorSetToFinalAngle;
-};  // class AgitatorRotateCommand
+};  // class MoveCommand
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib
 
 #endif  // AGITATOR_ROTATE_COMMAND_HPP_

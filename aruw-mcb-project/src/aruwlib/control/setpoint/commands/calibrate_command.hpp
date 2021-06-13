@@ -20,29 +20,33 @@
 #ifndef AGITATOR_CALIBRATE_COMMAND_HPP_
 #define AGITATOR_CALIBRATE_COMMAND_HPP_
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/control/command.hpp"
 
-#include "agitator_subsystem.hpp"
+namespace aruwlib
+{
+namespace control
+{
+namespace setpoint
+{
+// Forward declarations
+class SetpointSubsystem;
 
-namespace aruwsrc
-{
-namespace agitator
-{
 /**
  * Default command that can be used to calibrate the agitator (spam calls
- * `agitatorCalibrateHere`). By default, the agitator will keep calling `agitatorCalibrateHere`
+ * `calibrateHere`). By default, the agitator will keep calling `calibrateHere`
  * until the agitator is connected, however this command is for the following:
  *  - A placeholder command initially.
  *  - Allows you to recalibrate an agitator that has already been calibrated if necessary.
  */
-class AgitatorCalibrateCommand : public aruwlib::control::Command
+class CalibrateCommand : public aruwlib::control::Command
 {
 public:
     /**
      * @param[in] agitator The subsystem this command is dependent upon.
      */
-    explicit AgitatorCalibrateCommand(AgitatorSubsystem* agitator);
+    explicit CalibrateCommand(
+        aruwlib::control::setpoint::SetpointSubsystem* angularPositionalSubsystem);
 
     const char* getName() const override { return "agitator calibrate"; }
 
@@ -55,11 +59,13 @@ public:
     bool isFinished() const override;
 
 private:
-    AgitatorSubsystem* agitator;
-};  // class AgitatorCalibrateCommand
+    aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem;
+};  // class CalibrateCommand
 
-}  // namespace agitator
+}  // namespace setpoint
 
-}  // namespace aruwsrc
+}  // namespace control
+
+}  // namespace aruwlib
 
 #endif  // AGITATOR_CALIBRATE_COMMAND_HPP_

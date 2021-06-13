@@ -130,9 +130,9 @@ TEST(SentinelRotateAgitatorCommand, initialize_when_not_overheated_starts_rotati
 
     srac.initialize();
 
-    EXPECT_CALL(agitator, setAgitatorDesiredAngle);
-    ON_CALL(agitator, isAgitatorOnline).WillByDefault(Return(true));
-    ON_CALL(agitator, isAgitatorJammed).WillByDefault(Return(false));
+    EXPECT_CALL(agitator, setSetpoint);
+    ON_CALL(agitator, isOnline).WillByDefault(Return(true));
+    ON_CALL(agitator, isJammed).WillByDefault(Return(false));
     srac.execute();
 }
 
@@ -173,15 +173,15 @@ TEST(SentinelRotateAgitatorCommand, initialize_when_overheated_waits_before_rota
 
     EXPECT_CALL(switcher, isLowerUsed).WillRepeatedly(Return(false));
     EXPECT_CALL(switcher, useLowerBarrel(true));
-    ON_CALL(agitator, isAgitatorOnline).WillByDefault(Return(true));
-    ON_CALL(agitator, isAgitatorJammed).WillByDefault(Return(false));
+    ON_CALL(agitator, isOnline).WillByDefault(Return(true));
+    ON_CALL(agitator, isJammed).WillByDefault(Return(false));
 
     srac.initialize();
 
     // Won't call setAgitatorDesiredAngle until some time has passed
     srac.execute();
 
-    EXPECT_CALL(agitator, setAgitatorDesiredAngle);
+    EXPECT_CALL(agitator, setSetpoint);
     setTime(10000);
     srac.execute();
 }
@@ -225,8 +225,8 @@ TEST(
     setHeatAndHeatLimit(robotData, 0, 0, 100, 100);
     EXPECT_CALL(drivers.refSerial, getRobotData()).WillRepeatedly(ReturnRef(robotData));
 
-    ON_CALL(agitator, getAgitatorAngle).WillByDefault(Return(10));
-    ON_CALL(agitator, getAgitatorDesiredAngle).WillByDefault(Return(10));
+    ON_CALL(agitator, getCurrentValue).WillByDefault(Return(10));
+    ON_CALL(agitator, getSetpoint).WillByDefault(Return(10));
 
     srac.initialize();
     setTime(10000);

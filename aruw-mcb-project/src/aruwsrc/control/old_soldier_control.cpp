@@ -26,7 +26,8 @@
 #include <aruwlib/control/PressCommandMapping.hpp>
 #include <aruwlib/control/ToggleCommandMapping.hpp>
 
-#include "agitator/agitator_calibrate_command.hpp"
+#include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
+
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/agitator_subsystem.hpp"
 #include "chassis/chassis_autorotate_command.hpp"
@@ -39,6 +40,7 @@
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
 
+using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::turret;
@@ -91,7 +93,7 @@ WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
 
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
-AgitatorCalibrateCommand agitatorCalibrateCommand(&agitator);
+CalibrateCommand agitatorCalibrateCommand(&agitator);
 
 ShootFastComprisedCommand17MM agitatorShootFastCommand(drivers(), &agitator);
 

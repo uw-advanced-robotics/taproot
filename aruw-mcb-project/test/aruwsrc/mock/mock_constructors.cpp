@@ -57,6 +57,7 @@ AgitatorSubsystemMock::AgitatorSubsystemMock(
           agitatorCanBusId,
           isAgitatorInverted)
 {
+    ON_CALL(*this, isOnline).WillByDefault(testing::Return(true));
 }
 AgitatorSubsystemMock::~AgitatorSubsystemMock() {}
 
