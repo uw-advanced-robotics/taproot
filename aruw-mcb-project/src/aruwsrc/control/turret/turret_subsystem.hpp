@@ -65,6 +65,8 @@ public:
      */
     explicit TurretSubsystem(aruwlib::Drivers* drivers, bool limitYaw = true);
 
+    inline bool yawLimited() const { return limitYaw; }
+
     void initialize() override;
 
     void refresh() override;

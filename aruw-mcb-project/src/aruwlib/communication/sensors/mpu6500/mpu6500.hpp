@@ -141,11 +141,11 @@ public:
      */
     mockable float getTiltAngle();
 
-private:
-    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
-
     /// Use for converting from gyro values we receive to more conventional degrees / second.
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
+
+private:
+    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
     /// Use to convert the raw acceleration into more conventional degrees / second^2
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;

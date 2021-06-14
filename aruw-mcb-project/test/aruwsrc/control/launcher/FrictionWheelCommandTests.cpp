@@ -30,18 +30,11 @@ using aruwlib::Drivers;
 using aruwsrc::mock::FrictionWheelSubsystemMock;
 using namespace testing;
 
-static void setDefaultExpectations(Drivers *drivers)
-{
-    EXPECT_CALL(drivers->canRxHandler, removeReceiveHandler).Times(2);
-    EXPECT_CALL(drivers->djiMotorTxHandler, removeFromMotorManager).Times(2);
-}
-
 TEST(FrictionWheelRotateCommand, execute_zero_desired_rpm_always_zero)
 {
     Drivers d;
     FrictionWheelSubsystemMock fs(&d);
     FrictionWheelRotateCommand fc(&fs, 0);
-    setDefaultExpectations(&d);
     EXPECT_CALL(fs, setDesiredRpm(0));
 
     fc.execute();
@@ -52,7 +45,6 @@ TEST(FrictionWheelRotateCommand, execute_positive_rpm_always_positive)
     Drivers d;
     FrictionWheelSubsystemMock fs(&d);
     FrictionWheelRotateCommand fc(&fs, 10000);
-    setDefaultExpectations(&d);
     EXPECT_CALL(fs, setDesiredRpm(10000));
 
     fc.execute();
@@ -63,7 +55,6 @@ TEST(FrictionWheelRotateCommand, execute_negative_rpm_always_negative)
     Drivers d;
     FrictionWheelSubsystemMock fs(&d);
     FrictionWheelRotateCommand fc(&fs, -10000);
-    setDefaultExpectations(&d);
     EXPECT_CALL(fs, setDesiredRpm(-10000));
 
     fc.execute();
@@ -74,7 +65,6 @@ TEST(FrictionWheelRotateCommand, end_resets_desired_rpm_to_zero)
     Drivers d;
     FrictionWheelSubsystemMock fs(&d);
     FrictionWheelRotateCommand fc(&fs, 10000);
-    setDefaultExpectations(&d);
     InSequence s;
     EXPECT_CALL(fs, setDesiredRpm(10000));
     EXPECT_CALL(fs, setDesiredRpm(0));
@@ -93,7 +83,6 @@ TEST(FrictionWheelRotateCommand, isFinished_always_false)
     FrictionWheelSubsystemMock fs(&d);
     FrictionWheelRotateCommand fc(&fs, 10000);
     const int EXECUTE_TIMES = 100;
-    setDefaultExpectations(&d);
     EXPECT_CALL(fs, setDesiredRpm(10000)).Times(EXECUTE_TIMES);
 
     EXPECT_FALSE(fc.isFinished());

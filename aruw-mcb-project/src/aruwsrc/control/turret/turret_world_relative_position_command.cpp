@@ -35,7 +35,8 @@ namespace turret
 TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
     aruwlib::Drivers *drivers,
     TurretSubsystem *subsystem,
-    const chassis::ChassisSubsystem *chassis)
+    const chassis::ChassisSubsystem *chassis,
+    bool useImuOnTurret)
     : drivers(drivers),
       turretSubsystem(subsystem),
       chassisSubsystem(chassis),
@@ -45,7 +46,7 @@ TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
       yawPid(
           YAW_P,
           YAW_I,
-          YAW_D,
+          YAW_D_CHASSIS_IMU,
           YAW_MAX_ERROR_SUM,
           YAW_MAX_OUTPUT,
           YAW_Q_DERIVATIVE_KALMAN,
@@ -61,7 +62,8 @@ TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
           PITCH_Q_DERIVATIVE_KALMAN,
           PITCH_R_DERIVATIVE_KALMAN,
           PITCH_Q_PROPORTIONAL_KALMAN,
-          PITCH_R_PROPORTIONAL_KALMAN)
+          PITCH_R_PROPORTIONAL_KALMAN),
+      useImuOnTurret(useImuOnTurret)
 {
     addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem *>(subsystem));
 }
@@ -71,7 +73,18 @@ void TurretWorldRelativePositionCommand::initialize()
     imuInitialYaw = drivers->mpu6500.getYaw();
     yawPid.reset();
     pitchPid.reset();
-    yawTargetAngle.setValue(turretSubsystem->getYawSetpoint());
+    if (useImuOnTurret && drivers->imuRxHandler.isConnected())
+    {
+        yawTargetAngle.setValue(drivers->imuRxHandler.getYaw());
+        usingImuOnTurret = true;
+        yawPid.setD(YAW_D_TURRET_IMU);
+    }
+    else
+    {
+        yawTargetAngle.setValue(turretSubsystem->getYawSetpoint());
+        usingImuOnTurret = false;
+        yawPid.setD(YAW_D_CHASSIS_IMU);
+    }
 }
 
 void TurretWorldRelativePositionCommand::execute()
@@ -86,30 +99,89 @@ void TurretWorldRelativePositionCommand::execute()
 
 void TurretWorldRelativePositionCommand::runYawPositionController(float dt)
 {
+    // If we are trying to use the IMU on the turret, check to make sure it is available
+    // and do some re-initialization if its availability changes
+    if (useImuOnTurret)
+    {
+        bool turretImuOnline = drivers->imuRxHandler.isConnected();
+        if (!usingImuOnTurret && turretImuOnline)
+        {
+            // If we are not using the turret IMU and it has become available, use it
+            yawTargetAngle.setValue(drivers->imuRxHandler.getYaw());
+            usingImuOnTurret = true;
+            yawPid.setD(YAW_D_TURRET_IMU);
+        }
+        else if (usingImuOnTurret && !turretImuOnline)
+        {
+            // If the turret IMU has become unavailable, stop using it
+            yawTargetAngle.setValue(turretSubsystem->getYawSetpoint());
+            usingImuOnTurret = false;
+            yawPid.setD(YAW_D_CHASSIS_IMU);
+        }
+    }
+
     yawTargetAngle.shiftValue(
         USER_YAW_INPUT_SCALAR * drivers->controlOperatorInterface.getTurretYawInput());
 
-    // project target angle in world relative to chassis relative to limit the value
-    turretSubsystem->setYawSetpoint(
-        projectWorldRelativeYawToChassisFrame(yawTargetAngle.getValue(), imuInitialYaw));
+    if (usingImuOnTurret)
+    {
+        blinkCounter = (blinkCounter + 1) % 100;
+        drivers->leds.set(aruwlib::gpio::Leds::Green, blinkCounter > 50);
 
-    // project angle that is limited by the subsystem to world relative again to run the controller
-    yawTargetAngle.setValue(
-        projectChassisRelativeYawToWorldRelative(turretSubsystem->getYawSetpoint(), imuInitialYaw));
+        float yawActual = drivers->imuRxHandler.getYaw();
 
-    currValueImuYawGimbal.setValue(projectChassisRelativeYawToWorldRelative(
-        turretSubsystem->getCurrentYawValue().getValue(),
-        imuInitialYaw));
+        // project target angle from turret imu relative to chassis relative
+        turretSubsystem->setYawSetpoint(
+            turretSubsystem->getCurrentYawValue().getValue() -
+            yawTargetAngle.difference(yawActual));
+
+        if (turretSubsystem->yawLimited())
+        {
+            // project angle that is limited by subsystem to imu relative again to run the
+            // controller
+            yawTargetAngle.setValue(
+                turretSubsystem->getCurrentYawValue().getValue() -
+                turretSubsystem->getYawSetpoint() + yawActual);
+        }
+
+        currValueImuYawGimbal.setValue(yawActual);
+    }
+    else
+    {
+        // project target angle in world relative to chassis relative to limit the value
+        turretSubsystem->setYawSetpoint(
+            projectWorldRelativeYawToChassisFrame(yawTargetAngle.getValue(), imuInitialYaw));
+
+        if (turretSubsystem->yawLimited())
+        {
+            // project angle that is limited by the subsystem to world relative again to run the
+            // controller
+            yawTargetAngle.setValue(projectChassisRelativeYawToWorldRelative(
+                turretSubsystem->getYawSetpoint(),
+                imuInitialYaw));
+        }
+
+        currValueImuYawGimbal.setValue(projectChassisRelativeYawToWorldRelative(
+            turretSubsystem->getCurrentYawValue().getValue(),
+            imuInitialYaw));
+    }
 
     // position controller based on imu and yaw gimbal angle
     float positionControllerError = currValueImuYawGimbal.difference(yawTargetAngle);
-    float pidOutput = yawPid.runController(
-        positionControllerError,
-        turretSubsystem->getYawVelocity() + drivers->mpu6500.getGz(),
-        dt);
+    float pidOutput;
 
-    pidOutput += turretSubsystem->yawFeedForwardCalculation(
-        *chassisSubsystem->getDesiredVelocityChassisRelative()[chassis::ChassisSubsystem::R]);
+    if (useImuOnTurret)
+    {
+        pidOutput =
+            yawPid.runController(positionControllerError, drivers->imuRxHandler.getGz(), dt);
+    }
+    else
+    {
+        pidOutput = yawPid.runController(
+            positionControllerError,
+            turretSubsystem->getYawVelocity() + drivers->mpu6500.getGz(),
+            dt);
+    }
 
     turretSubsystem->setYawMotorOutput(pidOutput);
 }
@@ -138,8 +210,8 @@ void TurretWorldRelativePositionCommand::runPitchPositionController(float dt)
 
 void TurretWorldRelativePositionCommand::end(bool)
 {
-    turretSubsystem->setYawSetpoint(
-        projectWorldRelativeYawToChassisFrame(yawTargetAngle.getValue(), imuInitialYaw));
+    turretSubsystem->setYawMotorOutput(0);
+    turretSubsystem->setPitchMotorOutput(0);
 }
 
 float TurretWorldRelativePositionCommand::projectChassisRelativeYawToWorldRelative(

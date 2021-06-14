@@ -33,16 +33,9 @@ static constexpr float WHEEL_VEL = 1000;
 static constexpr float CHASSIS_VEL = 0.41887906;
 static constexpr float CHASSIS_VEL_R = 0.15330973;
 
-static void setDefaultExpectations(Drivers *d)
-{
-    EXPECT_CALL(d->djiMotorTxHandler, removeFromMotorManager).Times(4);
-    EXPECT_CALL(d->canRxHandler, removeReceiveHandler).Times(4);
-}
-
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_zero_desired_output)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, 0, 0);
@@ -55,7 +48,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_zero_desired_output)
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(WHEEL_VEL, 0, 0);
@@ -68,7 +60,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_output_desired)
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, WHEEL_VEL, 0);
@@ -81,7 +72,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_y_output_desired)
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_r_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, 0, WHEEL_VEL);
@@ -94,7 +84,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_r_output_desired)
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_and_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(WHEEL_VEL, WHEEL_VEL, 0);
@@ -107,7 +96,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_and_y_output_desired)
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_y_and_r_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(WHEEL_VEL, WHEEL_VEL, WHEEL_VEL);
@@ -120,7 +108,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_x_y_and_r_output_desire
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(-WHEEL_VEL, 0, 0);
@@ -133,7 +120,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_output_desir
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, -WHEEL_VEL, 0);
@@ -146,7 +132,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_y_output_desir
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_r_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, 0, -WHEEL_VEL);
@@ -159,7 +144,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_r_output_desir
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_and_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(-WHEEL_VEL, -WHEEL_VEL, 0);
@@ -172,7 +156,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_and_y_output
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_and_positive_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(-WHEEL_VEL, WHEEL_VEL, 0);
@@ -185,7 +168,6 @@ TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_negative_x_and_positive
 TEST(ChassisSubsystem, getDesiredVelocityChassisRelative_positive_x_and_negative_y_output_desired)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(WHEEL_VEL, -WHEEL_VEL, 0);
@@ -201,7 +183,6 @@ TEST(ChassisSubsystem, getActualVelocityChassisRelative) {}
 TEST(ChassisSubsystem, getVelocityWorldRelative_zero_desired_output_with_any_heading)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, 0, 0);
@@ -227,7 +208,6 @@ TEST(ChassisSubsystem, getVelocityWorldRelative_zero_desired_output_with_any_hea
 TEST(ChassisSubsystem, getVelocityWorldRelative_x_different_headings)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(WHEEL_VEL, 0, 0);
@@ -266,7 +246,6 @@ TEST(ChassisSubsystem, getVelocityWorldRelative_x_different_headings)
 TEST(ChassisSubsystem, getVelocityWorldRelative_y_different_headings)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, WHEEL_VEL, 0);
@@ -305,7 +284,6 @@ TEST(ChassisSubsystem, getVelocityWorldRelative_y_different_headings)
 TEST(ChassisSubsystem, getVelocityWorldRelative_r_different_headings)
 {
     Drivers d;
-    setDefaultExpectations(&d);
     ChassisSubsystem cs(&d);
 
     cs.setDesiredOutput(0, 0, WHEEL_VEL);
