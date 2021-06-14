@@ -134,11 +134,11 @@ HoldRepeatCommandMapping leftSwitchUp(
 /* initialize subsystems ----------------------------------------------------*/
 void initializeSubsystems()
 {
-    // agitator.initialize();
+    agitator.initialize();
     sentinelDrive.initialize();
-    // upperFrictionWheels.initialize();
-    // lowerFrictionWheels.initialize();
-    // switcher.initialize();
+    upperFrictionWheels.initialize();
+    lowerFrictionWheels.initialize();
+    switcher.initialize();
     drivers()->xavierSerial.attachChassis(&sentinelDrive);
 }
 
@@ -172,6 +172,7 @@ void registerSentinelIoMappings(aruwlib::Drivers *drivers)
     drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&rightSwitchUp);
+    drivers->commandMapper.addMap(&rightSwitchDown);
 }
 
 void initSubsystemCommands(aruwlib::Drivers *drivers)
