@@ -109,7 +109,7 @@ elif args["BUILD_PROFILE"] == "release":
     # Replace -Os with -O3
     if "-Os" in env["CCFLAGS"]:
         env["CCFLAGS"].remove("-Os")
-    env.AppendUnique(CCFLAGS=["-O3"])
+    env.AppendUnique(CCFLAGS=["-O2"])
 
 # Add profiling-specific flags
 if args["PROFILING"] == "true":
