@@ -41,7 +41,6 @@ TEST(JSONMessages, ReturnsCorrectString)
     EXPECT_CALL(mockMotor, getShaftRPM()).Times(1);
     EXPECT_CALL(mockMotor, getTorque()).Times(1);
     EXPECT_CALL(mockMotor, getEncoderUnwrapped()).Times(1);
-    EXPECT_CALL(drivers.djiMotorTxHandler, removeFromMotorManager).Times(AnyNumber());
     EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler).Times(AnyNumber());
 
     std::string s = makeMotorMessage(mockMotor);

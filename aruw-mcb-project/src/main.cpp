@@ -123,6 +123,7 @@ static void initializeIo(aruwlib::Drivers *drivers)
     drivers->schedulerTerminalHandler.init();
     drivers->djiMotorTerminalSerialHandler.init();
     drivers->xavierSerial.initializeCV();
+    drivers->imuRxHandler.init();
 }
 
 static void updateIo(aruwlib::Drivers *drivers)

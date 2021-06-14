@@ -31,6 +31,7 @@
 #include "aruwlib/mock/DjiMotorTerminalSerialHandlerMock.hpp"
 #include "aruwlib/mock/DjiMotorTxHandlerMock.hpp"
 #include "aruwlib/mock/ErrorControllerMock.hpp"
+#include "aruwlib/mock/ImuRxListenerMock.hpp"
 #include "aruwlib/mock/LedsMock.hpp"
 #include "aruwlib/mock/Mpu6500Mock.hpp"
 #include "aruwlib/mock/OledDisplayMock.hpp"
@@ -47,6 +48,7 @@
 #include "architecture/profiler.hpp"
 #include "communication/can/can.hpp"
 #include "communication/can/can_rx_handler.hpp"
+#include "communication/can/imu_rx_listener.hpp"
 #include "communication/gpio/analog.hpp"
 #include "communication/gpio/digital.hpp"
 #include "communication/gpio/leds.hpp"
@@ -101,7 +103,8 @@ public:
           oledDisplay(this),
           profiler(),
           djiMotorTerminalSerialHandler(this),
-          schedulerTerminalHandler(this)
+          schedulerTerminalHandler(this),
+          imuRxHandler(this)
     {
     }
 
@@ -127,6 +130,7 @@ public:
     arch::Profiler profiler;
     testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
     testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
+    testing::NiceMock<mock::ImuRxListenerMock> imuRxHandler;
 #else
 public:
     can::Can can;
@@ -150,6 +154,7 @@ public:
     arch::Profiler profiler;
     motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
     control::SchedulerTerminalHandler schedulerTerminalHandler;
+    can::ImuRxListener imuRxHandler;
 #endif
 };  // class Drivers
 

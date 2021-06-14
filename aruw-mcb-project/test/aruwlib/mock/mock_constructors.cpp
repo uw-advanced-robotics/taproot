@@ -30,6 +30,7 @@
 #include "DjiMotorTerminalSerialHandlerMock.hpp"
 #include "DjiMotorTxHandlerMock.hpp"
 #include "ErrorControllerMock.hpp"
+#include "ImuRxListenerMock.hpp"
 #include "LedsMock.hpp"
 #include "Mpu6500Mock.hpp"
 #include "OledDisplayMock.hpp"
@@ -110,6 +111,9 @@ DjiMotorTerminalSerialHandlerMock::DjiMotorTerminalSerialHandlerMock(aruwlib::Dr
 {
 }
 DjiMotorTerminalSerialHandlerMock::~DjiMotorTerminalSerialHandlerMock() {}
+
+ImuRxListenerMock::ImuRxListenerMock(Drivers *drivers) : ImuRxListener(drivers) {}
+ImuRxListenerMock::~ImuRxListenerMock() {}
 
 LedsMock::LedsMock() {}
 LedsMock::~LedsMock() {}

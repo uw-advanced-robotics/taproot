@@ -56,7 +56,8 @@ public:
     TurretWorldRelativePositionCommand(
         aruwlib::Drivers *drivers,
         TurretSubsystem *subsystem,
-        const chassis::ChassisSubsystem *chassis);
+        const chassis::ChassisSubsystem *chassis,
+        bool useImuOnTurret = false);
 
     void initialize() override;
 
@@ -69,13 +70,14 @@ public:
     const char *getName() const override { return "turret world relative position"; }
 
 private:
-    static constexpr float YAW_P = 3200.0f;
+    static constexpr float YAW_P = 3800.0f;
     static constexpr float YAW_I = 50.0f;
-    static constexpr float YAW_D = 180.0f;
+    static constexpr float YAW_D_TURRET_IMU = 4300.0f;
+    static constexpr float YAW_D_CHASSIS_IMU = 180.0f;
     static constexpr float YAW_MAX_ERROR_SUM = 1000.0f;
     static constexpr float YAW_MAX_OUTPUT = 30000.0f;
     static constexpr float YAW_Q_DERIVATIVE_KALMAN = 1.0f;
-    static constexpr float YAW_R_DERIVATIVE_KALMAN = 30.0f;
+    static constexpr float YAW_R_DERIVATIVE_KALMAN = 10.0f;
     static constexpr float YAW_Q_PROPORTIONAL_KALMAN = 1.0f;
     static constexpr float YAW_R_PROPORTIONAL_KALMAN = 10.0f;
 
@@ -109,6 +111,11 @@ private:
 
     aruwsrc::algorithms::TurretPid yawPid;
     aruwsrc::algorithms::TurretPid pitchPid;
+
+    const bool useImuOnTurret;
+    bool usingImuOnTurret;
+
+    int blinkCounter = 0;
 
     void runYawPositionController(float dt);
     void runPitchPositionController(float dt);

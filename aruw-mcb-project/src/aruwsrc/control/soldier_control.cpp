@@ -116,7 +116,7 @@ ChassisAutorotateCommand chassisAutorotateCommand(drivers(), &chassis, &turret);
 
 BeybladeCommand beybladeCommand(drivers(), &chassis, &turret);
 
-TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
+TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis, true);
 
 TurretCVCommand turretCVCommand(drivers(), &turret);
 

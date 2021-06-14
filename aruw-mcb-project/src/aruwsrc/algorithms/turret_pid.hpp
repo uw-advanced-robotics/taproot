@@ -59,6 +59,10 @@ public:
 
     void reset();
 
+    inline void setP(float p) { kp = p; }
+    inline void setI(float i) { ki = i; }
+    inline void setD(float d) { kd = d; }
+
 private:
     // gains and constants, to be set by the user
     float kp = 0.0f;

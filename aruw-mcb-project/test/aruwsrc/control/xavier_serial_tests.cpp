@@ -193,10 +193,6 @@ TEST(XavierSerial, sendMessage_validate_robot_data)
     static constexpr float yawValsToTest[] = {0, 1.52, 13.45, 178.9, 180, 200.3, 360.0};
     static constexpr int MESSAGES_TO_SEND = sizeof(yawValsToTest) / sizeof(float);
 
-    setExpectationsForTxTest(&drivers, MESSAGES_TO_SEND);
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler).Times(6);
-    EXPECT_CALL(drivers.djiMotorTxHandler, removeFromMotorManager).Times(6);
-
     for (int i = 0; i < MESSAGES_TO_SEND; i++)
     {
         EXPECT_CALL(cs, getLeftBackRpmActual).WillRepeatedly(Return(lbWheelRPMToTest[i]));

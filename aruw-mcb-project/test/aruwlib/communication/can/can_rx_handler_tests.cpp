@@ -31,7 +31,8 @@ TEST(CanRxHandler, ListenerAttachesSelf)
     EXPECT_CALL(drivers.canRxHandler, attachReceiveHandler);
     listener.attachSelfToRxHandler();
 
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
+    // 2 times because of the imu rx listener
+    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler).Times(2);
 }
 
 TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
@@ -52,6 +53,8 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
         EXPECT_EQ(nullptr, handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1)[normalizedId]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
     }
+
+    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
 }
 
 TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
@@ -77,6 +80,7 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
             handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1)[DJI_MOTOR_NORMALIZED_ID(i)]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
     }
+    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
 }
 
 TEST(CanRxHandler, ErrorIsThrownWithOOBMessageID)
