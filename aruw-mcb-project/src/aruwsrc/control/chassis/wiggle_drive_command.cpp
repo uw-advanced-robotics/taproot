@@ -43,41 +43,19 @@ WiggleDriveCommand::WiggleDriveCommand(
     : drivers(drivers),
       chassis(chassis),
       turret(turret),
-      turretYawRamp(0)
+      rotationSpeedRamp(0)
 {
     addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(chassis));
 }
 
 void WiggleDriveCommand::initialize()
 {
-    float turretCurAngle = turret->getYawAngleFromCenter();
+    rotationSign = (rand() - RAND_MAX / 2) < 0 ? -1 : 1;
 
-    // We don't apply the sine wave if we are out of the angle of the sine wave.
-    outOfCenter = fabsf(turretCurAngle) > WIGGLE_MAX_ROTATE_ANGLE;
-
-    turretCurAngle = aruwlib::algorithms::limitVal(
-        turretCurAngle,
-        -WIGGLE_MAX_ROTATE_ANGLE,
-        WIGGLE_MAX_ROTATE_ANGLE);
-
-    // We use the limited current turret angle to calculate a time offset in
-    // a angle vs. time graph so when we start at some angle from center we
-    // are still in phase.
-    startTimeForAngleOffset = asinf(turretCurAngle / WIGGLE_MAX_ROTATE_ANGLE) * getPeriod() /
-                              (2.0f * aruwlib::algorithms::PI);
-
-    // The offset so when we start calculating a rotation angle, the initial
-    // time is zero.
-    timeOffset = aruwlib::arch::clock::getTimeMilliseconds();
-
-    float turretYaw = turret->getYawAngleFromCenter();
-    turretYawRamp.setTarget(turretYaw);
-    turretYawRamp.setValue(turretYaw);
-}
-
-float WiggleDriveCommand::wiggleSin(float t)
-{
-    return WIGGLE_MAX_ROTATE_ANGLE * sinf((2.0f * aruwlib::algorithms::PI / getPeriod()) * t);
+    // TODO replace with chassis rotation speed
+    rotationSpeedRamp.reset(0);
+    const WiggleParams& wiggleParams = getWiggleParams();
+    rotationSpeedRamp.setTarget(rotationSign * wiggleParams.rotationSpeed);
 }
 
 void WiggleDriveCommand::execute()
@@ -91,45 +69,34 @@ void WiggleDriveCommand::execute()
     // We only wiggle when the turret is online.
     if (turret->isOnline())
     {
-        float curTime =
-            static_cast<float>(aruwlib::arch::clock::getTimeMilliseconds() - timeOffset) -
-            startTimeForAngleOffset;
-        float desiredAngleError;
+        const float turretYawFromCenter = turret->getYawAngleFromCenter();
+        const WiggleParams& wiggleParams = getWiggleParams();
 
-        float turretYaw = turret->getYawAngleFromCenter();
-        turretYawRamp.setTarget(turretYaw);
-        turretYawRamp.update(TURRET_YAW_TARGET_RAMP_INCREMENT);
-        float turretYawFiltered = turretYawRamp.getValue();
-
-        if (outOfCenter)
+        if (turretYawFromCenter > wiggleParams.turnaroundAngle)
         {
-            outOfCenter = fabsf(turretYaw) > WIGGLE_MAX_ROTATE_ANGLE;
-            if (!outOfCenter)
+            if (rotationSign > 0)
             {
-                initialize();
+                rotationSign = -rotationSign;
+                rotationSpeedRamp.setTarget(rotationSign * wiggleParams.rotationSpeed);
+            }
+        }
+        else if (turretYawFromCenter < -wiggleParams.turnaroundAngle)
+        {
+            if (rotationSign < 0)
+            {
+                rotationSign = -rotationSign;
+                rotationSpeedRamp.setTarget(rotationSign * wiggleParams.rotationSpeed);
             }
         }
 
-        if (!outOfCenter)
-        {
-            desiredAngleError = wiggleSin(curTime) + turretYawFiltered;
-        }
-        else
-        {
-            desiredAngleError = aruwlib::algorithms::limitVal(
-                turretYawFiltered,
-                -WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR,
-                WIGGLE_OUT_OF_CENTER_MAX_ROTATE_ERR);
-        }
+        rotationSpeedRamp.update(wiggleParams.rotationSpeedIncrement);
 
-        // Wrapping between -180 and 180.
-        ContiguousFloat rotationError(desiredAngleError, -180.0f, 180.0f);
-        r = chassis->chassisSpeedRotationPID(rotationError.getValue(), WIGGLE_ROTATE_KP);
+        r = rotationSpeedRamp.getValue();
         x *= TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING;
         y *= TRANSLATIONAL_SPEED_FRACTION_WHILE_WIGGLING;
         // Apply a rotation matrix to the user input so you drive turret
         // relative while wiggling.
-        aruwlib::algorithms::rotateVector(&x, &y, -degreesToRadians(turretYaw));
+        rotateVector(&x, &y, -degreesToRadians(turretYawFromCenter));
     }
     else
     {
@@ -140,8 +107,8 @@ void WiggleDriveCommand::execute()
     float rTranslationalGain = chassis->calculateRotationTranslationalGain(r) *
                                ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
-    x = aruwlib::algorithms::limitVal<float>(x, -rTranslationalGain, rTranslationalGain);
-    y = aruwlib::algorithms::limitVal<float>(y, -rTranslationalGain, rTranslationalGain);
+    x = limitVal<float>(x, -rTranslationalGain, rTranslationalGain);
+    y = limitVal<float>(y, -rTranslationalGain, rTranslationalGain);
 
     chassis->setDesiredOutput(x, y, r);
 }
@@ -150,25 +117,26 @@ void WiggleDriveCommand::end(bool) { chassis->setDesiredOutput(0.0f, 0.0f, 0.0f)
 
 bool WiggleDriveCommand::isFinished() const { return false; }
 
-float WiggleDriveCommand::getPeriod() const
+const WiggleDriveCommand::WiggleParams& WiggleDriveCommand::getWiggleParams() const
 {
+    return WIGGLE_PARAMS_45W_CUTOFF;
     uint16_t powerConsumptionLimit =
         drivers->refSerial.getRobotData().chassis.powerConsumptionLimit;
     if (powerConsumptionLimit <= 45 || !drivers->refSerial.getRefSerialReceivingData())
     {
-        return WIGGLE_PERIOD_45W_CUTOFF;
+        return WIGGLE_PARAMS_45W_CUTOFF;
     }
     else if (powerConsumptionLimit <= 60)
     {
-        return WIGGLE_PERIOD_60W_CUTOFF;
+        return WIGGLE_PARAMS_60W_CUTOFF;
     }
     else if (powerConsumptionLimit <= 80)
     {
-        return WIGGLE_PERIOD_80W_CUTOFF;
+        return WIGGLE_PARAMS_80W_CUTOFF;
     }
     else
     {
-        return WIGGLE_PERIOD_MAX_CUTOFF;
+        return WIGGLE_PARAMS_MAX_CUTOFF;
     }
 }
 
