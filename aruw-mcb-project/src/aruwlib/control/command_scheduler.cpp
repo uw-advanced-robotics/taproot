@@ -196,14 +196,15 @@ void CommandScheduler::run()
         if (isMasterScheduler)
         {
             (*it)->refresh();
-        }
-        Command *defaultCmd;
-        // If the current subsystem does not have an associated command and the current
-        // subsystem has a default command, add it
-        if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
-            ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
-        {
-            addCommand(defaultCmd);
+
+            Command *defaultCmd;
+            // If the current subsystem does not have an associated command and the current
+            // subsystem has a default command, add it
+            if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
+                ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
+            {
+                addCommand(defaultCmd);
+            }
         }
     }
 
