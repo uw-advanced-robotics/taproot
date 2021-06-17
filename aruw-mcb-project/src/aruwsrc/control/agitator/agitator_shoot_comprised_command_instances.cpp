@@ -95,8 +95,11 @@ bool ShootCommand42mm::isReady()
 {
     const auto &robotData = drivers->refSerial.getRobotData();
 
-    return !drivers->refSerial.getRefSerialReceivingData() || !heatLimiting ||
-           (robotData.turret.heat42 + HEAT_LIMIT_BUFFER <= robotData.turret.heatLimit42);
+    // (Flywheels have power) &&
+    // !(heat limiting data available && apply heat limiting && heat is over limit)
+    return robotData.shooterHasPower &&
+           !(drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
+             (robotData.turret.heat42 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit42));
 }
 
 }  // namespace agitator
