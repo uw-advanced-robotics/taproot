@@ -161,22 +161,22 @@ private:
     /**
      * Velocity PID gains and constants.
      */
-    static constexpr float VELOCITY_PID_KP = 0.0f;
+    static constexpr float VELOCITY_PID_KP = 20.0f;
     static constexpr float VELOCITY_PID_KI = 0.0f;
     static constexpr float VELOCITY_PID_KD = 0.0f;
     static constexpr float VELOCITY_PID_MAX_ERROR_SUM = 0.0f;
-    static constexpr float VELOCITY_PID_MAX_OUTPUT = 0.0f;
+    static constexpr float VELOCITY_PID_MAX_OUTPUT = 16000.0f;
 
     /**
      * Rotation PID gains and constants.
      * No i, max error sum the same as `MAX_WHEEL_SPEED_SINGLE_MOTOR`, proportional
      * gain specified by user.
      */
-    static constexpr float CHASSIS_REVOLVE_PID_MAX_P = 0.0;
+    static constexpr float CHASSIS_REVOLVE_PID_MAX_P = 3000.0;
     /**
      * Derivative term used in chassis PID.
      */
-    static constexpr float CHASSIS_REVOLVE_PID_KD = 0.0;
+    static constexpr float CHASSIS_REVOLVE_PID_KD = 500.0;
     /**
      * The maximum revolve error before we start using the derivative term.
      */
@@ -188,7 +188,7 @@ private:
     /**
      * Derivative max term.
      */
-    static constexpr float CHASSIS_REVOLVE_PID_MAX_D = 0.0f;
+    static constexpr float CHASSIS_REVOLVE_PID_MAX_D = 3500.0f;
     // mechanical chassis constants
     /**
      * Radius of the wheels.
