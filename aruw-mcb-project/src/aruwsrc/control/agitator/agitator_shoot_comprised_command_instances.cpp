@@ -26,11 +26,12 @@ namespace agitator
 ShootFastComprisedCommand17MM::ShootFastComprisedCommand17MM(
     aruwlib::Drivers *drivers,
     AgitatorSubsystem *agitator17mm,
-    bool heatLimiting)
+    bool heatLimiting,
+    float agitatorRotateAngle)
     : aruwlib::control::setpoint::MoveUnjamComprisedCommand(
           drivers,
           agitator17mm,
-          aruwlib::algorithms::PI / 5.0f,
+          agitatorRotateAngle,
           aruwlib::algorithms::PI / 2.0f,
           40,
           10),
@@ -48,9 +49,23 @@ bool ShootFastComprisedCommand17MM::isReady()
              (robotData.turret.heat17ID1 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit17ID1));
 }
 
+bool ShootFastComprisedCommand17MM::isFinished() const
+{
+    const auto &robotData = drivers->refSerial.getRobotData();
+
+    return (!unjamSequenceCommencing &&
+            !comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
+           (unjamSequenceCommencing &&
+            !comprisedCommandScheduler.isCommandScheduled(&agitatorUnjamCommand)) ||
+           agitatorDisconnectFault ||
+           (drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
+            (robotData.turret.heat17ID1 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit17ID1));
+}
+
 WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
     aruwlib::Drivers *drivers,
-    aruwsrc::agitator::LimitedAgitatorSubsystem *waterwheel)
+    aruwlib::control::setpoint::SetpointSubsystem *waterwheel,
+    bool heatLimiting)
     : MoveUnjamComprisedCommand(
           drivers,
           waterwheel,
@@ -59,21 +74,17 @@ WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
           WATERWHEEL_42MM_ROTATE_TIME,
           WATERWHEEL_42MM_PAUSE_AFTER_ROTATE_TIME),
       drivers(drivers),
-      waterwheel(waterwheel)
+      waterwheel(waterwheel),
+      heatLimiting(heatLimiting)
 {
 }
 
 bool WaterwheelLoadCommand42mm::isReady()
 {
-    return (waterwheel->isOnline() && !waterwheel->isLimitSwitchPressed());
-}
+    const auto &robotData = drivers->refSerial.getRobotData();
 
-bool WaterwheelLoadCommand42mm::isFinished() const
-{
-    return (!unjamSequenceCommencing && agitatorRotateCommand.isFinished()) ||
-           ((unjamSequenceCommencing && agitatorUnjamCommand.isFinished()) ||
-            !this->comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
-           agitatorDisconnectFault || waterwheel->isLimitSwitchPressed();
+    return !drivers->refSerial.getRefSerialReceivingData() || !heatLimiting ||
+           (robotData.turret.heat42 + HEAT_LIMIT_BUFFER <= robotData.turret.heatLimit42);
 }
 
 ShootCommand42mm::ShootCommand42mm(

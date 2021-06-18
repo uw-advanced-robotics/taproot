@@ -64,7 +64,7 @@ public:
 
     static constexpr bool isAgitatorInverted = false;
 
-    static constexpr float AGITATOR_JAMMING_DISTANCE = aruwlib::algorithms::PI / 10;
+    static constexpr float AGITATOR_JAMMING_DISTANCE = aruwlib::algorithms::PI / 5;
 
     // The motor that controls the hopper lid is an agitator_subsystem instance, so
     // I'm adding its constants here as well.
@@ -87,7 +87,6 @@ public:
     static constexpr aruwlib::can::CanBus AGITATOR_MOTOR_CAN_BUS = aruwlib::can::CanBus::CAN_BUS1;
 
 #elif defined(TARGET_HERO)
-    /// @todo tune all the things
     // Hero's waterwheel constants
     static constexpr float PID_HERO_WATERWHEEL_P = 100000.0f;
     static constexpr float PID_HERO_WATERWHEEL_I = 0.0f;
@@ -130,7 +129,7 @@ public:
      * and current angle is > `JAMMING_DISTANCE` radians for >= `JAMMING_TIME` ms;
      */
     static constexpr float JAMMING_DISTANCE = 1.0f;
-    static constexpr uint32_t JAMMING_TIME = 150;
+    static constexpr uint32_t JAMMING_TIME = 250;
 
     /**
      * Construct an agitator with the passed in PID parameters, gear ratio, and motor-specific

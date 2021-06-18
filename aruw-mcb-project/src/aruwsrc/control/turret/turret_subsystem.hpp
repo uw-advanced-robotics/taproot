@@ -49,11 +49,25 @@ public:
     static constexpr aruwlib::motor::MotorId PITCH_MOTOR_ID = aruwlib::motor::MOTOR6;
     static constexpr aruwlib::motor::MotorId YAW_MOTOR_ID = aruwlib::motor::MOTOR5;
 
+#if defined(TARGET_SOLDIER)
     static constexpr float TURRET_START_ANGLE = 90.0f;
     static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
     static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
     static constexpr float TURRET_PITCH_MIN_ANGLE = TURRET_START_ANGLE - 13.0f;
     static constexpr float TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 30.0f;
+#elif defined(TARGET_HERO)
+    static constexpr float TURRET_START_ANGLE = 90.0f;
+    static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 70.0f;
+    static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 70.0f;
+    static constexpr float TURRET_PITCH_MIN_ANGLE = 65.0f;
+    static constexpr float TURRET_PITCH_MAX_ANGLE = 104.0f;
+#else
+    static constexpr float TURRET_START_ANGLE = 90.0f;
+    static constexpr float TURRET_YAW_MIN_ANGLE = TURRET_START_ANGLE - 90.0f;
+    static constexpr float TURRET_YAW_MAX_ANGLE = TURRET_START_ANGLE + 90.0f;
+    static constexpr float TURRET_PITCH_MIN_ANGLE = TURRET_START_ANGLE - 13.0f;
+    static constexpr float TURRET_PITCH_MAX_ANGLE = TURRET_START_ANGLE + 30.0f;
+#endif
 
     /**
      * Constructs a TurretSubsystem.
@@ -176,6 +190,9 @@ private:
 #if defined(TARGET_SOLDIER)
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 6821;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;
+#elif defined(TARGET_HERO)
+    static constexpr uint16_t YAW_START_ENCODER_POSITION = 7598;
+    static constexpr uint16_t PITCH_START_ENCODER_POSITION = 1418;
 #else
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 0;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;

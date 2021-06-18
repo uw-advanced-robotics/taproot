@@ -46,9 +46,12 @@ public:
     ShootFastComprisedCommand17MM(
         aruwlib::Drivers* drivers,
         AgitatorSubsystem* agitator17mm,
-        bool heatLimiting = true);
+        bool heatLimiting = true,
+        float agitatorRotateAngle = aruwlib::algorithms::PI / 2.5f);
 
     bool isReady() override;
+
+    bool isFinished() const override;
 
 private:
     aruwlib::Drivers* drivers;
@@ -56,33 +59,38 @@ private:
     const bool heatLimiting;
 };  // class ShootFastComprisedCommand
 
+/**
+ */
 class WaterwheelLoadCommand42mm : public aruwlib::control::setpoint::MoveUnjamComprisedCommand
 {
 public:
     // Angle the command tries to move the agitator whenever it is scheduled
-    static constexpr float WATERWHEEL_42MM_CHANGE_ANGLE = aruwlib::algorithms::PI / 6;
+    static constexpr float WATERWHEEL_42MM_CHANGE_ANGLE = -aruwlib::algorithms::PI / 7;
     // Max angle the agitator will move while unjamming
-    static constexpr float WATERWHEEL_42MM_MAX_UNJAM_ANGLE = aruwlib::algorithms::PI / 6;
+    static constexpr float WATERWHEEL_42MM_MAX_UNJAM_ANGLE = aruwlib::algorithms::PI / 7;
     // Expected time for the water wheel to rotate the specified angle in ms
     static constexpr uint32_t WATERWHEEL_42MM_ROTATE_TIME = 1000;
     // How long the command should wait after reaching the target angle
     static constexpr uint32_t WATERWHEEL_42MM_PAUSE_AFTER_ROTATE_TIME = 10;
 
+    // Buffer from max heat limit in which limiting occurs, for hero 100 is one shot.
+    static constexpr float HEAT_LIMIT_BUFFER = 100;
+
     WaterwheelLoadCommand42mm(
         aruwlib::Drivers* drivers,
-        aruwsrc::agitator::LimitedAgitatorSubsystem* waterwheel);
+        aruwlib::control::setpoint::SetpointSubsystem* waterwheel,
+        bool heatLimiting = false);
 
     bool isReady() override;
-
-    bool isFinished() const override;
 
 private:
     // Store instance of drivers to be able to access digital
     aruwlib::Drivers* drivers;
 
     // Store pointer to limited agitator subsystem with derived class type
-    aruwsrc::agitator::LimitedAgitatorSubsystem* waterwheel;
+    aruwlib::control::setpoint::SetpointSubsystem* waterwheel;
 
+    bool heatLimiting;
 };  // class Waterwheel42mmLoadCommand
 
 /**

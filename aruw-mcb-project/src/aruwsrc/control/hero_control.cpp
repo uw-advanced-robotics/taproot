@@ -28,6 +28,7 @@
 #include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
 #include "aruwlib/control/setpoint/commands/move_absolute_command.hpp"
 #include "aruwlib/control/setpoint/commands/move_command.hpp"
+#include "aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp"
 
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"
 #include "agitator/double_agitator_subsystem.hpp"
@@ -38,7 +39,6 @@
 #include "chassis/wiggle_drive_command.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
 #include "launcher/friction_wheel_subsystem.hpp"
-#include "turret/turret_cv_command.hpp"
 #include "turret/turret_subsystem.hpp"
 #include "turret/turret_world_relative_position_command.hpp"
 
@@ -71,7 +71,7 @@ TurretSubsystem turret(drivers());
 ChassisSubsystem chassis(drivers());
 
 // Hero has two agitators, one waterWheel and then a kicker
-LimitedAgitatorSubsystem waterWheelAgitator(
+AgitatorSubsystem waterWheelAgitator(
     drivers(),
     AgitatorSubsystem::PID_HERO_WATERWHEEL_P,
     AgitatorSubsystem::PID_HERO_WATERWHEEL_I,
@@ -81,11 +81,7 @@ LimitedAgitatorSubsystem waterWheelAgitator(
     AgitatorSubsystem::AGITATOR_GEAR_RATIO_M2006,
     AgitatorSubsystem::HERO_WATERWHEEL_MOTOR_ID,
     AgitatorSubsystem::HERO_WATERWHEEL_MOTOR_CAN_BUS,
-    AgitatorSubsystem::HERO_WATERWHEEL_INVERTED,
-    LimitedAgitatorSubsystem::WATERWHEEL_LIMIT_PIN,
-    LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_MAX_SUM,
-    LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_LOWER_BOUND,
-    LimitedAgitatorSubsystem::WATERWHEEL_DEBOUNCE_UPPER_BOUND);
+    AgitatorSubsystem::HERO_WATERWHEEL_INVERTED);
 
 DoubleAgitatorSubsystem kickerSubsystem(
     drivers(),
@@ -103,9 +99,6 @@ DoubleAgitatorSubsystem kickerSubsystem(
     DoubleAgitatorSubsystem::JAM_DISTANCE_TOLERANCE,
     DoubleAgitatorSubsystem::JAM_TEMPORAL_TOLERANCE);
 
-// Inverted inversion (haha), because second kicker is on the
-// other end of the axle
-
 FrictionWheelSubsystem frictionWheels(drivers());
 
 /* define commands ----------------------------------------------------------*/
@@ -115,9 +108,8 @@ ChassisAutorotateCommand chassisAutorotateCommand(drivers(), &chassis, &turret);
 WiggleDriveCommand wiggleDriveCommand(drivers(), &chassis, &turret);
 TurretWorldRelativePositionCommand turretWorldRelativeCommand(drivers(), &turret, &chassis);
 
-TurretCVCommand turretCVCommand(drivers(), &turret);
-
-WaterwheelLoadCommand42mm waterwheelLoadCommand(drivers(), &waterWheelAgitator);
+WaterwheelLoadCommand42mm waterwheelLoadLimited(drivers(), &waterWheelAgitator, true);
+WaterwheelLoadCommand42mm waterwheelLoadUnlimitedCommand(drivers(), &waterWheelAgitator, false);
 
 ShootCommand42mm kickerShootHeatLimitedCommand(drivers(), &kickerSubsystem, true);
 ShootCommand42mm kickerShootUnlimitedCommand(drivers(), &kickerSubsystem, false);
@@ -133,17 +125,13 @@ HoldCommandMapping rightSwitchDown(
     drivers(),
     {&stopFrictionWheels},
     RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::DOWN));
-HoldCommandMapping leftSwitchUp(
-    drivers(),
-    {&chassisDriveCommand, &turretCVCommand},
-    RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 HoldCommandMapping leftSwitchDown(
     drivers(),
     {&wiggleDriveCommand},
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
 HoldCommandMapping rightSwitchUp(
     drivers(),
-    {&kickerShootHeatLimitedCommand},
+    {&kickerShootHeatLimitedCommand, &waterwheelLoadLimited},
     RemoteMapState(Remote::Switch::RIGHT_SWITCH, Remote::SwitchState::UP));
 
 // Keyboard/Mouse related mappings
@@ -151,19 +139,14 @@ ToggleCommandMapping rToggled(drivers(), {&stopFrictionWheels}, RemoteMapState({
 
 ToggleCommandMapping fToggled(drivers(), {&wiggleDriveCommand}, RemoteMapState({Remote::Key::F}));
 
-HoldCommandMapping leftMousePressedShiftNotPressed(
+HoldCommandMapping leftMousePressed(
     drivers(),
-    {&kickerShootHeatLimitedCommand},
-    RemoteMapState(RemoteMapState::MouseButton::LEFT, {}, {Remote::Key::SHIFT}));
-
-HoldCommandMapping leftMousePressedShiftPressed(
-    drivers(),
-    {&kickerShootUnlimitedCommand},
-    RemoteMapState(RemoteMapState::MouseButton::LEFT, {Remote::Key::SHIFT}));
+    {&kickerShootHeatLimitedCommand, &waterwheelLoadLimited},
+    RemoteMapState(RemoteMapState::MouseButton::LEFT));
 
 HoldCommandMapping rightMousePressed(
     drivers(),
-    {&turretCVCommand},
+    {&kickerShootUnlimitedCommand, &waterwheelLoadUnlimitedCommand},
     RemoteMapState(RemoteMapState::MouseButton::RIGHT));
 
 /* initialize subsystems ----------------------------------------------------*/
@@ -193,7 +176,6 @@ void setDefaultHeroCommands(aruwlib::Drivers *)
 {
     chassis.setDefaultCommand(&chassisAutorotateCommand);
     turret.setDefaultCommand(&turretWorldRelativeCommand);
-    waterWheelAgitator.setDefaultCommand(&waterwheelLoadCommand);
     frictionWheels.setDefaultCommand(&spinFrictionWheels);
 }
 
@@ -204,13 +186,11 @@ void startHeroCommands(aruwlib::Drivers *) {}
 void registerHeroIoMappings(aruwlib::Drivers *drivers)
 {
     drivers->commandMapper.addMap(&rightSwitchDown);
-    drivers->commandMapper.addMap(&leftSwitchUp);
     drivers->commandMapper.addMap(&leftSwitchDown);
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rToggled);
     drivers->commandMapper.addMap(&fToggled);
-    drivers->commandMapper.addMap(&leftMousePressedShiftNotPressed);
-    drivers->commandMapper.addMap(&leftMousePressedShiftPressed);
+    drivers->commandMapper.addMap(&leftMousePressed);
     drivers->commandMapper.addMap(&rightMousePressed);
 }
 
