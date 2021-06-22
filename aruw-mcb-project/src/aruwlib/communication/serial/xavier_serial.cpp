@@ -111,8 +111,7 @@ modm::ResumableResult<bool> XavierSerial::sendRobotMeasurements()
 {
     RF_BEGIN(0);
 
-    int numMotors;
-    if (chassisSub != nullptr && (numMotors = chassisSub->getNumChassisMotors()) <= 4)
+    if (chassisSub != nullptr)
     {
         convertToLittleEndian(chassisSub->getRightFrontRpmActual(), txMessage.data);
         convertToLittleEndian(
@@ -229,7 +228,10 @@ modm::ResumableResult<bool> XavierSerial::sendRobotID()
         txMessage.data[0] = static_cast<uint8_t>(drivers->refSerial.getRobotData().robotId);
         txMessage.length = 1;
         txMessage.type = CV_MESSAGE_TYPE_ROBOT_ID;
-        send();
+        if (!send())
+        {
+            RF_YIELD();
+        }
     }
     RF_END();
 }
