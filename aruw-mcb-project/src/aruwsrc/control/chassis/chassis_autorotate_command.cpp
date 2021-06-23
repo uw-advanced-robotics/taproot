@@ -79,6 +79,12 @@ void ChassisAutorotateCommand::execute()
                                           rTranslationalGain) *
                                       ChassisSubsystem::MAX_WHEEL_SPEED_SINGLE_MOTOR;
 
+    // Rotate X and Y depending on turret angle
+    aruwlib::algorithms::rotateVector(
+        &chassisXDesiredWheelspeed,
+        &chassisYDesiredWheelspeed,
+        -aruwlib::algorithms::degreesToRadians(turret->getYawAngleFromCenter()));
+
     chassis->setDesiredOutput(
         chassisXDesiredWheelspeed,
         chassisYDesiredWheelspeed,
