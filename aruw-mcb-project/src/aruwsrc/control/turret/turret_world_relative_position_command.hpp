@@ -97,20 +97,20 @@ private:
 
     static constexpr float PITCH_GRAVITY_COMPENSATION_KP = 4000.0f;
 #else
-    static constexpr float YAW_P = 1000.0f;
+    static constexpr float YAW_P = 2200.0f;
     static constexpr float YAW_I = 50.0f;
     static constexpr float YAW_D_TURRET_IMU = 10.0f;
-    static constexpr float YAW_D_CHASSIS_IMU = 10.0f;
+    static constexpr float YAW_D_CHASSIS_IMU = 60.0f;
     static constexpr float YAW_MAX_ERROR_SUM = 1000.0f;
     static constexpr float YAW_MAX_OUTPUT = 30000.0f;
     static constexpr float YAW_Q_DERIVATIVE_KALMAN = 1.0f;
-    static constexpr float YAW_R_DERIVATIVE_KALMAN = 10.0f;
+    static constexpr float YAW_R_DERIVATIVE_KALMAN = 50.0f;
     static constexpr float YAW_Q_PROPORTIONAL_KALMAN = 1.0f;
     static constexpr float YAW_R_PROPORTIONAL_KALMAN = 10.0f;
 
-    static constexpr float PITCH_P = 1000.0f;
+    static constexpr float PITCH_P = 3400.0f;
     static constexpr float PITCH_I = 0.0f;
-    static constexpr float PITCH_D = 50.0f;
+    static constexpr float PITCH_D = 150.0f;
     static constexpr float PITCH_MAX_ERROR_SUM = 0.0f;
     static constexpr float PITCH_MAX_OUTPUT = 30000.0f;
     static constexpr float PITCH_Q_DERIVATIVE_KALMAN = 1.5f;
