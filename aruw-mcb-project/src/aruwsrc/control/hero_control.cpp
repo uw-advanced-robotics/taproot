@@ -37,6 +37,8 @@
 #include "chassis/chassis_drive_command.hpp"
 #include "chassis/chassis_subsystem.hpp"
 #include "chassis/wiggle_drive_command.hpp"
+#include "client-display/client_display_command.hpp"
+#include "client-display/client_display_subsystem.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
 #include "launcher/friction_wheel_subsystem.hpp"
 #include "turret/turret_subsystem.hpp"
@@ -49,6 +51,7 @@ using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
 using namespace aruwsrc::turret;
 using namespace aruwlib::control;
+using namespace aruwsrc::display;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 using aruwlib::control::CommandMapper;
@@ -101,6 +104,8 @@ DoubleAgitatorSubsystem kickerSubsystem(
 
 FrictionWheelSubsystem frictionWheels(drivers());
 
+ClientDisplaySubsystem clientDisplay(drivers());
+
 /* define commands ----------------------------------------------------------*/
 ChassisDriveCommand chassisDriveCommand(drivers(), &chassis);
 
@@ -118,6 +123,14 @@ FrictionWheelRotateCommand spinFrictionWheels(
     &frictionWheels,
     FrictionWheelRotateCommand::DEFAULT_WHEEL_RPM);
 FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
+
+ClientDisplayCommand clientDisplayCommand(
+    drivers(),
+    &clientDisplay,
+    nullptr,
+    &chassisAutorotateCommand,
+    &wiggleDriveCommand,
+    &chassisDriveCommand);
 
 /* define command mappings --------------------------------------------------*/
 // Remote related mappings
@@ -157,6 +170,7 @@ void initializeSubsystems()
     waterWheelAgitator.initialize();
     kickerSubsystem.initialize();
     frictionWheels.initialize();
+    clientDisplay.initialize();
     drivers()->xavierSerial.attachChassis(&chassis);
     drivers()->xavierSerial.attachTurret(&turret);
 }
@@ -169,6 +183,7 @@ void registerHeroSubsystems(aruwlib::Drivers *drivers)
     drivers->commandScheduler.registerSubsystem(&waterWheelAgitator);
     drivers->commandScheduler.registerSubsystem(&kickerSubsystem);
     drivers->commandScheduler.registerSubsystem(&frictionWheels);
+    drivers->commandScheduler.registerSubsystem(&clientDisplay);
 }
 
 /* set any default commands to subsystems here ------------------------------*/
@@ -177,6 +192,7 @@ void setDefaultHeroCommands(aruwlib::Drivers *)
     chassis.setDefaultCommand(&chassisAutorotateCommand);
     turret.setDefaultCommand(&turretWorldRelativeCommand);
     frictionWheels.setDefaultCommand(&spinFrictionWheels);
+    clientDisplay.setDefaultCommand(&clientDisplayCommand);
 }
 
 /* add any starting commands to the scheduler here --------------------------*/
