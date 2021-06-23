@@ -191,7 +191,7 @@ private:
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 6821;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 4100;
 #elif defined(TARGET_HERO)
-    static constexpr uint16_t YAW_START_ENCODER_POSITION = 7598;
+    static constexpr uint16_t YAW_START_ENCODER_POSITION = 3000;
     static constexpr uint16_t PITCH_START_ENCODER_POSITION = 1418;
 #else
     static constexpr uint16_t YAW_START_ENCODER_POSITION = 0;
