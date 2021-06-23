@@ -218,7 +218,7 @@ void writeMessage(int16_t fileDescriptor, const char* message, uint16_t bytes)
  */
 int32_t readInt32(int16_t fileDescriptor)
 {
-    char buffer[4];
+    char buffer[5];
     readMessage(fileDescriptor, buffer, 4);
     int32_t answer = 0;
     for (size_t i = 0; i < 4; i++)
