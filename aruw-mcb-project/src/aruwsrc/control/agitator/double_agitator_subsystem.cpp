@@ -102,13 +102,13 @@ void DoubleAgitatorSubsystem::agitatorRunPositionPid()
         // the velocity ourselves, so it currently isn't used.
         float motor1Angle = getCurrentValue(agitatorMotor1, agitator1CalibratedZeroAngle);
         float motor2Angle = getCurrentValue(agitatorMotor2, agitator2CalibratedZeroAngle);
-        float angleDiff = motor1Angle - motor2Angle;
+        // TODO add angle difference compensation?
         agitatorPositionPid1.runController(
-            desiredAgitatorAngle - motor1Angle - angleDiff,
+            desiredAgitatorAngle - motor1Angle,
             getVelocity(agitatorMotor1),
             2.0f);
         agitatorPositionPid2.runController(
-            desiredAgitatorAngle - motor2Angle + angleDiff,
+            desiredAgitatorAngle - motor2Angle,
             getVelocity(agitatorMotor2),
             2.0f);
         agitatorMotor1.setDesiredOutput(agitatorPositionPid1.getOutput());
