@@ -19,10 +19,10 @@
 
 #include "ref_serial.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/architecture/endianness_wrappers.hpp"
+#include "aruwlib/drivers.hpp"
 
 using namespace aruwlib::arch;
 

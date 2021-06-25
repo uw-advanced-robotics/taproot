@@ -21,10 +21,10 @@
 
 #include <cstring>
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/endianness_wrappers.hpp"
 #include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
 #include "aruwlib/control/turret/i_turret_subsystem.hpp"
+#include "aruwlib/drivers.hpp"
 
 using namespace aruwlib::arch;
 using namespace aruwlib::serial;

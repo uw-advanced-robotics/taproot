@@ -17,17 +17,17 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "AgitatorSubsystemMock.hpp"
-#include "BeybladeCommandMock.hpp"
-#include "ChassisDriveCommandMock.hpp"
-#include "ChassisSubsystemMock.hpp"
-#include "FrictionWheelSubsystemMock.hpp"
-#include "GrabberSubsystemMock.hpp"
-#include "HopperSubsystemMock.hpp"
-#include "SentinelDriveSubsystemMock.hpp"
-#include "TowSubsystemMock.hpp"
-#include "TurretSubsystemMock.hpp"
-#include "XAxisSubsystemMock.hpp"
+#include "agitator_subsystem_mock.hpp"
+#include "beyblade_command_mock.hpp"
+#include "chassis_drive_command_mock.hpp"
+#include "chassis_subsystem_mock.hpp"
+#include "friction_wheel_subsystem_mock.hpp"
+#include "grabber_subsystem_mock.hpp"
+#include "hopper_subsystem_mock.hpp"
+#include "sentinel_drive_subsystem_mock.hpp"
+#include "tow_subsystem_mock.hpp"
+#include "turret_subsystem_mock.hpp"
+#include "x_axis_subsystem_mock.hpp"
 
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors

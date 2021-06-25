@@ -26,7 +26,7 @@
 #include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include "aruwlib/mock/DJIMotorMock.hpp"
+#include "aruwlib/mock/dji_motor_mock.hpp"
 #else
 #include "aruwlib/motor/dji_motor.hpp"
 #endif

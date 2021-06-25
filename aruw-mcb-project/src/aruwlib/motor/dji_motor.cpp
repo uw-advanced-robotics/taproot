@@ -19,14 +19,14 @@
 
 #include "dji_motor.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/drivers.hpp"
 
 #ifdef PLATFORM_HOSTED
 #include <iostream>
 
-#include "aruwlib/communication/tcp-server/JSONMessages.hpp"
-#include "aruwlib/communication/tcp-server/TCPServer.hpp"
+#include "aruwlib/communication/tcp-server/json_messages.hpp"
+#include "aruwlib/communication/tcp-server/tcp_server.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 #endif

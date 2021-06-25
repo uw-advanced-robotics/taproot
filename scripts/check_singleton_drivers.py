@@ -14,8 +14,8 @@ project_path = sys.argv[1]
 string_to_check = 'DoNotUse_getDrivers'
 
 files_to_whitelist = [
-    'aruwlib/DriversSingleton.cpp',
-    'aruwlib/DriversSingleton.hpp',
+    'aruwlib/drivers_singleton.cpp',
+    'aruwlib/drivers_singleton.hpp',
     'aruwsrc/control/engineer_control.cpp',
     'aruwsrc/control/old_soldier_control.cpp',
     'aruwsrc/control/sentinel_control.cpp',

@@ -23,10 +23,10 @@
 #include <cfloat>
 #include <random>
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/architecture/clock.hpp"
-#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/command_mapper.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
 using namespace aruwlib::motor;

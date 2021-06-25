@@ -19,7 +19,7 @@
 
 #include "client_display_command.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "client_display_subsystem.hpp"
 

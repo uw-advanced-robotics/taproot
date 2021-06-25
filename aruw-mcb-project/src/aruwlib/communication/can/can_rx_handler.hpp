@@ -20,7 +20,7 @@
 #ifndef CAN_RX_HANDLER_HPP_
 #define CAN_RX_HANDLER_HPP_
 
-#include "CanBus.hpp"
+#include "can_bus.hpp"
 #include "util_macros.hpp"
 
 namespace modm::can

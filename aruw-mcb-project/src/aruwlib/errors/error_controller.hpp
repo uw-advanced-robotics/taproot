@@ -21,7 +21,7 @@
 #define ERROR_CONTROLLER_HPP_
 
 #include "aruwlib/architecture/timeout.hpp"
-#include "aruwlib/communication/serial/TerminalSerial.hpp"
+#include "aruwlib/communication/serial/terminal_serial.hpp"
 
 #include "modm/container.hpp"
 

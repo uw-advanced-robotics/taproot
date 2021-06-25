@@ -21,7 +21,7 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "aruwsrc/control/chassis/chassis_subsystem.hpp"
 

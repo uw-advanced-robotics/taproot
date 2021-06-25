@@ -20,8 +20,8 @@
 #ifndef AGITATOR_CALIBRATE_COMMAND_HPP_
 #define AGITATOR_CALIBRATE_COMMAND_HPP_
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/control/command.hpp"
+#include "aruwlib/drivers.hpp"
 
 namespace aruwlib
 {

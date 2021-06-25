@@ -19,8 +19,8 @@
 
 #include "turret_manual_command.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/communication/remote.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "turret_subsystem.hpp"
 

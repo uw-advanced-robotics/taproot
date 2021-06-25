@@ -19,9 +19,9 @@
 
 #include "error_controller.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/strtok.hpp"
 #include "aruwlib/communication/gpio/leds.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "modm/container/linked_list.hpp"
 

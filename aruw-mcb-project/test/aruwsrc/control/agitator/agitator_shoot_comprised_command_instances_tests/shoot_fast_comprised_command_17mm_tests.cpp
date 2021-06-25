@@ -25,7 +25,7 @@
 #include <gtest/gtest.h>
 
 #include "aruwsrc/control/agitator/agitator_shoot_comprised_command_instances.hpp"
-#include "aruwsrc/mock/AgitatorSubsystemMock.hpp"
+#include "aruwsrc/mock/agitator_subsystem_mock.hpp"
 
 using namespace aruwlib;
 using namespace aruwlib::control::setpoint;
