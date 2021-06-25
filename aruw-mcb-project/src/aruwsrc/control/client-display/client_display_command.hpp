@@ -20,11 +20,12 @@
 #ifndef CLIENT_DISPLAY_COMMAND_HPP_
 #define CLIENT_DISPLAY_COMMAND_HPP_
 
-#include <aruwlib/architecture/periodic_timer.hpp>
-#include <aruwlib/communication/serial/ref_serial.hpp>
-#include <aruwlib/control/command.hpp>
-#include <modm/processing/protothread.hpp>
-#include <modm/processing/resumable.hpp>
+#include "aruwlib/architecture/periodic_timer.hpp"
+#include "aruwlib/communication/serial/ref_serial.hpp"
+#include "aruwlib/control/command.hpp"
+
+#include "modm/processing/protothread.hpp"
+#include "modm/processing/resumable.hpp"
 
 namespace aruwlib::control
 {

@@ -17,9 +17,10 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/communication/remote.hpp>
-#include <aruwlib/control/RemoteMapState.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/communication/remote.hpp"
+#include "aruwlib/control/RemoteMapState.hpp"
 
 using aruwlib::Remote;
 using aruwlib::control::RemoteMapState;

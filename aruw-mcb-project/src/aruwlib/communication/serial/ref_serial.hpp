@@ -22,9 +22,9 @@
 
 #include <cstdint>
 
-#include <modm/container/deque.hpp>
-
 #include "aruwlib/architecture/timeout.hpp"
+
+#include "modm/container/deque.hpp"
 
 #include "dji_serial.hpp"
 #include "util_macros.hpp"

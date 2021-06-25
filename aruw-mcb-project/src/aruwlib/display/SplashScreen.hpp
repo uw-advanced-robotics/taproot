@@ -20,7 +20,7 @@
 #ifndef SPLASH_SCREEN_HPP_
 #define SPLASH_SCREEN_HPP_
 
-#include <modm/ui/menu/abstract_menu.hpp>
+#include "modm/ui/menu/abstract_menu.hpp"
 
 namespace aruwlib
 {

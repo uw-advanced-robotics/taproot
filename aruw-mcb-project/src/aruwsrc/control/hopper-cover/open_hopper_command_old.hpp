@@ -20,7 +20,7 @@
 #ifndef __OPEN_HOPPER_COMMAND_OLD_HPP__
 #define __OPEN_HOPPER_COMMAND_OLD_HPP__
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 #include "hopper_subsystem.hpp"
 

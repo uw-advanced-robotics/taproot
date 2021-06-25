@@ -20,8 +20,9 @@
 #ifndef FRICTION_WHEEL_SUBSYSTEM_MOCK_HPP_
 #define FRICTION_WHEEL_SUBSYSTEM_MOCK_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/Drivers.hpp"
 
 #include "aruwsrc/control/launcher/friction_wheel_subsystem.hpp"
 

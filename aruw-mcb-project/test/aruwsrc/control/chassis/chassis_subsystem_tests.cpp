@@ -19,8 +19,9 @@
 
 #if defined(TARGET_SOLDIER)
 
-#include <aruwlib/Drivers.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
 
 #include "aruwsrc/control/chassis/chassis_subsystem.hpp"
 

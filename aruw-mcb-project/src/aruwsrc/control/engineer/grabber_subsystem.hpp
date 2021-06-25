@@ -20,8 +20,8 @@
 #ifndef GRABBER_SUBSYSTEM_HPP_
 #define GRABBER_SUBSYSTEM_HPP_
 
-#include <aruwlib/communication/gpio/digital.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/communication/gpio/digital.hpp"
+#include "aruwlib/control/subsystem.hpp"
 
 #include "util_macros.hpp"
 

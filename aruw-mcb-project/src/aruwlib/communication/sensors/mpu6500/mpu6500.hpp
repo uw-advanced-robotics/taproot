@@ -22,10 +22,10 @@
 
 #include <cstdint>
 
-#include <modm/processing/protothread.hpp>
-
 #include "aruwlib/algorithms/MahonyAHRS.h"
 #include "aruwlib/architecture/timeout.hpp"
+
+#include "modm/processing/protothread.hpp"
 
 #include "util_macros.hpp"
 

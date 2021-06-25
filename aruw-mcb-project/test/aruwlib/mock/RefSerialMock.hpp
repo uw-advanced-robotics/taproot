@@ -20,8 +20,9 @@
 #ifndef REF_SERIAL_MOCK_HPP_
 #define REF_SERIAL_MOCK_HPP_
 
-#include <aruwlib/communication/serial/ref_serial.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/serial/ref_serial.hpp"
 
 namespace aruwlib
 {

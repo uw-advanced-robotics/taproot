@@ -21,8 +21,8 @@
 #ifndef SENTINEL_RANDOM_DRIVE_COMMAND_HPP_
 #define SENTINEL_RANDOM_DRIVE_COMMAND_HPP_
 
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/command.hpp"
 
 #include "sentinel_drive_subsystem.hpp"
 

@@ -20,8 +20,9 @@
 #ifndef MPU6500_MOCK_HPP_
 #define MPU6500_MOCK_HPP_
 
-#include <aruwlib/communication/sensors/mpu6500/mpu6500.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
 
 namespace aruwlib
 {

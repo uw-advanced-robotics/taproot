@@ -20,8 +20,8 @@
 #ifndef CLIENT_DISPLAY_HPP_
 #define CLIENT_DISPLAY_HPP_
 
-#include <aruwlib/control/command.hpp>
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/subsystem.hpp"
 
 namespace aruwsrc::display
 {

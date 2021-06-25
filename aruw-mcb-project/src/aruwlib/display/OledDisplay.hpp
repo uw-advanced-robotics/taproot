@@ -20,11 +20,11 @@
 #ifndef OLED_DISPLAY_HPP_
 #define OLED_DISPLAY_HPP_
 
-#include <modm/processing/protothread.hpp>
-#include <modm/ui/menu/view_stack.hpp>
-
 #include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
+
+#include "modm/processing/protothread.hpp"
+#include "modm/ui/menu/view_stack.hpp"
 
 #include "OledButtonHandler.hpp"
 #include "SplashScreen.hpp"

@@ -21,9 +21,9 @@
 #ifndef SENTINEL_FULL_TRAVERSE_COMMAND_HPP_
 #define SENTINEL_FULL_TRAVERSE_COMMAND_HPP_
 
-#include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/architecture/clock.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/control/command.hpp"
 
 #include "sentinel_drive_subsystem.hpp"
 

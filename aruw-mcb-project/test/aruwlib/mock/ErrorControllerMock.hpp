@@ -20,8 +20,9 @@
 #ifndef ERROR_CONTROLLER_MOCK_HPP_
 #define ERROR_CONTROLLER_MOCK_HPP_
 
-#include <aruwlib/errors/error_controller.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/errors/error_controller.hpp"
 
 namespace aruwlib
 {

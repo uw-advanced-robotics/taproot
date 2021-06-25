@@ -19,7 +19,7 @@
 
 #include "grabber_subsystem.hpp"
 
-#include <aruwlib/Drivers.hpp>
+#include "aruwlib/Drivers.hpp"
 
 namespace aruwsrc
 {

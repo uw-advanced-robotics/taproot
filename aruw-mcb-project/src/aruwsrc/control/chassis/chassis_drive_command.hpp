@@ -20,7 +20,7 @@
 #ifndef CHASSIS_DRIVE_COMMAND_HPP_
 #define CHASSIS_DRIVE_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 namespace aruwlib
 {

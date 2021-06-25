@@ -20,8 +20,9 @@
 #ifndef LEDS_MOCK_HPP_
 #define LEDS_MOCK_HPP_
 
-#include <aruwlib/communication/gpio/leds.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/gpio/leds.hpp"
 
 namespace aruwlib
 {

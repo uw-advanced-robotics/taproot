@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#include <aruwlib/algorithms/extended_kalman.hpp>
+#include "aruwlib/algorithms/extended_kalman.hpp"
 
 namespace aruwsrc
 {

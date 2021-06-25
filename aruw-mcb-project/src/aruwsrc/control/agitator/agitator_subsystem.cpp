@@ -19,19 +19,18 @@
 
 #include "agitator_subsystem.hpp"
 
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/control/subsystem.hpp>
-#include <aruwlib/errors/create_errors.hpp>
-
 #include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/control/subsystem.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
 
-#include <modm/math/filter/pid.hpp>
+#include "modm/math/filter/pid.hpp"
 
 using namespace aruwlib::motor;
 

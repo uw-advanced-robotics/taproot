@@ -20,8 +20,8 @@
 #ifndef OLED_BUTTON_HANDLER_HPP_
 #define OLED_BUTTON_HANDLER_HPP_
 
-#include <modm/math/filter/debounce.hpp>
-#include <modm/ui/menu/view_stack.hpp>
+#include "modm/math/filter/debounce.hpp"
+#include "modm/ui/menu/view_stack.hpp"
 
 namespace aruwlib
 {

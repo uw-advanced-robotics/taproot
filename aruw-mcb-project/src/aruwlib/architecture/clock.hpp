@@ -22,9 +22,9 @@
 #include <cstdint>
 
 #ifndef PLATFORM_HOSTED
-#include <modm/platform.hpp>
+#include "modm/platform.hpp"
 #else
-#include <modm/architecture/interface/clock.hpp>
+#include "modm/architecture/interface/clock.hpp"
 #endif
 
 namespace aruwlib

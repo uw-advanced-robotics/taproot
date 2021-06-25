@@ -22,8 +22,7 @@
 
 #include <string>
 
-#include <aruwlib/architecture/timeout.hpp>
-
+#include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/communication/can/can_rx_listener.hpp"
 
 namespace aruwlib

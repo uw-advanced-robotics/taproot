@@ -21,9 +21,10 @@
 
 #include <string>
 
-#include <aruwlib/communication/tcp-server/TCPServer.hpp>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "aruwlib/communication/tcp-server/TCPServer.hpp"
 
 #include "TCPTestClient.hpp"
 

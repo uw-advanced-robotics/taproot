@@ -19,12 +19,12 @@
 
 #include "dji_motor_tx_handler.hpp"
 
-#include <modm/architecture/interface/assert.h>
-#include <modm/architecture/interface/can_message.hpp>
-
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+
+#include "modm/architecture/interface/assert.h"
+#include "modm/architecture/interface/can_message.hpp"
 
 #define CAN_DJI_MESSAGE_SEND_LENGTH 8
 #define CAN_DJI_LOW_IDENTIFIER 0X200

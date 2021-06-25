@@ -19,7 +19,7 @@
 
 #include "extend_xaxis_command.hpp"
 
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/control/subsystem.hpp"
 
 #include "xaxis_subsystem.hpp"
 

@@ -17,10 +17,10 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/ramp.hpp"
 
 #include "aruwsrc/control/chassis/beyblade_command.hpp"

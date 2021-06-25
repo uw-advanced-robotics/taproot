@@ -24,8 +24,8 @@
 
 #include <mutex>
 
-#include <modm/container/deque.hpp>
-#include <modm/io/iodevice.hpp>
+#include "modm/container/deque.hpp"
+#include "modm/io/iodevice.hpp"
 
 #include "util_macros.hpp"
 

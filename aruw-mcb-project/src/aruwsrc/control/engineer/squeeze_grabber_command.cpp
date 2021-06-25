@@ -19,7 +19,7 @@
 
 #include "squeeze_grabber_command.hpp"
 
-#include <aruwlib/control/subsystem.hpp>
+#include "aruwlib/control/subsystem.hpp"
 
 #include "grabber_subsystem.hpp"
 

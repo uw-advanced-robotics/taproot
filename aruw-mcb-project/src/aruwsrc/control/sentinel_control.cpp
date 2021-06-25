@@ -19,13 +19,12 @@
 
 #if defined(TARGET_SENTINEL)
 
-#include <aruwlib/DriversSingleton.hpp>
-#include <aruwlib/control/CommandMapper.hpp>
-#include <aruwlib/control/HoldCommandMapping.hpp>
-#include <aruwlib/control/HoldRepeatCommandMapping.hpp>
-#include <aruwlib/control/PressCommandMapping.hpp>
-#include <aruwlib/control/ToggleCommandMapping.hpp>
-
+#include "aruwlib/DriversSingleton.hpp"
+#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/HoldCommandMapping.hpp"
+#include "aruwlib/control/HoldRepeatCommandMapping.hpp"
+#include "aruwlib/control/PressCommandMapping.hpp"
+#include "aruwlib/control/ToggleCommandMapping.hpp"
 #include "aruwlib/control/setpoint/commands/calibrate_command.hpp"
 
 #include "agitator/agitator_shoot_comprised_command_instances.hpp"

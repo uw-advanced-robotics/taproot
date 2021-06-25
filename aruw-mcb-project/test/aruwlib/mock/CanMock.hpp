@@ -20,9 +20,11 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/communication/can/can.hpp>
 #include <gmock/gmock.h>
-#include <modm/architecture/interface/can_message.hpp>
+
+#include "aruwlib/communication/can/can.hpp"
+
+#include "modm/architecture/interface/can_message.hpp"
 
 namespace aruwlib
 {

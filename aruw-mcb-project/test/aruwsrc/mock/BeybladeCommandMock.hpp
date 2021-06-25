@@ -20,8 +20,9 @@
 #ifndef BEYBLADE_COMMAND_MOCK_HPP_
 #define BEYBLADE_COMMAND_MOCK_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/Drivers.hpp"
 
 #include "aruwsrc/control/chassis/beyblade_command.hpp"
 

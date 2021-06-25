@@ -20,9 +20,10 @@
 #ifndef COMMAND_MAPPER_MOCK_HPP_
 #define COMMAND_MAPPER_MOCK_HPP_
 
-#include <aruwlib/control/CommandMapper.hpp>
-#include <aruwlib/control/command.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/command.hpp"
 
 namespace aruwlib
 {

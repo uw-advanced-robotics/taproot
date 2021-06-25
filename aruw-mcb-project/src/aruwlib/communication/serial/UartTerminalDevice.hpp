@@ -20,9 +20,9 @@
 #ifndef TERMINAL_DEVICES_HPP_
 #define TERMINAL_DEVICES_HPP_
 
-#include <modm/io/iodevice.hpp>
-
 #include "aruwlib/communication/serial/uart.hpp"
+
+#include "modm/io/iodevice.hpp"
 
 namespace aruwlib
 {

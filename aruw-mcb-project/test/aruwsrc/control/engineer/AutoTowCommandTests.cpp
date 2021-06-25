@@ -17,9 +17,10 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
 
 #include "aruwsrc/control/engineer/AutoTowCommand.hpp"
 #include "aruwsrc/mock/TowSubsystemMock.hpp"

@@ -20,7 +20,7 @@
 #ifndef SQUEEZE_GRABBER_COMMAND_HPP_
 #define SQUEEZE_GRABBER_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 namespace aruwsrc
 {

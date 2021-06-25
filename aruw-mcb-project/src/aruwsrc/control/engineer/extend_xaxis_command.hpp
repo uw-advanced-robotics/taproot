@@ -20,7 +20,7 @@
 #ifndef EXTEND_XAXIS_COMMAND_HPP_
 #define EXTEND_XAXIS_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 namespace aruwsrc
 {

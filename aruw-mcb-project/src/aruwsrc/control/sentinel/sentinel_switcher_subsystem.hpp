@@ -20,8 +20,8 @@
 #ifndef SENTINEL_SWITCHER_SUBSYSTEM_HPP_
 #define SENTINEL_SWITCHER_SUBSYSTEM_HPP_
 
-#include <aruwlib/control/subsystem.hpp>
-#include <aruwlib/motor/servo.hpp>
+#include "aruwlib/control/subsystem.hpp"
+#include "aruwlib/motor/servo.hpp"
 
 #include "util_macros.hpp"
 

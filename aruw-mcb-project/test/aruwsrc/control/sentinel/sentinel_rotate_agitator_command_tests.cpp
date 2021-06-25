@@ -17,8 +17,9 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/architecture/clock.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/architecture/clock.hpp"
 
 #include "aruwsrc/control/sentinel/sentinel_rotate_agitator_command.hpp"
 #include "aruwsrc/mock/AgitatorSubsystemMock.hpp"

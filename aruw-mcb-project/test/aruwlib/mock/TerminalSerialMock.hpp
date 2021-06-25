@@ -20,8 +20,9 @@
 #ifndef TERMINAL_SERIAL_MOCK_HPP_
 #define TERMINAL_SERIAL_MOCK_HPP_
 
-#include <aruwlib/communication/serial/TerminalSerial.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/serial/TerminalSerial.hpp"
 
 namespace aruwlib
 {

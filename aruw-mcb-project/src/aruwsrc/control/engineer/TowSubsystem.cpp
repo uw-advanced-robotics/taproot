@@ -19,7 +19,7 @@
 
 #include "TowSubsystem.hpp"
 
-#include <aruwlib/Drivers.hpp>
+#include "aruwlib/Drivers.hpp"
 
 namespace aruwsrc
 {

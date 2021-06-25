@@ -20,8 +20,9 @@
 #ifndef DJI_MOTOR_TERMINAL_SERIAL_HANDLER_MOCK_HPP_
 #define DJI_MOTOR_TERMINAL_SERIAL_HANDLER_MOCK_HPP_
 
-#include <aruwlib/motor/DjiMotorTerminalSerialHandler.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/motor/DjiMotorTerminalSerialHandler.hpp"
 
 namespace aruwlib
 {
