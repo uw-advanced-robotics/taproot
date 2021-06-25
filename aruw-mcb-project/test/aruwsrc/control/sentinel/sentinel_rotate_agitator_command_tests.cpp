@@ -22,8 +22,8 @@
 #include "aruwlib/architecture/clock.hpp"
 
 #include "aruwsrc/control/sentinel/sentinel_rotate_agitator_command.hpp"
-#include "aruwsrc/mock/AgitatorSubsystemMock.hpp"
-#include "aruwsrc/mock/SentinelSwitcherSubsystemMock.hpp"
+#include "aruwsrc/mock/agitator_subsystem_mock.hpp"
+#include "aruwsrc/mock/sentinel_switcher_subsystem_mock.hpp"
 
 using namespace aruwsrc::sentinel;
 using namespace aruwlib::serial;

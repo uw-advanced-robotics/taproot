@@ -19,7 +19,7 @@
 
 #include "xaxis_subsystem.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 using aruwlib::Drivers;
 

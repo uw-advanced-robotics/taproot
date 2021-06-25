@@ -19,14 +19,14 @@
 
 #include <iostream>
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/architecture/endianness_wrappers.hpp"
 #include "aruwlib/communication/serial/xavier_serial.hpp"
+#include "aruwlib/drivers.hpp"
 
-#include "aruwsrc/mock/ChassisSubsystemMock.hpp"
-#include "aruwsrc/mock/TurretSubsystemMock.hpp"
+#include "aruwsrc/mock/chassis_subsystem_mock.hpp"
+#include "aruwsrc/mock/turret_subsystem_mock.hpp"
 #include "gtest/gtest.h"
 
 using aruwlib::Drivers;

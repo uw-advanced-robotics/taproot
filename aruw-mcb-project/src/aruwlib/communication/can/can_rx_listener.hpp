@@ -22,8 +22,8 @@
 
 #include <cstdint>
 
-#include "CanBus.hpp"
 #include "can.hpp"
+#include "can_bus.hpp"
 
 namespace modm::can
 {

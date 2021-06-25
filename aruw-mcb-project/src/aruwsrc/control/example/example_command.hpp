@@ -26,8 +26,8 @@
 #ifndef __COMMAND_EXAMPLE_HPP__
 #define __COMMAND_EXAMPLE_HPP__
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/control/command.hpp"
+#include "aruwlib/drivers.hpp"
 
 namespace aruwsrc
 {

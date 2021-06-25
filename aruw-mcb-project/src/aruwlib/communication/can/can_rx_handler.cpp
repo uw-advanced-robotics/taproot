@@ -19,7 +19,7 @@
 
 #include "can_rx_handler.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
 #include "modm/architecture/interface/assert.h"

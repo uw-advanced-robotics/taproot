@@ -19,7 +19,7 @@
 
 #include "analog_distance_sensor.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 namespace aruwlib
 {

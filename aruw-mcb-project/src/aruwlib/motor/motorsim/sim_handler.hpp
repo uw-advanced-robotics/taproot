@@ -23,7 +23,7 @@
 
 #include <array>
 
-#include "aruwlib/communication/can/CanBus.hpp"
+#include "aruwlib/communication/can/can_bus.hpp"
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
 
 #include "motor_sim.hpp"

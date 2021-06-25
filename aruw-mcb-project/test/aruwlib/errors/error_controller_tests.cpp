@@ -19,7 +19,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/error_controller.hpp"
 
 namespace aruwlib::errors

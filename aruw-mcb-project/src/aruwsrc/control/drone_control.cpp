@@ -19,7 +19,7 @@
 
 #if defined(TARGET_DRONE)
 
-#include "aruwlib/DriversSingleton.hpp"
+#include "aruwlib/drivers_singleton.hpp"
 
 using aruwlib::DoNotUse_getDrivers;
 

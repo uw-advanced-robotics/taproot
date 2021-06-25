@@ -19,12 +19,12 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/control/command.hpp"
 #include "aruwlib/control/command_scheduler.hpp"
-#include "aruwlib/mock/CommandMock.hpp"
-#include "aruwlib/mock/SubsystemMock.hpp"
+#include "aruwlib/drivers.hpp"
+#include "aruwlib/mock/command_mock.hpp"
+#include "aruwlib/mock/subsystem_mock.hpp"
 
 using aruwlib::Drivers;
 using aruwlib::mock::CommandMock;

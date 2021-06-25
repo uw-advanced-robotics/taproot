@@ -19,7 +19,7 @@
 
 #include "sentinel_rotate_agitator_command.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "sentinel_switcher_subsystem.hpp"
 

@@ -19,7 +19,7 @@
 
 #include "can_rx_listener.hpp"
 
-#include "aruwlib/Drivers.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 

@@ -19,8 +19,8 @@
 
 #include "mpu6500.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
 

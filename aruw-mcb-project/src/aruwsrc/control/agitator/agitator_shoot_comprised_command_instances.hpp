@@ -20,9 +20,9 @@
 #ifndef AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
 #define AGITATOR_SHOOT_COMPRISED_COMMAND_INSTANCES_HPP_
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp"
 #include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "limited_agitator_subsystem.hpp"
 

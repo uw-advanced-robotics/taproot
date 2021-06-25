@@ -21,7 +21,7 @@
 /* hosted environment (simulator) includes --------------------------------- */
 #include <iostream>
 
-#include "aruwlib/communication/tcp-server/TCPServer.hpp"
+#include "aruwlib/communication/tcp-server/tcp_server.hpp"
 #include "aruwlib/motor/motorsim/sim_handler.hpp"
 #endif
 
@@ -34,7 +34,7 @@
 #include "aruwlib/architecture/profiler.hpp"
 
 /* communication includes ---------------------------------------------------*/
-#include "aruwlib/DriversSingleton.hpp"
+#include "aruwlib/drivers_singleton.hpp"
 
 /* error handling includes --------------------------------------------------*/
 #include "aruwlib/errors/create_errors.hpp"

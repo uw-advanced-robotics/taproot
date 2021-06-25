@@ -20,12 +20,12 @@
 #ifndef AGITATOR_ROTATE_COMMAND_HPP_
 #define AGITATOR_ROTATE_COMMAND_HPP_
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/algorithms/ramp.hpp"
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/control/command.hpp"
 #include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
+#include "aruwlib/drivers.hpp"
 
 #include "modm/math/filter/pid.hpp"
 

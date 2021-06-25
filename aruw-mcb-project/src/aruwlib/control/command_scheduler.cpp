@@ -19,8 +19,8 @@
 
 #include "command_scheduler.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
 #include "command.hpp"

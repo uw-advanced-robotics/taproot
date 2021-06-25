@@ -19,10 +19,10 @@
 
 #include "dji_serial.hpp"
 
-#include "aruwlib/Drivers.hpp"
 #include "aruwlib/architecture/clock.hpp"
 #include "aruwlib/architecture/endianness_wrappers.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
+#include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
 /**
