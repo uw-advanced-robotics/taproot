@@ -21,7 +21,7 @@
 #define DIGITAL_HPP_
 
 #ifndef PLATFORM_HOSTED
-#include <modm/platform.hpp>
+#include "modm/platform.hpp"
 #endif
 
 #include <cstdint>

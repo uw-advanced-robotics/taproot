@@ -17,14 +17,15 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/control/CommandMapper.hpp>
-#include <aruwlib/control/HoldCommandMapping.hpp>
-#include <aruwlib/control/HoldRepeatCommandMapping.hpp>
-#include <aruwlib/control/PressCommandMapping.hpp>
-#include <aruwlib/control/RemoteMapState.hpp>
-#include <aruwlib/control/ToggleCommandMapping.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/HoldCommandMapping.hpp"
+#include "aruwlib/control/HoldRepeatCommandMapping.hpp"
+#include "aruwlib/control/PressCommandMapping.hpp"
+#include "aruwlib/control/RemoteMapState.hpp"
+#include "aruwlib/control/ToggleCommandMapping.hpp"
 
 #include "TestCommand.hpp"
 #include "TestSubsystem.hpp"

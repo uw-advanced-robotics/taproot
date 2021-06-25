@@ -22,8 +22,9 @@
 
 #include <iostream>
 
-#include <aruwlib/communication/can/can_rx_handler.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/can/can_rx_handler.hpp"
 
 namespace aruwlib
 {

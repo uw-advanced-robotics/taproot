@@ -20,10 +20,11 @@
 #ifndef CONTROL_OPERATOR_INTERFACE_MOCK_HPP_
 #define CONTROL_OPERATOR_INTERFACE_MOCK_HPP_
 
-#include <aruwlib/control/ControlOperatorInterface.hpp>
-#include <aruwlib/control/command.hpp>
-#include <aruwlib/control/subsystem.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/ControlOperatorInterface.hpp"
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/subsystem.hpp"
 
 namespace aruwlib
 {

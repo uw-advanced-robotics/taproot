@@ -17,12 +17,12 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/architecture/clock.hpp>
-#include <aruwlib/control/command.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
 #include <gtest/gtest.h>
 
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/command_scheduler.hpp"
 #include "aruwlib/mock/CommandMock.hpp"
 #include "aruwlib/mock/SubsystemMock.hpp"
 

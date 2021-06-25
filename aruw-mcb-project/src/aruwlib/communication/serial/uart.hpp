@@ -24,8 +24,8 @@
 #include <cstdlib>
 
 #ifndef PLATFORM_HOSTED
-#include <modm/platform.hpp>
-#include <modm/platform/uart/uart_base.hpp>
+#include "modm/platform.hpp"
+#include "modm/platform/uart/uart_base.hpp"
 #endif
 
 #include "aruwlib/rm-dev-board-a/board.hpp"

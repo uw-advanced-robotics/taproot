@@ -20,9 +20,8 @@
 #ifndef WIGGLE_DRIVE_COMMAND_HPP_
 #define WIGGLE_DRIVE_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
-
 #include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/control/command.hpp"
 
 #include "aruwsrc/control/turret/turret_subsystem.hpp"
 

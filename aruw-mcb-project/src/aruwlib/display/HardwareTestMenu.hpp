@@ -20,9 +20,9 @@
 #ifndef HARDWARE_TEST_MENU_HPP_
 #define HARDWARE_TEST_MENU_HPP_
 
-#include <modm/ui/menu/abstract_menu.hpp>
-
 #include "aruwlib/control/command_scheduler_types.hpp"
+
+#include "modm/ui/menu/abstract_menu.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 

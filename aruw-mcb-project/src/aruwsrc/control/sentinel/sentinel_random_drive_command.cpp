@@ -20,7 +20,7 @@
 #if defined(TARGET_SENTINEL)
 
 #ifndef PLATFORM_HOSTED
-#include <modm/platform/random/random_number_generator.hpp>
+#include "modm/platform/random/random_number_generator.hpp"
 #endif
 
 #include "sentinel_drive_subsystem.hpp"

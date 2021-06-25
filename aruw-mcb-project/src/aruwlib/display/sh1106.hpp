@@ -20,9 +20,9 @@
 #ifndef SH1106_HPP
 #define SH1106_HPP
 
-#include <modm/architecture/driver/atomic/flag.hpp>
-#include <modm/processing/resumable.hpp>
-#include <modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp>
+#include "modm/architecture/driver/atomic/flag.hpp"
+#include "modm/processing/resumable.hpp"
+#include "modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp"
 
 namespace aruwlib
 {

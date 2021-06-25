@@ -20,8 +20,9 @@
 #ifndef REMOTE_MOCK_HPP_
 #define REMOTE_MOCK_HPP_
 
-#include <aruwlib/communication/remote.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/remote.hpp"
 
 namespace aruwlib
 {

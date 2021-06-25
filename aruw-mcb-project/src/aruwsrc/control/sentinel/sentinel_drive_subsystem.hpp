@@ -20,20 +20,19 @@
 #ifndef __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 #define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
 
-#include <aruwlib/communication/gpio/digital.hpp>
-#include <aruwlib/control/chassis/i_chassis_subsystem.hpp>
+#include "aruwlib/communication/gpio/digital.hpp"
+#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
-
-#include <modm/math/filter/pid.hpp>
 
 #include "aruwlib/motor/m3508_constants.hpp"
 
 #include "aruwsrc/control/chassis/power_limiter.hpp"
+#include "modm/math/filter/pid.hpp"
 
 #include "util_macros.hpp"
 

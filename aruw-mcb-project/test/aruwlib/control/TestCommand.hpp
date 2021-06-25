@@ -20,7 +20,7 @@
 #ifndef TEST_COMMAND_HPP_
 #define TEST_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 #include "TestSubsystem.hpp"
 

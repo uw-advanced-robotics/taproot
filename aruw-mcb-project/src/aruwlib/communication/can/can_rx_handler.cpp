@@ -19,11 +19,11 @@
 
 #include "can_rx_handler.hpp"
 
-#include <modm/architecture/interface/assert.h>
-#include <modm/architecture/interface/can.hpp>
-
 #include "aruwlib/Drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
+
+#include "modm/architecture/interface/assert.h"
+#include "modm/architecture/interface/can.hpp"
 
 #include "can_rx_listener.hpp"
 

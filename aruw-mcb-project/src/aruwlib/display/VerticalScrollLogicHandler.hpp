@@ -22,7 +22,7 @@
 
 #include <inttypes.h>
 
-#include <modm/ui/menu/menu_buttons.hpp>
+#include "modm/ui/menu/menu_buttons.hpp"
 
 namespace aruwlib
 {

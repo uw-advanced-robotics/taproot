@@ -20,7 +20,7 @@
 #ifndef ERROR_MENU_HPP_
 #define ERROR_MENU_HPP_
 
-#include <modm/ui/menu/abstract_menu.hpp>
+#include "modm/ui/menu/abstract_menu.hpp"
 
 namespace aruwlib
 {

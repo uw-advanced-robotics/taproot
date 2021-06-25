@@ -20,8 +20,8 @@
 #ifndef BEYBLADE_COMMAND_HPP_
 #define BEYBLADE_COMMAND_HPP_
 
-#include <aruwlib/algorithms/ramp.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/algorithms/ramp.hpp"
+#include "aruwlib/control/command.hpp"
 
 namespace aruwlib
 {

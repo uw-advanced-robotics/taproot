@@ -17,8 +17,9 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/algorithms/contiguous_float.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/algorithms/contiguous_float.hpp"
 
 TEST(ContiguousFloat, Basic_functionality)
 {

@@ -20,8 +20,9 @@
 #ifndef SCHEDULER_TERMINAL_HANDLER_MOCK_HPP_
 #define SCHEDULER_TERMINAL_HANDLER_MOCK_HPP_
 
-#include <aruwlib/control/SchedulerTerminalHandler.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/SchedulerTerminalHandler.hpp"
 
 namespace aruwlib
 {

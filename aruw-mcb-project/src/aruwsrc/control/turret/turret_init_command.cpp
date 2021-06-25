@@ -19,8 +19,8 @@
 
 #include "turret_init_command.hpp"
 
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/control/command.hpp"
 
 #include "turret_subsystem.hpp"
 

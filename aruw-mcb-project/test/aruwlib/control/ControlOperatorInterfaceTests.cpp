@@ -25,11 +25,12 @@
  * done properly.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/architecture/clock.hpp>
-#include <aruwlib/control/ControlOperatorInterface.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/architecture/clock.hpp"
+#include "aruwlib/control/ControlOperatorInterface.hpp"
 
 using aruwlib::Drivers;
 using aruwlib::Remote;

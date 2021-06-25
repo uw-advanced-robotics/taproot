@@ -25,12 +25,12 @@
 #include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
 
-#include <modm/math/filter/pid.hpp>
+#include "modm/math/filter/pid.hpp"
 
 #include "util_macros.hpp"
 

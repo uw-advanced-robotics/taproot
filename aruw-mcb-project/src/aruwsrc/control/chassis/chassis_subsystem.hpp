@@ -26,15 +26,15 @@
 #include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
 
-#include <modm/math/filter/pid.hpp>
-#include <modm/math/matrix.hpp>
-
 #include "aruwlib/motor/m3508_constants.hpp"
+
+#include "modm/math/filter/pid.hpp"
+#include "modm/math/matrix.hpp"
 
 #include "power_limiter.hpp"
 #include "util_macros.hpp"

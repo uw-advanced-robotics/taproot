@@ -20,8 +20,9 @@
 #ifndef PWM_MOCK_HPP_
 #define PWM_MOCK_HPP_
 
-#include <aruwlib/communication/gpio/pwm.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/gpio/pwm.hpp"
 
 namespace aruwlib
 {

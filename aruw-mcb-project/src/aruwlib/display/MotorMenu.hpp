@@ -20,9 +20,9 @@
 #ifndef MOTOR_MENU_HPP_
 #define MOTOR_MENU_HPP_
 
-#include <modm/ui/menu/abstract_menu.hpp>
-
 #include "aruwlib/communication/can/CanBus.hpp"
+
+#include "modm/ui/menu/abstract_menu.hpp"
 
 #include "VerticalScrollLogicHandler.hpp"
 

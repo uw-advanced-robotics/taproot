@@ -17,11 +17,12 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/communication/can/can.hpp>
-#include <aruwlib/communication/tcp-server/JSONMessages.hpp>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/communication/can/can.hpp"
+#include "aruwlib/communication/tcp-server/JSONMessages.hpp"
 
 #include "../mock/DJIMotorMock.hpp"
 

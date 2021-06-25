@@ -17,8 +17,9 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/architecture/endianness_wrappers.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/architecture/endianness_wrappers.hpp"
 
 TEST(EndiannessWrappersTest, ToLittleEndian)
 {

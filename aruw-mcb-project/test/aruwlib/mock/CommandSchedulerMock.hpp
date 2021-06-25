@@ -20,10 +20,11 @@
 #ifndef COMMAND_SCHEDULER_MOCK_HPP_
 #define COMMAND_SCHEDULER_MOCK_HPP_
 
-#include <aruwlib/control/command.hpp>
-#include <aruwlib/control/command_scheduler.hpp>
-#include <aruwlib/control/subsystem.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/command.hpp"
+#include "aruwlib/control/command_scheduler.hpp"
+#include "aruwlib/control/subsystem.hpp"
 
 namespace aruwlib
 {

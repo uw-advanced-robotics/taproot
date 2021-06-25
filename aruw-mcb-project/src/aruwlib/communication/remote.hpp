@@ -23,7 +23,7 @@
 #include <cstdint>
 
 #ifndef PLATFORM_HOSTED
-#include <modm/platform.hpp>
+#include "modm/platform.hpp"
 #endif
 
 #include "util_macros.hpp"

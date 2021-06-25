@@ -20,8 +20,9 @@
 #ifndef DIGITAL_MOCK_HPP_
 #define DIGITAL_MOCK_HPP_
 
-#include <aruwlib/communication/gpio/digital.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/gpio/digital.hpp"
 
 namespace aruwlib
 {

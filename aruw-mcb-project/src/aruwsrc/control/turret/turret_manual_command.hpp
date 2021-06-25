@@ -20,8 +20,9 @@
 #ifndef TURRET_MANUAL_COMMAND_H_
 #define TURRET_MANUAL_COMMAND_H_
 
-#include <aruwlib/control/command.hpp>
-#include <modm/math/filter/pid.hpp>
+#include "aruwlib/control/command.hpp"
+
+#include "modm/math/filter/pid.hpp"
 
 namespace aruwlib
 {

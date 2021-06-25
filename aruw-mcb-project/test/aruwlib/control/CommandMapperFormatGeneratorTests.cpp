@@ -17,11 +17,12 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/control/CommandMapper.hpp>
-#include <aruwlib/control/CommandMapperFormatGenerator.hpp>
-#include <aruwlib/control/HoldCommandMapping.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/control/CommandMapper.hpp"
+#include "aruwlib/control/CommandMapperFormatGenerator.hpp"
+#include "aruwlib/control/HoldCommandMapping.hpp"
 
 #include "aruwsrc/control/robot_control.hpp"
 

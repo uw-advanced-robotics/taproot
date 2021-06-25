@@ -17,9 +17,10 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/display/VerticalScrollLogicHandler.hpp>
 #include <gtest/gtest.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/display/VerticalScrollLogicHandler.hpp"
 
 using namespace aruwlib::display;
 using namespace aruwlib;

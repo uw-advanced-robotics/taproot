@@ -19,14 +19,14 @@
 
 #include "sentinel_drive_subsystem.hpp"
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/algorithms/math_user_utils.hpp>
-#include <aruwlib/errors/create_errors.hpp>
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/algorithms/math_user_utils.hpp"
+#include "aruwlib/errors/create_errors.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include <aruwlib/mock/DJIMotorMock.hpp>
+#include "aruwlib/mock/DJIMotorMock.hpp"
 #else
-#include <aruwlib/motor/dji_motor.hpp>
+#include "aruwlib/motor/dji_motor.hpp"
 #endif
 
 using namespace aruwlib::gpio;

@@ -20,8 +20,9 @@
 #ifndef SUBSYSTEM_MOCK_HPP_
 #define SUBSYSTEM_MOCK_HPP_
 
-#include <aruwlib/control/subsystem.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/subsystem.hpp"
 
 namespace aruwlib
 {

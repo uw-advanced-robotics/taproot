@@ -20,8 +20,9 @@
 #ifndef UART_MOCK_HPP_
 #define UART_MOCK_HPP_
 
-#include <aruwlib/communication/serial/uart.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/serial/uart.hpp"
 
 namespace aruwlib
 {

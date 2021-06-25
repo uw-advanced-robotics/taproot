@@ -17,9 +17,10 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <aruwlib/Drivers.hpp>
-#include <aruwlib/errors/error_controller.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/Drivers.hpp"
+#include "aruwlib/errors/error_controller.hpp"
 
 namespace aruwlib::errors
 {

@@ -20,7 +20,7 @@
 #ifndef AUTO_TOW_COMMAND_HPP_
 #define AUTO_TOW_COMMAND_HPP_
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 #include "TowSubsystem.hpp"
 

@@ -20,7 +20,7 @@
 #ifndef __FRICTION_WHEEL_ROTATE_COMMAND_HPP__
 #define __FRICTION_WHEEL_ROTATE_COMMAND_HPP__
 
-#include <aruwlib/control/command.hpp>
+#include "aruwlib/control/command.hpp"
 
 namespace aruwsrc
 {

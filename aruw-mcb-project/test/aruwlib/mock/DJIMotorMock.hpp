@@ -20,11 +20,12 @@
 #ifndef DJI_MOTOR_MOCK_HPP_
 #define DJI_MOTOR_MOCK_HPP_
 
-#include <aruwlib/Drivers.hpp>
 #include <gmock/gmock.h>
-#include <modm/architecture/interface/can_message.hpp>
 
+#include "aruwlib/Drivers.hpp"
 #include "aruwlib/motor/dji_motor.hpp"
+
+#include "modm/architecture/interface/can_message.hpp"
 
 namespace aruwlib
 {

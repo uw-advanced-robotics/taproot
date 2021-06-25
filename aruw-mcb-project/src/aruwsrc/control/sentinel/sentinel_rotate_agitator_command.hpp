@@ -20,9 +20,9 @@
 #ifndef SENTINEL_AGITATOR_SYSTEM_COMPRISED_COMMAND_HPP_
 #define SENTINEL_AGITATOR_SYSTEM_COMPRISED_COMMAND_HPP_
 
-#include <aruwlib/architecture/timeout.hpp>
-#include <aruwlib/control/comprised_command.hpp>
-#include <aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp>
+#include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/control/comprised_command.hpp"
+#include "aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp"
 
 namespace aruwsrc
 {

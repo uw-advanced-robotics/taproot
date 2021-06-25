@@ -20,8 +20,9 @@
 #ifndef COMMAND_MOCK_HPP_
 #define COMMAND_MOCK_HPP_
 
-#include <aruwlib/control/command.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/control/command.hpp"
 
 namespace aruwlib
 {

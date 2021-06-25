@@ -20,7 +20,7 @@
 #ifndef __ARUW_PROFILER_HPP__
 #define __ARUW_PROFILER_HPP__
 
-#include <modm/container.hpp>
+#include "modm/container.hpp"
 
 #define PROFILE(profiler, func, params) func params
 

@@ -29,11 +29,11 @@
 #include "UartTerminalDevice.hpp"
 #endif
 
-#include <modm/io.hpp>
-
 #include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
+
+#include "modm/io.hpp"
 
 #include "util_macros.hpp"
 

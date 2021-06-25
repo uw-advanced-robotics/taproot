@@ -20,8 +20,9 @@
 #ifndef OLED_DISPLAY_MOCK_HPP_
 #define OLED_DISPLAY_MOCK_HPP_
 
-#include <aruwlib/display/OledDisplay.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/display/OledDisplay.hpp"
 
 namespace aruwlib
 {

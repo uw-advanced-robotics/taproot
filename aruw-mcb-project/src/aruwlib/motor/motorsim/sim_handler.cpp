@@ -21,7 +21,7 @@
 
 #include "sim_handler.hpp"
 
-#include <modm/architecture/interface/can_message.hpp>
+#include "modm/architecture/interface/can_message.hpp"
 
 #include "can_serializer.hpp"
 

@@ -20,8 +20,9 @@
 #ifndef ANALOG_MOCK_HPP_
 #define ANALOG_MOCK_HPP_
 
-#include <aruwlib/communication/gpio/analog.hpp>
 #include <gmock/gmock.h>
+
+#include "aruwlib/communication/gpio/analog.hpp"
 
 namespace aruwlib
 {

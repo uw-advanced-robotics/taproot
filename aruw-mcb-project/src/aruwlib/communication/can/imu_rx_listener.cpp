@@ -19,9 +19,9 @@
 
 #include "imu_rx_listener.hpp"
 
-#include <modm/architecture/interface/can.hpp>
-
 #include "aruwlib/architecture/endianness_wrappers.hpp"
+
+#include "modm/architecture/interface/can.hpp"
 
 namespace aruwlib::can
 {
