@@ -116,6 +116,14 @@ public:
     static constexpr aruwlib::can::CanBus HERO_KICKER2_MOTOR_CAN_BUS =
         aruwlib::can::CanBus::CAN_BUS1;
     static constexpr bool HERO_KICKER_INVERTED = false;
+
+    /**
+     * The jamming constants for waterwheel. Waterwheel is considered jammed if difference between
+     * setpoint and current angle is > `JAM_DISTANCE_TOLERANCE_WATERWHEEL` radians for >=
+     * `JAM_TEMPORAL_TOLERANCE_WATERWHEEL` ms;
+     */
+    static constexpr float JAM_DISTANCE_TOLERANCE_WATERWHEEL = aruwlib::algorithms::PI / 28.0f;
+    static constexpr uint32_t JAM_TEMPORAL_TOLERANCE_WATERWHEEL = 100.0f;
 #endif
 
     /**

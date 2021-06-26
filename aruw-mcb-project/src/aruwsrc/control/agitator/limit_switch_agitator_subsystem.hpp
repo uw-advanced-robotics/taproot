@@ -35,10 +35,17 @@ namespace aruwsrc
 namespace agitator
 {
 /**
- * An agitator subsystem that also checks a limit switch every
- * refresh cycle, debouncing the limit switch input.
+ * An agitator subsystem that contains an agitator and a limit switch. The limit switch is
+ * located between the agitator and the 42mm barrel. When the limit switch is tripped, this
+ * indicates that a ball has passed into the space between it and the barrel and the number of balls
+ * queued between the limit switch and barrel is incremented. When a projectile is fired through the
+ * barrel, this indicates that the number of balls between the limit switch and barrel has decreased
+ * by 1.
+ *
+ * This subsystem has all the functionality that the AgitatorSubsystem does but keeps track of
+ * this limit switch logic.
  */
-class LimitedAgitatorSubsystem : public AgitatorSubsystem
+class LimitSwitchAgitatorSubsystem : public AgitatorSubsystem
 {
 public:
 #if defined(TARGET_HERO)
@@ -47,10 +54,7 @@ public:
      * knows what they're doing.
      */
     static constexpr aruwlib::gpio::Digital::InputPin WATERWHEEL_LIMIT_PIN =
-        aruwlib::gpio::Digital::InputPin::A;
-    static constexpr uint8_t WATERWHEEL_DEBOUNCE_MAX_SUM = 100;
-    static constexpr uint8_t WATERWHEEL_DEBOUNCE_LOWER_BOUND = 30;
-    static constexpr uint8_t WATERWHEEL_DEBOUNCE_UPPER_BOUND = 70;
+        aruwlib::gpio::Digital::InputPin::B;
 #endif
 
     /**
@@ -58,7 +62,7 @@ public:
      * @note for all params before `limitSwitchPin` see `AgitatorSubsystem.hpp`
      * @note for all debounce params see `debounce.hpp` for reference
      */
-    LimitedAgitatorSubsystem(
+    LimitSwitchAgitatorSubsystem(
         aruwlib::Drivers* drivers,
         float kp,
         float ki,
@@ -69,19 +73,20 @@ public:
         aruwlib::motor::MotorId agitatorMotorId,
         aruwlib::can::CanBus agitatorCanBusId,
         bool isAgitatorInverted,
-        aruwlib::gpio::Digital::InputPin limitSwitchPin,
-        uint8_t debounceMaxSum,
-        uint8_t debounceLowerBound,
-        uint8_t debounceUpperBound);
+        float distanceTolerance,
+        uint32_t temporalTolerance,
+        aruwlib::gpio::Digital::InputPin limitSwitchPin);
 
     void refresh() override;
 
-    /**
-     * Get the debounced state of the limit switch
-     */
-    bool isLimitSwitchPressed() const;
+    inline int getBallsInTube() const { return ballsInTube; }
 
 private:
+    /**
+     * The heat will increase by this amount every time you fire a 42mm projectile.
+     */
+    static constexpr uint16_t FIRING_HEAT_INCREASE_42 = 100;
+
     /**
      * The pin that the agitator checks for limiting
      */
@@ -92,10 +97,11 @@ private:
      */
     aruwlib::gpio::Digital* digital;
 
-    /**
-     * debounce filter for limit switch input
-     */
-    modm::filter::Debounce<uint8_t> debounceFilter;
+    bool limitSwitchPressed;
+
+    int ballsInTube;
+
+    float prevHeat42;
 };
 
 }  // namespace agitator

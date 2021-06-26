@@ -64,8 +64,7 @@ bool ShootFastComprisedCommand17MM::isFinished() const
 
 WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
     aruwlib::Drivers *drivers,
-    aruwlib::control::setpoint::SetpointSubsystem *waterwheel,
-    bool heatLimiting)
+    aruwsrc::agitator::LimitSwitchAgitatorSubsystem *waterwheel)
     : MoveUnjamComprisedCommand(
           drivers,
           waterwheel,
@@ -74,17 +73,23 @@ WaterwheelLoadCommand42mm::WaterwheelLoadCommand42mm(
           WATERWHEEL_42MM_ROTATE_TIME,
           WATERWHEEL_42MM_PAUSE_AFTER_ROTATE_TIME),
       drivers(drivers),
-      waterwheel(waterwheel),
-      heatLimiting(heatLimiting)
+      waterwheel(waterwheel)
 {
 }
 
 bool WaterwheelLoadCommand42mm::isReady()
 {
-    const auto &robotData = drivers->refSerial.getRobotData();
+    return waterwheel->getBallsInTube() < BALLS_QUEUED_IN_TUBE;
+}
 
-    return !drivers->refSerial.getRefSerialReceivingData() || !heatLimiting ||
-           (robotData.turret.heat42 + HEAT_LIMIT_BUFFER <= robotData.turret.heatLimit42);
+bool WaterwheelLoadCommand42mm::isFinished() const
+{
+    return waterwheel->getBallsInTube() >= BALLS_QUEUED_IN_TUBE ||
+           (!unjamSequenceCommencing &&
+            !comprisedCommandScheduler.isCommandScheduled(&agitatorRotateCommand)) ||
+           (unjamSequenceCommencing &&
+            !comprisedCommandScheduler.isCommandScheduled(&agitatorUnjamCommand)) ||
+           agitatorDisconnectFault;
 }
 
 ShootCommand42mm::ShootCommand42mm(
@@ -106,11 +111,10 @@ bool ShootCommand42mm::isReady()
 {
     const auto &robotData = drivers->refSerial.getRobotData();
 
-    // (Flywheels have power) &&
     // !(heat limiting data available && apply heat limiting && heat is over limit)
-    return robotData.shooterHasPower &&
-           !(drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
-             (robotData.turret.heat42 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit42));
+    return !(
+        drivers->refSerial.getRefSerialReceivingData() && heatLimiting &&
+        (robotData.turret.heat42 + HEAT_LIMIT_BUFFER > robotData.turret.heatLimit42));
 }
 
 }  // namespace agitator

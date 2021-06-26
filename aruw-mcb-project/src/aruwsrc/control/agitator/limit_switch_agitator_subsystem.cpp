@@ -17,15 +17,17 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "aruwsrc/control/agitator/limited_agitator_subsystem.hpp"
+#include "limit_switch_agitator_subsystem.hpp"
 
 #include "aruwlib/drivers.hpp"
+
+using namespace aruwlib::algorithms;
 
 namespace aruwsrc
 {
 namespace agitator
 {
-LimitedAgitatorSubsystem::LimitedAgitatorSubsystem(
+LimitSwitchAgitatorSubsystem::LimitSwitchAgitatorSubsystem(
     aruwlib::Drivers* drivers,
     float kp,
     float ki,
@@ -36,10 +38,9 @@ LimitedAgitatorSubsystem::LimitedAgitatorSubsystem(
     aruwlib::motor::MotorId agitatorMotorId,
     aruwlib::can::CanBus agitatorCanBusId,
     bool isAgitatorInverted,
-    aruwlib::gpio::Digital::InputPin limitSwitchPin,
-    uint8_t debounceMaxSum,
-    uint8_t debounceLowerBound,
-    uint8_t debounceUpperBound)
+    float distanceTolerance,
+    uint32_t temporalTolerance,
+    aruwlib::gpio::Digital::InputPin limitSwitchPin)
     : Subsystem(drivers),
       AgitatorSubsystem(
           drivers,
@@ -51,14 +52,17 @@ LimitedAgitatorSubsystem::LimitedAgitatorSubsystem(
           agitatorGearRatio,
           agitatorMotorId,
           agitatorCanBusId,
-          isAgitatorInverted),
+          isAgitatorInverted,
+          true,
+          distanceTolerance,
+          temporalTolerance),
       limitSwitchPin(limitSwitchPin),
       digital(&drivers->digital),
-      debounceFilter(debounceMaxSum, debounceLowerBound, debounceUpperBound)
+      ballsInTube(0)
 {
 }
 
-void LimitedAgitatorSubsystem::refresh()
+void LimitSwitchAgitatorSubsystem::refresh()
 {
     if (agitatorIsCalibrated)
     {
@@ -69,11 +73,24 @@ void LimitedAgitatorSubsystem::refresh()
         calibrateHere();
     }
 
-    bool limitSwitchPressed = digital->read(limitSwitchPin);
-    debounceFilter.update(limitSwitchPressed);
-}
+    const bool newLimitSwitchPressed = !digital->read(limitSwitchPin);
+    const float heat42 = drivers->refSerial.getRobotData().turret.heat42;
 
-bool LimitedAgitatorSubsystem::isLimitSwitchPressed() const { return debounceFilter.getValue(); }
+    // Ball has been fired
+    if (heat42 - prevHeat42 > FIRING_HEAT_INCREASE_42 - 10)
+    {
+        ballsInTube = std::max(0, ballsInTube - 1);
+    }
+
+    // Limit switch rising edge
+    if (newLimitSwitchPressed && !limitSwitchPressed)
+    {
+        ballsInTube++;
+    }
+
+    prevHeat42 = heat42;
+    limitSwitchPressed = newLimitSwitchPressed;
+}
 
 }  // namespace agitator
 
