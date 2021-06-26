@@ -31,11 +31,11 @@
 #include "agitator/agitator_subsystem.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
 #include "launcher/friction_wheel_subsystem.hpp"
-#include "sentinel/sentinel_auto_drive_comprised_command.hpp"
-#include "sentinel/sentinel_drive_manual_command.hpp"
-#include "sentinel/sentinel_drive_subsystem.hpp"
-#include "sentinel/sentinel_rotate_agitator_command.hpp"
-#include "sentinel/sentinel_switcher_subsystem.hpp"
+#include "sentinel/drive/sentinel_auto_drive_comprised_command.hpp"
+#include "sentinel/drive/sentinel_drive_manual_command.hpp"
+#include "sentinel/drive/sentinel_drive_subsystem.hpp"
+#include "sentinel/firing/sentinel_rotate_agitator_command.hpp"
+#include "sentinel/firing/sentinel_switcher_subsystem.hpp"
 #include "turret/turret_cv_command.hpp"
 #include "turret/turret_init_command.hpp"
 #include "turret/turret_manual_command.hpp"
@@ -45,7 +45,8 @@
 using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::launcher;
-using namespace aruwsrc::sentinel;
+using namespace aruwsrc::control::sentinel::firing;
+using namespace aruwsrc::control::sentinel::drive;
 using namespace aruwlib::gpio;
 using namespace aruwsrc::control;
 using namespace aruwlib::control;

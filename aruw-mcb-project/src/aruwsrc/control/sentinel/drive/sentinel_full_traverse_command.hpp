@@ -27,9 +27,7 @@
 
 #include "sentinel_drive_subsystem.hpp"
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 class SentinelDriveSubsystem;
 
@@ -53,7 +51,7 @@ private:
     /**
      * The rotational speed of the sentinel's wheels before gearing is applied, in RPM.
      */
-    static constexpr float MAX_DESIRED_TRAVERSE_SPEED = 4000.0f;
+    static constexpr float MAX_DESIRED_TRAVERSE_SPEED = 3000.0f;
 
     /**
      * The distance from the end of the rail at which the sentinel will referse direction.
@@ -67,9 +65,7 @@ private:
     SentinelDriveSubsystem* subsystemSentinelDrive;
 };  // class SentinelFullTraverseCommand
 
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif  // SENTINEL_FULL_TRAVERSE_COMMAND_HPP_
 #endif

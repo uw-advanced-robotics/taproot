@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
-#define __SENTINEL_DRIVE_MANUAL_COMMAND_HPP__
+#ifndef SENTINEL_DRIVE_MANUAL_COMMAND_HPP_
+#define SENTINEL_DRIVE_MANUAL_COMMAND_HPP_
 
 #include "aruwlib/control/command.hpp"
 
@@ -27,9 +27,7 @@ namespace aruwlib
 class Drivers;
 }
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 class SentinelDriveSubsystem;
 
@@ -54,8 +52,6 @@ private:
     SentinelDriveSubsystem* subsystemSentinelDrive;
 };
 
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif

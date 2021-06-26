@@ -21,11 +21,11 @@
 
 #include "aruwlib/architecture/clock.hpp"
 
-#include "aruwsrc/control/sentinel/sentinel_rotate_agitator_command.hpp"
+#include "aruwsrc/control/sentinel/firing/sentinel_rotate_agitator_command.hpp"
 #include "aruwsrc/mock/agitator_subsystem_mock.hpp"
 #include "aruwsrc/mock/sentinel_switcher_subsystem_mock.hpp"
 
-using namespace aruwsrc::sentinel;
+using namespace aruwsrc::control::sentinel::firing;
 using namespace aruwlib::serial;
 using namespace aruwlib;
 using namespace testing;

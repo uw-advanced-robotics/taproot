@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __SUBSYSTEM_SENTINEL_DRIVE_HPP__
-#define __SUBSYSTEM_SENTINEL_DRIVE_HPP__
+#ifndef SUBSYSTEM_SENTINEL_DRIVE_HPP_
+#define SUBSYSTEM_SENTINEL_DRIVE_HPP_
 
 #include "aruwlib/communication/gpio/digital.hpp"
 #include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
@@ -36,9 +36,7 @@
 
 #include "util_macros.hpp"
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 class SentinelDriveSubsystem : public aruwlib::control::chassis::IChassisSubsystem
 {
@@ -144,8 +142,6 @@ private:
     aruwsrc::chassis::PowerLimiter powerLimiter;
 };
 
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif

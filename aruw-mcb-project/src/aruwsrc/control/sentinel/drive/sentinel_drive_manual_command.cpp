@@ -27,9 +27,7 @@
 using aruwlib::Drivers;
 using aruwlib::control::Subsystem;
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 SentinelDriveManualCommand::SentinelDriveManualCommand(
     aruwlib::Drivers* drivers,
@@ -52,6 +50,4 @@ void SentinelDriveManualCommand::execute()
 void SentinelDriveManualCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0); }
 
 bool SentinelDriveManualCommand::isFinished() const { return false; }
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive

@@ -25,6 +25,7 @@
 #include "grabber_subsystem_mock.hpp"
 #include "hopper_subsystem_mock.hpp"
 #include "sentinel_drive_subsystem_mock.hpp"
+#include "sentinel_switcher_subsystem_mock.hpp"
 #include "tow_subsystem_mock.hpp"
 #include "turret_subsystem_mock.hpp"
 #include "x_axis_subsystem_mock.hpp"
@@ -108,10 +109,18 @@ SentinelDriveSubsystemMock::SentinelDriveSubsystemMock(
     aruwlib::Drivers *drivers,
     aruwlib::gpio::Digital::InputPin leftLimitSwitch,
     aruwlib::gpio::Digital::InputPin rightLimitSwitch)
-    : control::SentinelDriveSubsystem(drivers, leftLimitSwitch, rightLimitSwitch)
+    : control::sentinel::drive::SentinelDriveSubsystem(drivers, leftLimitSwitch, rightLimitSwitch)
 {
 }
 SentinelDriveSubsystemMock::~SentinelDriveSubsystemMock() {}
+
+SentinelSwitcherSubsystemMock::SentinelSwitcherSubsystemMock(
+    aruwlib::Drivers *drivers,
+    aruwlib::gpio::Pwm::Pin switcherServoPin)
+    : control::sentinel::firing::SentinelSwitcherSubsystem(drivers, switcherServoPin)
+{
+}
+SentinelSwitcherSubsystemMock::~SentinelSwitcherSubsystemMock() {}
 
 TowSubsystemMock::TowSubsystemMock(
     aruwlib::Drivers *drivers,

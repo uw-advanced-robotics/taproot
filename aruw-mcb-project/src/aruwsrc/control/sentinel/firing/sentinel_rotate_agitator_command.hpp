@@ -24,17 +24,19 @@
 #include "aruwlib/control/comprised_command.hpp"
 #include "aruwlib/control/setpoint/commands/move_unjam_comprised_command.hpp"
 
-namespace aruwsrc
-{
-namespace agitator
+namespace aruwsrc::agitator
 {
 class AgitatorSubsystem;
 }
 
-namespace sentinel
+namespace aruwsrc::control::sentinel::firing
 {
 class SentinelSwitcherSubsystem;
 
+/**
+ * A command that rotates an agitator that feeds into two barrels. A switcher is
+ * used to alternate between barrels based on the heat limit of the barrel.
+ */
 class SentinelRotateAgitatorCommand : public aruwlib::control::ComprisedCommand
 {
 public:
@@ -74,8 +76,6 @@ private:
     bool switchingBarrel = false;
 };
 
-}  // namespace sentinel
+}  // namespace aruwsrc::control::sentinel::firing
 
-}  // namespace aruwsrc
-
-#endif
+#endif  // SENTINEL_AGITATOR_SYSTEM_COMPRISED_COMMAND_HPP_

@@ -25,9 +25,7 @@
 
 #include "util_macros.hpp"
 
-namespace aruwsrc
-{
-namespace sentinel
+namespace aruwsrc::control::sentinel::firing
 {
 /**
  * Controls a servo used to switch which barrel balls are fed into. Barrel ID1 is assumed
@@ -54,8 +52,6 @@ private:
     bool useLower = true;
 };
 
-}  // namespace sentinel
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::firing
 
 #endif

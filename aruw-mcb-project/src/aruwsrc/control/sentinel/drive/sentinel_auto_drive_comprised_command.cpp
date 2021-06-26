@@ -28,7 +28,7 @@
 
 using namespace aruwlib::algorithms;
 
-namespace aruwsrc::control
+namespace aruwsrc::control::sentinel::drive
 {
 SentinelAutoDriveComprisedCommand::SentinelAutoDriveComprisedCommand(
     aruwlib::Drivers *drivers,
@@ -52,6 +52,7 @@ void SentinelAutoDriveComprisedCommand::initialize()
 void SentinelAutoDriveComprisedCommand::execute()
 {
     const auto &robotData = drivers->refSerial.getRobotData();
+
     if (robotData.receivedDps > RANDOM_DRIVE_DPS_THRESHOLD)
     {
         if (!evadeMode)
@@ -79,6 +80,6 @@ void SentinelAutoDriveComprisedCommand::end(bool interrupted)
 
 bool SentinelAutoDriveComprisedCommand::isFinished() const { return false; }
 
-}  // namespace aruwsrc::control
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif
