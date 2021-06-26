@@ -28,7 +28,7 @@ namespace aruwsrc
 {
 namespace mock
 {
-class TurretSubsystemMock : public aruwsrc::turret::TurretSubsystem
+class TurretSubsystemMock : public aruwsrc::control::turret::TurretSubsystem
 {
 public:
     TurretSubsystemMock(aruwlib::Drivers *drivers);

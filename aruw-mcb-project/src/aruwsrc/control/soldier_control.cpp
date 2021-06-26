@@ -49,11 +49,12 @@
 
 using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
+using namespace aruwsrc::control::turret;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
-using namespace aruwsrc::turret;
 using namespace aruwlib::control;
 using namespace aruwsrc::display;
+using namespace aruwsrc::control;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 
@@ -65,9 +66,7 @@ using aruwlib::Remote;
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
-namespace aruwsrc
-{
-namespace control
+namespace soldier_control
 {
 /* define subsystems --------------------------------------------------------*/
 TurretSubsystem turret(drivers(), false);
@@ -205,29 +204,29 @@ void registerSoldierSubsystems(aruwlib::Drivers *drivers)
     aruwlib::motorsim::SimHandler::registerSim(
         CHASSIS_MOTOR_TYPE,
         aruwsrc::chassis::ChassisSubsystem::CAN_BUS_MOTORS,
-        chassis::ChassisSubsystem::LEFT_FRONT_MOTOR_ID);
+        aruwsrc::chassis::ChassisSubsystem::LEFT_FRONT_MOTOR_ID);
     aruwlib::motorsim::SimHandler::registerSim(
         CHASSIS_MOTOR_TYPE,
         aruwsrc::chassis::ChassisSubsystem::CAN_BUS_MOTORS,
-        chassis::ChassisSubsystem::LEFT_BACK_MOTOR_ID);
+        aruwsrc::chassis::ChassisSubsystem::LEFT_BACK_MOTOR_ID);
     aruwlib::motorsim::SimHandler::registerSim(
         CHASSIS_MOTOR_TYPE,
         aruwsrc::chassis::ChassisSubsystem::CAN_BUS_MOTORS,
-        chassis::ChassisSubsystem::RIGHT_FRONT_MOTOR_ID);
+        aruwsrc::chassis::ChassisSubsystem::RIGHT_FRONT_MOTOR_ID);
     aruwlib::motorsim::SimHandler::registerSim(
         CHASSIS_MOTOR_TYPE,
         aruwsrc::chassis::ChassisSubsystem::CAN_BUS_MOTORS,
-        chassis::ChassisSubsystem::RIGHT_BACK_MOTOR_ID);
+        aruwsrc::chassis::ChassisSubsystem::RIGHT_BACK_MOTOR_ID);
 
     // Register the motor sims for the turret subsystem
     aruwlib::motorsim::SimHandler::registerSim(
         aruwlib::motorsim::MotorSim::MotorType::GM6020,
-        aruwsrc::turret::TurretSubsystem::CAN_BUS_MOTORS,
-        aruwsrc::turret::TurretSubsystem::PITCH_MOTOR_ID);
+        aruwsrc::control::turret::TurretSubsystem::CAN_BUS_MOTORS,
+        aruwsrc::control::turret::TurretSubsystem::PITCH_MOTOR_ID);
     aruwlib::motorsim::SimHandler::registerSim(
         aruwlib::motorsim::MotorSim::MotorType::GM6020,
-        aruwsrc::turret::TurretSubsystem::CAN_BUS_MOTORS,
-        aruwsrc::turret::TurretSubsystem::YAW_MOTOR_ID);
+        aruwsrc::control::turret::TurretSubsystem::CAN_BUS_MOTORS,
+        aruwsrc::control::turret::TurretSubsystem::YAW_MOTOR_ID);
 
     // Register the motor sims for the Hopper Cover (There aren't any)
     // Register the motor sims for the Friction Wheels
@@ -284,18 +283,18 @@ void registerSoldierIoMappings(aruwlib::Drivers *drivers)
     drivers->commandMapper.addMap(&leftMousePressedShiftPressed);
     drivers->commandMapper.addMap(&rightMousePressed);
 }
+}  // namespace soldier_control
 
+namespace aruwsrc::control
+{
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    initializeSubsystems();
-    registerSoldierSubsystems(drivers);
-    setDefaultSoldierCommands(drivers);
-    startSoldierCommands(drivers);
-    registerSoldierIoMappings(drivers);
+    soldier_control::initializeSubsystems();
+    soldier_control::registerSoldierSubsystems(drivers);
+    soldier_control::setDefaultSoldierCommands(drivers);
+    soldier_control::startSoldierCommands(drivers);
+    soldier_control::registerSoldierIoMappings(drivers);
 }
-
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control
 
 #endif

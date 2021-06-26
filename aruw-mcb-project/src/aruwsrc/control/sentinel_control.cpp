@@ -62,9 +62,7 @@ using aruwlib::Remote;
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
-namespace aruwsrc
-{
-namespace control
+namespace sentinel_control
 {
 static constexpr Pwm::Pin SWITCHER_SERVO_PIN = Pwm::Pin::W;
 static constexpr Digital::InputPin LEFT_LIMIT_SWITCH = Digital::InputPin::A;
@@ -174,16 +172,18 @@ void registerSentinelIoMappings(aruwlib::Drivers *drivers)
     drivers->commandMapper.addMap(&rightSwitchUp);
     drivers->commandMapper.addMap(&rightSwitchDown);
 }
+}  // namespace sentinel_control
 
+namespace aruwsrc::control
+{
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    initializeSubsystems();
-    registerSentinelSubsystems(drivers);
-    setDefaultSentinelCommands(drivers);
-    startSentinelCommands(drivers);
-    registerSentinelIoMappings(drivers);
-}
-}  // namespace control
+    sentinel_control::initializeSubsystems();
+    sentinel_control::registerSentinelSubsystems(drivers);
+    sentinel_control::setDefaultSentinelCommands(drivers);
+    sentinel_control::startSentinelCommands(drivers);
+    sentinel_control::registerSentinelIoMappings(drivers);
 }  // namespace aruwsrc
+}  // namespace aruwsrc::control
 
 #endif

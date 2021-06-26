@@ -28,9 +28,7 @@
 
 using namespace aruwlib::sensors;
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 TurretWorldRelativePositionCommand::TurretWorldRelativePositionCommand(
     aruwlib::Drivers *drivers,
@@ -228,6 +226,4 @@ float TurretWorldRelativePositionCommand::projectWorldRelativeYawToChassisFrame(
     return yawAngle - drivers->mpu6500.getYaw() + imuInitialAngle;
 }
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret

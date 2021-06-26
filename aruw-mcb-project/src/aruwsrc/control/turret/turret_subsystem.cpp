@@ -32,12 +32,10 @@
 using namespace aruwlib::motor;
 using namespace aruwlib;
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers, bool limitYaw)
-    : aruwlib::control::turret::ITurretSubsystem(drivers),
+    : aruwlib::control::turret::iTurretSubsystem(drivers),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),
@@ -205,6 +203,4 @@ void TurretSubsystem::onHardwareTestStart()
     yawMotor.setDesiredOutput(0);
 }
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret

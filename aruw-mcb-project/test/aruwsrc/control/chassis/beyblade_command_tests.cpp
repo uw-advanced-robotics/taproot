@@ -42,7 +42,7 @@
     EXPECT_CALL(cs, setDesiredOutput(FloatEq(baseX), FloatEq(baseY), FloatEq(baseR)));
 
 using namespace aruwsrc::chassis;
-using namespace aruwsrc::turret;
+using namespace aruwsrc::control::turret;
 using aruwlib::Drivers;
 using namespace testing;
 using aruwlib::algorithms::Ramp;

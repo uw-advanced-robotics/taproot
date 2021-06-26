@@ -26,9 +26,7 @@
 
 using namespace aruwlib::arch::clock;
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 TurretCVCommand::TurretCVCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem)
     : drivers(drivers),
@@ -109,6 +107,4 @@ void TurretCVCommand::runPitchPositionController(float dt)
     turretSubsystem->setPitchMotorOutput(pidOutput);
 }
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret

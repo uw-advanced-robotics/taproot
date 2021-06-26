@@ -42,8 +42,9 @@
 using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
-using namespace aruwsrc::turret;
+using namespace aruwsrc::control::turret;
 using namespace aruwlib::control;
+using namespace aruwsrc::control;
 using aruwlib::DoNotUse_getDrivers;
 using aruwlib::Remote;
 
@@ -55,9 +56,7 @@ using aruwlib::Remote;
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
-namespace aruwsrc
-{
-namespace control
+namespace old_soldier_control
 {
 /* define subsystems --------------------------------------------------------*/
 TurretSubsystem turret(drivers());
@@ -160,18 +159,18 @@ void registerOldSoldierIoMappings(aruwlib::Drivers *drivers)
     drivers->commandMapper.addMap(&fToggled);
     drivers->commandMapper.addMap(&leftMousePressedShiftNotPressed);
 }
+}  // namespace old_soldier_control
 
+namespace aruwsrc::control
+{
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    initializeSubsystems();
-    registerOldSoldierSubsystems(drivers);
-    setDefaultOldSoldierCommands(drivers);
-    startOldSoldierCommands(drivers);
-    registerOldSoldierIoMappings(drivers);
+    old_soldier_control::initializeSubsystems();
+    old_soldier_control::registerOldSoldierSubsystems(drivers);
+    old_soldier_control::setDefaultOldSoldierCommands(drivers);
+    old_soldier_control::startOldSoldierCommands(drivers);
+    old_soldier_control::registerOldSoldierIoMappings(drivers);
 }
-
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control
 
 #endif

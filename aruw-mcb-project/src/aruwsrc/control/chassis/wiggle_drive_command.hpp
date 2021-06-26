@@ -22,8 +22,7 @@
 
 #include "aruwlib/algorithms/ramp.hpp"
 #include "aruwlib/control/command.hpp"
-
-#include "aruwsrc/control/turret/turret_subsystem.hpp"
+#include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
 namespace aruwlib
 {
@@ -47,7 +46,7 @@ public:
     WiggleDriveCommand(
         aruwlib::Drivers* drivers,
         ChassisSubsystem* chassis,
-        aruwsrc::turret::TurretSubsystem* turret);
+        const aruwlib::control::turret::iTurretSubsystem* turret);
 
     void initialize() override;
 
@@ -96,7 +95,7 @@ private:
 
     aruwlib::Drivers* drivers;
     ChassisSubsystem* chassis;
-    aruwsrc::turret::TurretSubsystem* turret;
+    const aruwlib::control::turret::iTurretSubsystem* turret;
 
     aruwlib::algorithms::Ramp rotationSpeedRamp;
 

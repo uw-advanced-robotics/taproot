@@ -36,7 +36,7 @@ namespace chassis
 ChassisAutorotateCommand::ChassisAutorotateCommand(
     aruwlib::Drivers* drivers,
     ChassisSubsystem* chassis,
-    aruwsrc::turret::TurretSubsystem const* turret)
+    const aruwlib::control::turret::iTurretSubsystem* turret)
     : drivers(drivers),
       chassis(chassis),
       turret(turret)

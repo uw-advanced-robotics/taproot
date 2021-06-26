@@ -49,7 +49,7 @@ using namespace aruwlib::control::setpoint;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::chassis;
 using namespace aruwsrc::launcher;
-using namespace aruwsrc::turret;
+using namespace aruwsrc::control::turret;
 using namespace aruwlib::control;
 using namespace aruwsrc::display;
 using aruwlib::DoNotUse_getDrivers;
@@ -64,9 +64,7 @@ using aruwlib::control::RemoteMapState;
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
-namespace aruwsrc
-{
-namespace control
+namespace hero_control
 {
 /* define subsystems --------------------------------------------------------*/
 TurretSubsystem turret(drivers());
@@ -221,18 +219,18 @@ void registerHeroIoMappings(aruwlib::Drivers *drivers)
     drivers->commandMapper.addMap(&rightMousePressed);
     drivers->commandMapper.addMap(&leftSwitchUp);
 }
+}  // namespace hero_control
 
+namespace aruwsrc::control
+{
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    initializeSubsystems();
-    registerHeroSubsystems(drivers);
-    setDefaultHeroCommands(drivers);
-    startHeroCommands(drivers);
-    registerHeroIoMappings(drivers);
+    hero_control::initializeSubsystems();
+    hero_control::registerHeroSubsystems(drivers);
+    hero_control::setDefaultHeroCommands(drivers);
+    hero_control::startHeroCommands(drivers);
+    hero_control::registerHeroIoMappings(drivers);
 }
-
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control
 
 #endif

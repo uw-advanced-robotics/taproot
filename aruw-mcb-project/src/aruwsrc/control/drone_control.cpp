@@ -31,9 +31,7 @@ using aruwlib::DoNotUse_getDrivers;
  */
 aruwlib::driversFunc drivers = aruwlib::DoNotUse_getDrivers;
 
-namespace aruwsrc
-{
-namespace control
+namespace drone_control
 {
 /* define subsystems --------------------------------------------------------*/
 
@@ -53,18 +51,18 @@ void startDroneCommands(aruwlib::Drivers *) {}
 
 /* register io mappings here ------------------------------------------------*/
 void registerDroneIoMappings(aruwlib::Drivers *) {}
+}  // namespace drone_control
 
+namespace aruwsrc::control
+{
 void initSubsystemCommands(aruwlib::Drivers *drivers)
 {
-    initializeSubsystems();
-    registerDroneSubsystems(drivers);
-    setDefaultDroneCommands(drivers);
-    startDroneCommands(drivers);
-    registerDroneIoMappings(drivers);
+    drone_control::initializeSubsystems();
+    drone_control::registerDroneSubsystems(drivers);
+    drone_control::setDefaultDroneCommands(drivers);
+    drone_control::startDroneCommands(drivers);
+    drone_control::registerDroneIoMappings(drivers);
 }
-
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control
 
 #endif

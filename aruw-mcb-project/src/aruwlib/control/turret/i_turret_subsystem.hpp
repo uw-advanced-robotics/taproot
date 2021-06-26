@@ -29,10 +29,10 @@ namespace aruwlib::control::turret
 /**
  * Interface for a generic turret motor with a pitch and yaw motor.
  */
-class ITurretSubsystem : public Subsystem
+class iTurretSubsystem : public Subsystem
 {
 public:
-    explicit ITurretSubsystem(Drivers *drivers) : Subsystem(drivers) {}
+    explicit iTurretSubsystem(Drivers *drivers) : Subsystem(drivers) {}
 
     /**
      * @return the desired yaw value value of whatever is being controlled.
@@ -76,6 +76,17 @@ public:
      * @see getYawVelocity
      */
     virtual inline float getPitchVelocity() const = 0;
+
+    /**
+     * @see getPitchAngleFromCenter
+     */
+    virtual float getYawAngleFromCenter() const = 0;
+
+    /**
+     * @return An angle between [-180, 180] that is the angle difference of the pitch's current
+     *      value and the center value as defined by a subclass.
+     */
+    virtual float getPitchAngleFromCenter() const = 0;
 };
 }  // namespace aruwlib::control::turret
 
