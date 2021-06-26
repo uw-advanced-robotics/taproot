@@ -26,9 +26,7 @@
 
 using aruwlib::Drivers;
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 TurretManualCommand::TurretManualCommand(aruwlib::Drivers *drivers, TurretSubsystem *subsystem)
     : drivers(drivers),
@@ -54,6 +52,4 @@ void TurretManualCommand::execute()
     turretSubsystem->setYawMotorOutput(manualYawPid.getValue());
 }
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret

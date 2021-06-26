@@ -37,7 +37,7 @@ namespace chassis
 class ChassisSubsystem;
 }
 
-namespace turret
+namespace control::turret
 {
 class TurretSubsystem;
 
@@ -152,7 +152,7 @@ private:
     float projectWorldRelativeYawToChassisFrame(float yawAngle, float imuInitialAngle);
 };  // class TurretWorldRelativePositionCommand
 
-}  // namespace turret
+}  // namespace control::turret
 
 }  // namespace aruwsrc
 

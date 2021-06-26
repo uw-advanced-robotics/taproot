@@ -29,9 +29,7 @@ namespace aruwlib
 class Drivers;
 }
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 class TurretSubsystem;
 /**
@@ -77,8 +75,6 @@ private:
     float pitchVelocityTarget = 0;
 };  // class TurretManualCommand
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret
 
 #endif  // TURRET_MANUAL_COMMAND_H_

@@ -24,9 +24,7 @@
 
 #include "turret_subsystem.hpp"
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 TurretInitCommand::TurretInitCommand(TurretSubsystem *subsystem)
     : turretSubsystem(subsystem),
@@ -50,6 +48,4 @@ void TurretInitCommand::execute()
     turretSubsystem->setYawMotorOutput(initYawPid.getValue());
 }
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret

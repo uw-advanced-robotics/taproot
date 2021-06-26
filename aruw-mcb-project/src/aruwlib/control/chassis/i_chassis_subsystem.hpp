@@ -26,10 +26,10 @@
 
 namespace aruwlib::control::chassis
 {
-class IChassisSubsystem : public Subsystem
+class iChassisSubsystem : public Subsystem
 {
 public:
-    IChassisSubsystem(Drivers *drivers) : Subsystem(drivers) {}
+    iChassisSubsystem(Drivers *drivers) : Subsystem(drivers) {}
 
     /**
      * @return the number of chassis motors

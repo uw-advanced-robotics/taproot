@@ -38,7 +38,7 @@
 
 namespace aruwsrc::control::sentinel::drive
 {
-class SentinelDriveSubsystem : public aruwlib::control::chassis::IChassisSubsystem
+class SentinelDriveSubsystem : public aruwlib::control::chassis::iChassisSubsystem
 {
 public:
     /// @see power_limiter.hpp for what these mean

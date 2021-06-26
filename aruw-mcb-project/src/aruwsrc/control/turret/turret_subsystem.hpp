@@ -34,15 +34,13 @@
 
 #include "util_macros.hpp"
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 /**
  * Stores software necessary for interacting with two gimbals that control the pitch and
  * yaw of a turret. Provides a convenient API for other commands to interact with a turret.
  */
-class TurretSubsystem : public aruwlib::control::turret::ITurretSubsystem
+class TurretSubsystem : public aruwlib::control::turret::iTurretSubsystem
 {
 public:
     static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;
@@ -149,13 +147,13 @@ public:
      * @return An angle between [-180, 180] that is the angle difference of the yaw gimbal
      *      from center (90 degrees), in degrees.
      */
-    mockable float getYawAngleFromCenter() const;
+    float getYawAngleFromCenter() const override;
 
     /**
      * @return An angle between [-180, 180] that is the angle difference of the pitch gimbal
      *      from center (90 degrees), in degrees.
      */
-    mockable float getPitchAngleFromCenter() const;
+    float getPitchAngleFromCenter() const override;
 
     /**
      * Attempts to set desired yaw output to the passed in value. If the turret is out of
@@ -238,8 +236,6 @@ private:
 
 };  // class TurretSubsystem
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret
 
 #endif  // TURRET_SUBSYSTEM_HPP_

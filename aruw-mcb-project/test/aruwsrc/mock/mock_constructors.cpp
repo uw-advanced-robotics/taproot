@@ -65,7 +65,7 @@ AgitatorSubsystemMock::~AgitatorSubsystemMock() {}
 BeybladeCommandMock::BeybladeCommandMock(
     aruwlib::Drivers *drivers,
     chassis::ChassisSubsystem *chassis,
-    turret::TurretSubsystem *turret)
+    aruwlib::control::turret::iTurretSubsystem *turret)
     : BeybladeCommand(drivers, chassis, turret)
 {
 }

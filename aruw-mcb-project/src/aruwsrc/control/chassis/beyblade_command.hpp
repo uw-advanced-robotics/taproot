@@ -22,20 +22,14 @@
 
 #include "aruwlib/algorithms/ramp.hpp"
 #include "aruwlib/control/command.hpp"
+#include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
 namespace aruwlib
 {
 class Drivers;
 }
 
-namespace aruwsrc
-{
-namespace turret
-{
-class TurretSubsystem;
-}
-
-namespace chassis
+namespace aruwsrc::chassis
 {
 class ChassisSubsystem;
 
@@ -48,7 +42,7 @@ public:
     BeybladeCommand(
         aruwlib::Drivers* drivers,
         ChassisSubsystem* chassis,
-        aruwsrc::turret::TurretSubsystem* turret);
+        const aruwlib::control::turret::iTurretSubsystem* turret);
 
     // fractional multiplier for user input and maximum motor speed to calculate desired x and y
     // speeds
@@ -110,13 +104,11 @@ private:
 
     aruwlib::Drivers* drivers;
     ChassisSubsystem* chassis;
-    aruwsrc::turret::TurretSubsystem* turret;
+    const aruwlib::control::turret::iTurretSubsystem* turret;
 
     float getRotationTarget() const;
 };  // class BeybladeCommand
 
-}  // namespace chassis
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::chassis
 
 #endif  // BEYBLADE_COMMAND_HPP_

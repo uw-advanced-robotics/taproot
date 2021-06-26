@@ -34,7 +34,7 @@ class TurretSetpointCommand : public control::Command
 public:
     TurretSetpointCommand(
         Drivers *drivers,
-        control::turret::ITurretSubsystem *turret,
+        control::turret::iTurretSubsystem *turret,
         const float yawInputScalar,
         const float pitchInputScalar);
 
@@ -53,7 +53,7 @@ public:
 private:
     Drivers *drivers;
 
-    control::turret::ITurretSubsystem *turret;
+    control::turret::iTurretSubsystem *turret;
 
     const float yawInputScalar;
     const float pitchInputScalar;

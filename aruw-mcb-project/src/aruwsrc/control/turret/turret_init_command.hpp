@@ -25,9 +25,7 @@
 
 #include "modm/math/filter/pid.hpp"
 
-namespace aruwsrc
-{
-namespace turret
+namespace aruwsrc::control::turret
 {
 class TurretSubsystem;
 /**
@@ -71,8 +69,6 @@ private:
     modm::Pid<float> initPitchPid;
 };  // class TurretInitCommand
 
-}  // namespace turret
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::turret
 
 #endif  // TURRET_INIT_COMMAND_H_

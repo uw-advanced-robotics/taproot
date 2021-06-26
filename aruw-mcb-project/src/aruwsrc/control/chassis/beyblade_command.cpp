@@ -40,7 +40,7 @@ namespace chassis
 BeybladeCommand::BeybladeCommand(
     aruwlib::Drivers* drivers,
     ChassisSubsystem* chassis,
-    aruwsrc::turret::TurretSubsystem* turret)
+    const aruwlib::control::turret::iTurretSubsystem* turret)
     : drivers(drivers),
       chassis(chassis),
       turret(turret)

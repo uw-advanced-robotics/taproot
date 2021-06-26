@@ -54,7 +54,7 @@ namespace chassis
  *     - In other words, 'x' is the bow/stern and 'y' is starboard/
  *       port in boat terms.
  */
-class ChassisSubsystem : public aruwlib::control::chassis::IChassisSubsystem
+class ChassisSubsystem : public aruwlib::control::chassis::iChassisSubsystem
 {
 public:
     /**
@@ -353,7 +353,7 @@ public:
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID,
         aruwlib::gpio::Analog::Pin currentPin = CURRENT_SENSOR_PIN)
-        : aruwlib::control::chassis::IChassisSubsystem(drivers),
+        : aruwlib::control::chassis::iChassisSubsystem(drivers),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
               VELOCITY_PID_KI,
