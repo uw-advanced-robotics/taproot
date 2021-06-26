@@ -27,9 +27,7 @@ using namespace aruwlib::control;
 
 #define TURRET_OVERHEAT(currHeat, heatLimit) (currHeat + BARREL_OVERHEAT_THRESHOLD > heatLimit)
 
-namespace aruwsrc
-{
-namespace sentinel
+namespace aruwsrc::control::sentinel::firing
 {
 SentinelRotateAgitatorCommand::SentinelRotateAgitatorCommand(
     aruwlib::Drivers* drivers,
@@ -107,6 +105,4 @@ bool SentinelRotateAgitatorCommand::isFinished() const
     return !switchingBarrel && rotateAgitator.isFinished();
 }
 
-}  // namespace sentinel
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::firing

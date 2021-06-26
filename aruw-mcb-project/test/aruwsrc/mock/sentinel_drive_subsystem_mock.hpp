@@ -22,11 +22,11 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwsrc/control/sentinel/sentinel_drive_subsystem.hpp"
+#include "aruwsrc/control/sentinel/drive/sentinel_drive_subsystem.hpp"
 
 namespace aruwsrc::mock
 {
-class SentinelDriveSubsystemMock : public control::SentinelDriveSubsystem
+class SentinelDriveSubsystemMock : public control::sentinel::drive::SentinelDriveSubsystem
 {
     SentinelDriveSubsystemMock(
         aruwlib::Drivers *drivers,

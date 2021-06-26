@@ -23,9 +23,7 @@
 
 using namespace aruwlib::arch::clock;
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 SentinelFullTraverseCommand::SentinelFullTraverseCommand(SentinelDriveSubsystem* subsystem)
     : prevTime(0),
@@ -67,8 +65,6 @@ void SentinelFullTraverseCommand::execute()
 void SentinelFullTraverseCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0.0f); }
 
 bool SentinelFullTraverseCommand::isFinished() const { return false; }
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif

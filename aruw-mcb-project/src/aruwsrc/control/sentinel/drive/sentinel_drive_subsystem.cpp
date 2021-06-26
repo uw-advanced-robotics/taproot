@@ -31,9 +31,7 @@
 
 using namespace aruwlib::gpio;
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 SentinelDriveSubsystem::SentinelDriveSubsystem(
     aruwlib::Drivers* drivers,
@@ -168,6 +166,4 @@ void SentinelDriveSubsystem::onHardwareTestStart() { this->setDesiredRpm(100.0f)
 
 void SentinelDriveSubsystem::onHardwareTestComplete() { this->setDesiredRpm(0.0f); }
 
-}  // namespace control
-
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive

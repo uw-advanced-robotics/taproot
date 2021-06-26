@@ -23,9 +23,7 @@
 
 #include "sentinel_switcher_subsystem.hpp"
 
-namespace aruwsrc
-{
-namespace sentinel
+namespace aruwsrc::control::sentinel::firing
 {
 SentinelSwitcherSubsystem::SentinelSwitcherSubsystem(
     aruwlib::Drivers *drivers,
@@ -45,5 +43,4 @@ void SentinelSwitcherSubsystem::useLowerBarrel(bool useLower)
 }
 
 bool SentinelSwitcherSubsystem::isLowerUsed() const { return useLower; }
-}  // namespace sentinel
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::firing

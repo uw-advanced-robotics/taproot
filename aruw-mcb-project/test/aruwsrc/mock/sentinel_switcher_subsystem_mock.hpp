@@ -22,19 +22,18 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwsrc/control/sentinel/sentinel_switcher_subsystem.hpp"
+#include "aruwsrc/control/sentinel/firing/sentinel_switcher_subsystem.hpp"
 
 namespace aruwsrc::mock
 {
-class SentinelSwitcherSubsystemMock : public sentinel::SentinelSwitcherSubsystem
+class SentinelSwitcherSubsystemMock : public control::sentinel::firing::SentinelSwitcherSubsystem
 {
 public:
     SentinelSwitcherSubsystemMock(
         aruwlib::Drivers *drivers,
-        aruwlib::gpio::Pwm::Pin switcherServoPin = aruwlib::gpio::Pwm::Pin::W)
-        : sentinel::SentinelSwitcherSubsystem(drivers, switcherServoPin)
-    {
-    }
+        aruwlib::gpio::Pwm::Pin switcherServoPin = aruwlib::gpio::Pwm::Pin::W);
+    virtual ~SentinelSwitcherSubsystemMock();
+
     MOCK_METHOD(const char *, getName, (), (override));
     MOCK_METHOD(void, refresh, (), (override));
     MOCK_METHOD(void, useLowerBarrel, (bool), (override));

@@ -31,9 +31,7 @@ using modm::platform::RandomNumberGenerator;
 #endif
 using aruwlib::control::Subsystem;
 
-namespace aruwsrc
-{
-namespace control
+namespace aruwsrc::control::sentinel::drive
 {
 SentinelRandomDriveCommand::SentinelRandomDriveCommand(SentinelDriveSubsystem* subsystem)
     : subsystemSentinelDrive(subsystem),
@@ -88,8 +86,7 @@ void SentinelRandomDriveCommand::execute()
 void SentinelRandomDriveCommand::end(bool) { subsystemSentinelDrive->setDesiredRpm(0); }
 
 bool SentinelRandomDriveCommand::isFinished() const { return false; }
-}  // namespace control
 
-}  // namespace aruwsrc
+}  // namespace aruwsrc::control::sentinel::drive
 
 #endif
