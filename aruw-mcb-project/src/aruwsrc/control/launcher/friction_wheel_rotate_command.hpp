@@ -47,9 +47,9 @@ public:
     const char* getName() const override { return "friction wheel rotate"; }
 
 #if defined(TARGET_SOLDIER)
-    static const int16_t DEFAULT_WHEEL_RPM = 4750;
+    static constexpr int16_t DEFAULT_WHEEL_RPM = 4500;
 #elif defined(TARGET_HERO)
-    static const int16_t DEFAULT_WHEEL_RPM = 7000;
+    static constexpr int16_t DEFAULT_WHEEL_RPM = 7000;
 #elif defined(TARGET_SENTINEL)
     static const int16_t DEFAULT_WHEEL_RPM = 5150;
 #else
