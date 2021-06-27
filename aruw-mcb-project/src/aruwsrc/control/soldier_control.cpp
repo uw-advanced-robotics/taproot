@@ -36,6 +36,7 @@
 #include "client-display/client_display_subsystem.hpp"
 #include "hopper-cover/hopper_commands.hpp"
 #include "launcher/friction_wheel_rotate_command.hpp"
+#include "launcher/friction_wheel_spin_ref_limited_command.hpp"
 #include "launcher/friction_wheel_subsystem.hpp"
 #include "turret/turret_cv_command.hpp"
 #include "turret/turret_subsystem.hpp"
@@ -48,6 +49,7 @@
 #endif
 
 using namespace aruwlib::control::setpoint;
+using namespace aruwsrc::control::launcher;
 using namespace aruwsrc::agitator;
 using namespace aruwsrc::control::turret;
 using namespace aruwsrc::chassis;
@@ -128,9 +130,7 @@ SoldierOpenHopperCommand openHopperCommand(&hopperCover);
 
 SoldierCloseHopperCommand closeHopperCommand(&hopperCover);
 
-FrictionWheelRotateCommand spinFrictionWheels(
-    &frictionWheels,
-    FrictionWheelRotateCommand::DEFAULT_WHEEL_RPM);
+FrictionWheelSpinRefLimitedCommand spinFrictionWheels(drivers(), &frictionWheels);
 
 FrictionWheelRotateCommand stopFrictionWheels(&frictionWheels, 0);
 
@@ -162,10 +162,7 @@ HoldCommandMapping leftSwitchUp(
     RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
 
 // Keyboard/Mouse related mappings
-ToggleCommandMapping rToggled(
-    drivers(),
-    {&openHopperCommand, &stopFrictionWheels},
-    RemoteMapState({Remote::Key::R}));
+ToggleCommandMapping rToggled(drivers(), {&openHopperCommand}, RemoteMapState({Remote::Key::R}));
 ToggleCommandMapping fToggled(drivers(), {&beybladeCommand}, RemoteMapState({Remote::Key::F}));
 HoldRepeatCommandMapping leftMousePressedShiftNotPressed(
     drivers(),

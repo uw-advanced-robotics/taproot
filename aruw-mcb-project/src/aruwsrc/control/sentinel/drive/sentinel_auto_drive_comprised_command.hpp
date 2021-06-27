@@ -21,7 +21,7 @@
 #ifndef SENTINEL_AUTO_DRIVE_COMPRISED_COMMAND_HPP_
 #define SENTINEL_AUTO_DRIVE_COMPRISED_COMMAND_HPP_
 
-#include <aruwlib/control/comprised_command.hpp>
+#include "aruwlib/control/comprised_command.hpp"
 
 #include "sentinel_full_traverse_command.hpp"
 #include "sentinel_random_drive_command.hpp"
