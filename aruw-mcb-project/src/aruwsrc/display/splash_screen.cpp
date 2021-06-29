@@ -21,7 +21,7 @@
 
 #include "main_menu.hpp"
 
-namespace aruwlib
+namespace aruwsrc
 {
 namespace display
 {
@@ -122,4 +122,4 @@ void SplashScreen::shortButtonPress(modm::MenuButtons::Button button)
 
 bool SplashScreen::hasChanged() { return !drawn; }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace aruwsrc

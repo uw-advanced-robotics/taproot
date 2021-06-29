@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TURRET_PID_HPP__
-#define __TURRET_PID_HPP__
+#ifndef SMOOTH_PID_HPP_
+#define SMOOTH_PID_HPP_
 
 #include <cstdint>
 
@@ -28,10 +28,10 @@ namespace aruwsrc
 {
 namespace algorithms
 {
-class TurretPid
+class SmoothPid
 {
 public:
-    TurretPid(
+    SmoothPid(
         float kp,
         float ki,
         float kd,

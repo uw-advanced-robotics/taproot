@@ -20,12 +20,11 @@
 #ifndef DOUBLE_AGITATOR_SUBSYSTEM_HPP_
 #define DOUBLE_AGITATOR_SUBSYSTEM_HPP_
 
+#include "aruwlib/algorithms/smooth_pid.hpp"
 #include "aruwlib/control/setpoint/algorithms/setpoint_continuous_jam_checker.hpp"
 #include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
 #include "aruwlib/drivers.hpp"
 #include "aruwlib/motor/dji_motor.hpp"
-
-#include "aruwsrc/algorithms/turret_pid.hpp"
 
 #include "agitator_subsystem.hpp"
 #include "util_macros.hpp"
@@ -158,8 +157,8 @@ private:
     /**
      * PID controller for running postiion PID on unwrapped agitator angle (in radians).
      */
-    aruwsrc::algorithms::TurretPid agitatorPositionPid1;
-    aruwsrc::algorithms::TurretPid agitatorPositionPid2;
+    aruwsrc::algorithms::SmoothPid agitatorPositionPid1;
+    aruwsrc::algorithms::SmoothPid agitatorPositionPid2;
 
     /**
      * First of two motors driving the shaft on the double agitator subsystem

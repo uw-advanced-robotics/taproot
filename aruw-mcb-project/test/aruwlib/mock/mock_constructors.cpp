@@ -33,7 +33,6 @@
 #include "imu_rx_listener_mock.hpp"
 #include "leds_mock.hpp"
 #include "mpu6500_mock.hpp"
-#include "oled_display_mock.hpp"
 #include "pwm_mock.hpp"
 #include "ref_serial_mock.hpp"
 #include "remote_mock.hpp"
@@ -41,7 +40,6 @@
 #include "subsystem_mock.hpp"
 #include "terminal_serial_mock.hpp"
 #include "uart_mock.hpp"
-#include "xavier_serial_mock.hpp"
 
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors
@@ -127,9 +125,6 @@ ErrorControllerMock::~ErrorControllerMock() {}
 Mpu6500Mock::Mpu6500Mock(aruwlib::Drivers *drivers) : aruwlib::sensors::Mpu6500(drivers) {}
 Mpu6500Mock::~Mpu6500Mock() {}
 
-OledDisplayMock::OledDisplayMock(Drivers *drivers) : display::OledDisplay(drivers) {}
-OledDisplayMock::~OledDisplayMock() {}
-
 PwmMock::PwmMock() {}
 PwmMock::~PwmMock() {}
 
@@ -157,6 +152,4 @@ TerminalSerialMock::~TerminalSerialMock() {}
 UartMock::UartMock() {}
 UartMock::~UartMock() {}
 
-XavierSerialMock::XavierSerialMock(Drivers *drivers) : serial::XavierSerial(drivers) {}
-XavierSerialMock::~XavierSerialMock() {}
 }  // namespace aruwlib::mock

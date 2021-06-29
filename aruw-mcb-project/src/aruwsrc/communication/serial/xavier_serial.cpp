@@ -29,11 +29,11 @@
 using namespace aruwlib::arch;
 using namespace aruwlib::serial;
 
-namespace aruwlib
+namespace aruwsrc
 {
 namespace serial
 {
-XavierSerial::XavierSerial(Drivers* drivers)
+XavierSerial::XavierSerial(aruwlib::Drivers* drivers)
     : DJISerial(drivers, Uart::UartPort::Uart2),
       lastAimData(),
       aimDataValid(false),
@@ -236,4 +236,4 @@ modm::ResumableResult<bool> XavierSerial::sendRobotID()
     RF_END();
 }
 }  // namespace serial
-}  // namespace aruwlib
+}  // namespace aruwsrc

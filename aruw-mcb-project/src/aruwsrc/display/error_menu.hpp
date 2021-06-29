@@ -25,12 +25,16 @@
 namespace aruwlib
 {
 class Drivers;
+}
+
+namespace aruwsrc
+{
 namespace display
 {
 class ErrorMenu : public modm::AbstractMenu
 {
 public:
-    ErrorMenu(modm::ViewStack *vs, Drivers *drivers);
+    ErrorMenu(modm::ViewStack *vs, aruwlib::Drivers *drivers);
 
     void draw() override;
 
@@ -45,9 +49,9 @@ public:
 private:
     static constexpr int ERROR_MENU_ID = 3;
 
-    Drivers *drivers;
+    aruwlib::Drivers *drivers;
 };  // class ErrorMenu
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace aruwsrc
 
 #endif  // ERROR_MENU_HPP_

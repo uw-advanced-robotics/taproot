@@ -31,12 +31,12 @@
 #include "aruwlib/motor/dji_motor.hpp"
 #endif
 
+#include "aruwlib/control/chassis/power_limiter.hpp"
 #include "aruwlib/motor/m3508_constants.hpp"
 
 #include "modm/math/filter/pid.hpp"
 #include "modm/math/matrix.hpp"
 
-#include "power_limiter.hpp"
 #include "util_macros.hpp"
 
 namespace aruwsrc

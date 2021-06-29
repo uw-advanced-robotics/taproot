@@ -21,11 +21,11 @@
 #define SENTINEL_TURRET_CV_COMMAND_HPP_
 
 #include "aruwlib/algorithms/contiguous_float.hpp"
+#include "aruwlib/algorithms/smooth_pid.hpp"
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/control/comprised_command.hpp"
 #include "aruwlib/control/turret/i_turret_subsystem.hpp"
 
-#include "aruwsrc/algorithms/turret_pid.hpp"
 #include "aruwsrc/control/agitator/agitator_subsystem.hpp"
 #include "aruwsrc/control/sentinel/firing/sentinel_rotate_agitator_command.hpp"
 #include "aruwsrc/control/sentinel/firing/sentinel_switcher_subsystem.hpp"

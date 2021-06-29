@@ -17,6 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef ENV_UNIT_TESTS
+
 #ifndef DRIVERS_SINGLETON_HPP_
 #define DRIVERS_SINGLETON_HPP_
 
@@ -36,3 +38,5 @@ using driversFunc = aruwlib::Drivers *(*)();
 }  // namespace aruwlib
 
 #endif  // DRIVERS_SINGLETON_HPP_
+
+#endif

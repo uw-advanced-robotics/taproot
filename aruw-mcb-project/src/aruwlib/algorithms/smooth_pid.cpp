@@ -17,7 +17,7 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "turret_pid.hpp"
+#include "smooth_pid.hpp"
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
 
@@ -27,7 +27,7 @@ namespace aruwsrc
 {
 namespace algorithms
 {
-float TurretPid::runController(float error, float errorDerivative, float dt)
+float SmoothPid::runController(float error, float errorDerivative, float dt)
 {
     // p
     currErrorP = kp * proportionalKalman.filterData(error);
@@ -43,16 +43,16 @@ float TurretPid::runController(float error, float errorDerivative, float dt)
     return output;
 }
 
-float TurretPid::runControllerDerivateError(float error, float dt)
+float SmoothPid::runControllerDerivateError(float error, float dt)
 {
     float errorDerivative = (error - prevError) / dt;
     prevError = error;
     return runController(error, errorDerivative, dt);
 }
 
-float TurretPid::getOutput() { return output; }
+float SmoothPid::getOutput() { return output; }
 
-void TurretPid::reset()
+void SmoothPid::reset()
 {
     this->output = 0.0f;
     this->currErrorP = 0.0f;

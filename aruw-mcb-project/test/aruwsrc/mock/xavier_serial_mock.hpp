@@ -22,16 +22,17 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/serial/xavier_serial.hpp"
+#include "aruwsrc/communication/serial/xavier_serial.hpp"
 
-namespace aruwlib
+namespace aruwsrc
 {
 namespace mock
 {
 class XavierSerialMock : public serial::XavierSerial
 {
 public:
-    XavierSerialMock(Drivers *drivers);
+    // XavierSerialMock(aruwlib::Drivers *drivers) : serial::XavierSerial(drivers) {}
+    XavierSerialMock(aruwlib::Drivers *drivers);
     virtual ~XavierSerialMock();
 
     MOCK_METHOD(void, initializeCV, (), (override));
@@ -41,10 +42,10 @@ public:
     MOCK_METHOD(void, stopAutoAim, (), (override));
     MOCK_METHOD(const TurretAimData &, getLastAimData, (), (const override));
     MOCK_METHOD(bool, lastAimDataValid, (), (const override));
-    MOCK_METHOD(void, attachTurret, (control::turret::iTurretSubsystem *), (override));
-    MOCK_METHOD(void, attachChassis, (control::chassis::iChassisSubsystem *), (override));
+    MOCK_METHOD(void, attachTurret, (aruwlib::control::turret::iTurretSubsystem *), (override));
+    MOCK_METHOD(void, attachChassis, (aruwlib::control::chassis::iChassisSubsystem *), (override));
 };  // class XavierSerialMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace aruwsrc
 
 #endif  // XAVIER_SERIAL_MOCK_HPP_

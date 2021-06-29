@@ -44,7 +44,10 @@ namespace control::chassis
 {
 class iChassisSubsystem;
 }
+}  // namespace aruwlib
 
+namespace aruwsrc
+{
 namespace serial
 {
 /**
@@ -115,11 +118,11 @@ public:
 
     mockable inline bool lastAimDataValid() const { return aimDataValid; }
 
-    mockable inline void attachTurret(control::turret::iTurretSubsystem* turret)
+    mockable inline void attachTurret(aruwlib::control::turret::iTurretSubsystem* turret)
     {
         turretSub = turret;
     }
-    mockable inline void attachChassis(control::chassis::iChassisSubsystem* chassis)
+    mockable inline void attachChassis(aruwlib::control::chassis::iChassisSubsystem* chassis)
     {
         chassisSub = chassis;
     }
@@ -184,8 +187,8 @@ private:
     /// A flag set to `true` if the timeout is not expired, and `false` otherwise.
     bool isCvOnline;
 
-    const control::turret::iTurretSubsystem* turretSub;
-    const control::chassis::iChassisSubsystem* chassisSub;
+    const aruwlib::control::turret::iTurretSubsystem* turretSub;
+    const aruwlib::control::chassis::iChassisSubsystem* chassisSub;
 
     /**
      * Interprets a raw `SerialMessage`'s `data` field to extract yaw, pitch, and other aim
@@ -214,6 +217,6 @@ public:
     modm::ResumableResult<bool> sendAutoAimRequest();
 };
 }  // namespace serial
-}  // namespace aruwlib
+}  // namespace aruwsrc
 
 #endif  // XAVIER_SERIAL_HPP_

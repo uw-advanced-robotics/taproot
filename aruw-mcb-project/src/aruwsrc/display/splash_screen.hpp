@@ -17,27 +17,42 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef OLED_DISPLAY_MOCK_HPP_
-#define OLED_DISPLAY_MOCK_HPP_
+#ifndef SPLASH_SCREEN_HPP_
+#define SPLASH_SCREEN_HPP_
 
-#include <gmock/gmock.h>
-
-#include "aruwlib/display/oled_display.hpp"
+#include "modm/ui/menu/abstract_menu.hpp"
 
 namespace aruwlib
 {
-namespace mock
+class Drivers;
+}
+
+namespace aruwsrc
 {
-class OledDisplayMock : public display::OledDisplay
+namespace display
+{
+class SplashScreen : public modm::AbstractMenu
 {
 public:
-    explicit OledDisplayMock(Drivers *drivers);
-    virtual ~OledDisplayMock();
-    MOCK_METHOD(void, initialize, (), (override));
-    MOCK_METHOD(bool, updateDisplay, (), (override));
-    MOCK_METHOD(void, updateMenu, (), (override));
-};  // class OledDisplayMock
-}  // namespace mock
-}  // namespace aruwlib
+    SplashScreen(modm::ViewStack *vs, aruwlib::Drivers *drivers);
 
-#endif  // OLED_DISPLAY_MOCK_HPP_
+    void draw() override;
+
+    void update() override;
+
+    void shortButtonPress(modm::MenuButtons::Button button) override;
+
+    bool hasChanged() override;
+
+    inline void resetHasChanged() { drawn = false; }
+
+private:
+    static constexpr int SPLASH_SCREEN_MENU_ID = 1;
+
+    bool drawn = false;
+    aruwlib::Drivers *drivers;
+};
+}  // namespace display
+}  // namespace aruwsrc
+
+#endif  // SPLASH_SCREEN_HPP_
