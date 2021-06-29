@@ -35,7 +35,7 @@ using namespace aruwlib;
 namespace aruwsrc::control::turret
 {
 TurretSubsystem::TurretSubsystem(aruwlib::Drivers* drivers, bool limitYaw)
-    : aruwlib::control::turret::iTurretSubsystem(drivers),
+    : aruwlib::control::turret::TurretSubsystemInterface(drivers),
       currPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),
       yawTarget(TURRET_START_ANGLE, 0.0f, 360.0f),

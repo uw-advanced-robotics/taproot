@@ -22,7 +22,7 @@
 
 #include "aruwlib/algorithms/contiguous_float.hpp"
 #include "aruwlib/algorithms/linear_interpolation.hpp"
-#include "aruwlib/control/turret/i_turret_subsystem.hpp"
+#include "aruwlib/control/turret/turret_subsystem_interface.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include "aruwlib/mock/dji_motor_mock.hpp"
@@ -40,7 +40,7 @@ namespace aruwsrc::control::turret
  * Stores software necessary for interacting with two gimbals that control the pitch and
  * yaw of a turret. Provides a convenient API for other commands to interact with a turret.
  */
-class TurretSubsystem : public aruwlib::control::turret::iTurretSubsystem
+class TurretSubsystem : public aruwlib::control::turret::TurretSubsystemInterface
 {
 public:
     static constexpr aruwlib::can::CanBus CAN_BUS_MOTORS = aruwlib::can::CanBus::CAN_BUS1;

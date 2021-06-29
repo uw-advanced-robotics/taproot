@@ -40,7 +40,7 @@ SentinelDriveSubsystem::SentinelDriveSubsystem(
     aruwlib::motor::MotorId leftMotorId,
     aruwlib::motor::MotorId rightMotorId,
     aruwlib::gpio::Analog::Pin currentSensorPin)
-    : aruwlib::control::chassis::iChassisSubsystem(drivers),
+    : aruwlib::control::chassis::ChassisSubsystemInterface(drivers),
       leftLimitSwitch(leftLimitSwitch),
       rightLimitSwitch(rightLimitSwitch),
       velocityPidLeftWheel(PID_P, PID_I, PID_D, PID_MAX_ERROR_SUM, PID_MAX_OUTPUT),

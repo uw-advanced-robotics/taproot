@@ -37,12 +37,12 @@ class Drivers;
 
 namespace control::turret
 {
-class iTurretSubsystem;
+class TurretSubsystemInterface;
 }
 
 namespace control::chassis
 {
-class iChassisSubsystem;
+class ChassisSubsystemInterface;
 }
 }  // namespace aruwlib
 
@@ -118,11 +118,12 @@ public:
 
     mockable inline bool lastAimDataValid() const { return aimDataValid; }
 
-    mockable inline void attachTurret(aruwlib::control::turret::iTurretSubsystem* turret)
+    mockable inline void attachTurret(aruwlib::control::turret::TurretSubsystemInterface* turret)
     {
         turretSub = turret;
     }
-    mockable inline void attachChassis(aruwlib::control::chassis::iChassisSubsystem* chassis)
+    mockable inline void attachChassis(
+        aruwlib::control::chassis::ChassisSubsystemInterface* chassis)
     {
         chassisSub = chassis;
     }
@@ -187,8 +188,8 @@ private:
     /// A flag set to `true` if the timeout is not expired, and `false` otherwise.
     bool isCvOnline;
 
-    const aruwlib::control::turret::iTurretSubsystem* turretSub;
-    const aruwlib::control::chassis::iChassisSubsystem* chassisSub;
+    const aruwlib::control::turret::TurretSubsystemInterface* turretSub;
+    const aruwlib::control::chassis::ChassisSubsystemInterface* chassisSub;
 
     /**
      * Interprets a raw `SerialMessage`'s `data` field to extract yaw, pitch, and other aim

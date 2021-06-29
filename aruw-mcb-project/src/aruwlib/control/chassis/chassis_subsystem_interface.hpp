@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef I_CHASSIS_SUBSYSTEM_HPP_
-#define I_CHASSIS_SUBSYSTEM_HPP_
+#ifndef CHASSIS_SUBSYSTEM_INTERFACE_
+#define CHASSIS_SUBSYSTEM_INTERFACE_
 
 #include "aruwlib/motor/dji_motor.hpp"
 
@@ -26,10 +26,10 @@
 
 namespace aruwlib::control::chassis
 {
-class iChassisSubsystem : public Subsystem
+class ChassisSubsystemInterface : public Subsystem
 {
 public:
-    iChassisSubsystem(Drivers *drivers) : Subsystem(drivers) {}
+    ChassisSubsystemInterface(Drivers *drivers) : Subsystem(drivers) {}
 
     /**
      * @return the number of chassis motors
@@ -43,4 +43,4 @@ public:
 };
 }  // namespace aruwlib::control::chassis
 
-#endif  // I_CHASSIS_SUBSYSTEM_HPP_
+#endif  // CHASSIS_SUBSYSTEM_INTERFACE_

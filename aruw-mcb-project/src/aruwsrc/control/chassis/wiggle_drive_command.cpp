@@ -39,7 +39,7 @@ namespace chassis
 WiggleDriveCommand::WiggleDriveCommand(
     aruwlib::Drivers* drivers,
     ChassisSubsystem* chassis,
-    const aruwlib::control::turret::iTurretSubsystem* turret)
+    const aruwlib::control::turret::TurretSubsystemInterface* turret)
     : drivers(drivers),
       chassis(chassis),
       turret(turret),

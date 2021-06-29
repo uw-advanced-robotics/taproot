@@ -24,7 +24,7 @@
 #include "aruwlib/algorithms/smooth_pid.hpp"
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/control/comprised_command.hpp"
-#include "aruwlib/control/turret/i_turret_subsystem.hpp"
+#include "aruwlib/control/turret/turret_subsystem_interface.hpp"
 
 #include "aruwsrc/control/agitator/agitator_subsystem.hpp"
 #include "aruwsrc/control/sentinel/firing/sentinel_rotate_agitator_command.hpp"
@@ -61,7 +61,7 @@ public:
 
     SentinelTurretCVCommand(
         aruwlib::Drivers *drivers,
-        aruwlib::control::turret::iTurretSubsystem *DoublePitchTurretSubsystem,
+        aruwlib::control::turret::TurretSubsystemInterface *DoublePitchTurretSubsystem,
         aruwsrc::agitator::AgitatorSubsystem *agitatorSubsystem,
         sentinel::firing::SentinelSwitcherSubsystem *switcher);
 
@@ -82,7 +82,7 @@ public:
 private:
     aruwlib::Drivers *drivers;
 
-    aruwlib::control::turret::iTurretSubsystem *sentinelTurret;
+    aruwlib::control::turret::TurretSubsystemInterface *sentinelTurret;
 
     sentinel::firing::SentinelRotateAgitatorCommand rotateAgitator;
 

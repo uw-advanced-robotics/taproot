@@ -27,7 +27,7 @@ namespace aruwlib::control::turret::commands
 {
 TurretSetpointCommand::TurretSetpointCommand(
     aruwlib::Drivers *drivers,
-    iTurretSubsystem *turret,
+    TurretSubsystemInterface *turret,
     const float yawInputScalar,
     const float pitchInputScalar)
     : drivers(drivers),

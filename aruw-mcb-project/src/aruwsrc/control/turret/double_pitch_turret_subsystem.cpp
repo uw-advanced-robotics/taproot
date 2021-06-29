@@ -32,7 +32,7 @@ using namespace aruwlib;
 namespace aruwsrc::control::turret
 {
 DoublePitchTurretSubsystem::DoublePitchTurretSubsystem(Drivers* drivers, bool limitYaw)
-    : iTurretSubsystem(drivers),
+    : TurretSubsystemInterface(drivers),
       currLeftPitchAngle(0.0f, 0.0f, 360.0f),
       currRightPitchAngle(0.0f, 0.0f, 360.0f),
       currYawAngle(0.0f, 0.0f, 360.0f),

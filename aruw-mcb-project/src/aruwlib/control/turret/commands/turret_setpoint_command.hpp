@@ -21,7 +21,7 @@
 #define SENTINEL_TURRET_CHASSIS_RELATIVE_POSITION_COMMAND_HPP_
 
 #include "aruwlib/control/command.hpp"
-#include "aruwlib/control/turret/i_turret_subsystem.hpp"
+#include "aruwlib/control/turret/turret_subsystem_interface.hpp"
 
 namespace aruwlib::control::turret::commands
 {
@@ -34,7 +34,7 @@ class TurretSetpointCommand : public control::Command
 public:
     TurretSetpointCommand(
         Drivers *drivers,
-        control::turret::iTurretSubsystem *turret,
+        control::turret::TurretSubsystemInterface *turret,
         const float yawInputScalar,
         const float pitchInputScalar);
 
@@ -53,7 +53,7 @@ public:
 private:
     Drivers *drivers;
 
-    control::turret::iTurretSubsystem *turret;
+    control::turret::TurretSubsystemInterface *turret;
 
     const float yawInputScalar;
     const float pitchInputScalar;
