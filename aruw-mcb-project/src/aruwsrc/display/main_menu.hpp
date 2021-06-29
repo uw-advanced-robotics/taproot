@@ -25,12 +25,16 @@
 namespace aruwlib
 {
 class Drivers;
+}
+
+namespace aruwsrc
+{
 namespace display
 {
 class MainMenu : public modm::StandardMenu
 {
 public:
-    MainMenu(modm::ViewStack *stack, Drivers *drivers);
+    MainMenu(modm::ViewStack *stack, aruwlib::Drivers *drivers);
 
     virtual ~MainMenu() = default;
 
@@ -42,7 +46,7 @@ public:
 private:
     static constexpr int MAIN_MENU_ID = 2;
 
-    Drivers *drivers;
+    aruwlib::Drivers *drivers;
 
     void addErrorMenuCallback();
     void addHardwareTestMenuCallback();
@@ -51,6 +55,6 @@ private:
     void addCommandSchedulerCallback();
 };  // class MainMenu
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace aruwsrc
 
 #endif  // MAIN_MENU_HPP_

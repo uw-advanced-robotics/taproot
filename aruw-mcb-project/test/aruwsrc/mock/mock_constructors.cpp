@@ -24,11 +24,13 @@
 #include "friction_wheel_subsystem_mock.hpp"
 #include "grabber_subsystem_mock.hpp"
 #include "hopper_subsystem_mock.hpp"
+#include "oled_display_mock.hpp"
 #include "sentinel_drive_subsystem_mock.hpp"
 #include "sentinel_switcher_subsystem_mock.hpp"
 #include "tow_subsystem_mock.hpp"
 #include "turret_subsystem_mock.hpp"
 #include "x_axis_subsystem_mock.hpp"
+#include "xavier_serial_mock.hpp"
 
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors
@@ -94,6 +96,9 @@ GrabberSubsystemMock::GrabberSubsystemMock(
 }
 GrabberSubsystemMock::~GrabberSubsystemMock() {}
 
+OledDisplayMock::OledDisplayMock(aruwlib::Drivers *drivers) : display::OledDisplay(drivers) {}
+OledDisplayMock::~OledDisplayMock() {}
+
 HopperSubsystemMock::HopperSubsystemMock(
     aruwlib::Drivers *drivers,
     aruwlib::gpio::Pwm::Pin pwmPin,
@@ -148,4 +153,7 @@ XAxisSubsystemMock::XAxisSubsystemMock(
 {
 }
 XAxisSubsystemMock::~XAxisSubsystemMock() {}
+
+XavierSerialMock::XavierSerialMock(aruwlib::Drivers *drivers) : serial::XavierSerial(drivers) {}
+XavierSerialMock::~XavierSerialMock() {}
 }  // namespace aruwsrc::mock

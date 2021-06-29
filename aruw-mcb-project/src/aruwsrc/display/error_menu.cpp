@@ -19,11 +19,11 @@
 
 #include "error_menu.hpp"
 
-namespace aruwlib
+namespace aruwsrc
 {
 namespace display
 {
-ErrorMenu::ErrorMenu(modm::ViewStack *vs, Drivers *drivers)
+ErrorMenu::ErrorMenu(modm::ViewStack *vs, aruwlib::Drivers *drivers)
     : AbstractMenu(vs, ERROR_MENU_ID),
       drivers(drivers)
 {
@@ -62,4 +62,4 @@ void ErrorMenu::draw()
     // TODO implement, see issue #222
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace aruwsrc

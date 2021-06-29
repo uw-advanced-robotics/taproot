@@ -21,13 +21,14 @@
 
 #include "aruwlib/drivers.hpp"
 
+using namespace aruwlib::display;
 using namespace modm::literals;
 
-namespace aruwlib
+namespace aruwsrc
 {
 namespace display
 {
-OledDisplay::OledDisplay(Drivers *drivers)
+OledDisplay::OledDisplay(aruwlib::Drivers *drivers)
     : display(),
       viewStack(&display),
       buttonHandler(drivers),
@@ -83,4 +84,4 @@ void OledDisplay::updateMenu()
     viewStack.update();
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace aruwsrc

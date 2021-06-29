@@ -20,10 +20,10 @@
 #include "sentinel_turret_cv_command.hpp"
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
-#include "aruwlib/communication/serial/xavier_serial.hpp"
 #include "aruwlib/control/comprised_command.hpp"
 #include "aruwlib/drivers.hpp"
 
+#include "aruwsrc/communication/serial/xavier_serial.hpp"
 #include "aruwsrc/control/turret/double_pitch_turret_subsystem.hpp"
 
 using namespace aruwlib;

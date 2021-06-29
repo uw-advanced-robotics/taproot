@@ -19,16 +19,19 @@
 
 #include "main_menu.hpp"
 
-#include "command_scheduler_menu.hpp"
-#include "error_menu.hpp"
-#include "hardware_test_menu.hpp"
-#include "motor_menu.hpp"
+#include "aruwlib/display/command_scheduler_menu.hpp"
+#include "aruwlib/display/hardware_test_menu.hpp"
+#include "aruwlib/display/motor_menu.hpp"
 
-namespace aruwlib
+#include "error_menu.hpp"
+
+using namespace aruwlib::display;
+
+namespace aruwsrc
 {
 namespace display
 {
-MainMenu::MainMenu(modm::ViewStack* stack, Drivers* drivers)
+MainMenu::MainMenu(modm::ViewStack* stack, aruwlib::Drivers* drivers)
     : modm::StandardMenu(stack, MAIN_MENU_ID),
       drivers(drivers)
 {
@@ -85,4 +88,4 @@ void MainMenu::addCommandSchedulerCallback()
 }
 }  // namespace display
 
-}  // namespace aruwlib
+}  // namespace aruwsrc

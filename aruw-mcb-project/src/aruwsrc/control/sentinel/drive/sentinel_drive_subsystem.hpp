@@ -29,9 +29,9 @@
 #include "aruwlib/motor/dji_motor.hpp"
 #endif
 
+#include "aruwlib/control/chassis/power_limiter.hpp"
 #include "aruwlib/motor/m3508_constants.hpp"
 
-#include "aruwsrc/control/chassis/power_limiter.hpp"
 #include "modm/math/filter/pid.hpp"
 
 #include "util_macros.hpp"

@@ -17,6 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef ENV_UNIT_TESTS
+
 #include "drivers_singleton.hpp"
 
 namespace aruwlib
@@ -35,3 +37,5 @@ Drivers DriversSingleton::drivers;
 
 Drivers *DoNotUse_getDrivers() { return &DriversSingleton::drivers; }
 }  // namespace aruwlib
+
+#endif

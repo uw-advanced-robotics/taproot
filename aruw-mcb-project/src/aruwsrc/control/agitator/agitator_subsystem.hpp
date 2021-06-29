@@ -29,10 +29,9 @@
 #include "aruwlib/motor/dji_motor.hpp"
 #endif
 
+#include "aruwlib/algorithms/smooth_pid.hpp"
 #include "aruwlib/control/setpoint/algorithms/setpoint_continuous_jam_checker.hpp"
 #include "aruwlib/control/setpoint/interfaces/setpoint_subsystem.hpp"
-
-#include "aruwsrc/algorithms/turret_pid.hpp"
 
 #include "util_macros.hpp"
 
@@ -239,7 +238,7 @@ private:
     /**
      * PID controller for running postiion PID on unwrapped agitator angle (in radians).
      */
-    aruwsrc::algorithms::TurretPid agitatorPositionPid;
+    aruwsrc::algorithms::SmoothPid agitatorPositionPid;
 
     /**
      * The object that runs jam detection.
