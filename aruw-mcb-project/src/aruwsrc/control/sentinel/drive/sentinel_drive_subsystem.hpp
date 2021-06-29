@@ -21,7 +21,7 @@
 #define SUBSYSTEM_SENTINEL_DRIVE_HPP_
 
 #include "aruwlib/communication/gpio/digital.hpp"
-#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
+#include "aruwlib/control/chassis/chassis_subsystem_interface.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include "aruwlib/mock/dji_motor_mock.hpp"
@@ -38,7 +38,7 @@
 
 namespace aruwsrc::control::sentinel::drive
 {
-class SentinelDriveSubsystem : public aruwlib::control::chassis::iChassisSubsystem
+class SentinelDriveSubsystem : public aruwlib::control::chassis::ChassisSubsystemInterface
 {
 public:
     /// @see power_limiter.hpp for what these mean

@@ -42,8 +42,16 @@ public:
     MOCK_METHOD(void, stopAutoAim, (), (override));
     MOCK_METHOD(const TurretAimData &, getLastAimData, (), (const override));
     MOCK_METHOD(bool, lastAimDataValid, (), (const override));
-    MOCK_METHOD(void, attachTurret, (aruwlib::control::turret::iTurretSubsystem *), (override));
-    MOCK_METHOD(void, attachChassis, (aruwlib::control::chassis::iChassisSubsystem *), (override));
+    MOCK_METHOD(
+        void,
+        attachTurret,
+        (aruwlib::control::turret::TurretSubsystemInterface *),
+        (override));
+    MOCK_METHOD(
+        void,
+        attachChassis,
+        (aruwlib::control::chassis::ChassisSubsystemInterface *),
+        (override));
 };  // class XavierSerialMock
 }  // namespace mock
 }  // namespace aruwsrc

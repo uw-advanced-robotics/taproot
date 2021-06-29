@@ -23,7 +23,7 @@
 #include "aruwlib/algorithms/extended_kalman.hpp"
 #include "aruwlib/algorithms/math_user_utils.hpp"
 #include "aruwlib/communication/gpio/analog.hpp"
-#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
+#include "aruwlib/control/chassis/chassis_subsystem_interface.hpp"
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include "aruwlib/mock/dji_motor_mock.hpp"
@@ -54,7 +54,7 @@ namespace chassis
  *     - In other words, 'x' is the bow/stern and 'y' is starboard/
  *       port in boat terms.
  */
-class ChassisSubsystem : public aruwlib::control::chassis::iChassisSubsystem
+class ChassisSubsystem : public aruwlib::control::chassis::ChassisSubsystemInterface
 {
 public:
     /**
@@ -353,7 +353,7 @@ public:
         aruwlib::motor::MotorId rightFrontMotorId = RIGHT_FRONT_MOTOR_ID,
         aruwlib::motor::MotorId rightBackMotorId = RIGHT_BACK_MOTOR_ID,
         aruwlib::gpio::Analog::Pin currentPin = CURRENT_SENSOR_PIN)
-        : aruwlib::control::chassis::iChassisSubsystem(drivers),
+        : aruwlib::control::chassis::ChassisSubsystemInterface(drivers),
           leftFrontVelocityPid(
               VELOCITY_PID_KP,
               VELOCITY_PID_KI,

@@ -22,8 +22,8 @@
 #include <cstring>
 
 #include "aruwlib/architecture/endianness_wrappers.hpp"
-#include "aruwlib/control/chassis/i_chassis_subsystem.hpp"
-#include "aruwlib/control/turret/i_turret_subsystem.hpp"
+#include "aruwlib/control/chassis/chassis_subsystem_interface.hpp"
+#include "aruwlib/control/turret/turret_subsystem_interface.hpp"
 #include "aruwlib/drivers.hpp"
 
 using namespace aruwlib::arch;

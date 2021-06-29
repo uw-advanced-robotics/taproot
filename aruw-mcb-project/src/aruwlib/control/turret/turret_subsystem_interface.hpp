@@ -17,8 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef I_TURRET_SUBSYSTEM_HPP_
-#define I_TURRET_SUBSYSTEM_HPP_
+#ifndef TURRET_SUBSYSTEM_INTERFACE_
+#define TURRET_SUBSYSTEM_INTERFACE_
 
 #include "aruwlib/algorithms/contiguous_float.hpp"
 
@@ -29,10 +29,10 @@ namespace aruwlib::control::turret
 /**
  * Interface for a generic turret motor with a pitch and yaw motor.
  */
-class iTurretSubsystem : public Subsystem
+class TurretSubsystemInterface : public Subsystem
 {
 public:
-    explicit iTurretSubsystem(Drivers *drivers) : Subsystem(drivers) {}
+    explicit TurretSubsystemInterface(Drivers *drivers) : Subsystem(drivers) {}
 
     /**
      * @return the desired yaw value value of whatever is being controlled.
@@ -90,4 +90,4 @@ public:
 };
 }  // namespace aruwlib::control::turret
 
-#endif  // I_TURRET_SUBSYSTEM_HPP_
+#endif  // TURRET_SUBSYSTEM_INTERFACE_
