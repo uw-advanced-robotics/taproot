@@ -1,8 +1,7 @@
 <library>
   <repositories>
-    <!-- path to modm repository -->
     <repository>
-      <path>../../modm/repo.lb</path>
+      <path>../../{{ modm_path }}</path>
     </repository>
   </repositories>
   <options>

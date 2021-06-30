@@ -1,0 +1,17 @@
+
+def init(repo):
+    repo.name = "aruw-mcb"
+    repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
+
+    repo.add_option(
+        StringOption(name="project_name",
+                     default="mcb-project",
+                     description="Project name"))
+    repo.add_option(
+        StringOption(name="modm_repo_lb",
+                     default="../modm/repo.lb",
+                     description="Path to repo.lb file, relative to your project.xml file"))
+
+def prepare(repo, options):
+    repo.add_modules_recursive("./src", modulefile="*.lb")
+    repo.add_modules_recursive("./build_tools", modulefile="*.lb")

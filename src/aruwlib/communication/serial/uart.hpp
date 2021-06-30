@@ -29,8 +29,7 @@
 #endif
 
 #include "aruwlib/rm-dev-board-a/board.hpp"
-
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {

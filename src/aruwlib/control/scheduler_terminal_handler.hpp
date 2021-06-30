@@ -21,8 +21,7 @@
 #define SCHEDULER_TERMINAL_HANDLER_HPP_
 
 #include "aruwlib/communication/serial/terminal_serial.hpp"
-
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {

@@ -1,12 +1,10 @@
 <library>
   <repositories>
-    <!-- path to modm repository -->
     <repository>
-      <path>../modm/repo.lb</path>
+      <path>../{{ modm_path }}</path>
     </repository>
   </repositories>
   <options>
-    <!-- give this project a custom name -->
     <option name="modm:build:project.name">aruw-mcb</option>
     <option name="modm:build:openocd.cfg">openocd.cfg</option>
     <option name="modm:build:scons:include_sconstruct">False</option>

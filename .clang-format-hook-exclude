@@ -1,8 +1,5 @@
 .gitlab/*
 .vscode/*
-aruw-mcb-project/build/*
-aruw-mcb-project/build_tools/*
-aruw-mcb-project/modm/*
-aruw-mcb-project/sim-modm/*
+test-project
 modm/*
 scripts/*

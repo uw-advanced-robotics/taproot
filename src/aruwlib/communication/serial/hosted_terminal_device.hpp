@@ -24,10 +24,10 @@
 
 #include <mutex>
 
+#include "aruwlib/util_macros.hpp"
+
 #include "modm/container/deque.hpp"
 #include "modm/io/iodevice.hpp"
-
-#include "util_macros.hpp"
 
 namespace std
 {

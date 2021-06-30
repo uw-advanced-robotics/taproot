@@ -21,8 +21,7 @@
 #define CONTROL_OPERATOR_INTERFACE_HPP_
 
 #include "aruwlib/algorithms/linear_interpolation.hpp"
-
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {

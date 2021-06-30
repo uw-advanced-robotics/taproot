@@ -24,10 +24,9 @@
 
 #include "aruwlib/algorithms/MahonyAHRS.h"
 #include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
-
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

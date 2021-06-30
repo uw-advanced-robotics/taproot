@@ -21,9 +21,9 @@
 #define DJI_MOTOR_TERMINAL_SERIAL_HANDLER_HPP_
 
 #include "aruwlib/communication/serial/terminal_serial.hpp"
+#include "aruwlib/util_macros.hpp"
 
 #include "dji_motor.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

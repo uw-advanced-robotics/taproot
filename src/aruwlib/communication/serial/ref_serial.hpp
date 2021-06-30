@@ -23,11 +23,11 @@
 #include <cstdint>
 
 #include "aruwlib/architecture/timeout.hpp"
+#include "aruwlib/util_macros.hpp"
 
 #include "modm/container/deque.hpp"
 
 #include "dji_serial.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

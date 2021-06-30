@@ -20,8 +20,9 @@
 #ifndef COMMAND_HPP_
 #define COMMAND_HPP_
 
+#include "aruwlib/util_macros.hpp"
+
 #include "command_scheduler_types.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

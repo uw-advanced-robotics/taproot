@@ -22,8 +22,9 @@
 
 #include <iterator>
 
+#include "aruwlib/util_macros.hpp"
+
 #include "command_scheduler_types.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

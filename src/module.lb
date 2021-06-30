@@ -1,0 +1,35 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of aruwlib.
+#
+# aruwlib is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# aruwlib is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+
+def init(module):
+    module.name = ":core"
+    module.description = "Core library features"
+
+def prepare(module, options):
+    module.add_option(BooleanOption(
+        name="generate_driver_hpp", default=True,
+        description="Specify whether or not to generate drivers.hpp.\
+                     Set to false after you generate drivers.hpp the first time."))
+
+    return True
+
+def build(env):
+    env.outbasepath = env["aruw-mcb:project_name"] + "/src"
+    env.copy("aruwlib")
+
+    if (env["generate_driver_hpp"]):
+        env.copy("drivers.hpp")

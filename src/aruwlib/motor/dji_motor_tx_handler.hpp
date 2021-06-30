@@ -51,8 +51,9 @@
 
 #include <limits.h>
 
+#include "aruwlib/util_macros.hpp"
+
 #include "dji_motor.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

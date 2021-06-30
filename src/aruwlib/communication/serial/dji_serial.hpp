@@ -24,8 +24,7 @@
 
 #include "aruwlib/algorithms/crc.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
-
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {

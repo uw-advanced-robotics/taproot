@@ -22,11 +22,11 @@
 
 #include "aruwlib/architecture/timeout.hpp"
 #include "aruwlib/communication/serial/terminal_serial.hpp"
+#include "aruwlib/util_macros.hpp"
 
 #include "modm/container.hpp"
 
 #include "system_error.hpp"
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

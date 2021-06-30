@@ -23,8 +23,7 @@
 #include <vector>
 
 #include "aruwlib/communication/remote.hpp"
-
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {

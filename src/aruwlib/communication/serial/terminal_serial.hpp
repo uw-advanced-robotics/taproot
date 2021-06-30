@@ -32,10 +32,9 @@
 #include "aruwlib/architecture/periodic_timer.hpp"
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/util_macros.hpp"
 
 #include "modm/io.hpp"
-
-#include "util_macros.hpp"
 
 namespace aruwlib
 {

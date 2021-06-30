@@ -70,7 +70,7 @@ mcb build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd aruw-mcb-project
+    - cd test-project
     - lbuild build
     - python3 $(which scons) build -j${NUM_JOBS} profile=fast additional-ccflags=-Werror
 
@@ -78,7 +78,7 @@ sim build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd aruw-mcb-project-sim
+    - cd test-project
     - lbuild build
     - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS}
 
@@ -86,7 +86,7 @@ tests build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd aruw-mcb-project-sim
+    - cd test-project
     - lbuild build
     - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE

@@ -26,7 +26,7 @@
 #include "modm/platform.hpp"
 #endif
 
-#include "util_macros.hpp"
+#include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
 {
