@@ -41,9 +41,8 @@
 #include "aruwlib/mock/scheduler_terminal_handler_mock.hpp"
 #include "aruwlib/mock/terminal_serial_mock.hpp"
 #include "aruwlib/mock/uart_mock.hpp"
-
-#include "aruwsrc/mock/oled_display_mock.hpp"
-#include "aruwsrc/mock/xavier_serial_mock.hpp"
+/* Start user mock includes */
+/* End user mock includes */
 #else
 #include "aruwlib/architecture/profiler.hpp"
 #include "aruwlib/communication/can/can.hpp"
@@ -65,9 +64,8 @@
 #include "aruwlib/errors/error_controller.hpp"
 #include "aruwlib/motor/dji_motor_terminal_serial_handler.hpp"
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
-
-#include "aruwsrc/communication/serial/xavier_serial.hpp"
-#include "aruwsrc/display/oled_display.hpp"
+/* Start user mock includes */
+/* End user mock includes */
 #endif
 
 namespace aruwlib
@@ -106,8 +104,8 @@ public:
           djiMotorTerminalSerialHandler(this),
           schedulerTerminalHandler(this),
           imuRxHandler(this)
-    {
-    }
+    /* Begin user constructor defines */
+    /* End user mock drivers defines */ {}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
     testing::NiceMock<mock::CanMock> can;
@@ -122,16 +120,16 @@ public:
     testing::NiceMock<mock::RefSerialMock> refSerial;
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
     testing::NiceMock<mock::ControlOperatorInterfaceMock> controlOperatorInterface;
-    testing::NiceMock<aruwsrc::mock::XavierSerialMock> xavierSerial;
     testing::NiceMock<mock::CommandMapperMock> commandMapper;
     mock::ErrorControllerMock errorController;
     testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
     testing::NiceMock<mock::DjiMotorTxHandlerMock> djiMotorTxHandler;
-    testing::NiceMock<aruwsrc::mock::OledDisplayMock> oledDisplay;
     arch::Profiler profiler;
     testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
     testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
     testing::NiceMock<mock::ImuRxListenerMock> imuRxHandler;
+/* Begin user mock drivers defines */
+/* End user mock drivers defines */
 #else
 public:
     can::Can can;
@@ -146,16 +144,16 @@ public:
     serial::RefSerial refSerial;
     control::CommandScheduler commandScheduler;
     control::ControlOperatorInterface controlOperatorInterface;
-    aruwsrc::serial::XavierSerial xavierSerial;
     control::CommandMapper commandMapper;
     errors::ErrorController errorController;
     communication::serial::TerminalSerial terminalSerial;
     motor::DjiMotorTxHandler djiMotorTxHandler;
-    aruwsrc::display::OledDisplay oledDisplay;
     arch::Profiler profiler;
     motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
     control::SchedulerTerminalHandler schedulerTerminalHandler;
     can::ImuRxListener imuRxHandler;
+/* Begin user drivers defines */
+/* End user drivers defines */
 #endif
 };  // class Drivers
 

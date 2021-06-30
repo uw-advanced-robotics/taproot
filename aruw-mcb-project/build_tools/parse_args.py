@@ -16,7 +16,6 @@
 # along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
 
 from SCons.Script import *
-from . import extract_robot_type
 
 
 CMD_LINE_ARGS                       = 1
@@ -73,8 +72,5 @@ def parse_args():
     args["PROFILING"] = ARGUMENTS.get("profiling", "false")
     if args["PROFILING"] not in VALID_PROFILING_TYPES:
         raise Exception("You specified an invalid profiling type.\n" + USAGE)
-
-    # Extract the robot type from either the command line or robot_type.hpp
-    args["ROBOT_TYPE"] = extract_robot_type.get_robot_type()
 
     return args

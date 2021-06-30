@@ -24,8 +24,6 @@
 #include "aruwlib/control/hold_command_mapping.hpp"
 #include "aruwlib/drivers.hpp"
 
-#include "aruwsrc/control/robot_control.hpp"
-
 #include "test_command.hpp"
 #include "test_subsystem.hpp"
 

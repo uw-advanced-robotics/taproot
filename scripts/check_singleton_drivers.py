@@ -16,12 +16,6 @@ string_to_check = 'DoNotUse_getDrivers'
 files_to_whitelist = [
     'aruwlib/drivers_singleton.cpp',
     'aruwlib/drivers_singleton.hpp',
-    'aruwsrc/control/engineer_control.cpp',
-    'aruwsrc/control/old_soldier_control.cpp',
-    'aruwsrc/control/sentinel_control.cpp',
-    'aruwsrc/control/soldier_control.cpp',
-    'aruwsrc/control/drone_control.cpp',
-    'aruwsrc/control/hero_control.cpp',
     'main.cpp'
 ]
 

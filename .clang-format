@@ -87,7 +87,7 @@ IncludeCategories:
   - Regex:    '^[<"]aruwlib'
     Priority: 4
   # This forces full include paths above folder-specific includes.
-  # (i.e. "aruwsrc/control/foo.hpp" is above just "bar.hpp")
+  # (i.e. "bar/control/foo.hpp" is above just "bar.hpp")
   - Regex:    '/+'
     Priority: 5
   # Other libraries' h files (with quotes).
