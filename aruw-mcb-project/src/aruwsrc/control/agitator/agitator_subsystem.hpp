@@ -238,7 +238,7 @@ private:
     /**
      * PID controller for running postiion PID on unwrapped agitator angle (in radians).
      */
-    aruwsrc::algorithms::SmoothPid agitatorPositionPid;
+    aruwlib::algorithms::SmoothPid agitatorPositionPid;
 
     /**
      * The object that runs jam detection.

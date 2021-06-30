@@ -26,7 +26,7 @@ using namespace aruwlib::algorithms;
 using namespace aruwlib::motor;
 using std::max;
 
-namespace aruwsrc::chassis
+namespace aruwlib::control::chassis
 {
 PowerLimiter::PowerLimiter(
     const aruwlib::Drivers *drivers,
@@ -209,4 +209,4 @@ float PowerLimiter::getChassisCurrent()
 
     return prevChassisCurrent;
 }
-}  // namespace aruwsrc::chassis
+}  // namespace aruwlib::control::chassis

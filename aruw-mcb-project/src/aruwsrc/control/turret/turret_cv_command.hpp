@@ -78,8 +78,8 @@ private:
     aruwlib::algorithms::ContiguousFloat yawTargetAngle;
     aruwlib::algorithms::ContiguousFloat pitchTargetAngle;
 
-    aruwsrc::algorithms::SmoothPid yawPid;
-    aruwsrc::algorithms::SmoothPid pitchPid;
+    aruwlib::algorithms::SmoothPid yawPid;
+    aruwlib::algorithms::SmoothPid pitchPid;
 
     uint32_t prevTime;
 

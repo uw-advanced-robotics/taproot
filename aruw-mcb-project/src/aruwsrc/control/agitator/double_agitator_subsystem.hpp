@@ -157,8 +157,8 @@ private:
     /**
      * PID controller for running postiion PID on unwrapped agitator angle (in radians).
      */
-    aruwsrc::algorithms::SmoothPid agitatorPositionPid1;
-    aruwsrc::algorithms::SmoothPid agitatorPositionPid2;
+    aruwlib::algorithms::SmoothPid agitatorPositionPid1;
+    aruwlib::algorithms::SmoothPid agitatorPositionPid2;
 
     /**
      * First of two motors driving the shaft on the double agitator subsystem
