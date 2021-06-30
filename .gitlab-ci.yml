@@ -56,178 +56,47 @@ clang-format:
   only: *verification_only
   except: *verification_except
 
-Policy Checks:
+policy checks:
   stage: Initial Verification
   script:
-    - python3 ./scripts/check_singleton_drivers.py ./aruw-mcb-project/src/ 
+    - python3 ./scripts/check_singleton_drivers.py ./src
     - python3 ./scripts/check_license_headers.py
   variables:
     GIT_SUBMODULE_STRATEGY: none
   only: *verification_only
   except: *verification_except
 
-# Hidden jobs to be extended for each robot
-
-.mcb build:
+mcb build:
   stage: Build all Targets
   only: *default_only
   script:
     - cd aruw-mcb-project
-    - python3 $(which scons) build robot=TARGET_$ROBOT -j${NUM_JOBS} additional-ccflags=-Werror
-    - python3 $(which scons) size robot=TARGET_$ROBOT -j${NUM_JOBS} additional-ccflags=-Werror > size.txt
-    - python3 ../scripts/parse_metrics.py $ROBOT
-    - cp $DEFAULT_BUILD_ELF_FILE ../$ARTIFACT_PATH/aruw-mcb-$ROBOT.elf
-  artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$ROBOT-mcb"
-    paths:
-      - $ARTIFACT_PATH/*
-    expire_in: 2 weeks
-    reports:
-      metrics: metrics.txt
+    - lbuild build
+    - python3 $(which scons) build -j${NUM_JOBS} profile=fast additional-ccflags=-Werror
 
-.sim build:
+sim build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd aruw-mcb-project
-    - python3 $(which scons) build-sim profile=fast robot=TARGET_$ROBOT -j${NUM_JOBS}
+    - cd aruw-mcb-project-sim
+    - lbuild build
+    - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS}
 
-.test build:
+tests build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd aruw-mcb-project
-    - python3 $(which scons) build-tests profile=fast robot=TARGET_$ROBOT -j${NUM_JOBS}
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
-
-# Soldier build
-
-Soldier MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: SOLDIER
-
-Soldier Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: SOLDIER
-
-Soldier Test Build:
-  stage: Build all Targets
-  only: *default_only
-  script:
-    - cd aruw-mcb-project
-    - python3 $(which scons) run-tests-gcov profile=fast robot=TARGET_SOLDIER -j${NUM_JOBS}
+    - cd aruw-mcb-project-sim
+    - lbuild build
+    - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all $DEFAULT_TESTS_BUILD_ELF_FILE
     - cd .. && gcovr -g --xml > cobertura.xml
-    - 'sed -i "s=<source>.</source>=<source>./aruw-mcb-project</source>=g" cobertura.xml'
-    - 'sed -i "s;filename=\";filename=\"aruw-mcb-project/;g" cobertura.xml'
+    - 'sed -i "s=<source>.</source>=<source>./aruw-mcb-project-sim</source>=g" cobertura.xml'
+    - 'sed -i "s;filename=\";filename=\"aruw-mcb-project-sim/;g" cobertura.xml'
   artifacts:
-    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-soldier-tests"
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:
       cobertura: cobertura.xml
-
-# Drone build
-
-Drone MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: DRONE
-
-Drone Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: DRONE
-
-Drone Test Build:
-  extends:
-    - .test build
-  variables:
-    ROBOT: DRONE
-
-# Engineer build
-
-Engineer MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: ENGINEER
-
-Engineer Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: ENGINEER
-
-Engineer Test Build:
-  extends:
-    - .test build
-  variables:
-    ROBOT: ENGINEER
-
-# Hero build
-
-Hero MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: HERO
-
-Hero Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: HERO
-
-Hero Test Build:
-  extends:
-    - .test build
-  variables:
-    ROBOT: HERO
-
-# Old Soldier build
-
-Old Soldier MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: OLD_SOLDIER
-
-Old Soldier Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: OLD_SOLDIER
-
-Old Soldier Test Build:
-  extends:
-    - .test build
-  variables:
-    ROBOT: OLD_SOLDIER
-
-# Sentinel build
-
-Sentinel MCB Build:
-  extends:
-    - .mcb build
-  variables:
-    ROBOT: SENTINEL
-
-Sentinel Sim Build:
-  extends:
-    - .sim build
-  variables:
-    ROBOT: SENTINEL
-
-Sentinel Test Build:
-  extends:
-    - .test build
-  variables:
-    ROBOT: SENTINEL
 
 # Pages deploy
 

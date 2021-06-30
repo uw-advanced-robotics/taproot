@@ -22,10 +22,10 @@ import sys
 
 SCRIPT_DIR = os.path.dirname(__file__)
 # These should be relative to the directory that this script is housed in.
-PATHS_TO_CHECK = [ '../aruw-mcb-project/src/',
-                   '../aruw-mcb-project/test/' ]
-FILES_TO_IGNORE = [ '../aruw-mcb-project/src/aruwlib/algorithms/MahonyAHRS.cpp',
-                    '../aruw-mcb-project/src/aruwlib/algorithms/MahonyAHRS.h' ]
+PATHS_TO_CHECK = [ '../src/',
+                   '../test/' ]
+FILES_TO_IGNORE = [ '../src/aruwlib/algorithms/MahonyAHRS.cpp',
+                    '../src/aruwlib/algorithms/MahonyAHRS.h' ]
 
 PATHS_TO_CHECK = [ os.path.join(SCRIPT_DIR, path) for path in PATHS_TO_CHECK ]
 FILES_TO_IGNORE = [ os.path.join(SCRIPT_DIR, path) for path in FILES_TO_IGNORE ]
