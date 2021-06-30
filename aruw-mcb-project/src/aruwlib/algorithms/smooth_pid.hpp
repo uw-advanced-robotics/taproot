@@ -24,7 +24,7 @@
 
 #include "aruwlib/algorithms/extended_kalman.hpp"
 
-namespace aruwsrc
+namespace aruwlib
 {
 namespace algorithms
 {
@@ -84,6 +84,6 @@ private:
 
 }  // namespace algorithms
 
-}  // namespace aruwsrc
+}  // namespace aruwlib
 
 #endif

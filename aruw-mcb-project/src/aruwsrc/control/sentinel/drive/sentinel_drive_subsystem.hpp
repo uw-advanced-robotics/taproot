@@ -139,7 +139,7 @@ private:
 
     const aruwlib::motor::M3508Constants motorConstants;
 
-    aruwsrc::chassis::PowerLimiter powerLimiter;
+    aruwlib::control::chassis::PowerLimiter powerLimiter;
 };
 
 }  // namespace aruwsrc::control::sentinel::drive

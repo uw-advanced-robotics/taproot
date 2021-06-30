@@ -342,7 +342,7 @@ private:
 #endif
 
     aruwlib::motor::DjiMotor* motors[4];
-    PowerLimiter chassisPowerLimiter;
+    aruwlib::control::chassis::PowerLimiter chassisPowerLimiter;
     const aruwlib::motor::M3508Constants motorConstants;
 
 public:

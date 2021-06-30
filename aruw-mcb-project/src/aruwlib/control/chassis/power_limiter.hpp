@@ -29,7 +29,7 @@ namespace aruwlib
 class Drivers;
 }
 
-namespace aruwsrc::chassis
+namespace aruwlib::control::chassis
 {
 /**
  * A utility object that a chassis may use to provide power limiting. Assumes the motor
@@ -119,6 +119,6 @@ private:
      */
     void updatePowerAndEnergyBuffer();
 };
-}  // namespace aruwsrc::chassis
+}  // namespace aruwlib::control::chassis
 
 #endif  // POWER_LIMITOR_HPP_

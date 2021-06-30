@@ -135,7 +135,7 @@ void DoublePitchTurretSubsystem::runPositionPid(
     const uint32_t dt,
     const float errorBtwnMotors,
     const float pitchGravityCompensation,
-    algorithms::SmoothPid& pidController,
+    aruwlib::algorithms::SmoothPid& pidController,
     DjiMotor& motor)
 {
     const float positionControllerError = errorBtwnMotors + currAngle.difference(setpoint);

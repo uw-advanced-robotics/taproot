@@ -23,7 +23,7 @@
 
 using namespace aruwlib::algorithms;
 
-namespace aruwsrc
+namespace aruwlib
 {
 namespace algorithms
 {
@@ -64,4 +64,4 @@ void SmoothPid::reset()
 
 }  // namespace algorithms
 
-}  // namespace aruwsrc
+}  // namespace aruwlib

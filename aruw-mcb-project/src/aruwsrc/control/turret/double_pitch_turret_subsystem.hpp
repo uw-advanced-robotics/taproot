@@ -164,9 +164,9 @@ private:
     aruwlib::algorithms::ContiguousFloat yawTarget;
     aruwlib::algorithms::ContiguousFloat pitchTarget;
 
-    aruwsrc::algorithms::SmoothPid yawMotorPid;
-    aruwsrc::algorithms::SmoothPid leftPitchPid;
-    aruwsrc::algorithms::SmoothPid rightPitchPid;
+    aruwlib::algorithms::SmoothPid yawMotorPid;
+    aruwlib::algorithms::SmoothPid leftPitchPid;
+    aruwlib::algorithms::SmoothPid rightPitchPid;
 
     uint32_t prevTime;
 
@@ -227,7 +227,7 @@ private:
         const uint32_t dt,
         const float errorBtwnMotors,
         const float pitchGravityCompensation,
-        algorithms::SmoothPid& pidController,
+        aruwlib::algorithms::SmoothPid& pidController,
         aruwlib::motor::DjiMotor& motor);
 
     /**

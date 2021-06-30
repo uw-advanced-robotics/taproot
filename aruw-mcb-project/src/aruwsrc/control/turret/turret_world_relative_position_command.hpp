@@ -136,8 +136,8 @@ private:
 
     uint32_t prevTime;
 
-    aruwsrc::algorithms::SmoothPid yawPid;
-    aruwsrc::algorithms::SmoothPid pitchPid;
+    aruwlib::algorithms::SmoothPid yawPid;
+    aruwlib::algorithms::SmoothPid pitchPid;
 
     const bool useImuOnTurret;
     bool usingImuOnTurret;
