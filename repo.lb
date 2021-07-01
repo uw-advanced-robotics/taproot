@@ -1,3 +1,4 @@
+import subprocess
 
 def init(repo):
     repo.name = "aruw-mcb"
@@ -16,3 +17,18 @@ def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
     repo.add_modules_recursive("./build_tools", modulefile="*.lb")
+
+def build(env):
+    print('building modm')
+    try:
+        subprocess.run(["lbuild", "build"], check=True, cwd="{0}".format(env["aruw-mcb:project_name"]))
+    except subprocess.CalledProcessError as e:
+        print(e.output())
+        exit(1)
+
+    print('building sim-modm')
+    try:
+        subprocess.run(["lbuild", "build"], check=True, cwd="{0}/sim-modm".format(env["aruw-mcb:project_name"]))
+    except subprocess.CalledProcessError as e:
+        print(e.output())
+        exit(1)
