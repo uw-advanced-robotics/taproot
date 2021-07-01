@@ -76,11 +76,11 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "${workspaceRoot}",
-        "./aruw-mcb-project/modm/src",
-        "./aruw-mcb-project/modm/ext/cmsis/core",
-        "./aruw-mcb-project/modm/ext/cmsis/device",
-        "./aruw-mcb-project/src",
-        "./aruw-mcb-project/test"
+        "./test-project/test-project/modm/src",
+        "./test-project/test-project/modm/ext/cmsis/core",
+        "./test-project/test-project/modm/ext/cmsis/device",
+        "./test-project/test-project/src",
+        "./test-project/test-project/test"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",

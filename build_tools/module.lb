@@ -32,7 +32,7 @@ def build(env):
     env.copy("openocd.cfg")
 
     if env["include_sconstruct"]:
-        env.copy("SConstruct")
+        env.template("SConstruct.in", "SConstruct")
 
 
 descr_include_sconstruct = """# Generate a SConstruct file

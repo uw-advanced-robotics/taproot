@@ -7,10 +7,9 @@
   <options>
     <option name="aruw-mcb:project_name">test-project</option>
     <option name="aruw-mcb:modm_repo_lb">../modm/repo.lb</option>
-    <option name="aruw-mcb:core:generate_driver_hpp">False</option>
   </options>
   <modules>
-    <module>aruw-mcb:core</module>
+    <module>aruw-mcb:testing:tests</module>
     <module>aruw-mcb:build</module>
   </modules>
 </library>

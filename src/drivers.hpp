@@ -94,12 +94,10 @@ public:
           commandScheduler(this, true),
 #endif
           controlOperatorInterface(this),
-          xavierSerial(this),
           commandMapper(this),
           errorController(this),
           terminalSerial(this),
           djiMotorTxHandler(this),
-          oledDisplay(this),
           profiler(),
           djiMotorTerminalSerialHandler(this),
           schedulerTerminalHandler(this),

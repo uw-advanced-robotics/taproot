@@ -1,0 +1,38 @@
+import os
+
+class Mock(Module):
+    def init(self, module):
+        module.name = ":testing:mock"
+
+    def prepare(self, module, options):
+        return True
+
+    def build(self, env):
+        env.outbasepath = env["aruw-mcb:project_name"] + "/test/aruwlib"
+        env.copy("mock")
+
+class AruwMCBTests(Module):
+    def init(self, module):
+        module.name = ":testing:tests"
+
+    def prepare(self, module, options):
+        module.depends(
+            "aruw-mcb:testing:mock",
+            "aruw-mcb:core")
+        return True
+
+    def build(self, env):
+        env.outbasepath = env["aruw-mcb:project_name"] + "/test/aruwlib"
+        env.copy(".", ignore=env.ignore_paths("*/mock/*"))
+
+def init(module):
+    module.name = ":testing"
+    module.description = "aruw-mcb Test Framework"
+
+def prepare(module, options):
+    module.add_submodule(Mock())
+    module.add_submodule(AruwMCBTests())
+    return True
+
+def build(env):
+    pass

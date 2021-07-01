@@ -23,7 +23,7 @@ from SCons.Script import *
 
 
 # Define project settings and build paths
-PROJECT_NAME        = "aruw-mcb"
+PROJECT_NAME        = "{{ options["aruw-mcb:project_name"] }}"
 BUILD_PATH          = "build"
 HARDWARE_MODM_PATH  = "modm"
 HOSTED_MODM_PATH    = "sim-modm/modm"
@@ -71,8 +71,7 @@ env["CONFIG_ARTIFACT_PATH"] = join(env["CONFIG_BUILD_BASE"], "artifact")
 env["CONFIG_PROFILE"] = args["BUILD_PROFILE"]
 
 
-print("Configured {0} parallel build jobs (-j{0}), {1}"
-    .format(GetOption("num_jobs"), args["ROBOT_TYPE"]))
+print("Configured {0} parallel build jobs (-j{0})".format(GetOption("num_jobs")))
 
 
 # Building all libraries (read from sconscript files located in provided dirs)
@@ -94,9 +93,6 @@ env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # Add source directory to build path (for including header files)
 env.AppendUnique(CPPPATH=[abspath(r"./src")])
-
-# Append on the global robot target build flag
-env.AppendUnique(CCFLAGS=["-D " + args["ROBOT_TYPE"]])
 
 # Add build-specific flags
 if args["BUILD_PROFILE"] == "debug":

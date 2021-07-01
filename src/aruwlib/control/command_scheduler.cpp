@@ -23,6 +23,8 @@
 #include "aruwlib/drivers.hpp"
 #include "aruwlib/errors/create_errors.hpp"
 
+#include "modm/architecture/interface/assert.hpp"
+
 #include "command.hpp"
 #include "subsystem.hpp"
 
