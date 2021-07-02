@@ -1,19 +1,19 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruw-mcb.
+# This file is part of aruwlib.
 #
-# aruw-mcb is free software: you can redistribute it and/or modify
+# aruwlib is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruw-mcb is distributed in the hope that it will be useful,
+# aruwlib is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
+# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
   image: aruw/mcb-2020-gitlab-ci:2021-03-20.1
@@ -88,8 +88,8 @@ tests build:
     - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/fast/test-project-tests.elf
     - cd ../.. && gcovr -g --xml > cobertura.xml
-    - 'sed -i "s=<source>.</source>=<source>./aruw-mcb-project-sim</source>=g" cobertura.xml'
-    - 'sed -i "s;filename=\";filename=\"aruw-mcb-project-sim/;g" cobertura.xml'
+    - 'sed -i "s=<source>.</source>=<source>./aruwlib-project-sim</source>=g" cobertura.xml'
+    - 'sed -i "s;filename=\";filename=\"aruwlib-project-sim/;g" cobertura.xml'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:

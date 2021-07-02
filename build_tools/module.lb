@@ -15,16 +15,16 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = env["aruw-mcb:project_name"] + "/build_tools"
+    env.outbasepath = env["aruwlib:project_name"] + "/build_tools"
     if env["include_argparser"]:
         env.copy("parse_args.py")
 
     env.copy("run_gcov.py")
 
-    env.outbasepath = env["aruw-mcb:project_name"]
+    env.outbasepath = env["aruwlib:project_name"]
 
     properties = {}
-    properties["modm_path"] = env["aruw-mcb:modm_repo_lb"]
+    properties["modm_path"] = env["aruwlib:modm_repo_lb"]
     env.substitutions = properties
 
     env.template("project.xml.in", "project.xml")

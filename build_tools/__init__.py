@@ -1,4 +1,4 @@
-# aruw Python build tools
+# aruwlib Python build tools
 __all__ = [
     "parse_args"
 ]

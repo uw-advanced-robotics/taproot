@@ -5,7 +5,7 @@
     </repository>
   </repositories>
   <options>
-    <option name="modm:build:project.name">aruw-mcb</option>
+    <option name="modm:build:project.name">aruwlib</option>
     <option name="modm:build:openocd.cfg">openocd.cfg</option>
     <option name="modm:build:scons:include_sconstruct">False</option>
     <option name="modm:platform:uart:1:buffer.rx">256</option>
