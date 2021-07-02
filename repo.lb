@@ -1,7 +1,7 @@
 import subprocess
 
 def init(repo):
-    repo.name = "aruw-mcb"
+    repo.name = "aruwlib"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
 
     repo.add_option(
@@ -21,14 +21,14 @@ def prepare(repo, options):
 def build(env):
     print('building modm')
     try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="{0}".format(env["aruw-mcb:project_name"]))
+        subprocess.run(["lbuild", "build"], check=True, cwd="{0}".format(env["aruwlib:project_name"]))
     except subprocess.CalledProcessError as e:
         print(e.output())
         exit(1)
 
     print('building sim-modm')
     try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="{0}/sim-modm".format(env["aruw-mcb:project_name"]))
+        subprocess.run(["lbuild", "build"], check=True, cwd="{0}/sim-modm".format(env["aruwlib:project_name"]))
     except subprocess.CalledProcessError as e:
         print(e.output())
         exit(1)

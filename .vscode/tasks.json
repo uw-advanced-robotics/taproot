@@ -70,7 +70,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/sim/debug/aruw-mcb.elf",
+            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/sim/debug/aruwlib.elf",
             "group": "build",
             "problemMatcher": [],
             "options": {
@@ -109,7 +109,7 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/tests/debug/aruw-mcb-tests.elf",
+            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/tests/debug/aruwlib-tests.elf",
             "group": "build",
             "problemMatcher": [],
             "options": {

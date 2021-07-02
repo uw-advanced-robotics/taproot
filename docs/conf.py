@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'ARUW MCB'
-copyright = '2020, ARUW'
-author = 'ARUW'
+project = 'aruwlib'
+copyright = '2021, aruwlib'
+author = 'aruwlib'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
@@ -55,7 +55,7 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 
-breathe_default_project = "ARUW MCB"
+breathe_default_project = "aruwlib"
 
 extensions = [
     # there may be others here already, e.g. 'sphinx.ext.mathjax'
@@ -65,7 +65,7 @@ extensions = [
 
 # Setup the breathe extension
 breathe_projects = {
-    "ARUW MCB": "./doxyoutput/xml"
+    "aruwlib": "./doxyoutput/xml"
 }
 
 # Setup the exhale extension

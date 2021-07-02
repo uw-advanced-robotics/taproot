@@ -9,6 +9,6 @@
     ],
     "mounts": [
         // Persist installed extensions across container rebuilds
-        "source=aruw-mcb-extensions,target=/root/.vscode-server/extensions,type=volume",
+        "source=ARUWLIB-extensions,target=/root/.vscode-server/extensions,type=volume",
     ]
 }
