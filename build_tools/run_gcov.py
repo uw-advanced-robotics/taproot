@@ -82,6 +82,7 @@ def run_gcov(env, source, alias="run_gcov"):
             subprocess.run(['lcov', '-c', '-d', '.', '-o', COVERAGE_INFO_FILE, '--no-external'], check=True, stdout=subprocess.DEVNULL)
 
             files_to_include = glob.glob(os.path.abspath('src/**/*[.cpp|.hpp]'), recursive=True)
+            files_to_include.extend(glob.glob(os.path.abspath('aruwlib/src/**/*[.cpp|.hpp]'), recursive=True))
             lcov_only_view_src_cmd = ['lcov', '-e', COVERAGE_INFO_FILE]
             lcov_only_view_src_cmd.extend(files_to_include)
             lcov_only_view_src_cmd.extend(['-o', COVERAGE_INFO_FILE])

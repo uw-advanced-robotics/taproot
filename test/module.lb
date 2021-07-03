@@ -8,7 +8,7 @@ class Mock(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = env["aruwlib:project_name"] + "/test/aruwlib"
+        env.outbasepath = "aruwlib/test/aruwlib"
         env.copy("mock")
 
 class ARUWLIBTests(Module):
@@ -22,7 +22,7 @@ class ARUWLIBTests(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = env["aruwlib:project_name"] + "/test/aruwlib"
+        env.outbasepath = "aruwlib/test/aruwlib"
         env.copy(".", ignore=env.ignore_paths("*/mock/*"))
 
 def init(module):

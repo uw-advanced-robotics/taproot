@@ -20,6 +20,6 @@
 #ifndef ARUWLIB_DRIVERS_HPP_
 #define ARUWLIB_DRIVERS_HPP_
 
-#include "../drivers.hpp"
+#include "../../src/drivers.hpp"
 
 #endif  // ARUWLIB_DRIVERS_HPP_

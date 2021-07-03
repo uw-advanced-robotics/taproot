@@ -9,19 +9,17 @@ def prepare(module, options):
         name="include_sconstruct", default=True,
         description=descr_include_sconstruct))
     module.add_option(BooleanOption(
-        name="include_argparser", default=True,
-        description=descr_include_argparser))
+        name="include_openocd_cfg", default=True,
+        description=descr_include_openocd_cfg))
 
     return True
 
 def build(env):
-    env.outbasepath = env["aruwlib:project_name"] + "/build_tools"
-    if env["include_argparser"]:
-        env.copy("parse_args.py")
-
+    env.outbasepath = "aruwlib/build_tools"
+    env.copy("parse_args.py")
     env.copy("run_gcov.py")
 
-    env.outbasepath = env["aruwlib:project_name"]
+    env.outbasepath = "aruwlib"
 
     properties = {}
     properties["modm_path"] = env["aruwlib:modm_repo_lb"]
@@ -29,10 +27,12 @@ def build(env):
 
     env.template("project.xml.in", "project.xml")
     env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
-    env.copy("openocd.cfg")
 
+    env.outbasepath = "."
     if env["include_sconstruct"]:
         env.template("SConstruct.in", "SConstruct")
+    if env["include_openocd_cfg"]:
+        env.copy("openocd.cfg")
 
 
 descr_include_sconstruct = """# Generate a SConstruct file
@@ -40,7 +40,7 @@ descr_include_sconstruct = """# Generate a SConstruct file
 !!! warning "This overwrites any top-level `SConstruct` file!"
 """
 
-descr_include_argparser = """# Generate build_tools/parse_args.py
+descr_include_openocd_cfg = """# Generate openocd.cfg
 
-!!! warning "This overwrites build_tools/parse_args.py"
+!!! warning "This overwrites any top-level `openocd.cfg` file!"
 """

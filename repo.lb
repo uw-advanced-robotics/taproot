@@ -21,14 +21,14 @@ def prepare(repo, options):
 def build(env):
     print('building modm')
     try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="{0}".format(env["aruwlib:project_name"]))
+        subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
     except subprocess.CalledProcessError as e:
         print(e.output())
         exit(1)
 
     print('building sim-modm')
     try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="{0}/sim-modm".format(env["aruwlib:project_name"]))
+        subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
     except subprocess.CalledProcessError as e:
         print(e.output())
         exit(1)

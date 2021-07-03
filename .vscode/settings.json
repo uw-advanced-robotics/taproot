@@ -69,6 +69,7 @@
         "valarray": "cpp",
         "variant": "cpp",
         "SConstruct": "python",
+        "SConstruct.in": "python",
         "SConscript": "python",
         "repo.lb": "python",
         "module.lb": "python"
@@ -76,11 +77,11 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "${workspaceRoot}",
-        "./test-project/test-project/modm/src",
-        "./test-project/test-project/modm/ext/cmsis/core",
-        "./test-project/test-project/modm/ext/cmsis/device",
-        "./test-project/test-project/src",
-        "./test-project/test-project/test"
+        "./test-project/aruwlib/modm/src",
+        "./test-project/aruwlib/modm/ext/cmsis/core",
+        "./test-project/aruwlib/modm/ext/cmsis/device",
+        "./test-project/aruwlib/src",
+        "./test-project/aruwlib/test"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",

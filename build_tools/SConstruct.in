@@ -17,7 +17,7 @@
 
 import os
 import argparse
-from build_tools import parse_args
+from aruwlib.build_tools import parse_args
 from os.path import join, abspath
 from SCons.Script import *
 
@@ -25,10 +25,12 @@ from SCons.Script import *
 # Define project settings and build paths
 PROJECT_NAME        = "{{ options["aruwlib:project_name"] }}"
 BUILD_PATH          = "build"
-HARDWARE_MODM_PATH  = "modm"
-HOSTED_MODM_PATH    = "sim-modm/modm"
-ARUWLIB_PATH        = "src/aruwlib"
-TEST_PATH           = "test"
+HARDWARE_MODM_PATH  = "aruwlib/modm"
+LINKERSCRIPT_FILE   = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")
+HOSTED_MODM_PATH    = "aruwlib/sim-modm/modm"
+ARUWLIB_SRC_PATH    = "aruwlib/src"
+ARUWLIB_PATH        = join(ARUWLIB_SRC_PATH, "aruwlib")
+ARUWLIB_TEST_PATH   = "aruwlib/test"
 
 # Define libraries
 HOSTED_LIBS         = ["pthread"]
@@ -52,10 +54,10 @@ if args["TARGET_ENV"] == "tests":
     ignored_files.extend(IGNORED_FILES_WHILE_TESTING)
 elif args["TARGET_ENV"] == "sim":
     modm_path = HOSTED_MODM_PATH
-    ignored_dirs.append(TEST_PATH)
+    ignored_dirs.append(ARUWLIB_TEST_PATH)
 elif args["TARGET_ENV"] == "hardware":
     modm_path = HARDWARE_MODM_PATH
-    ignored_dirs.append(TEST_PATH)
+    ignored_dirs.append(ARUWLIB_TEST_PATH)
 
 
 # Set the number of threads unless it has already been set to anything but 1
@@ -92,7 +94,10 @@ env.SConscript(dirs=external_scons_libraries, exports="env")
 # that may overwrite previous options.
 
 # Add source directory to build path (for including header files)
-env.AppendUnique(CPPPATH=[abspath(r"./src")])
+env.AppendUnique(CPPPATH=[
+    abspath(ARUWLIB_SRC_PATH),
+    abspath(ARUWLIB_TEST_PATH)
+])
 
 # Add build-specific flags
 if args["BUILD_PROFILE"] == "debug":
@@ -119,7 +124,7 @@ elif args["TARGET_ENV"] == "tests":
     env.AppendUnique(CPPFLAGS=[
         "-DPLATFORM_HOSTED",
         "-DENV_UNIT_TESTS"])
-    env.AppendUnique(CPPPATH=[abspath(TEST_PATH)])
+    env.AppendUnique(CPPPATH=[abspath(ARUWLIB_TEST_PATH)])
     env.AppendUnique(LIBS=GTEST_LIBS)
     env.AppendUnique(LIBS=HOSTED_LIBS)
 
@@ -130,10 +135,14 @@ elif args["TARGET_ENV"] == "tests":
             "-ftest-coverage"])
         env.AppendUnique(LIBS=COVERAGE_LIBS)
 else:  # hardware target env
-    pass
+    # Update linkerscript file
+    env["LINKFLAGS"].remove("-Tmodm/link/linkerscript.ld")
+    env.AppendUnique(LINKFLAGS=["-T" + LINKERSCRIPT_FILE])
+
 
 # Append little endian flag to all
 env.AppendUnique(CPPFLAGS=["-DLITTLE_ENDIAN"])
+
 
 # Add any additional flags the user chooses specify
 if "additional-ccflags" in ARGUMENTS:
@@ -148,7 +157,7 @@ if args["TARGET_ENV"] == "hardware":
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
 
     # The executable depends on the linkerscript
-    env.Depends(target=program, dependency=abspath("modm/link/linkerscript.ld"))
+    env.Depends(target=program, dependency=abspath(LINKERSCRIPT_FILE))
 
     # Add target environment-specific SCons aliases
     # WARNING: all aliases must be checked during argument validation
@@ -160,7 +169,7 @@ if args["TARGET_ENV"] == "hardware":
     env.Default("all")  # For the hardware target env, "all" runs if you don't
                         # specify anything (i.e. just type "scons")
 elif args["TARGET_ENV"] == "tests":
-    env.Append(toolpath=[abspath(r"build_tools")])
+    env.Append(toolpath=[abspath(r"aruwlib/build_tools")])
     env.Tool("run_gcov")
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
