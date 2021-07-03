@@ -5,10 +5,10 @@
     </repository>
   </repositories>
   <options>
-    <option name="aruwlib:project_name">test-project</option>
     <option name="aruwlib:modm_repo_lb">../modm/repo.lb</option>
   </options>
   <modules>
+    <module>aruwlib:core</module>
     <module>aruwlib:testing:tests</module>
     <module>aruwlib:build</module>
   </modules>

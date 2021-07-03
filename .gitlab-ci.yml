@@ -68,7 +68,6 @@ mcb build:
   only: *default_only
   script:
     - cd test-project && lbuild build
-    - cd test-project && lbuild build
     - python3 $(which scons) build -j${NUM_JOBS} additional-ccflags=-Werror
 
 sim build:
@@ -76,7 +75,6 @@ sim build:
   only: *default_only
   script:
     - cd test-project && lbuild build
-    - cd test-project/sim-modm && lbuild build && cd ..
     - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS}
 
 tests build:
@@ -84,10 +82,9 @@ tests build:
   only: *default_only
   script:
     - cd test-project && lbuild build
-    - cd test-project/sim-modm && lbuild build && cd ..
     - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/fast/test-project-tests.elf
-    - cd ../.. && gcovr -g --xml > cobertura.xml
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/fast/mcb-project-tests.elf
+    - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s=<source>.</source>=<source>./aruwlib-project-sim</source>=g" cobertura.xml'
     - 'sed -i "s;filename=\";filename=\"aruwlib-project-sim/;g" cobertura.xml'
   artifacts:

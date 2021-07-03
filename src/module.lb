@@ -30,8 +30,9 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = env["aruwlib:project_name"] + "/src"
+    env.outbasepath = "aruwlib/src"
     env.copy("aruwlib")
 
     if (env["generate_driver_hpp"]):
+        env.outbasepath = "src"
         env.copy("drivers.hpp")
