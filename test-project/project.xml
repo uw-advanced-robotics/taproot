@@ -10,6 +10,6 @@
   <modules>
     <module>aruwlib:core</module>
     <module>aruwlib:testing:tests</module>
-    <module>aruwlib:build</module>
+    <module>aruwlib:build:build-tools</module>
   </modules>
 </library>

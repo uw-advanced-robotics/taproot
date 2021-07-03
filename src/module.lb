@@ -25,7 +25,9 @@ def prepare(module, options):
         description="Specify whether or not to generate drivers.hpp.\
                      Set to false after you generate drivers.hpp the first time."))
 
-    module.depends("aruwlib:testing:mock")
+    module.depends(
+        "aruwlib:testing:mock",
+        "aruwlib:build:modm-projectxml")
 
     return True
 
