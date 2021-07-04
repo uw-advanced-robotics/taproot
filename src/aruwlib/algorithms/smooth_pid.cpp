@@ -27,6 +27,37 @@ namespace aruwlib
 {
 namespace algorithms
 {
+SmoothPid::SmoothPid(
+    float kp,
+    float ki,
+    float kd,
+    float maxICumulative,
+    float maxOutput,
+    float tQDerivativeKalman,
+    float tRDerivativeKalman,
+    float tQProportionalKalman,
+    float tRProportionalKalman)
+    : kp(kp),
+      ki(ki),
+      kd(kd),
+      maxICumulative(maxICumulative),
+      maxOutput(maxOutput),
+      proportionalKalman(tQProportionalKalman, tRProportionalKalman),
+      derivativeKalman(tQDerivativeKalman, tRDerivativeKalman)
+{
+}
+
+SmoothPid::SmoothPid(const PidConfigStruct &pidConfig)
+    : kp(pidConfig.kp),
+      ki(pidConfig.ki),
+      kd(pidConfig.kd),
+      maxICumulative(pidConfig.maxICumulative),
+      maxOutput(pidConfig.maxOutput),
+      proportionalKalman(pidConfig.tQProportionalKalman, pidConfig.tRProportionalKalman),
+      derivativeKalman(pidConfig.tQDerivativeKalman, pidConfig.tRDerivativeKalman)
+{
+}
+
 float SmoothPid::runController(float error, float errorDerivative, float dt)
 {
     // p

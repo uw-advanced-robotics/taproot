@@ -28,6 +28,19 @@ namespace aruwlib
 {
 namespace algorithms
 {
+struct PidConfigStruct
+{
+    float kp;
+    float ki;
+    float kd;
+    float maxICumulative;
+    float maxOutput;
+    float tQDerivativeKalman;
+    float tRDerivativeKalman;
+    float tQProportionalKalman;
+    float tRProportionalKalman;
+};
+
 class SmoothPid
 {
 public:
@@ -40,16 +53,9 @@ public:
         float tQDerivativeKalman,
         float tRDerivativeKalman,
         float tQProportionalKalman,
-        float tRProportionalKalman)
-        : kp(kp),
-          ki(ki),
-          kd(kd),
-          maxICumulative(maxICumulative),
-          maxOutput(maxOutput),
-          proportionalKalman(tQProportionalKalman, tRProportionalKalman),
-          derivativeKalman(tQDerivativeKalman, tRDerivativeKalman)
-    {
-    }
+        float tRProportionalKalman);
+
+    SmoothPid(const PidConfigStruct &pidConfig);
 
     float runController(float error, float rotationalSpeed, float dt);
 
