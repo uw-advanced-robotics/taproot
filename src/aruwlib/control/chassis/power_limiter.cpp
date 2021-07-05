@@ -39,14 +39,31 @@ PowerLimiter::PowerLimiter(
     const aruwlib::motor::MotorConstants &motorConstants)
     : drivers(drivers),
       currentPin(currentPin),
-      maxEnergyBuffer(maxEnergyBuffer),
-      energyBufferLimitThreshold(energyBufferLimitThreshold),
-      energyBufferCritThreshold(energyBufferCritThreshold),
-      powerConsumptionThreshold(powerConsumptionThreshold),
-      currentAllocatedForEnergyBufferLimiting(currentAllocatedForEnergyBufferLimiting),
+      powerLimiterConfig(
+          {maxEnergyBuffer,
+           energyBufferLimitThreshold,
+           energyBufferCritThreshold,
+           powerConsumptionThreshold,
+           currentAllocatedForEnergyBufferLimiting}),
       motorConstants(motorConstants),
       prevChassisCurrent(0),
       energyBuffer(maxEnergyBuffer),
+      consumedPower(0),
+      prevTime(0)
+{
+}
+
+PowerLimiter::PowerLimiter(
+    const aruwlib::Drivers *drivers,
+    aruwlib::gpio::Analog::Pin currentPin,
+    const PowerLimiterConfig &powerLimiterConfig,
+    const aruwlib::motor::MotorConstants &motorConstants)
+    : drivers(drivers),
+      currentPin(currentPin),
+      powerLimiterConfig(powerLimiterConfig),
+      motorConstants(motorConstants),
+      prevChassisCurrent(0),
+      energyBuffer(powerLimiterConfig.maxEnergyBuffer),
       consumedPower(0),
       prevTime(0)
 {
@@ -86,12 +103,13 @@ void PowerLimiter::performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int 
      */
     float powerConsumptionFrac = 1.0f;
 
-    if (energyBuffer < energyBufferLimitThreshold)
+    if (energyBuffer < powerLimiterConfig.energyBufferLimitThreshold)
     {
         // If we have eaten through the majority of our energy buffer, do harsher limiting
         // Cap the penalty at energyBufferCritThreshold / energyBufferLimitThreshold.
-        energyBufferFrac = static_cast<float>(max(energyBuffer, energyBufferCritThreshold)) /
-                           energyBufferLimitThreshold;
+        energyBufferFrac =
+            static_cast<float>(max(energyBuffer, powerLimiterConfig.energyBufferCritThreshold)) /
+            powerLimiterConfig.energyBufferLimitThreshold;
         powerConsumptionFrac = 0.0f;
     }
     else
@@ -103,7 +121,8 @@ void PowerLimiter::performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int 
          *
          * Also note that energyBufferFrac is always 1 when entering this conditional
          */
-        if (consumedPower + powerConsumptionThreshold > chassis.powerConsumptionLimit)
+        if (consumedPower + powerLimiterConfig.powerConsumptionThreshold >
+            chassis.powerConsumptionLimit)
         {
             // If we are above a the power consumption limit but we haven't eaten into our
             // energy buffer enough to enter the if statement of the outermost conditional, do
@@ -111,8 +130,9 @@ void PowerLimiter::performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int 
             if (consumedPower < chassis.powerConsumptionLimit)
             {
                 // Only do minimal limiting because we are not close to going over chassis power
-                powerConsumptionFrac = (chassis.powerConsumptionLimit - consumedPower) /
-                                       (chassis.powerConsumptionLimit - powerConsumptionThreshold);
+                powerConsumptionFrac =
+                    (chassis.powerConsumptionLimit - consumedPower) /
+                    (chassis.powerConsumptionLimit - powerLimiterConfig.powerConsumptionThreshold);
             }
             else
             {
@@ -128,7 +148,7 @@ void PowerLimiter::performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int 
      */
     float chassisCurrentLimit =
         powerConsumptionFrac * CURRENT_ALLOCATED_FOR_POWER_CONSUMPTION_LIMITING +
-        energyBufferFrac * currentAllocatedForEnergyBufferLimiting;
+        energyBufferFrac * powerLimiterConfig.currentAllocatedForEnergyBufferLimiting;
 
     float chassisCurrentOutput = 0.0f;
     for (int i = 0; i < numMotors; i++)
@@ -192,9 +212,9 @@ void PowerLimiter::updatePowerAndEnergyBuffer()
         energyBuffer = chassisData.powerBuffer;
     }
 
-    if (energyBuffer > maxEnergyBuffer)
+    if (energyBuffer > powerLimiterConfig.maxEnergyBuffer)
     {
-        energyBuffer = maxEnergyBuffer;
+        energyBuffer = powerLimiterConfig.maxEnergyBuffer;
     }
 
     consumedPower = newChassisPower;

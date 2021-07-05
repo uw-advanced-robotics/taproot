@@ -31,6 +31,15 @@ class Drivers;
 
 namespace aruwlib::control::chassis
 {
+struct PowerLimiterConfig
+{
+    float maxEnergyBuffer;
+    float energyBufferLimitThreshold;
+    float energyBufferCritThreshold;
+    float powerConsumptionThreshold;
+    float currentAllocatedForEnergyBufferLimiting;
+};
+
 /**
  * A utility object that a chassis may use to provide power limiting. Assumes the motor
  * being used is an M3508 and the current sensor is a TODO.
@@ -88,6 +97,23 @@ public:
         const aruwlib::motor::MotorConstants &motorConstants);
 
     /**
+     * Constructs a power limiter helper object.
+     *
+     * @param[in] drivers Global drivers object.
+     * @param[in] currentPin The pin connected to a current sensor connected in series with the
+     *      chassis.
+     * @param[in] powerLimiterConfig Pre-configured struct that contains all the necessary
+     * parameters for the power limiter to operate.
+     * @param[in] motorConstants An object that contains motor constants specific to the
+     *      motor being used in power limiting.
+     */
+    PowerLimiter(
+        const aruwlib::Drivers *drivers,
+        aruwlib::gpio::Analog::Pin currentPin,
+        const PowerLimiterConfig &powerLimiterConfig,
+        const aruwlib::motor::MotorConstants &motorConstants);
+
+    /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example), that
      * performs power limiting on the motors passed in.
      *
@@ -98,11 +124,7 @@ public:
 private:
     const aruwlib::Drivers *drivers;
     const aruwlib::gpio::Analog::Pin currentPin;
-    const float maxEnergyBuffer;
-    const float energyBufferLimitThreshold;
-    const float energyBufferCritThreshold;
-    const float powerConsumptionThreshold;
-    const float currentAllocatedForEnergyBufferLimiting;
+    const PowerLimiterConfig powerLimiterConfig;
     const aruwlib::motor::MotorConstants &motorConstants;
     float prevChassisCurrent;
     float energyBuffer;
