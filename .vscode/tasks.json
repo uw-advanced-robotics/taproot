@@ -16,7 +16,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -35,7 +35,7 @@
             },
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -48,7 +48,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -61,7 +61,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -74,7 +74,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -87,7 +87,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -100,7 +100,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -113,7 +113,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -129,7 +129,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -145,7 +145,7 @@
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -161,7 +161,7 @@
             "group": "none",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -174,7 +174,7 @@
             "group": "none",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         }
     ]
