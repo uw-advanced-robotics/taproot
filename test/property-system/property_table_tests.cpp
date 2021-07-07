@@ -1,29 +1,30 @@
 /*
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
- * This file is part of aruw-mcb.
+ * This file is part of aruwlib.
  *
- * aruw-mcb is free software: you can redistribute it and/or modify
+ * aruwlib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * aruw-mcb is distributed in the hope that it will be useful,
+ * aruwlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
+ * along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #include <iostream>
 #include <set>
 #include <string>
 
+#include <gtest/gtest.h>
+
 #include "aruwlib/property-system/int32_property.hpp"
 #include "aruwlib/property-system/property_table.hpp"
-#include <gtest/gtest.h>
 
 using aruwlib::property::BaseProperty;
 using aruwlib::property::BasePropertyInterface;
@@ -82,7 +83,7 @@ TEST(PropertyTable, isFull_getSize_reflect_number_of_properties_in_table)
         std::string name = std::to_string(i);
         numberStrs[i] = new char[name.size() + 1];
         strcpy(numberStrs[i], name.c_str());
-        
+
         Int32Property *p = new Int32Property(i, numberStrs[i]);
         ptable.addProperty(p);
     }
@@ -130,7 +131,8 @@ TEST(
     }
 
     int numMatching = 0;
-    for (auto iter = ptable.getPropertyTableBeginning(); iter != ptable.getPropertyTableEnd() ; iter++)
+    for (auto iter = ptable.getPropertyTableBeginning(); iter != ptable.getPropertyTableEnd();
+         iter++)
     {
         EXPECT_EQ(1, ptableContents.count(iter->first));
         numMatching++;
@@ -145,6 +147,8 @@ TEST(
 
     EXPECT_EQ(0, ptable.getSize());
 
-    std::for_each(ptableContents.begin(), ptableContents.end(), [](const char *name){ delete[] name; });
+    std::for_each(ptableContents.begin(), ptableContents.end(), [](const char *name) {
+        delete[] name;
+    });
     ptableContents.clear();
 }

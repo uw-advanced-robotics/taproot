@@ -1,20 +1,20 @@
 /*
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
- * This file is part of aruw-mcb.
+ * This file is part of aruwlib.
  *
- * aruw-mcb is free software: you can redistribute it and/or modify
+ * aruwlib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * aruw-mcb is distributed in the hope that it will be useful,
+ * aruwlib is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
+ * along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef PROPERTY_TABLE_HPP_
@@ -89,7 +89,8 @@ public:
      * @note a `reinterpret_cast` is used when setting the property's data. Be sure the
      *      data type is correct.
      * @tparam The data type of the property to be set.
-     * @tparam The type of property that the data corresponds to derived from the BasePropertyInterface.
+     * @tparam The type of property that the data corresponds to derived from the
+     * BasePropertyInterface.
      * @param[in] propertyName The name of the property to be set.
      * @param[in] data The data that the property will be set to.
      * @return `true` if the property was set successfully, `false` otherwise.
@@ -119,7 +120,8 @@ public:
      * @return A `const_iterator` to the beginning of the property table. This allows you to view
      *      table entries but not change them.
      */
-    std::map<const char *, BasePropertyInterface *>::const_iterator getPropertyTableBeginning() const
+    std::map<const char *, BasePropertyInterface *>::const_iterator getPropertyTableBeginning()
+        const
     {
         return propertyTable.begin();
     }
