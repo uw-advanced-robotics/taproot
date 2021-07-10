@@ -25,6 +25,8 @@
 
 namespace aruwlib::property
 {
+using BasePropertyId = uint8_t;
+
 /**
  * An BasePropertyInterface is a generic typed wrapper for an actual type or data structure.
  * In particular, a BaseProperty is used in the `PropertyTable` as a way to store
@@ -66,24 +68,14 @@ public:
     virtual ~BasePropertyInterface() = default;
 
     /**
-     * The header contains the the PROPERTY_TYPE_ID and the length (2 bytes).
+     * The header contains the the property type and the length (2 bytes).
      */
     static const uint8_t BASE_PROPERTY_HEADER_LENGTH = 3;
 
     /**
-     * The type ID is used to identify the property so one can parse the property correctly.
+     * @return The unique property identifier.
      */
-    enum class PROPERTY_TYPE_ID : uint8_t
-    {
-        INT32,
-        FLOAT,
-        BOOL
-    };
-
-    /**
-     * @return The type of property, one of `PROPERTY_TYPE_ID`.
-     */
-    virtual PROPERTY_TYPE_ID getPropertyType() const = 0;
+    virtual BasePropertyId getPropertyId() const = 0;
 
     /**
      * @return A string representation of the property. This is meant to represent the property's
@@ -134,6 +126,22 @@ protected:
 private:
     const char *propertyName;
 };
+
+class BasePropertyIdCounter
+{
+public:
+    template <class T>
+    static BasePropertyId get()
+    {
+        static const BasePropertyId STATIC_COMPONENT_TYPE_ID{count++};
+        return STATIC_COMPONENT_TYPE_ID;
+    }
+
+    static BasePropertyId get() { return count; }
+
+private:
+    static BasePropertyId count;
+};  // class BasePropertyIdCounter
 
 }  // namespace aruwlib::property
 

@@ -19,51 +19,51 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/property-system/int32_property.hpp"
+#include "aruwlib/property-system/integer_property.hpp"
 
-using aruwlib::property::Int32Property;
+using namespace aruwlib::property;
 
-TEST(Int32Property, Default_constructor_constructs_zeroed_int32)
+TEST(IntegerProperty, Default_constructor_constructs_zeroed_int32)
 {
-    Int32Property p;
+    IntegerProperty<int> p;
 
     EXPECT_EQ(0, p);
     EXPECT_EQ(nullptr, p.getPropertyName());
     EXPECT_EQ("0", p.toString());
 }
 
-TEST(Int32Property, Single_arg_constructor_allows_for_int32_specification)
+TEST(IntegerProperty, Single_arg_constructor_allows_for_int32_specification)
 {
-    Int32Property p(1234);
+    IntegerProperty<int> p(1234);
 
     EXPECT_EQ(1234, p);
     EXPECT_EQ(nullptr, p.getPropertyName());
     EXPECT_EQ(p.toString(), "1234");
 }
 
-TEST(Int32Property, Two_arg_constructor_allows_for_int32_and_name_specification)
+TEST(IntegerProperty, Two_arg_constructor_allows_for_int32_and_name_specification)
 {
-    Int32Property p(4321, "the property");
+    IntegerProperty<int> p(4321, "the property");
 
     EXPECT_EQ(4321, p);
     EXPECT_EQ("the property", p.getPropertyName());
     EXPECT_EQ("4321", p.toString());
 }
 
-TEST(Int32Property, Copy_constructor_copies_property_data_and_name)
+TEST(IntegerProperty, Copy_constructor_copies_property_data_and_name)
 {
-    Int32Property p1(4321, "the property");
-    Int32Property p2(p1);
+    IntegerProperty<int> p1(4321, "the property");
+    IntegerProperty<int> p2(p1);
 
     EXPECT_EQ(4321, p2);
     EXPECT_EQ("the property", p2.getPropertyName());
     EXPECT_EQ("4321", p2.toString());
 }
 
-TEST(Int32Property, Equals_operator_copies_property_data_and_name)
+TEST(IntegerProperty, Equals_operator_copies_property_data_and_name)
 {
-    Int32Property p1(1234, "the property");
-    Int32Property p2;
+    IntegerProperty<int> p1(1234, "the property");
+    IntegerProperty<int> p2;
 
     p2 = p1;
     EXPECT_EQ(1234, p1);
@@ -75,10 +75,10 @@ TEST(Int32Property, Equals_operator_copies_property_data_and_name)
     EXPECT_EQ("4321", p2.toString());
 }
 
-TEST(Int32Property, Plus_operator_adds_data)
+TEST(IntegerProperty, Plus_operator_adds_data)
 {
-    Int32Property p1(1);
-    Int32Property p2(2);
+    IntegerProperty<int> p1(1);
+    IntegerProperty<int> p2(2);
 
     EXPECT_EQ(3, p1 + p2);
     EXPECT_EQ(4, p1 + 3);
@@ -89,10 +89,10 @@ TEST(Int32Property, Plus_operator_adds_data)
     EXPECT_EQ(6, p1);
 }
 
-TEST(Int32Property, Minus_operator_subtracts_data)
+TEST(IntegerProperty, Minus_operator_subtracts_data)
 {
-    Int32Property p1(1);
-    Int32Property p2(2);
+    IntegerProperty<int> p1(1);
+    IntegerProperty<int> p2(2);
 
     EXPECT_EQ(-1, p1 - p2);
     EXPECT_EQ(-2, p1 - 3);
@@ -103,10 +103,10 @@ TEST(Int32Property, Minus_operator_subtracts_data)
     EXPECT_EQ(p1, -4);
 }
 
-TEST(Int32Property, Times_operator_multiplies_data)
+TEST(IntegerProperty, Times_operator_multiplies_data)
 {
-    Int32Property p1(2);
-    Int32Property p2(3);
+    IntegerProperty<int> p1(2);
+    IntegerProperty<int> p2(3);
 
     EXPECT_EQ(6, p1 * p2);
     EXPECT_EQ(8, p1 * 4);
@@ -117,10 +117,10 @@ TEST(Int32Property, Times_operator_multiplies_data)
     EXPECT_EQ(24, p1);
 }
 
-TEST(Int32Property, Divide_operator)
+TEST(IntegerProperty, Divide_operator)
 {
-    Int32Property p1(10);
-    Int32Property p2(2);
+    IntegerProperty<int> p1(10);
+    IntegerProperty<int> p2(2);
 
     EXPECT_EQ(5, p1 / p2);
     EXPECT_EQ(2, p1 / 5);
@@ -131,16 +131,16 @@ TEST(Int32Property, Divide_operator)
     EXPECT_EQ(2, p1);
 }
 
-TEST(Int32Property, getSerializationArrSize_returns_sizeof_int32)
+TEST(IntegerProperty, getSerializationArrSize_returns_sizeof_int32)
 {
-    Int32Property p(0x12345678, "the property");
+    IntegerProperty<int> p(0x12345678, "the property");
 
     EXPECT_EQ(sizeof(int32_t), p.getSerializationArrSize());
 }
 
-TEST(Int32Property, serializeData)
+TEST(IntegerProperty, serializeData)
 {
-    Int32Property p(0x12345678, "the property");
+    IntegerProperty<int> p(0x12345678, "the property");
     uint8_t *arr = new uint8_t[p.getSerializationArrSize()];
 
     p.serializeData(arr);
@@ -152,11 +152,24 @@ TEST(Int32Property, serializeData)
     delete[] arr;
 }
 
-TEST(Int32Property, setProperty_updates_data)
+TEST(IntegerProperty, setProperty_updates_data)
 {
-    Int32Property p;
+    IntegerProperty<int> p;
 
     p.setProperty(1);
     EXPECT_EQ(1, p);
     EXPECT_EQ("1", p.toString());
+}
+
+TEST(IntegerProperty, getPropertyId_unique_for_different_types)
+{
+    IntegerProperty<uint8_t> p1;
+    IntegerProperty<uint16_t> p2;
+    IntegerProperty<uint32_t> p3;
+    IntegerProperty<uint64_t> p4;
+
+    EXPECT_NE(p1.getPropertyId(), p2.getPropertyId());
+    EXPECT_NE(p2.getPropertyId(), p3.getPropertyId());
+    EXPECT_NE(p3.getPropertyId(), p4.getPropertyId());
+    EXPECT_NE(p4.getPropertyId(), p1.getPropertyId());
 }

@@ -43,7 +43,15 @@ public:
      * @return `true` if the property has been set properly, `false` otherwise.
      */
     virtual void setProperty(T data) = 0;
+
+    BasePropertyId getPropertyId() const override { return STATIC_BASE_PROPERTY_ID; }
+
+private:
+    static const BasePropertyId STATIC_BASE_PROPERTY_ID;
 };  // class BaseProperty
+
+template <typename T>
+const BasePropertyId BaseProperty<T>::STATIC_BASE_PROPERTY_ID = BasePropertyIdCounter::get<T>();
 
 }  // namespace aruwlib::property
 

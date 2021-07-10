@@ -39,7 +39,6 @@ public:
 
     void serializeData(uint8_t* arr) const override;
     uint16_t getSerializationArrSize() const override { return sizeof(float); }
-    PROPERTY_TYPE_ID getPropertyType() const override { return PROPERTY_TYPE_ID::FLOAT; }
     std::string toString() const override;
     void setProperty(float data) override;
 

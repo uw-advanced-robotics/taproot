@@ -38,7 +38,6 @@ public:
 
     void serializeData(uint8_t* arr) const override;
     uint16_t getSerializationArrSize() const override { return sizeof(bool); }
-    PROPERTY_TYPE_ID getPropertyType() const override { return PROPERTY_TYPE_ID::BOOL; }
     std::string toString() const override { return data ? "true" : "false"; }
     void setProperty(bool data) override;
 
