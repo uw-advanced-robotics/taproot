@@ -44,7 +44,7 @@ TODO. Check out the [template project](https://gitlab.com/aruw/controls/aruwlib-
 - [aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb), ARUW's full robot code project
 - [aruw-edu](https://gitlab.com/aruw/controls/aruw-edu): a hands-on tutorial for building robot code with aruwlib
 - The [template project](https://gitlab.com/aruw/controls/aruwlib-template-project) to kick-start your own development
-- The [aruw-mcb wiki](https://gitlab.com/aruw/controls/aruw-mcb/-/wikis/home) (temporary while we migrate content here) 
+- The [aruwlib wiki](https://gitlab.com/aruw/controls/aruwlib/-/wikis/home)
 - The [modm website](https://modm.io/) and associated documentation
 
 ## Requirements for use
