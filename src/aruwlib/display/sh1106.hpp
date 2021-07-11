@@ -21,6 +21,7 @@
 #define SH1106_HPP
 
 #include "modm/architecture/driver/atomic/flag.hpp"
+#include "modm/architecture/interface/delay.hpp"
 #include "modm/processing/resumable.hpp"
 #include "modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp"
 
