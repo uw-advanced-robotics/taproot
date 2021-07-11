@@ -23,13 +23,11 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/property-system/int32_property.hpp"
+#include "aruwlib/property-system/integer_property.hpp"
 #include "aruwlib/property-system/property_table.hpp"
 
-using aruwlib::property::BaseProperty;
-using aruwlib::property::BasePropertyInterface;
-using aruwlib::property::Int32Property;
-using aruwlib::property::PropertyTable;
+using namespace aruwlib::property;
+using Int32Property = IntegerProperty<int32_t>;
 
 TEST(
     PropertyTable,
