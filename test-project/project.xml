@@ -6,9 +6,11 @@
   </repositories>
   <options>
     <option name="aruwlib:modm_repo_lb">../modm/repo.lb</option>
+    <option name="aruwlib:docs:source_paths">../../src</option>
   </options>
   <modules>
     <module>aruwlib:core</module>
+    <module>aruwlib:docs</module>
     <module>aruwlib:testing:tests</module>
     <module>aruwlib:build:build-tools</module>
   </modules>

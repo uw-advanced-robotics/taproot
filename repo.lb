@@ -17,6 +17,7 @@ def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
     repo.add_modules_recursive("./build_tools", modulefile="*.lb")
+    repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
     print('building modm')
