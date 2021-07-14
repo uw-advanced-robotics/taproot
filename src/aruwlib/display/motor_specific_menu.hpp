@@ -22,6 +22,8 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
+#include "dummy_allocator.hpp"
+
 namespace aruwlib
 {
 namespace motor
@@ -31,11 +33,11 @@ class DjiMotor;
 class Drivers;
 namespace display
 {
-class MotorSpecificMenu : public modm::AbstractMenu
+class MotorSpecificMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
 {
 public:
     MotorSpecificMenu(
-        modm::ViewStack* stack,
+        modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
         Drivers* drivers,
         const aruwlib::motor::DjiMotor* motor);
 

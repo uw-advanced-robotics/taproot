@@ -85,22 +85,22 @@ public:
         {
             // TODO(kaelin): what's the TX pin on UART1?
             modm::platform::Usart1::connect<GpioB7::Rx>();
-            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
+            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(parity);
         }
         else if constexpr (port == UartPort::Uart2)
         {
             modm::platform::Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
-            modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(12, parity);
+            modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(parity);
         }
         else if constexpr (port == UartPort::Uart3)
         {
             modm::platform::Usart3::connect<GpioD8::Tx, GpioD9::Rx>();
-            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(12, parity);
+            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(parity);
         }
         else if constexpr (port == UartPort::Uart6)
         {
             modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
-            modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
+            modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(parity);
         }
 #endif
     }

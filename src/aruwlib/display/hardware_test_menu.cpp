@@ -29,8 +29,10 @@ namespace aruwlib
 {
 namespace display
 {
-HardwareTestMenu::HardwareTestMenu(modm::ViewStack* vs, Drivers* drivers)
-    : AbstractMenu(vs, HARDWARE_TEST_MENU_ID),
+HardwareTestMenu::HardwareTestMenu(
+    modm::ViewStack<DummyAllocator<modm::IAbstractView> >* vs,
+    Drivers* drivers)
+    : AbstractMenu<DummyAllocator<modm::IAbstractView> >(vs, HARDWARE_TEST_MENU_ID),
       drivers(drivers),
       vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED)
 {
