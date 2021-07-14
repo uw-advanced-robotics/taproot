@@ -42,7 +42,7 @@ stages:
   - Deploy Pages
 
 before_script:
-  - python -V # Print out python version for debugging
+  - python3 -V # Print out python version for debugging
 
 # Initial verification
 
