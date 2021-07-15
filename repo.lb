@@ -30,6 +30,11 @@ def init(repo):
                      default="../modm/repo.lb",
                      description="Path to repo.lb file, relative to your project.xml file"))
 
+    repo.add_option(
+        BooleanOption(name="rebuild_modm",
+                      default=True,
+                      description="Whether or not to rebuild modm HALs"))
+
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
@@ -37,16 +42,17 @@ def prepare(repo, options):
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
-    print('building modm')
-    try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
-    except subprocess.CalledProcessError as e:
-        print(e.output())
-        exit(1)
+    if env["aruwlib:rebuild_modm"]:
+        print('building modm')
+        try:
+            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
+        except subprocess.CalledProcessError as e:
+            print(e.output())
+            exit(1)
 
-    print('building sim-modm')
-    try:
-        subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
-    except subprocess.CalledProcessError as e:
-        print(e.output())
-        exit(1)
+        print('building sim-modm')
+        try:
+            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
+        except subprocess.CalledProcessError as e:
+            print(e.output())
+            exit(1)
