@@ -38,6 +38,7 @@ enum Location
     SERVO,
     OLED_DISPLAY,
     LOCATION_AMOUNT,
+    REMOTE
 };
 
 class SystemError

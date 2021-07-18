@@ -24,21 +24,41 @@
 
 #ifndef PLATFORM_HOSTED
 #include "modm/platform.hpp"
+#include "modm/platform/uart/uart_1.hpp"
 #endif
 
 #include "aruwlib/util_macros.hpp"
 
+#include "dma/dma_uart_rx_irqhandler.hpp"
+
 namespace aruwlib
 {
 class Drivers;
-
 /**
- * A unique UART handler that uses timing in leu of DBUS communication (modm does not
- * support DBUS) to interact with the DR16 receiver.
+ * Communication with the remote via UART + DMA
  */
 class Remote
 {
+private:
+    static constexpr int DMA_BUFF_SIZE = 50;       /// Size of DMA buffer used when requesting data.
+    static constexpr int REMOTE_PACKET_SIZE = 18;  /// Length of the remote recieve buffer.
+    static constexpr float STICK_MAX_VALUE = 660.0f;  /// Max value received by one of the sticks.
+    static constexpr uint32_t RECEIVE_PERIOD = 14;    /// Time between message receivals, in ms
+
 public:
+#ifndef PLATFORM_HOSTED
+    using RemoteDma = modm::platform::Usart1<
+        modm::platform::Dma2::Stream7,
+        modm::platform::DmaBase::ChannelSelection::CHANNEL_4,
+        modm::platform::Dma2::Stream2,
+        modm::platform::DmaBase::ChannelSelection::CHANNEL_4>;
+
+    using RemoteDmaTxISRHandler =
+        aruwlib::dma::DmaRXISR<REMOTE_PACKET_SIZE, RemoteDma, modm::platform::Dma2::Stream2>;
+#else
+    using RemoteDmaTxISRHandler = aruwlib::dma::DmaRXISRStub;
+#endif
+
     Remote(Drivers *drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(Remote)
     mockable ~Remote() = default;
@@ -167,13 +187,9 @@ public:
     mockable uint32_t getUpdateCounter() const;
 
 private:
-    static const int REMOTE_BUF_LEN = 18;              /// Length of the remote recieve buffer.
-    static const int REMOTE_READ_TIMEOUT = 6;          /// Timeout delay between valid packets.
-    static const int REMOTE_DISCONNECT_TIMEOUT = 100;  /// Timeout delay for remote disconnect.
-    static const int REMOTE_INT_PRI = 12;              /// Interrupt priority.
-    static constexpr float STICK_MAX_VALUE = 660.0f;   /// Max value received by one of the sticks.
-
-    /// The current remote information
+    /**
+     * The current remote information
+     */
     struct RemoteInfo
     {
         uint32_t updateCounter = 0;
@@ -199,27 +215,14 @@ private:
 
     RemoteInfo remote;
 
-    /// Remote connection state.
-    bool connected = false;
+    uint8_t rxBuffer[DMA_BUFF_SIZE]{0};  /// UART recieve buffer.
 
-    /// UART recieve buffer.
-    uint8_t rxBuffer[REMOTE_BUF_LEN]{0};
+    uint32_t lastRead = 0;  /// Timestamp when last byte was read (milliseconds).
 
-    /// Timestamp when last byte was read (milliseconds).
-    uint32_t lastRead = 0;
+    void parseBuffer();  /// Parses the current rxBuffer.
 
-    /// Current count of bytes read.
-    uint8_t currentBufferIndex = 0;
-
-    /// Parses the current rxBuffer.
-    void parseBuffer();
-
-    /// Clears the current rxBuffer.
-    void clearRxBuffer();
-
-    /// Resets the current remote info.
-    void reset();
-};  // class Remote
+    void reset();  /// Resets the current remote info.
+};
 
 }  // namespace aruwlib
 

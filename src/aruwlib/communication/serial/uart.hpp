@@ -47,7 +47,6 @@ class Uart
 public:
     enum UartPort
     {
-        Uart1,
         Uart2,
         Uart3,
         Uart6
@@ -81,13 +80,7 @@ public:
     {
 #ifndef PLATFORM_HOSTED
         // TODO(kaelin): move pin definition to Board?
-        if constexpr (port == UartPort::Uart1)
-        {
-            // TODO(kaelin): what's the TX pin on UART1?
-            modm::platform::Usart1::connect<GpioB7::Rx>();
-            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart2)
+        if constexpr (port == UartPort::Uart2)
         {
             modm::platform::Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
             modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(12, parity);

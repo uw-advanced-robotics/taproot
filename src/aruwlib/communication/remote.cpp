@@ -24,43 +24,68 @@
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/drivers.hpp"
 
-using namespace aruwlib::serial;
+using namespace aruwlib::arch::clock;
+
+#ifndef PLATFORM_HOSTED
+namespace modm::platform
+{
+void uart1IrqHandler() { aruwlib::Remote::RemoteDmaTxISRHandler::dmaRXISR(); }
+}  // namespace modm::platform
+#endif
 
 namespace aruwlib
 {
-void Remote::initialize() { drivers->uart.init<Uart::Uart1, 100000, Uart::Parity::Even>(); }
+void Remote::initialize()
+{
+#ifndef PLATFORM_HOSTED
+    Dma2::enableRcc();
+
+    RemoteDma::connect<GpioB7::Rx>();
+
+    // Only configure RX stream
+    Dma2::Stream2::configure(
+        DmaBase::ChannelSelection::CHANNEL_4,
+        DmaBase::DataTransferDirection::PERIPH_TO_MEM,
+        DmaBase::PeripheralIncrementMode::FIXED,
+        DmaBase::MemoryIncrementMode::INCREMENT,
+        DmaBase::PeripheralDataSize::BYTE,
+        DmaBase::MemoryDataSize::BYTE,
+        DmaBase::ControlMode::CIRCULAR,
+        DmaBase::PriorityLevel::LOW,
+        DmaBase::FifoMode::DISABLED,
+        DmaBase::FifoThreshold::QUARTER_FULL,
+        DmaBase::MemoryBurstTransfer::SINGLE,
+        DmaBase::PeripheralBurstTransfer::SINGLE);
+
+    RemoteDma::initialize<Board::SystemClock, 100000>(
+        false,
+        12,
+        modm::platform::UartBase::Parity::Even);
+
+    // Disable UART TX
+    modm::platform::UsartHal1::setTransmitterEnable(false);
+
+    // Disalbe RX interrupt, we only want the idle interrupt
+    modm::platform::UsartHal1::enableInterrupt(modm::platform::UsartHal1::Interrupt::RxIdle);
+    modm::platform::UsartHal1::disableInterrupt(modm::platform::UsartHal1::Interrupt::RxNotEmpty);
+
+    RemoteDma::clearIdleFlag();
+#endif
+}
 
 void Remote::read()
 {
-    // Check disconnect timeout
-    if (aruwlib::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_DISCONNECT_TIMEOUT)
+    if (RemoteDmaTxISRHandler::readBuffer(rxBuffer))
     {
-        connected = false;  // Remote no longer connected
-        reset();            // Reset current remote values
-    }
-    uint8_t data;  // Next byte to be read
-    // Read next byte if available and more needed for the current packet
-    while (drivers->uart.read(Uart::UartPort::Uart1, &data) && currentBufferIndex < REMOTE_BUF_LEN)
-    {
-        rxBuffer[currentBufferIndex] = data;
-        currentBufferIndex++;
-        lastRead = aruwlib::arch::clock::getTimeMilliseconds();
-    }
-    // Check read timeout
-    if (aruwlib::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_READ_TIMEOUT)
-    {
-        clearRxBuffer();
-    }
-    // Parse buffer if all 18 bytes are read
-    if (currentBufferIndex >= REMOTE_BUF_LEN)
-    {
-        connected = true;
         parseBuffer();
-        clearRxBuffer();
+    }
+    else if (!isConnected())
+    {
+        reset();
     }
 }
 
-bool Remote::isConnected() const { return connected; }
+bool Remote::isConnected() const { return getTimeMilliseconds() - lastRead <= 2 * RECEIVE_PERIOD; }
 
 float Remote::getChannel(Channel ch) const
 {
@@ -106,8 +131,6 @@ int16_t Remote::getWheel() const { return remote.wheel; }
 
 void Remote::parseBuffer()
 {
-    // values implemented by shifting bits across based on the dr16
-    // values documentation and code created last year
     remote.rightHorizontal = (rxBuffer[0] | rxBuffer[1] << 8) & 0x07FF;
     remote.rightHorizontal -= 1024;
     remote.rightVertical = (rxBuffer[1] >> 3 | rxBuffer[2] << 5) & 0x07FF;
@@ -153,11 +176,13 @@ void Remote::parseBuffer()
 
     // remaining 12 bytes (based on the DBUS_BUF_LEN variable
     // being 18) use mouse and keyboard data
-    // 660 is the max value from the remote, so gaining a higher
+    // STICK_MAX_VALUE is the max value from the remote, so gaining a higher
     // value would be impractical.
     // as such, the method returns null, exiting the method.
-    if ((abs(remote.rightHorizontal) > 660) || (abs(remote.rightVertical) > 660) ||
-        (abs(remote.leftHorizontal) > 660) || (abs(remote.leftVertical) > 660))
+    if ((abs(remote.rightHorizontal) > STICK_MAX_VALUE) ||
+        (abs(remote.rightVertical) > STICK_MAX_VALUE) ||
+        (abs(remote.leftHorizontal) > STICK_MAX_VALUE) ||
+        (abs(remote.leftVertical) > STICK_MAX_VALUE))
     {
         return;
     }
@@ -174,27 +199,15 @@ void Remote::parseBuffer()
     // Remote wheel
     remote.wheel = (rxBuffer[16] | rxBuffer[17] << 8) - 1024;
 
+    remote.updateCounter++;
+    lastRead = getTimeMilliseconds();
+
     drivers->commandMapper.handleKeyStateChange(
         remote.key,
         remote.leftSwitch,
         remote.rightSwitch,
         remote.mouse.l,
         remote.mouse.r);
-
-    remote.updateCounter++;
-}
-
-void Remote::clearRxBuffer()
-{
-    // Reset bytes read counter
-    currentBufferIndex = 0;
-    // Clear remote rxBuffer
-    for (int i = 0; i < REMOTE_BUF_LEN; i++)
-    {
-        rxBuffer[i] = 0;
-    }
-    // Clear Usart1 rxBuffer
-    drivers->uart.discardReceiveBuffer(Uart::UartPort::Uart1);
 }
 
 void Remote::reset()
@@ -212,7 +225,6 @@ void Remote::reset()
     remote.mouse.r = 0;
     remote.key = 0;
     remote.wheel = 0;
-    clearRxBuffer();
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }

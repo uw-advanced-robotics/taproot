@@ -34,8 +34,6 @@ bool Uart::read(UartPort port, uint8_t *data)
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::read(*data);
         case UartPort::Uart2:
             return Usart2::read(*data);
         case UartPort::Uart3:
@@ -55,8 +53,6 @@ std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::read(data, length);
         case UartPort::Uart2:
             return Usart2::read(data, length);
         case UartPort::Uart3:
@@ -76,8 +72,6 @@ std::size_t Uart::discardReceiveBuffer(UartPort port)
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::discardReceiveBuffer();
         case UartPort::Uart2:
             return Usart2::discardReceiveBuffer();
         case UartPort::Uart3:
@@ -97,8 +91,6 @@ bool Uart::write(UartPort port, uint8_t data)
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::write(data);
         case UartPort::Uart2:
             return Usart2::write(data);
         case UartPort::Uart3:
@@ -118,8 +110,6 @@ std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::write(data, length);
         case UartPort::Uart2:
             return Usart2::write(data, length);
         case UartPort::Uart3:
@@ -139,8 +129,6 @@ bool Uart::isWriteFinished(UartPort port) const
 #else
     switch (port)
     {
-        case UartPort::Uart1:
-            return Usart1::isWriteFinished();
         case UartPort::Uart2:
             return Usart2::isWriteFinished();
         case UartPort::Uart3:
@@ -158,9 +146,6 @@ void Uart::flushWriteBuffer(UartPort port)
 #ifndef PLATFORM_HOSTED
     switch (port)
     {
-        case UartPort::Uart1:
-            Usart1::flushWriteBuffer();
-            break;
         case UartPort::Uart2:
             Usart2::flushWriteBuffer();
             break;
