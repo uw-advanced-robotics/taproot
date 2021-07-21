@@ -96,6 +96,11 @@ enum class RemoteType : uint8_t
     INVALID_DMA_READ = 0,
 };
 
+enum class DjiMotorTxHandlerErrorType : uint8_t
+{
+    SEND_MESSAGE_FAILURE = 0
+};
+
 /**
  * Example for how to create and add an error. `drivers` is a pointer to an
  * `aruwlib::Drivers`, which contains an instance of an `ErrorController`.

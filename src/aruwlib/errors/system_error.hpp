@@ -38,7 +38,8 @@ enum Location
     SERVO,
     OLED_DISPLAY,
     LOCATION_AMOUNT,
-    REMOTE
+    REMOTE,
+    DJI_MOTOR_TX_HANDLER,
 };
 
 class SystemError
