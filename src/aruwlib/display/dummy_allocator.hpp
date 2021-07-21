@@ -34,7 +34,7 @@ public:
 
     DummyAllocator(const DummyAllocator& other) = default;
 
-    T* allocate(size_t) {}
+    T* allocate(size_t) { return nullptr; }
 
     void deallocate(T*) {}
 };  // class DummyAllocator
