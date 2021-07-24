@@ -2,20 +2,20 @@
 #
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 from os.path import join, dirname, splitext
 import sys
@@ -39,39 +39,39 @@ CPP_LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h']
 CPP_LICENSE_HEADER = '/*\n\
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
  *\n\
- * This file is part of aruwlib.\n\
+ * This file is part of Taproot.\n\
  *\n\
- * aruwlib is free software: you can redistribute it and/or modify\n\
+ * Taproot is free software: you can redistribute it and/or modify\n\
  * it under the terms of the GNU General Public License as published by\n\
  * the Free Software Foundation, either version 3 of the License, or\n\
  * (at your option) any later version.\n\
  *\n\
- * aruwlib is distributed in the hope that it will be useful,\n\
+ * Taproot is distributed in the hope that it will be useful,\n\
  * but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
  * GNU General Public License for more details.\n\
  *\n\
  * You should have received a copy of the GNU General Public License\n\
- * along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.\n\
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n\
  */\n'
 
 SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS = ['.lb', '.py', '.sh', '.yml']
 SCRIPT_LICENSE_HEADER = '# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
 #\n\
-# This file is part of aruwlib.\n\
+# This file is part of Taproot.\n\
 #\n\
-# aruwlib is free software: you can redistribute it and/or modify\n\
+# Taproot is free software: you can redistribute it and/or modify\n\
 # it under the terms of the GNU General Public License as published by\n\
 # the Free Software Foundation, either version 3 of the License, or\n\
 # (at your option) any later version.\n\
 #\n\
-# aruwlib is distributed in the hope that it will be useful,\n\
+# Taproot is distributed in the hope that it will be useful,\n\
 # but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
 # GNU General Public License for more details.\n\
 #\n\
 # You should have received a copy of the GNU General Public License\n\
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.\n'
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n'
 
 def find_files_to_check():
     file_types_to_check = CPP_LICENSED_SOURCE_FILE_EXTENSIONS + SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS
