@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = '{{ options["aruwlib:project_name"] }}'
-copyright = '2021, {{ options["aruwlib:project_name"] }}'
-author = '{{ options["aruwlib:project_name"] }}'
+project = '{{ options["taproot:project_name"] }}'
+copyright = '2021, {{ options["taproot:project_name"] }}'
+author = '{{ options["taproot:project_name"] }}'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'

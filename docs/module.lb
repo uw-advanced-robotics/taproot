@@ -25,7 +25,7 @@ def prepare(module, options):
         description="A space-seperated list of file directories to search through recursively when generating documentation.\n\
                     These directories should be relative to the generated docs folder (i.e. relative to your aruwlib/docs)"))
 
-    module.depends("aruwlib:core")
+    module.depends("taproot:core")
 
     return True
 

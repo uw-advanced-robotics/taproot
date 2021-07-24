@@ -18,7 +18,7 @@
 import subprocess
 
 def init(repo):
-    repo.name = "aruwlib"
+    repo.name = "taproot"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
 
     repo.add_option(
@@ -42,7 +42,7 @@ def prepare(repo, options):
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
-    if env["aruwlib:rebuild_modm"]:
+    if env["taproot:rebuild_modm"]:
         print('building modm')
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")

@@ -34,8 +34,8 @@ class ARUWLIBTests(Module):
 
     def prepare(self, module, options):
         module.depends(
-            "aruwlib:testing:mock",
-            "aruwlib:core")
+            "taproot:testing:mock",
+            "taproot:core")
         return True
 
     def build(self, env):

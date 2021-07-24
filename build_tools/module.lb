@@ -28,7 +28,7 @@ class ModmGeneration(Module):
         env.outbasepath = "aruwlib"
 
         properties = {}
-        properties["modm_path"] = env["aruwlib:modm_repo_lb"]
+        properties["modm_path"] = env["taproot:modm_repo_lb"]
         env.substitutions = properties
 
         env.template("project.xml.in", "project.xml")
