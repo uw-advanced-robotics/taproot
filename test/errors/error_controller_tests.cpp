@@ -19,8 +19,8 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/drivers.hpp"
-#include "aruwlib/errors/error_controller.hpp"
+#include "tap/drivers.hpp"
+#include "tap/errors/error_controller.hpp"
 
 namespace aruwlib::errors
 {

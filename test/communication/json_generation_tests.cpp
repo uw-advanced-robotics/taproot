@@ -20,9 +20,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "aruwlib/communication/can/can.hpp"
-#include "aruwlib/communication/tcp-server/json_messages.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/communication/can/can.hpp"
+#include "tap/communication/tcp-server/json_messages.hpp"
+#include "tap/drivers.hpp"
 
 #include "../mock/dji_motor_mock.hpp"
 

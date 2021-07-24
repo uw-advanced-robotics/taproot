@@ -22,8 +22,8 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/control/command.hpp"
-#include "aruwlib/control/command_mapper.hpp"
+#include "tap/control/command.hpp"
+#include "tap/control/command_mapper.hpp"
 
 namespace aruwlib
 {

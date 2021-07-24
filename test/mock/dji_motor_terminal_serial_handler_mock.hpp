@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/motor/dji_motor_terminal_serial_handler.hpp"
+#include "tap/motor/dji_motor_terminal_serial_handler.hpp"
 
 namespace aruwlib
 {

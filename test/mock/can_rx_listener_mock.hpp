@@ -24,7 +24,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/can/can_rx_listener.hpp"
+#include "tap/communication/can/can_rx_listener.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 

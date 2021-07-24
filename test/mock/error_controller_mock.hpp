@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/errors/error_controller.hpp"
+#include "tap/errors/error_controller.hpp"
 
 namespace aruwlib
 {

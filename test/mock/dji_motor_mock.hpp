@@ -22,8 +22,8 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/drivers.hpp"
-#include "aruwlib/motor/dji_motor.hpp"
+#include "tap/drivers.hpp"
+#include "tap/motor/dji_motor.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 

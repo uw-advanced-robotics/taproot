@@ -19,8 +19,8 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/communication/remote.hpp"
-#include "aruwlib/control/remote_map_state.hpp"
+#include "tap/communication/remote.hpp"
+#include "tap/control/remote_map_state.hpp"
 
 using aruwlib::Remote;
 using aruwlib::control::RemoteMapState;

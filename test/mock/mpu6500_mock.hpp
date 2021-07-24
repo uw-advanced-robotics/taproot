@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
+#include "tap/communication/sensors/mpu6500/mpu6500.hpp"
 
 namespace aruwlib
 {

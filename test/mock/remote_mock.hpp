@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/remote.hpp"
+#include "tap/communication/remote.hpp"
 
 namespace aruwlib
 {

@@ -24,7 +24,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "aruwlib/communication/tcp-server/tcp_server.hpp"
+#include "tap/communication/tcp-server/tcp_server.hpp"
 
 #include "tcp_test_client.hpp"
 

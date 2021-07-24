@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/gpio/pwm.hpp"
+#include "tap/communication/gpio/pwm.hpp"
 
 namespace aruwlib
 {

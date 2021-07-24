@@ -19,8 +19,8 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/display/vertical_scroll_logic_handler.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/display/vertical_scroll_logic_handler.hpp"
+#include "tap/drivers.hpp"
 
 using namespace aruwlib::display;
 using namespace aruwlib;

@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/gpio/digital.hpp"
+#include "tap/communication/gpio/digital.hpp"
 
 namespace aruwlib
 {

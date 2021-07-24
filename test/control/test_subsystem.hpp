@@ -20,7 +20,7 @@
 #ifndef TEST_SUBSYSTEM_HPP_
 #define TEST_SUBSYSTEM_HPP_
 
-#include "aruwlib/control/subsystem.hpp"
+#include "tap/control/subsystem.hpp"
 
 namespace aruwlib
 {

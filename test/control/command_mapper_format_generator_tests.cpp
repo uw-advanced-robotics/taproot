@@ -19,10 +19,10 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/control/command_mapper.hpp"
-#include "aruwlib/control/command_mapper_format_generator.hpp"
-#include "aruwlib/control/hold_command_mapping.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/control/command_mapper.hpp"
+#include "tap/control/command_mapper_format_generator.hpp"
+#include "tap/control/hold_command_mapping.hpp"
+#include "tap/drivers.hpp"
 
 #include "test_command.hpp"
 #include "test_subsystem.hpp"

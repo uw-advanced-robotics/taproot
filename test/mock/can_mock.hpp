@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/can/can.hpp"
+#include "tap/communication/can/can.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 

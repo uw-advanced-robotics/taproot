@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/gpio/analog.hpp"
+#include "tap/communication/gpio/analog.hpp"
 
 namespace aruwlib
 {

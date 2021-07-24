@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/can/imu_rx_listener.hpp"
+#include "tap/communication/can/imu_rx_listener.hpp"
 
 namespace aruwlib::mock
 {

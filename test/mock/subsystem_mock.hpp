@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/control/subsystem.hpp"
+#include "tap/control/subsystem.hpp"
 
 namespace aruwlib
 {

@@ -19,9 +19,9 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/control/remote_map_state.hpp"
-#include "aruwlib/control/toggle_command_mapping.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/control/remote_map_state.hpp"
+#include "tap/control/toggle_command_mapping.hpp"
+#include "tap/drivers.hpp"
 
 #include "test_command.hpp"
 #include "test_subsystem.hpp"

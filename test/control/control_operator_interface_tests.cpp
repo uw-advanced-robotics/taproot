@@ -27,10 +27,10 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/algorithms/math_user_utils.hpp"
-#include "aruwlib/architecture/clock.hpp"
-#include "aruwlib/control/control_operator_interface.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/algorithms/math_user_utils.hpp"
+#include "tap/architecture/clock.hpp"
+#include "tap/control/control_operator_interface.hpp"
+#include "tap/drivers.hpp"
 
 using aruwlib::Drivers;
 using aruwlib::Remote;

@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/motor/dji_motor_tx_handler.hpp"
+#include "tap/motor/dji_motor_tx_handler.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 

@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/algorithms/contiguous_float.hpp"
+#include "tap/algorithms/contiguous_float.hpp"
 
 TEST(ContiguousFloat, Basic_functionality)
 {

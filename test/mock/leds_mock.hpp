@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/gpio/leds.hpp"
+#include "tap/communication/gpio/leds.hpp"
 
 namespace aruwlib
 {

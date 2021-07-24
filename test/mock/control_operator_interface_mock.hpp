@@ -22,9 +22,9 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/control/command.hpp"
-#include "aruwlib/control/control_operator_interface.hpp"
-#include "aruwlib/control/subsystem.hpp"
+#include "tap/control/command.hpp"
+#include "tap/control/control_operator_interface.hpp"
+#include "tap/control/subsystem.hpp"
 
 namespace aruwlib
 {

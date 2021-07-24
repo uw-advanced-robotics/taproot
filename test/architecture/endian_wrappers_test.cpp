@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/architecture/endianness_wrappers.hpp"
+#include "tap/architecture/endianness_wrappers.hpp"
 
 TEST(EndiannessWrappersTest, ToLittleEndian)
 {

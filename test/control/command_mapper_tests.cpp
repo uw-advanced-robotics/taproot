@@ -19,13 +19,13 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/control/command_mapper.hpp"
-#include "aruwlib/control/hold_command_mapping.hpp"
-#include "aruwlib/control/hold_repeat_command_mapping.hpp"
-#include "aruwlib/control/press_command_mapping.hpp"
-#include "aruwlib/control/remote_map_state.hpp"
-#include "aruwlib/control/toggle_command_mapping.hpp"
-#include "aruwlib/drivers.hpp"
+#include "tap/control/command_mapper.hpp"
+#include "tap/control/hold_command_mapping.hpp"
+#include "tap/control/hold_repeat_command_mapping.hpp"
+#include "tap/control/press_command_mapping.hpp"
+#include "tap/control/remote_map_state.hpp"
+#include "tap/control/toggle_command_mapping.hpp"
+#include "tap/drivers.hpp"
 
 #include "test_command.hpp"
 #include "test_subsystem.hpp"

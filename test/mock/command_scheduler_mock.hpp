@@ -22,9 +22,9 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/control/command.hpp"
-#include "aruwlib/control/command_scheduler.hpp"
-#include "aruwlib/control/subsystem.hpp"
+#include "tap/control/command.hpp"
+#include "tap/control/command_scheduler.hpp"
+#include "tap/control/subsystem.hpp"
 
 namespace aruwlib
 {

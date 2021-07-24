@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/serial/terminal_serial.hpp"
+#include "tap/communication/serial/terminal_serial.hpp"
 
 namespace aruwlib
 {

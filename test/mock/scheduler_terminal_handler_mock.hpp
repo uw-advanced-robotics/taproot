@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/control/scheduler_terminal_handler.hpp"
+#include "tap/control/scheduler_terminal_handler.hpp"
 
 namespace aruwlib
 {

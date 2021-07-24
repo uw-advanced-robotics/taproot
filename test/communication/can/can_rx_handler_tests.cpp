@@ -19,9 +19,9 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/drivers.hpp"
-#include "aruwlib/mock/can_rx_handler_mock.hpp"
-#include "aruwlib/mock/can_rx_listener_mock.hpp"
+#include "tap/drivers.hpp"
+#include "tap/mock/can_rx_handler_mock.hpp"
+#include "tap/mock/can_rx_listener_mock.hpp"
 
 TEST(CanRxHandler, ListenerAttachesSelf)
 {

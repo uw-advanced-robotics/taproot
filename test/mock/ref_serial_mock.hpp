@@ -22,7 +22,7 @@
 
 #include <gmock/gmock.h>
 
-#include "aruwlib/communication/serial/ref_serial.hpp"
+#include "tap/communication/serial/ref_serial.hpp"
 
 namespace aruwlib
 {
