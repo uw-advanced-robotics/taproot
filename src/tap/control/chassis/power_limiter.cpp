@@ -29,14 +29,14 @@ using std::max;
 namespace tap::control::chassis
 {
 PowerLimiter::PowerLimiter(
-    const aruwlib::Drivers *drivers,
-    aruwlib::gpio::Analog::Pin currentPin,
+    const tap::Drivers *drivers,
+    tap::gpio::Analog::Pin currentPin,
     float maxEnergyBuffer,
     float energyBufferLimitThreshold,
     float energyBufferCritThreshold,
     float powerConsumptionThreshold,
     float currentAllocatedForEnergyBufferLimiting,
-    const aruwlib::motor::MotorConstants &motorConstants)
+    const tap::motor::MotorConstants &motorConstants)
     : drivers(drivers),
       currentPin(currentPin),
       maxEnergyBuffer(maxEnergyBuffer),
@@ -52,7 +52,7 @@ PowerLimiter::PowerLimiter(
 {
 }
 
-void PowerLimiter::performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int numMotors)
+void PowerLimiter::performPowerLimiting(tap::motor::DjiMotor *motors[], int numMotors)
 {
     if (!drivers->refSerial.getRefSerialReceivingData())
     {
@@ -182,12 +182,12 @@ void PowerLimiter::updatePowerAndEnergyBuffer()
     float newChassisPower = drivers->refSerial.getRobotData().chassis.volt * current / 1'000'000.0f;
 
     // See rules manual for reasoning behind the energy buffer calculation
-    float dt = aruwlib::arch::clock::getTimeMilliseconds() - prevTime;
-    prevTime = aruwlib::arch::clock::getTimeMilliseconds();
+    float dt = tap::arch::clock::getTimeMilliseconds() - prevTime;
+    prevTime = tap::arch::clock::getTimeMilliseconds();
     energyBuffer -= (consumedPower - chassisData.powerConsumptionLimit) * dt / 1000.0f;
 
     // To avoid large deviation from true power buffer, do this.
-    if (!aruwlib::algorithms::compareFloatClose(energyBuffer, chassisData.powerBuffer, 5))
+    if (!tap::algorithms::compareFloatClose(energyBuffer, chassisData.powerBuffer, 5))
     {
         energyBuffer = chassisData.powerBuffer;
     }

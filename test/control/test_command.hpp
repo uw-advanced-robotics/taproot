@@ -28,7 +28,7 @@ namespace tap
 {
 namespace control
 {
-class TestCommand : public aruwlib::control::Command
+class TestCommand : public tap::control::Command
 {
 public:
     TestCommand(TestSubsystem *ts) : finished(false), s(ts) { addSubsystemRequirement(s); }

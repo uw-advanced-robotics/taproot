@@ -25,8 +25,8 @@
 
 TEST(CanRxHandler, ListenerAttachesSelf)
 {
-    aruwlib::Drivers drivers;
-    aruwlib::mock::CanRxListenerMock listener(&drivers, 0, aruwlib::can::CanBus::CAN_BUS1);
+    tap::Drivers drivers;
+    tap::mock::CanRxListenerMock listener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
 
     EXPECT_CALL(drivers.canRxHandler, attachReceiveHandler);
     listener.attachSelfToRxHandler();
@@ -37,20 +37,20 @@ TEST(CanRxHandler, ListenerAttachesSelf)
 
 TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
 {
-    aruwlib::Drivers drivers;
-    aruwlib::can::CanRxHandler handler(&drivers);
+    tap::Drivers drivers;
+    tap::can::CanRxHandler handler(&drivers);
 
-    for (int i = aruwlib::motor::MOTOR1; i <= aruwlib::motor::MOTOR8; i++)
+    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
     {
-        aruwlib::mock::CanRxListenerMock listener(&drivers, i, aruwlib::can::CanBus::CAN_BUS1);
+        tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
         int normalizedId = DJI_MOTOR_NORMALIZED_ID(i);
 
         handler.attachReceiveHandler(&listener);
-        EXPECT_EQ(&listener, handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1)[normalizedId]);
+        EXPECT_EQ(&listener, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
 
         handler.removeReceiveHandler(listener);
-        EXPECT_EQ(nullptr, handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1)[normalizedId]);
+        EXPECT_EQ(nullptr, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
     }
 
@@ -59,11 +59,11 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
 
 TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
 {
-    aruwlib::Drivers drivers;
-    aruwlib::can::CanRxHandler handler(&drivers);
-    for (int i = aruwlib::motor::MOTOR1; i <= aruwlib::motor::MOTOR8; i++)
+    tap::Drivers drivers;
+    tap::can::CanRxHandler handler(&drivers);
+    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
     {
-        aruwlib::mock::CanRxListenerMock listener(&drivers, i, aruwlib::can::CanBus::CAN_BUS1);
+        tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
         handler.attachReceiveHandler(&listener);
 
@@ -71,13 +71,13 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
         const modm::can::Message rxMessage(i);
         handler.processReceivedCanData(
             rxMessage,
-            handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1),
+            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1),
             8);
 
         handler.removeReceiveHandler(listener);
         EXPECT_EQ(
             nullptr,
-            handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1)[DJI_MOTOR_NORMALIZED_ID(i)]);
+            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[DJI_MOTOR_NORMALIZED_ID(i)]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
     }
     EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
@@ -85,13 +85,13 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
 
 TEST(CanRxHandler, ErrorIsThrownWithOOBMessageID)
 {
-    aruwlib::Drivers drivers;
-    aruwlib::can::CanRxHandler handler(&drivers);
+    tap::Drivers drivers;
+    tap::can::CanRxHandler handler(&drivers);
     const modm::can::Message rxMessage(9);
 
     EXPECT_CALL(drivers.errorController, addToErrorList);
     handler.processReceivedCanData(
         rxMessage,
-        handler.getHandlerStore(aruwlib::can::CanBus::CAN_BUS1),
+        handler.getHandlerStore(tap::can::CanBus::CAN_BUS1),
         8);
 }

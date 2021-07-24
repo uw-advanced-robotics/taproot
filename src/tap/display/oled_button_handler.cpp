@@ -25,7 +25,7 @@ namespace tap
 {
 namespace display
 {
-OledButtonHandler::OledButtonHandler(aruwlib::Drivers *drivers)
+OledButtonHandler::OledButtonHandler(tap::Drivers *drivers)
     : drivers(drivers),
       downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       upButtonPressed(BUTTON_DEBOUNCE_SAMPLES),

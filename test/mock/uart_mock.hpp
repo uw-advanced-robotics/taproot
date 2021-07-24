@@ -28,31 +28,31 @@ namespace tap
 {
 namespace mock
 {
-class UartMock : public aruwlib::serial::Uart
+class UartMock : public tap::serial::Uart
 {
 public:
     UartMock();
     virtual ~UartMock();
 
-    MOCK_METHOD(bool, read, (aruwlib::serial::Uart::UartPort port, uint8_t *data), (override));
+    MOCK_METHOD(bool, read, (tap::serial::Uart::UartPort port, uint8_t *data), (override));
     MOCK_METHOD(
         std::size_t,
         read,
-        (aruwlib::serial::Uart::UartPort port, uint8_t *data, std::size_t length),
+        (tap::serial::Uart::UartPort port, uint8_t *data, std::size_t length),
         (override));
     MOCK_METHOD(
         std::size_t,
         discardReceiveBuffer,
-        (aruwlib::serial::Uart::UartPort port),
+        (tap::serial::Uart::UartPort port),
         (override));
-    MOCK_METHOD(bool, write, (aruwlib::serial::Uart::UartPort port, uint8_t data), (override));
+    MOCK_METHOD(bool, write, (tap::serial::Uart::UartPort port, uint8_t data), (override));
     MOCK_METHOD(
         std::size_t,
         write,
-        (aruwlib::serial::Uart::UartPort port, const uint8_t *data, std::size_t length),
+        (tap::serial::Uart::UartPort port, const uint8_t *data, std::size_t length),
         (override));
-    MOCK_METHOD(bool, isWriteFinished, (aruwlib::serial::Uart::UartPort port), (const override));
-    MOCK_METHOD(void, flushWriteBuffer, (aruwlib::serial::Uart::UartPort port), (override));
+    MOCK_METHOD(bool, isWriteFinished, (tap::serial::Uart::UartPort port), (const override));
+    MOCK_METHOD(void, flushWriteBuffer, (tap::serial::Uart::UartPort port), (override));
 };  // class UartMock
 }  // namespace mock
 }  // namespace tap

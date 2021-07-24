@@ -135,7 +135,7 @@ private:
      */
     ITerminalSerialCallback *currStreamer;
 
-    aruwlib::arch::PeriodicMilliTimer streamingTimer;
+    tap::arch::PeriodicMilliTimer streamingTimer;
 
     struct cmpByStringEquality
     {

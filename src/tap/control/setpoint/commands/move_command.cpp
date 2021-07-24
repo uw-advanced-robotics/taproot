@@ -44,7 +44,7 @@ MoveCommand::MoveCommand(
       agitatorPrevRotateTime(0),
       agitatorSetToFinalAngle(agitatorSetToFinalAngle)
 {
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(agitator));
+    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(agitator));
 }
 
 void MoveCommand::initialize()
@@ -54,13 +54,13 @@ void MoveCommand::initialize()
 
     rampToTargetAngle.setValue(setpointSubsystem->getCurrentValue());
 
-    agitatorPrevRotateTime = aruwlib::arch::clock::getTimeMilliseconds();
+    agitatorPrevRotateTime = tap::arch::clock::getTimeMilliseconds();
 }
 
 void MoveCommand::execute()
 {
     // update the agitator setpoint ramp
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     rampToTargetAngle.update(
         (currTime - agitatorPrevRotateTime) * agitatorTargetAngleChange /
         static_cast<float>(agitatorDesiredRotateTime));

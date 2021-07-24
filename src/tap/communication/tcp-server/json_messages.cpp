@@ -43,7 +43,7 @@ using std::string;
 /**
  * returns JSON string representing motor message.
  */
-string makeMotorMessage(const aruwlib::motor::DjiMotor& motor)
+string makeMotorMessage(const tap::motor::DjiMotor& motor)
 {
     string jsonMessage =
         "{\"messageType\":\"motor\","

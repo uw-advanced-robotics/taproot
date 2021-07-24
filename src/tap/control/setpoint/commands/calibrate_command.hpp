@@ -39,14 +39,14 @@ class SetpointSubsystem;
  *  - A placeholder command initially.
  *  - Allows you to recalibrate an agitator that has already been calibrated if necessary.
  */
-class CalibrateCommand : public aruwlib::control::Command
+class CalibrateCommand : public tap::control::Command
 {
 public:
     /**
      * @param[in] agitator The subsystem this command is dependent upon.
      */
     explicit CalibrateCommand(
-        aruwlib::control::setpoint::SetpointSubsystem* angularPositionalSubsystem);
+        tap::control::setpoint::SetpointSubsystem* angularPositionalSubsystem);
 
     const char* getName() const override { return "agitator calibrate"; }
 
@@ -59,7 +59,7 @@ public:
     bool isFinished() const override;
 
 private:
-    aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem;
+    tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 };  // class CalibrateCommand
 
 }  // namespace setpoint

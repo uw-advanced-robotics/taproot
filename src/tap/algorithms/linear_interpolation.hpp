@@ -42,7 +42,7 @@ namespace algorithms
  *     if (new value received) {
  *         li.update(value);
  *     }
- *     runcontroller(li.getInterpolated(aruwlib::arch::clock::getTimeMilliseconds()));
+ *     runcontroller(li.getInterpolated(tap::arch::clock::getTimeMilliseconds()));
  * }
  * \endcode
  */
@@ -67,7 +67,7 @@ public:
      * \f$y=slope\cdot (currTime - lastUpdateCallTime) + previousValue\f$.
      *
      * @note use a millisecond-resolution timer, e.g.
-     *      aruwlib::arch::clock::getTimeMilliseconds()
+     *      tap::arch::clock::getTimeMilliseconds()
      * @param[in] currTime the current clock time, in ms.
      * @return the interpolated value.
      */

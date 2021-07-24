@@ -32,9 +32,9 @@
 #include "tap/control/control_operator_interface.hpp"
 #include "tap/drivers.hpp"
 
-using aruwlib::Drivers;
-using aruwlib::Remote;
-using aruwlib::control::ControlOperatorInterface;
+using tap::Drivers;
+using tap::Remote;
+using tap::control::ControlOperatorInterface;
 using namespace testing;
 using namespace tap::arch::clock;
 using namespace tap::algorithms;

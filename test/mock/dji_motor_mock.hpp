@@ -31,13 +31,13 @@ namespace tap
 {
 namespace mock
 {
-class DjiMotorMock : public aruwlib::motor::DjiMotor
+class DjiMotorMock : public tap::motor::DjiMotor
 {
 public:
     DjiMotorMock(
         Drivers* drivers,
-        aruwlib::motor::MotorId desMotorIdentifier,
-        aruwlib::can::CanBus motorCanBus,
+        tap::motor::MotorId desMotorIdentifier,
+        tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name);
     virtual ~DjiMotorMock();
@@ -56,7 +56,7 @@ public:
     MOCK_METHOD(int16_t, getTorque, (), (const override));
     MOCK_METHOD(int16_t, getShaftRPM, (), (const override));
     MOCK_METHOD(bool, isMotorInverted, (), (const override));
-    MOCK_METHOD(aruwlib::can::CanBus, getCanBus, (), (const override));
+    MOCK_METHOD(tap::can::CanBus, getCanBus, (), (const override));
     MOCK_METHOD(const char*, getName, (), (const override));
 
 };  // class DjiMotor

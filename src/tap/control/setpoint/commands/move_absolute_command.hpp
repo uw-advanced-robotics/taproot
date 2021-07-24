@@ -43,7 +43,7 @@ namespace setpoint
  * Agitator angles are relative, and the "0"-angle is changed when
  * the agitator is calibrated.
  */
-class MoveAbsoluteCommand : public aruwlib::control::Command
+class MoveAbsoluteCommand : public tap::control::Command
 {
 public:
     /**
@@ -58,7 +58,7 @@ public:
      *  jam state without any unjamming performed
      */
     explicit MoveAbsoluteCommand(
-        aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem,
+        tap::control::setpoint::SetpointSubsystem* setpointSubsystem,
         float targetAngle,
         uint32_t agitatorRotateSpeed,
         float setpointTolerance,
@@ -77,13 +77,13 @@ public:
     bool isFinished() const override;
 
 protected:
-    aruwlib::control::setpoint::SetpointSubsystem* setpointSubsystem;
+    tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 
 private:
     /* target angle for the agitator to reach when command is called.*/
     float targetAngle;
 
-    aruwlib::algorithms::Ramp rampToTargetAngle;
+    tap::algorithms::Ramp rampToTargetAngle;
 
     /**
      * The angular speed the agitator should attempt to move at in

@@ -33,7 +33,7 @@ using namespace modm::platform;
 #endif
 using namespace modm::literals;
 
-void aruwlib::can::Can::initialize()
+void tap::can::Can::initialize()
 {
 #ifndef PLATFORM_HOSTED
     CanFilter::setStartFilterBankForCan2(14);
@@ -57,10 +57,10 @@ void aruwlib::can::Can::initialize()
 #endif
 }
 
-bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
+bool tap::can::Can::isMessageAvailable(tap::can::CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
-    return aruwlib::motorsim::SimHandler::readyToSend(bus);
+    return tap::motorsim::SimHandler::readyToSend(bus);
 #else
     switch (bus)
     {
@@ -74,10 +74,10 @@ bool aruwlib::can::Can::isMessageAvailable(aruwlib::can::CanBus bus) const
 #endif
 }
 
-bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message* message)
+bool tap::can::Can::getMessage(tap::can::CanBus bus, modm::can::Message* message)
 {
 #ifdef PLATFORM_HOSTED
-    return aruwlib::motorsim::SimHandler::sendMessage(bus, message);
+    return tap::motorsim::SimHandler::sendMessage(bus, message);
 #else
     switch (bus)
     {
@@ -91,7 +91,7 @@ bool aruwlib::can::Can::getMessage(aruwlib::can::CanBus bus, modm::can::Message*
 #endif
 }
 
-bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
+bool tap::can::Can::isReadyToSend(CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
     return true;
@@ -108,10 +108,10 @@ bool aruwlib::can::Can::isReadyToSend(CanBus bus) const
 #endif
 }
 
-bool aruwlib::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
+bool tap::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
 {
 #ifdef PLATFORM_HOSTED
-    return aruwlib::motorsim::SimHandler::getMessage(bus, message);
+    return tap::motorsim::SimHandler::getMessage(bus, message);
 #else
     switch (bus)
     {

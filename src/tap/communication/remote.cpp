@@ -33,7 +33,7 @@ void Remote::initialize() { drivers->uart.init<Uart::Uart1, 100000, Uart::Parity
 void Remote::read()
 {
     // Check disconnect timeout
-    if (aruwlib::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_DISCONNECT_TIMEOUT)
+    if (tap::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_DISCONNECT_TIMEOUT)
     {
         connected = false;  // Remote no longer connected
         reset();            // Reset current remote values
@@ -44,10 +44,10 @@ void Remote::read()
     {
         rxBuffer[currentBufferIndex] = data;
         currentBufferIndex++;
-        lastRead = aruwlib::arch::clock::getTimeMilliseconds();
+        lastRead = tap::arch::clock::getTimeMilliseconds();
     }
     // Check read timeout
-    if (aruwlib::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_READ_TIMEOUT)
+    if (tap::arch::clock::getTimeMilliseconds() - lastRead > REMOTE_READ_TIMEOUT)
     {
         clearRxBuffer();
     }

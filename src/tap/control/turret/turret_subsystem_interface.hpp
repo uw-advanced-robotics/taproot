@@ -57,11 +57,11 @@ public:
     /**
      * @return The current value of the turret's physical yaw.
      */
-    virtual const aruwlib::algorithms::ContiguousFloat &getCurrentYawValue() const = 0;
+    virtual const tap::algorithms::ContiguousFloat &getCurrentYawValue() const = 0;
     /**
      * @see getCurrentYawValue
      */
-    virtual const aruwlib::algorithms::ContiguousFloat &getCurrentPitchValue() const = 0;
+    virtual const tap::algorithms::ContiguousFloat &getCurrentPitchValue() const = 0;
 
     /**
      * @return `true` if the turret is online (i.e.: is connected)

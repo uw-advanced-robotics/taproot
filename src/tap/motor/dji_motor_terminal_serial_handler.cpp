@@ -145,12 +145,12 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
         outputStream << "CAN 1:" << modm::endl;
         getMotorInfoToString(
             drivers->djiMotorTxHandler.getCan1Motor(
-                static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
+                static_cast<MotorId>(motorId + tap::motor::MOTOR1)),
             outputStream);
         outputStream << "CAN 2:" << modm::endl;
         getMotorInfoToString(
             drivers->djiMotorTxHandler.getCan2Motor(
-                static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
+                static_cast<MotorId>(motorId + tap::motor::MOTOR1)),
             outputStream);
     }
     else
@@ -159,14 +159,14 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
         {
             getMotorInfoToString(
                 drivers->djiMotorTxHandler.getCan1Motor(
-                    static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
+                    static_cast<MotorId>(motorId + tap::motor::MOTOR1)),
                 outputStream);
         }
         else
         {
             getMotorInfoToString(
                 drivers->djiMotorTxHandler.getCan2Motor(
-                    static_cast<MotorId>(motorId + aruwlib::motor::MOTOR1)),
+                    static_cast<MotorId>(motorId + tap::motor::MOTOR1)),
                 outputStream);
         }
     }

@@ -68,8 +68,8 @@ void CommandMapper::addMap(CommandMapping *mapping)
             RAISE_ERROR(
                 drivers,
                 "failed to insert io mapping",
-                aruwlib::errors::CONTROLLER_MAPPER,
-                aruwlib::errors::ControllerMapperErrorType::INVALID_ADD);
+                tap::errors::CONTROLLER_MAPPER,
+                tap::errors::ControllerMapperErrorType::INVALID_ADD);
             return;
         }
     }

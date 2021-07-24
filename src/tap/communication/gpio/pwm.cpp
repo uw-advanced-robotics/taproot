@@ -61,7 +61,7 @@ void Pwm::writeAll(float duty)
 void Pwm::write(float duty, Pin pin)
 {
 #ifndef PLATFORM_HOSTED
-    duty = aruwlib::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
+    duty = tap::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
     Timer8::configureOutputChannel(
         static_cast<int>(pin),
         Timer8::OutputCompareMode::Pwm,

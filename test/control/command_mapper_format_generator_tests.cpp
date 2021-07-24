@@ -28,8 +28,8 @@
 #include "test_subsystem.hpp"
 
 using namespace tap::control;
-using aruwlib::Drivers;
-using aruwlib::Remote;
+using tap::Drivers;
+using tap::Remote;
 
 TEST(CommandMapperFormatGenerator, generateMappings_generates_nothing_if_no_mappings)
 {

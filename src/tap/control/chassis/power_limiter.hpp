@@ -78,14 +78,14 @@ public:
      *      motor being used in power limiting.
      */
     PowerLimiter(
-        const aruwlib::Drivers *drivers,
-        aruwlib::gpio::Analog::Pin currentPin,
+        const tap::Drivers *drivers,
+        tap::gpio::Analog::Pin currentPin,
         float maxEnergyBuffer,
         float energyBufferLimitThreshold,
         float energyBufferCritThreshold,
         float powerConsumptionThreshold,
         float currentAllocatedForEnergyBufferLimiting,
-        const aruwlib::motor::MotorConstants &motorConstants);
+        const tap::motor::MotorConstants &motorConstants);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example), that
@@ -93,17 +93,17 @@ public:
      *
      * @note Four wheeled varient designed for a normal mecanum wheeled chassis.
      */
-    void performPowerLimiting(aruwlib::motor::DjiMotor *motors[], int numMotors);
+    void performPowerLimiting(tap::motor::DjiMotor *motors[], int numMotors);
 
 private:
-    const aruwlib::Drivers *drivers;
-    const aruwlib::gpio::Analog::Pin currentPin;
+    const tap::Drivers *drivers;
+    const tap::gpio::Analog::Pin currentPin;
     const float maxEnergyBuffer;
     const float energyBufferLimitThreshold;
     const float energyBufferCritThreshold;
     const float powerConsumptionThreshold;
     const float currentAllocatedForEnergyBufferLimiting;
-    const aruwlib::motor::MotorConstants &motorConstants;
+    const tap::motor::MotorConstants &motorConstants;
     float prevChassisCurrent;
     float energyBuffer;
     float consumedPower;

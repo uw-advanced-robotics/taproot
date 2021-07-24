@@ -30,14 +30,14 @@ namespace motor
 {
 Servo::Servo(
     Drivers *drivers,
-    aruwlib::gpio::Pwm::Pin pwmPin,
+    tap::gpio::Pwm::Pin pwmPin,
     float maximumPwm,
     float minimumPwm,
     float pwmRampSpeed)
     : drivers(drivers),
       pwmOutputRamp(0.0f),
-      maxPwm(aruwlib::algorithms::limitVal<float>(maximumPwm, 0.0f, 1.0f)),
-      minPwm(aruwlib::algorithms::limitVal<float>(minimumPwm, 0.0f, 1.0f)),
+      maxPwm(tap::algorithms::limitVal<float>(maximumPwm, 0.0f, 1.0f)),
+      minPwm(tap::algorithms::limitVal<float>(minimumPwm, 0.0f, 1.0f)),
       pwmRampSpeed(pwmRampSpeed),
       prevTime(0),
       servoPin(pwmPin)
@@ -56,13 +56,13 @@ Servo::Servo(
 
 void Servo::setTargetPwm(float pwm)
 {
-    pwmOutputRamp.setTarget(aruwlib::algorithms::limitVal<float>(pwm, minPwm, maxPwm));
-    prevTime = aruwlib::arch::clock::getTimeMilliseconds();
+    pwmOutputRamp.setTarget(tap::algorithms::limitVal<float>(pwm, minPwm, maxPwm));
+    prevTime = tap::arch::clock::getTimeMilliseconds();
 }
 
 void Servo::updateSendPwmRamp()
 {
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     pwmOutputRamp.update(pwmRampSpeed * (currTime - prevTime));
     prevTime = currTime;
     currentPwm = pwmOutputRamp.getValue();

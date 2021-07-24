@@ -141,7 +141,7 @@ public:
         CanRxListener** messageHandlerStore,
         int messageHandlerStoreSize);
 
-    aruwlib::can::CanRxListener** getHandlerStore(aruwlib::can::CanBus bus);
+    tap::can::CanRxListener** getHandlerStore(tap::can::CanBus bus);
 };  // class CanRxHandler
 
 }  // namespace can

@@ -31,7 +31,7 @@ namespace motorsim
 {
 /* Singleton Class Variables */
 std::array<
-    std::array<MotorSim*, aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>,
+    std::array<MotorSim*, tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>,
     SimHandler::CAN_BUSSES>
     SimHandler::sims;
 
@@ -75,8 +75,8 @@ void SimHandler::resetMotorSims()
 }
 void SimHandler::registerSim(
     MotorSim::MotorType type,
-    aruwlib::can::CanBus bus,
-    aruwlib::motor::MotorId id,
+    tap::can::CanBus bus,
+    tap::motor::MotorId id,
     float loading)
 {
     int8_t port = CanSerializer::idToPort(id);
@@ -91,26 +91,26 @@ void SimHandler::registerSim(
     sims[busIndex][port] = new motorsim::MotorSim(type, loading);
 }
 
-bool SimHandler::readyToSend(aruwlib::can::CanBus bus)
+bool SimHandler::readyToSend(tap::can::CanBus bus)
 {
     uint8_t busIndex = static_cast<uint8_t>(bus);
     if (sims[busIndex][nextCanSendIndex[busIndex]] == nullptr)
     {
         nextCanSendIndex[busIndex] = (nextCanSendIndex[busIndex] + 1) %
-                                     aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
+                                     tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
         return false;
     }
     return true;
 }
 
-bool SimHandler::getMessage(aruwlib::can::CanBus bus, const modm::can::Message& message)
+bool SimHandler::getMessage(tap::can::CanBus bus, const modm::can::Message& message)
 {
     std::array<int16_t, 4> newInputs = CanSerializer::parseMessage(&message);
     uint8_t busIndex = static_cast<uint8_t>(bus);
 
     if (message.getIdentifier() == 0x1FF)
     {
-        for (int i = 0; i < (aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN / 2); i++)
+        for (int i = 0; i < (tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN / 2); i++)
         {
             if (sims[busIndex][i] != nullptr)
             {
@@ -120,8 +120,8 @@ bool SimHandler::getMessage(aruwlib::can::CanBus bus, const modm::can::Message& 
     }
     else if (message.getIdentifier() == 0x200)
     {
-        for (int i = (aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN / 2);
-             i < aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
+        for (int i = (tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN / 2);
+             i < tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
              i++)
         {
             if (sims[busIndex][i] != nullptr)
@@ -136,7 +136,7 @@ bool SimHandler::getMessage(aruwlib::can::CanBus bus, const modm::can::Message& 
     }
     return true;
 }
-bool SimHandler::sendMessage(aruwlib::can::CanBus bus, modm::can::Message* message)
+bool SimHandler::sendMessage(tap::can::CanBus bus, modm::can::Message* message)
 {
     uint8_t busIndex = static_cast<uint8_t>(bus);
 

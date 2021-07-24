@@ -26,8 +26,8 @@
 
 #include "../mock/dji_motor_mock.hpp"
 
-using aruwlib::Drivers;
-using aruwlib::mock::DjiMotorMock;
+using tap::Drivers;
+using tap::mock::DjiMotorMock;
 using namespace tap::can;
 using namespace tap::motor;
 using namespace tap::communication::json;
@@ -37,7 +37,7 @@ TEST(JSONMessages, ReturnsCorrectString)
 {
     Drivers drivers;
     DjiMotorMock mockMotor(&drivers, MotorId::MOTOR1, CanBus::CAN_BUS1, false, "MockMotor");
-    EXPECT_CALL(mockMotor, getCanBus()).Times(1).WillOnce(Return(aruwlib::can::CanBus::CAN_BUS2));
+    EXPECT_CALL(mockMotor, getCanBus()).Times(1).WillOnce(Return(tap::can::CanBus::CAN_BUS2));
     EXPECT_CALL(mockMotor, getMotorIdentifier()).Times(1);
     EXPECT_CALL(mockMotor, getShaftRPM()).Times(1);
     EXPECT_CALL(mockMotor, getTorque()).Times(1);

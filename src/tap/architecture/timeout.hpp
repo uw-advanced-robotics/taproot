@@ -109,8 +109,8 @@ public:
     }
 };
 
-using MicroTimeout = Timeout<aruwlib::arch::clock::getTimeMicroseconds>;
-using MilliTimeout = Timeout<aruwlib::arch::clock::getTimeMilliseconds>;
+using MicroTimeout = Timeout<tap::arch::clock::getTimeMicroseconds>;
+using MilliTimeout = Timeout<tap::arch::clock::getTimeMilliseconds>;
 }  // namespace arch
 }  // namespace tap
 

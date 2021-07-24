@@ -60,10 +60,10 @@ namespace tap
 class Drivers;
 namespace motor
 {
-#define DJI_MOTOR_NORMALIZED_ID(id) ((int32_t)id - aruwlib::motor::MotorId::MOTOR1)
+#define DJI_MOTOR_NORMALIZED_ID(id) ((int32_t)id - tap::motor::MotorId::MOTOR1)
 #define NORMALIZED_ID_TO_DJI_MOTOR(idx)   \
-    static_cast<aruwlib::motor::MotorId>( \
-        idx + static_cast<int32_t>(aruwlib::motor::MotorId::MOTOR1))
+    static_cast<tap::motor::MotorId>( \
+        idx + static_cast<int32_t>(tap::motor::MotorId::MOTOR1))
 
 class DjiMotorTxHandler
 {

@@ -28,7 +28,7 @@ namespace tap
 {
 namespace mock
 {
-class AnalogMock : public aruwlib::gpio::Analog
+class AnalogMock : public tap::gpio::Analog
 {
 public:
     AnalogMock();

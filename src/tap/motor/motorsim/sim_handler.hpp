@@ -49,24 +49,24 @@ public:
      */
     static void registerSim(
         MotorSim::MotorType type,
-        aruwlib::can::CanBus bus,
-        aruwlib::motor::MotorId id,
+        tap::can::CanBus bus,
+        tap::motor::MotorId id,
         float loading = 0);
     /**
      * Returns whether or not the SimHandler is ready to send another message.
      */
-    static bool readyToSend(aruwlib::can::CanBus bus);
+    static bool readyToSend(tap::can::CanBus bus);
     /**
      * Allows the SimHandler to receive a given CAN message
      * and stream input values to the motor sims.
      * Returns true if data is processed (it always should be).
      */
-    static bool getMessage(aruwlib::can::CanBus bus, const modm::can::Message& message);
+    static bool getMessage(tap::can::CanBus bus, const modm::can::Message& message);
     /**
      * Fills the given pointer with a new motor sim feedback message.
      * Returns true if successful (it always should be).
      */
-    static bool sendMessage(aruwlib::can::CanBus bus, modm::can::Message* message);
+    static bool sendMessage(tap::can::CanBus bus, modm::can::Message* message);
     /**
      * Updates all MotorSim objects (position, RPM, time values).
      */
@@ -76,10 +76,10 @@ private:
     /* Constants */
     static const uint8_t CAN_BUSSES = 2;
     static const uint8_t INDEX_LAST_PORT =
-        aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 1;
+        tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 1;
     /* Singleton Class Variables */
     static std::array<
-        std::array<MotorSim*, aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>,
+        std::array<MotorSim*, tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>,
         CAN_BUSSES>
         sims;
     static std::array<uint8_t, CAN_BUSSES> nextCanSendIndex;

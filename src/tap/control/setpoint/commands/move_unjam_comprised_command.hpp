@@ -38,7 +38,7 @@ class SetpointSubsystem;
  * A comprised command that combines the agitator unjam and rotate commands and provides
  * unjam monitoring to perform a single agitator rotation with unjamming if necessary.
  */
-class MoveUnjamComprisedCommand : public aruwlib::control::ComprisedCommand
+class MoveUnjamComprisedCommand : public tap::control::ComprisedCommand
 {
 public:
     /**
@@ -52,7 +52,7 @@ public:
      *      the desired angle before the command is considered complete.
      */
     MoveUnjamComprisedCommand(
-        aruwlib::Drivers* drivers,
+        tap::Drivers* drivers,
         SetpointSubsystem* setpointSubsystem,
         float agitatorChangeAngle,
         float maxUnjamAngle,

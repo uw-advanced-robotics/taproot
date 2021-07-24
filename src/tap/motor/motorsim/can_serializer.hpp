@@ -59,7 +59,7 @@ public:
      * Return the corresponding port number on the can (0-7)
      * for the given MotorId (uint32_t alias).
      */
-    static int8_t idToPort(aruwlib::motor::MotorId id);
+    static int8_t idToPort(tap::motor::MotorId id);
 
 private:
     /* Constants */

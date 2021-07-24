@@ -28,10 +28,10 @@ namespace tap
 {
 namespace mock
 {
-class Mpu6500Mock : public aruwlib::sensors::Mpu6500
+class Mpu6500Mock : public tap::sensors::Mpu6500
 {
 public:
-    Mpu6500Mock(aruwlib::Drivers *drivers);
+    Mpu6500Mock(tap::Drivers *drivers);
     virtual ~Mpu6500Mock();
 
     MOCK_METHOD(void, init, (), (override));

@@ -30,7 +30,7 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-modm::ResumableResult<bool> aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::
+modm::ResumableResult<bool> tap::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::
     updateNonblocking()
 {
     RF_BEGIN(0);
@@ -71,7 +71,7 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
+void tap::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::update()
 {
     writeToDisplay.testAndSet(true);
 }
@@ -83,7 +83,7 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::setInvert(bool invert)
+void tap::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::setInvert(bool invert)
 {
     a0.reset();
 
@@ -105,7 +105,7 @@ template <
     unsigned int Width,
     unsigned int Height,
     bool Flipped>
-void aruwlib::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::initializeBlocking()
+void tap::display::Sh1106<SPI, A0, Reset, Width, Height, Flipped>::initializeBlocking()
 {
     a0.setOutput();
     reset.setOutput();

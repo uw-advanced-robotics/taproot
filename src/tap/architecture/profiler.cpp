@@ -73,12 +73,12 @@ void Profiler::push(const char* profile)
 {
     profileStack.prepend(profile);
     profiles.append(profile);
-    timeStack.prepend(aruwlib::arch::clock::getTimeMicroseconds());
+    timeStack.prepend(tap::arch::clock::getTimeMicroseconds());
 }
 void Profiler::pop()
 {
     const char* profile = profileStack.getFront();
-    uint32_t ellapsedTime = aruwlib::arch::clock::getTimeMicroseconds() - timeStack.getFront();
+    uint32_t ellapsedTime = tap::arch::clock::getTimeMicroseconds() - timeStack.getFront();
     timeStack.removeFront();
     profileStack.removeFront();
 

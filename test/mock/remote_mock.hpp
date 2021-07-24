@@ -28,27 +28,27 @@ namespace tap
 {
 namespace mock
 {
-class RemoteMock : public aruwlib::Remote
+class RemoteMock : public tap::Remote
 {
 public:
-    RemoteMock(aruwlib::Drivers *drivers);
+    RemoteMock(tap::Drivers *drivers);
     virtual ~RemoteMock();
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, read, (), (override));
     MOCK_METHOD(bool, isConnected, (), (const override));
-    MOCK_METHOD(float, getChannel, (aruwlib::Remote::Channel ch), (const override));
+    MOCK_METHOD(float, getChannel, (tap::Remote::Channel ch), (const override));
     MOCK_METHOD(
-        aruwlib::Remote::SwitchState,
+        tap::Remote::SwitchState,
         getSwitch,
-        (aruwlib::Remote::Switch sw),
+        (tap::Remote::Switch sw),
         (const override));
     MOCK_METHOD(int16_t, getMouseX, (), (const override));
     MOCK_METHOD(int16_t, getMouseY, (), (const override));
     MOCK_METHOD(int16_t, getMouseZ, (), (const override));
     MOCK_METHOD(bool, getMouseL, (), (const override));
     MOCK_METHOD(bool, getMouseR, (), (const override));
-    MOCK_METHOD(bool, keyPressed, (aruwlib::Remote::Key key), (const override));
+    MOCK_METHOD(bool, keyPressed, (tap::Remote::Key key), (const override));
     MOCK_METHOD(int16_t, getWheel, (), (const override));
     MOCK_METHOD(uint32_t, getUpdateCounter, (), (const override));
 };  // class RemoteMock

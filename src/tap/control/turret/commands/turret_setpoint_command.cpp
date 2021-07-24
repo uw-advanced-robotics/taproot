@@ -26,7 +26,7 @@ using namespace tap::control::turret;
 namespace tap::control::turret::commands
 {
 TurretSetpointCommand::TurretSetpointCommand(
-    aruwlib::Drivers *drivers,
+    tap::Drivers *drivers,
     TurretSubsystemInterface *turret,
     const float yawInputScalar,
     const float pitchInputScalar)

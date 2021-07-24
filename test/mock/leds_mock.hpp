@@ -28,7 +28,7 @@ namespace tap
 {
 namespace mock
 {
-class LedsMock : public aruwlib::gpio::Leds
+class LedsMock : public tap::gpio::Leds
 {
 public:
     LedsMock();

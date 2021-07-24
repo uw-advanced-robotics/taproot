@@ -27,8 +27,8 @@
 #include "test_subsystem.hpp"
 
 using namespace tap::control;
-using aruwlib::Drivers;
-using aruwlib::Remote;
+using tap::Drivers;
+using tap::Remote;
 
 // A HoldRepetCommandMapping should behave in every way like a HoldCommandMapping except in cases
 // where the command is completed while the hold mapping is still valid.

@@ -40,7 +40,7 @@ DjiMotor::~DjiMotor() { drivers->djiMotorTxHandler.removeFromMotorManager(*this)
 DjiMotor::DjiMotor(
     Drivers* drivers,
     MotorId desMotorIdentifier,
-    aruwlib::can::CanBus motorCanBus,
+    tap::can::CanBus motorCanBus,
     bool isInverted,
     const char* name,
     uint16_t encWrapped,
@@ -103,7 +103,7 @@ void DjiMotor::parseCanRxData(const modm::can::Message& message)
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)
 {
     int16_t desOutputNotInverted = static_cast<int16_t>(
-        aruwlib::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
+        tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
 }
 
@@ -141,7 +141,7 @@ int16_t DjiMotor::getShaftRPM() const { return shaftRPM; }
 
 bool DjiMotor::isMotorInverted() const { return motorInverted; }
 
-aruwlib::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
+tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
 

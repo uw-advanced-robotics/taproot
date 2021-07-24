@@ -45,12 +45,12 @@ void MotorSim::reset()
 
 void MotorSim::setInput(int16_t in)
 {
-    input = aruwlib::algorithms::limitVal<int16_t>(in, -MAX_INPUT_MAG, MAX_INPUT_MAG);
+    input = tap::algorithms::limitVal<int16_t>(in, -MAX_INPUT_MAG, MAX_INPUT_MAG);
 }
 
 void MotorSim::setLoading(float t)
 {
-    loading = aruwlib::algorithms::limitVal<float>(t, (-KT * CURRENT_LIM), (KT * CURRENT_LIM));
+    loading = tap::algorithms::limitVal<float>(t, (-KT * CURRENT_LIM), (KT * CURRENT_LIM));
 }
 
 float MotorSim::getActualCurrent()
@@ -71,11 +71,11 @@ void MotorSim::update()
 {
     rpm = (MAX_W - (WT_GRAD * loading)) * static_cast<float>(input) /
           (static_cast<float>(MAX_INPUT_MAG) * (CURRENT_LIM / MAX_CURRENT_OUT));
-    pos += (static_cast<float>(aruwlib::arch::clock::getTimeMilliseconds() - time) /
+    pos += (static_cast<float>(tap::arch::clock::getTimeMilliseconds() - time) /
             MINUTES_PER_MILLISECOND) *
            rpm;
     pos = fmod(pos, 1);
-    time = aruwlib::arch::clock::getTimeMilliseconds();
+    time = tap::arch::clock::getTimeMilliseconds();
 }
 
 void MotorSim::initConstants(MotorType type)

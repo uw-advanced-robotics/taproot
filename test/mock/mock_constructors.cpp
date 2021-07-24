@@ -52,13 +52,13 @@ AnalogMock::~AnalogMock() {}
 CanMock::CanMock() {}
 CanMock::~CanMock() {}
 
-CanRxListenerMock::CanRxListenerMock(aruwlib::Drivers *drivers, uint32_t id, can::CanBus bus)
+CanRxListenerMock::CanRxListenerMock(tap::Drivers *drivers, uint32_t id, can::CanBus bus)
     : can::CanRxListener(drivers, id, bus)
 {
 }
 CanRxListenerMock::~CanRxListenerMock() {}
 
-CanRxHandlerMock::CanRxHandlerMock(aruwlib::Drivers *drivers) : can::CanRxHandler(drivers) {}
+CanRxHandlerMock::CanRxHandlerMock(tap::Drivers *drivers) : can::CanRxHandler(drivers) {}
 CanRxHandlerMock::~CanRxHandlerMock() {}
 
 CommandMock::CommandMock() : Command()
@@ -69,16 +69,16 @@ CommandMock::CommandMock() : Command()
 }
 CommandMock::~CommandMock() {}
 
-CommandMapperMock::CommandMapperMock(aruwlib::Drivers *drivers) : control::CommandMapper(drivers) {}
+CommandMapperMock::CommandMapperMock(tap::Drivers *drivers) : control::CommandMapper(drivers) {}
 CommandMapperMock::~CommandMapperMock() {}
 
-ControlOperatorInterfaceMock::ControlOperatorInterfaceMock(aruwlib::Drivers *drivers)
-    : aruwlib::control::ControlOperatorInterface(drivers)
+ControlOperatorInterfaceMock::ControlOperatorInterfaceMock(tap::Drivers *drivers)
+    : tap::control::ControlOperatorInterface(drivers)
 {
 }
 ControlOperatorInterfaceMock::~ControlOperatorInterfaceMock() {}
 
-CommandSchedulerMock::CommandSchedulerMock(aruwlib::Drivers *drivers)
+CommandSchedulerMock::CommandSchedulerMock(tap::Drivers *drivers)
     : control::CommandScheduler(drivers)
 {
 }
@@ -86,8 +86,8 @@ CommandSchedulerMock::~CommandSchedulerMock() {}
 
 DjiMotorMock::DjiMotorMock(
     Drivers *drivers,
-    aruwlib::motor::MotorId desMotorIdentifier,
-    aruwlib::can::CanBus motorCanBus,
+    tap::motor::MotorId desMotorIdentifier,
+    tap::can::CanBus motorCanBus,
     bool isInverted,
     const char *name)
     : DjiMotor(drivers, desMotorIdentifier, motorCanBus, isInverted, name)
@@ -98,13 +98,13 @@ DjiMotorMock::~DjiMotorMock() {}
 DigitalMock::DigitalMock() {}
 DigitalMock::~DigitalMock() {}
 
-DjiMotorTxHandlerMock::DjiMotorTxHandlerMock(aruwlib::Drivers *drivers)
-    : aruwlib::motor::DjiMotorTxHandler(drivers)
+DjiMotorTxHandlerMock::DjiMotorTxHandlerMock(tap::Drivers *drivers)
+    : tap::motor::DjiMotorTxHandler(drivers)
 {
 }
 DjiMotorTxHandlerMock::~DjiMotorTxHandlerMock() {}
 
-DjiMotorTerminalSerialHandlerMock::DjiMotorTerminalSerialHandlerMock(aruwlib::Drivers *drivers)
+DjiMotorTerminalSerialHandlerMock::DjiMotorTerminalSerialHandlerMock(tap::Drivers *drivers)
     : motor::DjiMotorTerminalSerialHandler(drivers)
 {
 }
@@ -116,13 +116,13 @@ ImuRxListenerMock::~ImuRxListenerMock() {}
 LedsMock::LedsMock() {}
 LedsMock::~LedsMock() {}
 
-ErrorControllerMock::ErrorControllerMock(aruwlib::Drivers *drivers)
-    : aruwlib::errors::ErrorController(drivers)
+ErrorControllerMock::ErrorControllerMock(tap::Drivers *drivers)
+    : tap::errors::ErrorController(drivers)
 {
 }
 ErrorControllerMock::~ErrorControllerMock() {}
 
-Mpu6500Mock::Mpu6500Mock(aruwlib::Drivers *drivers) : aruwlib::sensors::Mpu6500(drivers) {}
+Mpu6500Mock::Mpu6500Mock(tap::Drivers *drivers) : tap::sensors::Mpu6500(drivers) {}
 Mpu6500Mock::~Mpu6500Mock() {}
 
 PwmMock::PwmMock() {}
@@ -131,7 +131,7 @@ PwmMock::~PwmMock() {}
 RefSerialMock::RefSerialMock(Drivers *drivers) : serial::RefSerial(drivers) {}
 RefSerialMock::~RefSerialMock() {}
 
-RemoteMock::RemoteMock(aruwlib::Drivers *drivers) : aruwlib::Remote(drivers) {}
+RemoteMock::RemoteMock(tap::Drivers *drivers) : tap::Remote(drivers) {}
 RemoteMock::~RemoteMock() {}
 
 SchedulerTerminalHandlerMock::SchedulerTerminalHandlerMock(Drivers *drivers)

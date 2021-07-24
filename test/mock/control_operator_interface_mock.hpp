@@ -30,10 +30,10 @@ namespace tap
 {
 namespace mock
 {
-class ControlOperatorInterfaceMock : public aruwlib::control::ControlOperatorInterface
+class ControlOperatorInterfaceMock : public tap::control::ControlOperatorInterface
 {
 public:
-    ControlOperatorInterfaceMock(aruwlib::Drivers *drivers);
+    ControlOperatorInterfaceMock(tap::Drivers *drivers);
     virtual ~ControlOperatorInterfaceMock();
 
     MOCK_METHOD(float, getChassisXInput, (), (override));

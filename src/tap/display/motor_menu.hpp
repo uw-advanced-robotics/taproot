@@ -64,7 +64,7 @@ private:
     uint8_t can1PrevDisplayedStatus;
     uint8_t can2PrevDisplayedStatus;
 
-    void drawMotor(aruwlib::can::CanBus canBus, int normalizedMotorId);
+    void drawMotor(tap::can::CanBus canBus, int normalizedMotorId);
 };
 }  // namespace display
 }  // namespace tap

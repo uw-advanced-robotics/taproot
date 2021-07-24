@@ -33,7 +33,7 @@ namespace control
 float ControlOperatorInterface::getChassisXInput()
 {
     uint32_t updateCounter = drivers->remote.getUpdateCounter();
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     if (prevUpdateCounterX != updateCounter)
     {
         chassisXInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL), currTime);
@@ -54,7 +54,7 @@ float ControlOperatorInterface::getChassisXInput()
 float ControlOperatorInterface::getChassisYInput()
 {
     uint32_t updateCounter = drivers->remote.getUpdateCounter();
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     if (prevUpdateCounterY != updateCounter)
     {
         chassisYInput.update(
@@ -76,7 +76,7 @@ float ControlOperatorInterface::getChassisYInput()
 
 float ControlOperatorInterface::getChassisRInput()
 {
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     uint32_t updateCounter = drivers->remote.getUpdateCounter();
     if (prevUpdateCounterR != updateCounter)
     {
@@ -119,7 +119,7 @@ float ControlOperatorInterface::getTurretPitchInput()
 
 float ControlOperatorInterface::getSentinelSpeedInput()
 {
-    return drivers->remote.getChannel(aruwlib::Remote::Channel::LEFT_HORIZONTAL) *
+    return drivers->remote.getChannel(tap::Remote::Channel::LEFT_HORIZONTAL) *
            USER_STICK_SENTINEL_DRIVE_SCALAR;
 }
 }  // namespace control

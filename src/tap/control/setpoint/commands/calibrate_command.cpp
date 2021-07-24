@@ -22,7 +22,7 @@
 #include "tap/control/setpoint/interfaces/setpoint_subsystem.hpp"
 #include "tap/control/subsystem.hpp"
 
-using aruwlib::control::setpoint::SetpointSubsystem;
+using tap::control::setpoint::SetpointSubsystem;
 
 namespace tap
 {
@@ -33,7 +33,7 @@ namespace setpoint
 CalibrateCommand::CalibrateCommand(SetpointSubsystem* setpointSubsystem)
     : setpointSubsystem(setpointSubsystem)
 {
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
 }
 
 void CalibrateCommand::initialize() { setpointSubsystem->calibrateHere(); }

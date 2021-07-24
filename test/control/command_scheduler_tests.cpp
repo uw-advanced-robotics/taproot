@@ -26,9 +26,9 @@
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
 
-using aruwlib::Drivers;
-using aruwlib::mock::CommandMock;
-using aruwlib::mock::SubsystemMock;
+using tap::Drivers;
+using tap::mock::CommandMock;
+using tap::mock::SubsystemMock;
 using std::set;
 using namespace tap::control;
 using namespace testing;
@@ -818,9 +818,9 @@ TEST(CommandScheduler, run_with_many_registered_subsystems_and_commands_calls_re
     uint32_t totalTime = 0;
     for (int i = 0; i < RUN_TIMES; i++)
     {
-        uint32_t start = aruwlib::arch::clock::getTimeMicroseconds();
+        uint32_t start = tap::arch::clock::getTimeMicroseconds();
         scheduler.run();
-        uint32_t dt = aruwlib::arch::clock::getTimeMicroseconds() - start;
+        uint32_t dt = tap::arch::clock::getTimeMicroseconds() - start;
         totalTime += dt;
     }
     std::cout << "             Average time to run scheduler with " << CMDS_AND_SUBS_TO_ADD

@@ -56,7 +56,7 @@ public:
     DjiMotor(
         Drivers* drivers,
         MotorId desMotorIdentifier,
-        aruwlib::can::CanBus motorCanBus,
+        tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
         uint16_t encWrapped = ENC_RESOLUTION / 2,
@@ -102,7 +102,7 @@ public:
 
     mockable bool isMotorInverted() const;
 
-    mockable aruwlib::can::CanBus getCanBus() const;
+    mockable tap::can::CanBus getCanBus() const;
 
     mockable const char* getName() const;
 
@@ -145,7 +145,7 @@ private:
 
     uint32_t motorIdentifier;
 
-    aruwlib::can::CanBus motorCanBus;
+    tap::can::CanBus motorCanBus;
 
     int16_t desiredOutput;
 
@@ -163,7 +163,7 @@ private:
     // formerly encoderstore
     int64_t encoderRevolutions;
 
-    aruwlib::arch::MilliTimeout motorDisconnectTimeout;
+    tap::arch::MilliTimeout motorDisconnectTimeout;
 };
 
 }  // namespace motor

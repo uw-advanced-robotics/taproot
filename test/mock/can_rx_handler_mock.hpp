@@ -30,22 +30,22 @@ namespace tap
 {
 namespace mock
 {
-class CanRxHandlerMock : public aruwlib::can::CanRxHandler
+class CanRxHandlerMock : public tap::can::CanRxHandler
 {
 public:
-    CanRxHandlerMock(aruwlib::Drivers* drivers);
+    CanRxHandlerMock(tap::Drivers* drivers);
     virtual ~CanRxHandlerMock();
 
     MOCK_METHOD(
         void,
         attachReceiveHandler,
-        (aruwlib::can::CanRxListener* const listener),
+        (tap::can::CanRxListener* const listener),
         (override));
     MOCK_METHOD(void, pollCanData, (), (override));
     MOCK_METHOD(
         void,
         removeReceiveHandler,
-        (const aruwlib::can::CanRxListener& rxListener),
+        (const tap::can::CanRxListener& rxListener),
         (override));
 };  // class CanRxHandlerMock
 }  // namespace mock

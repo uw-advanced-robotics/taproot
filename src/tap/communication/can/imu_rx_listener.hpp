@@ -58,7 +58,7 @@ private:
     using ImuRxListenerFunc = void (ImuRxListener::*)(const modm::can::Message& message);
 
     static constexpr uint32_t ANGLE_GYRO_MESSAGE_CAN_ID = 0x203;
-    static constexpr aruwlib::can::CanBus IMU_MSG_CAN_BUS = aruwlib::can::CanBus::CAN_BUS1;
+    static constexpr tap::can::CanBus IMU_MSG_CAN_BUS = tap::can::CanBus::CAN_BUS1;
     static constexpr uint32_t DISCONNECT_TIMEOUT_PERIOD = 100;
 
     class ImuRxHandler : public CanRxListener

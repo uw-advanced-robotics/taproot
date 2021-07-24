@@ -49,7 +49,7 @@ void DjiMotorTxHandler::addMotorToManager(DjiMotor* motor)
     // add new motor to either the can1 or can2 motor store
     // because we checked to see if the motor is overloaded, we will
     // never have to worry about overfilling the CanxMotorStore array
-    if (motor->getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
+    if (motor->getCanBus() == tap::can::CanBus::CAN_BUS1)
     {
         addMotorToManager(can1MotorStore, motor);
     }
@@ -127,7 +127,7 @@ void DjiMotorTxHandler::serializeMotorStoreSendData(
 
 void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor)
 {
-    if (motor.getCanBus() == aruwlib::can::CanBus::CAN_BUS1)
+    if (motor.getCanBus() == tap::can::CanBus::CAN_BUS1)
     {
         removeFromMotorManager(motor, can1MotorStore);
     }
@@ -146,8 +146,8 @@ void DjiMotorTxHandler::removeFromMotorManager(const DjiMotor& motor, DjiMotor**
         RAISE_ERROR(
             drivers,
             "trying to remove something that doesn't exist",
-            aruwlib::errors::Location::MOTOR_CONTROL,
-            aruwlib::errors::MotorControlErrorType::NULL_MOTOR_ID);
+            tap::errors::Location::MOTOR_CONTROL,
+            tap::errors::MotorControlErrorType::NULL_MOTOR_ID);
         return;
     }
     motorStore[id] = nullptr;

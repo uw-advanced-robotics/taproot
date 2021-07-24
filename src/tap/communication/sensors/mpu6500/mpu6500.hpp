@@ -192,7 +192,7 @@ private:
 
     bool imuInitialized = false;
 
-    aruwlib::arch::MicroTimeout readRegistersTimeout;
+    tap::arch::MicroTimeout readRegistersTimeout;
     uint8_t tx = 0;  // Byte used for reading data in the read protothread
     uint8_t rx = 0;  // Byte used for reading data in the read protothread
 

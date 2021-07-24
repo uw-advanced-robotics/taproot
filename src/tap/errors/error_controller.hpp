@@ -46,7 +46,7 @@ namespace errors
  *   is invalid. The red LED is not used by the ErrorController.
  * - By default, LEDs A-H are always off if no errors are detected.
  */
-class ErrorController : public aruwlib::communication::serial::ITerminalSerialCallback
+class ErrorController : public tap::communication::serial::ITerminalSerialCallback
 {
 public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
@@ -100,7 +100,7 @@ private:
 
     modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
 
-    aruwlib::arch::MilliTimeout prevLedErrorChangeWait;
+    tap::arch::MilliTimeout prevLedErrorChangeWait;
 
     error_index_t currentDisplayIndex;
 

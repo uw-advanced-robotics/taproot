@@ -197,7 +197,7 @@ private:
      */
     inline bool verifyCRC8(uint8_t *message, uint32_t messageLength, uint8_t expectedCRC8)
     {
-        return aruwlib::algorithms::calculateCRC8(message, messageLength) == expectedCRC8;
+        return tap::algorithms::calculateCRC8(message, messageLength) == expectedCRC8;
     }
 
 protected:

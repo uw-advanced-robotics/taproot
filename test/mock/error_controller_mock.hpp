@@ -28,13 +28,13 @@ namespace tap
 {
 namespace mock
 {
-class ErrorControllerMock : public aruwlib::errors::ErrorController
+class ErrorControllerMock : public tap::errors::ErrorController
 {
 public:
-    ErrorControllerMock(aruwlib::Drivers* drivers);
+    ErrorControllerMock(tap::Drivers* drivers);
     virtual ~ErrorControllerMock();
 
-    MOCK_METHOD(void, addToErrorList, (const aruwlib::errors::SystemError& error), (override));
+    MOCK_METHOD(void, addToErrorList, (const tap::errors::SystemError& error), (override));
     MOCK_METHOD(void, updateLedDisplay, (), (override));
 };  // class ErrorControllerMock
 }  // namespace mock

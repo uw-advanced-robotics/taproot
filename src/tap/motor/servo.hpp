@@ -51,7 +51,7 @@ public:
      */
     Servo(
         Drivers *drivers,
-        aruwlib::gpio::Pwm::Pin currpwmPinPort,
+        tap::gpio::Pwm::Pin currpwmPinPort,
         float maximumPwm,
         float minimumPwm,
         float pwmRampSpeed);
@@ -94,7 +94,7 @@ private:
     Drivers *drivers;
 
     /// Used to change servo speed. See construtctor for detail.
-    aruwlib::algorithms::Ramp pwmOutputRamp;
+    tap::algorithms::Ramp pwmOutputRamp;
 
     /// The max PWM the servo can handle.
     float maxPwm;
@@ -112,7 +112,7 @@ private:
     uint32_t prevTime = 0;
 
     /// The PWM pin that the servo is attached to.
-    aruwlib::gpio::Pwm::Pin servoPin;
+    tap::gpio::Pwm::Pin servoPin;
 };  // class Servo
 
 }  // namespace motor

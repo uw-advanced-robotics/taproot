@@ -29,10 +29,10 @@ namespace tap
 {
 namespace mock
 {
-class CommandMapperMock : public aruwlib::control::CommandMapper
+class CommandMapperMock : public tap::control::CommandMapper
 {
 public:
-    CommandMapperMock(aruwlib::Drivers *drivers);
+    CommandMapperMock(tap::Drivers *drivers);
     virtual ~CommandMapperMock();
 
     MOCK_METHOD(
@@ -40,7 +40,7 @@ public:
         handleKeyStateChange,
         (uint16_t, Remote::SwitchState, Remote::SwitchState, bool, bool),
         (override));
-    MOCK_METHOD(void, addMap, (aruwlib::control::CommandMapping *), (override));
+    MOCK_METHOD(void, addMap, (tap::control::CommandMapping *), (override));
     MOCK_METHOD(std::size_t, getSize, (), (const override));
 };  // class CommandMapperMock
 }  // namespace mock

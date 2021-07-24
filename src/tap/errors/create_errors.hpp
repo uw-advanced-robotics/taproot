@@ -98,7 +98,7 @@ enum class DjiMotorTxHandlerErrorType : uint8_t
 
 /**
  * Example for how to create and add an error. `drivers` is a pointer to an
- * `aruwlib::Drivers`, which contains an instance of an `ErrorController`.
+ * `tap::Drivers`, which contains an instance of an `ErrorController`.
  *
  * @see ErrorController
  * @see SystemError
@@ -107,14 +107,14 @@ enum class DjiMotorTxHandlerErrorType : uint8_t
  * RAISE_ERROR(
  *     drivers
  *     "Error in DJI Serial",
- *     aruwlib::errors::Location::DJI_SERIAL,
- *     aruwlib::errors::ErrorType::INVALID_CRC);
+ *     tap::errors::Location::DJI_SERIAL,
+ *     tap::errors::ErrorType::INVALID_CRC);
  * ```
  */
 #define RAISE_ERROR(drivers, desc, l, et)                     \
     do                                                        \
     {                                                         \
-        aruwlib::errors::SystemError stringError(             \
+        tap::errors::SystemError stringError(             \
             desc,                                             \
             __LINE__,                                         \
             __FILE__,                                         \

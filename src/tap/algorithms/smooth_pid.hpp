@@ -78,8 +78,8 @@ private:
     float output = 0.0f;
     float prevError = 0.0f;
 
-    aruwlib::algorithms::ExtendedKalman proportionalKalman;
-    aruwlib::algorithms::ExtendedKalman derivativeKalman;
+    tap::algorithms::ExtendedKalman proportionalKalman;
+    tap::algorithms::ExtendedKalman derivativeKalman;
 };
 
 }  // namespace algorithms

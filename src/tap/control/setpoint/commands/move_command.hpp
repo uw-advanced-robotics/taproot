@@ -37,10 +37,10 @@ namespace setpoint
 {
 /**
  * Rotates the connected agitator some angle in some desired time. Currently
- * pass in a rotate velocity and it uses `aruwlib::arch::getTimeMilliseconds()`
+ * pass in a rotate velocity and it uses `tap::arch::getTimeMilliseconds()`
  * to determine the proper ramp increment.
  */
-class MoveCommand : public aruwlib::control::Command
+class MoveCommand : public tap::control::Command
 {
 public:
     /**
@@ -84,13 +84,13 @@ private:
     /**
      * The angle at which the agitator is considered to have reached its setpoint.
      */
-    static constexpr float SETPOINT_TOLERANCE = aruwlib::algorithms::PI / 16.0f;
+    static constexpr float SETPOINT_TOLERANCE = tap::algorithms::PI / 16.0f;
 
     SetpointSubsystem* setpointSubsystem;
 
     float agitatorTargetAngleChange;
 
-    aruwlib::algorithms::Ramp rampToTargetAngle;
+    tap::algorithms::Ramp rampToTargetAngle;
 
     /**
      * The time you want the agitator to take to rotate to the desired angle, in milliseconds.
@@ -99,7 +99,7 @@ private:
 
     uint32_t agitatorMinRotatePeriod;
 
-    aruwlib::arch::MilliTimeout agitatorMinRotateTimeout;
+    tap::arch::MilliTimeout agitatorMinRotateTimeout;
 
     float agitatorSetpointTolerance;
 

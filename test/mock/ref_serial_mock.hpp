@@ -37,7 +37,7 @@ public:
     MOCK_METHOD(
         void,
         messageReceiveCallback,
-        (const aruwlib::serial::DJISerial::SerialMessage&),
+        (const tap::serial::DJISerial::SerialMessage&),
         (override));
     MOCK_METHOD(bool, getRefSerialReceivingData, (), (const override));
     MOCK_METHOD(const RobotData&, getRobotData, (), (const override));

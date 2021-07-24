@@ -27,8 +27,8 @@
 #include "test_subsystem.hpp"
 
 using namespace tap::control;
-using aruwlib::Drivers;
-using aruwlib::Remote;
+using tap::Drivers;
+using tap::Remote;
 
 // Adding command with switch state RemoteMapState (RMS)
 

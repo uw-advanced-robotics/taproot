@@ -21,7 +21,7 @@
 
 #include <cstdint>
 
-float aruwlib::algorithms::fastInvSqrt(float x)
+float tap::algorithms::fastInvSqrt(float x)
 {
     static_assert(sizeof(float) == 4, "fast inverse sqrt requires 32-bit float");
     float halfx = 0.5f * x;
@@ -33,7 +33,7 @@ float aruwlib::algorithms::fastInvSqrt(float x)
     return y;
 }
 
-void aruwlib::algorithms::rotateVector(float* x, float* y, float radians)
+void tap::algorithms::rotateVector(float* x, float* y, float radians)
 {
     float x_temp = *x;
     *x = (*x) * cosf(radians) - *y * sinf(radians);

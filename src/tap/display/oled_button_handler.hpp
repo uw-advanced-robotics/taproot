@@ -45,7 +45,7 @@ public:
         NONE,
     };
 
-    OledButtonHandler(aruwlib::Drivers *drivers);
+    OledButtonHandler(tap::Drivers *drivers);
 
     /**
      * Updates the status of the current button and returns the updated button.
@@ -65,7 +65,7 @@ private:
     static constexpr int UP_ADC_VAL = 2500;
     static constexpr int DOWN_ADC_VAL = 3300;
 
-    aruwlib::Drivers *drivers;
+    tap::Drivers *drivers;
 
     modm::filter::Debounce<int> downButtonPressed;
     modm::filter::Debounce<int> upButtonPressed;

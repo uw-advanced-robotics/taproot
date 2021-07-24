@@ -76,7 +76,7 @@ public:
      */
     inline bool check()
     {
-        bool withinTolerance = aruwlib::algorithms::compareFloatClose(
+        bool withinTolerance = tap::algorithms::compareFloatClose(
             setpointSubsystem->getCurrentValue(),
             setpointSubsystem->getSetpoint(),
             distanceTolerance);
@@ -85,7 +85,7 @@ public:
 
 private:
     SetpointSubsystem* setpointSubsystem;
-    aruwlib::arch::ConditionalMilliTimer jamTimeout;
+    tap::arch::ConditionalMilliTimer jamTimeout;
     float distanceTolerance;
 };  // SetpointContinuousJamChecker
 

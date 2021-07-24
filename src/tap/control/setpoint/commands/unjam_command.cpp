@@ -46,7 +46,7 @@ UnjamCommand::UnjamCommand(
     {
         agitatorUnjamAngleMax = MIN_AGITATOR_UNJAM_ANGLE;
     }
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
     salvationTimeout.stop();
     agitatorUnjamRotateTimeout.stop();
 }
@@ -74,7 +74,7 @@ void UnjamCommand::execute()
 {
     if (salvationTimeout.execute())
     {
-        currAgitatorUnjamAngle = agitatorSetpointBeforeUnjam - 2 * aruwlib::algorithms::PI;
+        currAgitatorUnjamAngle = agitatorSetpointBeforeUnjam - 2 * tap::algorithms::PI;
         salvationTimeout.stop();
         agitatorUnjamRotateTimeout.restart(SALVATION_UNJAM_BACK_WAIT_TIME);
         currUnjamstate = AGITATOR_SALVATION_UNJAM_BACK;

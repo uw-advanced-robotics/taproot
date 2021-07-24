@@ -37,7 +37,7 @@ public:
     MotorSpecificMenu(
         modm::ViewStack* stack,
         Drivers* drivers,
-        const aruwlib::motor::DjiMotor* motor);
+        const tap::motor::DjiMotor* motor);
 
     void draw() override;
 
@@ -49,7 +49,7 @@ public:
 
 private:
     Drivers* drivers;
-    const aruwlib::motor::DjiMotor* associatedMotor;
+    const tap::motor::DjiMotor* associatedMotor;
 
     int16_t currDesiredOutput = 0;
     bool currIsInverted = false;

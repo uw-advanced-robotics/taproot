@@ -35,13 +35,13 @@ namespace control
 namespace setpoint
 {
 MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
-    aruwlib::Drivers* drivers,
+    tap::Drivers* drivers,
     SetpointSubsystem* setpointSubsystem,
     float agitatorChangeAngle,
     float maxUnjamAngle,
     uint32_t agitatorRotateTime,
     uint32_t agitatorPauseAfterRotateTime)
-    : aruwlib::control::ComprisedCommand(drivers),
+    : tap::control::ComprisedCommand(drivers),
       setpointSubsystem(setpointSubsystem),
       agitatorRotateCommand(
           setpointSubsystem,

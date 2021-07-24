@@ -32,10 +32,10 @@ namespace tap
 {
 namespace mock
 {
-class CanRxListenerMock : public aruwlib::can::CanRxListener
+class CanRxListenerMock : public tap::can::CanRxListener
 {
 public:
-    CanRxListenerMock(aruwlib::Drivers* drivers, uint32_t id, aruwlib::can::CanBus bus);
+    CanRxListenerMock(tap::Drivers* drivers, uint32_t id, tap::can::CanBus bus);
     ~CanRxListenerMock();
 
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));

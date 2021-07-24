@@ -50,7 +50,7 @@ modm::can::Message CanSerializer::serializeFeedback(
 {
     // Construct message, desginate recipient as 0-based index + first motor's ID
     modm::can::Message out(
-        port + static_cast<int>(aruwlib::motor::MotorId::MOTOR1),
+        port + static_cast<int>(tap::motor::MotorId::MOTOR1),
         FEEDBACK_MESSAGE_SEND_LENGTH);
 
     out.data[0] = angle >> 8;
@@ -65,11 +65,11 @@ modm::can::Message CanSerializer::serializeFeedback(
     return out;
 }
 
-int8_t CanSerializer::idToPort(aruwlib::motor::MotorId id)
+int8_t CanSerializer::idToPort(tap::motor::MotorId id)
 {
     int32_t out = DJI_MOTOR_NORMALIZED_ID(id);
 
-    return (out >= 0 && out < aruwlib::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN) ? out : -1;
+    return (out >= 0 && out < tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN) ? out : -1;
 }
 
 }  // namespace motorsim

@@ -23,13 +23,13 @@
 
 TEST(ContiguousFloat, Basic_functionality)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(5, 0, 10);
+    tap::algorithms::ContiguousFloat testInstance(5, 0, 10);
     EXPECT_EQ(5, testInstance.getValue());
 }
 
 TEST(ContiguousFloat, Wrapping_behavior)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(-4, 0, 10);
+    tap::algorithms::ContiguousFloat testInstance(-4, 0, 10);
     EXPECT_EQ(6, testInstance.getValue());
 
     testInstance.setValue(16);
@@ -41,7 +41,7 @@ TEST(ContiguousFloat, Wrapping_behavior)
 
 TEST(ContiguousFloat, Difference)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(2, 0, 10);
+    tap::algorithms::ContiguousFloat testInstance(2, 0, 10);
     EXPECT_EQ(2, testInstance.difference(4));
     EXPECT_EQ(-1, testInstance.difference(11));
 
@@ -56,7 +56,7 @@ TEST(ContiguousFloat, Difference)
 
 TEST(ContiguousFloat, Rotation_bounds)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(150, -180, 180);
+    tap::algorithms::ContiguousFloat testInstance(150, -180, 180);
 
     EXPECT_EQ(40, testInstance.difference(190));
     EXPECT_EQ(40, testInstance.difference(-170));
@@ -69,13 +69,13 @@ TEST(ContiguousFloat, Rotation_bounds)
     EXPECT_EQ(180, testInstance.getValue());
     EXPECT_EQ(0, testInstance.difference(-180));
 
-    aruwlib::algorithms::ContiguousFloat testInstance2(40, -180, 180);
+    tap::algorithms::ContiguousFloat testInstance2(40, -180, 180);
     EXPECT_EQ(-140, testInstance2.difference(-100));
 }
 
 TEST(ContiguousFloat, Shifting_value)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(150, -180, 180);
+    tap::algorithms::ContiguousFloat testInstance(150, -180, 180);
 
     testInstance.shiftValue(40);
     EXPECT_EQ(-170, testInstance.getValue());
@@ -92,7 +92,7 @@ TEST(ContiguousFloat, Shifting_value)
 
 TEST(ContiguousFloat, Bad_bounds)
 {
-    aruwlib::algorithms::ContiguousFloat testInstance(150, 180, -180);
+    tap::algorithms::ContiguousFloat testInstance(150, 180, -180);
     EXPECT_EQ(-180, testInstance.getLowerBound());
     EXPECT_EQ(180, testInstance.getUpperBound());
 }

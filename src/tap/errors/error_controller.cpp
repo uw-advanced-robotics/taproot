@@ -88,7 +88,7 @@ void ErrorController::displayBinaryNumberViaLeds(uint8_t binaryRep)
     for (error_index_t i = 0; i < NUM_LEDS; i++)
     {
         bool display = (binaryRep >> i) & 1;
-        drivers->leds.set(static_cast<aruwlib::gpio::Leds::LedPin>(i), display);
+        drivers->leds.set(static_cast<tap::gpio::Leds::LedPin>(i), display);
     }
 }
 

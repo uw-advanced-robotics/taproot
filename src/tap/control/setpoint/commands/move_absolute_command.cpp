@@ -39,14 +39,14 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
       agitatorSetpointTolerance(setpointTolerance),
       automaticallyClearJam(automaticallyClearJam)
 {
-    this->addSubsystemRequirement(dynamic_cast<aruwlib::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
 }
 
 void MoveAbsoluteCommand::initialize()
 {
     rampToTargetAngle.setTarget(targetAngle);
     rampToTargetAngle.setValue(setpointSubsystem->getCurrentValue());
-    agitatorPrevRotateTime = aruwlib::arch::clock::getTimeMilliseconds();
+    agitatorPrevRotateTime = tap::arch::clock::getTimeMilliseconds();
 }
 
 void MoveAbsoluteCommand::execute()
@@ -61,7 +61,7 @@ void MoveAbsoluteCommand::execute()
     }
 
     // We can assume that agitator is connected, otherwise end will be called.
-    uint32_t currTime = aruwlib::arch::clock::getTimeMilliseconds();
+    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     // Divide by 1'000'000 to get radians because agitatorRotateSpeed is in milliRadians/second
     // and time interval is in milliseconds. (milliseconds * 1/1000 (second/millisecond) *
     // (milliradians/second) * 1/1000 (radians/milliradian) = 1/1'000'000 as our conversion

@@ -43,7 +43,7 @@ namespace json
  * motor message, whether or not it is for the upper 4 motors based
  * on "upperMessage", and with the four current values in motorValues.
  */
-std::string makeMotorMessage(const aruwlib::motor::DjiMotor& motor);
+std::string makeMotorMessage(const tap::motor::DjiMotor& motor);
 
 }  // namespace json
 

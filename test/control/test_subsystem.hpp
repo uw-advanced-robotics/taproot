@@ -26,10 +26,10 @@ namespace tap
 {
 namespace control
 {
-class TestSubsystem : public aruwlib::control::Subsystem
+class TestSubsystem : public tap::control::Subsystem
 {
 public:
-    TestSubsystem(aruwlib::Drivers *drivers) : aruwlib::control::Subsystem(drivers) {}
+    TestSubsystem(tap::Drivers *drivers) : tap::control::Subsystem(drivers) {}
     void refresh() override {}
 };
 }  // namespace control

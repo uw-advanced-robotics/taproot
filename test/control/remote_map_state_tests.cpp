@@ -22,8 +22,8 @@
 #include "tap/communication/remote.hpp"
 #include "tap/control/remote_map_state.hpp"
 
-using aruwlib::Remote;
-using aruwlib::control::RemoteMapState;
+using tap::Remote;
+using tap::control::RemoteMapState;
 
 TEST(RemoteMapState, default_constructor_default_remote_state)
 {

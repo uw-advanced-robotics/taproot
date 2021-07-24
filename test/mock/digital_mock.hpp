@@ -28,7 +28,7 @@ namespace tap
 {
 namespace mock
 {
-class DigitalMock : public aruwlib::gpio::Digital
+class DigitalMock : public tap::gpio::Digital
 {
 public:
     DigitalMock();
@@ -38,10 +38,10 @@ public:
     MOCK_METHOD(
         void,
         configureInputPullMode,
-        (aruwlib::gpio::Digital::InputPin pin, aruwlib::gpio::Digital::InputPullMode mode),
+        (tap::gpio::Digital::InputPin pin, tap::gpio::Digital::InputPullMode mode),
         (override));
-    MOCK_METHOD(void, set, (aruwlib::gpio::Digital::OutputPin pin, bool isSet), (override));
-    MOCK_METHOD(bool, read, (aruwlib::gpio::Digital::InputPin pin), (const override));
+    MOCK_METHOD(void, set, (tap::gpio::Digital::OutputPin pin, bool isSet), (override));
+    MOCK_METHOD(bool, read, (tap::gpio::Digital::InputPin pin), (const override));
 };  // class DigitalMock
 }  // namespace mock
 }  // namespace tap

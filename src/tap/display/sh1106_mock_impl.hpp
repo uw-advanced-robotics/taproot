@@ -22,7 +22,7 @@
 #endif
 
 template <unsigned int Width, unsigned int Height, bool Flipped>
-modm::ResumableResult<bool> aruwlib::display::Sh1106<Width, Height, Flipped>::updateNonblocking()
+modm::ResumableResult<bool> tap::display::Sh1106<Width, Height, Flipped>::updateNonblocking()
 {
     RF_BEGIN(0);
     // no-op
@@ -30,20 +30,20 @@ modm::ResumableResult<bool> aruwlib::display::Sh1106<Width, Height, Flipped>::up
 }
 
 template <unsigned int Width, unsigned int Height, bool Flipped>
-void aruwlib::display::Sh1106<Width, Height, Flipped>::update()
+void tap::display::Sh1106<Width, Height, Flipped>::update()
 {
     // no-op
 }
 
 template <unsigned int Width, unsigned int Height, bool Flipped>
-void aruwlib::display::Sh1106<Width, Height, Flipped>::setInvert(bool invert)
+void tap::display::Sh1106<Width, Height, Flipped>::setInvert(bool invert)
 {
     // no-op
 }
 
 // ----------------------------------------------------------------------------
 template <unsigned int Width, unsigned int Height, bool Flipped>
-void aruwlib::display::Sh1106<Width, Height, Flipped>::initializeBlocking()
+void tap::display::Sh1106<Width, Height, Flipped>::initializeBlocking()
 {
     this->clear();
     this->update();

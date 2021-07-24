@@ -27,7 +27,7 @@ namespace tap::errors
 class ErrorControllerTester
 {
 public:
-    ErrorControllerTester(aruwlib::Drivers *drivers) : errorController(drivers) {}
+    ErrorControllerTester(tap::Drivers *drivers) : errorController(drivers) {}
     ErrorController errorController;
     bool removeSystemError(uint index) { return errorController.removeSystemErrorAtIndex(index); }
     void setCurrDisplayIndex(uint index) { errorController.currentDisplayIndex = index; }
@@ -36,7 +36,7 @@ public:
 };
 }  // namespace tap::errors
 
-using aruwlib::Drivers;
+using tap::Drivers;
 using namespace tap::errors;
 
 TEST(ErrorController, removeSystemError_no_errors_in_error_controller_doesnot_segfault)

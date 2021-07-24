@@ -40,7 +40,7 @@ namespace setpoint
  * a quantity describing whatever is being positionally controlled by the
  * subsystem.
  */
-class SetpointSubsystem : public virtual aruwlib::control::Subsystem
+class SetpointSubsystem : public virtual tap::control::Subsystem
 {
 public:
     /**

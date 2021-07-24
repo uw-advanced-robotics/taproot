@@ -58,8 +58,8 @@ void Mpu6500::init()
         RAISE_ERROR(
             drivers,
             "failed to initialize the imu properly",
-            aruwlib::errors::Location::MPU6500,
-            aruwlib::errors::Mpu6500ErrorType::IMU_NOT_RECEIVING_PROPERLY);
+            tap::errors::Location::MPU6500,
+            tap::errors::Mpu6500ErrorType::IMU_NOT_RECEIVING_PROPERLY);
         return;
     }
 
@@ -106,8 +106,8 @@ void Mpu6500::calcIMUAngles()
         RAISE_ERROR(
             drivers,
             "failed to initialize the imu properly",
-            aruwlib::errors::Location::MPU6500,
-            aruwlib::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
+            tap::errors::Location::MPU6500,
+            tap::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     }
 }
 
@@ -195,7 +195,7 @@ float Mpu6500::getTiltAngle()
 {
     if (!tiltAngleCalculated)
     {
-        tiltAngle = aruwlib::algorithms::radiansToDegrees(acosf(
+        tiltAngle = tap::algorithms::radiansToDegrees(acosf(
             cosf(mahonyAlgorithm.getPitchRadians()) * cosf(mahonyAlgorithm.getRollRadians())));
         tiltAngleCalculated = true;
     }
@@ -211,8 +211,8 @@ float Mpu6500::validateReading(float reading) const
     RAISE_ERROR(
         drivers,
         "failed to initialize the imu properly",
-        aruwlib::errors::Location::MPU6500,
-        aruwlib::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
+        tap::errors::Location::MPU6500,
+        tap::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     return 0.0f;
 }
 

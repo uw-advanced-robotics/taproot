@@ -30,24 +30,24 @@ namespace tap
 {
 namespace mock
 {
-class DjiMotorTxHandlerMock : public aruwlib::motor::DjiMotorTxHandler
+class DjiMotorTxHandlerMock : public tap::motor::DjiMotorTxHandler
 {
 public:
-    DjiMotorTxHandlerMock(aruwlib::Drivers *drivers);
+    DjiMotorTxHandlerMock(tap::Drivers *drivers);
     virtual ~DjiMotorTxHandlerMock();
 
-    MOCK_METHOD(void, addMotorToManager, (aruwlib::motor::DjiMotor * motor), (override));
+    MOCK_METHOD(void, addMotorToManager, (tap::motor::DjiMotor * motor), (override));
     MOCK_METHOD(void, processCanSendData, (), (override));
-    MOCK_METHOD(void, removeFromMotorManager, (const aruwlib::motor::DjiMotor &motor), (override));
+    MOCK_METHOD(void, removeFromMotorManager, (const tap::motor::DjiMotor &motor), (override));
     MOCK_METHOD(
-        const aruwlib::motor::DjiMotor *,
+        const tap::motor::DjiMotor *,
         getCan1Motor,
-        (aruwlib::motor::MotorId motorId),
+        (tap::motor::MotorId motorId),
         (override));
     MOCK_METHOD(
-        const aruwlib::motor::DjiMotor *,
+        const tap::motor::DjiMotor *,
         getCan2Motor,
-        (aruwlib::motor::MotorId motorId),
+        (tap::motor::MotorId motorId),
         (override));
 };  // class DjiMotorTxHandlerMock
 }  // namespace mock

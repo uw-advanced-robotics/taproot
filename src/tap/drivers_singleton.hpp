@@ -34,7 +34,7 @@ namespace tap
  *      run I/O stuff and to add a Drivers pointer to an instance of a Subsystem or Command.
  */
 Drivers *DoNotUse_getDrivers();
-using driversFunc = aruwlib::Drivers *(*)();
+using driversFunc = tap::Drivers *(*)();
 }  // namespace tap
 
 #endif  // DRIVERS_SINGLETON_HPP_
