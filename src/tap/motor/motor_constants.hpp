@@ -20,7 +20,7 @@
 #ifndef MOTOR_CONSTANTS_HPP_
 #define MOTOR_CONSTANTS_HPP_
 
-namespace aruwlib::motor
+namespace tap::motor
 {
 /**
  * An interface to store motor constants and conversions.
@@ -38,6 +38,6 @@ public:
      */
     virtual inline float getTorqueConstant() const = 0;
 };
-}  // namespace aruwlib::motor
+}  // namespace tap::motor
 
 #endif  // MOTOR_CONSTANTS_HPP_

@@ -22,8 +22,8 @@
 #include "tap/display/vertical_scroll_logic_handler.hpp"
 #include "tap/drivers.hpp"
 
-using namespace aruwlib::display;
-using namespace aruwlib;
+using namespace tap::display;
+using namespace tap;
 
 static void expectScrollerConstraintsEq(
     const VerticalScrollLogicHandler &handler,

@@ -28,9 +28,9 @@
 #include "command.hpp"
 #include "subsystem.hpp"
 
-using namespace aruwlib::errors;
+using namespace tap::errors;
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -565,4 +565,4 @@ bool operator!=(
     return !(a == b);
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

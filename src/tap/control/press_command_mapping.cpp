@@ -19,7 +19,7 @@
 
 #include "press_command_mapping.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -40,4 +40,4 @@ void PressCommandMapping::executeCommandMapping(const RemoteMapState &currState)
     }
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

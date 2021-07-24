@@ -24,12 +24,12 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/motor/motor_constants.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 }
 
-namespace aruwlib::control::chassis
+namespace tap::control::chassis
 {
 /**
  * A utility object that a chassis may use to provide power limiting. Assumes the motor
@@ -119,6 +119,6 @@ private:
      */
     void updatePowerAndEnergyBuffer();
 };
-}  // namespace aruwlib::control::chassis
+}  // namespace tap::control::chassis
 
 #endif  // POWER_LIMITOR_HPP_

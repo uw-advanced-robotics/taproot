@@ -23,7 +23,7 @@
 
 #include "tap/errors/create_errors.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -183,4 +183,4 @@ bool operator==(const RemoteMapState &rms1, const RemoteMapState &rms2)
 bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2) { return !(rms1 == rms2); }
 
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

@@ -25,7 +25,7 @@
 
 #include "modm/container/linked_list.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace errors
 {
@@ -250,4 +250,4 @@ bool ErrorController::validateErrorTypeAndLocation(const SystemError& error)
 }
 }  // namespace errors
 
-}  // namespace aruwlib
+}  // namespace tap

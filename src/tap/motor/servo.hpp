@@ -23,7 +23,7 @@
 #include "tap/algorithms/ramp.hpp"
 #include "tap/communication/gpio/pwm.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace motor
@@ -117,6 +117,6 @@ private:
 
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SERVO_HPP_

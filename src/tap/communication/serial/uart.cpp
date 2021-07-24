@@ -23,7 +23,7 @@
 
 using namespace Board;
 
-namespace aruwlib
+namespace tap
 {
 namespace serial
 {
@@ -178,4 +178,4 @@ void Uart::flushWriteBuffer(UartPort port)
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap

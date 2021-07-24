@@ -25,7 +25,7 @@
 #include "tap/communication/remote.hpp"
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -107,6 +107,6 @@ private:
 };  // class CommandMapper
 
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_MAPPER_HPP_

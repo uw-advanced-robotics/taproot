@@ -21,7 +21,7 @@
 
 #include "system_error.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace errors
 {
@@ -125,6 +125,6 @@ enum class DjiMotorTxHandlerErrorType : uint8_t
 
 }  // namespace errors
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CREATE_ERRORS_HPP_

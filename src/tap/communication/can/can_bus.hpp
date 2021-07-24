@@ -20,7 +20,7 @@
 #ifndef CAN_BUS_HPP_
 #define CAN_BUS_HPP_
 
-namespace aruwlib::can
+namespace tap::can
 {
 enum class CanBus
 {

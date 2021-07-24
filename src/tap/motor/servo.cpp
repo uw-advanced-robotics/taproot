@@ -24,7 +24,7 @@
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -79,4 +79,4 @@ bool Servo::isRampTargetMet() const { return pwmOutputRamp.isTargetReached(); }
 
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap

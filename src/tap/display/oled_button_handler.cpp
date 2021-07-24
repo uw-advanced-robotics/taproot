@@ -21,7 +21,7 @@
 
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -71,4 +71,4 @@ OledButtonHandler::Button OledButtonHandler::getCurrentButtonState()
     }
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

@@ -26,7 +26,7 @@
 
 #include "tap/communication/can/can_rx_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -49,6 +49,6 @@ public:
         (override));
 };  // class CanRxHandlerMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  CAN_RX_HANDLER_MOCK_HPP_

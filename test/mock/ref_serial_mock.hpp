@@ -24,7 +24,7 @@
 
 #include "tap/communication/serial/ref_serial.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -91,6 +91,6 @@ public:
     MOCK_METHOD(void, deleteGraphicLayer, (DeleteGraphicOperation, uint8_t), (override));
 };  // class RefSerialMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // REF_SERIAL_MOCK_HPP_

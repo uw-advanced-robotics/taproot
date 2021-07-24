@@ -30,7 +30,7 @@ namespace modm::can
 class Message;
 }
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace can
@@ -135,6 +135,6 @@ public:
 
 }  // namespace can
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

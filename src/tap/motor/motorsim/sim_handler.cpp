@@ -25,7 +25,7 @@
 
 #include "can_serializer.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motorsim
 {
@@ -173,6 +173,6 @@ void SimHandler::updateSims()
 
 }  // namespace motorsim
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // PLATFORM_HOSTED

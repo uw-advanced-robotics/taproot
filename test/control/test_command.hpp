@@ -24,7 +24,7 @@
 
 #include "test_subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -45,6 +45,6 @@ private:
     TestSubsystem *s;
 };  // TestCommand
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TEST_COMMAND_HPP_

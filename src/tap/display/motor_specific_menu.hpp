@@ -22,7 +22,7 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -57,6 +57,6 @@ private:
     int16_t currRPM = 0;
 };
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MOTOR_SPECIFIC_MENU_HPP_

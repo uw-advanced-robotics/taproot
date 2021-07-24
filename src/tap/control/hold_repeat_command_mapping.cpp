@@ -21,7 +21,7 @@
 
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -51,4 +51,4 @@ void HoldRepeatCommandMapping::executeCommandMapping(const RemoteMapState &currS
     }
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

@@ -27,7 +27,7 @@
 #include "command.hpp"
 #include "subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -84,4 +84,4 @@ void SchedulerTerminalHandler::printInfo(modm::IOStream& outputStream)
 }
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

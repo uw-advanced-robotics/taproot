@@ -22,7 +22,7 @@
 #include "tap/drivers.hpp"
 #include "tap/errors/error_controller.hpp"
 
-namespace aruwlib::errors
+namespace tap::errors
 {
 class ErrorControllerTester
 {
@@ -34,10 +34,10 @@ public:
     uint getErrorListSize() { return errorController.errorList.getSize(); }
     uint getCurrentDisplayIndex() { return errorController.currentDisplayIndex; }
 };
-}  // namespace aruwlib::errors
+}  // namespace tap::errors
 
 using aruwlib::Drivers;
-using namespace aruwlib::errors;
+using namespace tap::errors;
 
 TEST(ErrorController, removeSystemError_no_errors_in_error_controller_doesnot_segfault)
 {

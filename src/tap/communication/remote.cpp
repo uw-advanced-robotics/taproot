@@ -24,9 +24,9 @@
 #include "tap/communication/serial/uart.hpp"
 #include "tap/drivers.hpp"
 
-using namespace aruwlib::serial;
+using namespace tap::serial;
 
-namespace aruwlib
+namespace tap
 {
 void Remote::initialize() { drivers->uart.init<Uart::Uart1, 100000, Uart::Parity::Even>(); }
 
@@ -216,4 +216,4 @@ void Remote::reset()
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }
-}  // namespace aruwlib
+}  // namespace tap

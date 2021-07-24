@@ -22,7 +22,7 @@
 
 #include "dji_serial.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace serial
@@ -62,6 +62,6 @@ private:
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

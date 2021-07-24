@@ -25,7 +25,7 @@
 
 #include "dji_motor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace motor
@@ -74,6 +74,6 @@ private:
     void printAllMotorInfo(getMotorByIdFunc func, modm::IOStream& outputStream);
 };  // class DjiMotorTerminalSerialHandler
 }  // namespace motor
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // DJI_MOTOR_TERMINAL_SERIAL_HANDLER_HPP_

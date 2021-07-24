@@ -32,7 +32,7 @@ namespace modm::can
 class Message;
 }
 
-namespace aruwlib
+namespace tap
 {
 namespace motorsim
 {
@@ -67,7 +67,7 @@ private:
 };
 }  // namespace motorsim
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CAN_SERIALIZER_HPP_
 

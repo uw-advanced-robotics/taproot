@@ -21,7 +21,7 @@
 
 #include "drivers_singleton.hpp"
 
-namespace aruwlib
+namespace tap
 {
 /**
  * Class that allows one to construct a Drivers instance because of frienship
@@ -36,6 +36,6 @@ public:
 Drivers DriversSingleton::drivers;
 
 Drivers *DoNotUse_getDrivers() { return &DriversSingleton::drivers; }
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

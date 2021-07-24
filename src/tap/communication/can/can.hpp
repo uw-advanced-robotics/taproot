@@ -29,7 +29,7 @@ namespace modm::can
 class Message;
 }
 
-namespace aruwlib
+namespace tap
 {
 namespace can
 {
@@ -102,6 +102,6 @@ public:
 };  // class Can
 
 }  // namespace can
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CAN_HPP_

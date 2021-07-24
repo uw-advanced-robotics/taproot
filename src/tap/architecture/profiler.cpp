@@ -25,7 +25,7 @@
 
 #ifdef RUN_WITH_PROFILING
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -106,5 +106,5 @@ void Profiler::reset(const char* profile) { times[findIndex(times, profile, fals
 
 }  // namespace arch
 
-}  // namespace aruwlib
+}  // namespace tap
 #endif

@@ -43,7 +43,7 @@
 #define WRITE(data, length) \
     (drivers->uart.isWriteFinished(this->port) ? drivers->uart.write(this->port, data, length) : 0)
 
-namespace aruwlib
+namespace tap
 {
 namespace serial
 {
@@ -272,4 +272,4 @@ void DJISerial::updateSerial()
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap

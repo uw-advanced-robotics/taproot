@@ -21,7 +21,7 @@
 
 #include "tap/architecture/clock.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -98,4 +98,4 @@ bool MoveCommand::isFinished() const
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

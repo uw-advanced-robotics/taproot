@@ -24,7 +24,7 @@
 
 #include "../subsystem.hpp"
 
-namespace aruwlib::control::chassis
+namespace tap::control::chassis
 {
 class ChassisSubsystemInterface : public Subsystem
 {
@@ -41,6 +41,6 @@ public:
     virtual inline int16_t getRightFrontRpmActual() const = 0;
     virtual inline int16_t getRightBackRpmActual() const = 0;
 };
-}  // namespace aruwlib::control::chassis
+}  // namespace tap::control::chassis
 
 #endif  // CHASSIS_SUBSYSTEM_INTERFACE_

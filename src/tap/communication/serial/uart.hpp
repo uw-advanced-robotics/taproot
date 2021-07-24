@@ -31,7 +31,7 @@
 #include "tap/rm-dev-board-a/board.hpp"
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace serial
 {
@@ -168,6 +168,6 @@ public:
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

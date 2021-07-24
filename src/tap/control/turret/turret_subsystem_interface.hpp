@@ -24,7 +24,7 @@
 
 #include "../subsystem.hpp"
 
-namespace aruwlib::control::turret
+namespace tap::control::turret
 {
 /**
  * Interface for a generic turret motor with a pitch and yaw motor.
@@ -88,6 +88,6 @@ public:
      */
     virtual float getPitchAngleFromCenter() const = 0;
 };
-}  // namespace aruwlib::control::turret
+}  // namespace tap::control::turret
 
 #endif  // TURRET_SUBSYSTEM_INTERFACE_

@@ -24,7 +24,7 @@
 
 #include "modm/io/iodevice.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace communication
@@ -75,6 +75,6 @@ private:
 };  // class UartTerminalDevice
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TERMINAL_DEVICES_HPP_

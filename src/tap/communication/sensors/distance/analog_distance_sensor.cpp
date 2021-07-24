@@ -21,7 +21,7 @@
 
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -62,4 +62,4 @@ bool AnalogDistanceSensor::validReading() const
 }
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap

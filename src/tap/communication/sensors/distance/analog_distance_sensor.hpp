@@ -24,7 +24,7 @@
 
 #include "distance_sensor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace sensors
@@ -100,6 +100,6 @@ private:
 
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // ANALOG_DISTANCE_SENSOR_H_

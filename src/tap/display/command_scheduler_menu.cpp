@@ -26,7 +26,7 @@
 #include "tap/control/subsystem.hpp"
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -127,4 +127,4 @@ void CommandSchedulerMenu::draw()
         });
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

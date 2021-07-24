@@ -23,7 +23,7 @@
 #include "modm/math/filter/debounce.hpp"
 #include "modm/ui/menu/view_stack.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace display
@@ -74,6 +74,6 @@ private:
     modm::filter::Debounce<int> okButtonPressed;
 };  // class OledButtonHandler
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // BUTTON_HANDLER_HPP_

@@ -36,8 +36,8 @@ using aruwlib::Drivers;
 using aruwlib::Remote;
 using aruwlib::control::ControlOperatorInterface;
 using namespace testing;
-using namespace aruwlib::arch::clock;
-using namespace aruwlib::algorithms;
+using namespace tap::arch::clock;
+using namespace tap::algorithms;
 
 static constexpr float MAX_REMOTE = 1.0f;
 

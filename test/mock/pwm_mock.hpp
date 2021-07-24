@@ -24,7 +24,7 @@
 
 #include "tap/communication/gpio/pwm.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -39,6 +39,6 @@ public:
     MOCK_METHOD(void, write, (float duty, aruwlib::gpio::Pwm::Pin pin), (override));
 };  // class PwmMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  PWM_MOCK_HPP_

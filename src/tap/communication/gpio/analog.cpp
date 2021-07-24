@@ -23,7 +23,7 @@
 
 using namespace Board;
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -77,4 +77,4 @@ uint16_t Analog::read(Pin pin) const
 }
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap

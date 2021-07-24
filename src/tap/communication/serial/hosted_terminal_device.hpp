@@ -34,7 +34,7 @@ namespace std
 class thread;
 }
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace communication
@@ -80,7 +80,7 @@ private:
 };  // class HostedTerminalDevice
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif
 

@@ -22,7 +22,7 @@
 
 #include "motor_constants.hpp"
 
-namespace aruwlib::motor
+namespace tap::motor
 {
 class M3508Constants : public MotorConstants
 {
@@ -38,6 +38,6 @@ public:
 
     inline float getTorqueConstant() const override { return 0.3; }
 };
-}  // namespace aruwlib::motor
+}  // namespace tap::motor
 
 #endif  // M3508_CONSTANTS_HPP_

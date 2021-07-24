@@ -28,7 +28,7 @@
 
 #include "modm/architecture/interface/can_message.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -42,6 +42,6 @@ public:
 
 };  // class CanRxListenerMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  CAN_RX_LISTENER_MOCK_HPP_

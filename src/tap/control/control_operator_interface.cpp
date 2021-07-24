@@ -23,10 +23,10 @@
 #include "tap/architecture/clock.hpp"
 #include "tap/drivers.hpp"
 
-using namespace aruwlib;
-using namespace aruwlib::algorithms;
+using namespace tap;
+using namespace tap::algorithms;
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -124,4 +124,4 @@ float ControlOperatorInterface::getSentinelSpeedInput()
 }
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

@@ -23,7 +23,7 @@
 
 #include "extended_kalman.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -69,4 +69,4 @@ void ExtendedKalman::reset()
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap

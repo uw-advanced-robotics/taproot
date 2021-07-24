@@ -24,7 +24,7 @@
 
 #include "remote_map_state.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -123,6 +123,6 @@ protected:
     void removeCommands();
 };  // class CommandMapping
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_MAPPING_HPP_

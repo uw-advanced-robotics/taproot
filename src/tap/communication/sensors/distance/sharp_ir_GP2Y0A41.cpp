@@ -19,7 +19,7 @@
 
 #include "sharp_ir_GP2Y0A41.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -38,4 +38,4 @@ SharpIrGP2Y0A41::SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin)
 }
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap

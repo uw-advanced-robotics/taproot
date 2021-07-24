@@ -23,7 +23,7 @@
 
 #include "modm/architecture/interface/can_message.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace can
 {
@@ -39,4 +39,4 @@ void CanRxListener::attachSelfToRxHandler() { drivers->canRxHandler.attachReceiv
 CanRxListener::~CanRxListener() { drivers->canRxHandler.removeReceiveHandler(*this); }
 }  // namespace can
 
-}  // namespace aruwlib
+}  // namespace tap

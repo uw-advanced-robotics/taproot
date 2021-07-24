@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -174,4 +174,4 @@ void ContiguousFloat::validateBounds()
 
 }  // namespace algorithms
 
-}  //  namespace aruwlib
+}  //  namespace tap

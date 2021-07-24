@@ -22,7 +22,7 @@
 #include "tap/algorithms/strtok.hpp"
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -137,4 +137,4 @@ void TerminalSerial::printUsage()
 }
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap

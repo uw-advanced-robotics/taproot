@@ -28,7 +28,7 @@
 
 #include "modm/processing/protothread.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace sensors
@@ -247,6 +247,6 @@ private:
 
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MPU6500_HPP_

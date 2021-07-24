@@ -26,7 +26,7 @@
 
 #include "vertical_scroll_logic_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -67,5 +67,5 @@ private:
     void drawMotor(aruwlib::can::CanBus canBus, int normalizedMotorId);
 };
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 #endif  // MOTOR_MENU_HPP_

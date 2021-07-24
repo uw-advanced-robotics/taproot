@@ -25,7 +25,7 @@
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/can/can_rx_listener.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -168,6 +168,6 @@ private:
 
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

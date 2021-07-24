@@ -23,7 +23,7 @@
 
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -72,4 +72,4 @@ void CommandMapping::removeCommands()
     });
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

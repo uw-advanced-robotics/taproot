@@ -29,7 +29,7 @@ namespace modm::can
 class Message;
 }
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 
@@ -146,6 +146,6 @@ public:
 
 }  // namespace can
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CAN_RX_HANDLER_HPP_

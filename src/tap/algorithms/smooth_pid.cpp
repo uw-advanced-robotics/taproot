@@ -21,9 +21,9 @@
 
 #include "tap/algorithms/math_user_utils.hpp"
 
-using namespace aruwlib::algorithms;
+using namespace tap::algorithms;
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -64,4 +64,4 @@ void SmoothPid::reset()
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap

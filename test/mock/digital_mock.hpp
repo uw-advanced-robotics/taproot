@@ -24,7 +24,7 @@
 
 #include "tap/communication/gpio/digital.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -44,6 +44,6 @@ public:
     MOCK_METHOD(bool, read, (aruwlib::gpio::Digital::InputPin pin), (const override));
 };  // class DigitalMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // DIGITAL_MOCK_HPP_

@@ -20,7 +20,7 @@
 #ifndef MPU6500_REG_HPP_
 #define MPU6500_REG_HPP_
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -132,6 +132,6 @@ namespace sensors
 #define MPU_IIC_ADDR (0x68)
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MPU6500_REG_HPP_

@@ -25,7 +25,7 @@
 #include "modm/processing/resumable.hpp"
 #include "modm/ui/display/monochrome_graphic_display_buffered_vertical.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -88,7 +88,7 @@ private:
 };
 
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #ifdef PLATFORM_HOSTED
 #include "sh1106_mock_impl.hpp"

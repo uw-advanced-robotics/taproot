@@ -28,9 +28,9 @@
 
 using aruwlib::Drivers;
 using aruwlib::mock::DjiMotorMock;
-using namespace aruwlib::can;
-using namespace aruwlib::motor;
-using namespace aruwlib::communication::json;
+using namespace tap::can;
+using namespace tap::motor;
+using namespace tap::communication::json;
 using namespace testing;
 
 TEST(JSONMessages, ReturnsCorrectString)

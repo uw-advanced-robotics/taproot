@@ -28,7 +28,7 @@
 
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -68,6 +68,6 @@ public:
 };  // class Analog
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // ANALOG_HPP_

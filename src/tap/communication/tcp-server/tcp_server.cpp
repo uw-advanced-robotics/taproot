@@ -39,7 +39,7 @@ using std::cerr;
  * TCP Server class to allow MCB simulator to communicate with stuff.
  * I actually have no idea what's happening ~ Tenzin
  */
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -237,6 +237,6 @@ TCPServer TCPServer::mainServer(2001);
 
 }  // namespace communication
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // PLATFORM_HOSTED

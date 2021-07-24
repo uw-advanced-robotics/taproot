@@ -33,7 +33,7 @@
 
 #endif
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -76,6 +76,6 @@ public:
 
 }  // namespace arch
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

@@ -22,7 +22,7 @@
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -126,4 +126,4 @@ bool VerticalScrollLogicHandler::acknowledgeCursorChanged()
     return false;
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

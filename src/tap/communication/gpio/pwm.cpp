@@ -24,7 +24,7 @@
 
 using namespace Board;
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -70,4 +70,4 @@ void Pwm::write(float duty, Pin pin)
 }
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap

@@ -24,7 +24,7 @@
 
 #include "tap/communication/gpio/leds.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -38,6 +38,6 @@ public:
     MOCK_METHOD(void, set, (LedPin pin, bool isSet), (override));
 };  // class LedsMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // LEDS_MOCK_HPP_

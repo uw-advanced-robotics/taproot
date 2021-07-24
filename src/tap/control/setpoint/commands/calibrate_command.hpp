@@ -23,7 +23,7 @@
 #include "tap/control/command.hpp"
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -66,6 +66,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // AGITATOR_CALIBRATE_COMMAND_HPP_

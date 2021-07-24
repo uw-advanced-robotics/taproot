@@ -23,7 +23,7 @@
 #include "tap/control/command.hpp"
 #include "tap/control/turret/turret_subsystem_interface.hpp"
 
-namespace aruwlib::control::turret::commands
+namespace tap::control::turret::commands
 {
 /**
  * A command that changes the setpoint of an associated turret. Interfaces with a generic turret.
@@ -59,6 +59,6 @@ private:
     const float pitchInputScalar;
 };  // class TurretSetpointCommand
 
-}  // namespace aruwlib::control::turret::commands
+}  // namespace tap::control::turret::commands
 
 #endif  // SENTINEL_TURRET_CHASSIS_RELATIVE_POSITION_COMMAND_HPP_

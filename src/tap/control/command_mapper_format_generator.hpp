@@ -26,7 +26,7 @@
 
 #include "tap/communication/remote.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -61,6 +61,6 @@ private:
     const std::string keyMapToString(uint16_t keys) const;
 };  // class CommandMapperFormatGenerator
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_MAPPER_FORMAT_GENERATOR_HPP_

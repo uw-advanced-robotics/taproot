@@ -24,7 +24,7 @@
 
 #include "tap/control/subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -45,6 +45,6 @@ public:
     MOCK_METHOD(const char *, getName, (), (override));
 };  // class SubsystemMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SUBSYSTEM_MOCK_HPP_

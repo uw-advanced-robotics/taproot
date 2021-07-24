@@ -27,7 +27,7 @@
 #include "modm/architecture/interface/clock.hpp"
 #endif
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -52,5 +52,5 @@ inline uint32_t getTimeMicroseconds()
 
 }  // namespace arch
 
-}  // namespace aruwlib
+}  // namespace tap
 #endif

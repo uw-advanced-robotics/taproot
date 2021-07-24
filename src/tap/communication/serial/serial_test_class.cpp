@@ -19,7 +19,7 @@
 
 #include "serial_test_class.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace serial
 {
@@ -48,4 +48,4 @@ void SerialTestClass::sendMessage()
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap

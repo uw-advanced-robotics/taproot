@@ -20,7 +20,7 @@
 #ifndef SH1106_DEFINES_HPP
 #define SH1106_DEFINES_HPP
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -80,6 +80,6 @@ namespace display
 // (24) Read Display Data (unused)
 
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SH1106_DEFINES_HPP

@@ -26,7 +26,7 @@
 #include "tap/control/command_scheduler.hpp"
 #include "tap/control/subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -58,6 +58,6 @@ public:
     MOCK_METHOD(control::command_scheduler_bitmap_t, getAddedCommandBitmap, (), (const override));
 };  // class CommandSchedulerMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_SCHEDULER_MOCK_HPP_

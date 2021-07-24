@@ -24,7 +24,7 @@
 #include <iostream>
 #include <thread>
 
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -78,6 +78,6 @@ void HostedTerminalDevice::write(char c) { ::std::cout << c; }
 void HostedTerminalDevice::flush() { ::std::cout.flush(); }
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

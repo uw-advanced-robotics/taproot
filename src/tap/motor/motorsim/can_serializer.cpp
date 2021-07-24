@@ -25,7 +25,7 @@
 
 #include "modm/architecture/interface/can_message.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motorsim
 {
@@ -74,6 +74,6 @@ int8_t CanSerializer::idToPort(aruwlib::motor::MotorId id)
 
 }  // namespace motorsim
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // PLATFORM_HOSTED

@@ -44,7 +44,7 @@
 // A file for listing all mock constructors and destructors since doing
 // so in a source file allows for faster compilation than defining constructors
 // in the headers
-namespace aruwlib::mock
+namespace tap::mock
 {
 AnalogMock::AnalogMock() {}
 AnalogMock::~AnalogMock() {}
@@ -152,4 +152,4 @@ TerminalSerialMock::~TerminalSerialMock() {}
 UartMock::UartMock() {}
 UartMock::~UartMock() {}
 
-}  // namespace aruwlib::mock
+}  // namespace tap::mock

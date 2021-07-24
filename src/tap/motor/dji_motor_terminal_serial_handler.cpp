@@ -24,7 +24,7 @@
 
 #include "dji_motor_tx_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -197,4 +197,4 @@ void DjiMotorTerminalSerialHandler::printAllMotorInfo(
     }
 }
 }  // namespace motor
-}  // namespace aruwlib
+}  // namespace tap

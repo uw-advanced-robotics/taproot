@@ -25,9 +25,9 @@
 #include "command_mapping.hpp"
 #include "remote_map_state.hpp"
 
-using namespace aruwlib::errors;
+using namespace tap::errors;
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -85,4 +85,4 @@ const CommandMapping *CommandMapper::getAtIndex(std::size_t index) const
     return commandsToRun[index];
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

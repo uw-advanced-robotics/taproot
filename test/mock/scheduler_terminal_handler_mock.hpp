@@ -24,7 +24,7 @@
 
 #include "tap/control/scheduler_terminal_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -39,6 +39,6 @@ public:
     MOCK_METHOD(void, terminalSerialStreamCallback, (modm::IOStream &), (override));
 };
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  SCHEDULER_TERMINAL_HANDLER_MOCK_HPP_

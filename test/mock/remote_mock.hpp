@@ -24,7 +24,7 @@
 
 #include "tap/communication/remote.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -53,6 +53,6 @@ public:
     MOCK_METHOD(uint32_t, getUpdateCounter, (), (const override));
 };  // class RemoteMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // REMOTE_MOCK_HPP_

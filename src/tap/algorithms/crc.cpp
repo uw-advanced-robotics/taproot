@@ -19,7 +19,7 @@
 
 #include "crc.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -97,4 +97,4 @@ uint16_t calculateCRC16(const uint8_t *message, uint32_t messageLength, uint16_t
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap

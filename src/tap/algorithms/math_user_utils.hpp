@@ -23,7 +23,7 @@
 #include <cmath>
 #include <cstring>
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -147,6 +147,6 @@ void rotateVector(float* x, float* y, float radians);
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MATH_USER_UTILS_HPP_

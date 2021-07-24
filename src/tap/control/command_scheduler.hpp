@@ -26,7 +26,7 @@
 
 #include "command_scheduler_types.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -322,6 +322,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_SCHEDULER_HPP_

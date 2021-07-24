@@ -24,7 +24,7 @@
 
 #include "clock.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -112,6 +112,6 @@ public:
 using MicroTimeout = Timeout<aruwlib::arch::clock::getTimeMicroseconds>;
 using MilliTimeout = Timeout<aruwlib::arch::clock::getTimeMilliseconds>;
 }  // namespace arch
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

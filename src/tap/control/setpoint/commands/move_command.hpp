@@ -29,7 +29,7 @@
 
 #include "modm/math/filter/pid.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -112,6 +112,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // AGITATOR_ROTATE_COMMAND_HPP_

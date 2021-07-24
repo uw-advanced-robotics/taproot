@@ -24,7 +24,7 @@
 
 #include "tap/communication/serial/uart.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -55,6 +55,6 @@ public:
     MOCK_METHOD(void, flushWriteBuffer, (aruwlib::serial::Uart::UartPort port), (override));
 };  // class UartMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // UART_MOCK_HPP_

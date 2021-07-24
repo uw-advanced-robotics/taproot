@@ -30,7 +30,7 @@ namespace modm::can
 class Message;
 }
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 
@@ -89,6 +89,6 @@ private:
     void handleAngleGyroMessage(const modm::can::Message& message);
 };
 }  // namespace can
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // IMU_RX_LISTENER_HPP_

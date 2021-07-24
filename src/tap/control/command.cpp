@@ -22,7 +22,7 @@
 #include "command_scheduler.hpp"
 #include "subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -42,4 +42,4 @@ void Command::addSubsystemRequirement(Subsystem* requirement)
 bool Command::isReady() { return true; }
 
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

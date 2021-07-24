@@ -25,7 +25,7 @@
 #include "move_command.hpp"
 #include "unjam_command.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -85,6 +85,6 @@ protected:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // AGITATOR_SHOOT_COMPRISED_COMMAND_HPP_

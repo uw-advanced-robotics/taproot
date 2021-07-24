@@ -27,7 +27,7 @@
 #include <atomic>
 #include <cstdint>
 
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -123,7 +123,7 @@ int32_t readInt32(int16_t fileDescriptor);
 
 }  // namespace communication
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TCP_SERVER_HPP_
 

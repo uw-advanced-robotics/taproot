@@ -22,7 +22,7 @@
 
 #include "command_mapping.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -61,5 +61,5 @@ private:
     bool pressed;
 };  // class PressCommandMapping
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 #endif  // PRESS_COMMAND_MAPPING_HPP_

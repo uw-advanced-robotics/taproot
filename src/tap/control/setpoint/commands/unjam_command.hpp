@@ -26,7 +26,7 @@
 #include "tap/drivers.hpp"
 #include "tap/motor/dji_motor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -119,6 +119,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // AGITATOR_UNJAM_COMMAND_HPP_

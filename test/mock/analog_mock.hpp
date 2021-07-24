@@ -24,7 +24,7 @@
 
 #include "tap/communication/gpio/analog.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -38,6 +38,6 @@ public:
     MOCK_METHOD(uint16_t, read, (Analog::Pin pin), (const override));
 };  // class AnalogMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // ANALOG_MOCK_HPP_

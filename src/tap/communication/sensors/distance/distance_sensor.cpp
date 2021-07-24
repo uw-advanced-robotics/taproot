@@ -19,7 +19,7 @@
 
 #include "distance_sensor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -39,4 +39,4 @@ float DistanceSensor::getDistance() const { return distance; }
 
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap

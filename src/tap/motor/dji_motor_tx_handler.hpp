@@ -55,7 +55,7 @@
 
 #include "dji_motor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace motor
@@ -106,6 +106,6 @@ private:
 
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

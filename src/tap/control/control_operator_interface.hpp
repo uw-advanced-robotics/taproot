@@ -23,7 +23,7 @@
 #include "tap/algorithms/linear_interpolation.hpp"
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -103,6 +103,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CONTROL_OPERATOR_INTERFACE_HPP_

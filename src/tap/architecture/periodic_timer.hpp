@@ -22,7 +22,7 @@
 
 #include "tap/architecture/timeout.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -104,5 +104,5 @@ using PeriodicMilliTimer = PeriodicTimer<MilliTimeout>;
 using PeriodicMicroTimer = PeriodicTimer<MicroTimeout>;
 
 }  // namespace arch
-}  // namespace aruwlib
+}  // namespace tap
 #endif

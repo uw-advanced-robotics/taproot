@@ -23,7 +23,7 @@
 
 #include "math_user_utils.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -63,4 +63,4 @@ float Ramp::getTarget() const { return target; }
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap

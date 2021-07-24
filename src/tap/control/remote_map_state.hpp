@@ -25,7 +25,7 @@
 
 #include "tap/communication/remote.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -231,6 +231,6 @@ private:
     bool rMouseButton = false;
 };  // class RemoteState
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // REMOTE_MAP_STATE_HPP_

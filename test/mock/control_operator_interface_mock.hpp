@@ -26,7 +26,7 @@
 #include "tap/control/control_operator_interface.hpp"
 #include "tap/control/subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -44,6 +44,6 @@ public:
     MOCK_METHOD(float, getSentinelSpeedInput, (), (override));
 };  // class ControlOperatorInterfaceMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CONTROL_OPERATOR_INTERFACE_MOCK_HPP_

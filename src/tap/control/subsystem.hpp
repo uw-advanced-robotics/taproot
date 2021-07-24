@@ -24,7 +24,7 @@
 
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -143,6 +143,6 @@ public:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SUBSYSTEM_HPP_

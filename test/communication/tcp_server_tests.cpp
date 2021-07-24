@@ -28,7 +28,7 @@
 
 #include "tcp_test_client.hpp"
 
-using namespace aruwlib::communication;
+using namespace tap::communication;
 using test::communication::TCPClient;
 
 TEST(TCPServerTests, SendingCorrectMessages)

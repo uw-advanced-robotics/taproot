@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -81,6 +81,6 @@ private:
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // LINEAR_INTERPOLATION_HPP_

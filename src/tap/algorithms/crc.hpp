@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -57,6 +57,6 @@ uint16_t calculateCRC16(
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CRC_HPP_

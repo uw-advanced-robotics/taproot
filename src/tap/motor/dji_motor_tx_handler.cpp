@@ -30,7 +30,7 @@
 #define CAN_DJI_LOW_IDENTIFIER 0X200
 #define CAN_DJI_HIGH_IDENTIFIER 0X1FF
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -172,4 +172,4 @@ DjiMotor const* DjiMotorTxHandler::getCan2Motor(MotorId motorId)
 }
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap

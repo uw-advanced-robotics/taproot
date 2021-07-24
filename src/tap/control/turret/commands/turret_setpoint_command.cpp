@@ -21,9 +21,9 @@
 
 #include "tap/drivers.hpp"
 
-using namespace aruwlib::control::turret;
+using namespace tap::control::turret;
 
-namespace aruwlib::control::turret::commands
+namespace tap::control::turret::commands
 {
 TurretSetpointCommand::TurretSetpointCommand(
     aruwlib::Drivers *drivers,
@@ -49,4 +49,4 @@ void TurretSetpointCommand::execute()
         yawInputScalar * drivers->controlOperatorInterface.getTurretYawInput());
 }
 
-}  // namespace aruwlib::control::turret::commands
+}  // namespace tap::control::turret::commands

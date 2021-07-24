@@ -23,7 +23,7 @@
 #include "command.hpp"
 #include "command_scheduler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -61,6 +61,6 @@ protected:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

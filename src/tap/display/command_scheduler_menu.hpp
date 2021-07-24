@@ -27,7 +27,7 @@
 
 #include "vertical_scroll_logic_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 
@@ -66,6 +66,6 @@ private:
     control::command_scheduler_bitmap_t prevAddedCommands = 0;
 };  // class CommandSchedulerMenu
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_SCHEDULER_MENU_HPP_

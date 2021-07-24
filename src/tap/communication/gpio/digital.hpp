@@ -28,7 +28,7 @@
 
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -118,6 +118,6 @@ public:
 
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // DIGITAL_HPP_

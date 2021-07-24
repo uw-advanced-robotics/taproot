@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <cstring>
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -164,6 +164,6 @@ void convertFromBigEndian(T *data, const uint8_t *dataIn)
 }
 
 }  // namespace arch
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

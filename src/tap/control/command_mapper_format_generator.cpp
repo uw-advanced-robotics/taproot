@@ -24,7 +24,7 @@
 #include "command_mapping.hpp"
 #include "remote_map_state.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -192,4 +192,4 @@ const std::string CommandMapperFormatGenerator::keyMapToString(uint16_t keys) co
     return out.substr(0, out.length() - 2) + "}";
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

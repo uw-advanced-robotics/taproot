@@ -22,7 +22,7 @@
 
 #include "tap/control/subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -33,6 +33,6 @@ public:
     void refresh() override {}
 };
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TEST_SUBSYSTEM_HPP_

@@ -28,7 +28,7 @@
 
 #include "system_error.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace errors
@@ -124,6 +124,6 @@ private:
     bool validateErrorTypeAndLocation(const SystemError& error);
 };  // class ErrorController
 }  // namespace errors
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // ERROR_CONTROLLER_HPP_

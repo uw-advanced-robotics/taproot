@@ -26,7 +26,7 @@
 
 #include "modm/architecture/interface/can_message.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -51,6 +51,6 @@ public:
         (override));
 };  // class DjiMotorTxHandlerMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  DJI_MOTOR_TX_HANDLER_MOCK_HPP_

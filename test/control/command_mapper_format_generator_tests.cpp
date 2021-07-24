@@ -27,7 +27,7 @@
 #include "test_command.hpp"
 #include "test_subsystem.hpp"
 
-using namespace aruwlib::control;
+using namespace tap::control;
 using aruwlib::Drivers;
 using aruwlib::Remote;
 

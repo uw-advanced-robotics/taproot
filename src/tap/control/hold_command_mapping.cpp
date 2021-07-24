@@ -19,7 +19,7 @@
 
 #include "hold_command_mapping.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -41,4 +41,4 @@ void HoldCommandMapping::executeCommandMapping(const RemoteMapState &currState)
     }
 }
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap

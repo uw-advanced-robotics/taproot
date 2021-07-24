@@ -19,7 +19,7 @@
 
 #include "linear_interpolation.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -44,4 +44,4 @@ float LinearInterpolation::getInterpolatedValue(uint32_t currTime)
 }
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap

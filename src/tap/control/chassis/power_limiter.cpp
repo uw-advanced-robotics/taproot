@@ -22,11 +22,11 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/drivers.hpp"
 
-using namespace aruwlib::algorithms;
-using namespace aruwlib::motor;
+using namespace tap::algorithms;
+using namespace tap::motor;
 using std::max;
 
-namespace aruwlib::control::chassis
+namespace tap::control::chassis
 {
 PowerLimiter::PowerLimiter(
     const aruwlib::Drivers *drivers,
@@ -209,4 +209,4 @@ float PowerLimiter::getChassisCurrent()
 
     return prevChassisCurrent;
 }
-}  // namespace aruwlib::control::chassis
+}  // namespace tap::control::chassis

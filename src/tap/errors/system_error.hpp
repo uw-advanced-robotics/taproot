@@ -20,7 +20,7 @@
 #ifndef SYSTEM_ERROR_HPP_
 #define SYSTEM_ERROR_HPP_
 
-namespace aruwlib
+namespace tap
 {
 namespace errors
 {
@@ -102,6 +102,6 @@ private:
     uint8_t errorType;
 };  // class SystemError
 }  // namespace errors
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SYSTEM_ERROR_HPP_

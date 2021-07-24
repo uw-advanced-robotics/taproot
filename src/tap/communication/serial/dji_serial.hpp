@@ -26,7 +26,7 @@
 #include "tap/communication/serial/uart.hpp"
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace serial
@@ -220,6 +220,6 @@ protected:
 
 }  // namespace serial
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

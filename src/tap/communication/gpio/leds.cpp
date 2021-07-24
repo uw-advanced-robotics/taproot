@@ -23,7 +23,7 @@
 
 using namespace Board;
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -84,4 +84,4 @@ void Leds::set(Leds::LedPin pin, bool isSet)
 }
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap

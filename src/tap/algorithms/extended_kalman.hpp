@@ -24,7 +24,7 @@
 #ifndef KALMAN_HPP_
 #define KALMAN_HPP_
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -107,6 +107,6 @@ private:
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // KALMAN_HPP_

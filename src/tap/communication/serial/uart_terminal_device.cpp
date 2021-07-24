@@ -21,7 +21,7 @@
 
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -41,4 +41,4 @@ void UartTerminalDevice::write(char c) { drivers->uart.write(TERMINAL_UART_PORT,
 void UartTerminalDevice::flush() { drivers->uart.flushWriteBuffer(TERMINAL_UART_PORT); }
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap

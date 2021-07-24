@@ -26,7 +26,7 @@
 #include "tap/control/command.hpp"
 #include "tap/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -102,6 +102,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // AGITATOR_ABSOLUTE_ROTATE_COMMAND_HPP_

@@ -24,7 +24,7 @@
 
 #include "tap/algorithms/extended_kalman.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -84,6 +84,6 @@ private:
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

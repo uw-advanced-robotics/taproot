@@ -24,9 +24,9 @@
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/drivers.hpp"
 
-using namespace aruwlib::arch;
+using namespace tap::arch;
 
-namespace aruwlib
+namespace tap
 {
 namespace serial
 {
@@ -551,4 +551,4 @@ void RefSerial::configGraphicHeader(GraphicHeader* header, uint16_t cmdId, uint1
     header->receiverId = getRobotClientID(robotId);
 }
 }  // namespace serial
-}  // namespace aruwlib
+}  // namespace tap

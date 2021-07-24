@@ -24,7 +24,7 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace motorsim
 {
@@ -114,6 +114,6 @@ void MotorSim::initConstants(MotorType type)
 }
 }  // namespace motorsim
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // PLATFORM_HOSTED

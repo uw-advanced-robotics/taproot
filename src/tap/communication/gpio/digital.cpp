@@ -23,7 +23,7 @@
 
 using namespace Board;
 
-namespace aruwlib
+namespace tap
 {
 namespace gpio
 {
@@ -109,4 +109,4 @@ bool Digital::read(Digital::InputPin pin) const
 }
 }  // namespace gpio
 
-}  // namespace aruwlib
+}  // namespace tap

@@ -24,7 +24,7 @@
 
 using aruwlib::control::setpoint::SetpointSubsystem;
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -48,4 +48,4 @@ bool CalibrateCommand::isFinished() const { return setpointSubsystem->isCalibrat
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

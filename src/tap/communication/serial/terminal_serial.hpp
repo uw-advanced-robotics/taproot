@@ -36,7 +36,7 @@
 
 #include "modm/io.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace communication
@@ -152,6 +152,6 @@ private:
 };  // class TerminalSerial
 }  // namespace serial
 }  // namespace communication
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TERMINAL_SERIAL_HPP_

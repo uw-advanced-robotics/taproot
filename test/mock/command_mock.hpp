@@ -24,7 +24,7 @@
 
 #include "tap/control/command.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -48,6 +48,6 @@ public:
     MOCK_METHOD(bool, isFinished, (), (const override));
 };  // class CommandMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_MOCK_HPP_

@@ -24,7 +24,7 @@
 
 #include "tap/motor/dji_motor_terminal_serial_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -39,6 +39,6 @@ public:
     MOCK_METHOD(void, terminalSerialStreamCallback, (modm::IOStream &), (override));
 };
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  DJI_MOTOR_TERMINAL_SERIAL_HANDLER_MOCK_HPP_

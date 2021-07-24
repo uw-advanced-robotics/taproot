@@ -24,7 +24,7 @@
 
 #include "tap/errors/error_controller.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -38,6 +38,6 @@ public:
     MOCK_METHOD(void, updateLedDisplay, (), (override));
 };  // class ErrorControllerMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // ERROR_CONTROLLER_MOCK_HPP_

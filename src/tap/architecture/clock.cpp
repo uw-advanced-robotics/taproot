@@ -21,7 +21,7 @@
 
 #include "clock.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -36,6 +36,6 @@ uint32_t getTimeMilliseconds() { return currTimeMilliseconds; }
 uint32_t getTimeMicroseconds() { return currTimeMilliseconds * 1000; }
 }  // namespace clock
 }  // namespace arch
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

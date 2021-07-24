@@ -25,7 +25,7 @@
 #include "tap/control/command.hpp"
 #include "tap/control/command_mapper.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -44,6 +44,6 @@ public:
     MOCK_METHOD(std::size_t, getSize, (), (const override));
 };  // class CommandMapperMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // COMMAND_MAPPER_MOCK_HPP_

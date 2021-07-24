@@ -26,7 +26,7 @@
 
 #include "vertical_scroll_logic_handler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 
@@ -58,6 +58,6 @@ private:
     VerticalScrollLogicHandler vertScrollHandler;
 };  // class HardwareTestMenu
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // HARDWARE_TEST_MENU_HPP_

@@ -24,7 +24,7 @@
 
 #include "tap/communication/can/imu_rx_listener.hpp"
 
-namespace aruwlib::mock
+namespace tap::mock
 {
 class ImuRxListenerMock : public can::ImuRxListener
 {
@@ -32,6 +32,6 @@ public:
     ImuRxListenerMock(Drivers *drivers);
     ~ImuRxListenerMock();
 };
-}  // namespace aruwlib::mock
+}  // namespace tap::mock
 
 #endif  // IMU_RX_LISTENER_MOCK_HPP_

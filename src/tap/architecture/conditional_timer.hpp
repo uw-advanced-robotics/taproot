@@ -23,7 +23,7 @@
 
 #include "timeout.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace arch
 {
@@ -94,6 +94,6 @@ using ConditionalMilliTimer = ConditionalTimer<MilliTimeout>;
 
 }  // namespace arch
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif

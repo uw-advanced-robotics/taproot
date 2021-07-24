@@ -20,7 +20,7 @@
 #ifndef DISTANCE_SENSOR_H_
 #define DISTANCE_SENSOR_H_
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -77,6 +77,6 @@ protected:
 
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // DISTANCE_SENSOR_H_

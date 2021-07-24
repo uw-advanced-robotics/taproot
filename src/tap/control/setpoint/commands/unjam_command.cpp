@@ -21,7 +21,7 @@
 
 #include "tap/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -152,4 +152,4 @@ bool UnjamCommand::isFinished(void) const { return currUnjamstate == FINISHED; }
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

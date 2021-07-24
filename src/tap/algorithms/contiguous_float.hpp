@@ -20,7 +20,7 @@
 #ifndef CONTIGUOUS_FLOAT_HPP_
 #define CONTIGUOUS_FLOAT_HPP_
 
-namespace aruwlib
+namespace tap
 {
 namespace algorithms
 {
@@ -197,6 +197,6 @@ private:
 
 }  // namespace algorithms
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // CONTIGUOUS_FLOAT_HPP_

@@ -24,7 +24,7 @@
 
 #include "drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 /**
  * @return The singleton instance of the Drivers class. This is the only instance of the
@@ -35,7 +35,7 @@ namespace aruwlib
  */
 Drivers *DoNotUse_getDrivers();
 using driversFunc = aruwlib::Drivers *(*)();
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // DRIVERS_SINGLETON_HPP_
 

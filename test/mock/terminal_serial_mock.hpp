@@ -24,7 +24,7 @@
 
 #include "tap/communication/serial/terminal_serial.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -43,6 +43,6 @@ public:
         (override));
 };  // class TerminalSerialMock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // TERMINAL_SERIAL_MOCK_HPP_

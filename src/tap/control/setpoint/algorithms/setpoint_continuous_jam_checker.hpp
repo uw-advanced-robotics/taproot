@@ -24,7 +24,7 @@
 #include "tap/architecture/conditional_timer.hpp"
 #include "tap/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -93,6 +93,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MOTOR_JAM_DETECTOR_

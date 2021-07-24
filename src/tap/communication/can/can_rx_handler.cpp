@@ -27,7 +27,7 @@
 
 #include "can_rx_listener.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace can
 {
@@ -142,4 +142,4 @@ aruwlib::can::CanRxListener** CanRxHandler::getHandlerStore(aruwlib::can::CanBus
 }
 }  // namespace can
 
-}  // namespace aruwlib
+}  // namespace tap

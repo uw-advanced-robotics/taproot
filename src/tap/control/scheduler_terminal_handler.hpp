@@ -23,7 +23,7 @@
 #include "tap/communication/serial/terminal_serial.hpp"
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace control
@@ -60,6 +60,6 @@ private:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // SCHEDULER_TERMINAL_HANDLER_HPP_

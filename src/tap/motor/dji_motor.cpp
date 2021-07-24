@@ -31,7 +31,7 @@
 #include "modm/architecture/interface/can_message.hpp"
 #endif
 
-namespace aruwlib
+namespace tap
 {
 namespace motor
 {
@@ -93,7 +93,7 @@ void DjiMotor::parseCanRxData(const modm::can::Message& message)
      * this function is eventually called through a sequence of functions by
      * canRxHandler.pollCanData(). In fact this seems to be the only driver that
      * extends the can_rx_listener class... so it's the only thing that uses CAN? */
-    using namespace aruwlib::communication;
+    using namespace tap::communication;
     std::string jsonMessage = json::makeMotorMessage(*this);
     const char* jsonCString = jsonMessage.c_str();
     TCPServer::MainServer()->writeToClient(jsonCString, strlen(jsonCString));
@@ -168,4 +168,4 @@ void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
 }
 }  // namespace motor
 
-}  // namespace aruwlib
+}  // namespace tap

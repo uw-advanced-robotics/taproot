@@ -26,7 +26,7 @@
 
 #include "mpu6500_reg.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace sensors
 {
@@ -315,4 +315,4 @@ void Mpu6500::mpuNssHigh()
 
 }  // namespace sensors
 
-}  // namespace aruwlib
+}  // namespace tap

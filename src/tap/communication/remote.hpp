@@ -28,7 +28,7 @@
 
 #include "tap/util_macros.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 
@@ -221,6 +221,6 @@ private:
     void reset();
 };  // class Remote
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // REMOTE_HPP_

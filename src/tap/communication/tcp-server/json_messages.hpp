@@ -25,7 +25,7 @@
 
 #include "tap/motor/dji_motor.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace communication
 {
@@ -49,7 +49,7 @@ std::string makeMotorMessage(const aruwlib::motor::DjiMotor& motor);
 
 }  // namespace communication
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // JSONMESSAGES_HPP_
 

@@ -24,9 +24,9 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/motor/dji_motor_tx_handler.hpp"
 
-using namespace aruwlib::motor;
+using namespace tap::motor;
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -88,4 +88,4 @@ bool MotorSpecificMenu::hasChanged()
     return !(sameOutputDesired && sameInverted && sameEncoderWrapped);
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

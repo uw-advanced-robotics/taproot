@@ -28,10 +28,10 @@
 
 #include "motor_specific_menu.hpp"
 
-using namespace aruwlib::motor;
-using namespace aruwlib::can;
+using namespace tap::motor;
+using namespace tap::can;
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -189,4 +189,4 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
     }
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

@@ -22,7 +22,7 @@
 
 #include "command_mapping.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -64,6 +64,6 @@ private:
     bool commandsScheduled;
 };  // class HoldRepeatCommandMapping
 }  // namespace control
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // HOLD_REPEAT_COMMAND_MAPPING_HPP_

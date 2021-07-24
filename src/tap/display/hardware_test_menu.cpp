@@ -25,7 +25,7 @@
 #include "tap/control/subsystem.hpp"
 #include "tap/drivers.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace display
 {
@@ -117,4 +117,4 @@ void HardwareTestMenu::draw()
         });
 }
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap

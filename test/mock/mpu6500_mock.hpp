@@ -24,7 +24,7 @@
 
 #include "tap/communication/sensors/mpu6500/mpu6500.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace mock
 {
@@ -51,6 +51,6 @@ public:
     MOCK_METHOD(float, getTiltAngle, (), (override));
 };  // Mpu6500Mock
 }  // namespace mock
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  //  MPU6500_MOCK_HPP_

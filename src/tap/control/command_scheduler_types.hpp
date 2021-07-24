@@ -22,10 +22,10 @@
 
 #include <cinttypes>
 
-namespace aruwlib::control
+namespace tap::control
 {
 typedef uint64_t command_scheduler_bitmap_t;
 typedef uint64_t subsystem_scheduler_bitmap_t;
-}  // namespace aruwlib::control
+}  // namespace tap::control
 
 #endif  // COMMAND_SCHEDULER_TYPES_HPP_

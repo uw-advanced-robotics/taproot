@@ -21,7 +21,7 @@
 
 #include "command_scheduler.hpp"
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -54,4 +54,4 @@ Subsystem::Subsystem()
 #endif
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

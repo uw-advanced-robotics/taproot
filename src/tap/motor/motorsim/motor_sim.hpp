@@ -25,7 +25,7 @@
 #include <cmath>
 #include <cstdint>
 
-namespace aruwlib
+namespace tap
 {
 namespace motorsim
 {
@@ -120,7 +120,7 @@ private:
 };
 }  // namespace motorsim
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // MOTOR_SIM_HPP_
 

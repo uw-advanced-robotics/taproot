@@ -26,9 +26,9 @@
 #include "move_command.hpp"
 #include "unjam_command.hpp"
 
-using namespace aruwlib::control;
+using namespace tap::control;
 
-namespace aruwlib
+namespace tap
 {
 namespace control
 {
@@ -117,4 +117,4 @@ bool MoveUnjamComprisedCommand::isFinished() const
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap

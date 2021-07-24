@@ -30,7 +30,7 @@ using aruwlib::Drivers;
 using aruwlib::mock::CommandMock;
 using aruwlib::mock::SubsystemMock;
 using std::set;
-using namespace aruwlib::control;
+using namespace tap::control;
 using namespace testing;
 
 static subsystem_scheduler_bitmap_t calcRequirementsBitwise(const set<Subsystem *> subRequirements)

@@ -22,7 +22,7 @@
 
 #include "tap/control/subsystem.hpp"
 
-namespace aruwlib
+namespace tap
 {
 // Forward declaration
 class Drivers;
@@ -106,6 +106,6 @@ public:
 
 }  // namespace control
 
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // INTERFACES_ANGULAR_POSITIONAL_SUBSYSTEM_HPP_

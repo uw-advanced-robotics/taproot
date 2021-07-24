@@ -24,7 +24,7 @@
 
 #include "modm/ui/menu/menu_buttons.hpp"
 
-namespace aruwlib
+namespace tap
 {
 class Drivers;
 namespace display
@@ -109,6 +109,6 @@ private:
     }
 };  // class VerticalScrollLogicHandler
 }  // namespace display
-}  // namespace aruwlib
+}  // namespace tap
 
 #endif  // VERTICAL_SCROLL_LOGIC_HANDLER_HPP_
