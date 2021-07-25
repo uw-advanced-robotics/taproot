@@ -34,10 +34,7 @@ namespace display
 class MotorSpecificMenu : public modm::AbstractMenu
 {
 public:
-    MotorSpecificMenu(
-        modm::ViewStack* stack,
-        Drivers* drivers,
-        const tap::motor::DjiMotor* motor);
+    MotorSpecificMenu(modm::ViewStack* stack, Drivers* drivers, const tap::motor::DjiMotor* motor);
 
     void draw() override;
 

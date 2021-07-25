@@ -40,11 +40,7 @@ public:
         read,
         (tap::serial::Uart::UartPort port, uint8_t *data, std::size_t length),
         (override));
-    MOCK_METHOD(
-        std::size_t,
-        discardReceiveBuffer,
-        (tap::serial::Uart::UartPort port),
-        (override));
+    MOCK_METHOD(std::size_t, discardReceiveBuffer, (tap::serial::Uart::UartPort port), (override));
     MOCK_METHOD(bool, write, (tap::serial::Uart::UartPort port, uint8_t data), (override));
     MOCK_METHOD(
         std::size_t,

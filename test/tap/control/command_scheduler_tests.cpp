@@ -26,10 +26,10 @@
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
 
+using std::set;
 using tap::Drivers;
 using tap::mock::CommandMock;
 using tap::mock::SubsystemMock;
-using std::set;
 using namespace tap::control;
 using namespace testing;
 

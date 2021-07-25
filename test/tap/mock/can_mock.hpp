@@ -38,11 +38,7 @@ public:
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(bool, isMessageAvailable, (tap::can::CanBus bus), (const override));
-    MOCK_METHOD(
-        bool,
-        getMessage,
-        (tap::can::CanBus bus, modm::can::Message *message),
-        (override));
+    MOCK_METHOD(bool, getMessage, (tap::can::CanBus bus, modm::can::Message *message), (override));
     MOCK_METHOD(bool, isReadyToSend, (tap::can::CanBus bus), (const override));
     MOCK_METHOD(
         bool,

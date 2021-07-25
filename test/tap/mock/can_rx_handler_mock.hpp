@@ -36,11 +36,7 @@ public:
     CanRxHandlerMock(tap::Drivers* drivers);
     virtual ~CanRxHandlerMock();
 
-    MOCK_METHOD(
-        void,
-        attachReceiveHandler,
-        (tap::can::CanRxListener* const listener),
-        (override));
+    MOCK_METHOD(void, attachReceiveHandler, (tap::can::CanRxListener* const listener), (override));
     MOCK_METHOD(void, pollCanData, (), (override));
     MOCK_METHOD(
         void,

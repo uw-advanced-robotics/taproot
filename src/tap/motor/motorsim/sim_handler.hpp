@@ -75,13 +75,11 @@ public:
 private:
     /* Constants */
     static const uint8_t CAN_BUSSES = 2;
-    static const uint8_t INDEX_LAST_PORT =
-        tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 1;
+    static const uint8_t INDEX_LAST_PORT = tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 1;
     /* Singleton Class Variables */
-    static std::array<
-        std::array<MotorSim*, tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>,
-        CAN_BUSSES>
-        sims;
+    static std::
+        array<std::array<MotorSim*, tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>, CAN_BUSSES>
+            sims;
     static std::array<uint8_t, CAN_BUSSES> nextCanSendIndex;
 };
 }  // namespace motorsim

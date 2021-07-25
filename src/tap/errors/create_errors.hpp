@@ -114,7 +114,7 @@ enum class DjiMotorTxHandlerErrorType : uint8_t
 #define RAISE_ERROR(drivers, desc, l, et)                     \
     do                                                        \
     {                                                         \
-        tap::errors::SystemError stringError(             \
+        tap::errors::SystemError stringError(                 \
             desc,                                             \
             __LINE__,                                         \
             __FILE__,                                         \

@@ -96,8 +96,8 @@ bool SimHandler::readyToSend(tap::can::CanBus bus)
     uint8_t busIndex = static_cast<uint8_t>(bus);
     if (sims[busIndex][nextCanSendIndex[busIndex]] == nullptr)
     {
-        nextCanSendIndex[busIndex] = (nextCanSendIndex[busIndex] + 1) %
-                                     tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
+        nextCanSendIndex[busIndex] =
+            (nextCanSendIndex[busIndex] + 1) % tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN;
         return false;
     }
     return true;

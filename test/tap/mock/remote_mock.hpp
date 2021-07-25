@@ -38,11 +38,7 @@ public:
     MOCK_METHOD(void, read, (), (override));
     MOCK_METHOD(bool, isConnected, (), (const override));
     MOCK_METHOD(float, getChannel, (tap::Remote::Channel ch), (const override));
-    MOCK_METHOD(
-        tap::Remote::SwitchState,
-        getSwitch,
-        (tap::Remote::Switch sw),
-        (const override));
+    MOCK_METHOD(tap::Remote::SwitchState, getSwitch, (tap::Remote::Switch sw), (const override));
     MOCK_METHOD(int16_t, getMouseX, (), (const override));
     MOCK_METHOD(int16_t, getMouseY, (), (const override));
     MOCK_METHOD(int16_t, getMouseZ, (), (const override));
