@@ -17,35 +17,44 @@
  * along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "serial_test_class.hpp"
+#ifndef SYSTEM_ERROR_HPP_
+#define SYSTEM_ERROR_HPP_
 
 namespace aruwlib
 {
-namespace serial
+namespace errors
 {
-SerialTestClass::SerialTestClass(Drivers* drivers)
-    : DJISerial(drivers, Uart::UartPort::Uart2),
-      messageId(0),
-      i(0)
+class SystemError
 {
-}
+public:
+    constexpr SystemError()
+        : lineNumber(0),
+          description("default"),
+          filename("none")
+    {
+    }
 
-void SerialTestClass::messageReceiveCallback(const SerialMessage& completeMessage)
-{
-    messageId = completeMessage.sequenceNumber;
-}
+    constexpr SystemError(const char *desc, int line, const char *file)
+        : lineNumber(line),
+          description(desc),
+          filename(file)
+    {
+    }
 
-void SerialTestClass::sendMessage()
-{
-    this->txMessage.length = 1;
-    this->txMessage.headByte = 0xa5;
-    this->txMessage.sequenceNumber = i;
-    this->txMessage.type = 4;
-    this->txMessage.data[0] = 60;
-    this->send();
-    i++;
-}
+    constexpr int getLineNumber() const { return lineNumber; }
 
-}  // namespace serial
+    const char *getDescription() const { return description; }
 
+    const char *getFilename() const { return filename; }
+
+private:
+    int lineNumber;
+
+    const char *description;
+
+    const char *filename;
+};  // class SystemError
+}  // namespace errors
 }  // namespace aruwlib
+
+#endif  // SYSTEM_ERROR_HPP_

@@ -15,61 +15,29 @@
 # You should have received a copy of the GNU General Public License
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-
-class ModmGeneration(Module):
-    def init(self, module):
-        module.name = ":build:modm-projectxml"
-
-    def prepare(self, module, options):
-        return True
-
-    def build(self, env):
-        env.outbasepath = "aruwlib"
-
-        properties = {}
-        properties["modm_path"] = env["aruwlib:modm_repo_lb"]
-        env.substitutions = properties
-
-        env.template("project.xml.in", "project.xml")
-        env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
-
-class BuildTooling(Module):
-    def init(self, module):
-        module.name = ":build:build-tools"
-
-    def prepare(self, module, options):
-        module.add_option(BooleanOption(
-            name="include_sconstruct", default=True,
-            description=descr_include_sconstruct))
-        module.add_option(BooleanOption(
-            name="include_openocd_cfg", default=True,
-            description=descr_include_openocd_cfg))
-
-        return True
-
-    def build(self, env):
-        env.outbasepath = "aruwlib/build_tools"
-        env.copy("parse_args.py")
-        env.copy("run_gcov.py")
-
-        env.outbasepath = "."
-        if env["include_sconstruct"]:
-            env.template("SConstruct.in", "SConstruct")
-        if env["include_openocd_cfg"]:
-            env.copy("openocd.cfg")
-
 def init(module):
     module.name = ":build"
     module.description = "Build Tools"
 
 def prepare(module, options):
-    module.add_submodule(ModmGeneration())
-    module.add_submodule(BuildTooling())
+    module.add_option(BooleanOption(
+        name="include_sconstruct", default=True,
+        description=descr_include_sconstruct))
+    module.add_option(BooleanOption(
+        name="include_openocd_cfg", default=True,
+        description=descr_include_openocd_cfg))
     return True
 
 def build(env):
-    pass
+    env.outbasepath = "aruwlib/build_tools"
+    env.copy("parse_args.py")
+    env.copy("run_gcov.py")
+
+    env.outbasepath = "."
+    if env["include_sconstruct"]:
+        env.template("SConstruct.in", "SConstruct")
+    if env["include_openocd_cfg"]:
+        env.copy("openocd.cfg")
 
 descr_include_sconstruct = """# Generate a SConstruct file
 

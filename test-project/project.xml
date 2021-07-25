@@ -7,7 +7,7 @@
   <options>
     <option name="aruwlib:modm_repo_lb">../modm/repo.lb</option>
     <option name="aruwlib:docs:source_paths">../../src</option>
-    <option name="aruwlib:dev_board">rm-type-board-c</option>
+    <option name="aruwlib:dev_board">rm-dev-board-c</option>
   </options>
   <modules>
     <module>aruwlib:core</module>

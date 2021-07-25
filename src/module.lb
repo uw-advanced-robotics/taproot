@@ -15,8 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
-
 def init(module):
     module.name = ":core"
     module.description = "Core library features"
@@ -29,13 +27,31 @@ def prepare(module, options):
 
     module.depends(
         "aruwlib:testing:mock",
-        "aruwlib:modm-projectxml",
+        "aruwlib:modm-project.xml",
         "aruwlib:board",
-        "aruwlib:communication")
+        "aruwlib:errors")
+
+    # motor-specific dependencies
+    module.depends("aruwlib:communication:can", "aruwlib:communication:tcp-server")
+
+    # command mapper dependencies
+    module.depends("aruwlib:communication:serial:remote")
+
+    # power limiter dependencies
+    module.depends("aruwlib:communication:gpio:analog")
+    module.depends("aruwlib:communication:serial:ref_serial")
+
+    # scheduler dependencies
+    module.depends("aruwlib:communication:serial:terminal_serial")
+
+    # servo dependencies
+    module.depends("aruwlib:communication:gpio:pwm")
 
     return True
 
 def build(env):
+    # Copy all folders and files that are not configurable in this
+    # top level module
     env.outbasepath = "aruwlib/src"
     env.copy("aruwlib/SConscript")
     env.copy("aruwlib/drivers_singleton.hpp")
@@ -46,10 +62,20 @@ def build(env):
     env.copy("aruwlib/algorithms")
     env.copy("aruwlib/architecture")
     env.copy("aruwlib/control")
-    env.copy("aruwlib/errors")
     env.copy("aruwlib/motor")
 
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"
-        env.substitutions = {"with_terminal": env.has_module(":communiaction:serial:terminal_serial")}
+        env.substitutions = {
+            "with_terminal": env.has_module(":communication:serial:terminal_serial"),
+            "with_refserial": env.has_module(":communication:serial:ref_serial"),
+            "with_uart": env.has_module(":communication:serial"),
+            "with_remote": env.has_module(":communication:serial:remote"),
+            "with_pwm": env.has_module(":communication:gpio:pwm"),
+            "with_digital": env.has_module(":communication:gpio:digital"),
+            "with_analog": env.has_module(":communication:gpio:analog"),
+            "with_leds": env.has_module(":communication:gpio:leds"),
+            "with_mpu6500": env.has_module(":communication:sensors:mpu6500"),
+            "with_can": env.has_module(":communication:can"),
+        }
         env.template("drivers.hpp.in", "drivers.hpp")

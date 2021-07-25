@@ -22,24 +22,42 @@
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 #include "aruwlib/architecture/profiler.hpp"
+%% if with_analog
 #include "aruwlib/mock/analog_mock.hpp"
+%% endif
+%% if with_can
 #include "aruwlib/mock/can_mock.hpp"
 #include "aruwlib/mock/can_rx_handler_mock.hpp"
+%% endif
 #include "aruwlib/mock/command_mapper_mock.hpp"
 #include "aruwlib/mock/command_scheduler_mock.hpp"
 #include "aruwlib/mock/control_operator_interface_mock.hpp"
+%% if with_digital
 #include "aruwlib/mock/digital_mock.hpp"
+%% endif
 %% if with_terminal
 #include "aruwlib/mock/dji_motor_terminal_serial_handler_mock.hpp"
 %% endif
 #include "aruwlib/mock/dji_motor_tx_handler_mock.hpp"
 #include "aruwlib/mock/error_controller_mock.hpp"
+%% if with_can
 #include "aruwlib/mock/imu_rx_listener_mock.hpp"
+%% endif
+%% if with_leds
 #include "aruwlib/mock/leds_mock.hpp"
+%% endif
+%% if with_mpu6500
 #include "aruwlib/mock/mpu6500_mock.hpp"
+%% endif
+%% if with_pwm
 #include "aruwlib/mock/pwm_mock.hpp"
+%% endif
+%% if with_refserial
 #include "aruwlib/mock/ref_serial_mock.hpp"
+%% endif
+%% if with_remote
 #include "aruwlib/mock/remote_mock.hpp"
+%% endif
 #include "aruwlib/mock/scheduler_terminal_handler_mock.hpp"
 %% if with_terminal
 #include "aruwlib/mock/terminal_serial_mock.hpp"
@@ -49,20 +67,38 @@
 /* End user mock includes */
 #else
 #include "aruwlib/architecture/profiler.hpp"
+%% if with_can
 #include "aruwlib/communication/can/can.hpp"
 #include "aruwlib/communication/can/can_rx_handler.hpp"
 #include "aruwlib/communication/can/imu_rx_listener.hpp"
+%% endif
+%% if with_analog
 #include "aruwlib/communication/gpio/analog.hpp"
+%% endif
+%% if with_digital
 #include "aruwlib/communication/gpio/digital.hpp"
+%% endif
+%% if with_leds
 #include "aruwlib/communication/gpio/leds.hpp"
+%% endif
+%% if with_pwm
 #include "aruwlib/communication/gpio/pwm.hpp"
-#include "aruwlib/communication/remote.hpp"
+%% endif
+%% if with_remote
+#include "aruwlib/communication/serial/remote.hpp"
+%% endif
+%% if with_mpu6500
 #include "aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
+%% endif
+%% if with_refserial
 #include "aruwlib/communication/serial/ref_serial.hpp"
+%% endif
 %% if with_terminal
 #include "aruwlib/communication/serial/terminal_serial.hpp"
 %% endif
+%% if with_uart
 #include "aruwlib/communication/serial/uart.hpp"
+%% endif
 #include "aruwlib/control/command_mapper.hpp"
 #include "aruwlib/control/command_scheduler.hpp"
 #include "aruwlib/control/control_operator_interface.hpp"
@@ -85,17 +121,41 @@ class Drivers
 #ifdef ENV_UNIT_TESTS
 public:
 #endif
-    Drivers()
-        : can(),
+    Drivers() :
+%% if with_can
+          can(),
           canRxHandler(this),
+          imuRxListener(this),
+%% endif
+%% if with_analog
           analog(),
+%% endif
+%% if with_digital
           digital(),
+%% endif
+%% if with_leds
           leds(),
+%% endif
+%% if with_pwm
           pwm(),
+%% endif
+%% if with_remote
           remote(this),
+%% endif
+%% if with_mpu6500
           mpu6500(this),
+%% endif
+%% if with_uart
           uart(),
+%% endif
+%% if with_refserial
           refSerial(this),
+%% endif
+%% if with_terminal
+          terminalSerial(this),
+          djiMotorTerminalSerialHandler(this),
+%% endif
+          schedulerTerminalHandler(this),
 #ifdef ENV_UNIT_TESTS
           commandScheduler(this),
 #else
@@ -105,65 +165,95 @@ public:
           commandMapper(this),
           errorController(this),
           djiMotorTxHandler(this),
-          profiler(),
-%% if with_terminal
-          terminalSerial(this),
-          djiMotorTerminalSerialHandler(this),
-%% endif
-          schedulerTerminalHandler(this),
-          imuRxHandler(this)
+          profiler()
     /* Begin user constructor defines */
     /* End user mock drivers defines */ {}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+%% if with_can
     testing::NiceMock<mock::CanMock> can;
     testing::NiceMock<mock::CanRxHandlerMock> canRxHandler;
+    testing::NiceMock<mock::ImuRxListenerMock> imuRxListener;
+%% endif
+%% if with_analog
     testing::NiceMock<mock::AnalogMock> analog;
+%% endif
+%% if with_digital
     testing::NiceMock<mock::DigitalMock> digital;
+%% endif
+%% if with_leds
     testing::NiceMock<mock::LedsMock> leds;
+%% endif
+%% if with_pwm
     testing::NiceMock<mock::PwmMock> pwm;
+%% endif
+%% if with_remote
     testing::NiceMock<mock::RemoteMock> remote;
+%% endif
+%% if with_mpu6500
     testing::NiceMock<mock::Mpu6500Mock> mpu6500;
+%% endif
+%% if with_uart
     testing::NiceMock<mock::UartMock> uart;
+%% endif
+%% if with_refserial
     testing::NiceMock<mock::RefSerialMock> refSerial;
+%% endif
+%% if with_terminal
+    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
+    testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
+%% endif
+    testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
     testing::NiceMock<mock::ControlOperatorInterfaceMock> controlOperatorInterface;
     testing::NiceMock<mock::CommandMapperMock> commandMapper;
     mock::ErrorControllerMock errorController;
     testing::NiceMock<mock::DjiMotorTxHandlerMock> djiMotorTxHandler;
     arch::Profiler profiler;
-%% if with_terminal
-    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
-    testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
-%% endif
-    testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
-    testing::NiceMock<mock::ImuRxListenerMock> imuRxHandler;
 /* Begin user mock drivers defines */
 /* End user mock drivers defines */
 #else
 public:
+%% if with_can
     can::Can can;
     can::CanRxHandler canRxHandler;
+    can::ImuRxListener imuRxListener;
+%% endif
+%% if with_analog
     gpio::Analog analog;
+%% endif
+%% if with_digital
     gpio::Digital digital;
+%% endif
+%% if with_leds
     gpio::Leds leds;
+%% endif
+%% if with_pwm
     gpio::Pwm pwm;
+%% endif
+%% if with_remote
     Remote remote;
+%% endif
+%% if with_mpu6500
     sensors::Mpu6500 mpu6500;
+%% endif
+%% if with_uart
     serial::Uart uart;
+%% endif
+%% if with_refserial
     serial::RefSerial refSerial;
+%% endif
+%% if with_terminal
+    communication::serial::TerminalSerial terminalSerial;
+    motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
+%% endif
+    control::SchedulerTerminalHandler schedulerTerminalHandler;
     control::CommandScheduler commandScheduler;
     control::ControlOperatorInterface controlOperatorInterface;
     control::CommandMapper commandMapper;
     errors::ErrorController errorController;
     motor::DjiMotorTxHandler djiMotorTxHandler;
     arch::Profiler profiler;
-%% if with_terminal
-    communication::serial::TerminalSerial terminalSerial;
-    motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
-%% endif
-    control::SchedulerTerminalHandler schedulerTerminalHandler;
-    can::ImuRxListener imuRxHandler;
 /* Begin user drivers defines */
 /* End user drivers defines */
 #endif

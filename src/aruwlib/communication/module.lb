@@ -20,10 +20,7 @@ def init(module):
     module.description = "Various communication HALs"
 
 def prepare(module, options):
-    module.depends("aruwlib:core")
-
     return True
 
 def build(env):
-    env.outbasepath = "aruwlib/src/aruwlib/communication"
-    env.copy(".")
+    pass

@@ -71,7 +71,7 @@ private:
     Drivers *drivers;
 
     static constexpr aruwlib::serial::Uart::UartPort TERMINAL_UART_PORT =
-        aruwlib::serial::Uart::UartPort::Uart3;
+        aruwlib::serial::Uart::UartPort::{{ uart_port }};
 };  // class UartTerminalDevice
 }  // namespace serial
 }  // namespace communication

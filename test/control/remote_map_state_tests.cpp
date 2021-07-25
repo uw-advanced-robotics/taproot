@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "aruwlib/communication/remote.hpp"
+#include "aruwlib/communication/serial/remote.hpp"
 #include "aruwlib/control/remote_map_state.hpp"
 
 using aruwlib::Remote;

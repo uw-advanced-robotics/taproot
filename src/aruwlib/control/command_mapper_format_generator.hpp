@@ -24,7 +24,7 @@
 #include <string_view>
 #include <vector>
 
-#include "aruwlib/communication/remote.hpp"
+#include "aruwlib/communication/serial/remote.hpp"
 
 namespace aruwlib
 {

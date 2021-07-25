@@ -31,7 +31,7 @@ namespace aruwlib
 namespace serial
 {
 RefSerial::RefSerial(Drivers* drivers)
-    : DJISerial(drivers, Uart::UartPort::Uart6),
+    : DJISerial(drivers, Uart::UartPort::{{ uart_port }}),
       robotData(),
       gameData(),
       receivedDpsTracker()
@@ -458,7 +458,7 @@ void RefSerial::deleteGraphicLayer(DeleteGraphicOperation graphicOperation, uint
         sizeof(DeleteGraphicLayerMessage) - 2);
 
     drivers->uart.write(
-        Uart::Uart6,
+        Uart::{{ uart_port }},
         reinterpret_cast<uint8_t*>(&msg),
         sizeof(DeleteGraphicLayerMessage));
 }
@@ -497,7 +497,7 @@ static void sendGraphicHelper(
     if (sendMsg)
     {
         drivers->uart.write(
-            Uart::Uart6,
+            Uart::{{ uart_port }},
             reinterpret_cast<uint8_t*>(graphicMsg),
             sizeof(GraphicType));
     }

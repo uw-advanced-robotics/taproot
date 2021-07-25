@@ -23,7 +23,7 @@
 #include <cstdint>
 #include <list>
 
-#include "aruwlib/communication/remote.hpp"
+#include "aruwlib/communication/serial/remote.hpp"
 
 namespace aruwlib
 {

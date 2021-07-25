@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "aruwlib/communication/remote.hpp"
+#include "aruwlib/communication/serial/remote.hpp"
 #include "aruwlib/util_macros.hpp"
 
 namespace aruwlib

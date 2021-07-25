@@ -25,5 +25,5 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "aruwlib/src"
+    env.outbasepath = "aruwlib/src/aruwlib/display"
     env.copy(".")

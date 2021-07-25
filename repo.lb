@@ -37,7 +37,7 @@ def init(repo):
 
     repo.add_option(
         StringOption(name="dev_board",
-                     description="Which development board to be used, either \"rm-type-board-a\" or \"rm-type-board-c\""))
+                     description="Which development board to be used, either \"rm-dev-board-a\" or \"rm-dev-board-c\""))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")

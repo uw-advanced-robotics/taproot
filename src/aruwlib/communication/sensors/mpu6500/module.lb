@@ -16,18 +16,11 @@
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":board"
-    module.description = "Project.xml files for modm HAL generation"
+    module.name = ":communication:sensors:mpu6500"
 
-def prepare(module, options):    
+def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "aruwlib/src/aruwlib/board"
-
-    if env["aruwlib:dev_board"] == "rm-dev-board-a":
-        env.copy("rm-dev-board-a/board.hpp", "board.hpp")
-        env.copy("rm-dev-board-a/board.cpp", "board.cpp")
-    elif env["aruwlib:dev_board"] == "rm-dev-board-c":
-        env.copy("rm-dev-board-c/board.hpp", "board.hpp")
-        env.copy("rm-dev-board-c/board.cpp", "board.cpp")
+    env.outbasepath = "aruwlib/src/aruwlib/communication/sensors/mpu6500"
+    env.copy(".")
