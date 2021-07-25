@@ -26,7 +26,7 @@
 #include "aruwlib/motor/motorsim/sim_handler.hpp"
 #endif
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/board/board.hpp"
 
 #ifndef PLATFORM_HOSTED
 using namespace modm::platform;

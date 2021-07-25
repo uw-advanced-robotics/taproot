@@ -29,7 +29,9 @@
 #include "aruwlib/mock/command_scheduler_mock.hpp"
 #include "aruwlib/mock/control_operator_interface_mock.hpp"
 #include "aruwlib/mock/digital_mock.hpp"
+%% if with_terminal
 #include "aruwlib/mock/dji_motor_terminal_serial_handler_mock.hpp"
+%% endif
 #include "aruwlib/mock/dji_motor_tx_handler_mock.hpp"
 #include "aruwlib/mock/error_controller_mock.hpp"
 #include "aruwlib/mock/imu_rx_listener_mock.hpp"
@@ -39,7 +41,9 @@
 #include "aruwlib/mock/ref_serial_mock.hpp"
 #include "aruwlib/mock/remote_mock.hpp"
 #include "aruwlib/mock/scheduler_terminal_handler_mock.hpp"
+%% if with_terminal
 #include "aruwlib/mock/terminal_serial_mock.hpp"
+%% endif
 #include "aruwlib/mock/uart_mock.hpp"
 /* Start user mock includes */
 /* End user mock includes */
@@ -55,14 +59,18 @@
 #include "aruwlib/communication/remote.hpp"
 #include "aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
 #include "aruwlib/communication/serial/ref_serial.hpp"
+%% if with_terminal
 #include "aruwlib/communication/serial/terminal_serial.hpp"
+%% endif
 #include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/control/command_mapper.hpp"
 #include "aruwlib/control/command_scheduler.hpp"
 #include "aruwlib/control/control_operator_interface.hpp"
 #include "aruwlib/control/scheduler_terminal_handler.hpp"
 #include "aruwlib/errors/error_controller.hpp"
+%% if with_terminal
 #include "aruwlib/motor/dji_motor_terminal_serial_handler.hpp"
+%% endif
 #include "aruwlib/motor/dji_motor_tx_handler.hpp"
 /* Start user mock includes */
 /* End user mock includes */
@@ -96,10 +104,12 @@ public:
           controlOperatorInterface(this),
           commandMapper(this),
           errorController(this),
-          terminalSerial(this),
           djiMotorTxHandler(this),
           profiler(),
+%% if with_terminal
+          terminalSerial(this),
           djiMotorTerminalSerialHandler(this),
+%% endif
           schedulerTerminalHandler(this),
           imuRxHandler(this)
     /* Begin user constructor defines */
@@ -120,10 +130,12 @@ public:
     testing::NiceMock<mock::ControlOperatorInterfaceMock> controlOperatorInterface;
     testing::NiceMock<mock::CommandMapperMock> commandMapper;
     mock::ErrorControllerMock errorController;
-    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
     testing::NiceMock<mock::DjiMotorTxHandlerMock> djiMotorTxHandler;
     arch::Profiler profiler;
+%% if with_terminal
+    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
     testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
+%% endif
     testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
     testing::NiceMock<mock::ImuRxListenerMock> imuRxHandler;
 /* Begin user mock drivers defines */
@@ -144,10 +156,12 @@ public:
     control::ControlOperatorInterface controlOperatorInterface;
     control::CommandMapper commandMapper;
     errors::ErrorController errorController;
-    communication::serial::TerminalSerial terminalSerial;
     motor::DjiMotorTxHandler djiMotorTxHandler;
     arch::Profiler profiler;
+%% if with_terminal
+    communication::serial::TerminalSerial terminalSerial;
     motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
+%% endif
     control::SchedulerTerminalHandler schedulerTerminalHandler;
     can::ImuRxListener imuRxHandler;
 /* Begin user drivers defines */

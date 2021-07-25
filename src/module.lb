@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
+
 def init(module):
     module.name = ":core"
     module.description = "Core library features"
@@ -27,14 +29,27 @@ def prepare(module, options):
 
     module.depends(
         "aruwlib:testing:mock",
-        "aruwlib:build:modm-projectxml")
+        "aruwlib:modm-projectxml",
+        "aruwlib:board",
+        "aruwlib:communication")
 
     return True
 
 def build(env):
     env.outbasepath = "aruwlib/src"
-    env.copy("aruwlib")
+    env.copy("aruwlib/SConscript")
+    env.copy("aruwlib/drivers_singleton.hpp")
+    env.copy("aruwlib/util_macros.hpp")
+    env.copy("aruwlib/drivers.hpp")
+    env.copy("aruwlib/drivers_singleton.cpp")
+
+    env.copy("aruwlib/algorithms")
+    env.copy("aruwlib/architecture")
+    env.copy("aruwlib/control")
+    env.copy("aruwlib/errors")
+    env.copy("aruwlib/motor")
 
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"
-        env.copy("drivers.hpp")
+        env.substitutions = {"with_terminal": env.has_module(":communiaction:serial:terminal_serial")}
+        env.template("drivers.hpp.in", "drivers.hpp")

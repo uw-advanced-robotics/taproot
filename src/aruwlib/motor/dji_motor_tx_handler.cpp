@@ -82,24 +82,15 @@ void DjiMotorTxHandler::processCanSendData()
     serializeMotorStoreSendData(can1MotorStore, &can1MessageLow, &can1MessageHigh);
     serializeMotorStoreSendData(can2MotorStore, &can2MessageLow, &can2MessageHigh);
 
-    bool messageFailure = false;
     if (drivers->can.isReadyToSend(can::CanBus::CAN_BUS1))
     {
-        messageFailure |= drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
-        messageFailure |= drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageLow);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh);
     }
     if (drivers->can.isReadyToSend(can::CanBus::CAN_BUS2))
     {
-        messageFailure |= drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageLow);
-        messageFailure |= drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh);
-    }
-    if (messageFailure)
-    {
-        RAISE_ERROR(
-            drivers,
-            "sendMessage failure",
-            errors::Location::DJI_MOTOR_TX_HANDLER,
-            errors::DjiMotorTxHandlerErrorType::SEND_MESSAGE_FAILURE);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageLow);
+        drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh);
     }
 }
 

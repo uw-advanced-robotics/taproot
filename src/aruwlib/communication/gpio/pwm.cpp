@@ -20,7 +20,7 @@
 #include "pwm.hpp"
 
 #include "aruwlib/algorithms/math_user_utils.hpp"
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/board/board.hpp"
 
 using namespace Board;
 

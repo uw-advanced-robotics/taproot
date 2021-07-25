@@ -19,7 +19,7 @@
 
 #include "digital.hpp"
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/board/board.hpp"
 
 using namespace Board;
 

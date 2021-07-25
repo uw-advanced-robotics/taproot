@@ -98,7 +98,7 @@ public:
     };
 
     /**
-     * Enables and initializes `Uart::Uart1` communication.
+     * Enables and initializes `Uart::{{ uart_port }}` communication.
      */
     mockable void initialize();
 

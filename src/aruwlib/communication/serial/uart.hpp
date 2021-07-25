@@ -28,7 +28,7 @@
 #include "modm/platform/uart/uart_base.hpp"
 #endif
 
-#include "aruwlib/rm-dev-board-a/board.hpp"
+#include "aruwlib/board/board.hpp"
 #include "aruwlib/util_macros.hpp"
 
 namespace aruwlib
