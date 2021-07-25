@@ -1,19 +1,19 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import subprocess
@@ -82,7 +82,7 @@ def run_gcov(env, source, alias="run_gcov"):
             subprocess.run(['lcov', '-c', '-d', '.', '-o', COVERAGE_INFO_FILE, '--no-external'], check=True, stdout=subprocess.DEVNULL)
 
             files_to_include = glob.glob(os.path.abspath('src/**/*[.cpp|.hpp]'), recursive=True)
-            files_to_include.extend(glob.glob(os.path.abspath('aruwlib/src/**/*[.cpp|.hpp]'), recursive=True))
+            files_to_include.extend(glob.glob(os.path.abspath('taproot/src/**/*[.cpp|.hpp]'), recursive=True))
             lcov_only_view_src_cmd = ['lcov', '-e', COVERAGE_INFO_FILE]
             lcov_only_view_src_cmd.extend(files_to_include)
             lcov_only_view_src_cmd.extend(['-o', COVERAGE_INFO_FILE])
