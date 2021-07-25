@@ -21,7 +21,7 @@ import os
 import sys
 
 SCRIPT_DIR = os.path.dirname(__file__)
-INPUT_FILE = os.path.join(SCRIPT_DIR, '../aruwlib-project/size.txt')
+INPUT_FILE = os.path.join(SCRIPT_DIR, '../taproot-project/size.txt')
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, '../metrics.txt')
 
 if len(sys.argv) != 2:

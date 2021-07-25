@@ -32,8 +32,8 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "aruwlib/src"
-    env.copy("aruwlib")
+    env.outbasepath = "taproot/src"
+    env.copy("tap")
 
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"

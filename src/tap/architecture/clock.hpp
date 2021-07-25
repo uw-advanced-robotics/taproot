@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ARUWLIB_CLOCK_HPP__
-#define ARUWLIB_CLOCK_HPP__
+#ifndef TAPROOT_CLOCK_HPP__
+#define TAPROOT_CLOCK_HPP__
 #include <cstdint>
 
 #ifndef PLATFORM_HOSTED

@@ -21,7 +21,7 @@ from os.path import abspath
 
 files = env.FindSourceFiles(".")
 
-library = env.StaticLibrary(target="aruwlib", source=files)
+library = env.StaticLibrary(target="taproot", source=files)
 
 env.AppendUnique(LIBS=[
     library,

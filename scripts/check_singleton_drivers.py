@@ -31,8 +31,8 @@ project_path = sys.argv[1]
 string_to_check = 'DoNotUse_getDrivers'
 
 files_to_whitelist = [
-    'aruwlib/drivers_singleton.cpp',
-    'aruwlib/drivers_singleton.hpp',
+    'tap/drivers_singleton.cpp',
+    'tap/drivers_singleton.hpp',
     'main.cpp'
 ]
 

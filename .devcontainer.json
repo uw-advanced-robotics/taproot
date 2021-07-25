@@ -9,6 +9,6 @@
     ],
     "mounts": [
         // Persist installed extensions across container rebuilds
-        "source=ARUWLIB-extensions,target=/root/.vscode-server/extensions,type=volume",
+        "source=TAPROOT-extensions,target=/root/.vscode-server/extensions,type=volume",
     ]
 }

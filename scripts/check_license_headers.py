@@ -29,10 +29,10 @@ options:\n\
 
 FILE_GLOBS_TO_IGNORE = [
     '../modm/**/*',
-    '../**/test-project/aruwlib/**/*',
+    '../**/test-project/taproot/**/*',
     '../docs/*',
     '../**/__init__.py',
-    '../src/aruwlib/algorithms/MahonyAHRS.*']
+    '../src/tap/algorithms/MahonyAHRS.*']
 SCRIPT_DIR = dirname(__file__)
 
 CPP_LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h']

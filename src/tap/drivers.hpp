@@ -17,9 +17,9 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ARUWLIB_DRIVERS_HPP_
-#define ARUWLIB_DRIVERS_HPP_
+#ifndef TAPROOT_DRIVERS_HPP_
+#define TAPROOT_DRIVERS_HPP_
 
 #include "../../src/drivers.hpp"
 
-#endif  // ARUWLIB_DRIVERS_HPP_
+#endif  // TAPROOT_DRIVERS_HPP_

@@ -45,14 +45,14 @@ def build(env):
     if env["taproot:rebuild_modm"]:
         print('building modm')
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
+            subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)
 
         print('building sim-modm')
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
+            subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)

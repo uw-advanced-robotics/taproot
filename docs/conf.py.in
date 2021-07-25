@@ -55,7 +55,7 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 
-breathe_default_project = "aruwlib"
+breathe_default_project = "taproot"
 
 extensions = [
     # there may be others here already, e.g. 'sphinx.ext.mathjax'
@@ -65,7 +65,7 @@ extensions = [
 
 # Setup the breathe extension
 breathe_projects = {
-    "aruwlib": "./doxyoutput/xml"
+    "taproot": "./doxyoutput/xml"
 }
 
 # Setup the exhale extension

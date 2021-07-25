@@ -25,7 +25,7 @@ class ModmGeneration(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib"
+        env.outbasepath = "taproot"
 
         properties = {}
         properties["modm_path"] = env["taproot:modm_repo_lb"]
@@ -49,7 +49,7 @@ class BuildTooling(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib/build_tools"
+        env.outbasepath = "taproot/build_tools"
         env.copy("parse_args.py")
         env.copy("run_gcov.py")
 
