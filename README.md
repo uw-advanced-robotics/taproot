@@ -35,21 +35,29 @@ This library was originally designed for use in Advanced Robotics at the Univers
 ("ARUW")'s robot controls code, which remains the largest consumer. You can find the project
 [here](https://gitlab.com/aruw/controls/aruw-mcb).
 
+__In addition to this readme, check out 
+[our GitLab wiki](https://gitlab.com/aruw/controls/aruwlib/-/wikis/home),
+[generated documentation](https://aruw.gitlab.io/controls/aruwlib/) and the other resources linked
+below!__
+
+
 ## Getting started
 
-TODO. Check out the [template project](https://gitlab.com/aruw/controls/aruwlib-template-project).
+Check out the [template project](https://gitlab.com/aruw/controls/aruwlib-template-project) to help
+you set up a new project. Refer to the resources below for other project information.
+
+See ["Development guide"](#Development-guide) below for information on contributing to this project.
 
 ## Resources
 - The [generated API documentation for aruwlib](https://aruw.gitlab.io/controls/aruwlib/)
 - [aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb), ARUW's full robot code project
-- [aruw-edu](https://gitlab.com/aruw/controls/aruw-edu): a hands-on tutorial for building robot code with aruwlib
+- [aruw-edu](https://gitlab.com/aruw/controls/aruw-edu), a hands-on tutorial for building robot code with aruwlib
+- [aruwlib-examples](https://gitlab.com/aruw/controls/aruwlib-examples), small self-contained code examples
 - The [template project](https://gitlab.com/aruw/controls/aruwlib-template-project) to kick-start your own development
 - The [aruwlib wiki](https://gitlab.com/aruw/controls/aruwlib/-/wikis/home)
 - The [modm website](https://modm.io/) and associated documentation
 
 ## Requirements for use
-
-TODO: move to aruwlib-template-project?
 
 - A robot operated by a [RoboMaster Development Board Type A](https://store.dji.com/product/rm-development-board-type-a).
    - Support for the RoboMaster Development Board Type C is planned, tracked here: https://gitlab.com/aruw/controls/aruwlib/-/issues/9
@@ -75,34 +83,51 @@ aruwlib and the template project under the GPL to encourage collaboration and op
 RoboMaster controls codebases. We politely request that other teams choosing to utilize this
 library, or parts of it (including its design), open-source their own code in turn.
 
-## Development guide
+## Contributing
 
-TODO: we are looking to select and fully document a recommended workflow. See https://gitlab.com/aruw/controls/aruwlib/-/issues/15.
+We welcome [Merge Requests](https://gitlab.com/aruw/controls/aruwlib/-/merge_requests) and
+[Issues](https://gitlab.com/aruw/controls/aruwlib/-/issues)! Feel free to take on an open Issue if
+you see one valuable to you. We recommend posting to let us know what you're working on so we don't
+duplicate effort.
 
-We provide a Visual Studio Code development container environment to ease development in this repo.
-This is the easiest way to work on aruwlib. See [here](https://code.visualstudio.com/docs/remote/containers)
-for setup instructions. Once you have set up the tool, you can use the vscode command
-"Remote-Containers: Clone Repository in Container Volume" and provide it the URL
-`https://gitlab.com/aruw/controls/aruwlib.git` to open this project in a container.
-
-You will then need to initialize submodules to pull down modm:
-
-```
-git submodule update --init --recursive
-```
-
-If you would instead prefer to configure your own environment, we recommend you refer to the
-[Dockerfile for our development container](https://gitlab.com/aruw/controls/aruw-mcb-dev-container/-/blob/master/Dockerfile)
-for the necessary setup. 
-
-### Contributing
-
-We welcome Merge Requests and Issues! Feel free to take on an open Issue if you see one valuable to
-you. We recommend posting to let us know what you're working on so we don't duplicate effort.
+All development happens on GitLab (not GitHub).
 
 Issues and our Discord server are both great ways to get in touch.
 
 When you create a new branch, always branch off of `develop`.
+
+To learn about contributing to upstream repositories via forks, see here: https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html.
+
+## Development guide
+
+TODO: we are still working on selecting and fully documenting a recommended workflow. See https://gitlab.com/aruw/controls/aruwlib/-/issues/15.
+
+To develop software for the simulator or unit test environment, a Debian Linux development
+environment is necessary. When developing software for the development board, Linux, Windows, or Mac
+OS operating systems all work. We recommend working in a Debian Linux environment so you can both
+run tests and deploy to the development board.
+
+If you do not have a native Linux environment, we recommend using a virtual machine. We have tested
+a virtual machine hosted using [VirtualBox](https://www.virtualbox.org). Once you have a virtual
+machine installed on your computer, follow
+[this](https://gitlab.com/aruw/controls/aruwlib/-/wikis/Debian-Linux-Setup) guide to set up the
+tooling necessary to build and deploy software.
+
+Alternatively, we have guides for developing software in a [Docker
+container](https://gitlab.com/aruw/controls/aruwlib/-/wikis/Docker-Container-Setup), a [Windows
+machine](https://gitlab.com/aruw/controls/aruwlib/-/wikis/Windows-Setup), or by using [Windows
+Subsystem for Linux](https://gitlab.com/aruw/controls/aruwlib/-/wikis/Windows-WSL-Setup). Note that
+these have drawbacks because they either do not fully support both running unit tests on your local
+machine and deploying to the development board or have not been rigorously tested.
+
+Sometimes setting up your machine can be tricky. If you are having trouble setting up your
+environment properly, feel free to ask for help on our [Discord server](https://discord.gg/jjDrGhrjMy).
+
+If you have your own aruwlib-based project, you can also check out the aruwlib `develop` branch
+directly within your own submodule and work from there.
+
+In all cases, pushing your changes will require a fork of this repository, from which you can
+[open a Merge Request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html).
 
 ### Branch naming conventions in the aruwlib repository
 
@@ -122,12 +147,12 @@ members should typically be tested in the context of `aruw-mcb` before being mer
 To use the test project, `cd` into `aruwlib/test-project` (where the `project.xml` file is). You
 will have to first use `lbuild` to generate an aruwlib distribution before trying to build.
 
-- `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`. Note that there is a _separate_ instance used for the unit tests, which can be build by runnint the same command from within the `sim-modm` subdirectory.
+- `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`. Note that there is a _separate_ instance used for the unit tests, which can be build by running the same command from within the `sim-modm` subdirectory.
 - `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder located in `build/hardware/` which contains the final `.elf` file as well as the intermediate object files (`.o`).
 - `scons build-tests`: Builds a program which hosts our unit tests. This executable can be run on your host computer (only supported on Linux) and prints results for each unit test run.
 - `scons program`: Builds as with `scons build` and then programs the board.
 - `scons run-tests`: Builds and runs the unit test program.
-- `scons size`: Prints statistics on program size and (satically-)allocated memory. Note that the reported available heap space is an upper bound, and this tool has no way of knowing about the real size of dynamic allocations.
+- `scons size`: Prints statistics on program size and (statically-)allocated memory. Note that the reported available heap space is an upper bound, and this tool has no way of knowing about the real size of dynamic allocations.
 
 ## Working with modm
 
