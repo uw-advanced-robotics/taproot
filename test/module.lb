@@ -25,7 +25,7 @@ class Mock(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = "taproot/test/taproot"
+        env.outbasepath = "taproot/test/tap"
         env.copy("mock")
 
 class TaprootTests(Module):
@@ -39,7 +39,7 @@ class TaprootTests(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = "taproot/test/taproot"
+        env.outbasepath = "taproot/test/tap"
         env.copy(".", ignore=env.ignore_paths("*/mock/*"))
 
 def init(module):

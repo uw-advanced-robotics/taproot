@@ -29,7 +29,7 @@ HARDWARE_MODM_PATH  = "taproot/modm"
 LINKERSCRIPT_FILE   = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")
 HOSTED_MODM_PATH    = "taproot/sim-modm/modm"
 TAPROOT_SRC_PATH    = "taproot/src"
-TAPROOT_PATH        = join(TAPROOT_SRC_PATH, "taproot")
+TAPROOT_PATH        = join(TAPROOT_SRC_PATH, "tap")
 TAPROOT_TEST_PATH   = "taproot/test"
 
 # Define libraries
