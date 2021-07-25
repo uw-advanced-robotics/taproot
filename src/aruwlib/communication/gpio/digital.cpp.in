@@ -41,6 +41,7 @@ void Digital::init()
 void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMode mode)
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
         case Digital::InputPin::A:
@@ -59,12 +60,25 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
             DigitalInPinD::configure(mode);
             break;
     }
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    switch(pin)
+    {
+        case Digital::InputPin::C1:
+            DigitalInPinC1::configure(mode);
+            break;
+
+        case Digital::InputPin::C2:
+            DigitalInPinC2::configure(mode);
+            break;
+    }
+%% endif
 #endif
 }
 
 void Digital::set(Digital::OutputPin pin, bool isSet)
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
         case Digital::OutputPin::E:
@@ -83,6 +97,18 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
             DigitalOutPinH::set(isSet);
             break;
     }
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    switch(pin)
+    {
+        case Digital::OutputPin::C3:
+            DigitalOutPinC3::set(isSet);
+            break;
+
+        case Digital::OutputPin::C4:
+            DigitalOutPinC4::set(isSet);
+            break;
+    }
+%% endif
 #endif
 }
 
@@ -91,6 +117,7 @@ bool Digital::read(Digital::InputPin pin) const
 #ifdef PLATFORM_HOSTED
     return false;
 #else
+%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
         case Digital::InputPin::A:
@@ -105,6 +132,16 @@ bool Digital::read(Digital::InputPin pin) const
         case Digital::InputPin::D:
             return DigitalInPinD::read();
     }
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    switch(pin)
+    {
+        case Digital::InputPin::C1:
+            return DigitalInPinC1::read();
+
+        case Digital::InputPin::C2:
+            return DigitalInPinC2::read();
+    }
+%% endif
 #endif
 }
 }  // namespace gpio

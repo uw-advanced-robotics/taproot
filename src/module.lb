@@ -77,5 +77,6 @@ def build(env):
             "with_leds": env.has_module(":communication:gpio:leds"),
             "with_mpu6500": env.has_module(":communication:sensors:mpu6500"),
             "with_can": env.has_module(":communication:can"),
+            "with_imurxlistener": env.has_module(":communication:can:imu_rx_listener")
         }
         env.template("drivers.hpp.in", "drivers.hpp")

@@ -38,6 +38,7 @@ void Leds::init()
 void Leds::set(Leds::LedPin pin, bool isSet)
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
         case Leds::LedPin::A:
@@ -80,6 +81,21 @@ void Leds::set(Leds::LedPin pin, bool isSet)
             LedRed::set(isSet);
             break;
     }
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    switch (pin)
+    {
+        case Leds::LedPin::Green:
+            LedGreen::set(isSet);
+            break;
+
+        case Leds::LedPin::Red:
+            LedRed::set(isSet);
+            break;
+        
+        case Leds::LedPin::Blue:
+            LedBlue::set(isSet);
+    } 
+%% endif
 #endif
 }
 }  // namespace gpio

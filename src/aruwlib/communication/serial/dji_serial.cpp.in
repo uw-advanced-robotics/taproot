@@ -68,9 +68,11 @@ void DJISerial::initialize()
         case Uart::UartPort::Uart1:
             drivers->uart.init<Uart::UartPort::Uart1, 115200>();
             break;
+%% if options[":dev_board"] == "rm-dev-board-a"
         case Uart::UartPort::Uart2:
             drivers->uart.init<Uart::UartPort::Uart2, 115200>();
             break;
+%% endif
         case Uart::UartPort::Uart6:
             drivers->uart.init<Uart::UartPort::Uart6, 115200>();
             break;
@@ -273,3 +275,4 @@ void DJISerial::updateSerial()
 }  // namespace serial
 
 }  // namespace aruwlib
+

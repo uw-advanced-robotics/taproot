@@ -52,9 +52,10 @@ using namespace modm::literals;
  */
 struct SystemClock
 {
-    static constexpr uint32_t Frequency = 180_MHz;
-    static constexpr uint32_t Apb1 = Frequency / 2;
-    static constexpr uint32_t Apb2 = Frequency;
+    static constexpr uint32_t Frequency = 168_MHz;
+    static constexpr uint32_t Ahb = Frequency;
+    static constexpr uint32_t Apb1 = Frequency / 4;
+    static constexpr uint32_t Apb2 = Frequency / 2;
 
     static constexpr uint32_t Adc = Apb2;
 
@@ -81,8 +82,8 @@ struct SystemClock
     static constexpr uint32_t I2c2 = Apb1;
     static constexpr uint32_t I2c3 = Apb1;
 
-    static constexpr uint32_t Apb1Timer = 2 * Apb1;
-    static constexpr uint32_t Apb2Timer = 2 * Apb2;
+    static constexpr uint32_t Apb1Timer = Apb1 * 2;
+    static constexpr uint32_t Apb2Timer = Apb2 * 2;
     static constexpr uint32_t Timer1 = Apb2Timer;
     static constexpr uint32_t Timer2 = Apb1Timer;
     static constexpr uint32_t Timer3 = Apb1Timer;
@@ -98,30 +99,22 @@ struct SystemClock
     static constexpr uint32_t Timer13 = Apb1Timer;
     static constexpr uint32_t Timer14 = Apb1Timer;
 
-    static constexpr uint32_t PWM_FREQUENCY = 50;
-    static constexpr uint32_t PWM_RESOLUTION = 31000;
-    static constexpr uint32_t APB1_TIMER_CLOCKS = 48150000;
-    static constexpr uint32_t APB2_TIMER_CLOCKS = 92500000;
-    static constexpr uint32_t APB1_PRESCALER =
-        ((APB1_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
-    static constexpr uint32_t APB2_PRESCALER =
-        ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
-
     static bool inline enable()
     {
 #ifndef PLATFORM_HOSTED
         Rcc::enableExternalCrystal();  // 8 MHz
         Rcc::PllFactors pllF = {
-            6,    // 12MHz / N=6 -> 2MHz
-            180,  // 2MHz * M=180 -> 360MHz
-            2     // 360MHz / P=2 -> 180MHz = F_cpu
+            4,    // 8MHz / N=4 -> 2MHz
+            168,  // 2MHz * M=180 -> 336MHz
+            2     // 336MHz / P=2 -> 168MHz = F_cpu
         };
         Rcc::enablePll(Rcc::PllSource::ExternalCrystal, pllF);
 
         Rcc::setFlashLatency<Frequency>();
         Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);
-        Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div2);
-        Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div1);
+        Rcc::setAhbPrescaler(Rcc::AhbPrescaler::Div1);
+        Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div4);
+        Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div2);
         Rcc::updateCoreFrequency<Frequency>();
 #endif
 
@@ -131,6 +124,9 @@ struct SystemClock
 
 #ifndef PLATFORM_HOSTED
 
+// Initialize button
+using Button = GpioInputA0;
+
 // Initialize leds
 using LedRed = GpioOutputH12;
 using LedGreen = GpioOutputH11;
@@ -138,15 +134,8 @@ using LedBlue = GpioOutputH10;
 
 using LedsPort = SoftwareGpioPort<GpioOutputH12, GpioOutputH11, GpioOutputH10>;
 
-// initialize analog input pins
-using AnalogInPinS = GpioOutputA0;
-using AnalogInPinT = GpioOutputA1;
-using AnalogInPinU = GpioOutputA2;
-using AnalogInPinV = GpioOutputA3;
-using AnalogInPinOled = GpioOutputA6;
-
-using AnalogInPins =
-    SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV, AnalogInPinOled>;
+// initialize analog input pins, currently none initialized
+using AnalogInPins = SoftwareGpioPort<>;
 
 // initialize pwm output pins, connected to timer 8
 using PWMOutPinC5 = GpioOutputC6;

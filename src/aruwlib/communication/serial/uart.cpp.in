@@ -36,8 +36,10 @@ bool Uart::read(UartPort port, uint8_t *data)
     {
         case UartPort::Uart1:
             return Usart1::read(*data);
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::read(*data);
+%% endif
         case UartPort::Uart3:
             return Usart3::read(*data);
         case UartPort::Uart6:
@@ -57,8 +59,10 @@ std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
     {
         case UartPort::Uart1:
             return Usart1::read(data, length);
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::read(data, length);
+%% endif
         case UartPort::Uart3:
             return Usart3::read(data, length);
         case UartPort::Uart6:
@@ -78,8 +82,10 @@ std::size_t Uart::discardReceiveBuffer(UartPort port)
     {
         case UartPort::Uart1:
             return Usart1::discardReceiveBuffer();
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::discardReceiveBuffer();
+%% endif
         case UartPort::Uart3:
             return Usart3::discardReceiveBuffer();
         case UartPort::Uart6:
@@ -99,8 +105,10 @@ bool Uart::write(UartPort port, uint8_t data)
     {
         case UartPort::Uart1:
             return Usart1::write(data);
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::write(data);
+%% endif
         case UartPort::Uart3:
             return Usart3::write(data);
         case UartPort::Uart6:
@@ -120,8 +128,10 @@ std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
     {
         case UartPort::Uart1:
             return Usart1::write(data, length);
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::write(data, length);
+%% endif
         case UartPort::Uart3:
             return Usart3::write(data, length);
         case UartPort::Uart6:
@@ -141,8 +151,10 @@ bool Uart::isWriteFinished(UartPort port) const
     {
         case UartPort::Uart1:
             return Usart1::isWriteFinished();
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             return Usart2::isWriteFinished();
+%% endif
         case UartPort::Uart3:
             return Usart3::isWriteFinished();
         case UartPort::Uart6:
@@ -161,9 +173,11 @@ void Uart::flushWriteBuffer(UartPort port)
         case UartPort::Uart1:
             Usart1::flushWriteBuffer();
             break;
+%% if options[":dev_board"] == "rm-dev-board-a"
         case UartPort::Uart2:
             Usart2::flushWriteBuffer();
             break;
+%% endif
         case UartPort::Uart3:
             Usart3::flushWriteBuffer();
             break;

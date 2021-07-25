@@ -31,10 +31,6 @@ namespace errors
 {
 void ErrorController::addToErrorList(const SystemError& error)
 {
-    if (!validateErrorTypeAndLocation(error))
-    {
-        return;
-    }
     // only add error if it is not already added
     // Note that we are okay with comparing raw char pointers because an error generated
     // in our codebase use char pointers located in literals.

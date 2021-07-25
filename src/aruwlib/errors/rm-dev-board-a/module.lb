@@ -25,7 +25,7 @@ def prepare(module, options):
         "aruwlib:communication:serial:terminal_serial",
         "aruwlib:communication:gpio:leds")
 
-    return options["dev_board"] == "rm-dev-board-a"
+    return options[":dev_board"] == "rm-dev-board-a"
 
 def build(env):
     env.outbasepath = "aruwlib/src/aruwlib/errors"

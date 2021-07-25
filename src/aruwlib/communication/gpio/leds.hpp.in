@@ -39,6 +39,7 @@ public:
     DISALLOW_COPY_AND_ASSIGN(Leds)
     mockable ~Leds() = default;
 
+%% if options[":dev_board"] == "rm-dev-board-a"
     /**
      * The LED letters correspond to the letters written next to the LEDs
      * on the RoboMaster type A board. The `Green` LED is the led next
@@ -60,6 +61,19 @@ public:
         Green,
         Red
     };
+
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    /**
+     * The LEDs correspond to the color on the RoboMaster type C board.
+     */
+    enum LedPin
+    {
+        Green,
+        Red,
+        Blue
+    };
+
+%% endif
 
     /**
      * Initializes the LEDs by putting the pins in output mode and settting

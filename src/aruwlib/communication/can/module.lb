@@ -15,15 +15,33 @@
 # You should have received a copy of the GNU General Public License
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
+class ImuRxListener(Module):
+    def init(self, module):
+        module.name = ":communication:can:imu_rx_listener"
+
+    def prepare(self, module, options):
+        module.depends(":communication:sensors:mpu6500")
+        return options[":dev_board"] == "rm-dev-board-a"
+
+    def build(self, env):
+        env.outbasepath = "aruwlib/src/aruwlib/communication/can"
+        env.copy("imu_rx_listener.cpp")
+        env.copy("imu_rx_listener.hpp")
+
 def init(module):
     module.name = ":communication:can"
     module.description = "CAN wrappers"
 
 def prepare(module, options):
-    # TODO this dependency can be removed by moving imu_rx_listener
-    module.depends(":communication:sensors:mpu6500")
+    module.add_submodule(ImuRxListener())
     return True
 
 def build(env):
     env.outbasepath = "aruwlib/src/aruwlib/communication/can"
-    env.copy(".")
+    env.copy("can_bus.hpp")
+    env.copy("can_rx_handler.hpp")
+    env.copy("can_rx_handler.cpp")
+    env.copy("can_rx_listener.hpp")
+    env.copy("can_rx_listener.cpp")
+    env.copy("can.cpp")
+    env.copy("can.hpp")

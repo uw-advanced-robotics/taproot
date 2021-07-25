@@ -22,7 +22,7 @@ def init(module):
 def prepare(module, options):
     module.depends("aruwlib:core")
 
-    return options["dev_board"] == "rm-dev-board-c"
+    return options[":dev_board"] == "rm-dev-board-c"
 
 def build(env):
     env.outbasepath = "aruwlib/src/aruwlib/errors"

@@ -22,14 +22,15 @@ class Remote(Module):
 
     def prepare(self, module, options):
         module.depends(":communication:gpio")
-        module.add_option(
-            StringOption(name="uart_port",
-                         description="Which uart port the remote is connected to."))
         return True
 
     def build(self, env):
         env.outbasepath = "aruwlib/src/aruwlib/communication/serial"
-        env.substitutions = {"uart_port": env[":communication:serial:remote:uart_port"]}
+        if env[":dev_board"] == "rm-dev-board-a":
+            uart_port = "Uart1"
+        elif env[":dev_board"] == "rm-dev-board-c":
+            uart_port = "Uart3"
+        env.substitutions = {"uart_port": uart_port}
         env.template("remote.cpp.in", "remote.cpp")
         env.template("remote.hpp.in", "remote.hpp")
 
@@ -92,4 +93,4 @@ def build(env):
     env.template("uart.cpp.in", "uart.cpp")
     env.template("uart.hpp.in", "uart.hpp")
     env.copy("dji_serial.hpp")
-    env.copy("dji_serial.cpp")
+    env.template("dji_serial.cpp.in", "dji_serial.cpp")

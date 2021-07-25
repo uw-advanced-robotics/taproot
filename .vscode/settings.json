@@ -73,7 +73,10 @@
         "SConscript": "python",
         "repo.lb": "python",
         "module.lb": "python",
-        "*.in": "cpp",
+        "*.cpp.in": "cpp",
+        "*.hpp.in": "cpp",
+        "*.xml.in": "xml",
+        "*.in": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [

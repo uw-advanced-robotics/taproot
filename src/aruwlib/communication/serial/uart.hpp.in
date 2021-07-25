@@ -48,7 +48,9 @@ public:
     enum UartPort
     {
         Uart1,
+%% if options[":dev_board"] == "rm-dev-board-a"
         Uart2,
+%% endif
         Uart3,
         Uart6
     };
@@ -69,7 +71,7 @@ public:
     mockable ~Uart() = default;
 
     /**
-     * .initializes a particular Uart with the pins particular to the RoboMaster type a board.
+     * Initializes a particular Uart with the pins particular to the board.
      *
      * @note follow covention in the functino when adding a `UartPort`.
      * @tparam port the particular port to initialize.
@@ -80,7 +82,7 @@ public:
     void init()
     {
 #ifndef PLATFORM_HOSTED
-        // TODO(kaelin): move pin definition to Board?
+%% if options[":dev_board"] == "rm-dev-board-a"
         if constexpr (port == UartPort::Uart1)
         {
             // TODO(kaelin): what's the TX pin on UART1?
@@ -102,6 +104,23 @@ public:
             modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
             modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
         }
+%% elif options[":dev_board"] == "rm-dev-board-c"
+        if constexpr (port == UartPort::Uart1)
+        {
+            modm::platform::Usart1::connect<GpioA9::Tx, GpioB7::Rx>();
+            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
+        }
+        else if constexpr (port == UartPort::Uart3)
+        {
+            modm::platform::Usart3::connect<GpioC11::Rx>();
+            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(12, parity);
+        }
+        else if constexpr (port == UartPort::Uart6)
+        {
+            modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
+            modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
+        }
+%% endif
 #endif
     }
 

@@ -47,6 +47,7 @@ public:
     mockable ~Analog() = default;
 
     // Analog pins
+%% if options[":dev_board"] == "rm-dev-board-a"
     enum Pin
     {
         S = 1,
@@ -55,6 +56,11 @@ public:
         V,
         OLED_JOYSTICK,
     };
+
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    enum Pin {};
+
+%% endif
 
     /**
      * Initializes the ADC and connects the configured analog pins to it.

@@ -30,6 +30,7 @@ namespace gpio
 void Analog::init()
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     AnalogInPins::setAnalogInput();
 
     // Initial ADC/Timer setup
@@ -45,6 +46,7 @@ void Analog::init()
     Adc1::setPinChannel<AnalogInPinU>();
     Adc1::setPinChannel<AnalogInPinV>();
     Adc1::setPinChannel<AnalogInPinOled>();
+%% endif
 #endif
 }
 
@@ -53,6 +55,7 @@ uint16_t Analog::read(Pin pin) const
 #ifdef PLATFORM_HOSTED
     return 0;
 #else
+%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
         case Pin::S:
@@ -73,6 +76,7 @@ uint16_t Analog::read(Pin pin) const
         default:
             return 0;
     }
+%% endif
 #endif
 }
 }  // namespace gpio

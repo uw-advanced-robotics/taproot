@@ -23,7 +23,14 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.substitutions = {"modm_path": env["aruwlib:modm_repo_lb"]}
+    if env[":dev_board"] == "rm-dev-board-a":
+        mcu = "stm32f427iih6"
+    elif env[":dev_board"] == "rm-dev-board-c":
+        mcu = "stm32f407igh6"
+    env.substitutions = {
+        "modm_path": env["aruwlib:modm_repo_lb"],
+        "mcu": mcu
+    }
     env.outbasepath = "aruwlib"
     env.template("project.xml.in", "project.xml")
     env.template("sim-modm/project.xml.in", "sim-modm/project.xml")

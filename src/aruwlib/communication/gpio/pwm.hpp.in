@@ -42,6 +42,7 @@ public:
     DISALLOW_COPY_AND_ASSIGN(Pwm)
     mockable ~Pwm() = default;
 
+%% if options[":dev_board"] == "rm-dev-board-a"
     /**
      * PWM pins whose name corresponds to the names defined on the
      * RoboMaster type A board.
@@ -53,6 +54,20 @@ public:
         Y,
         Z
     };
+
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    /**
+     * PWM pins whose name corresponds to the names defined on the
+     * RoboMaster type C board.
+     */
+    enum Pin
+    {
+        C5 = 1,
+        C6,
+        C7
+    };
+
+%% endif
 
     mockable void init();
 

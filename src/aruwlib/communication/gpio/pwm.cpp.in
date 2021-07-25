@@ -31,30 +31,36 @@ namespace gpio
 void Pwm::init()
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     Timer8::connect<PWMOutPinW::Ch1, PWMOutPinX::Ch2, PWMOutPinY::Ch3, PWMOutPinZ::Ch4>();
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    Timer8::connect<PWMOutPinC5::Ch1, PWMOutPinC6::Ch2, PWMOutPinC7::Ch3>();
+%% endif
     Timer8::enable();
     Timer8::setMode(Timer8::Mode::UpCounter);
 
-    Timer8::setPrescaler(Board::SystemClock::APB2_PRESCALER);
-    Timer8::setOverflow(Board::SystemClock::PWM_RESOLUTION);
-#endif
-    // Set all out pins to 0 duty
-    writeAll(0.0f);
-
-#ifndef PLATFORM_HOSTED
-    // Start the timer
+    // Timer8::setPrescaler(Board::SystemClock::APB2_PRESCALER);
+    // Timer8::setOverflow(Board::SystemClock::PWM_RESOLUTION);
     Timer8::start();
     Timer8::enableOutput();
 #endif
+    // Set all out pins to 0 duty
+    writeAll(0.0f);
 }
 
 void Pwm::writeAll(float duty)
 {
 #ifndef PLATFORM_HOSTED
+%% if options[":dev_board"] == "rm-dev-board-a"
     write(duty, Pin::W);
     write(duty, Pin::X);
     write(duty, Pin::Y);
     write(duty, Pin::Z);
+%% elif options[":dev_board"] == "rm-dev-board-c"
+    write(duty, Pin::C5);
+    write(duty, Pin::C6);
+    write(duty, Pin::C7);
+%% endif
 #endif
 }
 
@@ -65,7 +71,7 @@ void Pwm::write(float duty, Pin pin)
     Timer8::configureOutputChannel(
         static_cast<int>(pin),
         Timer8::OutputCompareMode::Pwm,
-        Board::SystemClock::PWM_RESOLUTION * duty);
+        100 * duty);
 #endif
 }
 }  // namespace gpio
