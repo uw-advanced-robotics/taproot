@@ -17,6 +17,7 @@
     <option name="modm:platform:uart:6:buffer.rx">256</option>
     <option name="modm:platform:uart:6:buffer.tx">256</option>
     <option name="modm:target">stm32f427iih6</option>
+    <option name="modm:tinyusb:config">device.cdc</option>
   </options>
   <modules>
     <module>modm:architecture:clock</module>
@@ -55,5 +56,8 @@
     <module>modm:platform:uart:6</module>
     <module>modm:ui:display</module>
     <module>modm:ui:menu</module>
+    <module>modm:tinyusb</module>
+    <module>modm:platform:usb:fs</module>
+    <module>modm:io</module>
   </modules>
 </library>

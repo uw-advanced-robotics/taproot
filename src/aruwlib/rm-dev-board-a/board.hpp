@@ -107,6 +107,9 @@ struct SystemClock
     static constexpr uint32_t APB2_PRESCALER =
         ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
 
+
+    static constexpr uint32_t Usb = 48_MHz;
+
     static bool inline enable()
     {
 #ifndef PLATFORM_HOSTED
