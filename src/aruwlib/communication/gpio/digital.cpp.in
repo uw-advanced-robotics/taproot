@@ -110,3 +110,4 @@ bool Digital::read(Digital::InputPin pin) const
 }  // namespace gpio
 
 }  // namespace aruwlib
+

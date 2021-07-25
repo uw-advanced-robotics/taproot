@@ -552,3 +552,4 @@ void RefSerial::configGraphicHeader(GraphicHeader* header, uint16_t cmdId, uint1
 }
 }  // namespace serial
 }  // namespace aruwlib
+

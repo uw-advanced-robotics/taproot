@@ -71,3 +71,4 @@ public:
 }  // namespace aruwlib
 
 #endif  // ANALOG_HPP_
+

@@ -46,18 +46,18 @@ def prepare(repo, options):
     repo.add_modules_recursive("./modm_project_files", modulefile="*.lb")
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
-# def build(env):
-#     if env["aruwlib:rebuild_modm"]:
-#         print('building modm')
-#         try:
-#             subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
-#         except subprocess.CalledProcessError as e:
-#             print(e.output())
-#             exit(1)
+def build(env):
+    if env["aruwlib:rebuild_modm"]:
+        print('building modm')
+        try:
+            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
+        except subprocess.CalledProcessError as e:
+            print(e.output())
+            exit(1)
 
-#         print('building sim-modm')
-#         try:
-#             subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
-#         except subprocess.CalledProcessError as e:
-#             print(e.output())
-#             exit(1)
+        print('building sim-modm')
+        try:
+            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
+        except subprocess.CalledProcessError as e:
+            print(e.output())
+            exit(1)

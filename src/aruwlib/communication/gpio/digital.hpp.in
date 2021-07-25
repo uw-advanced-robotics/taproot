@@ -121,3 +121,4 @@ public:
 }  // namespace aruwlib
 
 #endif  // DIGITAL_HPP_
+

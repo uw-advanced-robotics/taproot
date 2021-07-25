@@ -179,3 +179,4 @@ void Uart::flushWriteBuffer(UartPort port)
 }  // namespace serial
 
 }  // namespace aruwlib
+

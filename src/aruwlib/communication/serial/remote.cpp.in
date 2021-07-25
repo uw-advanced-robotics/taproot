@@ -217,3 +217,4 @@ void Remote::reset()
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }
 }  // namespace aruwlib
+

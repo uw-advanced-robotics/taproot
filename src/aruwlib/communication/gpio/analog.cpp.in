@@ -78,3 +78,4 @@ uint16_t Analog::read(Pin pin) const
 }  // namespace gpio
 
 }  // namespace aruwlib
+
