@@ -7,7 +7,13 @@
   <options>
     <option name="aruwlib:modm_repo_lb">../modm/repo.lb</option>
     <option name="aruwlib:docs:source_paths">../../src</option>
-    <option name="aruwlib:dev_board">rm-dev-board-c</option>
+    <option name="aruwlib:dev_board">rm-dev-board-a</option>
+    <option name="aruwlib:communication:serial:terminal_serial:uart_port">Uart3</option>
+    <option name="aruwlib:communication:serial:ref_serial:uart_port">Uart6</option>
+    <option name="aruwlib:board:digital_in_pins">A,B,C,D</option>
+    <option name="aruwlib:board:digital_out_pins">E,F,G,H</option>
+    <option name="aruwlib:board:analog_in_pins">S,T,U,V,Oled</option>
+    <option name="aruwlib:board:pwm_pins">W,X,Y,Z,Buzzer</option>
   </options>
   <modules>
     <module>aruwlib:core</module>

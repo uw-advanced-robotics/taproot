@@ -43,6 +43,6 @@
         <uart name="1" rx="GpioB7"></uart>
         <uart name="2" tx="GpioD5" rx="GpioD6"></uart>
         <uart name="3" tx="GpioD8" rx="GpioD9"></uart>
-        <uart name="6" tx="GpioD14" rx="GpioG9"></uart>
+        <uart name="6" tx="GpioG14" rx="GpioG9"></uart>
     </uart-ports>
 </board>
