@@ -75,8 +75,7 @@
         "module.lb": "python",
         "*.cpp.in": "cpp",
         "*.hpp.in": "cpp",
-        "*.xml.in": "xml",
-        "*.in": "cpp"
+        "*.xml.in": "xml"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [

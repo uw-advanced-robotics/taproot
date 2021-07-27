@@ -27,12 +27,7 @@ namespace errors
 class SystemError
 {
 public:
-    constexpr SystemError()
-        : lineNumber(0),
-          description("default"),
-          filename("none")
-    {
-    }
+    constexpr SystemError() : lineNumber(0), description("default"), filename("none") {}
 
     constexpr SystemError(const char *desc, int line, const char *file)
         : lineNumber(line),

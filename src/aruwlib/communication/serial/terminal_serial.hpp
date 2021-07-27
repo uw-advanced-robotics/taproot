@@ -30,8 +30,8 @@
 #endif
 
 #include "aruwlib/architecture/periodic_timer.hpp"
-#include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/board/board.hpp"
+#include "aruwlib/communication/serial/uart.hpp"
 #include "aruwlib/util_macros.hpp"
 
 #include "modm/io.hpp"

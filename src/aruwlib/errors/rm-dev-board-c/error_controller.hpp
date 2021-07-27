@@ -56,10 +56,7 @@ public:
      * Constrcuts an ErrorController with a display time for each error specified
      * by `ERROR_ROTATE_TIME`.
      */
-    ErrorController(Drivers* drivers)
-        : drivers(drivers)
-    {
-    }
+    ErrorController(Drivers* drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(ErrorController)
     mockable ~ErrorController() = default;
 

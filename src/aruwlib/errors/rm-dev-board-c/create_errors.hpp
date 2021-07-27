@@ -28,7 +28,7 @@ namespace errors
 /**
  * Example for how to create and add an error. `drivers` is a pointer to an
  * `aruwlib::Drivers`, which contains an instance of an `ErrorController`.
- * 
+ *
  * Parameters l and et only exist for backwards compatibility with rm type a
  * board.
  *
@@ -43,7 +43,7 @@ namespace errors
  *     aruwlib::errors::ErrorType::INVALID_CRC);
  * ```
  */
-#define RAISE_ERROR(drivers, desc, l, et)                     \
+#define RAISE_ERROR(drivers, desc, l, et)                                   \
     do                                                                      \
     {                                                                       \
         aruwlib::errors::SystemError stringError(desc, __LINE__, __FILE__); \
