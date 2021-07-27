@@ -47,6 +47,7 @@
     <module>modm:platform:random</module>
     <module>modm:platform:spi:1</module>
     <module>modm:platform:timer:8</module>
+    <module>modm:platform:timer:12</module>
     <module>modm:platform:uart:1</module>
     <module>modm:platform:uart:3</module>
     <module>modm:platform:uart:6</module>

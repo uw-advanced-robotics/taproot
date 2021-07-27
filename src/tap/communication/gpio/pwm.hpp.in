@@ -38,6 +38,9 @@ namespace gpio
 class Pwm
 {
 public:
+{% for timer in timers %}
+    static constexpr uint32_t DEFAULT_{{ timer|upper }}_FREQUENCY = 2000;
+{% endfor %}
     Pwm() = default;
     DISALLOW_COPY_AND_ASSIGN(Pwm)
     mockable ~Pwm() = default;
@@ -46,6 +49,13 @@ public:
     {
 %% for pin in pins
         {{ pin }},
+%% endfor
+    };
+
+    enum Timer
+    {
+%% for timer in timers
+        {{ timer|upper }},
 %% endfor
     };
 
@@ -67,6 +77,27 @@ public:
      * @param[in] pin the PWM pin to be set.
      */
     mockable void write(float duty, Pwm::Pin pin);
+
+    /**
+     * Set the frequency of the timer, in Hz. Does nothing if frequency == 0
+     */
+    mockable void setTimerFrequency(Timer timer, uint32_t frequency);
+
+    mockable void pause(Timer timer);
+
+    mockable void start(Timer timer);
+
+private:
+    static constexpr int BUZZER_CHANNEL = 1;
+
+%% for timer in timers
+    /**
+     * Overflow as calculated by the modm {{ timer }} object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t {{ timer|lower }}CalculatedOverflow;
+%% endfor
 };  // class Pwm
 
 }  // namespace gpio

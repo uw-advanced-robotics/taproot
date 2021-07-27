@@ -23,6 +23,7 @@
 #include "tap/board/board.hpp"
 
 using namespace Board;
+using namespace tap::algorithms;
 
 namespace tap
 {
@@ -37,6 +38,7 @@ void Pwm::init()
     {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
     {{ timer }}::start();
     {{ timer }}::enableOutput();
+    {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
 
 %% endfor
 #endif
@@ -57,13 +59,55 @@ void Pwm::writeAll(float duty)
 void Pwm::write(float duty, Pin pin)
 {
 #ifndef PLATFORM_HOSTED
-    duty = tap::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
+    duty = limitVal<float>(duty, 0.0f, 1.0f);
 %% for timer in timers
     {{ timer }}::configureOutputChannel(
         0,
         Timer8::OutputCompareMode::Pwm,
         100 * duty);
 %% endfor
+#endif
+}
+
+void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            break;
+%% endfor
+    }
+#endif
+}
+
+void Pwm::pause(Timer timer)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::pause();
+            break;
+%% endfor
+    }
+#endif
+}
+
+void Pwm::start(Timer timer)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::start();
+            break;
+%% endfor
+    }
 #endif
 }
 }  // namespace gpio
