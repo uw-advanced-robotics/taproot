@@ -47,12 +47,9 @@ class Uart
 public:
     enum UartPort
     {
-        Uart1,
-%% if options[":dev_board"] == "rm-dev-board-a"
-        Uart2,
-%% endif
-        Uart3,
-        Uart6
+%% for port in uart_ports
+        Uart{{ port }},
+%% endfor
     };
 
 #ifdef PLATFORM_HOSTED
@@ -82,45 +79,25 @@ public:
     void init()
     {
 #ifndef PLATFORM_HOSTED
-%% if options[":dev_board"] == "rm-dev-board-a"
-        if constexpr (port == UartPort::Uart1)
+%% macro init_port(port, rxPin, txPin)
+            modm::platform::Usart{{ port }}::connect<{% if rxPin != None %}{{ rxPin }}::Rx{% if txPin != None %},{% endif %}{% endif %}{% if txPin != None %}{{ txPin }}::Tx{% endif %}>();
+            modm::platform::Usart{{ port }}::initialize<Board::SystemClock, baudrate>(12, parity);
+%% endmacro
+%% if uart_ports|length > 0
+        if constexpr (port == UartPort::Uart{{ uart_ports[0] }})
         {
-            // TODO(kaelin): what's the TX pin on UART1?
-            modm::platform::Usart1::connect<GpioB7::Rx>();
-            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart2)
-        {
-            modm::platform::Usart2::connect<GpioD5::Tx, GpioD6::Rx>();
-            modm::platform::Usart2::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart3)
-        {
-            modm::platform::Usart3::connect<GpioD8::Tx, GpioD9::Rx>();
-            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart6)
-        {
-            modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
-            modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-%% elif options[":dev_board"] == "rm-dev-board-c"
-        if constexpr (port == UartPort::Uart1)
-        {
-            modm::platform::Usart1::connect<GpioA9::Tx, GpioB7::Rx>();
-            modm::platform::Usart1::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart3)
-        {
-            modm::platform::Usart3::connect<GpioC11::Rx>();
-            modm::platform::Usart3::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
-        else if constexpr (port == UartPort::Uart6)
-        {
-            modm::platform::Usart6::connect<GpioG14::Tx, GpioG9::Rx>();
-            modm::platform::Usart6::initialize<Board::SystemClock, baudrate>(12, parity);
-        }
+    %% set port = uart_ports[0]
+    %% set rxPin = port_to_rx_pin[port]
+    %% set txPin = port_to_tx_pin[port]
+{{ init_port(port, rxPin, txPin) }}        }
 %% endif
+%% for port in uart_ports[1:]
+        else if constexpr (port == UartPort::Uart{{ port }})
+        {
+    %% set rxPin = port_to_rx_pin[port]
+    %% set txPin = port_to_tx_pin[port]
+{{ init_port(port, rxPin, txPin) }}        }
+%% endfor
 #endif
     }
 

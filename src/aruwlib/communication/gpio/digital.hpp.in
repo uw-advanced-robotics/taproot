@@ -48,16 +48,14 @@ public:
     DISALLOW_COPY_AND_ASSIGN(Digital)
     mockable ~Digital() = default;
 
-%% if options[":dev_board"] == "rm-dev-board-a"
     /**
      * Currently enabled digital input pins.
      */
     enum InputPin
     {
-        A,
-        B,
-        C,
-        D
+%% for pin in inputPins
+        {{ pin }},
+%% endfor
     };
 
     /**
@@ -65,32 +63,10 @@ public:
      */
     enum OutputPin
     {
-        E,
-        F,
-        G,
-        H
+%% for pin in outputPins
+        {{ pin }},
+%% endfor
     };
-
-%% elif options[":dev_board"] == "rm-dev-board-c"
-    /**
-     * Currently enabled digital input pins.
-     */
-    enum InputPin
-    {
-        C1,
-        C2
-    };
-
-    /**
-     * Currently enabled digital output pins.
-     */
-    enum OutputPin
-    {
-        C3,
-        C4
-    };
-
-%% endif
 
 #ifdef PLATFORM_HOSTED
     enum InputPullMode

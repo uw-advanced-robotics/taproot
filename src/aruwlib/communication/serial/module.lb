@@ -15,6 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
 
+import glob
+import lxml
+
+def parse_all(device):
+    device_file_names = glob.glob(repopath("supported-devices/*.xml"))
+    device_file_names = [dfn for dfn in device_file_names if device in dfn]
+    assert len(device_file_names) == 1
+    # parse the xml-file
+    parser = lxml.etree.XMLParser(no_network=True)
+    xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
+    xmlroot.xinclude()
+    return xmlroot.getroot()
+
 class Remote(Module):
     def init(self, module):
         module.name = ":communication:serial:remote"
@@ -89,6 +102,22 @@ def prepare(module, options):
     return True
 
 def build(env):
+    uart_ports = []
+    port_to_tx_pin = {}
+    port_to_rx_pin = {}
+
+    uart_ports
+    metadata = parse_all(env[":dev_board"])
+    for port in metadata.find("uart-ports"):
+        uart_ports.append(port.get("name"))
+        port_to_rx_pin[port.get("name")] = port.get("rx")
+        port_to_tx_pin[port.get("name")] = port.get("tx")
+
+    env.substitutions = {
+        "uart_ports": uart_ports,
+        "port_to_rx_pin": port_to_rx_pin,
+        "port_to_tx_pin": port_to_tx_pin,
+    }
     env.outbasepath = "aruwlib/src/aruwlib/communication/serial"
     env.template("uart.cpp.in", "uart.cpp")
     env.template("uart.hpp.in", "uart.hpp")

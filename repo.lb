@@ -36,8 +36,9 @@ def init(repo):
                       description="Whether or not to rebuild modm HALs"))
 
     repo.add_option(
-        StringOption(name="dev_board",
-                     description="Which development board to be used, either \"rm-dev-board-a\" or \"rm-dev-board-c\""))
+        EnumerationOption(name="dev_board",
+                          description="Which development board to be used",
+                          enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")

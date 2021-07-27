@@ -41,74 +41,28 @@ void Digital::init()
 void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMode mode)
 {
 #ifndef PLATFORM_HOSTED
-%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
-        case Digital::InputPin::A:
-            DigitalInPinA::configure(mode);
+%% for pin in inputPins
+        case Digital::InputPin::{{ pin }}:
+            DigitalInPin{{ pin }}::configure(mode);
             break;
-
-        case Digital::InputPin::B:
-            DigitalInPinB::configure(mode);
-            break;
-
-        case Digital::InputPin::C:
-            DigitalInPinC::configure(mode);
-            break;
-
-        case Digital::InputPin::D:
-            DigitalInPinD::configure(mode);
-            break;
+%% endfor
     }
-%% elif options[":dev_board"] == "rm-dev-board-c"
-    switch(pin)
-    {
-        case Digital::InputPin::C1:
-            DigitalInPinC1::configure(mode);
-            break;
-
-        case Digital::InputPin::C2:
-            DigitalInPinC2::configure(mode);
-            break;
-    }
-%% endif
 #endif
 }
 
 void Digital::set(Digital::OutputPin pin, bool isSet)
 {
 #ifndef PLATFORM_HOSTED
-%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
-        case Digital::OutputPin::E:
-            DigitalOutPinE::set(isSet);
+%% for pin in outputPins
+        case Digital::OutputPin::{{ pin }}:
+            DigitalOutPin{{ pin }}::set(isSet);
             break;
-
-        case Digital::OutputPin::F:
-            DigitalOutPinF::set(isSet);
-            break;
-
-        case Digital::OutputPin::G:
-            DigitalOutPinG::set(isSet);
-            break;
-
-        case Digital::OutputPin::H:
-            DigitalOutPinH::set(isSet);
-            break;
+%% endfor
     }
-%% elif options[":dev_board"] == "rm-dev-board-c"
-    switch(pin)
-    {
-        case Digital::OutputPin::C3:
-            DigitalOutPinC3::set(isSet);
-            break;
-
-        case Digital::OutputPin::C4:
-            DigitalOutPinC4::set(isSet);
-            break;
-    }
-%% endif
 #endif
 }
 
@@ -117,31 +71,13 @@ bool Digital::read(Digital::InputPin pin) const
 #ifdef PLATFORM_HOSTED
     return false;
 #else
-%% if options[":dev_board"] == "rm-dev-board-a"
     switch (pin)
     {
-        case Digital::InputPin::A:
-            return DigitalInPinA::read();
-
-        case Digital::InputPin::B:
-            return DigitalInPinB::read();
-
-        case Digital::InputPin::C:
-            return DigitalInPinC::read();
-
-        case Digital::InputPin::D:
-            return DigitalInPinD::read();
+%% for pin in inputPins
+        case Digital::InputPin::{{ pin }}:
+            return DigitalInPin{{ pin }}::read();
+%% endfor
     }
-%% elif options[":dev_board"] == "rm-dev-board-c"
-    switch(pin)
-    {
-        case Digital::InputPin::C1:
-            return DigitalInPinC1::read();
-
-        case Digital::InputPin::C2:
-            return DigitalInPinC2::read();
-    }
-%% endif
 #endif
 }
 }  // namespace gpio

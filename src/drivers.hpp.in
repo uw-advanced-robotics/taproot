@@ -86,14 +86,14 @@
 %% if with_pwm
 #include "aruwlib/communication/gpio/pwm.hpp"
 %% endif
-%% if with_remote
-#include "aruwlib/communication/serial/remote.hpp"
-%% endif
 %% if with_mpu6500
 #include "aruwlib/communication/sensors/mpu6500/mpu6500.hpp"
 %% endif
 %% if with_refserial
 #include "aruwlib/communication/serial/ref_serial.hpp"
+%% endif
+%% if with_remote
+#include "aruwlib/communication/serial/remote.hpp"
 %% endif
 %% if with_terminal
 #include "aruwlib/communication/serial/terminal_serial.hpp"

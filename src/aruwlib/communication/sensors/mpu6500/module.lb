@@ -19,7 +19,7 @@ def init(module):
     module.name = ":communication:sensors:mpu6500"
 
 def prepare(module, options):
-    return True
+    return options[":dev_board"] == "rm-dev-board-a"
 
 def build(env):
     env.outbasepath = "aruwlib/src/aruwlib/communication/sensors/mpu6500"
