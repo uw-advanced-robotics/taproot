@@ -17,31 +17,27 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PWM_MOCK_HPP_
-#define PWM_MOCK_HPP_
+#include "buzzer.hpp"
 
-#include <gmock/gmock.h>
-
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/communication/gpio/pwm.hpp"
 
-namespace tap
-{
-namespace mock
-{
-class PwmMock : public tap::gpio::Pwm
-{
-public:
-    PwmMock();
-    virtual ~PwmMock();
+#include "modm/architecture/interface/delay.hpp"
 
-    MOCK_METHOD(void, init, (), (override));
-    MOCK_METHOD(void, writeAll, (float), (override));
-    MOCK_METHOD(void, write, (float duty, tap::gpio::Pwm::Pin), (override));
-    MOCK_METHOD(void, setTimerFrequency, (tap::gpio::Pwm::Timer, uint32_t), (override));
-    MOCK_METHOD(void, pause, (tap::gpio::Pwm::Timer), (override));
-    MOCK_METHOD(void, start, (tap::gpio::Pwm::Timer), (override));
-};  // class PwmMock
-}  // namespace mock
-}  // namespace tap
+namespace tap::buzzer
+{
+void playNote(gpio::Pwm *pwmController, uint32_t frequency)
+{
+    if (frequency == 0)
+    {
+        silenceBuzzer(pwmController);
+    }
+    else
+    {
+        pwmController->write(0.5f, gpio::Pwm::BUZZER);
+        pwmController->setTimerFrequency(gpio::Pwm::TIMER_12, frequency);
+    }
+}
 
-#endif  //  PWM_MOCK_HPP_
+void silenceBuzzer(gpio::Pwm *pwmController) { pwmController->write(0, gpio::Pwm::BUZZER); }
+}  // namespace tap::buzzer

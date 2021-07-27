@@ -17,31 +17,35 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PWM_MOCK_HPP_
-#define PWM_MOCK_HPP_
+#ifndef BUZZER_HPP_
+#define BUZZER_HPP_
 
-#include <gmock/gmock.h>
-
-#include "tap/communication/gpio/pwm.hpp"
+#include <cstdint>
 
 namespace tap
 {
-namespace mock
+namespace gpio
 {
-class PwmMock : public tap::gpio::Pwm
-{
-public:
-    PwmMock();
-    virtual ~PwmMock();
+class Pwm;
+}
 
-    MOCK_METHOD(void, init, (), (override));
-    MOCK_METHOD(void, writeAll, (float), (override));
-    MOCK_METHOD(void, write, (float duty, tap::gpio::Pwm::Pin), (override));
-    MOCK_METHOD(void, setTimerFrequency, (tap::gpio::Pwm::Timer, uint32_t), (override));
-    MOCK_METHOD(void, pause, (tap::gpio::Pwm::Timer), (override));
-    MOCK_METHOD(void, start, (tap::gpio::Pwm::Timer), (override));
-};  // class PwmMock
-}  // namespace mock
+namespace buzzer
+{
+/**
+ * Plays the buzzer at the given frequency.
+ *
+ * @param[in] pwmController The PWM object that has access to the buzzer.
+ * @param[in] frequency The PWM freqneucy that corresponds to a pitch.
+ */
+void playNote(gpio::Pwm *pwmController, uint32_t frequency);
+
+/**
+ * Silences the buzzer.
+ *
+ * @param[in] pwmController the PWM object that has access to the buzzer.
+ */
+void silenceBuzzer(gpio::Pwm *pwmController);
+}  // namespace buzzer
 }  // namespace tap
 
-#endif  //  PWM_MOCK_HPP_
+#endif  // BUZZER_HPP_
