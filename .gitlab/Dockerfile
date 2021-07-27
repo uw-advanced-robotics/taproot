@@ -16,7 +16,7 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 # Temporary stages ===========
-FROM debian:buster as gtest-build
+FROM ubuntu:20.04 as gtest-build
 
 ARG GTEST_VERSION=1.10.0
 
@@ -37,40 +37,25 @@ RUN cmake ../
 RUN make -j
 
 # Main image =================
-FROM python:3.8.0-slim-buster
+FROM ubuntu:20.04
 # We do all installations in a single layer and clean up residual files in one
 # pass to minimize Docker image size (and thus, CI build time).
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install misc basic dependencies
-# Installing gnupg2 for "apt-key add"
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget bzip2 git gcc g++ gnupg2 valgrind \
-    && apt-get autoremove -y \
+    && apt-get install -y --no-install-recommends wget git valgrind clang-format-10 python3 python3-pip scons gcc-10 g++-10 locales locales-all lcov gcovr \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# lcov
-RUN apt-get update \
-    && apt-get install -y lcov gcovr \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 90 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
 
-# Now that we have wget, install clang-format
-# clang-format-10 depends on the python apt package, but Python is installed
-# from source, not apt, so apt doesn't see it. Hack around it to avoid the dep.
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key| apt-key add -
-RUN echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-10 main" >> /etc/apt/sources.list
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends libllvm10 libclang-cpp10 \
-    && apt-get autoremove -y \
-    && apt-get download clang-format-10 \
-    && dpkg --force-all -i clang-format-10*.deb \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 -O gcc-arm.tar.bz2 \
+# "install" the gcc ARM cross-compiler
+RUN wget -q https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -O gcc-arm.tar.bz2 \
     && tar -xjf /gcc-arm.tar.bz2 \
     && rm gcc-arm.tar.bz2
-ENV PATH="/gcc-arm-none-eabi-9-2020-q2-update/bin:$PATH"
+ENV PATH="/gcc-arm-none-eabi-10-2020-q4-major/bin:$PATH"
 
 ARG GTEST_VERSION=1.10.0
 # "install" gtest and gmock
@@ -78,5 +63,5 @@ COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/googletest/include/
 COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/googlemock/include/ /usr/local/include/
 COPY --from=gtest-build /googletest-release-${GTEST_VERSION}/build/lib/libg*.a /usr/local/lib/
 
-RUN pip install modm scons
+RUN pip3 install lbuild modm
 RUN wget -O /run-clang-format.py https://raw.githubusercontent.com/Sarcasm/run-clang-format/50a5250a2666218595ee21d68c71f50ac39866d2/run-clang-format.py
