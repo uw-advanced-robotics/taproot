@@ -1,0 +1,72 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "pwm.hpp"
+
+#include "tap/algorithms/math_user_utils.hpp"
+#include "tap/board/board.hpp"
+
+using namespace Board;
+
+namespace tap
+{
+namespace gpio
+{
+void Pwm::init()
+{
+#ifndef PLATFORM_HOSTED
+%% for timer in timers
+    {{ timer }}::connect<>();
+    {{ timer }}::enable();
+    {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
+    {{ timer }}::start();
+    {{ timer }}::enableOutput();
+
+%% endfor
+#endif
+    // Set all out pins to 0 duty
+    writeAll(0.0f);
+}
+
+void Pwm::writeAll(float duty)
+{
+#ifndef PLATFORM_HOSTED
+%% for pin in pins
+    write(duty, Pin::{{ pin }});
+%% endfor
+#endif
+}
+
+/////////////////////////////////// TODO /////////////////////////////////////
+void Pwm::write(float duty, Pin pin)
+{
+#ifndef PLATFORM_HOSTED
+    duty = tap::algorithms::limitVal<float>(duty, 0.0f, 1.0f);
+%% for timer in timers
+    {{ timer }}::configureOutputChannel(
+        0,
+        Timer8::OutputCompareMode::Pwm,
+        100 * duty);
+%% endfor
+#endif
+}
+}  // namespace gpio
+
+}  // namespace tap
+

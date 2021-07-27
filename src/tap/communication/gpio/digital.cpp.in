@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "digital.hpp"
+
+#include "tap/board/board.hpp"
+
+using namespace Board;
+
+namespace tap
+{
+namespace gpio
+{
+void Digital::init()
+{
+#ifndef PLATFORM_HOSTED
+    // init digital out pins
+    DigitalOutPins::setOutput(modm::Gpio::Low);
+    // init digital in pins
+    // interrupts disabled
+    DigitalInPins::setInput();
+#endif
+}
+
+void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMode mode)
+{
+#ifndef PLATFORM_HOSTED
+    switch (pin)
+    {
+%% for pin in inputPins
+        case Digital::InputPin::{{ pin }}:
+            DigitalInPin{{ pin }}::configure(mode);
+            break;
+%% endfor
+    }
+#endif
+}
+
+void Digital::set(Digital::OutputPin pin, bool isSet)
+{
+#ifndef PLATFORM_HOSTED
+    switch (pin)
+    {
+%% for pin in outputPins
+        case Digital::OutputPin::{{ pin }}:
+            DigitalOutPin{{ pin }}::set(isSet);
+            break;
+%% endfor
+    }
+#endif
+}
+
+bool Digital::read(Digital::InputPin pin) const
+{
+#ifdef PLATFORM_HOSTED
+    return false;
+#else
+    switch (pin)
+    {
+%% for pin in inputPins
+        case Digital::InputPin::{{ pin }}:
+            return DigitalInPin{{ pin }}::read();
+%% endfor
+    }
+#endif
+}
+}  // namespace gpio
+
+}  // namespace tap
+

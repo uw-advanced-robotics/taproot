@@ -80,11 +80,11 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "${workspaceRoot}",
-        "./test-project/aruwlib/modm/src",
-        "./test-project/aruwlib/modm/ext/cmsis/core",
-        "./test-project/aruwlib/modm/ext/cmsis/device",
-        "./test-project/aruwlib/src",
-        "./test-project/aruwlib/test"
+        "./test-project/taproot/modm/src",
+        "./test-project/taproot/modm/ext/cmsis/core",
+        "./test-project/taproot/modm/ext/cmsis/device",
+        "./test-project/taproot/src",
+        "./test-project/taproot/test"
     ],
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.cStandard": "c11",

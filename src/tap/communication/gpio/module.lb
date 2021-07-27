@@ -1,0 +1,159 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import glob
+import lxml.etree
+
+def parse_all(device):
+    device_file_names = glob.glob(repopath("supported-devices/*.xml"))
+    device_file_names = [dfn for dfn in device_file_names if device in dfn]
+    assert len(device_file_names) == 1
+    # parse the xml-file
+    parser = lxml.etree.XMLParser(no_network=True)
+    xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
+    xmlroot.xinclude()
+    return xmlroot.getroot()
+
+def extractPinDefines(pins: str) -> str:
+    pins = [pin.strip() for pin in str.split(pins, ",")]
+    if len(pins) == 1 and pins[0] == "":
+        pins = []
+    return pins
+
+class Analog(Module):
+    def __init__(self, metadata):
+        self.metadata = metadata
+        
+    def init(self, module):
+        module.name = ":communication:gpio:analog"
+
+    def prepare(self, module, options):
+        module.depends(":board")
+        return True
+
+    def build(self, env):
+        pins = listify(extractPinDefines(env[":board:analog_in_pins"]))
+
+        # Collect adcs
+        adcs = []
+        pinToAdc = {}
+        for pin in self.metadata.find("gpio-pins"):
+            if pin.get("alias") in pins:
+                adc = pin.find("adc")
+                assert adc != None
+                name = adc.get("name")
+                pinToAdc[pin.get("alias")] = name
+                if name not in adcs:
+                    adcs.append(name)
+
+        env.substitutions = {
+            "pins": pins,
+            "adcs": adcs,
+            "pinToAdc": pinToAdc,
+        }
+        env.outbasepath = "taproot/src/tap/communication/gpio"
+        env.template("analog.cpp.in", "analog.cpp")
+        env.template("analog.hpp.in", "analog.hpp")
+
+class Digital(Module):
+    def __init__(self, metadata):
+        self.metadata = metadata
+
+    def init(self, module):
+        module.name = ":communication:gpio:digital"
+
+    def prepare(self, module, options):
+        module.depends(":board")
+        return True
+
+    def build(self, env):
+        inputPins = listify(extractPinDefines(env[":board:digital_in_pins"]))
+        outputPins = listify(extractPinDefines(env[":board:digital_out_pins"]))
+        env.substitutions = {
+            "inputPins": inputPins,
+            "outputPins": outputPins,
+        }
+        env.outbasepath = "taproot/src/tap/communication/gpio"
+        env.template("digital.cpp.in", "digital.cpp")
+        env.template("digital.hpp.in", "digital.hpp")
+
+class Leds(Module):
+    def init(self, module):
+        module.name = ":communication:gpio:leds"
+
+    def prepare(self, module, options):
+        module.depends(":board")
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/gpio"
+        env.template("leds.cpp.in", "leds.cpp")
+        env.template("leds.hpp.in", "leds.hpp")
+
+class Pwm(Module):
+    def __init__(self, metadata):
+        self.metadata = metadata
+
+    def init(self, module):
+        module.name = ":communication:gpio:pwm"
+
+    def prepare(self, module, options):
+        module.depends(":board")
+        return True
+
+    def build(self, env):
+        # Collect pins
+        pins = listify(extractPinDefines(env[":board:pwm_pins"]))
+
+        # Collect timers
+        timers = []
+        pinToCh = {}
+        for pin in self.metadata.find("gpio-pins"):
+            if pin.get("alias") in pins:
+                timer = pin.find("timer")
+                assert timer != None
+                name = timer.get("name")
+                pinToCh[pin.get("alias")] = timer.get("channel")
+                if name not in timers:
+                    timers.append(name)
+
+        env.substitutions = {
+            "pins": pins,
+            "timers": timers,
+            "pinToCh": pinToCh,
+        }
+        env.outbasepath = "taproot/src/tap/communication/gpio"
+        env.template("pwm.cpp.in", "pwm.cpp")
+        env.template("pwm.hpp.in", "pwm.hpp")
+
+def init(module):
+    module.name = ":communication:gpio"
+    module.description = "Various GPIO HAL wrappers"
+
+def prepare(module, options):
+    module.depends("taproot:core", "taproot:board")
+
+    metadata = parse_all(options[":dev_board"])
+    module.add_submodule(Analog(metadata))
+    module.add_submodule(Digital(metadata))
+    module.add_submodule(Leds())
+    module.add_submodule(Pwm(metadata))
+
+    return True
+
+def build(env):
+    pass

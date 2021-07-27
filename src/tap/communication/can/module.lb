@@ -1,0 +1,47 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+class ImuRxListener(Module):
+    def init(self, module):
+        module.name = ":communication:can:imu_rx_listener"
+
+    def prepare(self, module, options):
+        module.depends(":communication:sensors:mpu6500")
+        return options[":dev_board"] == "rm-dev-board-a"
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/can"
+        env.copy("imu_rx_listener.cpp")
+        env.copy("imu_rx_listener.hpp")
+
+def init(module):
+    module.name = ":communication:can"
+    module.description = "CAN wrappers"
+
+def prepare(module, options):
+    module.add_submodule(ImuRxListener())
+    return True
+
+def build(env):
+    env.outbasepath = "taproot/src/tap/communication/can"
+    env.copy("can_bus.hpp")
+    env.copy("can_rx_handler.hpp")
+    env.copy("can_rx_handler.cpp")
+    env.copy("can_rx_listener.hpp")
+    env.copy("can_rx_listener.cpp")
+    env.copy("can.cpp")
+    env.copy("can.hpp")

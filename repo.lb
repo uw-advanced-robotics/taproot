@@ -1,24 +1,24 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import subprocess
 
 def init(repo):
-    repo.name = "aruwlib"
+    repo.name = "taproot"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
 
     repo.add_option(
@@ -48,17 +48,17 @@ def prepare(repo, options):
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
-    if env["aruwlib:rebuild_modm"]:
+    if env["taproot:rebuild_modm"]:
         print('building modm')
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib")
+            subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)
 
         print('building sim-modm')
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="aruwlib/sim-modm")
+            subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)

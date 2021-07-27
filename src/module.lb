@@ -1,19 +1,19 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
     module.name = ":core"
@@ -26,43 +26,43 @@ def prepare(module, options):
                      Set to false after you generate drivers.hpp the first time."))
 
     module.depends(
-        "aruwlib:testing:mock",
-        "aruwlib:modm-project.xml",
-        "aruwlib:board",
-        "aruwlib:errors")
+        "taproot:testing:mock",
+        "taproot:modm-project.xml",
+        "taproot:board",
+        "taproot:errors")
 
     # motor-specific dependencies
-    module.depends("aruwlib:communication:can", "aruwlib:communication:tcp-server")
+    module.depends("taproot:communication:can", "taproot:communication:tcp-server")
 
     # command mapper dependencies
-    module.depends("aruwlib:communication:serial:remote")
+    module.depends("taproot:communication:serial:remote")
 
     # power limiter dependencies
-    module.depends("aruwlib:communication:gpio:analog")
-    module.depends("aruwlib:communication:serial:ref_serial")
+    module.depends("taproot:communication:gpio:analog")
+    module.depends("taproot:communication:serial:ref_serial")
 
     # scheduler dependencies
-    module.depends("aruwlib:communication:serial:terminal_serial")
+    module.depends("taproot:communication:serial:terminal_serial")
 
     # servo dependencies
-    module.depends("aruwlib:communication:gpio:pwm")
+    module.depends("taproot:communication:gpio:pwm")
 
     return True
 
 def build(env):
     # Copy all folders and files that are not configurable in this
     # top level module
-    env.outbasepath = "aruwlib/src"
-    env.copy("aruwlib/SConscript")
-    env.copy("aruwlib/drivers_singleton.hpp")
-    env.copy("aruwlib/util_macros.hpp")
-    env.copy("aruwlib/drivers.hpp")
-    env.copy("aruwlib/drivers_singleton.cpp")
+    env.outbasepath = "taproot/src"
+    env.copy("tap/SConscript")
+    env.copy("tap/drivers_singleton.hpp")
+    env.copy("tap/util_macros.hpp")
+    env.copy("tap/drivers.hpp")
+    env.copy("tap/drivers_singleton.cpp")
 
-    env.copy("aruwlib/algorithms")
-    env.copy("aruwlib/architecture")
-    env.copy("aruwlib/control")
-    env.copy("aruwlib/motor")
+    env.copy("tap/algorithms")
+    env.copy("tap/architecture")
+    env.copy("tap/control")
+    env.copy("tap/motor")
 
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"

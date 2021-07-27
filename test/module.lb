@@ -1,19 +1,19 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 
@@ -25,30 +25,30 @@ class Mock(Module):
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib/test/aruwlib"
-        env.copy("mock")
+        env.outbasepath = "taproot/test"
+        env.copy("tap/mock")
 
-class ARUWLIBTests(Module):
+class TaprootTests(Module):
     def init(self, module):
         module.name = ":testing:tests"
 
     def prepare(self, module, options):
         module.depends(
-            "aruwlib:testing:mock",
-            "aruwlib:core")
+            "taproot:testing:mock",
+            "taproot:core")
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib/test/aruwlib"
-        env.copy(".", ignore=env.ignore_paths("*/mock/*"))
+        env.outbasepath = "taproot/test"
+        env.copy("tap", ignore=env.ignore_paths("*/mock/*"))
 
 def init(module):
     module.name = ":testing"
-    module.description = "aruwlib Test Framework"
+    module.description = "Taproot Test Framework"
 
 def prepare(module, options):
     module.add_submodule(Mock())
-    module.add_submodule(ARUWLIBTests())
+    module.add_submodule(TaprootTests())
     return True
 
 def build(env):
