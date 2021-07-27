@@ -38,6 +38,9 @@ namespace gpio
 class Pwm
 {
 public:
+    static constexpr uint32_t DEFAULT_TIMER8_FREQUENCY = 50;
+    static constexpr uint32_t DEFAULT_TIMER12_FREQUENCY = 2000;
+
     Pwm() = default;
     DISALLOW_COPY_AND_ASSIGN(Pwm)
     mockable ~Pwm() = default;
@@ -51,7 +54,17 @@ public:
         W = 1,
         X,
         Y,
-        Z
+        Z,
+        BUZZER,
+    };
+
+    /**
+     * Timer associated with the PWM pins accessible from this object
+     */
+    enum Timer
+    {
+        TIMER_8,   /// Associated with pins W, X, Y, and Z
+        TIMER_12,  /// Associated with buzzer
     };
 
     mockable void init();
@@ -72,6 +85,31 @@ public:
      * @param[in] pin the PWM pin to be set.
      */
     mockable void write(float duty, Pwm::Pin pin);
+
+    /**
+     * Set the frequency of the timer, in Hz. Does nothing if frequency == 0
+     */
+    mockable void setTimerFrequency(Timer timer, uint32_t frequency);
+
+    mockable void pause(Timer timer);
+
+    mockable void start(Timer timer);
+
+private:
+    static constexpr int BUZZER_CHANNEL = 1;
+
+    /**
+     * Overflow as calculated by the modm Timer8 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer8CalculatedOverflow;
+    /**
+     * Overflow as calculated by the modm Timer12 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer12CalculatedOverflow;
 };  // class Pwm
 
 }  // namespace gpio

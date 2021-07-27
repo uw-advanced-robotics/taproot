@@ -98,15 +98,6 @@ struct SystemClock
     static constexpr uint32_t Timer13 = Apb1Timer;
     static constexpr uint32_t Timer14 = Apb1Timer;
 
-    static constexpr uint32_t PWM_FREQUENCY = 50;
-    static constexpr uint32_t PWM_RESOLUTION = 31000;
-    static constexpr uint32_t APB1_TIMER_CLOCKS = 48150000;
-    static constexpr uint32_t APB2_TIMER_CLOCKS = 92500000;
-    static constexpr uint32_t APB1_PRESCALER =
-        ((APB1_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
-    static constexpr uint32_t APB2_PRESCALER =
-        ((APB2_TIMER_CLOCKS / PWM_FREQUENCY) / PWM_RESOLUTION - 1);
-
     static bool inline enable()
     {
 #ifndef PLATFORM_HOSTED
@@ -169,12 +160,14 @@ using AnalogInPins =
     SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV, AnalogInPinOled>;
 
 // initialize 4 pwm output pins
-using PWMOutPinW = GpioInputI5;
-using PWMOutPinX = GpioInputI6;
-using PWMOutPinY = GpioInputI7;
-using PWMOutPinZ = GpioInputI2;
+using PWMOutPinW = GpioOutputI5;
+using PWMOutPinX = GpioOutputI6;
+using PWMOutPinY = GpioOutputI7;
+using PWMOutPinZ = GpioOutputI2;
+using PWMOutPinBuzzer = GpioOutputH6;
 
-using PWMOutPins = SoftwareGpioPort<PWMOutPinW, PWMOutPinX, PWMOutPinY, PWMOutPinZ>;
+using PWMOutPins =
+    SoftwareGpioPort<PWMOutPinW, PWMOutPinX, PWMOutPinY, PWMOutPinZ, PWMOutPinBuzzer>;
 
 // initialize 4 digital input pins
 using DigitalInPinA = GpioOutputI0;
