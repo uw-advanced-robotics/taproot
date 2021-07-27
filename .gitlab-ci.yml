@@ -16,7 +16,7 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2021-03-20.1
+  image: aruw/mcb-2020-gitlab-ci:2021-06-02.1
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
@@ -42,7 +42,7 @@ stages:
   - Deploy Pages
 
 before_script:
-  - python -V # Print out python version for debugging
+  - python3 -V # Print out python version for debugging
 
 # Initial verification
 
@@ -83,7 +83,7 @@ tests build:
   script:
     - cd test-project && lbuild build
     - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/fast/mcb-project-tests.elf
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s=<source>.</source>=<source>./taproot-project-sim</source>=g" cobertura.xml'
     - 'sed -i "s;filename=\";filename=\"taproot-project-sim/;g" cobertura.xml'

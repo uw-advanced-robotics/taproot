@@ -17,48 +17,28 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MOTOR_SPECIFIC_MENU_HPP_
-#define MOTOR_SPECIFIC_MENU_HPP_
+#ifndef DUMMY_ALLOCATOR_HPP_
+#define DUMMY_ALLOCATOR_HPP_
 
-#include "modm/ui/menu/abstract_menu.hpp"
-
-#include "dummy_allocator.hpp"
+#include "modm/utils/allocator/allocator_base.hpp"
 
 namespace tap
 {
-namespace motor
-{
-class DjiMotor;
-}
-class Drivers;
 namespace display
 {
-class MotorSpecificMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
+template <typename T>
+class DummyAllocator : public modm::allocator::AllocatorBase<T>
 {
 public:
-    MotorSpecificMenu(
-        modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
-        Drivers* drivers,
-        const motor::DjiMotor* motor);
+    DummyAllocator() : modm::allocator::AllocatorBase<T>() {}
 
-    void draw() override;
+    DummyAllocator(const DummyAllocator& other) = default;
 
-    void shortButtonPress(modm::MenuButtons::Button button) override;
+    T* allocate(size_t) { return nullptr; }
 
-    void update() override;
-
-    bool hasChanged() override;
-
-private:
-    Drivers* drivers;
-    const tap::motor::DjiMotor* associatedMotor;
-
-    int16_t currDesiredOutput = 0;
-    bool currIsInverted = false;
-    uint16_t currEncoderWrapped;
-    int16_t currRPM = 0;
-};
+    void deallocate(T*) {}
+};  // class DummyAllocator
 }  // namespace display
 }  // namespace tap
 
-#endif  // MOTOR_SPECIFIC_MENU_HPP_
+#endif  // DUMMY_ALLOCATOR_HPP_
