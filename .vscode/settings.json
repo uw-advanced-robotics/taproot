@@ -73,13 +73,13 @@
         "SConscript": "python",
         "repo.lb": "python",
         "module.lb": "python",
-        "*.cpp.in": "cpp",
-        "*.hpp.in": "cpp",
-        "*.xml.in": "xml"
+        "*.cpp.in": "jinja-cpp",
+        "*.hpp.in": "jinja-cpp",
+        "*.xml.in": "jinja-xml",
+        "*.py.in": "jinja-py"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
-        "${workspaceRoot}",
         "./test-project/taproot/modm/src",
         "./test-project/taproot/modm/ext/cmsis/core",
         "./test-project/taproot/modm/ext/cmsis/device",

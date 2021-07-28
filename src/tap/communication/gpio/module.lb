@@ -121,20 +121,27 @@ class Pwm(Module):
 
         # Collect timers
         timers = []
-        pinToCh = {}
+        pin_to_ch = {}
+        pin_to_timer = {}
         for pin in self.metadata.find("gpio-pins"):
-            if pin.get("alias") in pins:
+            pin_name = pin.get("alias")
+            if pin_name in pins:
+
                 timer = pin.find("timer")
-                assert timer != None
+                assert timer != None, "Tried to configure PWM pin that doesn't have associated timer"
+
+                pin_to_ch[pin_name] = timer.get("channel")
+
                 name = timer.get("name")
-                pinToCh[pin.get("alias")] = timer.get("channel")
+                pin_to_timer[pin_name] = name
                 if name not in timers:
                     timers.append(name)
 
         env.substitutions = {
             "pins": pins,
             "timers": timers,
-            "pinToCh": pinToCh,
+            "pin_to_ch": pin_to_ch,
+            "pin_to_timer": pin_to_timer,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("pwm.cpp.in", "pwm.cpp")
@@ -145,7 +152,7 @@ def init(module):
     module.description = "Various GPIO HAL wrappers"
 
 def prepare(module, options):
-    module.depends("taproot:core", "taproot:board")
+    module.depends(":core", ":board")
 
     metadata = parse_all(options[":dev_board"])
     module.add_submodule(Analog(metadata))

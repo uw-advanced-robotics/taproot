@@ -20,7 +20,7 @@ def init(module):
     module.description = "Support for displaying information on OLED display"
 
 def prepare(module, options):
-    module.depends("taproot:core")
+    module.depends(":core")
 
     return True
 

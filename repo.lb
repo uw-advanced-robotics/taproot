@@ -22,23 +22,27 @@ def init(repo):
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
 
     repo.add_option(
-        StringOption(name="project_name",
-                     default="mcb-project",
-                     description="Project name"))
+        StringOption(
+            name="project_name",
+            default="mcb-project",
+            description="Project name"))
     repo.add_option(
-        StringOption(name="modm_repo_lb",
-                     default="../modm/repo.lb",
-                     description="Path to repo.lb file, relative to your project.xml file"))
+        StringOption(
+            name="modm_repo_lb",
+            default="../modm/repo.lb",
+            description="Path to repo.lb file, relative to your project.xml file"))
 
     repo.add_option(
-        BooleanOption(name="rebuild_modm",
-                      default=True,
-                      description="Whether or not to rebuild modm HALs"))
+        BooleanOption(
+            name="rebuild_modm",
+            default=True,
+            description="Whether or not to rebuild modm HALs"))
 
     repo.add_option(
-        EnumerationOption(name="dev_board",
-                          description="Which development board to be used",
-                          enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
+        EnumerationOption(
+            name="dev_board",
+            description="Which development board to be used",
+            enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")

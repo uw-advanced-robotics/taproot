@@ -31,11 +31,11 @@ void Analog::init()
 {
 #ifndef PLATFORM_HOSTED
 %% if pins|length > 0
-    AnalogInPins::setAnalogInput();
+    analog_in_pins::setAnalogInput();
     %% for adc in adcs
     // Initial ADC/Timer setup
     {{ adc }}::connect<
-        AnalogInPinS::In0,
+        analog_in_pins::In0,
         AnalogInPinT::In1,
         AnalogInPinU::In2,
         AnalogInPinV::In3,

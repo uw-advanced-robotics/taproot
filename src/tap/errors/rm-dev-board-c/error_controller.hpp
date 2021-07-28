@@ -35,16 +35,9 @@ namespace errors
 {
 /**
  * The ErrorController stores the errors that are currently active and displays errors
- * via the MCB's LEDs.
+ * via the terminal serial.
  *
  * Use the `RAISE_ERROR` macro to add errors to the main ErrorController.
- *
- * LED blink Protocol description:
- * - The 8 LEDs on the MCB are used to indicate the location of an error. LED A is the LSB
- *   and LED H is the MSB.
- * - The other green LED (next to the red LED) comes on when you have added an error that
- *   is invalid. The red LED is not used by the ErrorController.
- * - By default, LEDs A-H are always off if no errors are detected.
  */
 class ErrorController : public taproot::communication::serial::ITerminalSerialCallback
 {

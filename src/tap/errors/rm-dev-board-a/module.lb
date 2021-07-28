@@ -15,17 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+SUPPORTED_BOARDS = ["rm-dev-board-a"]
+
 def init(module):
     module.name = ":errors"
     module.description = "Error handler"
 
 def prepare(module, options):
     module.depends(
-        "taproot:core", 
-        "taproot:communication:serial:terminal_serial",
-        "taproot:communication:gpio:leds")
+        ":core", 
+        ":communication:serial:terminal_serial",
+        ":communication:gpio:leds")
 
-    return options[":dev_board"] == "rm-dev-board-a"
+    return options[":dev_board"] in SUPPORTED_BOARDS
 
 def build(env):
     env.outbasepath = "taproot/src/tap/errors"

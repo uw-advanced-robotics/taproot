@@ -116,7 +116,7 @@ def build(env):
     env.substitutions = {
         "uart_ports": uart_ports,
         "port_to_rx_pin": port_to_rx_pin,
-        "port_to_tx_pin": port_to_tx_pin,
+        "port_to_tx_pin": port_to_tx_pin
     }
     env.outbasepath = "taproot/src/tap/communication/serial"
     env.template("uart.cpp.in", "uart.cpp")

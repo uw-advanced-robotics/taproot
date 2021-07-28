@@ -20,7 +20,7 @@ def init(module):
     module.description = "Error handler"
 
 def prepare(module, options):
-    module.depends("taproot:core")
+    module.depends(":core")
 
     return options[":dev_board"] == "rm-dev-board-c"
 

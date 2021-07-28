@@ -34,8 +34,8 @@ class TaprootTests(Module):
 
     def prepare(self, module, options):
         module.depends(
-            "taproot:testing:mock",
-            "taproot:core")
+            ":testing:mock",
+            ":core")
         return True
 
     def build(self, env):

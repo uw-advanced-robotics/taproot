@@ -21,10 +21,12 @@ def init(module):
 
 def prepare(module, options):
     module.add_option(BooleanOption(
-        name="include_sconstruct", default=True,
+        name="include_sconstruct",
+        default=True,
         description=descr_include_sconstruct))
     module.add_option(BooleanOption(
-        name="include_openocd_cfg", default=True,
+        name="include_openocd_cfg",
+        default=True,
         description=descr_include_openocd_cfg))
     return True
 

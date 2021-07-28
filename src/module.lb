@@ -26,26 +26,26 @@ def prepare(module, options):
                      Set to false after you generate drivers.hpp the first time."))
 
     module.depends(
-        "taproot:testing:mock",
-        "taproot:modm-project.xml",
-        "taproot:board",
-        "taproot:errors")
+        ":testing:mock",
+        ":modm-project.xml",
+        ":board",
+        ":errors")
 
     # motor-specific dependencies
-    module.depends("taproot:communication:can", "taproot:communication:tcp-server")
+    module.depends(":communication:can", ":communication:tcp-server")
 
     # command mapper dependencies
-    module.depends("taproot:communication:serial:remote")
+    module.depends(":communication:serial:remote")
 
     # power limiter dependencies
-    module.depends("taproot:communication:gpio:analog")
-    module.depends("taproot:communication:serial:ref_serial")
+    module.depends(":communication:gpio:analog")
+    module.depends(":communication:serial:ref_serial")
 
     # scheduler dependencies
-    module.depends("taproot:communication:serial:terminal_serial")
+    module.depends(":communication:serial:terminal_serial")
 
     # servo dependencies
-    module.depends("taproot:communication:gpio:pwm")
+    module.depends(":communication:gpio:pwm")
 
     return True
 

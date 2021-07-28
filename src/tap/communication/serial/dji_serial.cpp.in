@@ -65,17 +65,12 @@ void DJISerial::initialize()
 {
     switch (this->port)
     {
-        case Uart::UartPort::Uart1:
-            drivers->uart.init<Uart::UartPort::Uart1, 115200>();
+%% for port in uart_ports
+        case Uart::UartPort::Uart{{ port }}:
+            {# TODO allow for configurable baudrate #}
+            drivers->uart.init<Uart::UartPort::Uart{{ port }}, 115200>();
             break;
-%% if options[":dev_board"] == "rm-dev-board-a"
-        case Uart::UartPort::Uart2:
-            drivers->uart.init<Uart::UartPort::Uart2, 115200>();
-            break;
-%% endif
-        case Uart::UartPort::Uart6:
-            drivers->uart.init<Uart::UartPort::Uart6, 115200>();
-            break;
+%% endfor
         default:
             break;
     }
