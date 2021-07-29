@@ -15,18 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import glob
-import lxml.etree
-
-def parse_all(device):
-    device_file_names = glob.glob(repopath("supported-devices/*.xml"))
-    device_file_names = [dfn for dfn in device_file_names if device in dfn]
-    assert len(device_file_names) == 1
-    # parse the xml-file
-    parser = lxml.etree.XMLParser(no_network=True)
-    xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
-    xmlroot.xinclude()
-    return xmlroot.getroot()
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+from board_info_parser import BoardInfoParser
 
 def init(module):
     module.name = ":board"
@@ -71,14 +62,15 @@ def build(env):
     analog_in_pins = extract_pin_defines(env["analog_in_pins"])
     pwm_pins = extract_pin_defines(env["pwm_pins"])
 
-    metadata = parse_all(board_name)
+    metadata = BoardInfoParser.parse_board_info(env[":dev_board"])
 
     pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
     assert len(pins) == len(set(pins)), "duplicate pin definitions"
 
     metadata_pins = metadata.find("gpio-pins")
     for pin in pins:
-        assert any(metadata_pin.get("alias") == pin for metadata_pin in metadata_pins), f"invalid pin {pin}"
+        assert any(metadata_pin.get("alias") == pin for metadata_pin in metadata_pins),\
+            f"invalid pin {pin}"
 
     pin_mappings = { pin.get("alias"): pin.get("name") for pin in metadata_pins }
 

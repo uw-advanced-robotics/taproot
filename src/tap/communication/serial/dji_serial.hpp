@@ -69,10 +69,7 @@ namespace serial
  * | 8 + Data Length | CRC16 of header and frame, MSB                             |
  * +-----------------+------------------------------------------------------------+
  * \endrst
- *
- * @tparam baudrate baudrate desired in Hz.
  */
-template <modm::baudrate_t baudrate>
 class DJISerial
 {
 private:

@@ -135,38 +135,22 @@ using LedGreen = GpioOutputH11;
 using LedBlue = GpioOutputH10;
 using LedsPort = SoftwareGpioPort<GpioOutputH12, GpioOutputH11, GpioOutputH10>;
 
-// initialize analog input pins
-{% if analog_in_pins|length > 0 %}
-    %% for pin in analog_in_pins
-using AnalogInPin{{ pin }} = {{ pin_mappings[pin] }};
-    %% endfor
+%% macro configure_pins(comment, pin_group_name, pins)
+    %% if pins|length > 0
+// {{ comment }}
+        {% if pins|length > 0 %}
+            %% for pin in pins
+using {{ pin_group_name }}{{ pin }} = {{ pin_mappings[pin] }};
+            %% endfor
+        {% endif %}
+using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{{ pin_group_name }}{{ pin }}{% if not loop.last %}, {% endif %}{% endfor %}>;
+    %% endif
+%% endmacro
 
-using analog_in_pins = SoftwareGpioPort<{% for pin in analog_in_pins[:-1] %}AnalogInPin{{ pin }}, {% endfor %}AnalogInPin{{ analog_in_pins[-1] }}>;
-{% endif %}
-// Initialize pwm pins
-{% if pwm_pins|length > 0 %}
-    %% for pin in pwm_pins
-using PWMOutPin{{ pin }} = {{ pin_mappings[pin] }};
-    %% endfor
-
-using PWMOutPins = SoftwareGpioPort<{% for pin in pwm_pins[:-1] %}PWMOutPin{{ pin }}, {% endfor %}PWMOutPin{{ pwm_pins[-1] }}>;
-{% endif %}
-// initialize digital input pins
-{% if digital_in_pins|length > 0 %}
-    %% for pin in digital_in_pins
-using DigitalInPin{{ pin }} = {{ pin_mappings[pin] }};
-    %% endfor
-
-using digital_in_pins = SoftwareGpioPort<{% for pin in digital_in_pins[:-1] %}DigitalInPin{{ pin }}, {% endfor %}DigitalInPin{{ digital_in_pins[-1] }}>;
-{% endif %}
-// initialize digital output pins
-{% if digital_out_pins|length > 0 %}
-    %% for pin in digital_out_pins
-using DigitalOutPin{{ pin }} = {{ pin_mappings[pin] }};
-    %% endfor
-
-using digital_out_pins = SoftwareGpioPort<{% for pin in digital_out_pins[:-1] %}DigitalOutPin{{ pin }}, {% endfor %}DigitalOutPin{{ digital_out_pins[-1] }}>;
-{% endif %}
+{{ configure_pins("Initialize analog input pins", "AnalogInPin", analog_in_pins) }}
+{{ configure_pins("Initialize PWM pins", "PWMOutPin", pwm_pins) }}
+{{ configure_pins("Initialize digital input pins", "DigitalInPin", digital_in_pins) }}
+{{ configure_pins("Initialize digital output pins", "DigitalOutPin", digital_out_pins) }}
 // gpio pins used for SPI communication to the onboard BMI088 IMU
 
 using ImuSck = GpioB3;

@@ -31,10 +31,10 @@ void Digital::init()
 {
 #ifndef PLATFORM_HOSTED
     // init digital out pins
-    digital_out_pins::setOutput(modm::Gpio::Low);
+    DigitalOutPins::setOutput(modm::Gpio::Low);
     // init digital in pins
     // interrupts disabled
-    digital_in_pins::setInput();
+    DigitalInPins::setInput();
 #endif
 }
 

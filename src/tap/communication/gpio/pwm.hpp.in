@@ -90,6 +90,13 @@ public:
 private:
     static constexpr int BUZZER_CHANNEL = 1;
 
+    enum Ch
+    {
+%% for ch in chs:
+        {{ ch }} = {{ ch[2:] }},
+%% endfor
+    };
+
 %% for timer in timers
     /**
      * Overflow as calculated by the modm {{ timer }} object in its getPeriod function.

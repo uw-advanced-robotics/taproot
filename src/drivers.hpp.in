@@ -40,9 +40,6 @@
 %% endif
 #include "tap/mock/dji_motor_tx_handler_mock.hpp"
 #include "tap/mock/error_controller_mock.hpp"
-%% if with_imurxlistener
-#include "tap/mock/imu_rx_listener_mock.hpp"
-%% endif
 %% if with_leds
 #include "tap/mock/leds_mock.hpp"
 %% endif
@@ -70,9 +67,6 @@
 %% if with_can
 #include "tap/communication/can/can.hpp"
 #include "tap/communication/can/can_rx_handler.hpp"
-%% endif
-%% if with_imurxlistener
-#include "tap/communication/can/imu_rx_listener.hpp"
 %% endif
 %% if with_analog
 #include "tap/communication/gpio/analog.hpp"
@@ -128,9 +122,6 @@ public:
           can(),
           canRxHandler(this),
 %% endif
-%% if with_imurxlistener
-          imuRxListener(this),
-%% endif
 %% if with_analog
           analog(),
 %% endif
@@ -178,9 +169,6 @@ public:
     testing::NiceMock<mock::CanMock> can;
     testing::NiceMock<mock::CanRxHandlerMock> canRxHandler;
 %% endif
-%% if with_imurxlistener
-    testing::NiceMock<mock::ImuRxListenerMock> imuRxListener;
-%% endif
 %% if with_analog
     testing::NiceMock<mock::AnalogMock> analog;
 %% endif
@@ -223,9 +211,6 @@ public:
 %% if with_can
     can::Can can;
     can::CanRxHandler canRxHandler;
-%% endif
-%% if with_imurxlistener
-    can::ImuRxListener imuRxListener;
 %% endif
 %% if with_analog
     gpio::Analog analog;

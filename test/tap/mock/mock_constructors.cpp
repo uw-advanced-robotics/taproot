@@ -110,9 +110,6 @@ DjiMotorTerminalSerialHandlerMock::DjiMotorTerminalSerialHandlerMock(tap::Driver
 }
 DjiMotorTerminalSerialHandlerMock::~DjiMotorTerminalSerialHandlerMock() {}
 
-ImuRxListenerMock::ImuRxListenerMock(Drivers *drivers) : ImuRxListener(drivers) {}
-ImuRxListenerMock::~ImuRxListenerMock() {}
-
 LedsMock::LedsMock() {}
 LedsMock::~LedsMock() {}
 

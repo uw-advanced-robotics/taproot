@@ -15,29 +15,30 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-MCU_VARIANTS_BY_BOARD = {
-    "rm-dev-board-a": "stm32f427iih6",
-    "rm-dev-board-c": "stm32f407igh6",
-}
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+from board_info_parser import BoardInfoParser
+
+BUZZER_PIN = "Buzzer"
+
+buzzer_timer = None
 
 def init(module):
-    module.name = ":modm-project.xml"
-    module.description = "TCP server that runs on the hosted environment"
+    module.name = ":communication:sensors:buzzer"
+    module.description = "Analog buzzer API"
 
 def prepare(module, options):
-    return True
+    metadata = BoardInfoParser.parse_board_info(options[":dev_board"])
+    pins = metadata.find("gpio-pins")
+    buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]
+    if len(buzzer_pins) == 1:
+        global buzzer_timer
+        buzzer_timer = buzzer_pins[0].find("timer").get("name")
+    return len(buzzer_pins) == 1
 
 def build(env):
-    board_name = env[":dev_board"]
-    try:
-        mcu = MCU_VARIANTS_BY_BOARD[board_name]
-    except KeyError:
-        raise RuntimeError(f"Dev board {board_name} is not valid")
-
-    env.substitutions = {
-        "modm_path": env[":modm_repo_lb"],
-        "mcu": mcu
-    }
-    env.outbasepath = "taproot"
-    env.template("project.xml.in", "project.xml")
-    env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
+    global buzzer_timer
+    env.outbasepath = "taproot/src/tap/communication/sensors/buzzer"
+    env.substitutions = {"buzzer_timer": buzzer_timer}
+    env.template("buzzer.cpp.in", "buzzer.cpp")
+    env.copy("buzzer.hpp")

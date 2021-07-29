@@ -39,15 +39,15 @@ namespace errors
  * RAISE_ERROR(
  *     drivers
  *     "Error in DJI Serial",
- *     taproot::errors::Location::DJI_SERIAL,
- *     taproot::errors::ErrorType::INVALID_CRC);
+ *     tap::errors::Location::DJI_SERIAL,
+ *     tap::errors::ErrorType::INVALID_CRC);
  * ```
  */
-#define RAISE_ERROR(drivers, desc, l, et)                                   \
-    do                                                                      \
-    {                                                                       \
-        taproot::errors::SystemError stringError(desc, __LINE__, __FILE__); \
-        drivers->errorController.addToErrorList(stringError);               \
+#define RAISE_ERROR(drivers, desc, l, et)                               \
+    do                                                                  \
+    {                                                                   \
+        tap::errors::SystemError stringError(desc, __LINE__, __FILE__); \
+        drivers->errorController.addToErrorList(stringError);           \
     } while (0);
 
 }  // namespace errors

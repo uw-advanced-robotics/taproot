@@ -15,20 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import glob
-import lxml.etree
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+from board_info_parser import BoardInfoParser
 
-def parse_all(device):
-    device_file_names = glob.glob(repopath("supported-devices/*.xml"))
-    device_file_names = [dfn for dfn in device_file_names if device in dfn]
-    assert len(device_file_names) == 1
-    # parse the xml-file
-    parser = lxml.etree.XMLParser(no_network=True)
-    xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
-    xmlroot.xinclude()
-    return xmlroot.getroot()
-
-def extractPinDefines(pins: str) -> str:
+def extractPinDefines(pins):
     pins = [pin.strip() for pin in str.split(pins, ",")]
     if len(pins) == 1 and pins[0] == "":
         pins = []
@@ -46,24 +37,28 @@ class Analog(Module):
         return True
 
     def build(self, env):
-        pins = listify(extractPinDefines(env[":board:analog_in_pins"]))
+        user_pins = listify(extractPinDefines(env[":board:analog_in_pins"]))
 
         # Collect adcs
         adcs = []
-        pinToAdc = {}
+        pin_to_adc = {}
+        pin_to_in = {}
         for pin in self.metadata.find("gpio-pins"):
-            if pin.get("alias") in pins:
+            pin_name = pin.get("alias")
+            if pin_name in user_pins:
                 adc = pin.find("adc")
                 assert adc != None
-                name = adc.get("name")
-                pinToAdc[pin.get("alias")] = name
-                if name not in adcs:
-                    adcs.append(name)
+                adc_name = adc.get("name")
+                pin_to_adc[pin_name] = adc_name
+                pin_to_in[pin_name] = adc.get("in")
+                if adc_name not in adcs:
+                    adcs.append(adc_name)
 
         env.substitutions = {
-            "pins": pins,
+            "pins": user_pins,
             "adcs": adcs,
-            "pinToAdc": pinToAdc,
+            "pin_to_adc": pin_to_adc,
+            "pin_to_in": pin_to_in,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("analog.cpp.in", "analog.cpp")
@@ -117,31 +112,37 @@ class Pwm(Module):
 
     def build(self, env):
         # Collect pins
-        pins = listify(extractPinDefines(env[":board:pwm_pins"]))
+        user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
 
         # Collect timers
         timers = []
+        chs = []
         pin_to_ch = {}
         pin_to_timer = {}
         for pin in self.metadata.find("gpio-pins"):
             pin_name = pin.get("alias")
-            if pin_name in pins:
+            if pin_name in user_pins:
 
                 timer = pin.find("timer")
                 assert timer != None, "Tried to configure PWM pin that doesn't have associated timer"
 
-                pin_to_ch[pin_name] = timer.get("channel")
+                channel = timer.get("channel")
 
-                name = timer.get("name")
-                pin_to_timer[pin_name] = name
-                if name not in timers:
-                    timers.append(name)
+                pin_to_ch[pin_name] = channel
+
+                timer_name = timer.get("name")
+                pin_to_timer[pin_name] = timer_name
+                if channel not in chs:
+                    chs.append(channel)
+                if timer_name not in timers:
+                    timers.append(timer_name)
 
         env.substitutions = {
-            "pins": pins,
+            "pins": user_pins,
             "timers": timers,
             "pin_to_ch": pin_to_ch,
             "pin_to_timer": pin_to_timer,
+            "chs": chs,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("pwm.cpp.in", "pwm.cpp")
@@ -154,7 +155,7 @@ def init(module):
 def prepare(module, options):
     module.depends(":core", ":board")
 
-    metadata = parse_all(options[":dev_board"])
+    metadata = BoardInfoParser.parse_board_info(options[":dev_board"])
     module.add_submodule(Analog(metadata))
     module.add_submodule(Digital(metadata))
     module.add_submodule(Leds())

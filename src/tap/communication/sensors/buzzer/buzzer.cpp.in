@@ -34,10 +34,10 @@ void playNote(gpio::Pwm *pwmController, uint32_t frequency)
     }
     else
     {
-        pwmController->write(0.5f, gpio::Pwm::BUZZER);
-        pwmController->setTimerFrequency(gpio::Pwm::TIMER_12, frequency);
+        pwmController->write(0.5f, gpio::Pwm::Buzzer);
+        pwmController->setTimerFrequency(gpio::Pwm::{{ buzzer_timer|upper }}, frequency);
     }
 }
 
-void silenceBuzzer(gpio::Pwm *pwmController) { pwmController->write(0, gpio::Pwm::BUZZER); }
+void silenceBuzzer(gpio::Pwm *pwmController) { pwmController->write(0, gpio::Pwm::Buzzer); }
 }  // namespace tap::buzzer

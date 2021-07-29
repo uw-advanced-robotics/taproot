@@ -31,21 +31,24 @@ void Analog::init()
 {
 #ifndef PLATFORM_HOSTED
 %% if pins|length > 0
-    analog_in_pins::setAnalogInput();
-    %% for adc in adcs
-    // Initial ADC/Timer setup
-    {{ adc }}::connect<
-        analog_in_pins::In0,
-        AnalogInPinT::In1,
-        AnalogInPinU::In2,
-        AnalogInPinV::In3,
-        AnalogInPinOled::In6>();
-    {{ adc }}::initialize<SystemClock, 22500000_Bd>();
-    %% endfor
-    %% for pin in pins
-    {{ pinToAdc[pin] }}::setPinChannel<AnalogInPin{{ pin }}>();
-    %% endfor
+    AnalogInPins::setAnalogInput();
 %% endif
+{% for adc in adcs %}
+    // Initial ADC/Timer setup
+    %% set pins_associated_with_adc = []
+    %% for pin in pins
+        %% if pin_to_adc[pin] == adc
+            %% set pins_associated_with_adc = pins_associated_with_adc.append(pin)
+        %% endif
+    %% endfor
+
+    {{ adc }}::connect<{% for pin in pins_associated_with_adc %}AnalogInPin{{ pin }}::{{ pin_to_in[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    {{ adc }}::initialize<SystemClock, 22500000_Bd>();
+
+    %% for pin in pins_associated_with_adc
+    {{ pin_to_adc[pin] }}::setPinChannel<AnalogInPin{{ pin }}>();
+    %% endfor
+{% endfor %}
 #endif
 }
 
@@ -58,7 +61,7 @@ uint16_t Analog::read(Pin pin) const
     {
 %% for pin in pins
         case Pin::{{ pin }}:
-            return {{ pinToAdc[pin] }}::readChannel(Adc1::getPinChannel<AnalogInPin{{ pin }}>());
+            return {{ pin_to_adc[pin] }}::readChannel(Adc1::getPinChannel<AnalogInPin{{ pin }}>());
 %% endfor
         default:
             return 0;

@@ -39,7 +39,7 @@ namespace errors
  *
  * Use the `RAISE_ERROR` macro to add errors to the main ErrorController.
  */
-class ErrorController : public taproot::communication::serial::ITerminalSerialCallback
+class ErrorController : public tap::communication::serial::ITerminalSerialCallback
 {
 public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
