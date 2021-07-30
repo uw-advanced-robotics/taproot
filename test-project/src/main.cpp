@@ -39,7 +39,7 @@ void tud_resume_cb() { tmr.restart(1000); }
 
 namespace usb
 {
-// using Vbus = GpioA9;
+using Vbus = GpioA9;
 using Id = GpioA10;
 using Dm = GpioA11;
 using Dp = GpioA12;
@@ -53,14 +53,15 @@ using Device = modm::platform::UsbFs;
 int main()
 {
 	Board::initialize();
+    Board::LedsPort::setOutput();
 
 	usb::Device::initialize<SystemClock>();
 	usb::Device::connect<usb::Dm::Dm, usb::Dp::Dp, usb::Id::Id>();
 
 	usb::Overcurrent::setInput();
-	// usb::Vbus::setInput();
+	usb::Vbus::setInput();
 	// Force device mode
-	USB_OTG_FS->GUSBCFG |= USB_OTG_GUSBCFG_FDMOD;
+	// USB_OTG_FS->GUSBCFG |= USB_OTG_GUSBCFG_FDMOD;
 	modm::delay_ms(25);
 	// Enable VBUS sense (B device) via pin PA9
 	// USB_OTG_FS->GCCFG |= USB_OTG_GCCFG_VBDEN;

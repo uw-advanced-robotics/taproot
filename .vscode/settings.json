@@ -79,6 +79,7 @@
         "${workspaceRoot}",
         "./test-project/aruwlib/modm/src",
         "./test-project/aruwlib/modm/ext/cmsis/core",
+        "./test-project/aruwlib/modm/ext/tinyusb",
         "./test-project/aruwlib/modm/ext/cmsis/device",
         "./test-project/aruwlib/src",
         "./test-project/aruwlib/test"

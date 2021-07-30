@@ -48,7 +48,7 @@
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Program - Debug",
-            "executable": "${workspaceFolder}/test-project/build/hardware/debug/mcb-project.elf",
+            "executable": "${workspaceFolder}/test-project/build/hardware/scons-debug/mcb-project.elf",
             "device": "STM32F427II",
             "configFiles": [
                 "${workspaceFolder}/test-project/openocd.cfg"
