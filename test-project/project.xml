@@ -35,6 +35,7 @@
     <module>taproot:communication:sensors:buzzer</module>
     <module>taproot:communication:sensors:distance</module>
     <module>taproot:communication:gpio:leds</module>
+    <module>taproot:communication:gpio:digital</module>
 
     <!-- Uncomment when working with type a board -->
     <!-- <module>taproot:communication:sensors:mpu6500</module> -->

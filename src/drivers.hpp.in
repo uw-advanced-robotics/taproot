@@ -21,89 +21,17 @@
 #define DRIVERS_HPP_
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-#include "tap/architecture/profiler.hpp"
-%% if with_analog
-#include "tap/mock/analog_mock.hpp"
-%% endif
-%% if with_can
-#include "tap/mock/can_mock.hpp"
-#include "tap/mock/can_rx_handler_mock.hpp"
-%% endif
-#include "tap/mock/command_mapper_mock.hpp"
+%% for include in mock_driver_includes
+#include "{{ include }}"
+%% endfor
 #include "tap/mock/command_scheduler_mock.hpp"
-#include "tap/mock/control_operator_interface_mock.hpp"
-%% if with_digital
-#include "tap/mock/digital_mock.hpp"
-%% endif
-%% if with_terminal
-#include "tap/mock/dji_motor_terminal_serial_handler_mock.hpp"
-%% endif
-#include "tap/mock/dji_motor_tx_handler_mock.hpp"
-#include "tap/mock/error_controller_mock.hpp"
-%% if with_leds
-#include "tap/mock/leds_mock.hpp"
-%% endif
-%% if with_mpu6500
-#include "tap/mock/mpu6500_mock.hpp"
-%% endif
-%% if with_pwm
-#include "tap/mock/pwm_mock.hpp"
-%% endif
-%% if with_refserial
-#include "tap/mock/ref_serial_mock.hpp"
-%% endif
-%% if with_remote
-#include "tap/mock/remote_mock.hpp"
-%% endif
-#include "tap/mock/scheduler_terminal_handler_mock.hpp"
-%% if with_terminal
-#include "tap/mock/terminal_serial_mock.hpp"
-%% endif
-#include "tap/mock/uart_mock.hpp"
 /* Start user mock includes */
 /* End user mock includes */
 #else
-#include "tap/architecture/profiler.hpp"
-%% if with_can
-#include "tap/communication/can/can.hpp"
-#include "tap/communication/can/can_rx_handler.hpp"
-%% endif
-%% if with_analog
-#include "tap/communication/gpio/analog.hpp"
-%% endif
-%% if with_digital
-#include "tap/communication/gpio/digital.hpp"
-%% endif
-%% if with_leds
-#include "tap/communication/gpio/leds.hpp"
-%% endif
-%% if with_pwm
-#include "tap/communication/gpio/pwm.hpp"
-%% endif
-%% if with_mpu6500
-#include "tap/communication/sensors/mpu6500/mpu6500.hpp"
-%% endif
-%% if with_refserial
-#include "tap/communication/serial/ref_serial.hpp"
-%% endif
-%% if with_remote
-#include "tap/communication/serial/remote.hpp"
-%% endif
-%% if with_terminal
-#include "tap/communication/serial/terminal_serial.hpp"
-%% endif
-%% if with_uart
-#include "tap/communication/serial/uart.hpp"
-%% endif
-#include "tap/control/command_mapper.hpp"
+%% for include in src_driver_includes
+#include "{{ include }}"
+%% endfor
 #include "tap/control/command_scheduler.hpp"
-#include "tap/control/control_operator_interface.hpp"
-#include "tap/control/scheduler_terminal_handler.hpp"
-#include "tap/errors/error_controller.hpp"
-%% if with_terminal
-#include "tap/motor/dji_motor_terminal_serial_handler.hpp"
-%% endif
-#include "tap/motor/dji_motor_tx_handler.hpp"
 /* Start user mock includes */
 /* End user mock includes */
 #endif
@@ -117,136 +45,32 @@ class Drivers
 #ifdef ENV_UNIT_TESTS
 public:
 #endif
-    Drivers() :
-%% if with_can
-          can(),
-          canRxHandler(this),
-%% endif
-%% if with_analog
-          analog(),
-%% endif
-%% if with_digital
-          digital(),
-%% endif
-%% if with_leds
-          leds(),
-%% endif
-%% if with_pwm
-          pwm(),
-%% endif
-%% if with_remote
-          remote(this),
-%% endif
-%% if with_mpu6500
-          mpu6500(this),
-%% endif
-%% if with_uart
-          uart(),
-%% endif
-%% if with_refserial
-          refSerial(this),
-%% endif
-%% if with_terminal
-          terminalSerial(this),
-          djiMotorTerminalSerialHandler(this),
-%% endif
-          schedulerTerminalHandler(this),
+    Drivers()
+%% for object_and_mock in object_and_mocks
+        {% if loop.first %}:{% else %} {% endif%} {{ object_and_mock["object-instance-name"] }}({{ object_and_mock["constructor"] }}),
+%% endfor
 #ifdef ENV_UNIT_TESTS
-          commandScheduler(this),
+          commandScheduler(this)
 #else
-          commandScheduler(this, true),
+          commandScheduler(this, true)
 #endif
-          controlOperatorInterface(this),
-          commandMapper(this),
-          errorController(this),
-          djiMotorTxHandler(this),
-          profiler()
     /* Begin user constructor defines */
-    /* End user mock drivers defines */ {}
+    /* End user mock drivers defines */
+          {}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
-%% if with_can
-    testing::NiceMock<mock::CanMock> can;
-    testing::NiceMock<mock::CanRxHandlerMock> canRxHandler;
-%% endif
-%% if with_analog
-    testing::NiceMock<mock::AnalogMock> analog;
-%% endif
-%% if with_digital
-    testing::NiceMock<mock::DigitalMock> digital;
-%% endif
-%% if with_leds
-    testing::NiceMock<mock::LedsMock> leds;
-%% endif
-%% if with_pwm
-    testing::NiceMock<mock::PwmMock> pwm;
-%% endif
-%% if with_remote
-    testing::NiceMock<mock::RemoteMock> remote;
-%% endif
-%% if with_mpu6500
-    testing::NiceMock<mock::Mpu6500Mock> mpu6500;
-%% endif
-%% if with_uart
-    testing::NiceMock<mock::UartMock> uart;
-%% endif
-%% if with_refserial
-    testing::NiceMock<mock::RefSerialMock> refSerial;
-%% endif
-%% if with_terminal
-    testing::NiceMock<mock::TerminalSerialMock> terminalSerial;
-    testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
-%% endif
-    testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
+%% for object_and_mock in object_and_mocks
+    {{ object_and_mock["mock-object-name"] }} {{ object_and_mock["object-instance-name"] }};
+%% endfor
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
-    testing::NiceMock<mock::ControlOperatorInterfaceMock> controlOperatorInterface;
-    testing::NiceMock<mock::CommandMapperMock> commandMapper;
-    mock::ErrorControllerMock errorController;
-    testing::NiceMock<mock::DjiMotorTxHandlerMock> djiMotorTxHandler;
-    arch::Profiler profiler;
 /* Begin user mock drivers defines */
 /* End user mock drivers defines */
 #else
 public:
-%% if with_can
-    can::Can can;
-    can::CanRxHandler canRxHandler;
-%% endif
-%% if with_analog
-    gpio::Analog analog;
-%% endif
-%% if with_digital
-    gpio::Digital digital;
-%% endif
-%% if with_leds
-    gpio::Leds leds;
-%% endif
-%% if with_pwm
-    gpio::Pwm pwm;
-%% endif
-%% if with_remote
-    Remote remote;
-%% endif
-%% if with_mpu6500
-    sensors::Mpu6500 mpu6500;
-%% endif
-%% if with_uart
-    serial::Uart uart;
-%% endif
-%% if with_refserial
-    serial::RefSerial refSerial;
-%% endif
-%% if with_terminal
-    communication::serial::TerminalSerial terminalSerial;
-    motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
-%% endif
-    control::SchedulerTerminalHandler schedulerTerminalHandler;
+%% for object_and_mock in object_and_mocks
+    {{ object_and_mock["object-name"] }} {{ object_and_mock["object-instance-name"] }};
+%% endfor
     control::CommandScheduler commandScheduler;
-    control::ControlOperatorInterface controlOperatorInterface;
-    control::CommandMapper commandMapper;
-    errors::ErrorController errorController;
-    motor::DjiMotorTxHandler djiMotorTxHandler;
-    arch::Profiler profiler;
 /* Begin user drivers defines */
 /* End user drivers defines */
 #endif

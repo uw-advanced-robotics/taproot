@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("src"))
+import drivers
+
 def init(module):
     module.name = ":core"
     module.description = "Core library features"
@@ -67,15 +71,8 @@ def build(env):
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"
         env.substitutions = {
-            "with_terminal": env.has_module(":communication:serial:terminal_serial"),
-            "with_refserial": env.has_module(":communication:serial:ref_serial"),
-            "with_uart": env.has_module(":communication:serial"),
-            "with_remote": env.has_module(":communication:serial:remote"),
-            "with_pwm": env.has_module(":communication:gpio:pwm"),
-            "with_digital": env.has_module(":communication:gpio:digital"),
-            "with_analog": env.has_module(":communication:gpio:analog"),
-            "with_leds": env.has_module(":communication:gpio:leds"),
-            "with_mpu6500": env.has_module(":communication:sensors:mpu6500"),
-            "with_can": env.has_module(":communication:can"),
+            "object_and_mocks": drivers.getObjectAndMockNames(env),
+            "mock_driver_includes": drivers.getMockFilesSorted(env),
+            "src_driver_includes": drivers.getSrcFilesSorted(env),
         }
         env.template("drivers.hpp.in", "drivers.hpp")
