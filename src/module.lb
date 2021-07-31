@@ -71,8 +71,8 @@ def build(env):
     if (env["generate_driver_hpp"]):
         env.outbasepath = "src"
         env.substitutions = {
-            "object_and_mocks": drivers.getObjectAndMockNames(env),
-            "mock_driver_includes": drivers.getMockFilesSorted(env),
-            "src_driver_includes": drivers.getSrcFilesSorted(env),
+            "object_and_mocks": drivers.get_object_and_mock_names(env),
+            "mock_driver_includes": drivers.get_mock_files_sorted(env),
+            "src_driver_includes": drivers.get_src_files_sorted(env),
         }
         env.template("drivers.hpp.in", "drivers.hpp")

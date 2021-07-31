@@ -15,7 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
+import sys
+sys.path.append(repopath("src"))
+import drivers
+
+MOCK_DIRECTORY = "tap/mock"
 
 class Mock(Module):
     def init(self, module):
@@ -25,8 +29,11 @@ class Mock(Module):
         return True
 
     def build(self, env):
+        mock_files = drivers.get_mock_files_sorted(env)
         env.outbasepath = "taproot/test"
-        env.copy("tap/mock")
+        for file in mock_files:
+            if file.startswith(MOCK_DIRECTORY):
+                env.copy(file)
 
 class TaprootTests(Module):
     def init(self, module):

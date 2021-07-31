@@ -77,6 +77,8 @@ bool Digital::read(Digital::InputPin pin) const
         case Digital::InputPin::{{ pin }}:
             return DigitalInPin{{ pin }}::read();
 %% endfor
+        default:
+            return false;
     }
 #endif
 }
