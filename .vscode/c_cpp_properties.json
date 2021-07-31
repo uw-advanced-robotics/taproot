@@ -2,6 +2,11 @@
     "configurations": [
         {
             "name": "Test",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/test",
+                "test-project/taproot/sim-modm/modm/src"
+            ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
@@ -9,6 +14,10 @@
         },
         {
             "name": "Sim",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/sim-modm/modm/src"
+            ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
@@ -16,6 +25,12 @@
         },
         {
             "name": "MCB",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/modm/src",
+                "test-project/taproot/modm/ext/cmsis/core",
+                "test-project/taproot/modm/ext/cmsis/device"
+            ],
             "compilerPath": "/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++",
             "intelliSenseMode": "gcc-arm",
             "browse": { "limitSymbolsToIncludedHeaders": true }
