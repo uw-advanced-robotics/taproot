@@ -186,15 +186,15 @@ def get_mock_files_sorted(env):
     return get_names_sorted(env, "mock-file")
 
 def get_object_and_mock_names(env):
-    objectAndMocks = []
+    objects_and_mocks = []
     for driver in DRIVERS_AND_MODULE_DEPENDENCIES:
         if should_driver_be_generated(env, driver):
             object_instance_name_pascal = driver["object-name"].split("::")[-1]
             object_instance_name_camel = object_instance_name_pascal[0].lower() + object_instance_name_pascal[1:]
-            objectAndMocks.append({
+            objects_and_mocks.append({
                 "object-name": driver["object-name"],
                 "mock-object-name": driver["mock-object-name"],
                 "object-instance-name": object_instance_name_camel,
                 "constructor": driver["constructor"]
             })
-    return objectAndMocks
+    return objects_and_mocks

@@ -76,11 +76,11 @@ class Digital(Module):
         return True
 
     def build(self, env):
-        inputPins = listify(extractPinDefines(env[":board:digital_in_pins"]))
-        outputPins = listify(extractPinDefines(env[":board:digital_out_pins"]))
+        input_pins = listify(extractPinDefines(env[":board:digital_in_pins"]))
+        output_pins = listify(extractPinDefines(env[":board:digital_out_pins"]))
         env.substitutions = {
-            "inputPins": inputPins,
-            "outputPins": outputPins,
+            "input_pins": input_pins,
+            "output_pins": output_pins,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("digital.cpp.in", "digital.cpp")

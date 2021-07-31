@@ -52,15 +52,15 @@ def prepare(repo, options):
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
-    if env["taproot:rebuild_modm"]:
-        print('building modm')
+    if env[":rebuild_modm"]:
+        print("building modm")
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)
 
-        print('building sim-modm')
+        print("building sim-modm")
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
         except subprocess.CalledProcessError as e:

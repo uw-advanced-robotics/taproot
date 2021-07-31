@@ -29,8 +29,7 @@ class Mock(Module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
-        module.depends(
-            ":core")
+        module.depends(":core")
         return True
 
     def build(self, env):

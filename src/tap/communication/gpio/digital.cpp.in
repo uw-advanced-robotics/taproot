@@ -43,7 +43,7 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
 #ifndef PLATFORM_HOSTED
     switch (pin)
     {
-%% for pin in inputPins
+%% for pin in input_pins
         case Digital::InputPin::{{ pin }}:
             DigitalInPin{{ pin }}::configure(mode);
             break;
@@ -57,7 +57,7 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
 #ifndef PLATFORM_HOSTED
     switch (pin)
     {
-%% for pin in outputPins
+%% for pin in output_pins
         case Digital::OutputPin::{{ pin }}:
             DigitalOutPin{{ pin }}::set(isSet);
             break;
@@ -73,7 +73,7 @@ bool Digital::read(Digital::InputPin pin) const
 #else
     switch (pin)
     {
-%% for pin in inputPins
+%% for pin in input_pins
         case Digital::InputPin::{{ pin }}:
             return DigitalInPin{{ pin }}::read();
 %% endfor

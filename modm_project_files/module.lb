@@ -22,7 +22,7 @@ MCU_VARIANTS_BY_BOARD = {
 
 def init(module):
     module.name = ":modm-project.xml"
-    module.description = "TCP server that runs on the hosted environment"
+    module.description = "project.xml files used to generate modm HALs"
 
 def prepare(module, options):
     return True

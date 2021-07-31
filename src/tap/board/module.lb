@@ -45,7 +45,7 @@ def prepare(module, options):
     module.add_option(
         StringOption(
             name="pwm_pins",
-            description="a comma-separated list of pwm pins",
+            description="a comma-separated list of PWM pins",
             default=""))
 
     return True

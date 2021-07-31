@@ -17,7 +17,7 @@
 
 def init(module):
     module.name = ":communication:can"
-    module.description = "CAN wrappers"
+    module.description = "CAN I/O interface wrappers"
 
 def prepare(module, options):
     return True

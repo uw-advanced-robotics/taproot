@@ -52,7 +52,7 @@ public:
      */
     enum InputPin
     {
-%% for pin in inputPins
+%% for pin in input_pins
         {{ pin }},
 %% endfor
     };
@@ -62,7 +62,7 @@ public:
      */
     enum OutputPin
     {
-%% for pin in outputPins
+%% for pin in output_pins
         {{ pin }},
 %% endfor
     };
