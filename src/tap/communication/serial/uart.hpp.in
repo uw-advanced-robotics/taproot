@@ -81,7 +81,7 @@ public:
 #ifndef PLATFORM_HOSTED
 %% macro init_port(port, rxPin, txPin)
             modm::platform::Usart{{ port }}::connect<{% if txPin != None %}{{ txPin }}::Tx{% if rxPin != None %}, {% endif %}{% endif %}{% if rxPin != None %}{{ rxPin }}::Rx{% endif %}>();
-            modm::platform::Usart{{ port }}::initialize<Board::SystemClock, baudrate>(12, parity);
+            modm::platform::Usart{{ port }}::initialize<Board::SystemClock, baudrate>(parity);
 %% endmacro
 %% if uart_ports|length > 0
         if constexpr (port == UartPort::Uart{{ uart_ports[0] }})

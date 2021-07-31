@@ -18,6 +18,13 @@
 def nice_mock(mock_name):
     return f"testing::NiceMock<{mock_name}>"
 
+"""
+A dictionary storing data about each driver that has
+been defined in code. This data is used to construct
+a drivers object. The module-dependencies specified
+will determine if the driver defined below will be
+added to the main drivers object.
+"""
 DRIVERS_AND_MODULE_DEPENDENCIES = [
     {
         "object-name": "arch::Profiler",
@@ -61,7 +68,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "gpio::Leds",
-        "mock-object-name": nice_mock("mock::LedMock"),
+        "mock-object-name": nice_mock("mock::LedsMock"),
         "src-file": "tap/communication/gpio/leds.hpp",
         "mock-file": "tap/mock/leds_mock.hpp",
         "constructor": "",
@@ -85,7 +92,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "serial::RefSerial",
-        "mock-object-name": nice_mock("mock::RefSerial"),
+        "mock-object-name": nice_mock("mock::RefSerialMock"),
         "src-file": "tap/communication/serial/ref_serial.hpp",
         "mock-file": "tap/mock/ref_serial_mock.hpp",
         "constructor": "this",
@@ -93,7 +100,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "Remote",
-        "mock-object-name": nice_mock("mock::Remote"),
+        "mock-object-name": nice_mock("mock::RemoteMock"),
         "src-file": "tap/communication/serial/remote.hpp",
         "mock-file": "tap/mock/remote_mock.hpp",
         "constructor": "this",
@@ -101,7 +108,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "serial::Uart",
-        "mock-object-name": nice_mock("mock::Uart"),
+        "mock-object-name": nice_mock("mock::UartMock"),
         "src-file": "tap/communication/serial/uart.hpp",
         "mock-file": "tap/mock/uart_mock.hpp",
         "constructor": "",
@@ -150,7 +157,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "motor::DjiMotorTerminalSerialHandler",
-        "mock-object-name": nice_mock("mock::DjiMotorTerminalSerialHandler"),
+        "mock-object-name": nice_mock("mock::DjiMotorTerminalSerialHandlerMock"),
         "src-file": "tap/motor/dji_motor_terminal_serial_handler.hpp",
         "mock-file": "tap/mock/dji_motor_terminal_serial_handler_mock.hpp",
         "constructor": "this",
