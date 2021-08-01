@@ -37,6 +37,7 @@
 #include "ref_serial_mock.hpp"
 #include "remote_mock.hpp"
 #include "scheduler_terminal_handler_mock.hpp"
+#include "setpoint_subsystem_mock.hpp"
 #include "subsystem_mock.hpp"
 #include "terminal_serial_mock.hpp"
 #include "uart_mock.hpp"
@@ -139,6 +140,9 @@ SchedulerTerminalHandlerMock::SchedulerTerminalHandlerMock(Drivers *drivers)
 {
 }
 SchedulerTerminalHandlerMock::~SchedulerTerminalHandlerMock() {}
+
+SetpointSubsystemMock::SetpointSubsystemMock(Drivers *drivers) : Subsystem(drivers) {}
+SetpointSubsystemMock::~SetpointSubsystemMock() {}
 
 SubsystemMock::SubsystemMock(Drivers *drivers) : control::Subsystem(drivers) {}
 SubsystemMock::~SubsystemMock() {}
