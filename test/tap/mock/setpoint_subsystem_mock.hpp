@@ -34,6 +34,9 @@ public:
     SetpointSubsystemMock(tap::Drivers* drivers);
     virtual ~SetpointSubsystemMock();
 
+    // Method of Subsystem base class
+    MOCK_METHOD(int, getGlobalIdentifier, (), (const override));
+
     MOCK_METHOD(float, getSetpoint, (), (const override));
     MOCK_METHOD(void, setSetpoint, (float), (override));
     MOCK_METHOD(float, getCurrentValue, (), (const override));
