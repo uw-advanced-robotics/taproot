@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef AGITATOR_CALIBRATE_COMMAND_HPP_
-#define AGITATOR_CALIBRATE_COMMAND_HPP_
+#ifndef CALIBRATE_COMMAND_HPP_
+#define CALIBRATE_COMMAND_HPP_
 
 #include "tap/control/command.hpp"
 #include "tap/drivers.hpp"
@@ -33,20 +33,20 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * Default command that can be used to calibrate the agitator (spam calls
- * `calibrateHere`). By default, the agitator will keep calling `calibrateHere`
- * until the agitator is connected, however this command is for the following:
+ * Default command that can be used to calibrate the setpoint subsystem (spam calls
+ * `calibrateHere`). By default, the setpoint subsystem will keep calling `calibrateHere`
+ * until the setpoint subsystem is connected, however this command is for the following:
  *  - A placeholder command initially.
- *  - Allows you to recalibrate an agitator that has already been calibrated if necessary.
+ *  - Allows you to recalibrate an setpoint subsystem that has already been calibrated if necessary.
  */
 class CalibrateCommand : public tap::control::Command
 {
 public:
     /**
-     * @param[in] agitator The subsystem this command is dependent upon.
+     * @param[in] setpointSubsystem The subsystem this command is dependent upon.
      */
     explicit CalibrateCommand(
-        tap::control::setpoint::SetpointSubsystem* angularPositionalSubsystem);
+        tap::control::setpoint::SetpointSubsystem* setpointSubsystem);
 
     const char* getName() const override { return "agitator calibrate"; }
 
@@ -68,4 +68,4 @@ private:
 
 }  // namespace tap
 
-#endif  // AGITATOR_CALIBRATE_COMMAND_HPP_
+#endif  // CALIBRATE_COMMAND_HPP_
