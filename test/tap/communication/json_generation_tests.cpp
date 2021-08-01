@@ -24,7 +24,7 @@
 #include "tap/communication/tcp-server/json_messages.hpp"
 #include "tap/drivers.hpp"
 
-#include "../mock/dji_motor_mock.hpp"
+#include "tap/mock/dji_motor_mock.hpp"
 
 using tap::Drivers;
 using tap::mock::DjiMotorMock;
