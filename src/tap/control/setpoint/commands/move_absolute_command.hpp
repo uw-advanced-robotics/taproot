@@ -61,13 +61,13 @@ public:
     explicit MoveAbsoluteCommand(
         tap::control::setpoint::SetpointSubsystem* setpointSubsystem,
         float setpoint,
-        uint32_t speed,
+        float speed,
         float setpointTolerance,
         bool shouldAutomaticallyClearJam);
 
     const char* getName() const override { return "move absolute"; }
 
-    bool isReady() override { return !setpointSubsystem->isJammed(); }
+    bool isReady() override;
 
     void initialize() override;
 
@@ -84,14 +84,13 @@ private:
     /* target value for the subsystem to reach when command is called.*/
     float setpoint;
 
-    tap::algorithms::Ramp rampTosetpoint;
+    tap::algorithms::Ramp rampToSetpoint;
 
     /**
      * The speed the subsystem should attempt to move at in
-     * (milli-setpoint-units) / second. Factor of 1/1000 for units used
-     * to allow more fine-grained control over speeds.
+     * setpoint-units / second. 
      */
-    uint32_t speed;
+    float speed;
 
     float setpointTolerance;
 

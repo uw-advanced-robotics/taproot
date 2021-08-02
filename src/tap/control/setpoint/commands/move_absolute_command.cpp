@@ -30,7 +30,7 @@ namespace setpoint
 MoveAbsoluteCommand::MoveAbsoluteCommand(
     SetpointSubsystem* setpointSubsystem,
     float setpoint,
-    uint32_t speed,
+    float speed,
     float setpointTolerance,
     bool automaticallyClearJam)
     : setpointSubsystem(setpointSubsystem),
@@ -42,10 +42,15 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
 }
 
+bool MoveAbsoluteCommand::isReady()
+{
+    return setpointSubsystem->isOnline() && !setpointSubsystem->isJammed();
+}
+
 void MoveAbsoluteCommand::initialize()
 {
-    rampTosetpoint.setTarget(setpoint);
-    rampTosetpoint.setValue(setpointSubsystem->getCurrentValue());
+    rampToSetpoint.setTarget(setpoint);
+    rampToSetpoint.setValue(setpointSubsystem->getCurrentValue());
     prevMoveTime = tap::arch::clock::getTimeMilliseconds();
 }
 
@@ -62,15 +67,13 @@ void MoveAbsoluteCommand::execute()
 
     // We can assume that subsystem is connected, otherwise end will be called.
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
-    // Divide by 1'000'000 to get setpoint-units because speed is in milli-setpoint-units/second
+    // Divide by 1'000 to get setpoint-units because speed is in setpoint-units/second
     // and time interval is in milliseconds. (milliseconds * 1/1000 (second/millisecond) *
-    // (milliradians/second) * 1/1000 (units/milli-units) = 1/1'000'000 as our conversion
-    rampTosetpoint.update(
-        (static_cast<float>(currTime - prevMoveTime) * speed) /
-        1'000'000.0f);
+    // (setpoint-units/second))  = 1/1000 setpoint-units as our conversion
+    rampToSetpoint.update((static_cast<float>(currTime - prevMoveTime) * speed) / 1000.0f);
     prevMoveTime = currTime;
 
-    setpointSubsystem->setSetpoint(rampTosetpoint.getValue());
+    setpointSubsystem->setSetpoint(rampToSetpoint.getValue());
 }
 
 void MoveAbsoluteCommand::end(bool)
@@ -89,7 +92,7 @@ bool MoveAbsoluteCommand::isFinished() const
 {
     // Command is finished if we've reached target, lost connection to subsystem, or
     // if our subsystem is jammed.
-    return (fabsf(setpointSubsystem->getCurrentValue() - rampTosetpoint.getTarget()) <
+    return (fabsf(setpointSubsystem->getCurrentValue() - rampToSetpoint.getTarget()) <
             setpointTolerance) ||
            !setpointSubsystem->isOnline() || setpointSubsystem->isJammed();
 }
