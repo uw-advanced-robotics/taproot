@@ -19,6 +19,7 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/drivers.hpp"
 #include "tap/control/setpoint/commands/calibrate_command.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 

@@ -33,14 +33,14 @@ namespace control
 namespace setpoint
 {
 /**
- * A command that uses an `SetpointSubsystem` to rotate to the same
- * angle everytime, attemping to rotate at the given angular velocity.
+ * A command that uses an `SetpointSubsystem` to move to the same
+ * position/value everytime, attemping to rotate at the given angular velocity.
  * (Consistency doesn't work across motor disconnects). This command
  * ends immediately if the agitator is jammed, and upon ending will
  * stop the connected agitator by setting its target position to its
  * current position.
  *
- * Agitator angles are relative, and the "0"-angle is changed when
+ * Subsystem values are relative, and the "0"-value is changed when
  * the agitator is calibrated.
  */
 class MoveAbsoluteCommand : public tap::control::Command
@@ -49,22 +49,23 @@ public:
     /**
      * @param[in] setpointSubsystem the subsystem this command manipulates.
      * @param[in] setpoint the target value the controlled variable
-     *  should attempt to reach
-     * @param[in] speed The angular speed the agitator should
-     *  attempt to move at in milliradians/second
-     * @param[in] setpointTolerance the command will consider the target angle
+     *  should reach
+     * @param[in] speed The speed the subsystem should attempt to move its value
+     *  at in  milli-units/second (where "units" are the same as those the setpoint uses,
+     *  milli- prefix means 1/1000th's)
+     * @param[in] setpointTolerance the command will consider the target value
      *  as reached when it's distance to the target is within this value
      * @param[in] shouldAutomaticallyClearJam the command will clear the subsystem's
      *  jam state without any unjamming performed
      */
     explicit MoveAbsoluteCommand(
         tap::control::setpoint::SetpointSubsystem* setpointSubsystem,
-        float targetAngle,
-        uint32_t agitatorRotateSpeed,
+        float setpoint,
+        uint32_t speed,
         float setpointTolerance,
         bool shouldAutomaticallyClearJam);
 
-    const char* getName() const override { return "open hopper lid"; }
+    const char* getName() const override { return "move absolute"; }
 
     bool isReady() override { return !setpointSubsystem->isJammed(); }
 
@@ -80,20 +81,21 @@ protected:
     tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 
 private:
-    /* target angle for the agitator to reach when command is called.*/
-    float targetAngle;
+    /* target value for the subsystem to reach when command is called.*/
+    float setpoint;
 
-    tap::algorithms::Ramp rampToTargetAngle;
+    tap::algorithms::Ramp rampTosetpoint;
 
     /**
-     * The angular speed the agitator should attempt to move at in
-     * milliradians/second.
+     * The speed the subsystem should attempt to move at in
+     * (milli-setpoint-units) / second. Factor of 1/1000 for units used
+     * to allow more fine-grained control over speeds.
      */
-    uint32_t agitatorRotateSpeed;
+    uint32_t speed;
 
-    float agitatorSetpointTolerance;
+    float setpointTolerance;
 
-    uint32_t agitatorPrevRotateTime;
+    uint32_t prevMoveTime;
 
     bool automaticallyClearJam;
 };  // class MoveAbsoluteCommand
