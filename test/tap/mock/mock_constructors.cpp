@@ -142,7 +142,12 @@ SchedulerTerminalHandlerMock::SchedulerTerminalHandlerMock(Drivers *drivers)
 SchedulerTerminalHandlerMock::~SchedulerTerminalHandlerMock() {}
 
 SetpointSubsystemMock::SetpointSubsystemMock(Drivers *drivers) : Subsystem(drivers) {}
-SetpointSubsystemMock::~SetpointSubsystemMock() {}
+SetpointSubsystemMock::~SetpointSubsystemMock()
+{
+    // Default to simulating an online and unjammed setpointSubsystem
+    ON_CALL(*this, isOnline).WillByDefault(testing::Return(true));
+    ON_CALL(*this, isJammed).WillByDefault(testing::Return(false));
+}
 
 SubsystemMock::SubsystemMock(Drivers *drivers) : control::Subsystem(drivers) {}
 SubsystemMock::~SubsystemMock() {}

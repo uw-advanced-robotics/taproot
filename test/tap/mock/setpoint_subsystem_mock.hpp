@@ -28,6 +28,10 @@ namespace tap
 {
 namespace mock
 {
+/**
+ * A class for mocking a setpoint subsystem. Will by default act as if it
+ * were unjammed and online (specified in mock_constructors.cpp)
+ */
 class SetpointSubsystemMock : public control::setpoint::SetpointSubsystem
 {
 public:
