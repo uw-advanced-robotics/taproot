@@ -59,6 +59,11 @@ void MoveCommand::initialize()
 
 void MoveCommand::execute()
 {
+    // Don't move setpoint if the subsystem is online. Wait until subsystem back online.
+    if (!setpointSubsystem->isOnline())
+    {
+        return;
+    }
     // update the agitator setpoint ramp
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     rampToTargetAngle.update(

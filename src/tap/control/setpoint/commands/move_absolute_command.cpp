@@ -32,12 +32,14 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
     float setpoint,
     float speed,
     float setpointTolerance,
-    bool automaticallyClearJam)
+    bool automaticallyClearJam,
+    bool setSetpointToTargetOnEnd)
     : setpointSubsystem(setpointSubsystem),
       setpoint(setpoint),
       speed(speed),
       setpointTolerance(setpointTolerance),
-      automaticallyClearJam(automaticallyClearJam)
+      automaticallyClearJam(automaticallyClearJam),
+      setSetpointToTargetOnEnd(setSetpointToTargetOnEnd)
 {
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
 }
@@ -58,8 +60,9 @@ void MoveAbsoluteCommand::execute()
 {
     // If the subsystem is jammed, set the setpoint to the current value. Necessary since
     // derived classes may choose to overwrite the `isFinished` function and so for motor safety
-    // we do this.
-    if (setpointSubsystem->isJammed())
+    // we do this. Also if subsystem is online we delay our execution so that setpoint doesn't
+    // run away while subsystem offline.
+    if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline())
     {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
         return;
@@ -78,10 +81,17 @@ void MoveAbsoluteCommand::execute()
 
 void MoveAbsoluteCommand::end(bool)
 {
-    // When this command ends we want to make sure to set the subsystem's target value
-    // to it's current value so it doesn't keep trying to move, especially if it's jammed
-    // or reached the end of its range of motion.
-    setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
+    // Either set setpoint to ideal target or current value based on option
+    // used to construct command.
+    if (setSetpointToTargetOnEnd)
+    {
+        setpointSubsystem->setSetpoint(setpoint);
+    }
+    else
+    {
+        setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
+    }
+    
     if (automaticallyClearJam)
     {
         setpointSubsystem->clearJam();

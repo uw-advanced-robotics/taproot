@@ -57,13 +57,17 @@ public:
      *  as reached when it's distance to the target is within this value
      * @param[in] shouldAutomaticallyClearJam the command will clear the subsystem's
      *  jam state without any unjamming performed
+     * @param[in] setSetpointToTargetOnEnd the command will set the subsystem's setpoint
+     * to the target value when ending if true, otherwise it will set the setpoint to
+     * the subsystem's current value.
      */
     explicit MoveAbsoluteCommand(
         tap::control::setpoint::SetpointSubsystem* setpointSubsystem,
         float setpoint,
         float speed,
         float setpointTolerance,
-        bool shouldAutomaticallyClearJam);
+        bool shouldAutomaticallyClearJam,
+        bool setSetpointToTargetOnEnd);
 
     const char* getName() const override { return "move absolute"; }
 
@@ -97,6 +101,8 @@ private:
     uint32_t prevMoveTime;
 
     bool automaticallyClearJam;
+
+    bool setSetpointToTargetOnEnd;
 };  // class MoveAbsoluteCommand
 
 }  // namespace setpoint
