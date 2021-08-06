@@ -46,7 +46,7 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
 
 bool MoveAbsoluteCommand::isReady()
 {
-    return setpointSubsystem->isOnline() && !setpointSubsystem->isJammed();
+    return !setpointSubsystem->isJammed();
 }
 
 void MoveAbsoluteCommand::initialize()

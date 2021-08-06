@@ -57,7 +57,9 @@ public:
         float agitatorChangeAngle,
         float maxUnjamAngle,
         uint32_t agitatorRotateTime,
-        uint32_t agitatorPauseAfterRotateTime);
+        uint32_t agitatorPauseAfterRotateTime,
+        bool setToTargetOnEnd,
+        float setpointTolerance);
 
     void initialize() override;
 

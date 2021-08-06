@@ -83,7 +83,14 @@ public:
 private:
     SetpointSubsystem* setpointSubsystem;
 
+    /**
+     * The target setpoint displacement from the current setpoint everytime this command
+     * is run.
+     */
     float targetDisplacement;
+
+    // Stores the actual distance between target endpoint and startpoint of movement
+    float trueDisplacement;
 
     tap::algorithms::Ramp rampToTargetValue;
 
@@ -94,6 +101,7 @@ private:
 
     tap::arch::MilliTimeout minMoveTimeout;
 
+    uint32_t minMoveTimeoutPeriod;
 
     float setpointTolerance;
 

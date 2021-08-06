@@ -38,7 +38,7 @@ MoveCommand::MoveCommand(
       targetDisplacement(targetDisplacement),
       rampToTargetValue(0.0f),
       moveTime(moveTime),
-      minMoveTimeout(moveTime + pauseAfterMoveTime),
+      minMoveTimeoutPeriod(moveTime + pauseAfterMoveTime),
       setpointTolerance(setpointTolerance),
       previousMoveTime(0),
       setToTargetOnEnd(setToTargetOnEnd)
@@ -49,11 +49,17 @@ MoveCommand::MoveCommand(
 void MoveCommand::initialize()
 {
     // set the ramp start and target values
-    rampToTargetValue.setTarget(setpointSubsystem->getSetpoint() + targetDisplacement);
+    float targetValue = setpointSubsystem->getSetpoint() + targetDisplacement;
+    float currentValue = setpointSubsystem->getCurrentValue();
 
-    rampToTargetValue.setValue(setpointSubsystem->getCurrentValue());
+    rampToTargetValue.setTarget(targetValue);
+    rampToTargetValue.setValue(currentValue);
+
+    trueDisplacement = rampToTargetValue.getTarget() - currentValue;
 
     previousMoveTime = tap::arch::clock::getTimeMilliseconds();
+    // Reset min move time timeout.
+    minMoveTimeout.restart(minMoveTimeoutPeriod);
 }
 
 void MoveCommand::execute()
@@ -66,7 +72,7 @@ void MoveCommand::execute()
     // update the subsystem setpoint ramp
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     rampToTargetValue.update(
-        (currTime - previousMoveTime) * targetDisplacement /
+        (currTime - previousMoveTime) * trueDisplacement /
         static_cast<float>(moveTime));
     previousMoveTime = currTime;
     setpointSubsystem->setSetpoint(rampToTargetValue.getValue());
@@ -93,7 +99,7 @@ bool MoveCommand::isFinished() const
     // The subsystem is jammed, or it is within the setpoint tolerance, the ramp is
     // finished, and the minimum rotate time is expired.
     return setpointSubsystem->isJammed() ||
-           (fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
+           (fabsf(setpointSubsystem->getCurrentValue() - rampToTargetValue.getTarget()) <
                 setpointTolerance &&
             rampToTargetValue.isTargetReached() && minMoveTimeout.isExpired());
 }

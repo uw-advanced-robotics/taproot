@@ -54,25 +54,14 @@ TEST(MoveAbsoluteCommand, command_registers_subsystem_requirements)
 
 // isReady() tests ------------------------------------
 
-TEST(MoveAbsoluteCommand, command_is_only_ready_when_subsystem_online_and_unjammed)
+TEST(MoveAbsoluteCommand, command_ready_when_subsystem_unjammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
     
-    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     EXPECT_TRUE(command.isReady());
-}
-
-TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_offline)
-{
-    CREATE_COMMON_TEST_OBJECTS();
-    MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
-    
-    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
-
-    EXPECT_FALSE(command.isReady());
 }
 
 TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_jammed)
