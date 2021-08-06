@@ -28,33 +28,32 @@ namespace control
 namespace setpoint
 {
 MoveCommand::MoveCommand(
-    SetpointSubsystem* agitator,
-    float agitatorAngleChange,
-    uint32_t agitatorRotateTime,
-    uint32_t agitatorPauseAfterRotateTime,
-    bool agitatorSetToFinalAngle,
+    SetpointSubsystem* setpointSubsystem,
+    float targetDisplacement,
+    uint32_t moveTime,
+    uint32_t pauseAfterMoveTime,
+    bool setToTargetOnEnd,
     float setpointTolerance)
-    : setpointSubsystem(agitator),
-      agitatorTargetAngleChange(agitatorAngleChange),
-      rampToTargetAngle(0.0f),
-      agitatorDesiredRotateTime(agitatorRotateTime),
-      agitatorMinRotatePeriod(agitatorRotateTime + agitatorPauseAfterRotateTime),
-      agitatorMinRotateTimeout(agitatorRotateTime + agitatorPauseAfterRotateTime),
-      agitatorSetpointTolerance(setpointTolerance),
-      agitatorPrevRotateTime(0),
-      agitatorSetToFinalAngle(agitatorSetToFinalAngle)
+    : setpointSubsystem(setpointSubsystem),
+      targetDisplacement(targetDisplacement),
+      rampToTargetValue(0.0f),
+      moveTime(moveTime),
+      minMoveTimeout(moveTime + pauseAfterMoveTime),
+      setpointTolerance(setpointTolerance),
+      previousMoveTime(0),
+      setToTargetOnEnd(setToTargetOnEnd)
 {
-    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(agitator));
+    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
 }
 
 void MoveCommand::initialize()
 {
-    // set the ramp start and target angles
-    rampToTargetAngle.setTarget(setpointSubsystem->getSetpoint() + agitatorTargetAngleChange);
+    // set the ramp start and target values
+    rampToTargetValue.setTarget(setpointSubsystem->getSetpoint() + targetDisplacement);
 
-    rampToTargetAngle.setValue(setpointSubsystem->getCurrentValue());
+    rampToTargetValue.setValue(setpointSubsystem->getCurrentValue());
 
-    agitatorPrevRotateTime = tap::arch::clock::getTimeMilliseconds();
+    previousMoveTime = tap::arch::clock::getTimeMilliseconds();
 }
 
 void MoveCommand::execute()
@@ -64,28 +63,28 @@ void MoveCommand::execute()
     {
         return;
     }
-    // update the agitator setpoint ramp
+    // update the subsystem setpoint ramp
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
-    rampToTargetAngle.update(
-        (currTime - agitatorPrevRotateTime) * agitatorTargetAngleChange /
-        static_cast<float>(agitatorDesiredRotateTime));
-    agitatorPrevRotateTime = currTime;
-    setpointSubsystem->setSetpoint(rampToTargetAngle.getValue());
+    rampToTargetValue.update(
+        (currTime - previousMoveTime) * targetDisplacement /
+        static_cast<float>(moveTime));
+    previousMoveTime = currTime;
+    setpointSubsystem->setSetpoint(rampToTargetValue.getValue());
 }
 
 void MoveCommand::end(bool)
 {
-    // if the agitator is not interrupted, then it exited normally
-    // (i.e. reached the desired angle) and is not jammed. If it is
-    // jammed we thus want to set the agitator angle to the current angle,
+    // if the subsystem is not interrupted, then it exited normally
+    // (i.e. reached the desired value) and is not jammed. If it is
+    // jammed we thus want to set the subsystem value to the current value,
     // so the motor does not attempt to keep rotating forward (and possible stalling)
-    if (setpointSubsystem->isJammed() || !agitatorSetToFinalAngle)
+    if (setpointSubsystem->isJammed() || !setToTargetOnEnd)
     {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
     else
     {
-        setpointSubsystem->setSetpoint(rampToTargetAngle.getTarget());
+        setpointSubsystem->setSetpoint(rampToTargetValue.getTarget());
     }
 }
 
@@ -95,8 +94,8 @@ bool MoveCommand::isFinished() const
     // finished, and the minimum rotate time is expired.
     return setpointSubsystem->isJammed() ||
            (fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
-                agitatorSetpointTolerance &&
-            rampToTargetAngle.isTargetReached() && agitatorMinRotateTimeout.isExpired());
+                setpointTolerance &&
+            rampToTargetValue.isTargetReached() && minMoveTimeout.isExpired());
 }
 
 }  // namespace setpoint
