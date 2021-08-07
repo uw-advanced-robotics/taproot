@@ -91,6 +91,7 @@ tests build:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:
       cobertura: cobertura.xml
+    expire_in: 2 weeks
 
 # Pages deploy
 
