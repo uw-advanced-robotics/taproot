@@ -31,41 +31,41 @@ class SetpointSubsystem;  // forward declaration
 
 UnjamCommand::UnjamCommand(
     SetpointSubsystem* setpointSubsystem,
-    float agitatorMaxUnjamAngle,
-    uint32_t agitatorMaxWaitTime)
-    : currUnjamstate(AGITATOR_UNJAM_BACK),
-      agitatorUnjamRotateTimeout(0),
+    float maximumDisplacement,
+    uint32_t maxWaitTime)
+    : currUnjamstate(UNJAM_BACK),
+      unjamRotateTimeout(0),
       salvationTimeout(0),
-      agitatorMaxWaitTime(agitatorMaxWaitTime),
+      maxWaitTime(maxWaitTime),
       setpointSubsystem(setpointSubsystem),
-      agitatorUnjamAngleMax(agitatorMaxUnjamAngle),
-      currAgitatorUnjamAngle(0.0f),
-      agitatorSetpointBeforeUnjam(0.0f)
+      maxUnjamDisplacement(maximumDisplacement),
+      currUnjamDisplacement(0.0f),
+      setpointBeforeUnjam(0.0f)
 {
-    if (agitatorMaxUnjamAngle < MIN_AGITATOR_UNJAM_ANGLE)
+    if (maximumDisplacement < MIN_UNJAM_DISPLACEMENT)
     {
-        agitatorUnjamAngleMax = MIN_AGITATOR_UNJAM_ANGLE;
+        maxUnjamDisplacement = MIN_UNJAM_DISPLACEMENT;
     }
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
     salvationTimeout.stop();
-    agitatorUnjamRotateTimeout.stop();
+    unjamRotateTimeout.stop();
 }
 
 void UnjamCommand::initialize()
 {
-    agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
+    unjamRotateTimeout.restart(maxWaitTime);
 
-    // define a random unjam angle between [MIN_AGITATOR_UNJAM_ANGLE, agitatorUnjamAngleMax]
+    // define a random unjam displacement between [MIN_UNJAM_DISPLACEMENT, maxUnjamDisplacement]
     const float minUnjamAngle =
-        agitatorUnjamAngleMax <= MIN_AGITATOR_UNJAM_ANGLE ? 0 : MIN_AGITATOR_UNJAM_ANGLE;
-    float randomUnjamAngle = fmodf(rand(), agitatorUnjamAngleMax - minUnjamAngle) + minUnjamAngle;
+        maxUnjamDisplacement <= MIN_UNJAM_DISPLACEMENT ? 0 : MIN_UNJAM_DISPLACEMENT;
+    float randomUnjamAngle = fmodf(rand(), maxUnjamDisplacement - minUnjamAngle) + minUnjamAngle;
 
-    // subtract this angle from the current angle to rotate agitator backwards
-    currAgitatorUnjamAngle = setpointSubsystem->getCurrentValue() - randomUnjamAngle;
+    // subtract this value from the current value to move subsystem backwards
+    currUnjamDisplacement = setpointSubsystem->getCurrentValue() - randomUnjamAngle;
 
-    // store the current setpoint angle to be referenced later
-    agitatorSetpointBeforeUnjam = setpointSubsystem->getSetpoint();
-    currUnjamstate = AGITATOR_UNJAM_BACK;
+    // store the current setpoint value to be referenced later
+    setpointBeforeUnjam = setpointSubsystem->getSetpoint();
+    currUnjamstate = UNJAM_BACK;
 
     salvationTimeout.restart(SALVATION_TIMEOUT_MS);
 }
@@ -74,18 +74,18 @@ void UnjamCommand::execute()
 {
     if (salvationTimeout.execute())
     {
-        currAgitatorUnjamAngle = agitatorSetpointBeforeUnjam - 2 * tap::algorithms::PI;
+        currUnjamDisplacement = setpointBeforeUnjam - 2 * tap::algorithms::PI;
         salvationTimeout.stop();
-        agitatorUnjamRotateTimeout.restart(SALVATION_UNJAM_BACK_WAIT_TIME);
-        currUnjamstate = AGITATOR_SALVATION_UNJAM_BACK;
+        unjamRotateTimeout.restart(SALVATION_UNJAM_BACK_WAIT_TIME);
+        currUnjamstate = SALVATION_UNJAM_BACK;
     }
 
     switch (currUnjamstate)
     {
-        case AGITATOR_SALVATION_UNJAM_BACK:
+        case SALVATION_UNJAM_BACK:
         {
-            setpointSubsystem->setSetpoint(currAgitatorUnjamAngle);
-            if (agitatorUnjamRotateTimeout.isExpired() ||
+            setpointSubsystem->setSetpoint(currUnjamDisplacement);
+            if (unjamRotateTimeout.isExpired() ||
                 fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
                     SETPOINT_TOLERANCE)
             {
@@ -93,41 +93,41 @@ void UnjamCommand::execute()
             }
             break;
         }
-        case AGITATOR_UNJAM_BACK:
+        case UNJAM_BACK:
         {
-            setpointSubsystem->setSetpoint(currAgitatorUnjamAngle);
-            if (agitatorUnjamRotateTimeout.isExpired() ||
+            setpointSubsystem->setSetpoint(currUnjamDisplacement);
+            if (unjamRotateTimeout.isExpired() ||
                 fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
                     SETPOINT_TOLERANCE)
-            {  // either the timeout has been triggered or the agitator has reached the setpoint
-                // define a random time that the agitator will take to rotate forwards.
-                agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
+            {  // either the timeout has been triggered or the subsystem has reached the setpoint
+                // define a random time that the subsystem will take to rotate forwards.
+                unjamRotateTimeout.restart(maxWaitTime);
 
-                // reset the agitator
-                currUnjamstate = AGITATOR_UNJAM_RESET;
+                // reset the subsystem
+                currUnjamstate = UNJAM_RESET;
             }
             break;
         }
-        case AGITATOR_UNJAM_RESET:  // this is different than just agitator_rotate_command
+        case UNJAM_RESET:  // this is different than just move_command
         {
-            // reset the angle to what it was before unjamming
-            setpointSubsystem->setSetpoint(agitatorSetpointBeforeUnjam);
-            // the agitator is still jammed
-            if (agitatorUnjamRotateTimeout.isExpired())
+            // reset the value to what it was before unjamming
+            setpointSubsystem->setSetpoint(setpointBeforeUnjam);
+            // the subsystem is still jammed
+            if (unjamRotateTimeout.isExpired())
             {
                 // restart the timeout
-                agitatorUnjamRotateTimeout.restart(agitatorMaxWaitTime);
+                unjamRotateTimeout.restart(maxWaitTime);
 
-                // define a new random angle, which will be used in the unjam back state
-                const float minUnjamAngle = agitatorUnjamAngleMax <= MIN_AGITATOR_UNJAM_ANGLE
+                // define a new random value, which will be used in the unjam back state
+                const float minUnjamAngle = maxUnjamDisplacement <= MIN_UNJAM_DISPLACEMENT
                                                 ? 0
-                                                : MIN_AGITATOR_UNJAM_ANGLE;
+                                                : MIN_UNJAM_DISPLACEMENT;
                 float randomUnjamAngle =
-                    fmodf(rand(), agitatorUnjamAngleMax - minUnjamAngle) + minUnjamAngle;
+                    fmodf(rand(), maxUnjamDisplacement - minUnjamAngle) + minUnjamAngle;
 
-                currAgitatorUnjamAngle = agitatorSetpointBeforeUnjam - randomUnjamAngle;
+                currUnjamDisplacement = setpointBeforeUnjam - randomUnjamAngle;
 
-                currUnjamstate = AGITATOR_UNJAM_BACK;
+                currUnjamstate = UNJAM_BACK;
             }
             else if (
                 fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <

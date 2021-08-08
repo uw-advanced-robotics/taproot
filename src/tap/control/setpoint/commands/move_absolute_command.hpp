@@ -49,17 +49,17 @@ public:
     /**
      * @param[in] setpointSubsystem the subsystem this command manipulates.
      * @param[in] setpoint the target value the controlled variable
-     *  should reach
+     *      should reach
      * @param[in] speed The speed the subsystem should attempt to move its value
-     *  at in  milli-units/second (where "units" are the same as those the setpoint uses,
-     *  milli- prefix means 1/1000th's)
+     *      at in  milli-units/second (where "units" are the same as those the setpoint uses,
+     *      milli- prefix means 1/1000th's)
      * @param[in] setpointTolerance the command will consider the target value
-     *  as reached when it's distance to the target is within this value
+     *      as reached when it's distance to the target is within this value
      * @param[in] shouldAutomaticallyClearJam the command will clear the subsystem's
-     *  jam state without any unjamming performed
+     *      jam state without any unjamming performed
      * @param[in] setSetpointToTargetOnEnd the command will set the subsystem's setpoint
-     * to the target value when ending if true, otherwise it will set the setpoint to
-     * the subsystem's current value.
+     *      to the target value when ending if true, otherwise it will set the setpoint to
+     *      the subsystem's current value.
      */
     explicit MoveAbsoluteCommand(
         tap::control::setpoint::SetpointSubsystem* setpointSubsystem,

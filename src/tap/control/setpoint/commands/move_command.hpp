@@ -47,18 +47,18 @@ public:
      * @param[in] setpointSubsystem The subsystem associated with the rotate command.
      * @param[in] targetDisplacement The desired change in subsystem value in subsystem units.
      * @param[in] moveTime The time it takes to move the subsystem to the desired
-     *  value in milliseconds.
+     *      value in milliseconds.
      * @param[in] pauseAfterMoveTime The time that the command will wait after moving to
-     *  the desired value before the command is considered complete.
+     *      the desired value before the command is considered complete.
      * @param[in] setToTargetOnEnd if `true` the command will set the subsystem setpoint
-     *  to the ideal target value during an uninterrupted `end()`, otherwise the subsystem will
-     *  always set the setpoint to the its current value on `end()`.
+     *      to the ideal target value during an uninterrupted `end()`, otherwise the subsystem will
+     *      always set the setpoint to the its current value on `end()`.
      * @param[in] setpointTolerance The difference between current and desired value when the
-     *  command will be considered to be completed (used in the `isFinished` function). Only set
-     *  this if you want a different tolerance.
+     *      command will be considered to be completed (used in the `isFinished` function). Only set
+     *      this if you want a different tolerance.
      * @attention the ramp value is calculated by finding the rotation speed
-     *  (\f$targetDisplacement / moveTime\f$), and then multiplying this by
-     *  the period (how often the ramp is called)
+     *      (\f$targetDisplacement / moveTime\f$), and then multiplying this by
+     *      the period (how often the ramp is called)
      */
     MoveCommand(
         SetpointSubsystem* setpointSubsystem,

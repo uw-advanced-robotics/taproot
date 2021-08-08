@@ -36,25 +36,25 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * Command that takes control of an agitator motor and attempts to unjam it. Whether
- * or not the agitator is actually in a jam condition is not up for this command to
- * determine. It is assumed that unjamming must occur.
+ * Command that takes control of a setpoint subsystem and attempts to unjam 
+ * it by moving back and forth. Whether or not the subsystem is actually in a jam 
+ * condition is not up for this command to determine. It is assumed that 
+ * unjamming must occur.
  */
 class UnjamCommand : public tap::control::Command
 {
 public:
     /**
-     * @param[in] agitator The associated agitator subsystem to control.
-     * @param[in] agitatorMaxUnjamAngle The maximum backwards rotation of the agitator
-     *      to be used in an unjam step. A random backwards angle is subsequently choosen
-     *      each time the agitator unjam command attempts to rotate the agitator backwards.
-     * @param[in] agitatorMaxWaitTime The maximum amount of time the controller will
+     * @param[in] setpointSubsystem The associated agitator subsystem to control.
+     * @param[in] maximumDisplacement The maximum displacement of the subsystem
+     *      to be used in an unjam step.
+     * @param[in] maxWaitTime The maximum amount of time the controller will
      *      wait for the motor to rotate backwards before commencing with a forward rotation.
      */
     UnjamCommand(
-        SetpointSubsystem* agitator,
-        float agitatorMaxUnjamAngle,
-        uint32_t agitatorMaxWaitTime = AGITATOR_MAX_WAIT_TIME);
+        SetpointSubsystem* setpointSubsystem,
+        float maximumDisplacement,
+        uint32_t maxWaitTime = DEFAULT_MAX_WAIT_TIME);
 
     void initialize() override;
 
@@ -77,42 +77,42 @@ private:
      * The maximum time that the command will wait from commanding the agitator to rotate
      * backwards to rotating forwards again.
      */
-    static constexpr uint32_t AGITATOR_MAX_WAIT_TIME = 130;
+    static constexpr uint32_t DEFAULT_MAX_WAIT_TIME = 130;
 
     /**
      * Minimum angle the agitator will rotate backwards when unjamming.
      */
-    static constexpr float MIN_AGITATOR_UNJAM_ANGLE = tap::algorithms::PI / 4.0f;
+    static constexpr float MIN_UNJAM_DISPLACEMENT = tap::algorithms::PI / 4.0f;
 
-    enum AgitatorUnjamState
+    enum UnjamState
     {
-        AGITATOR_SALVATION_UNJAM_BACK,
-        AGITATOR_UNJAM_BACK,
-        AGITATOR_UNJAM_RESET,
+        SALVATION_UNJAM_BACK,
+        UNJAM_BACK,
+        UNJAM_RESET,
         FINISHED
     };
 
-    AgitatorUnjamState currUnjamstate;
+    UnjamState currUnjamstate;
 
     /**
-     * Time allowed to rotate back the the `currAgitatorUnjamAngle`.
+     * Time allowed to rotate back the the `currUnjamDisplacement`.
      */
-    tap::arch::MilliTimeout agitatorUnjamRotateTimeout;
+    tap::arch::MilliTimeout unjamRotateTimeout;
 
     tap::arch::MilliTimeout salvationTimeout;
 
     /**
-     * Usually set to `AGITATOR_MAX_WAIT_TIME`, but can be user defined.
+     * Usually set to `DEFAULT_MAX_WAIT_TIME`, but can be user defined.
      */
-    uint32_t agitatorMaxWaitTime;
+    uint32_t maxWaitTime;
 
     SetpointSubsystem* setpointSubsystem;
 
-    float agitatorUnjamAngleMax;
+    float maxUnjamDisplacement;
 
-    float currAgitatorUnjamAngle;
+    float currUnjamDisplacement;
 
-    float agitatorSetpointBeforeUnjam;
+    float setpointBeforeUnjam;
 };  // class UnjamCommand
 
 }  // namespace setpoint
