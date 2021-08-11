@@ -200,6 +200,10 @@ using DisplayReset = GpioB10;
 using DisplayCommand = GpioB9;
 using DisplaySpiMaster = SpiMaster1;
 
+using Bno055I2CMasterScl = GpioF1;
+using Bno055I2CMasterSda = GpioF0;
+using Bno055I2CMaster = I2cMaster2;
+
 #endif
 
 inline void initialize()

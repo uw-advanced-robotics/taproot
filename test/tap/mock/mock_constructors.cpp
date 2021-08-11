@@ -18,6 +18,7 @@
  */
 
 #include "analog_mock.hpp"
+#include "bno055_interface_mock.hpp"
 #include "can_mock.hpp"
 #include "can_rx_handler_mock.hpp"
 #include "can_rx_listener_mock.hpp"
@@ -151,5 +152,8 @@ TerminalSerialMock::~TerminalSerialMock() {}
 
 UartMock::UartMock() {}
 UartMock::~UartMock() {}
+
+Bno055InterfaceMock::Bno055InterfaceMock() : sensors::Bno055Interface() {}
+Bno055InterfaceMock::~Bno055InterfaceMock() {}
 
 }  // namespace tap::mock
