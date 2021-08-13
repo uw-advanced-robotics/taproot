@@ -26,8 +26,8 @@ def init(module):
 def prepare(module, options):
     module.add_option(BooleanOption(
         name="generate_driver_hpp", default=True,
-        description="Specify whether or not to generate drivers.hpp.\
-                     Set to false after you generate drivers.hpp the first time."))
+        description="Specify whether or not to generate drivers.hpp." \
+                     "Set to false after you generate drivers.hpp the first time."))
 
     module.depends(
         ":testing:mock",
@@ -72,7 +72,7 @@ def build(env):
         env.outbasepath = "src"
         env.substitutions = {
             "object_and_mocks": drivers.get_object_and_mock_names(env),
-            "mock_driver_includes": drivers.get_mock_files_sorted(env),
+            "mock_driver_includes": drivers.get_mock_headers_sorted(env),
             "src_driver_includes": drivers.get_src_files_sorted(env),
         }
         env.template("drivers.hpp.in", "drivers.hpp")

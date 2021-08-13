@@ -17,7 +17,10 @@
 
 def init(module):
     module.name = ":communication:tcp-server"
-    module.description = "TCP server that runs on the hosted environment"
+    module.description = "Generic TCP server that runs on a hosted Linux environment " \
+        "Provides utility for opening and connecting to a port. Provides read/write " \
+        "utilities for interacting with a TCP port. This is a **simulation-only module** - " \
+        "it will only be built when running on the hosted platform."
 
 def prepare(module, options):
     module.depends(":core")

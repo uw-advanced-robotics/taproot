@@ -27,25 +27,25 @@ def prepare(module, options):
     module.add_option(
         StringOption(
             name="digital_in_pins",
-            description="a comma-separated list of digital in pins",
+            description="Comma-separated list of digital in pins",
             default=""))
 
     module.add_option(
         StringOption(
             name="digital_out_pins",
-            description="a comma-separated list of digital out pins",
+            description="Comma-separated list of digital out pins",
             default=""))
 
     module.add_option(
         StringOption(
             name="analog_in_pins",
-            description="a comma-separated list of analog in pins",
+            description="Comma-separated list of analog in pins",
             default=""))
 
     module.add_option(
         StringOption(
             name="pwm_pins",
-            description="a comma-separated list of PWM pins",
+            description="Comma-separated list of PWM pins",
             default=""))
 
     return True

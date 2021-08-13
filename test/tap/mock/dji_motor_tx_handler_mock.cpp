@@ -16,18 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-{% for mock_include in mock_includes %}
-#include "{{ mock_include }}"
-{%- endfor %}
 
-// A file for listing all mock constructors and destructors since doing
-// so in a source file allows for faster compilation than defining constructors
-// in the headers
+#include "dji_motor_tx_handler_mock.hpp"
+
 namespace tap::mock
 {
-%% for mock_constructor in mock_constructors
-    %% if "tap/mock/" + mock_constructor["mock-file"] in mock_includes
-{{ mock_constructor["constructor-destructor"] }}
-    %% endif
-%% endfor
+DjiMotorTxHandlerMock::DjiMotorTxHandlerMock(tap::Drivers *drivers)
+    : tap::motor::DjiMotorTxHandler(drivers)
+{
+}
+DjiMotorTxHandlerMock::~DjiMotorTxHandlerMock() {}
 }  // namespace tap::mock

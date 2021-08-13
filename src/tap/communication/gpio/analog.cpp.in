@@ -35,17 +35,10 @@ void Analog::init()
 %% endif
 {% for adc in adcs %}
     // Initial ADC/Timer setup
-    %% set pins_associated_with_adc = []
-    %% for pin in pins
-        %% if pin_to_adc[pin] == adc
-            %% set pins_associated_with_adc = pins_associated_with_adc.append(pin)
-        %% endif
-    %% endfor
-
-    {{ adc }}::connect<{% for pin in pins_associated_with_adc %}AnalogInPin{{ pin }}::{{ pin_to_in[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    {{ adc }}::connect<{% for pin in adc_to_pin_map[adc] %}AnalogInPin{{ pin }}::{{ pin_to_in[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ adc }}::initialize<SystemClock, 22500000_Bd>();
 
-    %% for pin in pins_associated_with_adc
+    %% for pin in adc_to_pin_map[adc]
     {{ pin_to_adc[pin] }}::setPinChannel<AnalogInPin{{ pin }}>();
     %% endfor
 {% endfor %}

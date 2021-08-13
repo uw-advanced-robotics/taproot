@@ -67,7 +67,7 @@ void DJISerial::initialize()
     {
 %% for port in uart_ports
         case Uart::UartPort::Uart{{ port }}:
-            {# TODO allow for configurable baudrate #}
+            {# TODO allow for configurable baudrate, see taproot#50 #}
             drivers->uart.init<Uart::UartPort::Uart{{ port }}, 115200>();
             break;
 %% endfor

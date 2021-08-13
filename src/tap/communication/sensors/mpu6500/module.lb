@@ -17,6 +17,8 @@
 
 def init(module):
     module.name = ":communication:sensors:mpu6500"
+    module.description = "Robomaster Development Board Type A specific communication" \
+        "with the on board mpu6500"
 
 def prepare(module, options):
     return options[":dev_board"] == "rm-dev-board-a"

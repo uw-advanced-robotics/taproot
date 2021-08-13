@@ -32,7 +32,7 @@
         <gpio alias="Z" name="GpioI2">
             <timer name="Timer8" channel="Ch4"></timer>
         </gpio>
-        <gpio alias="Oled" name="GpioA6">
+        <gpio alias="OledJoystick" name="GpioA6">
             <adc name="Adc1" in="In6"></adc>
         </gpio>
         <gpio alias="Buzzer" name="GpioH6">

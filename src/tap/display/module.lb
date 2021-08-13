@@ -15,9 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+# TODO this module needs some cleaning up, see this issue: https://gitlab.com/aruw/controls/taproot/-/issues/51
+
 def init(module):
     module.name = ":display"
-    module.description = "Support for displaying information on an OLED display"
+    module.description = "Support for displaying information on an OLED display." \
+        "Currently this module contains sh1106-specific display code as well as " \
+        "generic menu objects that you can use. This software is designed and tested " \
+        "to be used on the RoboMaster Development Board OLED " \
+        "(https://www.robomaster.com/en-US/products/components/general/development-board)"
 
 def prepare(module, options):
     module.depends(":core")

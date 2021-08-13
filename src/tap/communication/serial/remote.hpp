@@ -98,7 +98,7 @@ public:
     };
 
     /**
-     * Enables and initializes `Uart::{{ uart_port }}` communication.
+     * Enables and initializes `bound_ports::REMOTE_SERIAL_UART_PORT`.
      */
     mockable void initialize();
 
@@ -224,4 +224,3 @@ private:
 }  // namespace tap
 
 #endif  // REMOTE_HPP_
-

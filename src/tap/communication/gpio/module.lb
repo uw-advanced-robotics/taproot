@@ -21,9 +21,7 @@ from board_info_parser import BoardInfoParser
 
 def extractPinDefines(pins):
     pins = [pin.strip() for pin in str.split(pins, ",")]
-    if len(pins) == 1 and pins[0] == "":
-        pins = []
-    return pins
+    return [] if pins == [""] else pins
 
 class Analog(Module):
     def __init__(self, metadata):
@@ -37,7 +35,7 @@ class Analog(Module):
         return True
 
     def build(self, env):
-        user_pins = listify(extractPinDefines(env[":board:analog_in_pins"]))
+        user_pins = extractPinDefines(env[":board:analog_in_pins"])
 
         # Collect adcs
         adcs = []
@@ -47,18 +45,27 @@ class Analog(Module):
             pin_name = pin.get("alias")
             if pin_name in user_pins:
                 adc = pin.find("adc")
-                assert adc != None
                 adc_name = adc.get("name")
                 pin_to_adc[pin_name] = adc_name
                 pin_to_in[pin_name] = adc.get("in")
                 if adc_name not in adcs:
                     adcs.append(adc_name)
 
+        # Add list of pins associated with each ADC
+        adc_to_pin_map = {}
+        for adc in adcs:
+            pins_associated_with_adc = []
+            for pin in user_pins:
+                if pin_to_adc[pin] == adc:
+                    pins_associated_with_adc.append(pin)
+            adc_to_pin_map[adc] = pins_associated_with_adc
+
         env.substitutions = {
             "pins": user_pins,
             "adcs": adcs,
             "pin_to_adc": pin_to_adc,
             "pin_to_in": pin_to_in,
+            "adc_to_pin_map": adc_to_pin_map
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("analog.cpp.in", "analog.cpp")

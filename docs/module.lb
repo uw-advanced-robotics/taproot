@@ -23,10 +23,10 @@ def prepare(module, options):
     module.add_option(StringOption(
         name="source_paths",
         default="",
-        description="A space-separated list of file directories to search\
-                     through recursively when generating documentation.\
-                     These directories should be relative to the generated\
-                     docs folder (i.e. relative to your taproot/docs)"))
+        description="A space-separated list of file directories to search" \
+                    "through recursively when generating documentation." \
+                    "These directories should be relative to the generated" \
+                    "docs folder (i.e. relative to your taproot/docs)"))
 
     module.depends(":core")
 

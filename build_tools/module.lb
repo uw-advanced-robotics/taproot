@@ -41,12 +41,12 @@ def build(env):
     if env["include_openocd_cfg"]:
         env.copy("openocd.cfg")
 
-descr_include_sconstruct = """# Generate a SConstruct file
+descr_include_sconstruct = """Generate a SConstruct file
 
 !!! warning "This overwrites any top-level `SConstruct` file!"
 """
 
-descr_include_openocd_cfg = """# Generate openocd.cfg
+descr_include_openocd_cfg = """Generate openocd.cfg
 
 !!! warning "This overwrites any top-level `openocd.cfg` file!"
 """

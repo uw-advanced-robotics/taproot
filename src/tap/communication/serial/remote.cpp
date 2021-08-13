@@ -24,11 +24,16 @@
 #include "tap/communication/serial/uart.hpp"
 #include "tap/drivers.hpp"
 
+#include "remote_serial_constants.hpp"
+
 using namespace tap::serial;
 
 namespace tap
 {
-void Remote::initialize() { drivers->uart.init<Uart::{{ uart_port }}, 100000, Uart::Parity::Even>(); }
+void Remote::initialize()
+{
+    drivers->uart.init<bound_ports::REMOTE_SERIAL_UART_PORT, 100000, Uart::Parity::Even>();
+}
 
 void Remote::read()
 {
@@ -40,7 +45,8 @@ void Remote::read()
     }
     uint8_t data;  // Next byte to be read
     // Read next byte if available and more needed for the current packet
-    while (drivers->uart.read(Uart::UartPort::{{ uart_port }}, &data) && currentBufferIndex < REMOTE_BUF_LEN)
+    while (drivers->uart.read(bound_ports::REMOTE_SERIAL_UART_PORT, &data) &&
+           currentBufferIndex < REMOTE_BUF_LEN)
     {
         rxBuffer[currentBufferIndex] = data;
         currentBufferIndex++;
@@ -194,7 +200,7 @@ void Remote::clearRxBuffer()
         rxBuffer[i] = 0;
     }
     // Clear Usart1 rxBuffer
-    drivers->uart.discardReceiveBuffer(Uart::UartPort::{{ uart_port }});
+    drivers->uart.discardReceiveBuffer(bound_ports::REMOTE_SERIAL_UART_PORT);
 }
 
 void Remote::reset()
@@ -218,4 +224,3 @@ void Remote::reset()
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }
 
 }  // namespace tap
-

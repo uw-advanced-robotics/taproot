@@ -22,6 +22,10 @@ import os
 from pathlib import Path
 
 def repopath(path):
+    """
+    Relocate given path to the path of the repo file.
+    Copied from `modm/test/all/run_all.py`
+    """
     return (Path(os.path.abspath(__file__)).parents[2] / path)
 
 class BoardInfoParser:
@@ -34,10 +38,8 @@ class BoardInfoParser:
         assert len(device_file_names) == 1, f"Device {device} not found or there are multiple device files with the device name"
         device = device_file_names[0]
 
-        try:
-            BoardInfoParser.parsed_board_info[device]
-        except KeyError:
-            # parse the xml-file
+        if device not in BoardInfoParser.parsed_board_info:
+            # parse the xml-file if we haven't already
             parser = lxml.etree.XMLParser(no_network=True)
             xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
             xmlroot.xinclude()

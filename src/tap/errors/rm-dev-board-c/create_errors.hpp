@@ -36,11 +36,7 @@ namespace errors
  * @see SystemError
  *
  * ```cpp
- * RAISE_ERROR(
- *     drivers
- *     "Error in DJI Serial",
- *     tap::errors::Location::DJI_SERIAL,
- *     tap::errors::ErrorType::INVALID_CRC);
+ * RAISE_ERROR(drivers, "Error in DJI Serial");
  * ```
  */
 #define RAISE_ERROR(drivers, desc, l, et)                               \

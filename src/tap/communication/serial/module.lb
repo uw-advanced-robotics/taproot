@@ -41,8 +41,9 @@ class Remote(Module):
         except KeyError:
             raise RuntimeError(f"Dev board {board_name} is not valid")
         env.substitutions = {"uart_port": uart_port}
-        env.template("remote.cpp.in", "remote.cpp")
-        env.template("remote.hpp.in", "remote.hpp")
+        env.template("remote_serial_constants.hpp.in", "remote_serial_constants.hpp")
+        env.copy("remote.cpp")
+        env.copy("remote.hpp")
 
 class RefSerial(Module):
     def init(self, module):
@@ -60,8 +61,9 @@ class RefSerial(Module):
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
         env.substitutions = {"uart_port": env["uart_port"]}
-        env.template("ref_serial.cpp.in", "ref_serial.cpp")
-        env.template("ref_serial.hpp.in", "ref_serial.hpp")
+        env.template("ref_serial_constants.hpp.in", "ref_serial_constants.hpp")
+        env.copy("ref_serial.cpp")
+        env.copy("ref_serial.hpp")
 
 class TerminalSerial(Module):
     def init(self, module):
@@ -73,14 +75,15 @@ class TerminalSerial(Module):
         module.add_option(
             StringOption(
                 name="uart_port",
-                description="Which uart port the host device that is reading data\
-                             from the UART port is connected to."))
+                description="Which uart port the host device that is reading data" \
+                             "from the UART port is connected to."))
         return True
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
         env.substitutions = {"uart_port": env["uart_port"]}
-        env.template("uart_terminal_device.hpp.in", "uart_terminal_device.hpp")
+        env.template("uart_terminal_device_constants.hpp.in", "uart_terminal_device_constants.hpp")
+        env.copy("uart_terminal_device.hpp")
         env.copy("uart_terminal_device.cpp")
         env.copy("terminal_serial.hpp")
         env.copy("terminal_serial.cpp")

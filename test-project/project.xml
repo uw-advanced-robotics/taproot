@@ -15,7 +15,7 @@
     <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
     <option name="taproot:board:digital_in_pins">A,B,C,D</option>
     <option name="taproot:board:digital_out_pins">E,F,G,H</option>
-    <option name="taproot:board:analog_in_pins">S,T,U,V,Oled</option>
+    <option name="taproot:board:analog_in_pins">S,T,U,V,OledJoystick</option>
     <option name="taproot:board:pwm_pins">W,X,Y,Z,Buzzer</option>
 
     <!-- Uncomment when working with type c board -->

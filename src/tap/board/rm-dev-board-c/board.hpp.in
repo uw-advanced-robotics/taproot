@@ -42,7 +42,6 @@ using namespace modm::platform;
 #include "modm/math/units.hpp"
 #endif
 
-/// @ingroup TODO
 namespace Board
 {
 using namespace modm::literals;
