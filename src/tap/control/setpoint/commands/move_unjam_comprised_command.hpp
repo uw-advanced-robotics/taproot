@@ -46,6 +46,8 @@ public:
      * @param[in] agitatorChangeAngle The angle in radians that the agitator should rotate.
      * @param[in] maxUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
+     * @param[in] minUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
+     *      passed on directly to this command's constructor.
      * @param[in] agitatorRotateTime The time it takes to rotate the agitator to the desired angle
      *      in milliseconds.
      * @param[in] agitatorPauseAfterRotateTime The time that the command will wait after rotating to
@@ -56,6 +58,7 @@ public:
         SetpointSubsystem* setpointSubsystem,
         float agitatorChangeAngle,
         float maxUnjamAngle,
+        float minUnjamAngle,
         uint32_t agitatorRotateTime,
         uint32_t agitatorPauseAfterRotateTime,
         bool setToTargetOnEnd,

@@ -32,6 +32,7 @@ class SetpointSubsystem;  // forward declaration
 UnjamCommand::UnjamCommand(
     SetpointSubsystem* setpointSubsystem,
     float maximumDisplacement,
+    float unjamDisplacement,
     uint32_t maxWaitTime)
     : currUnjamstate(UNJAM_BACK),
       unjamRotateTimeout(0),
@@ -39,6 +40,7 @@ UnjamCommand::UnjamCommand(
       maxWaitTime(maxWaitTime),
       setpointSubsystem(setpointSubsystem),
       maxUnjamDisplacement(maximumDisplacement),
+      unjamDisplacement(unjamDisplacement),
       currUnjamDisplacement(0.0f),
       setpointBeforeUnjam(0.0f)
 {
@@ -72,6 +74,11 @@ void UnjamCommand::initialize()
 
 void UnjamCommand::execute()
 {
+    // Don't run logic if subsystem offline
+    if (!setpointSubsystem->isOnline())
+    {
+        return;
+    }
     if (salvationTimeout.execute())
     {
         currUnjamDisplacement = setpointBeforeUnjam - 2 * tap::algorithms::PI;

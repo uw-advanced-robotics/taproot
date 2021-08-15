@@ -39,6 +39,7 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     SetpointSubsystem* setpointSubsystem,
     float agitatorChangeAngle,
     float maxUnjamAngle,
+    float minUnjamAngle,
     uint32_t agitatorRotateTime,
     uint32_t agitatorPauseAfterRotateTime,
     bool setToTargetOnEnd,
@@ -52,7 +53,7 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
           agitatorPauseAfterRotateTime,
           setToTargetOnEnd,
           setpointTolerance),
-      agitatorUnjamCommand(setpointSubsystem, maxUnjamAngle),
+      agitatorUnjamCommand(setpointSubsystem, maxUnjamAngle, minUnjamAngle),
       unjamSequenceCommencing(false),
       agitatorDisconnectFault(false)
 {

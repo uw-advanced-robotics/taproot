@@ -48,12 +48,16 @@ public:
      * @param[in] setpointSubsystem The associated agitator subsystem to control.
      * @param[in] maximumDisplacement The maximum displacement of the subsystem
      *      to be used in an unjam step.
+     * @param[in] unjamDisplacementThreshold The minimum displacement to be reached both
+     *      forwards and backwards before the subsystem is considered unjammed.
      * @param[in] maxWaitTime The maximum amount of time the controller will
-     *      wait for the motor to rotate backwards before commencing with a forward rotation.
+     *      wait for the subsystem to move in milliseconds before 
+     *      trying to move in the opposite direction.
      */
     UnjamCommand(
         SetpointSubsystem* setpointSubsystem,
-        float maximumDisplacement,
+        float minimumDisplacement,
+        float unjamDisplacement,
         uint32_t maxWaitTime = DEFAULT_MAX_WAIT_TIME);
 
     void initialize() override;
@@ -109,6 +113,8 @@ private:
     SetpointSubsystem* setpointSubsystem;
 
     float maxUnjamDisplacement;
+
+    float unjamDisplacement;
 
     float currUnjamDisplacement;
 
