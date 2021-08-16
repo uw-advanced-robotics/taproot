@@ -107,8 +107,8 @@ TEST(UnjamCommand, command_does_not_execute_while_subsystem_offline)
 
 // isFinished() tests ------------------------------------
 
-// Test function for follosing test
-float getCurrentValueSimulator()
+// Test function for following test
+static float getCurrentValueSimulator()
 {
     uint32_t time = getTimeMilliseconds();
     // Return initial position
@@ -128,7 +128,7 @@ float getCurrentValueSimulator()
 
 /**
  * Subsystem will be determined to be unjammed when unjam command
- * was able to successfully reach backwards and forwards MIN_UNJAM_DISPLACEMENT
+ * was able to successfully reach backwards and forwards `unjamDisplacement`
  */
 TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_both_directions)
 {
@@ -148,6 +148,8 @@ TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_b
         setTime(i);
         command.execute();
     }
+
+    EXPECT_TRUE(command.isFinished());
 }
 
 // end() tests ------------------------------------
