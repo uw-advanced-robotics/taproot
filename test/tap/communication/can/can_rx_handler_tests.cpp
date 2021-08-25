@@ -28,11 +28,10 @@ TEST(CanRxHandler, ListenerAttachesSelf)
     tap::Drivers drivers;
     tap::mock::CanRxListenerMock listener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
 
-    EXPECT_CALL(drivers.canRxHandler, attachReceiveHandler);
+    EXPECT_CALL(drivers.canRxHandler, attachReceiveHandler(&listener));
     listener.attachSelfToRxHandler();
 
-    // 2 times because of the imu rx listener
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler).Times(2);
+    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
 }
 
 TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
@@ -51,10 +50,8 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
 
         handler.removeReceiveHandler(listener);
         EXPECT_EQ(nullptr, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
-        EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
+        EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
     }
-
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
 }
 
 TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
@@ -78,9 +75,8 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
         EXPECT_EQ(
             nullptr,
             handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[DJI_MOTOR_NORMALIZED_ID(i)]);
-        EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
+        EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
     }
-    EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler);
 }
 
 TEST(CanRxHandler, ErrorIsThrownWithOOBMessageID)

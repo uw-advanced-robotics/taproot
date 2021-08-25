@@ -30,7 +30,6 @@
 #include "dji_motor_terminal_serial_handler_mock.hpp"
 #include "dji_motor_tx_handler_mock.hpp"
 #include "error_controller_mock.hpp"
-#include "imu_rx_listener_mock.hpp"
 #include "leds_mock.hpp"
 #include "mpu6500_mock.hpp"
 #include "pwm_mock.hpp"
@@ -109,9 +108,6 @@ DjiMotorTerminalSerialHandlerMock::DjiMotorTerminalSerialHandlerMock(tap::Driver
 {
 }
 DjiMotorTerminalSerialHandlerMock::~DjiMotorTerminalSerialHandlerMock() {}
-
-ImuRxListenerMock::ImuRxListenerMock(Drivers *drivers) : ImuRxListener(drivers) {}
-ImuRxListenerMock::~ImuRxListenerMock() {}
 
 LedsMock::LedsMock() {}
 LedsMock::~LedsMock() {}
