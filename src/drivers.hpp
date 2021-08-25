@@ -32,7 +32,6 @@
 #include "tap/mock/dji_motor_terminal_serial_handler_mock.hpp"
 #include "tap/mock/dji_motor_tx_handler_mock.hpp"
 #include "tap/mock/error_controller_mock.hpp"
-#include "tap/mock/imu_rx_listener_mock.hpp"
 #include "tap/mock/leds_mock.hpp"
 #include "tap/mock/mpu6500_mock.hpp"
 #include "tap/mock/pwm_mock.hpp"
@@ -47,7 +46,6 @@
 #include "tap/architecture/profiler.hpp"
 #include "tap/communication/can/can.hpp"
 #include "tap/communication/can/can_rx_handler.hpp"
-#include "tap/communication/can/imu_rx_listener.hpp"
 #include "tap/communication/gpio/analog.hpp"
 #include "tap/communication/gpio/digital.hpp"
 #include "tap/communication/gpio/leds.hpp"
@@ -100,8 +98,7 @@ public:
           djiMotorTxHandler(this),
           profiler(),
           djiMotorTerminalSerialHandler(this),
-          schedulerTerminalHandler(this),
-          imuRxHandler(this)
+          schedulerTerminalHandler(this)
     /* Begin user constructor defines */
     /* End user mock drivers defines */ {}
 
@@ -125,7 +122,6 @@ public:
     arch::Profiler profiler;
     testing::NiceMock<mock::DjiMotorTerminalSerialHandlerMock> djiMotorTerminalSerialHandler;
     testing::NiceMock<mock::SchedulerTerminalHandlerMock> schedulerTerminalHandler;
-    testing::NiceMock<mock::ImuRxListenerMock> imuRxHandler;
 /* Begin user mock drivers defines */
 /* End user mock drivers defines */
 #else
@@ -149,7 +145,6 @@ public:
     arch::Profiler profiler;
     motor::DjiMotorTerminalSerialHandler djiMotorTerminalSerialHandler;
     control::SchedulerTerminalHandler schedulerTerminalHandler;
-    can::ImuRxListener imuRxHandler;
 /* Begin user drivers defines */
 /* End user drivers defines */
 #endif
