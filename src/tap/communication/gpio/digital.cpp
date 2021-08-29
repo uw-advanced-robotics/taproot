@@ -82,6 +82,10 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
         case Digital::OutputPin::H:
             DigitalOutPinH::set(isSet);
             break;
+
+        case Digital::OutputPin::Laser:
+            DigitalOutPinLaser::set(isSet);
+            break;
     }
 #endif
 }

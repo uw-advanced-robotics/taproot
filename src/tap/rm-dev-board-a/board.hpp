@@ -178,13 +178,18 @@ using DigitalInPinD = GpioOutputH10;
 using DigitalInPins = SoftwareGpioPort<DigitalInPinA, DigitalInPinB, DigitalInPinC, DigitalInPinD>;
 
 // initialize 4 digital output pins
-using DigitalOutPinE = GpioInputD15;
-using DigitalOutPinF = GpioInputD14;
-using DigitalOutPinG = GpioInputD13;
-using DigitalOutPinH = GpioInputD12;
+using DigitalOutPinE = GpioOutputD15;
+using DigitalOutPinF = GpioOutputD14;
+using DigitalOutPinG = GpioOutputD13;
+using DigitalOutPinH = GpioOutputD12;
+using DigitalOutPinLaser = GpioOutputG13;
 
-using DigitalOutPins =
-    SoftwareGpioPort<DigitalOutPinE, DigitalOutPinF, DigitalOutPinG, DigitalOutPinH>;
+using DigitalOutPins = SoftwareGpioPort<
+    DigitalOutPinE,
+    DigitalOutPinF,
+    DigitalOutPinG,
+    DigitalOutPinH,
+    DigitalOutPinLaser>;
 
 // gpio pins used for SPI communication to the onboard MPU6500 IMU
 using ImuSck = GpioF7;
