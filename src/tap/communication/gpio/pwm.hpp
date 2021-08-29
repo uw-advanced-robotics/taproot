@@ -38,6 +38,7 @@ namespace gpio
 class Pwm
 {
 public:
+    static constexpr uint32_t DEFAULT_TIMER3_FREQUENCY = 50;
     static constexpr uint32_t DEFAULT_TIMER8_FREQUENCY = 50;
     static constexpr uint32_t DEFAULT_TIMER12_FREQUENCY = 2000;
 
@@ -56,6 +57,7 @@ public:
         Y,
         Z,
         BUZZER,
+        HEATER,
     };
 
     /**
@@ -63,6 +65,7 @@ public:
      */
     enum Timer
     {
+        TIMER_3,    /// Associated with heater
         TIMER_8,   /// Associated with pins W, X, Y, and Z
         TIMER_12,  /// Associated with buzzer
     };
@@ -97,7 +100,14 @@ public:
 
 private:
     static constexpr int BUZZER_CHANNEL = 1;
+    static constexpr int HEATER_CHANNEL = 2;
 
+    /**
+     * Overflow as calculated by the modm Timer3 object in its getPeriod function.
+     * This is what the Auto Reload Register is set to and the pwm duty is scaled to
+     * a value between 0 and this value.
+     */
+    uint16_t timer3CalculatedOverflow;
     /**
      * Overflow as calculated by the modm Timer8 object in its getPeriod function.
      * This is what the Auto Reload Register is set to and the pwm duty is scaled to

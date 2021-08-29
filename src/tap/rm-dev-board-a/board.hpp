@@ -160,14 +160,20 @@ using AnalogInPins =
     SoftwareGpioPort<AnalogInPinS, AnalogInPinT, AnalogInPinU, AnalogInPinV, AnalogInPinOled>;
 
 // initialize 4 pwm output pins
+using PWMOutPinHeater = GpioOutputB5;
 using PWMOutPinW = GpioOutputI5;
 using PWMOutPinX = GpioOutputI6;
 using PWMOutPinY = GpioOutputI7;
 using PWMOutPinZ = GpioOutputI2;
 using PWMOutPinBuzzer = GpioOutputH6;
 
-using PWMOutPins =
-    SoftwareGpioPort<PWMOutPinW, PWMOutPinX, PWMOutPinY, PWMOutPinZ, PWMOutPinBuzzer>;
+using PWMOutPins = SoftwareGpioPort<
+    PWMOutPinHeater,
+    PWMOutPinW,
+    PWMOutPinX,
+    PWMOutPinY,
+    PWMOutPinZ,
+    PWMOutPinBuzzer>;
 
 // initialize 4 digital input pins
 using DigitalInPinA = GpioOutputI0;

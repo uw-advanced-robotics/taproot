@@ -32,6 +32,14 @@ namespace gpio
 void Pwm::init()
 {
 #ifndef PLATFORM_HOSTED
+    Timer3::connect<PWMOutPinHeater::Ch2>();
+    Timer3::enable();
+    Timer3::setMode(Timer3::Mode::UpCounter);
+    timer3CalculatedOverflow =
+        Timer3::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_TIMER3_FREQUENCY);
+    Timer3::start();
+    Timer3::enableOutput();
+
     Timer8::connect<PWMOutPinW::Ch1, PWMOutPinX::Ch2, PWMOutPinY::Ch3, PWMOutPinZ::Ch4>();
     Timer8::enable();
     Timer8::setMode(Timer8::Mode::UpCounter);
@@ -54,6 +62,7 @@ void Pwm::init()
 
 void Pwm::writeAll(float duty)
 {
+    write(duty, Pin::HEATER);
     write(duty, Pin::W);
     write(duty, Pin::X);
     write(duty, Pin::Y);
@@ -65,11 +74,18 @@ void Pwm::write(float duty, Pin pin)
 {
 #ifndef PLATFORM_HOSTED
     duty = limitVal(duty, 0.0f, 1.0f);
-    if (pin == BUZZER)
+    if (pin == HEATER)
+    {
+        Timer3::configureOutputChannel(
+            HEATER_CHANNEL,
+            Timer3::OutputCompareMode::Pwm,
+            duty * timer3CalculatedOverflow);
+    }
+    else if (pin == BUZZER)
     {
         Timer12::configureOutputChannel(
             BUZZER_CHANNEL,
-            Timer12::OutputCompareMode::Pwm2,
+            Timer12::OutputCompareMode::Pwm,
             duty * timer8CalculatedOverflow);
     }
     else
@@ -87,11 +103,15 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
 #ifndef PLATFORM_HOSTED
     switch (timer)
     {
+        case TIMER_3:
+            timer3CalculatedOverflow = Timer3::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            break;
         case TIMER_8:
-            Timer8::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            timer8CalculatedOverflow = Timer8::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
         case TIMER_12:
-            Timer12::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            timer12CalculatedOverflow =
+                Timer12::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
     }
 #endif
@@ -102,6 +122,9 @@ void Pwm::pause(Timer timer)
 #ifndef PLATFORM_HOSTED
     switch (timer)
     {
+        case TIMER_3:
+            Timer3::pause();
+            break;
         case TIMER_8:
             Timer8::pause();
             break;
@@ -117,6 +140,9 @@ void Pwm::start(Timer timer)
 #ifndef PLATFORM_HOSTED
     switch (timer)
     {
+        case TIMER_3:
+            Timer3::start();
+            break;
         case TIMER_8:
             Timer8::start();
             break;
