@@ -32,6 +32,7 @@
 #include "error_controller_mock.hpp"
 #include "leds_mock.hpp"
 #include "mpu6500_mock.hpp"
+#include "mpu6500_terminal_serial_handler_mock.hpp"
 #include "pwm_mock.hpp"
 #include "ref_serial_mock.hpp"
 #include "remote_mock.hpp"
@@ -120,6 +121,12 @@ ErrorControllerMock::~ErrorControllerMock() {}
 
 Mpu6500Mock::Mpu6500Mock(tap::Drivers *drivers) : tap::sensors::Mpu6500(drivers) {}
 Mpu6500Mock::~Mpu6500Mock() {}
+
+Mpu6500TerminalSerialHandlerMock::Mpu6500TerminalSerialHandlerMock(tap::Drivers *drivers)
+    : tap::sensors::Mpu6500TerminalSerialHandler(drivers)
+{
+}
+Mpu6500TerminalSerialHandlerMock::~Mpu6500TerminalSerialHandlerMock() {}
 
 PwmMock::PwmMock() {}
 PwmMock::~PwmMock() {}

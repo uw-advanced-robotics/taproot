@@ -34,6 +34,7 @@
 #include "tap/mock/error_controller_mock.hpp"
 #include "tap/mock/leds_mock.hpp"
 #include "tap/mock/mpu6500_mock.hpp"
+#include "tap/mock/mpu6500_terminal_serial_handler_mock.hpp"
 #include "tap/mock/pwm_mock.hpp"
 #include "tap/mock/ref_serial_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
@@ -52,6 +53,7 @@
 #include "tap/communication/gpio/pwm.hpp"
 #include "tap/communication/remote.hpp"
 #include "tap/communication/sensors/mpu6500/mpu6500.hpp"
+#include "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp"
 #include "tap/communication/serial/ref_serial.hpp"
 #include "tap/communication/serial/terminal_serial.hpp"
 #include "tap/communication/serial/uart.hpp"
@@ -84,6 +86,7 @@ public:
           pwm(),
           remote(this),
           mpu6500(this),
+          mpu6500TerminalSerialHandler(this),
           uart(),
           refSerial(this),
 #ifdef ENV_UNIT_TESTS
@@ -111,6 +114,7 @@ public:
     testing::NiceMock<mock::PwmMock> pwm;
     testing::NiceMock<mock::RemoteMock> remote;
     testing::NiceMock<mock::Mpu6500Mock> mpu6500;
+    testing::NiceMock<mock::Mpu6500TerminalSerialHandlerMock> mpu6500TerminalSerialHandler;
     testing::NiceMock<mock::UartMock> uart;
     testing::NiceMock<mock::RefSerialMock> refSerial;
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
@@ -134,6 +138,7 @@ public:
     gpio::Pwm pwm;
     Remote remote;
     sensors::Mpu6500 mpu6500;
+    sensors::Mpu6500TerminalSerialHandler mpu6500TerminalSerialHandler;
     serial::Uart uart;
     serial::RefSerial refSerial;
     control::CommandScheduler commandScheduler;
