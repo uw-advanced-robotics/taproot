@@ -65,7 +65,7 @@ public:
      */
     enum Timer
     {
-        TIMER_3,    /// Associated with heater
+        TIMER_3,   /// Associated with heater
         TIMER_8,   /// Associated with pins W, X, Y, and Z
         TIMER_12,  /// Associated with buzzer
     };

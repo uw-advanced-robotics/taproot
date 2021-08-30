@@ -26,6 +26,7 @@
 #include "tap/architecture/timeout.hpp"
 #include "tap/util_macros.hpp"
 
+#include "modm/math/filter/pid.hpp"
 #include "modm/processing/protothread.hpp"
 
 namespace tap
@@ -46,7 +47,7 @@ namespace sensors
 class Mpu6500 : public ::modm::pt::Protothread
 {
 public:
-    Mpu6500(Drivers *drivers) : drivers(drivers), raw() {}
+    Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
 
@@ -54,12 +55,13 @@ public:
      * Initialize the imu and the SPI line. Uses SPI1, which is internal to the
      * type A board.
      *
-     * @note this function blocks for approximately 1 second.
+     * @note this function can block for approximately 12 seconds.
      */
     mockable void init();
 
     /**
      * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
+     * Also runs a controller to keep the temperature constant.
      * Call at 500 hz for best performance.
      */
     mockable void calcIMUAngles();
@@ -140,19 +142,27 @@ public:
      */
     mockable float getTiltAngle();
 
-    /// Use for converting from gyro values we receive to more conventional degrees / second.
+    /**
+     * Use for converting from gyro values we receive to more conventional degrees / second.
+     */
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
 
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
-    /// Use to convert the raw acceleration into more conventional degrees / second^2
+    /**
+     * Use to convert the raw acceleration into more conventional degrees / second^2
+     */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-    /// The number of samples we take in order to determine the mpu offsets.
+    /**
+     * The number of samples we take in order to determine the mpu offsets.
+     */
     static constexpr float MPU6500_OFFSET_SAMPLES = 300;
 
-    /// The number of bytes read to read acceleration, gyro, and temperature.
+    /**
+     * The number of bytes read to read acceleration, gyro, and temperature.
+     */
     static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
     /**
@@ -160,6 +170,35 @@ private:
      * in microseconds.
      */
     static constexpr int DELAY_BTWN_CALC_AND_READ_REG = 1550;
+
+    /**
+     * PID constants for temperature control.
+     */
+    static constexpr float TEMPERATURE_PID_P = 0.8f;
+    static constexpr float TEMPERATURE_PID_I = 0.2f;
+    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.5f;
+    static constexpr float TEMPERATURE_PID_MAX_OUT = 1.0f;
+    /**
+     * PWM frequency of the timer associated with the GPIO pin that is in charge
+     * of controlling the temperature of the IMU.
+     */
+    static constexpr float HEATER_PWM_FREQUENCY = 1000.0f;
+
+    /**
+     * Normal operating temperature is ~40 degrees C, and RM manual says the optimal operating
+     * temperature is ~15-20 degrees C above the normal operating temperature
+     */
+    static constexpr float IMU_DESIRED_TEMPERATURE = 55.0f;
+
+    /**
+     * Time in ms to wait for the IMU heat to stabalize upon initialization.
+     */
+    static constexpr uint32_t MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE = 10'000;
+
+    /**
+     * Bit appended or removed from a register while reading/writing.
+     */
+    static constexpr uint8_t MPU6500_READ_BIT = 0x80;
 
     /**
      * Storage for the raw data we receive from the mpu6500, as well as offsets
@@ -174,17 +213,27 @@ private:
             int16_t z = 0;
         };
 
-        /// Raw acceleration data.
+        /**
+         * Raw acceleration data.
+         */
         Vector accel;
-        /// Raw gyroscope data.
+        /**
+         * Raw gyroscope data.
+         */
         Vector gyro;
 
-        /// Raw temperature.
+        /**
+         * Raw temperature.
+         */
         uint16_t temperature = 0;
 
-        /// Acceleration offset calculated in init.
+        /**
+         * Acceleration offset calculated in init.
+         */
         Vector accelOffset;
-        /// Gyroscope offset calculated in init.
+        /**
+         * Gyroscope offset calculated in init.
+         */
         Vector gyroOffset;
     };
 
@@ -193,8 +242,8 @@ private:
     bool imuInitialized = false;
 
     tap::arch::MicroTimeout readRegistersTimeout;
-    uint8_t tx = 0;  // Byte used for reading data in the read protothread
-    uint8_t rx = 0;  // Byte used for reading data in the read protothread
+    uint8_t tx = 0;  /// Byte used for reading data in the read protothread
+    uint8_t rx = 0;  /// Byte used for reading data in the read protothread
 
     RawData raw;
 
@@ -207,18 +256,28 @@ private:
 
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
-    /// Compute the gyro offset values. @note this function blocks.
+    modm::Pid<float> imuTemperatureController;
+
+    /**
+     * Compute the gyro offset values. @note this function blocks.
+     */
     void calculateGyroOffset();
 
-    /// Calibrate accelerometer offset values. @note this function blocks.
+    /**
+     * Calibrate accelerometer offset values. @note this function blocks.
+     */
     void calculateAccOffset();
 
     // Functions for interacting with hardware directly.
 
-    /// Pull the NSS pin low to initiate contact with the imu.
+    /**
+     * Pull the NSS pin low to initiate contact with the imu.
+     */
     void mpuNssLow();
 
-    /// Pull the NSS pin high to end contact with the imu.
+    /**
+     * Pull the NSS pin high to end contact with the imu.
+     */
     void mpuNssHigh();
 
     /**
@@ -230,7 +289,7 @@ private:
     /**
      * Write to a given register.
      */
-    uint8_t spiWriteRegister(uint8_t reg, uint8_t data);
+    void spiWriteRegister(uint8_t reg, uint8_t data);
 
     /**
      * Read from a given register.
@@ -242,7 +301,12 @@ private:
      * regAddr is the first address read, and it reads len number of addresses
      * from that point.
      */
-    uint8_t spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+    void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+
+    /**
+     * Runs a PID controller to regulate the temperature of the IMU.
+     */
+    void runTemperatureController();
 };
 
 }  // namespace sensors

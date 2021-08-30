@@ -32,6 +32,18 @@ namespace sensors
 {
 using namespace modm::literals;
 
+Mpu6500::Mpu6500(Drivers *drivers)
+    : drivers(drivers),
+      raw(),
+      imuTemperatureController(
+          TEMPERATURE_PID_P,
+          TEMPERATURE_PID_I,
+          0,
+          TEMPERATURE_PID_MAX_ERR_SUM,
+          TEMPERATURE_PID_MAX_OUT)
+{
+}
+
 void Mpu6500::init()
 {
 #ifndef PLATFORM_HOSTED
@@ -85,6 +97,16 @@ void Mpu6500::init()
         modm::delay_ms(1);
     }
 
+    drivers->pwm.setTimerFrequency(gpio::Pwm::TIMER_3, HEATER_PWM_FREQUENCY);
+
+    tap::arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
+    do
+    {
+        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
+        runTemperatureController();
+        modm::delay_ms(2);
+    } while (!waitHeatTimeout.execute() && getTemp() < IMU_DESIRED_TEMPERATURE);
+
     calculateAccOffset();
     calculateGyroOffset();
 
@@ -100,6 +122,8 @@ void Mpu6500::calcIMUAngles()
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
         readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+
+        runTemperatureController();
     }
     else
     {
@@ -227,6 +251,8 @@ void Mpu6500::calculateGyroOffset()
         raw.gyroOffset.x += (rxBuff[8] << 8) | rxBuff[9];
         raw.gyroOffset.y += (rxBuff[10] << 8) | rxBuff[11];
         raw.gyroOffset.z += (rxBuff[12] << 8) | rxBuff[13];
+        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
+        runTemperatureController();
         modm::delay_ms(2);
     }
 
@@ -245,6 +271,8 @@ void Mpu6500::calculateAccOffset()
         raw.accelOffset.x += (rxBuff[0] << 8) | rxBuff[1];
         raw.accelOffset.y += (rxBuff[2] << 8) | rxBuff[3];
         raw.accelOffset.z += ((rxBuff[4] << 8) | rxBuff[5]) - 4096;
+        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
+        runTemperatureController();
         modm::delay_ms(2);
     }
 
@@ -256,25 +284,24 @@ void Mpu6500::calculateAccOffset()
 
 // Hardware interface functions (blocking functions, for initialization only)
 
-uint8_t Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
+void Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 {
 #ifndef PLATFORM_HOSTED
     mpuNssLow();
-    uint8_t tx = reg & 0x7F;
-    uint8_t rx = 0;
+    uint8_t tx = reg & ~MPU6500_READ_BIT;
+    uint8_t rx = 0;  // Unused
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     tx = data;
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
 #endif
-    return 0;
 }
 
 uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 {
 #ifndef PLATFORM_HOSTED
     mpuNssLow();
-    uint8_t tx = reg | 0x80;
+    uint8_t tx = reg | MPU6500_READ_BIT;
     uint8_t rx = 0;
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
@@ -285,18 +312,17 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 #endif
 }
 
-uint8_t Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
+void Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 {
 #ifndef PLATFORM_HOSTED
     mpuNssLow();
-    uint8_t tx = regAddr | 0x80;
+    uint8_t tx = regAddr | MPU6500_READ_BIT;
     uint8_t rx = 0;
     txBuff[0] = tx;
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     Board::ImuSpiMaster::transferBlocking(txBuff, pData, len);
     mpuNssHigh();
 #endif
-    return 0;
 }
 
 void Mpu6500::mpuNssLow()
@@ -313,6 +339,14 @@ void Mpu6500::mpuNssHigh()
 #endif
 }
 
+void Mpu6500::runTemperatureController()
+{
+    // Run PID controller to find desired output, output units PWM frequency
+    imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - drivers->mpu6500.getTemp());
+
+    // Set heater PWM output, limit output so it is not < 0
+    drivers->pwm.write(std::max(0.0f, imuTemperatureController.getValue()), tap::gpio::Pwm::HEATER);
+}
 }  // namespace sensors
 
 }  // namespace tap
