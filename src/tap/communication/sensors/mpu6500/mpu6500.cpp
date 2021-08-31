@@ -38,7 +38,7 @@ Mpu6500::Mpu6500(Drivers *drivers)
       imuTemperatureController(
           TEMPERATURE_PID_P,
           TEMPERATURE_PID_I,
-          0,
+          TEMPERATURE_PID_D,
           TEMPERATURE_PID_MAX_ERR_SUM,
           TEMPERATURE_PID_MAX_OUT)
 {
@@ -99,13 +99,26 @@ void Mpu6500::init()
 
     drivers->pwm.setTimerFrequency(gpio::Pwm::TIMER_3, HEATER_PWM_FREQUENCY);
 
-    tap::arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
+    arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
     do
     {
+        // Read registers to get temperature of mpu6500
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
+        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
+        // Run temperature controller to update the temperature of the mpu6500
         runTemperatureController();
         modm::delay_ms(2);
     } while (!waitHeatTimeout.execute() && getTemp() < IMU_DESIRED_TEMPERATURE);
+
+    // Wait for the IMU temperature to stabalize now that we are close to the correct temperature
+    waitHeatTimeout.restart(10000);
+    while (!waitHeatTimeout.execute())
+    {
+        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
+        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
+        runTemperatureController();
+        modm::delay_ms(2);
+    }
 
     calculateAccOffset();
     calculateGyroOffset();
@@ -151,15 +164,21 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        raw.accel.x = (rxBuff[0] << 8 | rxBuff[1]) - raw.accelOffset.x;
-        raw.accel.y = (rxBuff[2] << 8 | rxBuff[3]) - raw.accelOffset.y;
-        raw.accel.z = (rxBuff[4] << 8 | rxBuff[5]) - raw.accelOffset.z;
+        raw.accel.x = static_cast<float>(static_cast<int16_t>(rxBuff[0] << 8 | rxBuff[1])) -
+                      raw.accelOffset.x;
+        raw.accel.y = static_cast<float>(static_cast<int16_t>(rxBuff[2] << 8 | rxBuff[3])) -
+                      raw.accelOffset.y;
+        raw.accel.z = static_cast<float>(static_cast<int16_t>(rxBuff[4] << 8 | rxBuff[5])) -
+                      raw.accelOffset.z;
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
-        raw.gyro.x = ((rxBuff[8] << 8 | rxBuff[9]) - raw.gyroOffset.x);
-        raw.gyro.y = ((rxBuff[10] << 8 | rxBuff[11]) - raw.gyroOffset.y);
-        raw.gyro.z = ((rxBuff[12] << 8 | rxBuff[13]) - raw.gyroOffset.z);
+        raw.gyro.x = static_cast<float>(
+            static_cast<int16_t>((rxBuff[8] << 8 | rxBuff[9])) - raw.gyroOffset.x);
+        raw.gyro.y = static_cast<float>(
+            static_cast<int16_t>((rxBuff[10] << 8 | rxBuff[11])) - raw.gyroOffset.y);
+        raw.gyro.z = static_cast<float>(
+            static_cast<int16_t>((rxBuff[12] << 8 | rxBuff[13])) - raw.gyroOffset.z);
     }
     PT_END();
 #else
@@ -248,9 +267,9 @@ void Mpu6500::calculateGyroOffset()
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
-        raw.gyroOffset.x += (rxBuff[8] << 8) | rxBuff[9];
-        raw.gyroOffset.y += (rxBuff[10] << 8) | rxBuff[11];
-        raw.gyroOffset.z += (rxBuff[12] << 8) | rxBuff[13];
+        raw.gyroOffset.x += static_cast<int16_t>((rxBuff[8] << 8) | rxBuff[9]);
+        raw.gyroOffset.y += static_cast<int16_t>((rxBuff[10] << 8) | rxBuff[11]);
+        raw.gyroOffset.z += static_cast<int16_t>((rxBuff[12] << 8) | rxBuff[13]);
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
         runTemperatureController();
         modm::delay_ms(2);
@@ -268,9 +287,9 @@ void Mpu6500::calculateAccOffset()
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
         spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
-        raw.accelOffset.x += (rxBuff[0] << 8) | rxBuff[1];
-        raw.accelOffset.y += (rxBuff[2] << 8) | rxBuff[3];
-        raw.accelOffset.z += ((rxBuff[4] << 8) | rxBuff[5]) - 4096;
+        raw.accelOffset.x += static_cast<int16_t>((rxBuff[0] << 8) | rxBuff[1]);
+        raw.accelOffset.y += static_cast<int16_t>((rxBuff[2] << 8) | rxBuff[3]);
+        raw.accelOffset.z += static_cast<int16_t>(((rxBuff[4] << 8) | rxBuff[5]) - 4096);
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
         runTemperatureController();
         modm::delay_ms(2);
@@ -342,7 +361,7 @@ void Mpu6500::mpuNssHigh()
 void Mpu6500::runTemperatureController()
 {
     // Run PID controller to find desired output, output units PWM frequency
-    imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - drivers->mpu6500.getTemp());
+    imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - getTemp());
 
     // Set heater PWM output, limit output so it is not < 0
     drivers->pwm.write(std::max(0.0f, imuTemperatureController.getValue()), tap::gpio::Pwm::HEATER);

@@ -158,7 +158,7 @@ private:
     /**
      * The number of samples we take in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_OFFSET_SAMPLES = 300;
+    static constexpr float MPU6500_OFFSET_SAMPLES = 500;
 
     /**
      * The number of bytes read to read acceleration, gyro, and temperature.
@@ -174,9 +174,10 @@ private:
     /**
      * PID constants for temperature control.
      */
-    static constexpr float TEMPERATURE_PID_P = 0.8f;
-    static constexpr float TEMPERATURE_PID_I = 0.2f;
-    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.5f;
+    static constexpr float TEMPERATURE_PID_P = 1.0f;
+    static constexpr float TEMPERATURE_PID_I = 0.0f;
+    static constexpr float TEMPERATURE_PID_D = 20.0f;
+    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.0f;
     static constexpr float TEMPERATURE_PID_MAX_OUT = 1.0f;
     /**
      * PWM frequency of the timer associated with the GPIO pin that is in charge
@@ -186,9 +187,9 @@ private:
 
     /**
      * Normal operating temperature is ~40 degrees C, and RM manual says the optimal operating
-     * temperature is ~15-20 degrees C above the normal operating temperature
+     * temperature is ~15-20 degrees C above the normal operating temperature of the board.
      */
-    static constexpr float IMU_DESIRED_TEMPERATURE = 55.0f;
+    static constexpr float IMU_DESIRED_TEMPERATURE = 50.0f;
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.
@@ -208,9 +209,9 @@ private:
     {
         struct Vector
         {
-            int16_t x = 0;
-            int16_t y = 0;
-            int16_t z = 0;
+            float x = 0;
+            float y = 0;
+            float z = 0;
         };
 
         /**
