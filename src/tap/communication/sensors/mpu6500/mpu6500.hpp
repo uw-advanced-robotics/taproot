@@ -194,7 +194,7 @@ private:
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.
      */
-    static constexpr uint32_t MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE = 10'000;
+    static constexpr uint32_t MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE = 100;
 
     /**
      * Bit appended or removed from a register while reading/writing.
@@ -308,6 +308,8 @@ private:
      * Runs a PID controller to regulate the temperature of the IMU.
      */
     void runTemperatureController();
+
+    friend class Ist8310;
 };
 
 }  // namespace sensors

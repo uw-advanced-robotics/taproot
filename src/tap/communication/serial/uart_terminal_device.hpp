@@ -71,7 +71,7 @@ private:
     Drivers *drivers;
 
     static constexpr tap::serial::Uart::UartPort TERMINAL_UART_PORT =
-        tap::serial::Uart::UartPort::Uart3;
+        tap::serial::Uart::UartPort::Uart2;
 };  // class UartTerminalDevice
 }  // namespace serial
 }  // namespace communication

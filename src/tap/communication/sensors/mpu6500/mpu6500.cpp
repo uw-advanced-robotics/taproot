@@ -151,17 +151,17 @@ void Mpu6500::calcIMUAngles()
 bool Mpu6500::read()
 {
 #ifndef PLATFORM_HOSTED
-    PT_BEGIN();
-    while (true)
-    {
-        PT_WAIT_UNTIL(readRegistersTimeout.execute());
+    // PT_BEGIN();
+    // while (true)
+    // {
+        // PT_WAIT_UNTIL(readRegistersTimeout.execute());
 
         mpuNssLow();
         tx = MPU6500_ACCEL_XOUT_H | 0x80;
         rx = 0;
         txBuff[0] = tx;
-        PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-        PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
+        Board::ImuSpiMaster::transfer(&tx, &rx, 1);
+        Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
         mpuNssHigh();
 
         raw.accel.x = static_cast<float>(static_cast<int16_t>(rxBuff[0] << 8 | rxBuff[1])) -
@@ -179,8 +179,8 @@ bool Mpu6500::read()
             static_cast<int16_t>((rxBuff[10] << 8 | rxBuff[11])) - raw.gyroOffset.y);
         raw.gyro.z = static_cast<float>(
             static_cast<int16_t>((rxBuff[12] << 8 | rxBuff[13])) - raw.gyroOffset.z);
-    }
-    PT_END();
+    // }
+    // PT_END();
 #else
     return false;
 #endif

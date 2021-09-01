@@ -109,6 +109,8 @@ public:
 
     mockable void addHeader(const char *header, ITerminalSerialCallback *callback);
 
+    modm::IOStream &getStream() { return stream; }
+
 private:
     static constexpr int MAX_LINE_LENGTH = 256;
     static constexpr int STREAMING_PERIOD = 500;
