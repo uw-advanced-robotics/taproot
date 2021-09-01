@@ -39,6 +39,7 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
     printingAngles = false;
     printingGyro = false;
     printingAccel = false;
+    printingTemp = false;
     while (
         (arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine)))
     {
@@ -54,6 +55,10 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
         {
             printingAccel = true;
         }
+        else if (!printingTemp && strcmp(arg, "temp") == 0)
+        {
+            printingTemp = true;
+        }
         else if (strcmp(arg, "-h"))
         {
             outputStream << USAGE;
@@ -61,7 +66,7 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
         }
     }
 
-    if (!printingAngles && !printingGyro && !printingAccel)
+    if (!printingAngles && !printingGyro && !printingAccel && !printingTemp)
     {
         outputStream << USAGE;
         return !streamingEnabled;
@@ -92,17 +97,34 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
     if (printingAngles)
     {
         checkNeedsTab(needsTab, outputStream);
-        outputStream << mpu.getPitch() << "\t" << mpu.getRoll() << "\t" << mpu.getYaw();
+        outputStream.printf(
+            "%.2f\t%.2f\t%.2f",
+            static_cast<double>(mpu.getPitch()),
+            static_cast<double>(mpu.getRoll()),
+            static_cast<double>(mpu.getYaw()));
     }
     if (printingGyro)
     {
         checkNeedsTab(needsTab, outputStream);
-        outputStream << mpu.getGx() << "\t" << mpu.getGy() << "\t" << mpu.getGz();
+        outputStream.printf(
+            "%.2f\t%.2f\t%.2f",
+            static_cast<double>(mpu.getGx()),
+            static_cast<double>(mpu.getGy()),
+            static_cast<double>(mpu.getGz()));
     }
     if (printingAccel)
     {
         checkNeedsTab(needsTab, outputStream);
-        outputStream << mpu.getAx() << "\t" << mpu.getAy() << "\t" << mpu.getAz();
+        outputStream.printf(
+            "%.2f\t%.2f\t%.2f",
+            static_cast<double>(mpu.getAx()),
+            static_cast<double>(mpu.getAy()),
+            static_cast<double>(mpu.getAz()));
+    }
+    if (printingTemp)
+    {
+        checkNeedsTab(needsTab, outputStream);
+        outputStream.printf("%.2f", static_cast<double>(mpu.getTemp()));
     }
     outputStream << modm::endl;
 }
@@ -124,6 +146,11 @@ void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream << "ax\tay\taz";
+    }
+    if (printingTemp)
+    {
+        checkNeedsTab(needsTab, outputStream);
+        outputStream << "temp";
     }
     outputStream << modm::endl;
 }

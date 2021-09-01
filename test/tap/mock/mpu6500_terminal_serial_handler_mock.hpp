@@ -22,13 +22,13 @@
 
 #include <gmock/gmock.h>
 
-#include "tap/communication/sensors/mpu6500/mpu6500.hpp"
+#include "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp"
 
 namespace tap
 {
 namespace mock
 {
-class Mpu6500TerminalSerialHandlerMock : public tap::sensors::Mpu6500
+class Mpu6500TerminalSerialHandlerMock : public tap::sensors::Mpu6500TerminalSerialHandler
 {
 public:
     Mpu6500TerminalSerialHandlerMock(tap::Drivers *drivers);

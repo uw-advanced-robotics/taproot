@@ -29,6 +29,11 @@ class Drivers;
 
 namespace sensors
 {
+/**
+ * Interface for reading IMU data. Connects to the terminal serial driver and allows
+ * the user to query gyro, accel, angle, and temperature data. Single query and streaming
+ * modes supported.
+ */
 class Mpu6500TerminalSerialHandler : public communication::serial::ITerminalSerialCallback
 {
 public:
@@ -47,18 +52,20 @@ public:
 
 private:
     static constexpr char USAGE[] =
-        "Usage: mpu6500 [-h] [angle] [gyro] [acc]\n"
+        "Usage: mpu6500 [-h] [angle] [gyro] [acc] [temp]\n"
         "  Where:\n"
         "    - [-h] Prints usage\n"
         "    - [angle] Prints angle data\n"
         "    - [gyro] Prints gyro data\n"
-        "    - [accel] Prints accel data\n";
+        "    - [accel] Prints accel data\n"
+        "    - [temp] Prints temp data\n";
 
     Drivers* drivers;
 
     bool printingAngles = false;
     bool printingGyro = false;
     bool printingAccel = false;
+    bool printingTemp = false;
 
     void printHeader(modm::IOStream& outputStream);
 };  // class Mpu6500TerminalSerialHandler
