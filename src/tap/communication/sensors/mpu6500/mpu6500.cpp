@@ -24,6 +24,7 @@
 #include "tap/errors/create_errors.hpp"
 #include "tap/rm-dev-board-a/board.hpp"
 
+#include "mpu6500_config.hpp"
 #include "mpu6500_reg.hpp"
 
 namespace tap
@@ -47,6 +48,7 @@ Mpu6500::Mpu6500(Drivers *drivers)
 void Mpu6500::init()
 {
 #ifndef PLATFORM_HOSTED
+    // Configure NSS pin
     Board::ImuNss::GpioOutput();
 
     // connect GPIO pins to the alternate SPI function
@@ -55,13 +57,22 @@ void Mpu6500::init()
     // initialize SPI with clock speed
     Board::ImuSpiMaster::initialize<Board::SystemClock, 703125_Hz>();
 
+    // When using SPI interface, user should use PWR_MGMT_1 (register 107) as well as
+    // SIGNAL_PATH_RESET (register 104) to ensure the reset is performed properly. The sequence
+    // used should be:
+    //  1. Set H_RESET = 1 (register PWR_MGMT_1)
+    //  2. Wait 100ms
+    //  3. Set GYRO_RST = ACCEL_RST = TEMP_RST = 1 (register SIGNAL_PATH_RESET)
+    //  4. Wait 100ms
+
     // set power mode
-    spiWriteRegister(MPU6500_PWR_MGMT_1, 0x80);
+    spiWriteRegister(MPU6500_PWR_MGMT_1, MPU6500_PWR_MGMT_1_DEVICE_RESET_BIT);
 
     modm::delay_ms(100);
 
     // reset gyro, accel, and temperature
-    spiWriteRegister(MPU6500_SIGNAL_PATH_RESET, 0x07);
+    spiWriteRegister(MPU6500_SIGNAL_PATH_RESET, MPU6500_SIGNAL_PATH_RESET_ALL);
+
     modm::delay_ms(100);
 
     // verify mpu register ID
@@ -75,38 +86,33 @@ void Mpu6500::init()
         return;
     }
 
-    imuInitialized = true;
-
-    // 0: 250hz; 1: 184hz; 2: 92hz; 3: 41hz; 4: 20hz; 5: 10hz; 6: 5hz; 7: 3600hz
-    uint8_t Mpu6500InitData[7][2] = {
-        {MPU6500_PWR_MGMT_1, 0x03},      // Auto selects Clock Source
-        {MPU6500_PWR_MGMT_2, 0x00},      // all enable
-        {MPU6500_CONFIG, 0x02},          // gyro bandwidth 0x00:250Hz 0x04:20Hz
-        {MPU6500_GYRO_CONFIG, 0x18},     // gyro range 0x10:+-1000dps 0x18:+-2000dps
-        {MPU6500_ACCEL_CONFIG, 0x10},    // acc range 0x10:+-8G
-        {MPU6500_ACCEL_CONFIG_2, 0x00},  // acc bandwidth 0x00:250Hz 0x04:20Hz
-        {MPU6500_USER_CTRL, 0x20},       // Enable the I2C Master I/F module
-                                         // pins ES_DA and ES_SCL are isolated from
-                                         // pins SDA/SDI and SCL/SCLK.
+    uint8_t mpu6500InitData[7][2] = {
+        {MPU6500_PWR_MGMT_1, MPU6500_PWR_MGMT_1_CLKSEL},
+        {MPU6500_PWR_MGMT_2, 0x00},  // all enable
+        {MPU6500_CONFIG, MPU6500_CONFIG_DATA},
+        {MPU6500_GYRO_CONFIG, MPU6500_GYRO_CONFIG_DATA},
+        {MPU6500_ACCEL_CONFIG, MPU6500_ACCEL_CONFIG_DATA},
+        {MPU6500_ACCEL_CONFIG_2, MPU6500_ACCEL_CONFIG_2_DATA},
+        {MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA},
     };
 
     // write init setting to registers
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < sizeof(mpu6500InitData) / 2; i++)
     {
-        spiWriteRegister(Mpu6500InitData[i][0], Mpu6500InitData[i][1]);
+        spiWriteRegister(mpu6500InitData[i][0], Mpu6500InitData[i][1]);
         modm::delay_ms(1);
     }
 
+    imuInitialized = true;
+
+    // Initialize the heater timer frequency
     drivers->pwm.setTimerFrequency(gpio::Pwm::TIMER_3, HEATER_PWM_FREQUENCY);
 
+    // Wait for the heater to warm the mpu6500 up
     arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
     do
     {
-        // Read registers to get temperature of mpu6500
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
-        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        // Run temperature controller to update the temperature of the mpu6500
-        runTemperatureController();
+        readTempAndRunController();
         modm::delay_ms(2);
     } while (!waitHeatTimeout.execute() && getTemp() < IMU_DESIRED_TEMPERATURE);
 
@@ -114,9 +120,7 @@ void Mpu6500::init()
     waitHeatTimeout.restart(10000);
     while (!waitHeatTimeout.execute())
     {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
-        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        runTemperatureController();
+        readTempAndRunController();
         modm::delay_ms(2);
     }
 
@@ -148,13 +152,16 @@ void Mpu6500::calcIMUAngles()
     }
 }
 
+#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
+    (static_cast<float>(static_cast<int16_t>((buff[0] << 8) | buff[1])))
+
 bool Mpu6500::read()
 {
 #ifndef PLATFORM_HOSTED
-    // PT_BEGIN();
-    // while (true)
-    // {
-        // PT_WAIT_UNTIL(readRegistersTimeout.execute());
+    PT_BEGIN();
+    while (true)
+    {
+        PT_WAIT_UNTIL(readRegistersTimeout.execute());
 
         mpuNssLow();
         tx = MPU6500_ACCEL_XOUT_H | 0x80;
@@ -164,23 +171,17 @@ bool Mpu6500::read()
         Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
         mpuNssHigh();
 
-        raw.accel.x = static_cast<float>(static_cast<int16_t>(rxBuff[0] << 8 | rxBuff[1])) -
-                      raw.accelOffset.x;
-        raw.accel.y = static_cast<float>(static_cast<int16_t>(rxBuff[2] << 8 | rxBuff[3])) -
-                      raw.accelOffset.y;
-        raw.accel.z = static_cast<float>(static_cast<int16_t>(rxBuff[4] << 8 | rxBuff[5])) -
-                      raw.accelOffset.z;
+        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
+        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2) - raw.accelOffset.y;
+        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4) - raw.accelOffset.z;
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
-        raw.gyro.x = static_cast<float>(
-            static_cast<int16_t>((rxBuff[8] << 8 | rxBuff[9])) - raw.gyroOffset.x);
-        raw.gyro.y = static_cast<float>(
-            static_cast<int16_t>((rxBuff[10] << 8 | rxBuff[11])) - raw.gyroOffset.y);
-        raw.gyro.z = static_cast<float>(
-            static_cast<int16_t>((rxBuff[12] << 8 | rxBuff[13])) - raw.gyroOffset.z);
-    // }
-    // PT_END();
+        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8) - raw.gyroOffset.x;
+        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10) - raw.gyroOffset.y;
+        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12) - raw.gyroOffset.z;
+    }
+    PT_END();
 #else
     return false;
 #endif
@@ -366,6 +367,13 @@ void Mpu6500::runTemperatureController()
     // Set heater PWM output, limit output so it is not < 0
     drivers->pwm.write(std::max(0.0f, imuTemperatureController.getValue()), tap::gpio::Pwm::HEATER);
 }
+
+void Mpu6500::readTempAndRunController()
+{
+    spiReadRegister(MPU6500_TEMP_OUT_H, rxBuff, 2) raw.temperature = rxBuff[0] << 8 | rxBuff[1];
+    runTemperatureController();
+}
+
 }  // namespace sensors
 
 }  // namespace tap

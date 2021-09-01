@@ -309,6 +309,11 @@ private:
      */
     void runTemperatureController();
 
+    /**
+     * Reads the temperature of the mpu6500 (blocks) and calls runTemperatureController
+     */
+    void readTempAndRunController();
+
     friend class Ist8310;
 };
 
