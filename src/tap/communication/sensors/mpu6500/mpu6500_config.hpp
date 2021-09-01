@@ -100,7 +100,7 @@
 // [4]
 // 1 – Reset I2C Slave module and put the serial interface in SPI mode only.
 // This bit auto clears after one clock cycle of the internal 20MHz clock.
-#define MPU6500_USER_CTRL_I2C_IF_DIS
+#define MPU6500_USER_CTRL_I2C_IF_DIS 0b0
 
 // [3]
 // Reset the DMP when set to 1 while DMP_EN equals 0, automatically set to 0 when reset triggered
@@ -123,7 +123,7 @@
     (BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_DMP_EN, 0), BIT_SHIFT(1, 0)) |      \
      BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_FIFO_EN, 1), BIT_SHIFT(1, 1)) |     \
      BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_I2C_MST_EN, 2), BIT_SHIFT(1, 2)) |  \
-     BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_I2C_IF, 3), BIT_SHIFT(1, 3)) |      \
+     BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_I2C_IF_DIS, 3), BIT_SHIFT(1, 3)) |  \
      BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_DMP_RST, 4), BIT_SHIFT(1, 4)) |     \
      BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_FIFO_RST, 5), BIT_SHIFT(1, 5)) |    \
      BIT_MASK(BIT_SHIFT(MPU6500_USER_CTRL_I2C_MST_RST, 6), BIT_SHIFT(1, 6)) | \

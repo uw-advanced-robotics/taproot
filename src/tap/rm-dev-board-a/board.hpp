@@ -198,7 +198,6 @@ using ImuMiso = GpioF8;
 using ImuMosi = GpioF9;
 using ImuNss = GpioF6;
 using ImuSpiMaster = SpiMaster5;
-using IstEnablePin = GpioE2;
 
 using DisplaySck = GpioB3;
 using DisplayMiso = GpioB4;

@@ -88,7 +88,7 @@ void Mpu6500::init()
 
     uint8_t mpu6500InitData[7][2] = {
         {MPU6500_PWR_MGMT_1, MPU6500_PWR_MGMT_1_CLKSEL},
-        {MPU6500_PWR_MGMT_2, 0x00},  // all enable
+        {MPU6500_PWR_MGMT_2, 0x00},  // enable all
         {MPU6500_CONFIG, MPU6500_CONFIG_DATA},
         {MPU6500_GYRO_CONFIG, MPU6500_GYRO_CONFIG_DATA},
         {MPU6500_ACCEL_CONFIG, MPU6500_ACCEL_CONFIG_DATA},
@@ -97,9 +97,9 @@ void Mpu6500::init()
     };
 
     // write init setting to registers
-    for (int i = 0; i < sizeof(mpu6500InitData) / 2; i++)
+    for (unsigned int i = 0; i < sizeof(mpu6500InitData) / 2; i++)
     {
-        spiWriteRegister(mpu6500InitData[i][0], Mpu6500InitData[i][1]);
+        spiWriteRegister(mpu6500InitData[i][0], mpu6500InitData[i][1]);
         modm::delay_ms(1);
     }
 
@@ -153,7 +153,7 @@ void Mpu6500::calcIMUAngles()
 }
 
 #define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
-    (static_cast<float>(static_cast<int16_t>((buff[0] << 8) | buff[1])))
+    (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
 
 bool Mpu6500::read()
 {
@@ -167,8 +167,8 @@ bool Mpu6500::read()
         tx = MPU6500_ACCEL_XOUT_H | 0x80;
         rx = 0;
         txBuff[0] = tx;
-        Board::ImuSpiMaster::transfer(&tx, &rx, 1);
-        Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
+        PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
+        PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
         raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
@@ -370,7 +370,8 @@ void Mpu6500::runTemperatureController()
 
 void Mpu6500::readTempAndRunController()
 {
-    spiReadRegister(MPU6500_TEMP_OUT_H, rxBuff, 2) raw.temperature = rxBuff[0] << 8 | rxBuff[1];
+    spiReadRegisters(MPU6500_TEMP_OUT_H, rxBuff, 2);
+    raw.temperature = rxBuff[0] << 8 | rxBuff[1];
     runTemperatureController();
 }
 
