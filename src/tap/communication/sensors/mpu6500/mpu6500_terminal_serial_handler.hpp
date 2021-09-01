@@ -52,7 +52,7 @@ private:
         "    - [-h] Prints usage\n"
         "    - [angle] Prints angle data\n"
         "    - [gyro] Prints gyro data\n"
-        "    - [acc] Prints accel data\n";
+        "    - [accel] Prints accel data\n";
 
     Drivers* drivers;
 

@@ -104,6 +104,7 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
         checkNeedsTab(needsTab, outputStream);
         outputStream << mpu.getAx() << "\t" << mpu.getAy() << "\t" << mpu.getAz();
     }
+    outputStream << modm::endl;
 }
 
 void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
