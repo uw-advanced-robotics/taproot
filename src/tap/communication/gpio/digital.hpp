@@ -67,7 +67,8 @@ public:
         E,
         F,
         G,
-        H
+        H,
+        Laser
     };
 
 #ifdef PLATFORM_HOSTED
