@@ -20,6 +20,7 @@
 #ifndef AGITATOR_UNJAM_COMMAND_HPP_
 #define AGITATOR_UNJAM_COMMAND_HPP_
 
+#include <cstdint>
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
@@ -40,25 +41,31 @@ class SetpointSubsystem;
  * it by moving back and forth. Whether or not the subsystem is actually in a jam 
  * condition is not up for this command to determine. It is assumed that 
  * unjamming must occur.
+ * 
+ * If successful the unjam command will return the setpoint of the subsystem back
+ * to its original value.
  */
 class UnjamCommand : public tap::control::Command
 {
 public:
     /**
      * @param[in] setpointSubsystem The associated agitator subsystem to control.
-     * @param[in] maximumDisplacement The maximum displacement of the subsystem
-     *      to be used in an unjam step.
-     * @param[in] unjamDisplacementThreshold The minimum displacement to be reached both
+     * @param[in] unjamDisplacement How far to attempt to displace the subsystem
+     *      during an unjam. This value should be positive! Absolute value will be
+     *      taken if negative.
+     * @param[in] unjamThreshold The minimum displacement to be reached both
      *      forwards and backwards before the subsystem is considered unjammed.
+     *      This value must be positive. Absolute value will be taken
+     *      if negative.
      * @param[in] maxWaitTime The maximum amount of time the controller will
-     *      wait for the subsystem to move in milliseconds before 
+     *      wait for the subsystem to reach unjam target in milliseconds before 
      *      trying to move in the opposite direction.
      */
     UnjamCommand(
         SetpointSubsystem* setpointSubsystem,
-        float minimumDisplacement,
         float unjamDisplacement,
-        uint32_t maxWaitTime = DEFAULT_MAX_WAIT_TIME);
+        float unjamThreshold,
+        uint32_t maxWaitTime);
 
     void initialize() override;
 
@@ -71,54 +78,48 @@ public:
     const char* getName() const override { return "agitator unjam"; }
 
 private:
-    static constexpr uint32_t SALVATION_TIMEOUT_MS = 2000;
-
-    static constexpr uint32_t SALVATION_UNJAM_BACK_WAIT_TIME = 1000;
-
-    static constexpr float SETPOINT_TOLERANCE = tap::algorithms::PI / 16.0f;
-
-    /**
-     * The maximum time that the command will wait from commanding the agitator to rotate
-     * backwards to rotating forwards again.
-     */
-    static constexpr uint32_t DEFAULT_MAX_WAIT_TIME = 130;
-
-    /**
-     * Minimum angle the agitator will rotate backwards when unjamming.
-     */
-    static constexpr float MIN_UNJAM_DISPLACEMENT = tap::algorithms::PI / 4.0f;
-
     enum UnjamState
     {
-        SALVATION_UNJAM_BACK,
-        UNJAM_BACK,
-        UNJAM_RESET,
-        FINISHED
+        UNJAM_FORWARD,
+        UNJAM_BACKWARD
     };
 
-    UnjamState currUnjamstate;
+    void beginUnjamForwards();
+
+    void beginUnjamBackwards();
 
     /**
-     * Time allowed to rotate back the the `currUnjamDisplacement`.
+     * Time allowed to rotate back the the `currunjamThreshold`.
      */
     tap::arch::MilliTimeout unjamRotateTimeout;
 
-    tap::arch::MilliTimeout salvationTimeout;
-
     /**
-     * Usually set to `DEFAULT_MAX_WAIT_TIME`, but can be user defined.
+     * Maximum time the command will spend trying to reach unjam target in
+     * one direction before giving up and trying other direction.
      */
     uint32_t maxWaitTime;
 
     SetpointSubsystem* setpointSubsystem;
 
-    float maxUnjamDisplacement;
-
+    // The target displacement in both directions during unjam
     float unjamDisplacement;
 
-    float currUnjamDisplacement;
+    // The minimum displacement in both directions at which point jam is 
+    // considered cleared
+    float unjamThreshold;
+
+    // counts the number of times the subsystem has been commanded backwards
+    uint_fast8_t backwardsCount;
+
+    UnjamState currUnjamState;
 
     float setpointBeforeUnjam;
+
+    float valueBeforeUnjam;
+
+    bool backwardsCleared;
+
+    bool forwardsCleared;
 };  // class UnjamCommand
 
 }  // namespace setpoint

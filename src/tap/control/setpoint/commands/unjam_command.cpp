@@ -31,25 +31,18 @@ class SetpointSubsystem;  // forward declaration
 
 UnjamCommand::UnjamCommand(
     SetpointSubsystem* setpointSubsystem,
-    float maximumDisplacement,
     float unjamDisplacement,
+    float unjamThreshold,
     uint32_t maxWaitTime)
-    : currUnjamstate(UNJAM_BACK),
-      unjamRotateTimeout(0),
-      salvationTimeout(0),
+    : unjamRotateTimeout(0),
       maxWaitTime(maxWaitTime),
       setpointSubsystem(setpointSubsystem),
-      maxUnjamDisplacement(maximumDisplacement),
       unjamDisplacement(unjamDisplacement),
-      currUnjamDisplacement(0.0f),
-      setpointBeforeUnjam(0.0f)
+      unjamThreshold(unjamThreshold)
 {
-    if (maximumDisplacement < MIN_UNJAM_DISPLACEMENT)
-    {
-        maxUnjamDisplacement = MIN_UNJAM_DISPLACEMENT;
-    }
+    unjamDisplacement = abs(unjamDisplacement);
+    unjamThreshold = abs(unjamThreshold);
     this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
-    salvationTimeout.stop();
     unjamRotateTimeout.stop();
 }
 
@@ -57,19 +50,18 @@ void UnjamCommand::initialize()
 {
     unjamRotateTimeout.restart(maxWaitTime);
 
-    // define a random unjam displacement between [MIN_UNJAM_DISPLACEMENT, maxUnjamDisplacement]
-    const float minUnjamAngle =
-        maxUnjamDisplacement <= MIN_UNJAM_DISPLACEMENT ? 0 : MIN_UNJAM_DISPLACEMENT;
-    float randomUnjamAngle = fmodf(rand(), maxUnjamDisplacement - minUnjamAngle) + minUnjamAngle;
+    valueBeforeUnjam = setpointSubsystem->getCurrentValue();
 
-    // subtract this value from the current value to move subsystem backwards
-    currUnjamDisplacement = setpointSubsystem->getCurrentValue() - randomUnjamAngle;
+    setpointSubsystem->setSetpoint(valueBeforeUnjam - unjamDisplacement);
+    currUnjamState = UNJAM_BACKWARD;
+    backwardsCount = 1;
 
-    // store the current setpoint value to be referenced later
+    // store the current setpoint value to be able to restore subsystem state after command
+    // completion
     setpointBeforeUnjam = setpointSubsystem->getSetpoint();
-    currUnjamstate = UNJAM_BACK;
 
-    salvationTimeout.restart(SALVATION_TIMEOUT_MS);
+    forwardsCleared = false;
+    backwardsCleared = false;
 }
 
 void UnjamCommand::execute()
@@ -79,81 +71,61 @@ void UnjamCommand::execute()
     {
         return;
     }
-    if (salvationTimeout.execute())
+
+    float currValue = setpointSubsystem->getCurrentValue();
+
+    switch (currUnjamState)
     {
-        currUnjamDisplacement = setpointBeforeUnjam - 2 * tap::algorithms::PI;
-        salvationTimeout.stop();
-        unjamRotateTimeout.restart(SALVATION_UNJAM_BACK_WAIT_TIME);
-        currUnjamstate = SALVATION_UNJAM_BACK;
-    }
-
-    switch (currUnjamstate)
-    {
-        case SALVATION_UNJAM_BACK:
-        {
-            setpointSubsystem->setSetpoint(currUnjamDisplacement);
-            if (unjamRotateTimeout.isExpired() ||
-                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
-                    SETPOINT_TOLERANCE)
+        case UNJAM_FORWARD:
+            if (currValue >= valueBeforeUnjam + unjamThreshold)
             {
-                currUnjamstate = FINISHED;
+                forwardsCleared = true;
+                beginUnjamBackwards();
             }
-            break;
-        }
-        case UNJAM_BACK:
-        {
-            setpointSubsystem->setSetpoint(currUnjamDisplacement);
-            if (unjamRotateTimeout.isExpired() ||
-                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
-                    SETPOINT_TOLERANCE)
-            {  // either the timeout has been triggered or the subsystem has reached the setpoint
-                // define a random time that the subsystem will take to rotate forwards.
-                unjamRotateTimeout.restart(maxWaitTime);
-
-                // reset the subsystem
-                currUnjamstate = UNJAM_RESET;
-            }
-            break;
-        }
-        case UNJAM_RESET:  // this is different than just move_command
-        {
-            // reset the value to what it was before unjamming
-            setpointSubsystem->setSetpoint(setpointBeforeUnjam);
-            // the subsystem is still jammed
-            if (unjamRotateTimeout.isExpired())
+            else if (unjamRotateTimeout.isExpired())
             {
-                // restart the timeout
-                unjamRotateTimeout.restart(maxWaitTime);
-
-                // define a new random value, which will be used in the unjam back state
-                const float minUnjamAngle = maxUnjamDisplacement <= MIN_UNJAM_DISPLACEMENT
-                                                ? 0
-                                                : MIN_UNJAM_DISPLACEMENT;
-                float randomUnjamAngle =
-                    fmodf(rand(), maxUnjamDisplacement - minUnjamAngle) + minUnjamAngle;
-
-                currUnjamDisplacement = setpointBeforeUnjam - randomUnjamAngle;
-
-                currUnjamstate = UNJAM_BACK;
+                beginUnjamBackwards();
             }
-            else if (
-                fabsf(setpointSubsystem->getCurrentValue() - setpointSubsystem->getSetpoint()) <
-                SETPOINT_TOLERANCE)
+            break;
+        case UNJAM_BACKWARD:
+            if (currValue <= valueBeforeUnjam - unjamThreshold)
             {
-                currUnjamstate = FINISHED;
+                backwardsCleared = true;
+                beginUnjamForwards();
+            }
+            else if (unjamRotateTimeout.isExpired())
+            {
+                beginUnjamForwards();
             }
             break;
-        }
-        case FINISHED:  // this could be only two states, but its simpler to debug with three
-        {
-            break;
-        }
     }
 }
 
-void UnjamCommand::end(bool) { setpointSubsystem->clearJam(); }
+void UnjamCommand::end(bool)
+{
+    if (forwardsCleared && backwardsCleared)
+    {
+        setpointSubsystem->clearJam();
+    }
+    setpointSubsystem->setSetpoint(setpointBeforeUnjam);
+}
 
-bool UnjamCommand::isFinished(void) const { return currUnjamstate == FINISHED; }
+bool UnjamCommand::isFinished() const { return backwardsCount >= 3; }
+
+void UnjamCommand::beginUnjamForwards()
+{
+    unjamRotateTimeout.restart(maxWaitTime);
+    setpointSubsystem->setSetpoint(valueBeforeUnjam - unjamDisplacement);
+    currUnjamState = UNJAM_FORWARD;
+}
+
+void UnjamCommand::beginUnjamBackwards()
+{
+    unjamRotateTimeout.restart(maxWaitTime);
+    setpointSubsystem->setSetpoint(valueBeforeUnjam + unjamDisplacement);
+    currUnjamState = UNJAM_BACKWARD;
+    backwardsCount += 1;
+}
 
 }  // namespace setpoint
 
