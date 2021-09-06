@@ -117,7 +117,7 @@ void Mpu6500::init()
     } while (!waitHeatTimeout.execute() && getTemp() < IMU_DESIRED_TEMPERATURE);
 
     // Wait for the IMU temperature to stabalize now that we are close to the correct temperature
-    waitHeatTimeout.restart(10000);
+    waitHeatTimeout.restart(WAIT_TIME_AFTER_CALIBRATION);
     while (!waitHeatTimeout.execute())
     {
         readTempAndRunController();
