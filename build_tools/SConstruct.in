@@ -132,7 +132,12 @@ elif args["TARGET_ENV"] == "tests":
     if COMMAND_LINE_TARGETS[0] == "run-tests-gcov":
         env.AppendUnique(CPPFLAGS=[
             "-fprofile-arcs",
-            "-ftest-coverage"])
+            "-ftest-coverage",
+            "-fno-inline",
+            "-fno-inline-small-functions",
+            "-fno-default-inline"])
+        env.Append(CCFLAGS='--coverage')
+        env.Append(LINKFLAGS='--coverage')
         env.AppendUnique(LIBS=COVERAGE_LIBS)
 else:  # hardware target env
     # Update linkerscript file
