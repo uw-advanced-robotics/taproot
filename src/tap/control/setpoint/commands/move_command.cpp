@@ -38,7 +38,7 @@ MoveCommand::MoveCommand(
       targetDisplacement(targetDisplacement),
       rampToTargetValue(0.0f),
       moveTime(moveTime),
-      minMoveTimeoutPeriod(moveTime + pauseAfterMoveTime),
+      pauseAfterMoveTime(pauseAfterMoveTime),
       setpointTolerance(setpointTolerance),
       previousMoveTime(0),
       setToTargetOnEnd(setToTargetOnEnd)
@@ -55,11 +55,12 @@ void MoveCommand::initialize()
     rampToTargetValue.setTarget(targetValue);
     rampToTargetValue.setValue(currentValue);
 
-    trueDisplacement = rampToTargetValue.getTarget() - currentValue;
+    trueDisplacement = targetValue - currentValue;
 
     previousMoveTime = tap::arch::clock::getTimeMilliseconds();
-    // Reset min move time timeout.
-    minMoveTimeout.restart(minMoveTimeoutPeriod);
+
+    // Stop timeout, doesn't start until target reached
+    minMoveTimeout.stop();
 }
 
 void MoveCommand::execute()
@@ -76,6 +77,12 @@ void MoveCommand::execute()
         static_cast<float>(moveTime));
     previousMoveTime = currTime;
     setpointSubsystem->setSetpoint(rampToTargetValue.getValue());
+
+    if (minMoveTimeout.isStopped() && 
+        fabsf(setpointSubsystem->getCurrentValue() - rampToTargetValue.getTarget()) <= setpointTolerance)
+    {
+        minMoveTimeout.restart(pauseAfterMoveTime);
+    }
 }
 
 void MoveCommand::end(bool)

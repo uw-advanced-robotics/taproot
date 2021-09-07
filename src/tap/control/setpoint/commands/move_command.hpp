@@ -48,8 +48,8 @@ public:
      * @param[in] targetDisplacement The desired change in subsystem value in subsystem units.
      * @param[in] moveTime The time it takes to move the subsystem to the desired
      *      value in milliseconds.
-     * @param[in] pauseAfterMoveTime The time that the command will wait after moving to
-     *      the desired value before the command is considered complete.
+     * @param[in] pauseAfterMoveTime Time in milliseconds that the command will wait after reaching
+     *      the target displacement before the command is considered complete.
      * @param[in] setToTargetOnEnd if `true` the command will set the subsystem setpoint
      *      to the ideal target value during an uninterrupted `end()`, otherwise the subsystem will
      *      always set the setpoint to the its current value on `end()`.
@@ -101,7 +101,7 @@ private:
 
     tap::arch::MilliTimeout minMoveTimeout;
 
-    uint32_t minMoveTimeoutPeriod;
+    uint32_t pauseAfterMoveTime;
 
     float setpointTolerance;
 

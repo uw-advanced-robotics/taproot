@@ -75,10 +75,11 @@ TEST(MoveUnjamComprisedCommand, command_displaces_setpoint_by_target_amount_afte
 
     // Move command is relative to previous setpoint and must check current value
     // to see where it's starting from.
+    float currentValue = 1.0f;
     EXPECT_CALL(subsystem, getSetpoint).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
-    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
+    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(ReturnPointee(&currentValue));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
-    EXPECT_CALL(subsystem, setSetpoint(FloatNear(8.5f, 0.1f)));
+    EXPECT_CALL(subsystem, setSetpoint(FloatNear(8.5f, 0.1f))).Times(AtLeast(1));
 
     setTime(0);
     command.initialize();
@@ -88,7 +89,18 @@ TEST(MoveUnjamComprisedCommand, command_displaces_setpoint_by_target_amount_afte
         command.execute();
     }
 
-    // Once setpoint is reached command should finish
+    currentValue = 8.5f;
+    command.execute();
+
+    // Insufficient time given for pause after rotate time
+    EXPECT_FALSE(command.isFinished());
+
+    // Account for pauseAfterRotateTime
+    setTime(1015);
+    currentValue = 8.5f;
+    command.execute();
+
+    // Once setpoint is reached and pause after rotate time is reached command should finish
     EXPECT_TRUE(command.isFinished());
 }
 
