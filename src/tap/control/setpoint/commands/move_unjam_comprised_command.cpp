@@ -37,23 +37,24 @@ namespace setpoint
 MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     tap::Drivers* drivers,
     SetpointSubsystem* setpointSubsystem,
-    float agitatorChangeAngle,
-    float maxUnjamAngle,
-    float minUnjamAngle,
-    uint32_t agitatorRotateTime,
-    uint32_t agitatorPauseAfterRotateTime,
+    float moveDisplacement,
+    float unjamDisplacement,
+    float unjamThreshold,
+    uint32_t maxUnjamWaitTime,
+    uint32_t moveTime,
+    uint32_t pauseAfterMoveTime,
     bool setToTargetOnEnd,
     float setpointTolerance)
     : tap::control::ComprisedCommand(drivers),
       setpointSubsystem(setpointSubsystem),
       agitatorRotateCommand(
           setpointSubsystem,
-          agitatorChangeAngle,
-          agitatorRotateTime,
-          agitatorPauseAfterRotateTime,
+          moveDisplacement,
+          moveTime,
+          pauseAfterMoveTime,
           setToTargetOnEnd,
           setpointTolerance),
-      agitatorUnjamCommand(setpointSubsystem, maxUnjamAngle, minUnjamAngle),
+      agitatorUnjamCommand(setpointSubsystem, unjamDisplacement, unjamThreshold, maxUnjamWaitTime),
       unjamSequenceCommencing(false),
       agitatorDisconnectFault(false)
 {

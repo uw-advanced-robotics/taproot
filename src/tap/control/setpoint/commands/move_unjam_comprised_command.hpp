@@ -35,32 +35,40 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * A comprised command that combines the agitator unjam and rotate commands and provides
+ * A comprised command that combines the unjam and move commands and provides
  * unjam monitoring to perform a single agitator rotation with unjamming if necessary.
  */
 class MoveUnjamComprisedCommand : public tap::control::ComprisedCommand
 {
 public:
     /**
-     * @param[in] agitator The agitator to interact with.
-     * @param[in] agitatorChangeAngle The angle in radians that the agitator should rotate.
-     * @param[in] maxUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
+     * @param[in] drivers A pointer to the `Drivers` struct
+     * @param[in] setpointSubsystem The subsystem to interact with.
+     * @param[in] moveDisplacement The displacement the command will apply to the subsystem
+     * @param[in] unjamDisplacement See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
-     * @param[in] minUnjamAngle See `AgitatorUnJamCommand`'s constructor for more details,
+     * @param[in] unjamThreshold See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
-     * @param[in] agitatorRotateTime The time it takes to rotate the agitator to the desired angle
+     * @param[in] maxUnjamWaitTime See `UnjamCommand`'s constructor for more details,
+     *      passed on directly to this command's constructor.
+     * @param[in] moveTime The time it takes to rotate the agitator to the desired angle
      *      in milliseconds.
-     * @param[in] agitatorPauseAfterRotateTime The time that the command will wait after rotating to
-     *      the desired angle before the command is considered complete.
+     * @param[in] pauseAfterMoveTime See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
+     * @param[in] setToTargetOnEnd See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
+     * @param[in] setpointTolerance See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
      */
     MoveUnjamComprisedCommand(
         tap::Drivers* drivers,
         SetpointSubsystem* setpointSubsystem,
-        float agitatorChangeAngle,
-        float maxUnjamAngle,
-        float minUnjamAngle,
-        uint32_t agitatorRotateTime,
-        uint32_t agitatorPauseAfterRotateTime,
+        float moveDisplacement,
+        float unjamDisplacement,
+        float unjamThreshold,
+        uint32_t maxUnjamWaitTime,
+        uint32_t moveTime,
+        uint32_t pauseAfterMoveTime,
         bool setToTargetOnEnd,
         float setpointTolerance);
 
