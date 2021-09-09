@@ -72,7 +72,11 @@
         "SConstruct.in": "python",
         "SConscript": "python",
         "repo.lb": "python",
-        "module.lb": "python"
+        "module.lb": "python",
+        "*.cpp.in": "jinja-cpp",
+        "*.hpp.in": "jinja-cpp",
+        "*.xml.in": "jinja-xml",
+        "*.py.in": "jinja-py"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [

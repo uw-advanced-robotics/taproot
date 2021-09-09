@@ -52,7 +52,7 @@ public:
 
 private:
     static constexpr char USAGE[] =
-        "Usage: mpu6500 [-h] [angle] [gyro] [acc] [temp]\n"
+        "Usage: mpu6500 [-h] [angle] [gyro] [accel] [temp]\n"
         "  Where:\n"
         "    - [-h] Prints usage\n"
         "    - [angle] Prints angle data\n"
