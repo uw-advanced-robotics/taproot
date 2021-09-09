@@ -51,7 +51,7 @@ void Pwm::init()
 %% endfor
 #endif
     // Set all out pins to 0 duty
-    writeAll(0.0f);
+    writeAllZeros();
 }
 
 void Pwm::writeAllZeros()

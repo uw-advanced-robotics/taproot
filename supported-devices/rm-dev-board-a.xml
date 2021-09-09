@@ -40,7 +40,7 @@
         </gpio>
         <gpio alias="Laser" name="GpioG13"></gpio>
         <gpio alias="ImuHeater" name="GpioB5">
-            <timer name="Timer3" channel="Ch3"></timer>
+            <timer name="Timer3" channel="Ch2"></timer>
         </gpio>
     </gpio-pins>
     <uart-ports>

@@ -311,13 +311,16 @@ private:
 
     /**
      * Runs a PID controller to regulate the temperature of the IMU.
+     * 
+     * @param[in] temperature The temperature of the mpu6500, units degrees C.
      */
-    void runTemperatureController();
+    void runTemperatureController(float temperature);
 
     /**
-     * Reads the temperature of the mpu6500 (blocks) and calls runTemperatureController
+     * Reads the temperature high/low registers of the mpu6500 in a
+     * blocking fashion.
      */
-    void readTempAndRunController();
+    void readTemperatureBlocking();
 };
 
 }  // namespace sensors

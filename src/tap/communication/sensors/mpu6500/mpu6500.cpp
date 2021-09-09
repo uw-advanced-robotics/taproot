@@ -57,6 +57,9 @@ void Mpu6500::init()
     // initialize SPI with clock speed
     Board::ImuSpiMaster::initialize<Board::SystemClock, 703125_Hz>();
 
+    // See page 42 of the mpu6500 register map for initialization process:
+    // https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
+    //
     // When using SPI interface, user should use PWR_MGMT_1 (register 107) as well as
     // SIGNAL_PATH_RESET (register 104) to ensure the reset is performed properly. The sequence
     // used should be:
@@ -86,41 +89,43 @@ void Mpu6500::init()
         return;
     }
 
-    uint8_t mpu6500InitData[7][2] = {
-        {MPU6500_PWR_MGMT_1, MPU6500_PWR_MGMT_1_CLKSEL},
-        {MPU6500_PWR_MGMT_2, 0x00},  // enable all
-        {MPU6500_CONFIG, MPU6500_CONFIG_DATA},
-        {MPU6500_GYRO_CONFIG, MPU6500_GYRO_CONFIG_DATA},
-        {MPU6500_ACCEL_CONFIG, MPU6500_ACCEL_CONFIG_DATA},
-        {MPU6500_ACCEL_CONFIG_2, MPU6500_ACCEL_CONFIG_2_DATA},
-        {MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA},
-    };
-
-    // write init setting to registers
-    for (unsigned int i = 0; i < sizeof(mpu6500InitData) / 2; i++)
-    {
-        spiWriteRegister(mpu6500InitData[i][0], mpu6500InitData[i][1]);
-        modm::delay_ms(1);
-    }
+    // Configure mpu
+    spiWriteRegister(MPU6500_PWR_MGMT_1, MPU6500_PWR_MGMT_1_CLKSEL);
+    modm::delay_ms(1);  // Delay for some time to wait for the register to be updated (probably not
+                        // necessary but we do it anyway)
+    spiWriteRegister(MPU6500_PWR_MGMT_2, 0x00);
+    modm::delay_ms(1);
+    spiWriteRegister(MPU6500_CONFIG, MPU6500_CONFIG_DATA);
+    modm::delay_ms(1);
+    spiWriteRegister(MPU6500_GYRO_CONFIG, MPU6500_GYRO_CONFIG_DATA);
+    modm::delay_ms(1);
+    spiWriteRegister(MPU6500_ACCEL_CONFIG, MPU6500_ACCEL_CONFIG_DATA);
+    modm::delay_ms(1);
+    spiWriteRegister(MPU6500_ACCEL_CONFIG_2, MPU6500_ACCEL_CONFIG_2_DATA);
+    modm::delay_ms(1);
+    spiWriteRegister(MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA);
+    modm::delay_ms(1);
 
     imuInitialized = true;
 
     // Initialize the heater timer frequency
-    drivers->pwm.setTimerFrequency(gpio::Pwm::TIMER_3, HEATER_PWM_FREQUENCY);
+    drivers->pwm.setTimerFrequency(gpio::Pwm::TIMER3, HEATER_PWM_FREQUENCY);
 
     // Wait for the heater to warm the mpu6500 up
     arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
     do
     {
-        readTempAndRunController();
+        readTemperatureBlocking();
+        runTemperatureController(getTemp());
         modm::delay_ms(2);
     } while (!waitHeatTimeout.execute() && getTemp() < IMU_DESIRED_TEMPERATURE);
 
-    // Wait for the IMU temperature to stabalize now that we are close to the correct temperature
+    // Wait for the IMU temperature to stabilize now that we are close to the correct temperature
     waitHeatTimeout.restart(WAIT_TIME_AFTER_CALIBRATION);
     while (!waitHeatTimeout.execute())
     {
-        readTempAndRunController();
+        readTemperatureBlocking();
+        runTemperatureController(getTemp());
         modm::delay_ms(2);
     }
 
@@ -140,7 +145,7 @@ void Mpu6500::calcIMUAngles()
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
         readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
 
-        runTemperatureController();
+        runTemperatureController(getTemp());
     }
     else
     {
@@ -267,12 +272,12 @@ void Mpu6500::calculateGyroOffset()
 #ifndef PLATFORM_HOSTED
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
+        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
         raw.gyroOffset.x += static_cast<int16_t>((rxBuff[8] << 8) | rxBuff[9]);
         raw.gyroOffset.y += static_cast<int16_t>((rxBuff[10] << 8) | rxBuff[11]);
         raw.gyroOffset.z += static_cast<int16_t>((rxBuff[12] << 8) | rxBuff[13]);
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        runTemperatureController();
+        runTemperatureController(getTemp());
         modm::delay_ms(2);
     }
 
@@ -287,12 +292,12 @@ void Mpu6500::calculateAccOffset()
 #ifndef PLATFORM_HOSTED
     for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
     {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, 14);
+        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
         raw.accelOffset.x += static_cast<int16_t>((rxBuff[0] << 8) | rxBuff[1]);
         raw.accelOffset.y += static_cast<int16_t>((rxBuff[2] << 8) | rxBuff[3]);
         raw.accelOffset.z += static_cast<int16_t>(((rxBuff[4] << 8) | rxBuff[5]) - 4096);
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        runTemperatureController();
+        runTemperatureController(getTemp());
         modm::delay_ms(2);
     }
 
@@ -359,20 +364,21 @@ void Mpu6500::mpuNssHigh()
 #endif
 }
 
-void Mpu6500::runTemperatureController()
+void Mpu6500::runTemperatureController(float temperature)
 {
     // Run PID controller to find desired output, output units PWM frequency
-    imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - getTemp());
+    imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - temperature);
 
     // Set heater PWM output, limit output so it is not < 0
-    drivers->pwm.write(std::max(0.0f, imuTemperatureController.getValue()), tap::gpio::Pwm::HEATER);
+    drivers->pwm.write(
+        std::max(0.0f, imuTemperatureController.getValue()),
+        tap::gpio::Pwm::ImuHeater);
 }
 
-void Mpu6500::readTempAndRunController()
+void Mpu6500::readTemperatureBlocking()
 {
     spiReadRegisters(MPU6500_TEMP_OUT_H, rxBuff, 2);
     raw.temperature = rxBuff[0] << 8 | rxBuff[1];
-    runTemperatureController();
 }
 
 }  // namespace sensors
