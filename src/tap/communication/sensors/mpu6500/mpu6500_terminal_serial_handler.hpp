@@ -37,7 +37,7 @@ namespace sensors
 class Mpu6500TerminalSerialHandler : public communication::serial::ITerminalSerialCallback
 {
 public:
-    static constexpr char HEADER[] = "imu";
+    static constexpr char HEADER[] = "mpu6500";
 
     Mpu6500TerminalSerialHandler(Drivers* drivers) : drivers(drivers) {}
 
@@ -62,10 +62,27 @@ private:
 
     Drivers* drivers;
 
-    bool printingAngles = false;
-    bool printingGyro = false;
-    bool printingAccel = false;
-    bool printingTemp = false;
+    /**
+     * Each element in the enum corresponds to a sensor that a user may query.
+     * Each enum value is a bit mask that when set in a bit map indicates
+     * the sensor data will be printed to the screen.
+     */
+    enum InspectSubject : uint8_t
+    {
+        ANGLES = 1,
+        GYRO = 1 << 1,
+        ACCEL = 1 << 2,
+        TEMP = 1 << 3
+    };
+
+    /**
+     * Contains which elements are being inspected (one, none, or a combination
+     * of `InspectSubject`) using bit masking techniques.
+     *
+     * For example, if `ANGLES` and `GYRO` are being inspected, `inspectSubjectBitmap`
+     * is equal to `ANGLES | GYRO`.
+     */
+    uint8_t inspectSubjectBitmap = 0;
 
     void printHeader(modm::IOStream& outputStream);
 };  // class Mpu6500TerminalSerialHandler

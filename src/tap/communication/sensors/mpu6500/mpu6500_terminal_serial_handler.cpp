@@ -22,11 +22,13 @@
 #include "tap/algorithms/strtok.hpp"
 #include "tap/drivers.hpp"
 
-namespace tap
-{
-namespace sensors
+namespace tap::sensors
 {
 constexpr char Mpu6500TerminalSerialHandler::USAGE[];
+
+#define SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, subject) \
+    ((inspectSubjectBitmap & subject) != 0)
+#define SET_INSPECT_SUBJECT(inspectSubjectBitmap, subject) (inspectSubjectBitmap |= subject)
 
 void Mpu6500TerminalSerialHandler::init() { drivers->terminalSerial.addHeader(HEADER, this); }
 
@@ -36,28 +38,32 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
     bool streamingEnabled)
 {
     char* arg;
-    printingAngles = false;
-    printingGyro = false;
-    printingAccel = false;
-    printingTemp = false;
+    inspectSubjectBitmap = 0;
     while (
         (arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine)))
     {
-        if (!printingAngles && strcmp(arg, "angle") == 0)
+        if (!SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ANGLES) &&
+            strcmp(arg, "angle") == 0)
         {
-            printingAngles = true;
+            SET_INSPECT_SUBJECT(inspectSubjectBitmap, InspectSubject::ANGLES);
         }
-        else if (!printingGyro && strcmp(arg, "gyro") == 0)
+        else if (
+            !SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::GYRO) &&
+            strcmp(arg, "gyro") == 0)
         {
-            printingGyro = true;
+            SET_INSPECT_SUBJECT(inspectSubjectBitmap, InspectSubject::GYRO);
         }
-        else if (!printingAccel && strcmp(arg, "accel") == 0)
+        else if (
+            !SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ACCEL) &&
+            strcmp(arg, "accel") == 0)
         {
-            printingAccel = true;
+            SET_INSPECT_SUBJECT(inspectSubjectBitmap, InspectSubject::ACCEL);
         }
-        else if (!printingTemp && strcmp(arg, "temp") == 0)
+        else if (
+            !SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::TEMP) &&
+            strcmp(arg, "temp") == 0)
         {
-            printingTemp = true;
+            SET_INSPECT_SUBJECT(inspectSubjectBitmap, InspectSubject::TEMP);
         }
         else if (strcmp(arg, "-h"))
         {
@@ -66,7 +72,7 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
         }
     }
 
-    if (!printingAngles && !printingGyro && !printingAccel && !printingTemp)
+    if (inspectSubjectBitmap == 0)
     {
         outputStream << USAGE;
         return !streamingEnabled;
@@ -94,7 +100,7 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
 {
     bool needsTab = false;
     Mpu6500& mpu = drivers->mpu6500;
-    if (printingAngles)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ANGLES))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream.printf(
@@ -103,7 +109,7 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
             static_cast<double>(mpu.getRoll()),
             static_cast<double>(mpu.getYaw()));
     }
-    if (printingGyro)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::GYRO))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream.printf(
@@ -112,7 +118,7 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
             static_cast<double>(mpu.getGy()),
             static_cast<double>(mpu.getGz()));
     }
-    if (printingAccel)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ACCEL))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream.printf(
@@ -121,7 +127,7 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
             static_cast<double>(mpu.getAy()),
             static_cast<double>(mpu.getAz()));
     }
-    if (printingTemp)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::TEMP))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream.printf("%.2f", static_cast<double>(mpu.getTemp()));
@@ -132,27 +138,26 @@ void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& 
 void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
 {
     bool needsTab = false;
-    if (printingAngles)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ANGLES))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream << "pit\trol\tyaw";
     }
-    if (printingGyro)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::GYRO))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream << "gx\tgy\tgz";
     }
-    if (printingAccel)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::ACCEL))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream << "ax\tay\taz";
     }
-    if (printingTemp)
+    if (SUBJECT_BEING_INSPECTED(inspectSubjectBitmap, InspectSubject::TEMP))
     {
         checkNeedsTab(needsTab, outputStream);
         outputStream << "temp";
     }
     outputStream << modm::endl;
 }
-}  // namespace sensors
-}  // namespace tap
+}  // namespace tap::sensors
