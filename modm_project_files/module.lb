@@ -1,0 +1,43 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+MCU_VARIANTS_BY_BOARD = {
+    "rm-dev-board-a": "stm32f427iih6",
+    "rm-dev-board-c": "stm32f407igh6",
+}
+
+def init(module):
+    module.name = ":modm-project.xml"
+    module.description = "project.xml files used to generate modm HALs"
+
+def prepare(module, options):
+    return True
+
+def build(env):
+    board_name = env[":dev_board"]
+    try:
+        mcu = MCU_VARIANTS_BY_BOARD[board_name]
+    except KeyError:
+        raise RuntimeError(f"Dev board {board_name} is not valid")
+
+    env.substitutions = {
+        "modm_path": env[":modm_repo_lb"],
+        "mcu": mcu
+    }
+    env.outbasepath = "taproot"
+    env.template("project.xml.in", "project.xml")
+    env.template("sim-modm/project.xml.in", "sim-modm/project.xml")

@@ -1,0 +1,49 @@
+<board>
+    <gpio-pins>
+        <gpio alias="A" name="GpioI0"></gpio>
+        <gpio alias="B" name="GpioH12"></gpio>
+        <gpio alias="C" name="GpioH11"></gpio>
+        <gpio alias="D" name="GpioH10"></gpio>
+        <gpio alias="E" name="GpioD15"></gpio>
+        <gpio alias="F" name="GpioD14"></gpio>
+        <gpio alias="G" name="GpioD13"></gpio>
+        <gpio alias="H" name="GpioD12"></gpio>
+        <gpio alias="S" name="GpioA0">
+            <adc name="Adc1" in="In0"></adc>
+        </gpio>
+        <gpio alias="T" name="GpioA1">
+            <adc name="Adc1" in="In1"></adc>
+        </gpio>
+        <gpio alias="U" name="GpioA2">
+            <adc name="Adc1" in="In2"></adc>
+        </gpio>
+        <gpio alias="V" name="GpioA3">
+            <adc name="Adc1" in="In3"></adc>
+        </gpio>
+        <gpio alias="W" name="GpioI5">
+            <timer name="Timer8" channel="Ch1"></timer>
+        </gpio>
+        <gpio alias="X" name="GpioI6">
+            <timer name="Timer8" channel="Ch2"></timer>
+        </gpio>
+        <gpio alias="Y" name="GpioI7">
+            <timer name="Timer8" channel="Ch3"></timer>
+        </gpio>
+        <gpio alias="Z" name="GpioI2">
+            <timer name="Timer8" channel="Ch4"></timer>
+        </gpio>
+        <gpio alias="OledJoystick" name="GpioA6">
+            <adc name="Adc1" in="In6"></adc>
+        </gpio>
+        <gpio alias="Buzzer" name="GpioH6">
+            <timer name="Timer12" channel="Ch1"></timer>
+        </gpio>
+        <gpio alias="Laser" name="GpioG13"></gpio>
+    </gpio-pins>
+    <uart-ports>
+        <uart name="1" rx="GpioB7"></uart>
+        <uart name="2" tx="GpioD5" rx="GpioD6"></uart>
+        <uart name="3" tx="GpioD8" rx="GpioD9"></uart>
+        <uart name="6" tx="GpioG14" rx="GpioG9"></uart>
+    </uart-ports>
+</board>

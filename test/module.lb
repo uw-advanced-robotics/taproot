@@ -15,18 +15,43 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+MOCK_DIRECTORY = "tap/mock"
+
+import sys
 import os
+sys.path.append(repopath("src"))
+import drivers
 
 class Mock(Module):
     def init(self, module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
+        module.depends(":core")
         return True
 
     def build(self, env):
+        mock_driver_headers_to_include = drivers.get_mock_headers_sorted(env)
+
+        # Ignore all mock driver files that are not being generated
+        mock_driver_files_to_ignore = []
+        for driver in drivers.DRIVERS_AND_MODULE_DEPENDENCIES:
+            if driver["mock-header"] not in mock_driver_headers_to_include:
+                # Add header and source files to the ignore list
+                mock_driver_files_to_ignore.append(driver["mock-header"])
+                mock_driver_files_to_ignore.append(os.path.splitext(driver["mock-header"])[0] + ".cpp")
+
         env.outbasepath = "taproot/test"
-        env.copy("tap/mock")
+
+        mock_includes = []
+        # Copy all files from the mock directory except for driver mocks that should
+        # be ignored
+        files_to_copy = os.listdir(repopath(f"test/{MOCK_DIRECTORY}"))
+        for file in files_to_copy:
+            mock_file = f"{MOCK_DIRECTORY}/{file}"
+            if mock_file not in mock_driver_files_to_ignore:
+                env.copy(mock_file)
+                mock_includes.append(mock_file)
 
 class TaprootTests(Module):
     def init(self, module):
@@ -34,13 +59,26 @@ class TaprootTests(Module):
 
     def prepare(self, module, options):
         module.depends(
-            "taproot:testing:mock",
-            "taproot:core")
+            ":testing:mock",
+            ":core")
         return True
 
     def build(self, env):
         env.outbasepath = "taproot/test"
-        env.copy("tap", ignore=env.ignore_paths("*/mock/*"))
+        if env.has_module(":display"):
+            env.copy("tap/display")
+        if env.has_module(":core"):
+            env.copy("tap/algorithms")
+            env.copy("tap/architecture")
+        if env.has_module(":communication:can"):
+            env.copy("tap/communication/can")
+        if env.has_module(":communication:tcp-server"):
+            env.copy("tap/communication/tcp-server")
+        if env.has_module(":errors") and env[":dev_board"] == "rm-dev-board-a":
+            # Note: only dev board a can build these tests currently
+            # due to cross-compatibility issues.
+            env.copy("tap/errors")
+        env.copy("tap/control")
 
 def init(module):
     module.name = ":testing"

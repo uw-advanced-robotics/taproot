@@ -1,0 +1,151 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "uart.hpp"
+
+#include "tap/board/board.hpp"
+
+using namespace Board;
+
+namespace tap
+{
+namespace serial
+{
+bool Uart::read(UartPort port, uint8_t *data)
+{
+#ifdef PLATFORM_HOSTED
+    return false;
+#else
+    switch (port)
+    {
+%% for port in uart_ports:
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::read(*data);
+%% endfor
+        default:
+            return false;
+    }
+#endif
+}
+
+std::size_t Uart::read(UartPort port, uint8_t *data, std::size_t length)
+{
+#ifdef PLATFORM_HOSTED
+    return 0;
+#else
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::read(data, length);
+%% endfor
+        default:
+            return 0;
+    }
+#endif
+}
+
+std::size_t Uart::discardReceiveBuffer(UartPort port)
+{
+#ifdef PLATFORM_HOSTED
+    return 0;
+#else
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::discardReceiveBuffer();
+%% endfor
+        default:
+            return 0;
+    }
+#endif
+}
+
+bool Uart::write(UartPort port, uint8_t data)
+{
+#ifdef PLATFORM_HOSTED
+    return false;
+#else
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::write(data);
+%% endfor
+        default:
+            return false;
+    }
+#endif
+}
+
+std::size_t Uart::write(UartPort port, const uint8_t *data, std::size_t length)
+{
+#ifdef PLATFORM_HOSTED
+    return 0;
+#else
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::write(data, length);
+%% endfor
+        default:
+            return 0;
+    }
+#endif
+}
+
+bool Uart::isWriteFinished(UartPort port) const
+{
+#ifdef PLATFORM_HOSTED
+    return false;
+#else
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            return Usart{{ port }}::isWriteFinished();
+%% endfor
+        default:
+            return false;
+    }
+#endif
+}
+
+void Uart::flushWriteBuffer(UartPort port)
+{
+#ifndef PLATFORM_HOSTED
+    switch (port)
+    {
+%% for port in uart_ports
+        case UartPort::Uart{{ port }}:
+            Usart{{ port }}::flushWriteBuffer();
+            break;
+%% endfor
+        default:
+            break;
+    }
+#endif
+}
+
+}  // namespace serial
+
+}  // namespace tap
+
