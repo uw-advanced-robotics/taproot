@@ -44,9 +44,9 @@ void Pwm::init()
     {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ timer }}::enable();
     {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
+    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
     {{ timer }}::start();
     {{ timer }}::enableOutput();
-    {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
 
 %% endfor
 #endif

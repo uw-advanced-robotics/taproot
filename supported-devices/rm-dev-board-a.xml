@@ -38,6 +38,7 @@
         <gpio alias="Buzzer" name="GpioH6">
             <timer name="Timer12" channel="Ch1"></timer>
         </gpio>
+        <gpio alias="Laser" name="GpioG13"></gpio>
     </gpio-pins>
     <uart-ports>
         <uart name="1" rx="GpioB7"></uart>

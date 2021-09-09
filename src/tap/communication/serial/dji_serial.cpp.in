@@ -61,13 +61,13 @@ DJISerial::DJISerial(Drivers *drivers, Uart::UartPort port, bool isRxCRCEnforcem
 {
 }
 
+// TODO allow for configurable baudrate, see taproot#50
 void DJISerial::initialize()
 {
     switch (this->port)
     {
 %% for port in uart_ports
         case Uart::UartPort::Uart{{ port }}:
-            {# TODO allow for configurable baudrate, see taproot#50 #}
             drivers->uart.init<Uart::UartPort::Uart{{ port }}, 115200>();
             break;
 %% endfor

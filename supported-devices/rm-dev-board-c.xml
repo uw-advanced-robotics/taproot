@@ -35,6 +35,7 @@
         <gpio alias="VolDetect" name="GpioF10">
             <adc name="Adc3" in="In8"></adc>
         </gpio>
+        <gpio alias="Laser" name="GpioC8"></gpio>
     </gpio-pins>
     <uart-ports>
         <uart name="1" tx="GpioA9" rx="GpioB7"></uart>
