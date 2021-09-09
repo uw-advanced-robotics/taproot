@@ -24,9 +24,9 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
+#include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
-#include "modm/math/filter/pid.hpp"
 #include "modm/processing/protothread.hpp"
 
 namespace tap
@@ -172,24 +172,10 @@ private:
     static constexpr int DELAY_BTWN_CALC_AND_READ_REG = 1550;
 
     /**
-     * PID constants for temperature control.
-     */
-    static constexpr float TEMPERATURE_PID_P = 1.0f;
-    static constexpr float TEMPERATURE_PID_I = 0.0f;
-    static constexpr float TEMPERATURE_PID_D = 20.0f;
-    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.0f;
-    static constexpr float TEMPERATURE_PID_MAX_OUT = 1.0f;
-    /**
      * PWM frequency of the timer associated with the GPIO pin that is in charge
      * of controlling the temperature of the IMU.
      */
     static constexpr float HEATER_PWM_FREQUENCY = 1000.0f;
-
-    /**
-     * Normal operating temperature is ~40 degrees C, and RM manual says the optimal operating
-     * temperature is ~15-20 degrees C above the normal operating temperature of the board.
-     */
-    static constexpr float IMU_DESIRED_TEMPERATURE = 50.0f;
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.
@@ -255,14 +241,14 @@ private:
 
     Mahony mahonyAlgorithm;
 
+    sensors::ImuHeater imuHeater;
+
     float tiltAngle = 0.0f;
     bool tiltAngleCalculated = false;
 
     uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
-
-    modm::Pid<float> imuTemperatureController;
 
     /**
      * Compute the gyro offset values. @note this function blocks.
@@ -308,13 +294,6 @@ private:
      * from that point.
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
-
-    /**
-     * Runs a PID controller to regulate the temperature of the IMU.
-     * 
-     * @param[in] temperature The temperature of the mpu6500, units degrees C.
-     */
-    void runTemperatureController(float temperature);
 
     /**
      * Reads the temperature high/low registers of the mpu6500 in a
