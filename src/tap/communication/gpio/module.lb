@@ -17,7 +17,7 @@
 
 import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
-from board_info_parser import BoardInfoParser
+import board_info_parser
 
 def extractPinDefines(pins):
     pins = [pin.strip() for pin in str.split(pins, ",")]
@@ -162,7 +162,7 @@ def init(module):
 def prepare(module, options):
     module.depends(":core", ":board")
 
-    metadata = BoardInfoParser.parse_board_info(options[":dev_board"])
+    metadata = board_info_parser.parse_board_info(options[":dev_board"])
     module.add_submodule(Analog(metadata))
     module.add_submodule(Digital(metadata))
     module.add_submodule(Leds())

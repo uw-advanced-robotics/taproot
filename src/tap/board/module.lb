@@ -17,7 +17,7 @@
 
 import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
-from board_info_parser import BoardInfoParser
+import board_info_parser
 
 def init(module):
     module.name = ":board"
@@ -62,7 +62,7 @@ def build(env):
     analog_in_pins = extract_pin_defines(env["analog_in_pins"])
     pwm_pins = extract_pin_defines(env["pwm_pins"])
 
-    metadata = BoardInfoParser.parse_board_info(env[":dev_board"])
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
 
     pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
     assert len(pins) == len(set(pins)), "duplicate pin definitions"

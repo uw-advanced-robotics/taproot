@@ -17,32 +17,24 @@
 
 import glob
 import lxml
-import os
 
-from pathlib import Path
+from lbuild_utils import repo_path_rel_repolb
 
-def repopath(path):
-    """
-    Relocate given path to the path of the repo file.
-    Copied from `modm/test/all/run_all.py`
-    """
-    return (Path(os.path.abspath(__file__)).parents[2] / path)
+parsed_board_info = {}
 
-class BoardInfoParser:
-    parsed_board_info = {}
+def parse_board_info(device):
+    global parsed_board_info
 
-    @staticmethod
-    def parse_board_info(device):
-        device_file_names = glob.glob(str(repopath("supported-devices/*.xml")))
-        device_file_names = [dfn for dfn in device_file_names if device in dfn]
-        assert len(device_file_names) == 1, f"Device {device} not found or there are multiple device files with the device name"
-        device = device_file_names[0]
+    device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
+    device_file_names = [dfn for dfn in device_file_names if device in dfn]
+    assert len(device_file_names) == 1, f"Device {device} not found or there are multiple device files with the device name"
+    device = device_file_names[0]
 
-        if device not in BoardInfoParser.parsed_board_info:
-            # parse the xml-file if we haven't already
-            parser = lxml.etree.XMLParser(no_network=True)
-            xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
-            xmlroot.xinclude()
-            BoardInfoParser.parsed_board_info[device] = xmlroot.getroot()
+    if device not in parsed_board_info:
+        # parse the xml-file if we haven't already
+        parser = lxml.etree.XMLParser(no_network=True)
+        xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
+        xmlroot.xinclude()
+        parsed_board_info[device] = xmlroot.getroot()
 
-        return BoardInfoParser.parsed_board_info[device]
+    return parsed_board_info[device]

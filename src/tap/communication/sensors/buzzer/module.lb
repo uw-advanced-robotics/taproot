@@ -17,7 +17,7 @@
 
 import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
-from board_info_parser import BoardInfoParser
+import board_info_parser
 
 BUZZER_PIN = "Buzzer"
 
@@ -28,7 +28,7 @@ def init(module):
     module.description = "Analog buzzer API"
 
 def prepare(module, options):
-    metadata = BoardInfoParser.parse_board_info(options[":dev_board"])
+    metadata = board_info_parser.parse_board_info(options[":dev_board"])
     pins = metadata.find("gpio-pins")
     buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]
     if len(buzzer_pins) == 1:

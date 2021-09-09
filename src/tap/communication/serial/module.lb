@@ -17,7 +17,7 @@
 
 import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
-from board_info_parser import BoardInfoParser
+import board_info_parser
 
 REMOTE_UART_PORTS_BY_BOARD = {
     "rm-dev-board-a": "Uart1",
@@ -108,7 +108,7 @@ def build(env):
     port_to_tx_pin = {}
     port_to_rx_pin = {}
 
-    metadata = BoardInfoParser.parse_board_info(env[":dev_board"])
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
     for port in metadata.find("uart-ports"):
         uart_ports.append(port.get("name"))
         port_to_rx_pin[port.get("name")] = port.get("rx")
