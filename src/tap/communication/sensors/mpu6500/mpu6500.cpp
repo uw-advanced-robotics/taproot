@@ -20,9 +20,9 @@
 #include "mpu6500.hpp"
 
 #include "tap/algorithms/math_user_utils.hpp"
+#include "tap/board/board.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
-#include "tap/rm-dev-board-a/board.hpp"
 
 #include "mpu6500_config.hpp"
 #include "mpu6500_reg.hpp"

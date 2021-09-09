@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/communication/remote.hpp"
+#include "tap/communication/serial/remote.hpp"
 #include "tap/control/remote_map_state.hpp"
 
 using tap::Remote;

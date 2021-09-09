@@ -1,0 +1,131 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "pwm.hpp"
+
+#include "tap/algorithms/math_user_utils.hpp"
+#include "tap/board/board.hpp"
+
+using namespace Board;
+using namespace tap::algorithms;
+
+namespace tap
+{
+namespace gpio
+{
+void Pwm::init()
+{
+#ifndef PLATFORM_HOSTED
+
+%% for timer in timers
+    %% set pins_associated_with_timer = []
+    %% for pin in pins
+        %% if pin_to_timer[pin] == timer
+            %% set pins_associated_with_timer = pins_associated_with_timer.append(pin)
+        %% endif
+    %% endfor
+
+    {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    {{ timer }}::enable();
+    {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
+    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
+    {{ timer }}::start();
+    {{ timer }}::enableOutput();
+
+%% endfor
+#endif
+    // Set all out pins to 0 duty
+    writeAll(0.0f);
+}
+
+void Pwm::writeAllZeros()
+{
+#ifndef PLATFORM_HOSTED
+%% for pin in pins
+    write(0.0f, Pin::{{ pin }});
+%% endfor
+#endif
+}
+
+void Pwm::write(float duty, Pin pin)
+{
+#ifndef PLATFORM_HOSTED
+    duty = limitVal<float>(duty, 0.0f, 1.0f);
+    switch (pin)
+    {
+%% for pin in pins
+    %% set timer = pin_to_timer[pin]
+        case Pin::{{ pin }}:
+            {{ timer }}::configureOutputChannel(
+                {{ pin_to_ch[pin] }},
+                {{ timer }}::OutputCompareMode::Pwm,
+                duty * {{ timer|lower }}CalculatedOverflow);
+            break;
+%% endfor
+        default:
+            break;
+    };
+#endif
+}
+
+void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            break;
+%% endfor
+    }
+#endif
+}
+
+void Pwm::pause(Timer timer)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::pause();
+            break;
+%% endfor
+    }
+#endif
+}
+
+void Pwm::start(Timer timer)
+{
+#ifndef PLATFORM_HOSTED
+    switch (timer)
+    {
+%% for timer in timers
+        case {{ timer|upper }}:
+            {{ timer }}::start();
+            break;
+%% endfor
+    }
+#endif
+}
+}  // namespace gpio
+
+}  // namespace tap
+
