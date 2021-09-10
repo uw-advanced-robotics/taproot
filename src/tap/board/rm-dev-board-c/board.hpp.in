@@ -162,6 +162,10 @@ using ImuInt1Gyro = GpioC5;
 using ImuHeater = GpioF6;
 using ImuSpiMaster = SpiMaster1;
 
+using Bno055I2CMasterScl = GpioF1;
+using Bno055I2CMasterSda = GpioF0;
+using Bno055I2CMaster = I2cMaster2;
+
 #endif
 
 inline void initialize()
