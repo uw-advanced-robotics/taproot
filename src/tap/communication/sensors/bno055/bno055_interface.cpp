@@ -6,7 +6,13 @@ namespace tap
 {
 namespace sensors
 {
-Bno055Interface::Bno055Interface() : data(), unusedData(), imu(unusedData, BNO055_ADDR) {}
+Bno055Interface::Bno055Interface()
+    : data(),
+      timer(READ_IMU_DATA_PERIOD),
+      unusedData(),
+      imu(unusedData, BNO055_ADDR)
+{
+}
 
 void Bno055Interface::initialize()
 {

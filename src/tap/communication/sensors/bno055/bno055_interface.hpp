@@ -5,6 +5,7 @@
 #include <modm/processing.hpp>
 
 #include "tap/board/board.hpp"
+#include "tap/architecture/periodic_timer.hpp"
 #include "tap/util_macros.hpp"
 
 namespace tap
@@ -23,6 +24,8 @@ public:
     mockable bool update();
 
 private:
+    static constexpr uint32_t READ_IMU_DATA_PERIOD = 2;
+
     struct RawData
     {
         int16_t acceleration[3];
@@ -30,7 +33,7 @@ private:
     };
 
     RawData data;
-    modm::ShortPeriodicTimer timer{500};
+    tap::arch::PeriodicMilliTimer timer;
     modm::bno055::Data unusedData;
     modm::Bno055<Board::Bno055I2CMaster> imu;
 };
