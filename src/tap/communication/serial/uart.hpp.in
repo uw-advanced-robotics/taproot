@@ -1,0 +1,170 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef UART_HPP
+#define UART_HPP
+
+#include <cstdint>
+#include <cstdlib>
+
+#ifndef PLATFORM_HOSTED
+#include "modm/platform.hpp"
+#include "modm/platform/uart/uart_base.hpp"
+#endif
+
+#include "tap/board/board.hpp"
+#include "tap/util_macros.hpp"
+
+namespace tap
+{
+namespace serial
+{
+/**
+ * Class that wraps modm's Uart implementation.
+ *
+ * Currently only wraps the uart ports that we are generating modm
+ * code for. If additional `UartPort`'s are added, they must be added
+ * to this wrapper class here.
+ */
+class Uart
+{
+public:
+    enum UartPort
+    {
+%% for port in uart_ports
+        Uart{{ port }},
+%% endfor
+    };
+
+#ifdef PLATFORM_HOSTED
+    enum Parity
+    {
+        Disabled,
+        Even,
+        Odd
+    };
+#else
+    using Parity = modm::platform::UartBase::Parity;
+#endif
+
+    Uart() = default;
+    DISALLOW_COPY_AND_ASSIGN(Uart)
+    mockable ~Uart() = default;
+
+    /**
+     * Initializes a particular Uart with the pins particular to the board.
+     *
+     * @note follow covention in the functino when adding a `UartPort`.
+     * @tparam port the particular port to initialize.
+     * @tparam baudrate desired baud rate in Hz.
+     * @tparam parity @see `Parity`.
+     */
+    template <UartPort port, modm::baudrate_t baudrate, Parity parity = Parity::Disabled>
+    void init()
+    {
+#ifndef PLATFORM_HOSTED
+%% macro init_port(port, rxPin, txPin)
+            modm::platform::Usart{{ port }}::connect<{% if txPin != None %}{{ txPin }}::Tx{% if rxPin != None %}, {% endif %}{% endif %}{% if rxPin != None %}{{ rxPin }}::Rx{% endif %}>();
+            modm::platform::Usart{{ port }}::initialize<Board::SystemClock, baudrate>(parity);
+%% endmacro
+%% if uart_ports|length > 0
+        if constexpr (port == UartPort::Uart{{ uart_ports[0] }})
+        {
+    %% set port = uart_ports[0]
+    %% set rxPin = port_to_rx_pin[port]
+    %% set txPin = port_to_tx_pin[port]
+{{ init_port(port, rxPin, txPin) }}        }
+%% endif
+%% for port in uart_ports[1:]
+        else if constexpr (port == UartPort::Uart{{ port }})
+        {
+    %% set rxPin = port_to_rx_pin[port]
+    %% set txPin = port_to_tx_pin[port]
+{{ init_port(port, rxPin, txPin) }}        }
+%% endfor
+#endif
+    }
+
+    /**
+     * Read a single byte.
+     *
+     * @param[in] port the port to read from.
+     * @param[out] data Byte read, if any.
+     *
+     * @return `true` if a byte was received, `false` otherwise.
+     */
+    mockable bool read(UartPort port, uint8_t *data);
+
+    /**
+     * Read a block of bytes.
+     *
+     * @param[in] port the port to read from.
+     * @param[out] data pointer to a buffer big enough to store `length` bytes
+     * @param[in] length number of bytes to be read.
+     *
+     * @return number of bytes which could be read, maximal `length`.
+     */
+    mockable std::size_t read(UartPort port, uint8_t *data, std::size_t length);
+
+    /**
+     * Empty the receive FIFO queue and hardware buffer.
+     *
+     * @param[in] port the port's buffer to discard.
+     * @return the size of the deleted FIFO queue.
+     */
+    mockable std::size_t discardReceiveBuffer(UartPort port);
+
+    /**
+     * Pushes a single byte into the buffer.
+     *
+     * @param[in] port the port to write to.
+     * @return `true` if data has been successfully sent, `false` if buffer is full.
+     * @note this writing is buffered.
+     */
+    mockable bool write(UartPort port, uint8_t data);
+
+    /**
+     * Pushes a block of bytes into the buffer.
+     *
+     * @param[in] port the port to write to.
+     * @param[in] data pointer to a buffer big enough to store `length` bytes.
+     * @param[in] length number of bytes to be written.
+     * @return the number of bytes that have been written.
+     * @note this writing may be buffered.
+     */
+    mockable std::size_t write(UartPort port, const uint8_t *data, std::size_t length);
+
+    /**
+     * Because the data is buffered, check here to see if the buffer is empty
+     * (implying everything has been written).
+     *
+     * @param[in] port the port to see if writing is finished.
+     * @return `true` if the buffer is empty and the last byte has been sent.
+     */
+    mockable bool isWriteFinished(UartPort port) const;
+
+    mockable void flushWriteBuffer(UartPort port);
+};
+
+}  // namespace serial
+
+}  // namespace tap
+
+#endif
+

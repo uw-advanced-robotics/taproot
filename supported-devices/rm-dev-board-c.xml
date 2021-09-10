@@ -1,0 +1,45 @@
+<board>
+    <gpio-pins>
+        <gpio alias="C1" name="GpioE9">
+            <timer name="Timer1" channel="Ch1"></timer>
+        </gpio>
+        <gpio alias="C2" name="GpioE11">
+            <timer name="Timer1" channel="Ch2"></timer>
+        </gpio>
+        <gpio alias="C3" name="GpioE13">
+            <timer name="Timer1" channel="Ch3"></timer>
+        </gpio>
+        <gpio alias="C4" name="GpioE14">
+            <timer name="Timer1" channel="Ch4"></timer>
+        </gpio>
+        <gpio alias="C5" name="GpioC6">
+            <timer name="Timer8" channel="Ch1"></timer>
+        </gpio>
+        <gpio alias="C6" name="GpioI6">
+            <timer name="Timer8" channel="Ch2"></timer>
+        </gpio>
+        <gpio alias="C7" name="GpioI7">
+            <timer name="Timer8" channel="Ch3"></timer>
+        </gpio>
+        <gpio alias="PF1" name="GpioF1"></gpio>
+        <gpio alias="PF0" name="GpioF0"></gpio>
+        <gpio alias="B12" name="GpioB12"></gpio>
+        <gpio alias="B13" name="GpioB13"></gpio>
+        <gpio alias="B14" name="GpioB14"></gpio>
+        <gpio alias="B15" name="GpioB15">
+            <!-- Can be used for RTC_REFIN -->
+        </gpio>
+        <gpio alias="Buzzer" name="GpioD14">
+            <timer name="Timer4" channel="Ch3"></timer>
+        </gpio>
+        <gpio alias="VolDetect" name="GpioF10">
+            <adc name="Adc3" in="In8"></adc>
+        </gpio>
+        <gpio alias="Laser" name="GpioC8"></gpio>
+    </gpio-pins>
+    <uart-ports>
+        <uart name="1" tx="GpioA9" rx="GpioB7"></uart>
+        <uart name="3" rx="GpioC11"></uart>
+        <uart name="6" tx="GpioG14" rx="GpioG9"></uart>
+    </uart-ports>
+</board>

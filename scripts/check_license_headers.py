@@ -35,7 +35,7 @@ FILE_GLOBS_TO_IGNORE = [
     '../src/tap/algorithms/MahonyAHRS.*']
 SCRIPT_DIR = dirname(__file__)
 
-CPP_LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h']
+CPP_LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h', '.hpp.in', '.cpp.in']
 CPP_LICENSE_HEADER = '/*\n\
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
  *\n\
@@ -55,7 +55,7 @@ CPP_LICENSE_HEADER = '/*\n\
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n\
  */\n'
 
-SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS = ['.lb', '.py', '.sh', '.yml']
+SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS = ['.lb', '.py', '.sh', '.yml', '.py.in']
 SCRIPT_LICENSE_HEADER = '# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
 #\n\
 # This file is part of Taproot.\n\

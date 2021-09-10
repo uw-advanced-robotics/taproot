@@ -1,0 +1,86 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
+def init(module):
+    module.name = ":board"
+    module.description = "Project.xml files for modm HAL generation"
+
+def prepare(module, options):    
+    module.add_option(
+        StringOption(
+            name="digital_in_pins",
+            description="Comma-separated list of digital in pins",
+            default=""))
+
+    module.add_option(
+        StringOption(
+            name="digital_out_pins",
+            description="Comma-separated list of digital out pins",
+            default=""))
+
+    module.add_option(
+        StringOption(
+            name="analog_in_pins",
+            description="Comma-separated list of analog in pins",
+            default=""))
+
+    module.add_option(
+        StringOption(
+            name="pwm_pins",
+            description="Comma-separated list of PWM pins",
+            default=""))
+
+    return True
+
+def build(env):
+    def extract_pin_defines(pins: str) -> str:
+        pins = [pin.strip() for pin in str.split(pins, ",")]
+        return [] if pins == [""] else pins
+
+    board_name = env[":dev_board"]
+
+    digital_in_pins = extract_pin_defines(env["digital_in_pins"])
+    digital_out_pins = extract_pin_defines(env["digital_out_pins"])
+    analog_in_pins = extract_pin_defines(env["analog_in_pins"])
+    pwm_pins = extract_pin_defines(env["pwm_pins"])
+
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+
+    pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
+    assert len(pins) == len(set(pins)), "duplicate pin definitions"
+
+    metadata_pins = metadata.find("gpio-pins")
+    for pin in pins:
+        assert any(metadata_pin.get("alias") == pin for metadata_pin in metadata_pins),\
+            f"invalid pin {pin}"
+
+    pin_mappings = { pin.get("alias"): pin.get("name") for pin in metadata_pins }
+
+    env.substitutions = {
+        "digital_in_pins": digital_in_pins,
+        "digital_out_pins": digital_out_pins,
+        "analog_in_pins": analog_in_pins,
+        "pwm_pins": pwm_pins,
+        "pin_mappings": pin_mappings,
+    }
+    env.outbasepath = "taproot/src/tap/board"
+    env.copy("board.cpp")
+    env.template(f"{board_name}/board.hpp.in", "board.hpp")

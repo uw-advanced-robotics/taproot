@@ -4,7 +4,7 @@
 #include <modm/driver/inertial/bno055.hpp>
 #include <modm/processing.hpp>
 
-#include "tap/rm-dev-board-a/board.hpp"
+#include "tap/board/board.hpp"
 #include "tap/util_macros.hpp"
 
 namespace tap

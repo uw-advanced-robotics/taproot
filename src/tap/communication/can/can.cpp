@@ -26,7 +26,7 @@
 #include "tap/motor/motorsim/sim_handler.hpp"
 #endif
 
-#include "tap/rm-dev-board-a/board.hpp"
+#include "tap/board/board.hpp"
 
 #ifndef PLATFORM_HOSTED
 using namespace modm::platform;
