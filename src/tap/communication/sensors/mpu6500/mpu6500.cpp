@@ -126,7 +126,7 @@ void Mpu6500::init()
 #endif
 }
 
-void Mpu6500::calcIMUAngles()
+void Mpu6500::periodicIMUUpdate()
 {
     if (imuInitialized)
     {

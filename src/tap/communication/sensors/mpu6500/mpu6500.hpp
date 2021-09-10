@@ -64,7 +64,7 @@ public:
      * Also runs a controller to keep the temperature constant.
      * Call at 500 hz for best performance.
      */
-    mockable void calcIMUAngles();
+    mockable void periodicIMUUpdate();
 
     /**
      * Read data from the imu. This is a protothread that reads the SPI bus using
