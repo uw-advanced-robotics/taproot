@@ -46,7 +46,6 @@ bool RefSerial::getRefSerialReceivingData() const
     return !(refSerialOfflineTimeout.isStopped() || refSerialOfflineTimeout.isExpired());
 }
 
-// rx stuff
 void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
 {
     refSerialOfflineTimeout.restart(TIME_OFFLINE_REF_DATA_MS);
