@@ -39,6 +39,9 @@
             <timer name="Timer12" channel="Ch1"></timer>
         </gpio>
         <gpio alias="Laser" name="GpioG13"></gpio>
+        <gpio alias="ImuHeater" name="GpioB5">
+            <timer name="Timer3" channel="Ch2"></timer>
+        </gpio>
     </gpio-pins>
     <uart-ports>
         <uart name="1" rx="GpioB7"></uart>

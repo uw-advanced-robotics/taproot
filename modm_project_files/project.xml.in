@@ -52,14 +52,16 @@
     <module>modm:platform:spi:1</module>
 %% if options[":dev_board"] == "rm-dev-board-a"
     <module>modm:platform:i2c:2</module>
+    <module>modm:platform:timer:3</module>
     <module>modm:platform:timer:12</module>
     <module>modm:platform:spi:5</module>
     <module>modm:platform:uart:2</module>
     <module>modm:ui:display</module>
     <module>modm:ui:menu</module>
 %% elif options[":dev_board"] == "rm-dev-board-c"
-    <module>modm:platform:timer:4</module>
     <module>modm:platform:timer:1</module>
+    <module>modm:platform:timer:4</module>
+    <module>modm:platform:timer:10</module>
     <module>modm:platform:adc:3</module>
 %% endif
   </modules>

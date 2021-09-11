@@ -16,14 +16,13 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":communication:sensors:mpu6500"
-    module.description = "Robomaster Development Board Type A specific communication" \
-        "with the on board mpu6500"
+    module.name = ":communication:sensors:imu_heater"
+    module.description = "A driver that controls the robomaster development board "\
+        "imu heating element"
 
 def prepare(module, options):
-    module.depends(":communication:sensors:imu_heater")
-    return options[":dev_board"] == "rm-dev-board-a"
+    return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/sensors/mpu6500"
+    env.outbasepath = "taproot/src/tap/communication/sensors/imu_heater"
     env.copy(".")
