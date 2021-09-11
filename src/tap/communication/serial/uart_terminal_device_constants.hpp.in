@@ -23,7 +23,7 @@
 namespace tap::serial::bound_ports
 {
     static constexpr Uart::UartPort TERMINAL_SERIAL_UART_PORT = Uart::UartPort::{{ uart_port }};
-}  // namespace tap::serial
+}  // namespace tap::serial::bound_ports
 
 #endif  // UART_TERMINAL_DEVICE_CONSTANTS_HPP_
 
