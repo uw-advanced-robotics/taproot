@@ -51,14 +51,14 @@ void Pwm::init()
 %% endfor
 #endif
     // Set all out pins to 0 duty
-    writeAll(0.0f);
+    writeAllZeros();
 }
 
-void Pwm::writeAll(float duty)
+void Pwm::writeAllZeros()
 {
 #ifndef PLATFORM_HOSTED
 %% for pin in pins
-    write(duty, Pin::{{ pin }});
+    write(0.0f, Pin::{{ pin }});
 %% endfor
 #endif
 }
@@ -91,7 +91,7 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
     {
 %% for timer in timers
         case {{ timer|upper }}:
-            {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
 %% endfor
     }
