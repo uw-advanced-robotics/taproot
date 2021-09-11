@@ -23,6 +23,8 @@
 #include "tap/communication/serial/terminal_serial.hpp"
 #include "tap/util_macros.hpp"
 
+#include "modm/architecture/interface/register.hpp"
+
 namespace tap
 {
 class Drivers;
@@ -39,7 +41,7 @@ class Mpu6500TerminalSerialHandler : public communication::serial::ITerminalSeri
 public:
     static constexpr char HEADER[] = "mpu6500";
 
-    Mpu6500TerminalSerialHandler(Drivers* drivers) : drivers(drivers) {}
+    Mpu6500TerminalSerialHandler(Drivers* drivers) : drivers(drivers), subjectsBeingInspected(0) {}
 
     mockable void init();
 
@@ -75,14 +77,16 @@ private:
         TEMP = 1 << 3
     };
 
+    MODM_FLAGS8(InspectSubject);
+
     /**
      * Contains which elements are being inspected (one, none, or a combination
      * of `InspectSubject`) using bit masking techniques.
      *
-     * For example, if `ANGLES` and `GYRO` are being inspected, `inspectSubjectBitmap`
+     * For example, if `ANGLES` and `GYRO` are being inspected, `subjectsBeingInspected`
      * is equal to `ANGLES | GYRO`.
      */
-    uint8_t inspectSubjectBitmap = 0;
+    InspectSubject_t subjectsBeingInspected;
 
     void printHeader(modm::IOStream& outputStream);
 };  // class Mpu6500TerminalSerialHandler
