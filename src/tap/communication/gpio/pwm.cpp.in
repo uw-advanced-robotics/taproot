@@ -91,7 +91,7 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
     {
 %% for timer in timers
         case {{ timer|upper }}:
-            {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
 %% endfor
     }
