@@ -62,12 +62,9 @@ public:
     mockable void init();
 
     /**
-     * Sets all Timer channels to the same duty.
-     *
-     * @param[in] duty the duty cycle to be set. If the duty is outside of the range
-     *      of [0, 1] the duty is limited to within the range.
+     * Sets all configured timer channels to 0% duty cycle.
      */
-    mockable void writeAll(float duty);
+    mockable void writeAllZeros();
 
     /**
      * Sets the PWM duty for a specified pin.
@@ -89,6 +86,7 @@ public:
 
 private:
     static constexpr int BUZZER_CHANNEL = 1;
+    static constexpr int HEATER_CHANNEL = 2;
 
     enum Ch
     {
