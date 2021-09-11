@@ -171,6 +171,14 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "constructor": "this",
         "module-dependencies": "",
     },
+    {
+        "object-name": "sensors::Mpu6500TerminalSerialHandler",
+        "mock-object-name": nice_mock("mock::Mpu6500TerminalSerialHandlerMock"),
+        "src-file": "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp",
+        "mock-header": "tap/mock/mpu6500_terminal_serial_handler_mock.hpp",
+        "constructor": "this",
+        "module-dependencies": [":communication:serial:terminal_serial"],
+    }
 ]
 
 def should_driver_be_generated(env, driver):
