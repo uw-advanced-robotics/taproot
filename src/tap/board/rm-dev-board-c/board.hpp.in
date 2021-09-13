@@ -103,8 +103,8 @@ struct SystemClock
 #ifndef PLATFORM_HOSTED
         Rcc::enableExternalCrystal();  // 12 MHz
         Rcc::PllFactors pllF = {
-            6,    // 12MHz / N=6 -> 2MHz
-            168,  // 2MHz * M=168 -> 336MHz
+            6,    // 12MHz / M=6 -> 2MHz
+            168,  // 2MHz * N=168 -> 336MHz
             2     // 336MHz / P=2 -> 168MHz = F_cpu
         };
         Rcc::enablePll(Rcc::PllSource::ExternalCrystal, pllF);
