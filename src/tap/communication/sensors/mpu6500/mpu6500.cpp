@@ -233,7 +233,7 @@ float Mpu6500::getTiltAngle()
 {
     if (!tiltAngleCalculated)
     {
-        tiltAngle = tap::algorithms::radiansToDegrees(acosf(
+        tiltAngle = modm::toDegree(acosf(
             cosf(mahonyAlgorithm.getPitchRadians()) * cosf(mahonyAlgorithm.getRollRadians())));
         tiltAngleCalculated = true;
     }
