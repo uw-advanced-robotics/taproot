@@ -110,7 +110,6 @@ struct SystemClock
 
         Rcc::setFlashLatency<Frequency>();
         Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);
-        {# TODO I think this should be Div4 and Div2 (see https://gitlab.com/aruw/controls/aruw-mcb/-/issues/168) for tracking #}
         Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div4);
         Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div2);
         Rcc::updateCoreFrequency<Frequency>();
