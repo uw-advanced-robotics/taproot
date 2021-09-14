@@ -52,8 +52,8 @@ using namespace modm::literals;
 struct SystemClock
 {
     static constexpr uint32_t Frequency = 180_MHz;
-    static constexpr uint32_t Apb1 = Frequency / 2;
-    static constexpr uint32_t Apb2 = Frequency;
+    static constexpr uint32_t Apb1 = Frequency / 4;
+    static constexpr uint32_t Apb2 = Frequency / 2;
 
     static constexpr uint32_t Adc = Apb2;
 
@@ -110,9 +110,8 @@ struct SystemClock
 
         Rcc::setFlashLatency<Frequency>();
         Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);
-        {# TODO I think this should be Div4 and Div2 (see https://gitlab.com/aruw/controls/aruw-mcb/-/issues/168) for tracking #}
-        Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div2);
-        Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div1);
+        Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div4);
+        Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div2);
         Rcc::updateCoreFrequency<Frequency>();
 #endif
 
