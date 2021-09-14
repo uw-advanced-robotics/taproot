@@ -54,4 +54,4 @@ void LinearInterpolationContiguous::reset(float initialValue, uint32_t initialTi
     lastUpdateCallTime = initialTime;
     slope = 0.0f;
 }
-}  // namespace tap
+}  // namespace tap::algorithms

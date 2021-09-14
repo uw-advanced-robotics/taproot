@@ -21,6 +21,7 @@
 #define LINEAR_INTERPOLATION_CONTIGUOUS_HPP_
 
 #include <cstdint>
+
 #include "contiguous_float.hpp"
 
 namespace tap
@@ -69,8 +70,8 @@ public:
     void reset(float initialValue, uint32_t initialTime);
 
 private:
-    uint32_t lastUpdateCallTime;  /// The previous timestamp from when update was called.
-    ContiguousFloat previousValue;/// The previous data value.
+    uint32_t lastUpdateCallTime;    /// The previous timestamp from when update was called.
+    ContiguousFloat previousValue;  /// The previous data value.
     float slope;  /// The current slope, calculated using the previous and most current data.
 };                // class LinearInterpolationContiguous
 
