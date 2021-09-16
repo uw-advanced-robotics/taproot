@@ -115,14 +115,14 @@ bool UnjamCommand::isFinished() const { return backwardsCount >= 3; }
 void UnjamCommand::beginUnjamForwards()
 {
     unjamRotateTimeout.restart(maxWaitTime);
-    setpointSubsystem->setSetpoint(valueBeforeUnjam - unjamDisplacement);
+    setpointSubsystem->setSetpoint(valueBeforeUnjam + unjamDisplacement);
     currUnjamState = UNJAM_FORWARD;
 }
 
 void UnjamCommand::beginUnjamBackwards()
 {
     unjamRotateTimeout.restart(maxWaitTime);
-    setpointSubsystem->setSetpoint(valueBeforeUnjam + unjamDisplacement);
+    setpointSubsystem->setSetpoint(valueBeforeUnjam - unjamDisplacement);
     currUnjamState = UNJAM_BACKWARD;
     backwardsCount += 1;
 }

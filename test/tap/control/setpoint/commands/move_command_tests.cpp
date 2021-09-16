@@ -155,6 +155,7 @@ TEST(MoveCommand, command_is_finished_when_subsystem_jammed)
 
 TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_within_tolerance)
 {
+    // Command being finished also requires sufficient time to have passed.
     CREATE_COMMON_TEST_OBJECTS();
     MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 1.0f);
 
@@ -166,8 +167,11 @@ TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_w
 
     setTime(0);
     command.initialize();
-    setTime(1015);
+    // When command executes it should see that subsystem position is at target and start pause after
+    // rotate timeout
     command.execute();
+    // Provide sufficient time for pause after rotation
+    setTime(15);
     EXPECT_TRUE(command.isFinished());
 }
 

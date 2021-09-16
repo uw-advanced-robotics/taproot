@@ -93,7 +93,8 @@ TEST(UnjamCommand, command_does_not_execute_while_subsystem_offline)
     UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
-    EXPECT_CALL(subsystem, setSetpoint).Times(0);
+    // Allow setpoint to be set at most once during initialization step
+    EXPECT_CALL(subsystem, setSetpoint).Times(AtMost(1));
 
     setTime(0);
     command.initialize();
@@ -133,7 +134,7 @@ static float getCurrentValueSimulator()
 TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_both_directions)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.4f, 1000);
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
@@ -149,7 +150,12 @@ TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_b
         command.execute();
     }
 
-    EXPECT_TRUE(command.isFinished());
+    // command.isFinished() called here to model actual command lifecycle
+    // but should have no effect on command's state as it is a const function
+    command.isFinished();
+
+    command.end(true);
+
 }
 
 // end() tests ------------------------------------
@@ -157,7 +163,7 @@ TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_b
 /**
  * An old implementation of end() had the command clear jam there.
  * This is an issue as end() can be called by having the command
- * finish. This is to check that that isn't happening
+ * interrupted. This is to check that that isn't happening
  */
 TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
 {
@@ -166,5 +172,14 @@ TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
 
     EXPECT_CALL(subsystem, clearJam).Times(0);
 
+    setTime(0);
+    command.initialize();
+
+    setTime(1);
+    command.execute();
+
+    // Oh no! Command has been interrupted and ended, clearJam shouldn't be
+    // called.
+    setTime(2);
     command.end(true);
 }
