@@ -17,40 +17,31 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "linear_interpolation_contiguous.hpp"
+#include "linear_interpolation_predictor.hpp"
 
 namespace tap::algorithms
 {
-LinearInterpolationContiguous::LinearInterpolationContiguous(float lowerBound, float upperBound)
+LinearInterpolationPredictor::LinearInterpolationPredictor()
     : lastUpdateCallTime(0),
-      previousValue(0.0f, lowerBound, upperBound),
+      previousValue(0.0f),
       slope(0.0f)
 {
 }
 
-void LinearInterpolationContiguous::update(float newValue, uint32_t currTime)
+void LinearInterpolationPredictor::update(float newValue, uint32_t currTime)
 {
-    if (currTime == lastUpdateCallTime)
+    if (currTime <= lastUpdateCallTime)
     {
         return;
     }
-    slope = (-previousValue.difference(newValue)) / (currTime - lastUpdateCallTime);
-    previousValue.setValue(newValue);
+    slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);
+    previousValue = newValue;
     lastUpdateCallTime = currTime;
 }
 
-float LinearInterpolationContiguous::getInterpolatedValue(uint32_t currTime)
+void LinearInterpolationPredictor::reset(float initialValue, uint32_t initialTime)
 {
-    return ContiguousFloat(
-               slope * static_cast<float>(currTime - lastUpdateCallTime) + previousValue.getValue(),
-               previousValue.getLowerBound(),
-               previousValue.getUpperBound())
-        .getValue();
-}
-
-void LinearInterpolationContiguous::reset(float initialValue, uint32_t initialTime)
-{
-    previousValue.setValue(initialValue);
+    previousValue = initialValue;
     lastUpdateCallTime = initialTime;
     slope = 0.0f;
 }

@@ -17,29 +17,27 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEAR_INTERPOLATION_CONTIGUOUS_HPP_
-#define LINEAR_INTERPOLATION_CONTIGUOUS_HPP_
+#ifndef LINEAR_INTERPOLATION_PREDICTOR_CONTIGUOUS_HPP_
+#define LINEAR_INTERPOLATION_PREDICTOR_CONTIGUOUS_HPP_
 
 #include <cstdint>
 
 #include "contiguous_float.hpp"
 
-namespace tap
-{
-namespace algorithms
+namespace tap::algorithms
 {
 /**
- * An object that is similar in every respect to the `LinearInterpolation`
+ * An object that is similar in every respect to the `LinearInterpolationPredictor`
  * object except that it uses `ContiguousFloat`'s instead.
  */
-class LinearInterpolationContiguous
+class LinearInterpolationPredictorContiguous
 {
 public:
     /**
      * @param[in] lowerBound Lower bound for linear interpolation contiguous float.
      * @param[in] upperBound Upper bound for linear interpolation contiguous float.
      */
-    LinearInterpolationContiguous(float lowerBound, float upperBound);
+    LinearInterpolationPredictorContiguous(float lowerBound, float upperBound);
 
     /**
      * Updates the interpolation using the newValue.
@@ -47,6 +45,7 @@ public:
      * @note only call this when you receive a new value (use remote rx
      *      counter to tell when there is new data from the remote, for
      *      example).
+     * @note This function should be called with increasing values of `currTime`.
      * @param[in] newValue the new data used in the interpolation.
      * @param[in] currTime The time that this function was called.
      */
@@ -54,16 +53,33 @@ public:
 
     /**
      * Returns the current value, that is: \f$y\f$ in the equation
-     * \f$y=slope\cdot (currTime - lastUpdateCallTime) + previousValue\f$.
+     * \f$y=slope\cdot (currTime - lastUpdateCallTime) + previousValue\f$
+     * in the units of whatever value you are inputting in the `update` function.
      *
+     * @note Slope is defined by the previous two values passed into the `update`
+     *      function, a period preceeding `lastUpdateCallTime`.
      * @note use a millisecond-resolution timer, e.g.
-     *      tap::arch::clock::getTimeMilliseconds()
+     *      `tap::arch::clock::getTimeMilliseconds()`
      * @param[in] currTime the current clock time, in ms.
      * @return the interpolated value.
      */
-    float getInterpolatedValue(uint32_t currTime);
+    float getInterpolatedValue(uint32_t currTime)
+    {
+        return ContiguousFloat(
+                   slope * static_cast<float>(currTime - lastUpdateCallTime) +
+                       previousValue.getValue(),
+                   previousValue.getLowerBound(),
+                   previousValue.getUpperBound())
+            .getValue();
+    }
 
     /**
+     * Resets the predictor. The slope will be reset to 0 and the initial values
+     * and time will be used to initialize the predictor.
+     *
+     * @note It is highly recommended that you call this function before calling
+     *      `update` to "initialize" the system.
+     *
      * @param[in] initialValue The value to set the previous value to when resetting.
      * @param[in] initialTime The value to set the previous time to when resetting.
      */
@@ -73,10 +89,8 @@ private:
     uint32_t lastUpdateCallTime;    /// The previous timestamp from when update was called.
     ContiguousFloat previousValue;  /// The previous data value.
     float slope;  /// The current slope, calculated using the previous and most current data.
-};                // class LinearInterpolationContiguous
+};                // class LinearInterpolationPredictorContiguous
 
-}  // namespace algorithms
+}  // namespace tap::algorithms
 
-}  // namespace tap
-
-#endif  // LINEAR_INTERPOLATION_CONTIGUOUS_HPP_
+#endif  // LINEAR_INTERPOLATION_PREDICTOR_CONTIGUOUS_HPP_
