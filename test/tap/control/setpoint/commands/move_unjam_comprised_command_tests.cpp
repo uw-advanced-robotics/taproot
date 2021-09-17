@@ -131,20 +131,19 @@ TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
     EXPECT_CALL(subsystem, isJammed).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
-    EXPECT_CALL(subsystem, setSetpoint(Lt(0.1f)));
-    EXPECT_CALL(subsystem, setSetpoint(Gt(3.9f)));
-    EXPECT_CALL(subsystem, clearJam);
+    EXPECT_CALL(subsystem, setSetpoint(Lt(0.1f))).Times(AtLeast(1));
+    EXPECT_CALL(subsystem, setSetpoint(Gt(5.9f))).Times(AtLeast(1));
+    EXPECT_CALL(subsystem, clearJam).Times(AtLeast(1));
 
     setTime(0);
     command.initialize();
-    for (int i = 200; i <= 2000; i += 200)
+    for (int i = 50; i <= 2000; i += 50)
     {
         setTime(i);
         command.execute();
     }
 
-    // Once successfully unjammed command should end
-    EXPECT_TRUE(command.isFinished());
+    command.end(!command.isFinished());
 }
 
 TEST(MoveUnjamComprisedCommand, command_does_not_execute_while_offline)
