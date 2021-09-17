@@ -81,3 +81,15 @@ TEST(LinearInterpolationPredictorContiguous, normal_operation_wrapping)
     li.update(9.5, 11);
     EXPECT_FLOAT_EQ(0.5, li.getInterpolatedValue(13));
 }
+
+TEST(LinearInterpolationPredictorContiguous, after_update_with_bad_time_value_doesnt_change)
+{
+    LinearInterpolationPredictorContiguous li(0, 10);
+
+    li.reset(5, 1);
+    li.update(6, 2);
+    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(3));
+    li.update(7, 1);
+    // Time before last update time, slope should be 0, getInterpolatedValue returns last value
+    EXPECT_FLOAT_EQ(6, li.getInterpolatedValue(4));
+}

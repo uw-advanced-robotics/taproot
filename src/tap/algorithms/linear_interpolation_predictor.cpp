@@ -32,6 +32,7 @@ void LinearInterpolationPredictor::update(float newValue, uint32_t currTime)
 {
     if (currTime <= lastUpdateCallTime)
     {
+        slope = 0.0f;
         return;
     }
     slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);

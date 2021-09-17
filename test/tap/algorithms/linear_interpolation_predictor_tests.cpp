@@ -57,3 +57,15 @@ TEST(LinearInterpolationPredictor, normal_operation_no_wrapping)
     li.update(4, 26);
     EXPECT_FLOAT_EQ(2, li.getInterpolatedValue(27));
 }
+
+TEST(LinearInterpolationPredictor, after_update_with_bad_time_value_doesnt_change)
+{
+    LinearInterpolationPredictor li;
+
+    li.reset(5, 1);
+    li.update(6, 2);
+    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(3));
+    li.update(7, 1);
+    // Time before last update time, slope should be 0, getInterpolatedValue returns last value
+    EXPECT_FLOAT_EQ(6, li.getInterpolatedValue(4));
+}
