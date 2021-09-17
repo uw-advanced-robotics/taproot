@@ -75,14 +75,14 @@ sim build:
   only: *default_only
   script:
     - cd test-project && lbuild build
-    - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS}
+    - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS} additional-ccflags=-Werror
 
 tests build:
   stage: Build all Targets
   only: *default_only
   script:
     - cd test-project && lbuild build
-    - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
+    - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS} additional-ccflags=-Werror
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s=<source>.</source>=<source>./taproot-project-sim</source>=g" cobertura.xml'
