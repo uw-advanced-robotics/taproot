@@ -17,31 +17,35 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "linear_interpolation.hpp"
+#include "linear_interpolation_predictor_contiguous.hpp"
 
-namespace tap
+namespace tap::algorithms
 {
-namespace algorithms
-{
-LinearInterpolation::LinearInterpolation() : lastUpdateCallTime(0), previousValue(0.0f), slope(0.0f)
+LinearInterpolationPredictorContiguous::LinearInterpolationPredictorContiguous(
+    float lowerBound,
+    float upperBound)
+    : lastUpdateCallTime(0),
+      previousValue(0.0f, lowerBound, upperBound),
+      slope(0.0f)
 {
 }
 
-void LinearInterpolation::update(float newValue, uint32_t currTime)
+void LinearInterpolationPredictorContiguous::update(float newValue, uint32_t currTime)
 {
-    if (currTime == lastUpdateCallTime)
+    if (currTime <= lastUpdateCallTime)
     {
+        slope = 0;
         return;
     }
-    slope = (newValue - previousValue) / (currTime - lastUpdateCallTime);
-    previousValue = newValue;
+    slope = (previousValue.difference(newValue)) / (currTime - lastUpdateCallTime);
+    previousValue.setValue(newValue);
     lastUpdateCallTime = currTime;
 }
 
-float LinearInterpolation::getInterpolatedValue(uint32_t currTime)
+void LinearInterpolationPredictorContiguous::reset(float initialValue, uint32_t initialTime)
 {
-    return slope * static_cast<float>(currTime - lastUpdateCallTime) + previousValue;
+    previousValue.setValue(initialValue);
+    lastUpdateCallTime = initialTime;
+    slope = 0.0f;
 }
-}  // namespace algorithms
-
-}  // namespace tap
+}  // namespace tap::algorithms
