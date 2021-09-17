@@ -183,3 +183,23 @@ TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
     setTime(2);
     command.end(true);
 }
+
+TEST(UnjamCommand, command_resets_setpoint_on_end)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+
+    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(-10.0f));
+    EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
+    EXPECT_CALL(subsystem, setSetpoint(FloatEq(-10.0f)));
+
+    setTime(0);
+    command.initialize();
+    for (int i = 50; i <= 1000; i += 50)
+    {
+        setTime(i);
+        command.execute();
+    }
+
+    command.end(!command.isFinished());
+}
