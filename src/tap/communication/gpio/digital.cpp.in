@@ -20,6 +20,7 @@
 #include "digital.hpp"
 
 #include "tap/board/board.hpp"
+#include "tap/util_macros.hpp"
 
 using namespace Board;
 
@@ -40,7 +41,10 @@ void Digital::init()
 
 void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMode mode)
 {
-#ifndef PLATFORM_HOSTED
+#ifdef PLATFORM_HOSTED
+    UNUSED(pin);
+    UNUSED(mode);
+#else
     switch (pin)
     {
 %% for pin in input_pins
@@ -54,7 +58,10 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
 
 void Digital::set(Digital::OutputPin pin, bool isSet)
 {
-#ifndef PLATFORM_HOSTED
+#ifdef PLATFORM_HOSTED
+    UNUSED(pin);
+    UNUSED(isSet);
+#else
     switch (pin)
     {
 %% for pin in output_pins
@@ -69,6 +76,7 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
 bool Digital::read(Digital::InputPin pin) const
 {
 #ifdef PLATFORM_HOSTED
+    UNUSED(pin);
     return false;
 #else
     switch (pin)

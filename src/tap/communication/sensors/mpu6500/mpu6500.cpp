@@ -300,7 +300,10 @@ void Mpu6500::calculateAccOffset()
 
 void Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 {
-#ifndef PLATFORM_HOSTED
+#ifdef PLATFORM_HOSTED
+    UNUSED(reg);
+    UNUSED(data);
+#else
     mpuNssLow();
     uint8_t tx = reg & ~MPU6500_READ_BIT;
     uint8_t rx = 0;  // Unused
@@ -313,7 +316,10 @@ void Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
 
 uint8_t Mpu6500::spiReadRegister(uint8_t reg)
 {
-#ifndef PLATFORM_HOSTED
+#ifdef PLATFORM_HOSTED
+    UNUSED(reg);
+    return 0;
+#else
     mpuNssLow();
     uint8_t tx = reg | MPU6500_READ_BIT;
     uint8_t rx = 0;
@@ -321,14 +327,16 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
     return rx;
-#else
-    return 0;
 #endif
 }
 
 void Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 {
-#ifndef PLATFORM_HOSTED
+#ifdef PLATFORM_HOSTED
+    UNUSED(regAddr);
+    UNUSED(pData);
+    UNUSED(len);
+#else
     mpuNssLow();
     uint8_t tx = regAddr | MPU6500_READ_BIT;
     uint8_t rx = 0;
