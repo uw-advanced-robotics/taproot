@@ -16,7 +16,6 @@
 # along with {{ options["taproot:project_name"] }}.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-import argparse
 from taproot.build_tools import parse_args
 from os.path import join, abspath
 from SCons.Script import *
