@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import subprocess
 
 def init(repo):
@@ -63,6 +64,18 @@ def build(env):
         print("building sim-modm")
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
+        except subprocess.CalledProcessError as e:
+            print(e.output())
+            exit(1)
+
+    if env[":core:generate_driver_hpp"]:
+        print("running clang-format on drivers.hpp")
+        try:
+            proc = subprocess.run(["which", "clang-format"], stdout=subprocess.PIPE, text=True)
+            print("####")
+            print(proc)
+            clang_format = proc.stdout.replace("\n", "")
+            subprocess.run([clang_format, "-i", "./src/drivers.hpp"], check=True)
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)
