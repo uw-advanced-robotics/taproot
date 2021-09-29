@@ -98,6 +98,11 @@ public:
      * @see setYawMotorOutput
      */
     virtual void setPitchMotorOutput(float out) = 0;
+
+    /**
+     * If `true`, the turret may spin 360 degrees freely, otherwise `false`.
+     */
+    virtual bool yawLimited() const = 0;
 };
 }  // namespace tap::control::turret
 
