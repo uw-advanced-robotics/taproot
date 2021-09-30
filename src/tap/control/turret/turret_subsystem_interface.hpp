@@ -100,7 +100,7 @@ public:
     virtual void setPitchMotorOutput(float out) = 0;
 
     /**
-     * If `true`, the turret may spin 360 degrees freely, otherwise `false`.
+     * If `false`, the turret may spin 360 degrees freely, otherwise `true`.
      */
     virtual bool yawLimited() const = 0;
 };
