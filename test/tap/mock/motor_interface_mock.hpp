@@ -22,8 +22,9 @@
 
 #include <cstdint>
 
-#include "tap/motor/motor_interface.hpp"
 #include <gmock/gmock.h>
+
+#include "tap/motor/motor_interface.hpp"
 
 namespace tap::mock
 {

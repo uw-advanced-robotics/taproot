@@ -22,8 +22,8 @@
 
 #include <cstdint>
 
-namespace tap::motor {
-
+namespace tap::motor
+{
 class MotorInterface
 {
 public:
@@ -38,6 +38,6 @@ public:
     virtual int16_t getShaftRPM() const = 0;
 };
 
-}
+}  // namespace tap::motor
 
 #endif  //  MOTOR_INTERFACE_HPP_
