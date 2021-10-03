@@ -78,17 +78,21 @@ bool DoubleDjiMotor::isMotorOnline() const
 
 int16_t DoubleDjiMotor::getOutputDesired() const
 {
-    return motorOne.isMotorInverted() ? -motorOne.getOutputDesired() : motorOne.getOutputDesired();
+    int16_t m1Out =
+        motorOne.isMotorInverted() ? -motorOne.getOutputDesired() : motorOne.getOutputDesired();
+    int16_t m2Out =
+        motorTwo.isMotorInverted() ? -motorTwo.getOutputDesired() : motorTwo.getOutputDesired();
+
+    return (static_cast<int32_t>(m1Out) + static_cast<int32_t>(m2Out)) / 2;
 }
 
 int8_t DoubleDjiMotor::getTemperature() const
 {
-    return (static_cast<uint16_t>(motorOne.getTemperature()) +
-            static_cast<uint16_t>(motorTwo.getTemperature())) /
+    return (static_cast<int16_t>(motorOne.getTemperature()) +
+            static_cast<int16_t>(motorTwo.getTemperature())) /
            2;
 }
 int16_t DoubleDjiMotor::getTorque() const
-
 {
     return (static_cast<int32_t>(motorOne.getTorque()) +
             static_cast<int32_t>(motorTwo.getTorque())) /

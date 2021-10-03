@@ -39,7 +39,9 @@ public:
         tap::motor::MotorId desMotorIdentifier,
         tap::can::CanBus motorCanBus,
         bool isInverted,
-        const char* name);
+        const char* name,
+        uint16_t encWrapped = ENC_RESOLUTION / 2,
+        int64_t encRevolutions = 0);
     virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));

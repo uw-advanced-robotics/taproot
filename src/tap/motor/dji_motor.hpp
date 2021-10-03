@@ -64,8 +64,6 @@ public:
 
     mockable ~DjiMotor();
 
-    DjiMotor(DjiMotor&&) = default;
-
     void initialize() override;
 
     // formerly encoderstore

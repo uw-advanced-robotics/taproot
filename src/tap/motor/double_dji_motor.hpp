@@ -23,8 +23,17 @@
 #include "dji_motor.hpp"
 #include "motor_interface.hpp"
 
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <gmock/gmock.h>
+
+#include "tap/mock/dji_motor_mock.hpp"
+#endif
+
 namespace tap::motor
 {
+/**
+ * Wraps two motors assumed to be connected to a rigid drive shaft.
+ */
 class DoubleDjiMotor : public MotorInterface
 {
 public:
@@ -52,8 +61,16 @@ public:
     int16_t getShaftRPM() const override;
 
 private:
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+public:
+    testing::NiceMock<mock::DjiMotorMock> motorOne;
+    testing::NiceMock<mock::DjiMotorMock> motorTwo;
+
+private:
+#else
     DjiMotor motorOne;
     DjiMotor motorTwo;
+#endif
 };
 }  // namespace tap::motor
 

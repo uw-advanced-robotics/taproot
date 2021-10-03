@@ -26,8 +26,17 @@ DjiMotorMock::DjiMotorMock(
     tap::motor::MotorId desMotorIdentifier,
     tap::can::CanBus motorCanBus,
     bool isInverted,
-    const char *name)
-    : DjiMotor(drivers, desMotorIdentifier, motorCanBus, isInverted, name)
+    const char *name,
+    uint16_t encWrapped,
+    int64_t encRevolutions)
+    : DjiMotor(
+          drivers,
+          desMotorIdentifier,
+          motorCanBus,
+          isInverted,
+          name,
+          encWrapped,
+          encRevolutions)
 {
 }
 DjiMotorMock::~DjiMotorMock() {}
