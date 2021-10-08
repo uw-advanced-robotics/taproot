@@ -32,7 +32,10 @@
 namespace tap::motor
 {
 /**
- * Wraps two motors assumed to be connected to a rigid drive shaft.
+ * Wraps two motors assumed to be connected to a rigid drive shaft. Assumes
+ * that the two motors are identical with the same gear ratio and are dji
+ * motors with the same communication and control interface (for example,
+ * two M3508's, two 6020's, etc.).
  */
 class DoubleDjiMotor : public MotorInterface
 {

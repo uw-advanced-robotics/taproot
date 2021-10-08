@@ -181,7 +181,7 @@ TEST(DoubleDjiMotor, getTemperature__returns_average_temperature)
 
     motorOneTemp = -100;
     motorTwoTemp = 100;
-    EXPECT_EQ(0, motor.getTemperature());
+    EXPECT_EQ(100, motor.getTemperature());
 
     motorOneTemp = 120;
     motorTwoTemp = 120;

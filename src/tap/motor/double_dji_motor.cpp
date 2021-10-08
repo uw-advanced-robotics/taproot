@@ -88,9 +88,7 @@ int16_t DoubleDjiMotor::getOutputDesired() const
 
 int8_t DoubleDjiMotor::getTemperature() const
 {
-    return (static_cast<int16_t>(motorOne.getTemperature()) +
-            static_cast<int16_t>(motorTwo.getTemperature())) /
-           2;
+    return std::max(motorOne.getTemperature(), motorTwo.getTemperature());
 }
 int16_t DoubleDjiMotor::getTorque() const
 {
