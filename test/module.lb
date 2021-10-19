@@ -70,6 +70,7 @@ class TaprootTests(Module):
         if env.has_module(":core"):
             env.copy("tap/algorithms")
             env.copy("tap/architecture")
+            env.copy("tap/motor")
         if env.has_module(":communication:can"):
             env.copy("tap/communication/can")
         if env.has_module(":communication:tcp-server"):
