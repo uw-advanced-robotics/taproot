@@ -25,11 +25,13 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
+#include "tap/mock/remote_mock.hpp"
 
 using std::set;
 using tap::Drivers;
 using tap::mock::CommandMock;
 using tap::mock::SubsystemMock;
+using tap::mock::RemoteMock;
 using namespace tap::control;
 using namespace testing;
 
@@ -1082,8 +1084,8 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    NiceMock<CommandMock> c;
-    SubsystemMock s(&drivers);
+    NiceMock<CommandMock> c; // command mock
+    SubsystemMock s(&drivers); // subsystem mock
     set<Subsystem *> subRequirements{&s};
     EXPECT_CALL(c, getRequirementsBitwise)
         .Times(5)
@@ -1099,6 +1101,19 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     scheduler.run();
     scheduler.run();
     scheduler.run();
+}
+
+TEST(CommandScheduler, run_one_command_ends_when_remote_disconnects)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    NiceMock<CommandMock> c; // command mock
+
+    scheduler.addCommand(&c);
+    EXPECT_CALL(c, execute).Times(1);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    EXPECT_CALL(c, end).Times(1);
 }
 
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)

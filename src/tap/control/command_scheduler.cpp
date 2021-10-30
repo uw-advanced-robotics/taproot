@@ -34,6 +34,7 @@ namespace tap
 {
 namespace control
 {
+bool CommandScheduler::safeDisconnectMode = true;
 bool CommandScheduler::masterSchedulerExists = false;
 Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBSYSTEM_COUNT];
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
@@ -181,13 +182,21 @@ void CommandScheduler::run()
         return;
     }
 
-    // Execute commands in the addedCommandBitmap, remove any that are finished
-    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
-    {
-        (*it)->execute();
-        if ((*it)->isFinished())
+    if (!drivers->remote.isConnected() && safeDisconnectMode) {
+        // End all commands running. They were interrupted by the remote disconnecting.
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
-            removeCommand(*it, false);
+            removeCommand(*it, true);
+        }
+    } else {
+        // Execute commands in the addedCommandBitmap, remove any that are finished
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+        {
+            (*it)->execute();
+            if ((*it)->isFinished())
+            {
+                removeCommand(*it, false);
+            }
         }
     }
 
@@ -202,7 +211,8 @@ void CommandScheduler::run()
             Command *defaultCmd;
             // If the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
+            if ((drivers->remote.isConnected() || !safeDisconnectMode) && 
+                !(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
                 addCommand(defaultCmd);
@@ -315,6 +325,16 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
 
     // Remove the command from the command bitmap
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
+}
+
+void CommandScheduler::enableSafeDisconnectMode()
+{
+    safeDisconnectMode = true;
+}
+
+void CommandScheduler::disableSafeDisconnectMode()
+{
+    safeDisconnectMode = false;
 }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)

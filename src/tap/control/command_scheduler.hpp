@@ -146,6 +146,20 @@ public:
     mockable void removeCommand(Command* command, bool interrupted);
 
     /**
+     * Enables operation in safe disconnect mode. When operating with safe
+     * disconnect mode, the robot will end all of the Command Scheduler's
+     * Commands if the remote disconnects from the robot.
+     */
+    mockable void enableSafeDisconnectMode();
+
+    /**
+     * Disables operation in safe disconnect mode. When  operating without safe
+     * disconnect mode, the robot will continue to execute Commands in the
+     * Command Scheduler even if the remote disconnects from the robot.
+     */
+    mockable void disableSafeDisconnectMode();
+
+    /**
      * @return `true` if the CommandScheduler contains the requrested Command.
      *      `false` otherwise.
      */
@@ -292,6 +306,11 @@ private:
      * A global flag indicating whether or not a "master" scheduler has been constructed.
      */
     static bool masterSchedulerExists;
+
+    /**
+     * A global flag indicating whether or not safe disconnect mode is enabled.
+     */
+    static bool safeDisconnectMode;
 
     Drivers* drivers;
 
