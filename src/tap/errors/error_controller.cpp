@@ -25,9 +25,7 @@
 
 #include "modm/container/linked_list.hpp"
 
-namespace tap
-{
-namespace errors
+namespace tap::errors
 {
 void ErrorController::addToErrorList(const SystemError& error)
 {
@@ -188,6 +186,4 @@ void ErrorController::clearAllTerminalErrors(modm::IOStream& outputStream)
     removeAllSystemErrors();
 }
 
-}  // namespace errors
-
-}  // namespace tap
+}  // namespace tap::errors

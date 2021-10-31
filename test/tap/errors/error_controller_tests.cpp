@@ -27,12 +27,20 @@ namespace tap::errors
 class ErrorControllerTester
 {
 public:
-    ErrorControllerTester(tap::Drivers *drivers) : errorController(drivers) {}
-    ErrorController errorController;
+    ErrorControllerTester(tap::Drivers* drivers) : errorController(drivers) {}
     bool removeSystemError(uint index) { return errorController.removeSystemErrorAtIndex(index); }
-    void setCurrDisplayIndex(uint index) { errorController.currentDisplayIndex = index; }
     uint getErrorListSize() { return errorController.errorList.getSize(); }
-    uint getCurrentDisplayIndex() { return errorController.currentDisplayIndex; }
+    bool removeSystemErrorAtIndex(ErrorController::error_index_t index)
+    {
+        return errorController.removeSystemErrorAtIndex(index);
+    }
+    void removeAllSystemErrors() { errorController.removeAllSystemErrors(); }
+    void displayAllErrors(modm::IOStream& outputStream)
+    {
+        errorController.displayAllErrors(outputStream);
+    }
+
+    ErrorController errorController;
 };
 }  // namespace tap::errors
 
@@ -52,7 +60,7 @@ TEST(ErrorController, removeSystemError_single_error_removed_at_zero_index)
 {
     Drivers drivers;
     ErrorControllerTester ec(&drivers);
-    SystemError se("error", __LINE__, __FILE__, Location::CAN_RX, 1);
+    SystemError se("error", __LINE__, __FILE__);
 
     ec.errorController.addToErrorList(se);
 
@@ -64,13 +72,55 @@ TEST(ErrorController, removeSystemError_single_error_removed_at_zero_index)
     EXPECT_FALSE(ec.removeSystemError(0));
 }
 
-TEST(ErrorController, removeSystemError_multiple_errors_successfully_removed_from_end)
+TEST(ErrorController, removeSystemError_from_end)
 {
     Drivers drivers;
     ErrorControllerTester ec(&drivers);
-    SystemError se1("error", __LINE__, __FILE__, Location::CAN_RX, 1);
-    SystemError se2("error 2", __LINE__, __FILE__, Location::COMMAND_SCHEDULER, 1);
-    SystemError se3("error 3", __LINE__, __FILE__, Location::DJI_SERIAL, 1);
+    SystemError se1("error", __LINE__, __FILE__);
+    SystemError se2("error 2", __LINE__, __FILE__);
+    SystemError se3("error 3", __LINE__, __FILE__);
+
+    ec.errorController.addToErrorList(se1);
+    ec.errorController.addToErrorList(se2);
+    ec.errorController.addToErrorList(se3);
+    EXPECT_EQ(3, ec.getErrorListSize());
+
+    EXPECT_TRUE(ec.removeSystemError(2));
+    EXPECT_EQ(2, ec.getErrorListSize());
+    EXPECT_TRUE(ec.removeSystemError(1));
+    EXPECT_EQ(1, ec.getErrorListSize());
+    EXPECT_TRUE(ec.removeSystemError(0));
+    EXPECT_EQ(0, ec.getErrorListSize());
+}
+
+TEST(ErrorController, removeSystemError_from_start)
+{
+    Drivers drivers;
+    ErrorControllerTester ec(&drivers);
+    SystemError se1("error", __LINE__, __FILE__);
+    SystemError se2("error 2", __LINE__, __FILE__);
+    SystemError se3("error 3", __LINE__, __FILE__);
+
+    ec.errorController.addToErrorList(se1);
+    ec.errorController.addToErrorList(se2);
+    ec.errorController.addToErrorList(se3);
+    EXPECT_EQ(3, ec.getErrorListSize());
+
+    EXPECT_TRUE(ec.removeSystemError(0));
+    EXPECT_EQ(2, ec.getErrorListSize());
+    EXPECT_TRUE(ec.removeSystemError(0));
+    EXPECT_EQ(1, ec.getErrorListSize());
+    EXPECT_TRUE(ec.removeSystemError(0));
+    EXPECT_EQ(0, ec.getErrorListSize());
+}
+
+TEST(ErrorController, removeSystemError_from_middle)
+{
+    Drivers drivers;
+    ErrorControllerTester ec(&drivers);
+    SystemError se1("error", __LINE__, __FILE__);
+    SystemError se2("error 2", __LINE__, __FILE__);
+    SystemError se3("error 3", __LINE__, __FILE__);
 
     ec.errorController.addToErrorList(se1);
     ec.errorController.addToErrorList(se2);
@@ -78,138 +128,39 @@ TEST(ErrorController, removeSystemError_multiple_errors_successfully_removed_fro
     EXPECT_EQ(3, ec.getErrorListSize());
 
     // first try currentDisplayIndex at end
-    ec.setCurrDisplayIndex(2);
-    EXPECT_TRUE(ec.removeSystemError(2));
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se3);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // next try with currentDisplayIndex before end
-    ec.setCurrDisplayIndex(1);
-    EXPECT_TRUE(ec.removeSystemError(2));
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se3);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // finally try with currentDisplayIndex at start
-    ec.setCurrDisplayIndex(0);
-    EXPECT_TRUE(ec.removeSystemError(2));
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
+    EXPECT_TRUE(ec.removeSystemError(1));
     EXPECT_EQ(2, ec.getErrorListSize());
 }
 
-TEST(ErrorController, removeSystemError_at_start_usually_shifts_currentDisplayIndex_left)
+TEST(ErrorController, removeAllSystemErrors__when_no_errors_does_nothing_but_doesnt_segfault)
 {
     Drivers drivers;
     ErrorControllerTester ec(&drivers);
-    SystemError se1("error", __LINE__, __FILE__, Location::CAN_RX, 1);
-    SystemError se2("error 2", __LINE__, __FILE__, Location::COMMAND_SCHEDULER, 1);
-    SystemError se3("error 3", __LINE__, __FILE__, Location::DJI_SERIAL, 1);
 
-    ec.errorController.addToErrorList(se1);
-    ec.errorController.addToErrorList(se2);
-    ec.errorController.addToErrorList(se3);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // first try currentDisplayIndex at end
-    ec.setCurrDisplayIndex(2);
-    EXPECT_TRUE(ec.removeSystemError(0));
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se1);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // next try with currentDisplayIndex before end
-    ec.setCurrDisplayIndex(1);
-    EXPECT_TRUE(ec.removeSystemError(0));
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se2);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // finally try with currentDisplayIndex at start
-    ec.setCurrDisplayIndex(0);
-    EXPECT_TRUE(ec.removeSystemError(0));
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
+    ec.removeAllSystemErrors();
 }
 
-TEST(
-    ErrorController,
-    removeSystemError_from_middle_shifts_currentDisplayIndex_left_if_removed_index_smaller)
+TEST(ErrorController, removeAllSystemErrors__multiple_errors_removed)
 {
     Drivers drivers;
     ErrorControllerTester ec(&drivers);
-    SystemError se1("error", __LINE__, __FILE__, Location::CAN_RX, 1);
-    SystemError se2("error 2", __LINE__, __FILE__, Location::COMMAND_SCHEDULER, 1);
-    SystemError se3("error 3", __LINE__, __FILE__, Location::DJI_SERIAL, 1);
+    SystemError se1("error", __LINE__, __FILE__);
+    SystemError se2("error 2", __LINE__, __FILE__);
+    SystemError se3("error 3", __LINE__, __FILE__);
 
     ec.errorController.addToErrorList(se1);
     ec.errorController.addToErrorList(se2);
     ec.errorController.addToErrorList(se3);
     EXPECT_EQ(3, ec.getErrorListSize());
 
-    // first try currentDisplayIndex at end
-    ec.setCurrDisplayIndex(2);
-    EXPECT_TRUE(ec.removeSystemError(1));
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se2);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // next try with currentDisplayIndex before end
-    ec.setCurrDisplayIndex(1);
-    EXPECT_TRUE(ec.removeSystemError(1));
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
-
-    ec.errorController.addToErrorList(se3);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // finally try with currentDisplayIndex at start
-    ec.setCurrDisplayIndex(0);
-    EXPECT_TRUE(ec.removeSystemError(1));
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
-    EXPECT_EQ(2, ec.getErrorListSize());
+    ec.removeAllSystemErrors();
+    EXPECT_EQ(0, ec.getErrorListSize());
 }
 
-TEST(ErrorController, removeSystemError_index_before_currentDisplayIndex_shifts_index_left)
-{
-    Drivers drivers;
-    ErrorControllerTester ec(&drivers);
-    SystemError se1("error", __LINE__, __FILE__, Location::CAN_RX, 1);
-    SystemError se2("error 2", __LINE__, __FILE__, Location::COMMAND_SCHEDULER, 1);
-    SystemError se3("error 3", __LINE__, __FILE__, Location::DJI_SERIAL, 1);
+// TODO the rest
 
-    ec.errorController.addToErrorList(se1);
-    ec.errorController.addToErrorList(se2);
-    ec.errorController.addToErrorList(se3);
+TEST(ErrorController, displayAllErrors__with_no_errors_displays_no_errors) {}
 
-    // display index 2, remove index 0
-    ec.setCurrDisplayIndex(2);
-    ec.removeSystemError(0);
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
+TEST(ErrorController, displayAllErrors__contains_error_descriptions_of_all_errors) {}
 
-    ec.errorController.addToErrorList(se1);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // display index 1, remove index 0
-    ec.setCurrDisplayIndex(1);
-    ec.removeSystemError(0);
-    EXPECT_EQ(0, ec.getCurrentDisplayIndex());
-
-    ec.errorController.addToErrorList(se2);
-    EXPECT_EQ(3, ec.getErrorListSize());
-
-    // display index 2, remove index 1
-    ec.setCurrDisplayIndex(2);
-    ec.removeSystemError(1);
-    EXPECT_EQ(1, ec.getCurrentDisplayIndex());
-}
+TEST(ErrorController, terminalSerialCallback__) {}
