@@ -53,6 +53,8 @@ class Mock(Module):
                 env.copy(mock_file)
                 mock_includes.append(mock_file)
 
+        env.copy("tap/stub")
+
 class TaprootTests(Module):
     def init(self, module):
         module.name = ":testing:tests"
@@ -80,7 +82,6 @@ class TaprootTests(Module):
             # due to cross-compatibility issues.
             env.copy("tap/errors")
         env.copy("tap/control")
-        env.copy("tap/stub")
 
 def init(module):
     module.name = ":testing"
