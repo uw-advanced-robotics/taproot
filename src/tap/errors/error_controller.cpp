@@ -103,19 +103,19 @@ bool ErrorController::terminalSerialCallback(
     char* arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
     if (arg == nullptr || strcmp(arg, "-H") == 0)
     {
-        help(outputStream);
+        outputStream << USAGE;
         return arg != nullptr;
     }
-    else if (strcmp(arg, "PrintErrors") == 0)
+    else if (strcmp(arg, "printall") == 0)
     {
         outputStream << "printing errors" << modm::endl;
         displayAllErrors(outputStream);
     }
-    else if (strcmp(arg, "RemoveAllTerminalErrors") == 0)
+    else if (strcmp(arg, "removeall") == 0)
     {
         clearAllTerminalErrors(outputStream);
     }
-    else if (strcmp(arg, "RemoveTerminalError") == 0)
+    else if (strcmp(arg, "remove") == 0)
     {
         arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
         if (arg == nullptr)
@@ -140,24 +140,12 @@ bool ErrorController::terminalSerialCallback(
     return true;
 }
 
-void ErrorController::help(modm::IOStream& outputStream)
-{
-    outputStream << "Usage: error <target> [index]\n"
-                    "  Where\"<target>\" is one of:\n"
-                    "    - \"-H\": displays possible commands.\n"
-                    "    - \"PrintErrors\": prints all errors in errorList, displaying their"
-                    "description, lineNumber, fileName, and index.\n"
-                    "    - \"RemoveTerminalError [Index]\": removes the error at the given "
-                    "index. Example: Error RemoveTerminalError 1.\n"
-                    "    - \"RemoveAllTerminalErrors\": removes all errors from the errorList.\n";
-}
-
 void ErrorController::displayAllErrors(modm::IOStream& outputStream)
 {
     int index = 0;
     if (errorList.getSize() == 0)
     {
-        outputStream << "No Errors Found" << modm::endl;
+        outputStream << "No errors found" << modm::endl;
     }
     else
     {
@@ -173,7 +161,7 @@ void ErrorController::displayAllErrors(modm::IOStream& outputStream)
 // Syntax: Error RemoveTerminalError [Index]
 void ErrorController::removeTerminalError(int index, modm::IOStream& outputStream)
 {
-    outputStream << "Removing Terminal Error at index..." << index << modm::endl;
+    outputStream << "Removing terminal error at index..." << index << modm::endl;
     if (!removeSystemErrorAtIndex(index))
     {
         outputStream << "Invalid index" << modm::endl;
@@ -182,7 +170,7 @@ void ErrorController::removeTerminalError(int index, modm::IOStream& outputStrea
 
 void ErrorController::clearAllTerminalErrors(modm::IOStream& outputStream)
 {
-    outputStream << "Clearing all terminal errors..." << modm::endl;
+    outputStream << "Removing all terminal errors..." << modm::endl;
     removeAllSystemErrors();
 }
 

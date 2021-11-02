@@ -66,6 +66,15 @@ public:
     void terminalSerialStreamCallback(modm::IOStream&) override {}
 
 private:
+    static constexpr char USAGE[] =
+        "Usage: error <target>\n"
+        "  Where <target> is one of:\n"
+        "    - [-H]: displays possible commands.\n"
+        "    - [printall]: prints all errors in errorList, displaying their"
+        "description, lineNumber, fileName, and index.\n"
+        "    - [remove [index]]: removes the error at the given index. Example: error remove 1.\n"
+        "    - [removeall]: removes all errors from the errorList.\n";
+
     friend class ErrorControllerTester;
 
     Drivers* drivers;
@@ -81,8 +90,6 @@ private:
     void removeTerminalError(int index, modm::IOStream& outputStream);
 
     void clearAllTerminalErrors(modm::IOStream& outputStream);
-
-    void help(modm::IOStream& outputStream);
 };  // class ErrorController
 }  // namespace tap::errors
 
