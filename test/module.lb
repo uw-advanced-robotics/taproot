@@ -80,6 +80,7 @@ class TaprootTests(Module):
             # due to cross-compatibility issues.
             env.copy("tap/errors")
         env.copy("tap/control")
+        env.copy("tap/stub")
 
 def init(module):
     module.name = ":testing"
