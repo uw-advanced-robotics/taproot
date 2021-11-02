@@ -64,21 +64,21 @@ policy checks:
   only: *verification_only
   except: *verification_except
 
-mcb build:
+.mcb build:
   stage: Build all Targets
   only: *default_only
   script:
     - cd test-project && lbuild build
     - python3 $(which scons) build $ADDITIONAL_CI_BUILD_ARGS
 
-sim build:
+.sim build:
   stage: Build all Targets
   only: *default_only
   script:
     - cd test-project && lbuild build
     - python3 $(which scons) build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
 
-tests build:
+.tests build:
   stage: Build all Targets
   only: *default_only
   script:
@@ -93,6 +93,43 @@ tests build:
     reports:
       cobertura: cobertura.xml
     expire_in: 2 weeks
+
+.configure for type c:
+  before_script:
+    - cd test-project
+    - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
+    - sed -i '/<!-- For RoboMaster Development Board Type C --> <!--/c\' project.xml
+    - sed -i '/--> <!-- End For RoboMaster Development Board Type C -->/c\' project.xml
+    - cd ..
+
+# Type A CI
+type a mcb build:
+  extends:
+    - .mcb build
+
+type a sim build:
+  extends:
+    - .sim build
+
+type a tests build:
+  extends:
+    - .tests build
+
+# Type C CI
+type c mcb build:
+  extends:
+    - .configure for type c
+    - .mcb build
+
+type c sim build:
+  extends:
+    - .configure for type c
+    - .sim build
+
+type c tests build:
+  extends:
+    - .configure for type c
+    - .tests build
 
 # Pages deploy
 
