@@ -17,6 +17,7 @@
 
 import os
 import subprocess
+import shutil
 
 def init(repo):
     repo.name = "taproot"
@@ -71,10 +72,11 @@ def build(env):
     if env[":core:generate_driver_hpp"]:
         print("running clang-format on drivers.hpp")
         try:
-            proc = subprocess.run(["which", "clang-format"], stdout=subprocess.PIPE, text=True)
+            clang_format = shutil.which("clang-format")
             print("####")
-            print(proc)
-            clang_format = proc.stdout.replace("\n", "")
+            print(clang_format)
+            print("####")
+
             subprocess.run([clang_format, "-i", "./src/drivers.hpp"], check=True)
         except subprocess.CalledProcessError as e:
             print(e.output())
