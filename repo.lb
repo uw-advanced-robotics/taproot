@@ -72,12 +72,21 @@ def build(env):
     if env[":core:generate_driver_hpp"]:
         print("running clang-format on drivers.hpp")
         try:
-            clang_format = shutil.which("clang-format")
-            print("####")
-            print(clang_format)
-            print("####")
+            # populate possible clang-format versions
+            clangfmt_versions = ["", "-10"]
+            for i in [4, 3]:
+                for j in range(10):
+                    clangfmt_versions.append(f"{str(i)}.{str(j)}")
+            
+            for version in clangfmt_versions:
+                clang = shutil.which(f"clang-format{version}")
+                if clang != None:
+                    break
 
-            subprocess.run([clang_format, "-i", "./src/drivers.hpp"], check=True)
+            if clang == None:
+                print("could not run clang-format on drivers.hpp, could not find clang-format")
+
+            subprocess.run([clang, "-i", "./src/drivers.hpp"], check=True)
         except subprocess.CalledProcessError as e:
             print(e.output())
             exit(1)
