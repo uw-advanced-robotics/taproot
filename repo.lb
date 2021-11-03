@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
 import subprocess
 import shutil
 
@@ -95,6 +94,7 @@ def build(env):
 
             if clang == None:
                 print("could not run clang-format on drivers.hpp, could not find clang-format")
+                exit(1)
 
             subprocess.run([clang, "-i", "./src/drivers.hpp"], check=True)
         except subprocess.CalledProcessError as e:
