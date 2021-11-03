@@ -73,11 +73,21 @@ def build(env):
         print("running clang-format on drivers.hpp")
         try:
             # populate possible clang-format versions
+            # identical logic to clang-format-all
+            #
+            # Some distros just call it clang-format. Others (e.g. Ubuntu) are insistent
+            # that the version number be part of the command. We prefer clang-format if
+            # that's present, otherwise we work backwards from highest version to lowest
+            # version.
             clangfmt_versions = ["", "-10"]
             for i in [4, 3]:
                 for j in range(10):
-                    clangfmt_versions.append(f"{str(i)}.{str(j)}")
-            
+                    # In the ordered list, second value (after ".") should be ordered from
+                    # largest to smallest so we search for a newer distro before searching for
+                    # an older one.
+                    clangfmt_versions.append(f"{str(i)}.{str(9 - j)}")
+
+            # try and find a usable clang-format installation
             for version in clangfmt_versions:
                 clang = shutil.which(f"clang-format{version}")
                 if clang != None:
