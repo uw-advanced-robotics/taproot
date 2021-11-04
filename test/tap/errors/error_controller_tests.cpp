@@ -47,6 +47,7 @@ public:
 
 using tap::Drivers;
 using namespace tap::errors;
+using namespace testing;
 
 TEST(ErrorController, removeSystemError__no_errors_in_error_controller_doesnot_segfault)
 {
@@ -170,8 +171,7 @@ TEST(ErrorController, displayAllErrors__with_no_errors_displays_no_errors)
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    // The output string contains "no errors found"
-    EXPECT_NE(std::string::npos, output.find("no errors found"));
+    EXPECT_THAT(output, HasSubstr("no errors found"));
 }
 
 TEST(ErrorController, displayAllErrors__contains_error_descriptions_of_all_errors)
@@ -194,13 +194,11 @@ TEST(ErrorController, displayAllErrors__contains_error_descriptions_of_all_error
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    // The output string doesn't contain "no errors found"
-    EXPECT_EQ(std::string::npos, output.find("no errors found"));
+    EXPECT_THAT(output, Not(HasSubstr("no errors found")));
 
-    // The output string contains "error1", "error2", "error3"
-    EXPECT_NE(std::string::npos, output.find("error1"));
-    EXPECT_NE(std::string::npos, output.find("error2"));
-    EXPECT_NE(std::string::npos, output.find("error3"));
+    EXPECT_THAT(output, HasSubstr("error1"));
+    EXPECT_THAT(output, HasSubstr("error2"));
+    EXPECT_THAT(output, HasSubstr("error3"));
 }
 
 TEST(ErrorController, terminalSerialCallback__streamingEnabled_true_function_does_nothing)
@@ -223,13 +221,11 @@ TEST(ErrorController, terminalSerialCallback__help_or_nothing_returns_help_strin
 
     char help[] = "-H";
     EXPECT_TRUE(ec.errorController.terminalSerialCallback(help, stream, false));
-    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
-    EXPECT_NE(std::string::npos, output.find("Usage"));
+    EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), HasSubstr("Usage"));
 
     char error[] = "  ";
     EXPECT_FALSE(ec.errorController.terminalSerialCallback(error, stream, false));
-    output = terminalDevice.readAllItemsFromWriteBufferToString();
-    EXPECT_NE(std::string::npos, output.find("Usage"));
+    EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), HasSubstr("Usage"));
 }
 
 TEST(ErrorController, terminalSerialCallback__printall_prints_all_errors)
@@ -251,10 +247,9 @@ TEST(ErrorController, terminalSerialCallback__printall_prints_all_errors)
     EXPECT_TRUE(ec.errorController.terminalSerialCallback(printAll, stream, false));
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
 
-    // The output string contains "error1", "error2", "error3"
-    EXPECT_NE(std::string::npos, output.find("error1"));
-    EXPECT_NE(std::string::npos, output.find("error2"));
-    EXPECT_NE(std::string::npos, output.find("error3"));
+    EXPECT_THAT(output, HasSubstr("error1"));
+    EXPECT_THAT(output, HasSubstr("error2"));
+    EXPECT_THAT(output, HasSubstr("error3"));
 }
 
 TEST(ErrorController, terminalSerialCallback__remove_at_index_removes_correct_error)
@@ -277,15 +272,13 @@ TEST(ErrorController, terminalSerialCallback__remove_at_index_removes_correct_er
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    EXPECT_NE(std::string::npos, output.find("removing"));
+    EXPECT_THAT(output, HasSubstr("removing"));
 
     // call printall to check which errors still remain
     char printAll[] = "printall";
     EXPECT_TRUE(ec.errorController.terminalSerialCallback(printAll, stream, false));
-    output = terminalDevice.readAllItemsFromWriteBufferToString();
 
-    // The output string doesn't contain "error2"
-    EXPECT_EQ(std::string::npos, output.find("error2"));
+    EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), Not(HasSubstr("error2")));
     EXPECT_EQ(2, ec.getErrorListSize());
 }
 
@@ -309,14 +302,14 @@ TEST(ErrorController, terminalSerialCallback__remove_at_index_doesnot_remove_inv
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    EXPECT_NE(std::string::npos, output.find("invalid index"));
+    EXPECT_THAT(output, HasSubstr("invalid index"));
 
     char remove2[] = "remove 3";
     EXPECT_TRUE(ec.errorController.terminalSerialCallback(remove2, stream, false));
     output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    EXPECT_NE(std::string::npos, output.find("invalid index"));
+    EXPECT_THAT(output, HasSubstr("invalid index"));
 }
 
 TEST(ErrorController, terminalSerialCallback__removeall_removes_all_errors)
@@ -339,16 +332,15 @@ TEST(ErrorController, terminalSerialCallback__removeall_removes_all_errors)
     std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
     std::transform(output.begin(), output.end(), output.begin(), ::tolower);
 
-    EXPECT_NE(std::string::npos, output.find("removing"));
+    EXPECT_THAT(output, HasSubstr("removing"));
 
     // call printall to check which errors still remain
     char printAll[] = "printall";
     EXPECT_TRUE(ec.errorController.terminalSerialCallback(printAll, stream, false));
     output = terminalDevice.readAllItemsFromWriteBufferToString();
 
-    // The output string doesn't contain "error1", "error2", or "error3"
-    EXPECT_EQ(std::string::npos, output.find("error1"));
-    EXPECT_EQ(std::string::npos, output.find("error2"));
-    EXPECT_EQ(std::string::npos, output.find("error3"));
+    EXPECT_THAT(output, Not(HasSubstr("error1")));
+    EXPECT_THAT(output, Not(HasSubstr("error2")));
+    EXPECT_THAT(output, Not(HasSubstr("error3")));
     EXPECT_EQ(0, ec.getErrorListSize());
 }
