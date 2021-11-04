@@ -15,9 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import platform
+
 MCU_VARIANTS_BY_BOARD = {
     "rm-dev-board-a": "stm32f427iih6",
     "rm-dev-board-c": "stm32f407igh6",
+}
+HOSTED_TARGET_NAMES_BY_SYSTEM = {
+    "Linux": "hosted-linux",
+    "Darwin": "hosted-darwin",
+    "Windows": "hosted-windows",
 }
 
 def init(module):
@@ -26,6 +33,13 @@ def init(module):
 
 def prepare(module, options):
     return True
+
+def _get_hosted_target_for_current_platform():
+    system_type = platform.system()
+    try:
+        return HOSTED_TARGET_NAMES_BY_SYSTEM[system_type]
+    except KeyError:
+        raise RuntimeError(f"Unknown host platform {system_type}")
 
 def build(env):
     board_name = env[":dev_board"]
@@ -36,8 +50,10 @@ def build(env):
 
     env.substitutions = {
         "modm_path": env[":modm_repo_lb"],
-        "mcu": mcu
+        "mcu": mcu,
+        "hosted_target": _get_hosted_target_for_current_platform(),
     }
     env.outbasepath = "taproot"
     env.template("project.xml.in", "project.xml")
     env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
+    env.template("sim-modm/.gitignore.in", "sim-modm/.gitignore")
