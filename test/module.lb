@@ -82,6 +82,8 @@ class TaprootTests(Module):
         if env.has_module(":errors"):
             env.copy("tap/errors")
         env.copy("tap/control")
+        if env.has_module("taproot:communication:serial"):
+            env.copy("tap/communication/serial")
 
 def init(module):
     module.name = ":testing"

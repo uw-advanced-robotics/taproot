@@ -17,32 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMINAL_SERIAL_MOCK_HPP_
-#define TERMINAL_SERIAL_MOCK_HPP_
+#include "terminal_serial_callback_interface_mock.hpp"
 
-#include <gmock/gmock.h>
-
-#include "tap/communication/serial/terminal_serial.hpp"
-
-namespace tap
+namespace tap::mock
 {
-namespace mock
-{
-class TerminalSerialMock : public communication::serial::TerminalSerial
-{
-public:
-    TerminalSerialMock(Drivers *drivers);
-    virtual ~TerminalSerialMock();
-
-    MOCK_METHOD(void, initialize, (), (override));
-    MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(
-        void,
-        addHeader,
-        (const char *, communication::serial::TerminalSerialCallbackInterface *),
-        (override));
-};  // class TerminalSerialMock
-}  // namespace mock
-}  // namespace tap
-
-#endif  // TERMINAL_SERIAL_MOCK_HPP_
+TerminalSerialCallbackInterfaceMock::TerminalSerialCallbackInterfaceMock() {}
+TerminalSerialCallbackInterfaceMock::~TerminalSerialCallbackInterfaceMock() {}
+}  // namespace tap::mock
