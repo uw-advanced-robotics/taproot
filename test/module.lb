@@ -82,6 +82,8 @@ class TaprootTests(Module):
             # due to cross-compatibility issues.
             env.copy("tap/errors")
         env.copy("tap/control")
+        if env.has_module("taproot:communication:serial"):
+            env.copy("tap/communication/serial")
 
 def init(module):
     module.name = ":testing"

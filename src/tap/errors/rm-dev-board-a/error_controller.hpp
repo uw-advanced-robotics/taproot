@@ -46,7 +46,7 @@ namespace errors
  *   is invalid. The red LED is not used by the ErrorController.
  * - By default, LEDs A-H are always off if no errors are detected.
  */
-class ErrorController : public tap::communication::serial::ITerminalSerialCallback
+class ErrorController : public tap::communication::serial::TerminalSerialCallbackInterface
 {
 public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
