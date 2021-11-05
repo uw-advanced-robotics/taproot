@@ -97,18 +97,21 @@ policy-checks:
   stage: Build all Targets
   only: *default_only
   script:
+    - cd test-project
     - python3 $(which scons) build $ADDITIONAL_CI_BUILD_ARGS
 
 .sim-build:
   stage: Build all Targets
   only: *default_only
   script:
+    - cd test-project
     - python3 $(which scons) build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
 
 .tests-build:
   stage: Build all Targets
   only: *default_only
   script:
+    - cd test-project
     - python3 $(which scons) run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
