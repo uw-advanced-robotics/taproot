@@ -120,6 +120,7 @@ policy-checks:
 
 type-a-generate-test-project:
   needs: []
+  only: *default_only
   stage: Initial Verification
   extends:
     - .run-lbuild
@@ -129,6 +130,7 @@ type-a-generate-test-project:
 type-c-generate-test-project:
   needs: []
   stage: Initial Verification
+  only: *default_only
   extends:
     - .run-lbuild
   before_script:
