@@ -71,17 +71,25 @@ policy-checks:
     - cd test-project && lbuild build && cd ..
   cache:
     untracked: true
-    key: $BOARD_TYPE-binaries
+    key: $BOARD_TYPE-project
     paths:
       - test-project
 
-.config-cache:
+.type-a-config-cache:
   needs:
-    - $BOARD_TYPE-generate-test-project
+    - type-a-generate-test-project
   dependencies:
-    - $BOARD_TYPE-generate-test-project
+    - type-a-generate-test-project
   cache:
-    key: $BOARD_TYPE-binaries
+    key: type-a-project
+
+.type-c-config-cache:
+  needs:
+    - type-c-generate-test-project
+  dependencies:
+    - type-c-generate-test-project
+  cache:
+    key: type-c-project
 
 .mcb-build:
   stage: Build all Targets
@@ -118,11 +126,11 @@ type-a-generate-test-project:
   variables:
     BOARD_TYPE: type-a
 
-type-c-generate test project:
+type-c-generate-test-project:
   needs: []
   stage: Initial Verification
   extends:
-    - .run lbuild
+    - .run-lbuild
   before_script:
     - cd test-project
     - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
@@ -135,21 +143,21 @@ type-c-generate test project:
 # Type A CI
 type-a-mcb-build:
   extends:
-    - .config-cache
+    - .type-a-config-cache
     - .mcb-build
   variables:
     BOARD_TYPE: type-a
 
 type-a-sim-build:
   extends:
-    - .config-cache
+    - .type-a-config-cache
     - .sim-build
   variables:
     BOARD_TYPE: type-a
 
 type-a-tests-build:
   extends:
-    - .config-cache
+    - .type-a-config-cache
     - .tests-build
   variables:
     BOARD_TYPE: type-a
@@ -157,21 +165,21 @@ type-a-tests-build:
 # Type C CI
 type-c-mcb-build:
   extends:
-    - .config-cache
+    - .type-c-config-cache
     - .mcb-build
   variables:
     BOARD_TYPE: type-c
 
 type-c-sim-build:
   extends:
-    - .config-cache
+    - .type-c-config-cache
     - .sim-build
   variables:
     BOARD_TYPE: type-c
 
 type-c-tests-build:
   extends:
-    - .config-cache
+    - .type-c-config-cache
     - .tests-build
   variables:
     BOARD_TYPE: type-c
