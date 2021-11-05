@@ -49,13 +49,15 @@ before_script:
 
 clang-format:
   stage: Initial Verification
+  needs: []
   script:
     - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r src/ test/
   only: *verification_only
   except: *verification_except
 
-policy checks:
+policy-checks:
   stage: Initial Verification
+  needs: []
   script:
     - python3 ./scripts/check_singleton_drivers.py src
     - python3 ./scripts/check_license_headers.py
@@ -64,25 +66,39 @@ policy checks:
   only: *verification_only
   except: *verification_except
 
-.mcb build:
+.run-lbuild:
+  script:
+    - cd test-project && lbuild build && cd ..
+  cache:
+    untracked: true
+    key: $BOARD_TYPE-binaries
+    paths:
+      - test-project
+
+.config-cache:
+  needs:
+    - $BOARD_TYPE-generate-test-project
+  dependencies:
+    - $BOARD_TYPE-generate-test-project
+  cache:
+    key: $BOARD_TYPE-binaries
+
+.mcb-build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd test-project && lbuild build
     - python3 $(which scons) build $ADDITIONAL_CI_BUILD_ARGS
 
-.sim build:
+.sim-build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd test-project && lbuild build
     - python3 $(which scons) build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
 
-.tests build:
+.tests-build:
   stage: Build all Targets
   only: *default_only
   script:
-    - cd test-project && lbuild build
     - python3 $(which scons) run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
@@ -94,42 +110,71 @@ policy checks:
       cobertura: cobertura.xml
     expire_in: 2 weeks
 
-.configure for type c:
+type-a-generate-test-project:
+  needs: []
+  stage: Initial Verification
+  extends:
+    - .run-lbuild
+  variables:
+    BOARD_TYPE: type-a
+
+type-c-generate test project:
+  needs: []
+  stage: Initial Verification
+  extends:
+    - .run lbuild
   before_script:
     - cd test-project
     - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
     - sed -i '/<!-- For RoboMaster Development Board Type C --> <!--/c\' project.xml
     - sed -i '/--> <!-- End For RoboMaster Development Board Type C -->/c\' project.xml
     - cd ..
+  variables:
+    BOARD_TYPE: type-c
 
 # Type A CI
-type a mcb build:
+type-a-mcb-build:
   extends:
-    - .mcb build
+    - .config-cache
+    - .mcb-build
+  variables:
+    BOARD_TYPE: type-a
 
-type a sim build:
+type-a-sim-build:
   extends:
-    - .sim build
+    - .config-cache
+    - .sim-build
+  variables:
+    BOARD_TYPE: type-a
 
-type a tests build:
+type-a-tests-build:
   extends:
-    - .tests build
+    - .config-cache
+    - .tests-build
+  variables:
+    BOARD_TYPE: type-a
 
 # Type C CI
-type c mcb build:
+type-c-mcb-build:
   extends:
-    - .configure for type c
-    - .mcb build
+    - .config-cache
+    - .mcb-build
+  variables:
+    BOARD_TYPE: type-c
 
-type c sim build:
+type-c-sim-build:
   extends:
-    - .configure for type c
-    - .sim build
+    - .config-cache
+    - .sim-build
+  variables:
+    BOARD_TYPE: type-c
 
-type c tests build:
+type-c-tests-build:
   extends:
-    - .configure for type c
-    - .tests build
+    - .config-cache
+    - .tests-build
+  variables:
+    BOARD_TYPE: type-c
 
 # Pages deploy
 
