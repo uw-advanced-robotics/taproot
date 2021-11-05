@@ -147,44 +147,32 @@ type-a-mcb-build:
   extends:
     - .type-a-config-cache
     - .mcb-build
-  variables:
-    BOARD_TYPE: type-a
 
 type-a-sim-build:
   extends:
     - .type-a-config-cache
     - .sim-build
-  variables:
-    BOARD_TYPE: type-a
 
 type-a-tests-build:
   extends:
     - .type-a-config-cache
     - .tests-build
-  variables:
-    BOARD_TYPE: type-a
 
 # Type C CI
 type-c-mcb-build:
   extends:
     - .type-c-config-cache
     - .mcb-build
-  variables:
-    BOARD_TYPE: type-c
 
 type-c-sim-build:
   extends:
     - .type-c-config-cache
     - .sim-build
-  variables:
-    BOARD_TYPE: type-c
 
 type-c-tests-build:
   extends:
     - .type-c-config-cache
     - .tests-build
-  variables:
-    BOARD_TYPE: type-c
 
 # Pages deploy
 
