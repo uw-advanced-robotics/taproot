@@ -82,6 +82,7 @@ policy-checks:
     - type-a-generate-test-project
   cache:
     key: type-a-project
+    untracked: true
 
 .type-c-config-cache:
   needs:
@@ -90,6 +91,7 @@ policy-checks:
     - type-c-generate-test-project
   cache:
     key: type-c-project
+    untracked: true
 
 .mcb-build:
   stage: Build all Targets
