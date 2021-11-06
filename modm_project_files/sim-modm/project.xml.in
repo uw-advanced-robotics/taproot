@@ -1,7 +1,7 @@
 <library>
   <repositories>
     <repository>
-      <path>../../{{ modm_path }}</path>
+      <path>../../../{{ modm_path }}</path>
     </repository>
   </repositories>
   <options>

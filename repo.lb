@@ -17,6 +17,13 @@
 
 import subprocess
 
+# TODO: is there a way to import this from modm_project_files/module.lb
+HOSTED_TARGET_NAMES = [
+    "hosted-linux",
+    "hosted-darwin",
+    "hosted-windows",
+]
+
 def init(repo):
     repo.name = "taproot"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
@@ -57,12 +64,13 @@ def build(env):
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)
 
         print("building sim-modm")
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
+            for target in HOSTED_TARGET_NAMES:
+                subprocess.run(["lbuild", "build"], check=True, cwd=f"taproot/sim-modm/{target}")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)

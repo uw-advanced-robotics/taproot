@@ -5,7 +5,7 @@
             "includePath": [
                 "${default}",
                 "test-project/taproot/test",
-                "test-project/taproot/sim-modm/modm/src"
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
@@ -16,7 +16,7 @@
             "name": "Sim",
             "includePath": [
                 "${default}",
-                "test-project/taproot/sim-modm/modm/src"
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "compilerPath": "/usr/bin/g++",
