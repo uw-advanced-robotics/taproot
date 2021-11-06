@@ -22,6 +22,7 @@
 
 #include <cstdint>
 #include "tap/algorithms/math_user_utils.hpp"
+#include "tap/algorithms/ramp.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
 #include "tap/drivers.hpp"
@@ -37,13 +38,13 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * Command that takes control of a setpoint subsystem and attempts to unjam 
- * it by moving back and forth. Whether or not the subsystem is actually in a jam 
- * condition is not up for this command to determine. It is assumed that 
- * unjamming must occur.
- * 
+ * Command that takes control of a setpoint subsystem moves it back and forth. 
+ * One back and forward motion counts as a cycle. Unjamming cycles start by trying
+ * to move in negative direction before trying to move in positive direction. 
+ *
  * If successful the unjam command will return the setpoint of the subsystem back
- * to its original value.
+ * to its original value. If not successful, setpoint is set to current value so as
+ * to not damage motors.
  */
 class UnjamCommand : public tap::control::Command
 {
@@ -60,12 +61,14 @@ public:
      * @param[in] maxWaitTime The maximum amount of time the controller will
      *      wait for the subsystem to reach unjam target in milliseconds before 
      *      trying to move in the opposite direction.
+     * @param[in] targetCycleCount the number of cycles to attempt to wiggle the subsystem
      */
     UnjamCommand(
         SetpointSubsystem* setpointSubsystem,
         float unjamDisplacement,
         float unjamThreshold,
-        uint32_t maxWaitTime);
+        uint32_t maxWaitTime,
+        uint_fast16_t targetCycleCount);
 
     void initialize() override;
 
@@ -80,8 +83,8 @@ public:
 private:
     enum UnjamState
     {
-        UNJAM_FORWARD,
-        UNJAM_BACKWARD
+        UNJAM_BACKWARD,
+        UNJAM_FORWARD
     };
 
     void beginUnjamForwards();
@@ -89,7 +92,7 @@ private:
     void beginUnjamBackwards();
 
     /**
-     * Time allowed to rotate back the the `currunjamThreshold`.
+     * Timeout for time allowed to rotate past the `unjamThreshold`.
      */
     tap::arch::MilliTimeout unjamRotateTimeout;
 
@@ -97,19 +100,30 @@ private:
      * Maximum time the command will spend trying to reach unjam target in
      * one direction before giving up and trying other direction.
      */
-    uint32_t maxWaitTime;
+    const uint32_t maxWaitTime;
 
     SetpointSubsystem* setpointSubsystem;
 
-    // The target displacement in both directions during unjam
+    /**
+     * The target displacement in both directions during unjam
+     */
     float unjamDisplacement;
 
-    // The minimum displacement in both directions at which point jam is 
-    // considered cleared
+    /**
+     * The minimum displacement in both directions at which point jam is 
+     * considered cleared
+     */
     float unjamThreshold;
 
-    // counts the number of times the subsystem has been commanded backwards
-    uint_fast8_t backwardsCount;
+    /**
+     * The number of times the comand will try to wiggle the subsystem.
+     */
+    const uint_fast16_t targetCycleCount;
+
+    /**
+     * counts the number of times the subsystem has been commanded backwards
+     */
+    uint_fast16_t backwardsCount;
 
     UnjamState currUnjamState;
 

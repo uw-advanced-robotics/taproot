@@ -33,16 +33,18 @@ UnjamCommand::UnjamCommand(
     SetpointSubsystem* setpointSubsystem,
     float unjamDisplacement,
     float unjamThreshold,
-    uint32_t maxWaitTime)
+    uint32_t maxWaitTime,
+    uint_fast16_t targetCycleCount)
     : unjamRotateTimeout(0),
       maxWaitTime(maxWaitTime),
       setpointSubsystem(setpointSubsystem),
       unjamDisplacement(unjamDisplacement),
-      unjamThreshold(unjamThreshold)
+      unjamThreshold(unjamThreshold),
+      targetCycleCount(targetCycleCount)
 {
     unjamDisplacement = abs(unjamDisplacement);
     unjamThreshold = abs(unjamThreshold);
-    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(setpointSubsystem);
     unjamRotateTimeout.stop();
 }
 
@@ -50,43 +52,25 @@ void UnjamCommand::initialize()
 {
     unjamRotateTimeout.restart(maxWaitTime);
 
-    valueBeforeUnjam = setpointSubsystem->getCurrentValue();
-
-    setpointSubsystem->setSetpoint(valueBeforeUnjam - unjamDisplacement);
-    currUnjamState = UNJAM_BACKWARD;
-    backwardsCount = 1;
-
     // store the current setpoint value to be able to restore subsystem state after command
     // completion
     setpointBeforeUnjam = setpointSubsystem->getSetpoint();
 
+    valueBeforeUnjam = setpointSubsystem->getCurrentValue();
+
     forwardsCleared = false;
     backwardsCleared = false;
+    backwardsCount = 0;
+
+    beginUnjamBackwards();
 }
 
 void UnjamCommand::execute()
 {
-    // Don't run logic if subsystem offline
-    if (!setpointSubsystem->isOnline())
-    {
-        return;
-    }
-
     float currValue = setpointSubsystem->getCurrentValue();
 
     switch (currUnjamState)
     {
-        case UNJAM_FORWARD:
-            if (currValue >= valueBeforeUnjam + unjamThreshold)
-            {
-                forwardsCleared = true;
-                beginUnjamBackwards();
-            }
-            else if (unjamRotateTimeout.isExpired())
-            {
-                beginUnjamBackwards();
-            }
-            break;
         case UNJAM_BACKWARD:
             if (currValue <= valueBeforeUnjam - unjamThreshold)
             {
@@ -98,6 +82,17 @@ void UnjamCommand::execute()
                 beginUnjamForwards();
             }
             break;
+        case UNJAM_FORWARD:
+            if (currValue >= valueBeforeUnjam + unjamThreshold)
+            {
+                forwardsCleared = true;
+                beginUnjamBackwards();
+            }
+            else if (unjamRotateTimeout.isExpired())
+            {
+                beginUnjamBackwards();
+            }
+            break;
     }
 }
 
@@ -106,11 +101,13 @@ void UnjamCommand::end(bool)
     if (forwardsCleared && backwardsCleared)
     {
         setpointSubsystem->clearJam();
+        setpointSubsystem->setSetpoint(setpointBeforeUnjam);
+    } else {
+        setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
-    setpointSubsystem->setSetpoint(setpointBeforeUnjam);
 }
 
-bool UnjamCommand::isFinished() const { return backwardsCount >= 3; }
+bool UnjamCommand::isFinished() const { return backwardsCount >= targetCycleCount + 1; }
 
 void UnjamCommand::beginUnjamForwards()
 {

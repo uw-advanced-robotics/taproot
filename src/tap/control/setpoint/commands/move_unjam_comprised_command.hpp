@@ -42,7 +42,7 @@ class MoveUnjamComprisedCommand : public tap::control::ComprisedCommand
 {
 public:
     /**
-     * @param[in] drivers A pointer to the `Drivers` struct
+     * @param[in] drivers A pointer to the `Drivers` struct.
      * @param[in] setpointSubsystem The subsystem to interact with.
      * @param[in] moveDisplacement The displacement the command will apply to the subsystem
      * @param[in] unjamDisplacement See `UnjamCommand`'s constructor for more details,

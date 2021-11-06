@@ -34,8 +34,8 @@ namespace setpoint
 {
 /**
  * A command that uses an `SetpointSubsystem` to move to the same
- * position/value everytime, attemping to rotate at the given angular velocity.
- * (Consistency doesn't work across motor disconnects). This command
+ * position/value everytime, attemping to rotate at the given velocity.
+ * (Coordinates may shift if motor disconnects). This command
  * ends immediately if the agitator is jammed, and upon ending will
  * stop the connected agitator by setting its target position to its
  * current position.
@@ -85,7 +85,9 @@ protected:
     tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 
 private:
-    /* target value for the subsystem to reach when command is called.*/
+    /** 
+     * target value for the subsystem to reach when command is called. 
+     */
     float setpoint;
 
     tap::algorithms::Ramp rampToSetpoint;

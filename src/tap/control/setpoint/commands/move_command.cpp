@@ -19,6 +19,7 @@
 
 #include "move_command.hpp"
 
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 
 namespace tap
@@ -43,7 +44,7 @@ MoveCommand::MoveCommand(
       previousMoveTime(0),
       setToTargetOnEnd(setToTargetOnEnd)
 {
-    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(setpointSubsystem);
 }
 
 void MoveCommand::initialize()
@@ -66,20 +67,21 @@ void MoveCommand::initialize()
 void MoveCommand::execute()
 {
     // Don't move setpoint if the subsystem is online. Wait until subsystem back online.
-    if (!setpointSubsystem->isOnline())
+    if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline())
     {
+        previousMoveTime = tap::arch::clock::getTimeMilliseconds();
         return;
     }
     // update the subsystem setpoint ramp
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     rampToTargetValue.update(
-        (currTime - previousMoveTime) * trueDisplacement /
-        static_cast<float>(moveTime));
+        (currTime - previousMoveTime) * trueDisplacement / static_cast<float>(moveTime));
     previousMoveTime = currTime;
     setpointSubsystem->setSetpoint(rampToTargetValue.getValue());
 
-    if (minMoveTimeout.isStopped() && 
-        fabsf(setpointSubsystem->getCurrentValue() - rampToTargetValue.getTarget()) <= setpointTolerance)
+    if (minMoveTimeout.isStopped() &&
+        fabsf(setpointSubsystem->getCurrentValue() - rampToTargetValue.getTarget()) <=
+            setpointTolerance)
     {
         minMoveTimeout.restart(pauseAfterMoveTime);
     }
@@ -106,8 +108,10 @@ bool MoveCommand::isFinished() const
     // The subsystem is jammed, or it is within the setpoint tolerance, the ramp is
     // finished, and the minimum rotate time is expired.
     return setpointSubsystem->isJammed() ||
-           (fabsf(setpointSubsystem->getCurrentValue() - rampToTargetValue.getTarget()) <
-                setpointTolerance &&
+           (algorithms::compareFloatClose(
+                setpointSubsystem->getCurrentValue(),
+                rampToTargetValue.getTarget(),
+                setpointTolerance) &&
             rampToTargetValue.isTargetReached() && minMoveTimeout.isExpired());
 }
 

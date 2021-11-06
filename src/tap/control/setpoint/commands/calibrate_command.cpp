@@ -24,16 +24,12 @@
 
 using tap::control::setpoint::SetpointSubsystem;
 
-namespace tap
-{
-namespace control
-{
-namespace setpoint
+namespace tap::control::setpoint
 {
 CalibrateCommand::CalibrateCommand(SetpointSubsystem* setpointSubsystem)
     : setpointSubsystem(setpointSubsystem)
 {
-    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(setpointSubsystem);
 }
 
 bool CalibrateCommand::isReady() { return setpointSubsystem->isOnline(); }
@@ -47,11 +43,7 @@ void CalibrateCommand::end(bool) {}
 
 bool CalibrateCommand::isFinished() const
 {
-    return setpointSubsystem->isCalibrated() && calibrationSuccessful;
+    return calibrationSuccessful;
 }
 
-}  // namespace setpoint
-
-}  // namespace control
-
-}  // namespace tap
+}  // namespace tap::control::setpoint

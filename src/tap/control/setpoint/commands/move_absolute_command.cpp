@@ -19,6 +19,7 @@
 
 #include "move_absolute_command.hpp"
 
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 
 namespace tap
@@ -41,13 +42,10 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
       automaticallyClearJam(automaticallyClearJam),
       setSetpointToTargetOnEnd(setSetpointToTargetOnEnd)
 {
-    this->addSubsystemRequirement(dynamic_cast<tap::control::Subsystem*>(setpointSubsystem));
+    this->addSubsystemRequirement(setpointSubsystem);
 }
 
-bool MoveAbsoluteCommand::isReady()
-{
-    return !setpointSubsystem->isJammed();
-}
+bool MoveAbsoluteCommand::isReady() { return !setpointSubsystem->isJammed(); }
 
 void MoveAbsoluteCommand::initialize()
 {
@@ -60,10 +58,13 @@ void MoveAbsoluteCommand::execute()
 {
     // If the subsystem is jammed, set the setpoint to the current value. Necessary since
     // derived classes may choose to overwrite the `isFinished` function and so for motor safety
-    // we do this. Also if subsystem is online we delay our execution so that setpoint doesn't
+    // we do this. Also if subsystem is offline we delay our execution so that setpoint doesn't
     // run away while subsystem offline.
     if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline())
     {
+        // Set prevMoveTime to now so that delta time doesn't become ridiculous while
+        // subsystem is stuck in non-functional state.
+        prevMoveTime = tap::arch::clock::getTimeMilliseconds();
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
         return;
     }
@@ -91,7 +92,7 @@ void MoveAbsoluteCommand::end(bool)
     {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
-    
+
     if (automaticallyClearJam)
     {
         setpointSubsystem->clearJam();
@@ -100,11 +101,12 @@ void MoveAbsoluteCommand::end(bool)
 
 bool MoveAbsoluteCommand::isFinished() const
 {
-    // Command is finished if we've reached target, lost connection to subsystem, or
-    // if our subsystem is jammed.
-    return (fabsf(setpointSubsystem->getCurrentValue() - rampToSetpoint.getTarget()) <
-            setpointTolerance) ||
-           !setpointSubsystem->isOnline() || setpointSubsystem->isJammed();
+    // Command is finished if we've reached target or if our subsystem is jammed.
+    return algorithms::compareFloatClose(
+               setpointSubsystem->getCurrentValue(),
+               rampToSetpoint.getTarget(),
+               setpointTolerance) ||
+           setpointSubsystem->isJammed();
 }
 
 }  // namespace setpoint

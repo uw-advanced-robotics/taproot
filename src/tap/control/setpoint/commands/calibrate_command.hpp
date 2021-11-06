@@ -51,7 +51,7 @@ public:
      * @param[in] setpointSubsystem The subsystem this command is dependent upon.
      */
     explicit CalibrateCommand(
-        tap::control::setpoint::SetpointSubsystem* setpointSubsystem);
+        SetpointSubsystem* setpointSubsystem);
 
     const char* getName() const override { return "agitator calibrate"; }
 

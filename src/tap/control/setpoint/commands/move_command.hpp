@@ -36,8 +36,8 @@ namespace control
 namespace setpoint
 {
 /**
- * Moves the connected subsystem some value in some desired time. Currently
- * pass in a displacement and time and it uses `tap::arch::getTimeMilliseconds()`
+ * Displaces the connected subsystem some value in some desired time. Currently
+ * pass in a displacement and time to move and it uses `tap::arch::getTimeMilliseconds()`
  * to determine the speed to move at.
  */
 class MoveCommand : public tap::control::Command
@@ -89,7 +89,9 @@ private:
      */
     float targetDisplacement;
 
-    // Stores the actual distance between target endpoint and startpoint of movement
+    /** 
+     * Stores the actual distance between target endpoint and startpoint of movement 
+     */
     float trueDisplacement;
 
     tap::algorithms::Ramp rampToTargetValue;
