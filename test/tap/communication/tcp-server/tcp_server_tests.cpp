@@ -19,8 +19,7 @@
 
 #ifdef __linux__
 #include <threads.h>
-#endif // __linux__
-
+#endif  // __linux__
 
 #include <string>
 
@@ -31,7 +30,7 @@
 
 #include "tcp_test_client.hpp"
 
-# ifdef __linux__
+#ifdef __linux__
 using namespace tap::communication;
 using test::communication::TCPClient;
 
@@ -73,4 +72,4 @@ TEST(TCPServerTests, DISABLED_SendingCorrectMessages)
     // not supported on current host OS
 }
 
-#endif // __linux__
+#endif  // __linux__
