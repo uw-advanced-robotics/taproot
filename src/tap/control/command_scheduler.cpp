@@ -34,7 +34,7 @@ namespace tap
 {
 namespace control
 {
-bool CommandScheduler::safeDisconnectMode = true;
+bool CommandScheduler::safeDisconnectMode = false;
 bool CommandScheduler::masterSchedulerExists = false;
 Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBSYSTEM_COUNT];
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
@@ -240,6 +240,7 @@ void CommandScheduler::run()
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
+    // TODO: don't add the command if the remote is disconnected
     if (runningHardwareTests)
     {
         RAISE_ERROR(

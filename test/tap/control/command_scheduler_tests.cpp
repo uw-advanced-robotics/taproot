@@ -1084,8 +1084,8 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    NiceMock<CommandMock> c; // command mock
-    SubsystemMock s(&drivers); // subsystem mock
+    NiceMock<CommandMock> c;
+    SubsystemMock s(&drivers);
     set<Subsystem *> subRequirements{&s};
     EXPECT_CALL(c, getRequirementsBitwise)
         .Times(5)
@@ -1103,17 +1103,50 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     scheduler.run();
 }
 
-TEST(CommandScheduler, run_one_command_ends_when_remote_disconnects)
+TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
+    scheduler.enableSafeDisconnectMode();
 
-    NiceMock<CommandMock> c; // command mock
+    NiceMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    // FIX THIS EXPECT CALL STUFF TO BE CLEANER -- new issue
 
-    scheduler.addCommand(&c);
-    EXPECT_CALL(c, execute).Times(1);
+    EXPECT_CALL(c, end);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    EXPECT_CALL(c, end).Times(1);
+    
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c);
+    scheduler.run();
+}
+
+TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    scheduler.enableSafeDisconnectMode();
+
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c1, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(c2, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+
+    EXPECT_CALL(c1, end);
+    EXPECT_CALL(c2, end);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c1);
+    scheduler.addCommand(&c2);
+    scheduler.run();
 }
 
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
