@@ -133,11 +133,10 @@ type c tests build:
 
 # Pages deploy
 
-pages:
+docs:
   image: alpine
+  needs: []
   stage: Deploy Pages
-  variables:
-    GIT_SUBMODULE_STRATEGY: none
   before_script:
     - apk update
     - apk add py-pip python3-dev
@@ -150,6 +149,24 @@ pages:
   script:
     - cd docs && make html
     - mv _build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop
+    - merge_requests
+  environment:
+    name: "docs preview for $CI_COMMIT_REF_NAME"
+    url: "https://aruw.gitlab.io/-/controls/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
+
+pages:
+  image: alpine
+  needs: ["docs"]
+  dependencies: ["docs"]
+  stage: Deploy Pages
+  before_script:
+    - "true"
+  script: "true"
   artifacts:
     paths:
       - public
