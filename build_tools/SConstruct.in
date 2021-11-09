@@ -24,7 +24,7 @@ from SCons.Script import *
 from taproot.build_tools import parse_args
 
 # Define project settings and build paths
-PROJECT_NAME        = "{{ options["taproot:project_name"] }}"
+PROJECT_NAME        = "{{ options['taproot:project_name'] }}"
 BUILD_PATH          = "build"
 HARDWARE_MODM_PATH  = "taproot/modm"
 LINKERSCRIPT_FILE   = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")

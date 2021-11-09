@@ -17,12 +17,10 @@
 
 import subprocess
 
-# TODO: is there a way to import this from modm_project_files/module.lb
-HOSTED_TARGET_NAMES = [
-    "hosted-linux",
-    "hosted-darwin",
-    "hosted-windows",
-]
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+
+from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 
 def init(repo):
     repo.name = "taproot"
@@ -69,7 +67,7 @@ def build(env):
 
         print("building sim-modm")
         try:
-            for target in HOSTED_TARGET_NAMES:
+            for target in ALL_HOSTED_TARGET_NAMES:
                 subprocess.run(["lbuild", "build"], check=True, cwd=f"taproot/sim-modm/{target}")
         except subprocess.CalledProcessError as e:
             print(e)
