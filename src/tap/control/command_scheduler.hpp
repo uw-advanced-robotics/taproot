@@ -78,7 +78,8 @@ class Subsystem;
  *
  * while (1)
  * {
- *     // The subsystem will refresh forever and the command until it is not finished.
+ *     // The subsystem will refresh forever and the command will execute until it
+ *     // is finished.
  *     drivers->commandScheduler.run();
  * }
  * ```
