@@ -161,7 +161,7 @@ for consumers using Taproot. See [here](https://gitlab.com/aruw/controls/taproot
 for more details on this flow.
 
 To facilitate testing, this repo has a project defined in `test-project/` which consumes Taproot. It
-can be used for basic testing and as a generation/build smoke-test. Note that, changes made by ARUW
+can be used for basic testing and as a generation/build smoke-test. Note that changes made by ARUW
 members should typically be tested in the context of `aruw-mcb` before being merged here.
 
 To use the test project, `cd` into `taproot/test-project` (where the `project.xml` file is). Run
