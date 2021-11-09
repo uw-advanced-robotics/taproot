@@ -60,7 +60,7 @@ See ["Development guide"](#Development-guide) below for information on contribut
 ## Requirements for use
 
 - A robot operated by a [RoboMaster Development Board Type A](https://store.dji.com/product/rm-development-board-type-a) or [Type C](https://www.robomaster.com/en-US/products/components/general/development-board-type-c/info).
-- A Linux environment. Virtual Machines work great. Documentation forthcoming (TODO).
+- A Linux, macOS or Windows computer
 - An ST-Link- or J-Link-compatible probe for flashing and debugging
 
 ## Contacting
