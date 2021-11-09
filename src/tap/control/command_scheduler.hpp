@@ -65,9 +65,9 @@ class Subsystem;
  * the scheduler. Then the scheduler is run over and over, in a loop.
  *
  * ```
- * // A class that has Command as a base class.
+ * // A class that has Subsystem as a base class.
  * CoolSubsystem sub;
- * // A class that has Subsystem as a base class that requires
+ * // A class that has Command as a base class that requires
  * // the subsystem above. In the constructor of the ControlCoolCommand,
  * // you must call `addSubsystemRequirement(sub)`, where `sub` is the
  * // `CoolSubsystem` defined below.
