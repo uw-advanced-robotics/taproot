@@ -113,6 +113,14 @@ Follow the guide appropriate for your operating system.
   Note that, as of writing, the native Windows instructions _do not_ support running automated tests
   or simulation. This will be fixed soon.
 
+Then install `pipenv` and set up the build tools:
+
+```
+pip3 install pipenv
+cd test-project/
+pipenv install
+```
+
 Alternately, you want the easiest setup experience and **_do not_ require deploying code to
 hardware**, consider developing within the provided [Docker container](https://gitlab.com/aruw/controls/taproot/-/wikis/Docker-Container-Setup).
 If you have Docker and vscode installed, you can access this environment in one click using the

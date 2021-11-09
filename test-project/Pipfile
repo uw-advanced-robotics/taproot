@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+scons = { version = "==3.1.2", markers = "sys_platform == 'win32'" }
+lbuild = "==1.20.0"
+pyelftools = "*"
+pywin32 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3"
