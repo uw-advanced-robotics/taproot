@@ -60,9 +60,9 @@ class Subsystem;
  *
  * The main use case will be to be refreshing all the main subsystems running
  * on the robot. You should access the main scheduler via the global `tap::Drivers *`
- * instance, which should have an instance of a `CommandScheduler` called  commandScheduler`.
+ * instance, which should have an instance of a `CommandScheduler` called  `commandScheduler`.
  * The below example code registers a subsystem (`sub`) and adds a command (`cmd`) to
- * the scheduler. Then the scheduler is ran over and over. in a loop.
+ * the scheduler. Then the scheduler is run over and over, in a loop.
  *
  * ```
  * // A class that has Command as a base class.
