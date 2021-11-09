@@ -164,6 +164,8 @@ pages:
   needs: ["docs"]
   dependencies: ["docs"]
   stage: Deploy Pages
+  before_script:
+    - "true"
   script: "true"
   artifacts:
     paths:
