@@ -70,7 +70,7 @@ class Subsystem;
  * // A class that has Command as a base class that requires
  * // the subsystem above. In the constructor of the ControlCoolCommand,
  * // you must call `addSubsystemRequirement(sub)`, where `sub` is the
- * // `CoolSubsystem` defined below.
+ * // `CoolSubsystem` defined above.
  * ControlCoolCommand cmd(&sub);
  *
  * drivers->commandScheduler.registerSubsystem(&sub);
