@@ -188,10 +188,10 @@ Likely commands are as follows:
   located in `build/hardware/` which contains the final `.elf` file as well as the intermediate
   object files (`.o`).
 - `scons build-tests`: Builds a program which hosts our unit tests. This executable can be run on
-  your host computer (only supported on Linux) and prints results for each unit test run.
+  your host computer and prints results for each unit test run.
 - `scons run`: Builds as with `scons build` and then programs the board.
 - `scons run-tests`: Builds and runs the unit test program. In `test-project`, this includes all of
-  the unit tests for Taproot itself.
+  the unit tests for Taproot itself. Same as `build-tests` but also runs the built file.
 - `scons size`: Prints statistics on program size and (statically-)allocated memory. Note that the
   reported available heap space is an upper bound, and this tool has no way of knowing about the
   real size of dynamic allocations.
