@@ -99,6 +99,10 @@ To learn about contributing to upstream repositories via forks, see here: https:
 
 ## Development guide
 
+If you are looking to develop _your own_ Taproot-based project, refer to the README there for setup
+instructions. The below is for developing Taproot itself. The instructions are very similar but may
+be customized per project.
+
 ### System setup
 
 Follow the guide appropriate for your operating system.
@@ -109,9 +113,6 @@ Follow the guide appropriate for your operating system.
     of Debian or Fedora packages.
 - macOS: https://gitlab.com/aruw/controls/taproot/-/wikis/macOS-Setup
 - Windows: https://gitlab.com/aruw/controls/taproot/-/wikis/Windows-Setup
-  
-  Note that, as of writing, the native Windows instructions _do not_ support running automated tests
-  or simulation. This will be fixed soon.
 
 Then install `pipenv` and set up the build tools:
 
