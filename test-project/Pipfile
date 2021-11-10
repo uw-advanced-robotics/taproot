@@ -4,10 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-scons = { version = "==3.1.2", markers = "sys_platform == 'win32'" }
+scons = "==3.1.2"
 lbuild = "==1.20.0"
 pyelftools = "*"
-pywin32 = "*"
+pywin32 = { version = "*", markers = "sys_platform == 'win32'" }
 
 [dev-packages]
 
