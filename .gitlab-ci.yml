@@ -39,6 +39,7 @@ variables:
 
 stages:
   - Initial Verification
+  - Generate Test Project
   - Build all Targets
   - Deploy Pages
 
@@ -47,7 +48,7 @@ before_script:
 
 # Initial verification
 
-clang-format:
+"Clang Format":
   stage: Initial Verification
   needs: []
   script:
@@ -55,7 +56,7 @@ clang-format:
   only: *verification_only
   except: *verification_except
 
-policy-checks:
+"Policy Checks":
   stage: Initial Verification
   needs: []
   script:
@@ -66,49 +67,45 @@ policy-checks:
   only: *verification_only
   except: *verification_except
 
-.run-lbuild:
+.run_lbuild:
   script:
     - cd test-project && lbuild build && cd ..
   cache:
     untracked: true
-    key: $BOARD_TYPE-project
+    key: ${BOARD_TYPE}_project
     paths:
       - test-project
 
-.type-a-config-cache:
-  needs:
-    - type-a-generate-test-project
-  dependencies:
-    - type-a-generate-test-project
+.type_a_config_cache:
+  needs: ["Type A: Generate Test Project"]
+  dependencies: ["Type A: Generate Test Project"]
   cache:
-    key: type-a-project
+    key: type_a_project
     untracked: true
 
-.type-c-config-cache:
-  needs:
-    - type-c-generate-test-project
-  dependencies:
-    - type-c-generate-test-project
+.type_c_config_cache:
+  needs: ["Type C: Generate Test Project"]
+  dependencies: ["Type C: Generate Test Project"]
   cache:
-    key: type-c-project
+    key: type_c_project
     untracked: true
 
-.mcb-build:
-  stage: Build all Targets
+.mcb_build:
+  stage: "Build all Targets"
   only: *default_only
   script:
     - cd test-project
     - scons build $ADDITIONAL_CI_BUILD_ARGS
 
-.sim-build:
-  stage: Build all Targets
+.sim_build:
+  stage: "Build all Targets"
   only: *default_only
   script:
     - cd test-project
     - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
 
-.tests-build:
-  stage: Build all Targets
+.tests_build:
+  stage: "Build all Targets"
   only: *default_only
   script:
     - cd test-project
@@ -123,21 +120,21 @@ policy-checks:
       cobertura: cobertura.xml
     expire_in: 2 weeks
 
-type-a-generate-test-project:
+"Type A: Generate Test Project":
   needs: []
   only: *default_only
-  stage: Initial Verification
+  stage: Generate Test Project
   extends:
-    - .run-lbuild
+    - .run_lbuild
   variables:
-    BOARD_TYPE: type-a
+    BOARD_TYPE: type_a
 
-type-c-generate-test-project:
+"Type C: Generate Test Project":
   needs: []
-  stage: Initial Verification
+  stage: Generate Test Project
   only: *default_only
   extends:
-    - .run-lbuild
+    - .run_lbuild
   before_script:
     - cd test-project
     - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
@@ -145,43 +142,43 @@ type-c-generate-test-project:
     - sed -i '/--> <!-- End For RoboMaster Development Board Type C -->/c\' project.xml
     - cd ..
   variables:
-    BOARD_TYPE: type-c
+    BOARD_TYPE: type_c
 
 # Type A CI
-type-a-mcb-build:
+"Type A: MCB Build":
   extends:
-    - .type-a-config-cache
-    - .mcb-build
+    - .type_a_config_cache
+    - .mcb_build
 
-type-a-sim-build:
+"Type A: Sim Build":
   extends:
-    - .type-a-config-cache
-    - .sim-build
+    - .type_a_config_cache
+    - .sim_build
 
-type-a-tests-build:
+"Type A: Tests Build":
   extends:
-    - .type-a-config-cache
-    - .tests-build
+    - .type_a_config_cache
+    - .tests_build
 
 # Type C CI
-type-c-mcb-build:
+"Type C: MCB Build":
   extends:
-    - .type-c-config-cache
-    - .mcb-build
+    - .type_c_config_cache
+    - .mcb_build
 
-type-c-sim-build:
+"Type C: Sim Build":
   extends:
-    - .type-c-config-cache
-    - .sim-build
+    - .type_c_config_cache
+    - .sim_build
 
-type-c-tests-build:
+"Type C: Tests Build":
   extends:
-    - .type-c-config-cache
-    - .tests-build
+    - .type_c_config_cache
+    - .tests_build
 
 # Pages deploy
 
-docs:
+"Generate Docs":
   image: alpine
   needs: []
   stage: Deploy Pages
@@ -209,8 +206,8 @@ docs:
 
 pages:
   image: alpine
-  needs: ["docs"]
-  dependencies: ["docs"]
+  needs: ["Generate Docs"]
+  dependencies: ["Generate Docs"]
   stage: Deploy Pages
   before_script:
     - "true"
