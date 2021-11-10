@@ -11,5 +11,5 @@
 
 ### All changes
 
-- "sim-modm" instance is now generated for all three major desktop platforms, with builds now
-  natively supported on macOS and Windows and tests supported on macOS. (!73, #96, #15)
+- "sim-modm" instance is now generated for all three major desktop platforms, with hardware builds
+  and testing environments fully supported on each. (!73, #96, #15)
