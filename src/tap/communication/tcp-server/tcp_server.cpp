@@ -152,7 +152,8 @@ void TCPServer::closeConnection()
 /**
  * Post: Returns the port number of this server.
  */
-uint16_t TCPServer::getPortNumber() {
+uint16_t TCPServer::getPortNumber()
+{
 #ifdef __linux__
     return this->portNumber;
 # else
