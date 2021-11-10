@@ -156,7 +156,7 @@ uint16_t TCPServer::getPortNumber()
 {
 #ifdef __linux__
     return this->portNumber;
-#else      
+#else
     return 0;
 #endif  // __linux__
 }
