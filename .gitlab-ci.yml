@@ -39,6 +39,7 @@ variables:
 
 stages:
   - Initial Verification
+  - Generate Test Project
   - Build all Targets
   - Deploy Pages
 
@@ -47,15 +48,17 @@ before_script:
 
 # Initial verification
 
-clang-format:
+"Clang Format":
   stage: Initial Verification
+  needs: []
   script:
     - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r src/ test/
   only: *verification_only
   except: *verification_except
 
-policy checks:
+"Policy Checks":
   stage: Initial Verification
+  needs: []
   script:
     - python3 ./scripts/check_singleton_drivers.py src
     - python3 ./scripts/check_license_headers.py
@@ -64,26 +67,49 @@ policy checks:
   only: *verification_only
   except: *verification_except
 
-.mcb build:
-  stage: Build all Targets
-  only: *default_only
+.run_lbuild:
   script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) build $ADDITIONAL_CI_BUILD_ARGS
+    - cd test-project && lbuild build && cd ..
+  cache:
+    untracked: true
+    key: ${BOARD_TYPE}_project
+    paths:
+      - test-project
 
-.sim build:
-  stage: Build all Targets
-  only: *default_only
-  script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+.type_a_config_cache:
+  needs: ["Type A: Generate Test Project"]
+  dependencies: ["Type A: Generate Test Project"]
+  cache:
+    key: type_a_project
+    untracked: true
 
-.tests build:
-  stage: Build all Targets
+.type_c_config_cache:
+  needs: ["Type C: Generate Test Project"]
+  dependencies: ["Type C: Generate Test Project"]
+  cache:
+    key: type_c_project
+    untracked: true
+
+.mcb_build:
+  stage: "Build all Targets"
   only: *default_only
   script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
+    - cd test-project
+    - scons build $ADDITIONAL_CI_BUILD_ARGS
+
+.sim_build:
+  stage: "Build all Targets"
+  only: *default_only
+  script:
+    - cd test-project
+    - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+
+.tests_build:
+  stage: "Build all Targets"
+  only: *default_only
+  script:
+    - cd test-project
+    - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s=<source>.</source>=<source>./taproot-project-sim</source>=g" cobertura.xml'
@@ -94,46 +120,65 @@ policy checks:
       cobertura: cobertura.xml
     expire_in: 2 weeks
 
-.configure for type c:
+"Type A: Generate Test Project":
+  needs: []
+  only: *default_only
+  stage: Generate Test Project
+  extends:
+    - .run_lbuild
+  variables:
+    BOARD_TYPE: type_a
+
+"Type C: Generate Test Project":
+  needs: []
+  stage: Generate Test Project
+  only: *default_only
+  extends:
+    - .run_lbuild
   before_script:
     - cd test-project
     - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
     - sed -i '/<!-- For RoboMaster Development Board Type C --> <!--/c\' project.xml
     - sed -i '/--> <!-- End For RoboMaster Development Board Type C -->/c\' project.xml
     - cd ..
+  variables:
+    BOARD_TYPE: type_c
 
 # Type A CI
-type a mcb build:
+"Type A: MCB Build":
   extends:
-    - .mcb build
+    - .type_a_config_cache
+    - .mcb_build
 
-type a sim build:
+"Type A: Sim Build":
   extends:
-    - .sim build
+    - .type_a_config_cache
+    - .sim_build
 
-type a tests build:
+"Type A: Tests Build":
   extends:
-    - .tests build
+    - .type_a_config_cache
+    - .tests_build
 
 # Type C CI
-type c mcb build:
+"Type C: MCB Build":
   extends:
-    - .configure for type c
-    - .mcb build
+    - .type_c_config_cache
+    - .mcb_build
 
-type c sim build:
+"Type C: Sim Build":
   extends:
-    - .configure for type c
-    - .sim build
+    - .type_c_config_cache
+    - .sim_build
 
-type c tests build:
+"Type C: Tests Build":
   extends:
-    - .configure for type c
-    - .tests build
+    - .type_c_config_cache
+    - .tests_build
 
 # Pages deploy
 
-docs:
+"Generate Docs":
   image: alpine
   needs: []
   stage: Deploy Pages
@@ -161,8 +206,8 @@ docs:
 
 pages:
   image: alpine
-  needs: ["docs"]
-  dependencies: ["docs"]
+  needs: ["Generate Docs"]
+  dependencies: ["Generate Docs"]
   stage: Deploy Pages
   before_script:
     - "true"
