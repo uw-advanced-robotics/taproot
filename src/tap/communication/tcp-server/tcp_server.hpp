@@ -100,7 +100,7 @@ private:
     // Singleton server.
     static TCPServer mainServer;
 #endif  // __linux__
-};  // TCPServer
+};      // TCPServer
 
 #ifdef __linux__
 /**
