@@ -1,6 +1,6 @@
 # Taproot Python build tools
 __all__ = [
-    "parse_args"
+    "parse_args",
 ]
 
 from . import parse_args
