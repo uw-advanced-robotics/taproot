@@ -24,23 +24,23 @@ from SCons.Script import *
 from taproot.build_tools import parse_args
 
 # Define project settings and build paths
-PROJECT_NAME        = "{{ options['taproot:project_name'] }}"
-BUILD_PATH          = "build"
-HARDWARE_MODM_PATH  = "taproot/modm"
-LINKERSCRIPT_FILE   = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")
-SIM_MODM_DIR        = "taproot/sim-modm/"
-TAPROOT_SRC_PATH    = "taproot/src"
-TAPROOT_PATH        = join(TAPROOT_SRC_PATH, "tap")
-TAPROOT_TEST_PATH   = "taproot/test"
+PROJECT_NAME         = "{{ options['taproot:project_name'] }}"
+BUILD_PATH           = "build"
+HARDWARE_MODM_PATH   = "taproot/modm"
+LINKERSCRIPT_FILE    = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")
+SIM_MODM_PARENT_PATH = "taproot/sim-modm/"
+TAPROOT_SRC_PATH     = "taproot/src"
+TAPROOT_PATH         = join(TAPROOT_SRC_PATH, "tap")
+TAPROOT_TEST_PATH    = "taproot/test"
 
 # Define libraries
-HOSTED_LIBS         = ["pthread"]
-GTEST_LIBS          = ["gtest", "gtest_main", "gmock", "gmock_main"]
-COVERAGE_LIBS       = ["-lgcov"]
+HOSTED_LIBS          = ["pthread"]
+GTEST_LIBS           = ["gtest", "gtest_main", "gmock", "gmock_main"]
+COVERAGE_LIBS        = ["-lgcov"]
 
 # Don't compile this stuff
-ignored_dirs        = [".lbuild_cache", BUILD_PATH, SIM_MODM_DIR, HARDWARE_MODM_PATH, TAPROOT_PATH]
-ignored_files       = []
+ignored_dirs         = [".lbuild_cache", BUILD_PATH, SIM_MODM_PARENT_PATH, HARDWARE_MODM_PATH, TAPROOT_PATH]
+ignored_files        = []
 # Don't compile this stuff when testing
 IGNORED_FILES_WHILE_TESTING = ["src/main.cpp"]
 
