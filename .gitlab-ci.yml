@@ -201,7 +201,7 @@ before_script:
     - develop
     - merge_requests
   environment:
-    name: "docs preview for $CI_COMMIT_REF_NAME"
+    name: "docs preview"
     url: "https://aruw.gitlab.io/-/controls/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
 
 pages:
