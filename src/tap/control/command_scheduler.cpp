@@ -230,6 +230,7 @@ void CommandScheduler::run()
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
+
     if (runningHardwareTests)
     {
         RAISE_ERROR(

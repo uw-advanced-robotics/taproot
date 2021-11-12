@@ -112,8 +112,7 @@ before_script:
     - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
-    - 'sed -i "s=<source>.</source>=<source>./taproot-project-sim</source>=g" cobertura.xml'
-    - 'sed -i "s;filename=\";filename=\"taproot-project-sim/;g" cobertura.xml'
+    - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:
