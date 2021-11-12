@@ -96,11 +96,11 @@ private:
     int16_t mainClientDescriptor;  // File Descriptor which we communciate with
     sockaddr_in serverAddress;
     int16_t portNumber;  // portNumber the server is bound to
-#endif  // __linux__
+#endif                   // __linux__
 
     // Singleton server.
     static TCPServer mainServer;
-};      // TCPServer
+};  // TCPServer
 
 #ifdef __linux__
 /**
