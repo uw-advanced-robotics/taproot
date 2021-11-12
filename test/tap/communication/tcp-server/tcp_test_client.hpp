@@ -20,12 +20,14 @@
 #ifndef TCP_TEST_CLIENT_HPP_
 #define TCP_TEST_CLIENT_HPP_
 
+#ifdef __linux__
 #include <netdb.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#endif  // __linux__
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -60,8 +62,10 @@ public:
 private:
     int sockfd;
     int portno;
+#ifdef __linux__
     struct sockaddr_in serv_addr;
     struct hostent* server;
+#endif  // __linux__
 };
 
 }  // namespace communication

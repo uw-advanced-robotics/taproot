@@ -19,12 +19,14 @@
 
 #include "tcp_test_client.hpp"
 
+#ifdef __linux__
 #include <netdb.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
+#endif  // __linux__
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -39,6 +41,7 @@ namespace communication
 
 TCPClient::TCPClient(const char *hostname, int portno) : portno(portno)
 {
+#ifdef __linux__
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
@@ -67,10 +70,12 @@ TCPClient::TCPClient(const char *hostname, int portno) : portno(portno)
 
     // At this point client is successfully connected, and we can use socket
     // file descriptor to read whatever we want.
+#endif  // __linux__
 }
 
 void TCPClient::Read(char *buffer, int length)
 {
+#ifdef __linux__
     int n = read(sockfd, buffer, length);
     if (n < 0)
     {
@@ -83,10 +88,12 @@ void TCPClient::Read(char *buffer, int length)
     {
         printf("TCPClient: short read occurred");
     }
+#endif  // __linux__
 }
 
 void TCPClient::Write(char *message)
 {
+#ifdef __linux__
     int length = strlen(message);
     int n = write(sockfd, message, length);
 
@@ -95,6 +102,7 @@ void TCPClient::Write(char *message)
         perror("TCPClient: write error");
         throw std::runtime_error("WriteError");
     }
+#endif  // __linux__
 }
 
 }  // namespace communication

@@ -29,10 +29,10 @@ class ErrorControllerTester
 public:
     ErrorControllerTester(tap::Drivers *drivers) : errorController(drivers) {}
     ErrorController errorController;
-    bool removeSystemError(uint index) { return errorController.removeSystemErrorAtIndex(index); }
-    void setCurrDisplayIndex(uint index) { errorController.currentDisplayIndex = index; }
-    uint getErrorListSize() { return errorController.errorList.getSize(); }
-    uint getCurrentDisplayIndex() { return errorController.currentDisplayIndex; }
+    bool removeSystemError(ErrorController::error_index_t index) { return errorController.removeSystemErrorAtIndex(index); }
+    void setCurrDisplayIndex(ErrorController::error_index_t index) { errorController.currentDisplayIndex = index; }
+    ErrorController::error_index_t getErrorListSize() { return errorController.errorList.getSize(); }
+    ErrorController::error_index_t getCurrentDisplayIndex() { return errorController.currentDisplayIndex; }
 };
 }  // namespace tap::errors
 
