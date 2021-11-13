@@ -49,6 +49,8 @@ public:
      *      passed on directly to this command's constructor.
      * @param[in] unjamThreshold See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
+     * @param[in] unjamCycleCount See `UnjamCommand`'s constructor for more details,
+     *      passed on directly to this command's constructor.
      * @param[in] maxUnjamWaitTime See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
      * @param[in] moveTime The time it takes to rotate the agitator to the desired angle
@@ -67,6 +69,7 @@ public:
         float unjamDisplacement,
         float unjamThreshold,
         uint32_t maxUnjamWaitTime,
+        uint_fast16_t unjamCycleCount,
         uint32_t moveTime,
         uint32_t pauseAfterMoveTime,
         bool setToTargetOnEnd,

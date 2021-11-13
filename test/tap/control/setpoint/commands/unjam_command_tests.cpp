@@ -40,7 +40,7 @@ TEST(UnjamCommand, command_registers_subsystem_requirements)
 {
     CREATE_COMMON_TEST_OBJECTS();
     EXPECT_CALL(subsystem, getGlobalIdentifier).Times(AtLeast(1)).WillRepeatedly(Return(3));
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_EQ(command.getRequirementsBitwise(), (1U << 3));
 }
@@ -59,7 +59,7 @@ TEST(UnjamCommand, command_registers_subsystem_requirements)
 TEST(UnjamCommand, command_gets_startpoint)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_CALL(subsystem, getCurrentValue()).Times(AtLeast(1));
 
@@ -68,29 +68,34 @@ TEST(UnjamCommand, command_gets_startpoint)
 
 // execution tests ------------------------------------
 
-TEST(UnjamCommand, command_moves_subsystem_back_and_forth)
+TEST(UnjamCommand, command_moves_subsystem_back_and_forth_appropriate_number_of_times)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    constexpr int NUM_CYCLES = 5;
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, NUM_CYCLES);
 
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(-10.0f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
-    EXPECT_CALL(subsystem, setSetpoint(Ge(-7.5f))).Times(AtLeast(1));
-    EXPECT_CALL(subsystem, setSetpoint(Le(-12.5f))).Times(AtLeast(1));
+    EXPECT_CALL(subsystem, setSetpoint(Ge(-7.5f))).Times(NUM_CYCLES);
+    EXPECT_CALL(subsystem, setSetpoint(Le(-12.5f))).Times(NUM_CYCLES + 1);
 
     setTime(0);
+    ASSERT_TRUE(command.isReady());
     command.initialize();
-    for (int i = 200; i <= 3000; i += 200)
+    command.execute();
+    int i = 200;
+    while (i <= 10000 && !command.isFinished())
     {
         setTime(i);
         command.execute();
+        i += 200;
     }
 }
 
 TEST(UnjamCommand, command_does_not_execute_while_subsystem_offline)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
     // Allow setpoint to be set at most once during initialization step
@@ -134,7 +139,7 @@ static float getCurrentValueSimulator()
 TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_both_directions)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.4f, 1000);
+    UnjamCommand command(&subsystem, 3.0f, 2.4f, 1000, 2);
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
@@ -168,7 +173,7 @@ TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_b
 TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_CALL(subsystem, clearJam).Times(0);
 
@@ -187,7 +192,7 @@ TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
 TEST(UnjamCommand, command_resets_setpoint_on_end)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400);
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(-10.0f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());

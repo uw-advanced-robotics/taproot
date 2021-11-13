@@ -45,7 +45,10 @@ MoveAbsoluteCommand::MoveAbsoluteCommand(
     this->addSubsystemRequirement(setpointSubsystem);
 }
 
-bool MoveAbsoluteCommand::isReady() { return !setpointSubsystem->isJammed(); }
+bool MoveAbsoluteCommand::isReady()
+{
+    return !setpointSubsystem->isJammed() && setpointSubsystem->isOnline();
+}
 
 void MoveAbsoluteCommand::initialize()
 {
@@ -84,9 +87,9 @@ void MoveAbsoluteCommand::end(bool)
 {
     // Either set setpoint to ideal target or current value based on option
     // used to construct command.
-    if (setSetpointToTargetOnEnd)
+    if (!setpointSubsystem->isJammed() && setSetpointToTargetOnEnd)
     {
-        setpointSubsystem->setSetpoint(setpoint);
+        setpointSubsystem->setSetpoint(setpoint);\
     }
     else
     {
@@ -101,12 +104,13 @@ void MoveAbsoluteCommand::end(bool)
 
 bool MoveAbsoluteCommand::isFinished() const
 {
-    // Command is finished if we've reached target or if our subsystem is jammed.
+    // Command is finished if we've reached target or if our subsystem is jammed
+    // or offline
     return algorithms::compareFloatClose(
                setpointSubsystem->getCurrentValue(),
                rampToSetpoint.getTarget(),
                setpointTolerance) ||
-           setpointSubsystem->isJammed();
+           setpointSubsystem->isJammed() || !setpointSubsystem->isOnline();
 }
 
 }  // namespace setpoint

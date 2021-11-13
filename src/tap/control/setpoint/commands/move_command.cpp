@@ -66,7 +66,7 @@ void MoveCommand::initialize()
 
 void MoveCommand::execute()
 {
-    // Don't move setpoint if the subsystem is online. Wait until subsystem back online.
+    // Don't move setpoint if the subsystem is jammed or offline
     if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline())
     {
         previousMoveTime = tap::arch::clock::getTimeMilliseconds();
@@ -93,7 +93,7 @@ void MoveCommand::end(bool)
     // (i.e. reached the desired value) and is not jammed. If it is
     // jammed we thus want to set the subsystem value to the current value,
     // so the motor does not attempt to keep rotating forward (and possible stalling)
-    if (setpointSubsystem->isJammed() || !setToTargetOnEnd)
+    if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline() || !setToTargetOnEnd)
     {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
@@ -105,9 +105,9 @@ void MoveCommand::end(bool)
 
 bool MoveCommand::isFinished() const
 {
-    // The subsystem is jammed, or it is within the setpoint tolerance, the ramp is
+    // The subsystem is jammed or offline or it is within the setpoint tolerance, the ramp is
     // finished, and the minimum rotate time is expired.
-    return setpointSubsystem->isJammed() ||
+    return setpointSubsystem->isJammed() || !setpointSubsystem->isOnline() ||
            (algorithms::compareFloatClose(
                 setpointSubsystem->getCurrentValue(),
                 rampToTargetValue.getTarget(),

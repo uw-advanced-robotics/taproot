@@ -41,6 +41,7 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     float unjamDisplacement,
     float unjamThreshold,
     uint32_t maxUnjamWaitTime,
+    uint_fast16_t unjamCycleCount,
     uint32_t moveTime,
     uint32_t pauseAfterMoveTime,
     bool setToTargetOnEnd,
@@ -54,7 +55,7 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
           pauseAfterMoveTime,
           setToTargetOnEnd,
           setpointTolerance),
-      agitatorUnjamCommand(setpointSubsystem, unjamDisplacement, unjamThreshold, maxUnjamWaitTime),
+      agitatorUnjamCommand(setpointSubsystem, unjamDisplacement, unjamThreshold, maxUnjamWaitTime, unjamCycleCount),
       unjamSequenceCommencing(false),
       agitatorDisconnectFault(false)
 {

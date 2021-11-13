@@ -39,6 +39,8 @@ namespace setpoint
  * Displaces the connected subsystem some value in some desired time. Currently
  * pass in a displacement and time to move and it uses `tap::arch::getTimeMilliseconds()`
  * to determine the speed to move at.
+ *
+ * Ends if subsystem is offline.
  */
 class MoveCommand : public tap::control::Command
 {
@@ -70,7 +72,10 @@ public:
 
     const char* getName() const override { return "move command"; }
 
-    bool isReady() override { return !setpointSubsystem->isJammed(); }
+    bool isReady() override
+    {
+        return !setpointSubsystem->isJammed() && setpointSubsystem->isOnline();
+    }
 
     void initialize() override;
 
@@ -89,8 +94,8 @@ private:
      */
     float targetDisplacement;
 
-    /** 
-     * Stores the actual distance between target endpoint and startpoint of movement 
+    /**
+     * Stores the actual distance between target endpoint and startpoint of movement
      */
     float trueDisplacement;
 

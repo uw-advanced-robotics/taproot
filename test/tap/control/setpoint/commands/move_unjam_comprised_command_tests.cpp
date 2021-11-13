@@ -42,7 +42,7 @@ TEST(MoveUnjamComprisedCommand, command_registers_subsystem_requirements)
     EXPECT_CALL(subsystem, getGlobalIdentifier)
         .Times(AtLeast(1))
         .WillRepeatedly(Return(3));
-    MoveUnjamComprisedCommand command(&drivers, &subsystem, 5.0f, 3.0f, 2.5f, 500, 1000, 30, true, 0.2f);
+    MoveUnjamComprisedCommand command(&drivers, &subsystem, 5.0f, 3.0f, 2.5f, 500, 3, 1000, 30, true, 0.2f);
 
     EXPECT_EQ(command.getRequirementsBitwise(), (1U << 3));
 }
@@ -53,7 +53,7 @@ TEST(MoveUnjamComprisedCommand, command_registers_subsystem_requirements)
 TEST(MoveUnjamComprisedCommand, command_ready_even_when_subsystem_jammed_and_offline)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveUnjamComprisedCommand command(&drivers, &subsystem, 5.0f, 3.0f, 2.5f, 500, 1000, 30, true, 0.2f);
+    MoveUnjamComprisedCommand command(&drivers, &subsystem, 5.0f, 3.0f, 2.5f, 500, 3, 1000, 30, true, 0.2f);
 
     ON_CALL(subsystem, isJammed).WillByDefault(Return(true));
     ON_CALL(subsystem, isOnline).WillByDefault(Return(true));
@@ -71,7 +71,7 @@ TEST(MoveUnjamComprisedCommand, command_ready_even_when_subsystem_jammed_and_off
 TEST(MoveUnjamComprisedCommand, command_displaces_setpoint_by_target_amount_after_sufficient_time)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 1000, 15, true, 0.2f);
+    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 3, 1000, 15, true, 0.2f);
 
     // Move command is relative to previous setpoint and must check current value
     // to see where it's starting from.
@@ -126,7 +126,7 @@ static float getCurrentValueSimulator()
 TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 1000, 15, true, 0.2f);
+    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 3, 1000, 15, true, 0.2f);
 
     EXPECT_CALL(subsystem, isJammed).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
@@ -149,7 +149,7 @@ TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
 TEST(MoveUnjamComprisedCommand, command_does_not_execute_while_offline)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 1000, 15, true, 0.2f);
+    MoveUnjamComprisedCommand command(&drivers, &subsystem, 7.5f, 3.0f, 2.5f, 500, 3, 1000, 15, true, 0.2f);
 
     EXPECT_CALL(subsystem, isOnline).WillRepeatedly(Return(false));
     EXPECT_CALL(subsystem, setSetpoint).Times(0);

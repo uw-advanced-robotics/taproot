@@ -69,6 +69,16 @@ TEST(MoveCommand, command_ready_when_subsystem_unjammed)
     EXPECT_TRUE(command.isReady());
 }
 
+TEST(MoveCommand, command_not_ready_when_subsystem_offline)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 0.001f);
+
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+
+    ASSERT_FALSE(command.isReady());
+}
+
 // initialize() tests ------------------------------------
 
 // No explicit expectations set on initialize()
@@ -151,6 +161,22 @@ TEST(MoveCommand, command_is_finished_when_subsystem_jammed)
     setTime(200);
     command.execute();
     EXPECT_TRUE(command.isFinished());
+}
+
+TEST(MoveCommand, command_is_finished_when_subsystem_offline)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 0.001f);
+
+    setTime(0);
+    command.isReady();
+    command.initialize();
+    setTime(200);
+    command.execute();
+
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+
+    ASSERT_TRUE(command.isFinished());
 }
 
 TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_within_tolerance)

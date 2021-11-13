@@ -112,7 +112,6 @@ TEST(CalibrateCommand, command_finished_when_subsystem_calibrated_and_calibratio
 {
     CREATE_COMMON_TEST_OBJECTS();
 
-    EXPECT_CALL(subsystem, isCalibrated).Times(AtLeast(1)).WillRepeatedly(Return(true));
     EXPECT_CALL(subsystem, calibrateHere).Times(AtLeast(1)).WillRepeatedly(Return(true));
 
     command.initialize();

@@ -74,6 +74,16 @@ TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_jammed)
     EXPECT_FALSE(command.isReady());
 }
 
+TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_offline)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
+    
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+    
+    EXPECT_FALSE(command.isReady());
+}
+
 // initialize() tests ------------------------------------
 
 // no explicit expectations set on initialize()
@@ -170,6 +180,20 @@ TEST(MoveAbsoluteCommand, command_finishes_if_subsystem_jammed)
     setTime(1);
     command.execute();
     EXPECT_TRUE(command.isFinished());
+}
+
+TEST(MoveAbsoluteCommand, command_finishes_if_subsystem_offline)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    MoveAbsoluteCommand command(&subsystem, 7.5f, 6.5f, 0.001f, false, true);
+
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+    setTime(0);
+    command.isReady();
+    command.initialize();
+    setTime(1);
+    command.execute();
+    ASSERT_TRUE(command.isFinished());
 }
 
 TEST(MoveAbsoluteCommand, command_not_finished_when_system_unjammed_and_setpoint_not_reached)
