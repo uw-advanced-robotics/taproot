@@ -24,14 +24,14 @@
 #include "tap/control/command_scheduler.hpp"
 #include "tap/drivers.hpp"
 #include "tap/mock/command_mock.hpp"
-#include "tap/mock/subsystem_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
+#include "tap/mock/subsystem_mock.hpp"
 
 using std::set;
 using tap::Drivers;
 using tap::mock::CommandMock;
-using tap::mock::SubsystemMock;
 using tap::mock::RemoteMock;
+using tap::mock::SubsystemMock;
 using namespace tap::control;
 using namespace testing;
 
@@ -1118,7 +1118,7 @@ TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
 
     EXPECT_CALL(c, end);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    
+
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c);
     scheduler.run();
@@ -1142,7 +1142,7 @@ TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
     EXPECT_CALL(c1, end);
     EXPECT_CALL(c2, end);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    
+
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
