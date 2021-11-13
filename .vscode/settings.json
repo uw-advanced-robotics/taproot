@@ -78,6 +78,12 @@
         "*.xml.in": "jinja-xml",
         "*.py.in": "jinja-py"
     },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "test-project": true
+    },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "test-project/taproot/src",
