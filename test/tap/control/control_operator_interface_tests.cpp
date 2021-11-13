@@ -50,11 +50,15 @@ static float runChassisXInputTest(
     ControlOperatorInterface &operatorInterface,
     float remoteVal,
     bool wPressed,
-    bool sPressed)
+    bool sPressed,
+    bool shiftPressed = false,
+    bool ctrlPressed = false)
 {
     EXPECT_CALL(drivers.remote, getUpdateCounter).WillOnce(Return(1));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::W)).WillOnce(Return(wPressed));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::S)).WillOnce(Return(sPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::SHIFT)).WillOnce(Return(shiftPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::CTRL)).WillOnce(Return(ctrlPressed));
     EXPECT_CALL(drivers.remote, getChannel(Remote::Channel::LEFT_VERTICAL))
         .WillOnce(Return(remoteVal));
     return operatorInterface.getChassisXInput();
@@ -65,11 +69,15 @@ static float runChassisYInputTest(
     ControlOperatorInterface &operatorInterface,
     float remoteVal,
     bool dPressed,
-    bool aPressed)
+    bool aPressed,
+    bool shiftPressed = false,
+    bool ctrlPressed = false)
 {
     EXPECT_CALL(drivers.remote, getUpdateCounter).WillOnce(Return(1));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::A)).WillOnce(Return(aPressed));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::D)).WillOnce(Return(dPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::SHIFT)).WillOnce(Return(shiftPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::CTRL)).WillOnce(Return(ctrlPressed));
     EXPECT_CALL(drivers.remote, getChannel(Remote::Channel::LEFT_HORIZONTAL))
         .WillOnce(Return(remoteVal));
     return operatorInterface.getChassisYInput();
@@ -262,6 +270,24 @@ TEST(ControlOperatorInterface, getChassisInput_half_max_remote_and_max_and_min_k
     EXPECT_FLOAT_EQ(
         0.5f,
         runChassisRInputTest(drivers, operatorInterface, MAX_REMOTE / 2.0f, true, true));
+}
+
+TEST(ControlOperatorInterface, getChassisInput_walk_and_crouch)
+{
+    INIT_TEST
+    setTime(1);
+    EXPECT_FLOAT_EQ(
+        MAX_REMOTE * ControlOperatorInterface::WALK_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, true, true, true)); // walk forward
+    EXPECT_FLOAT_EQ(
+        MAX_REMOTE * ControlOperatorInterface::CROUCH_SCALAR,
+        runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, true, true, false, true)); // crouch forward
+    EXPECT_FLOAT_EQ(
+        -MAX_REMOTE * ControlOperatorInterface::WALK_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, -MAX_REMOTE, true, true, true)); // walk backward
+    EXPECT_FLOAT_EQ(
+        -MAX_REMOTE * ControlOperatorInterface::CROUCH_SCALAR,
+        runChassisYInputTest(drivers, operatorInterface, -MAX_REMOTE, true, true, false, true)); // crouch backward
 }
 
 // Note: Remote input inverted for yaw control.

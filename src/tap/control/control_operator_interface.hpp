@@ -41,6 +41,8 @@ public:
     static constexpr int16_t USER_MOUSE_PITCH_MAX = 1000;
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
+    static constexpr float CROUCH_SCALAR = (1.0f / 5);
+    static constexpr float WALK_SCALAR = (1.0f / 2.5);
     static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
     static constexpr float CHASSIS_X_KEY_INPUT_FILTER_ALPHA = 0.05f;
     static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_ALPHA = 0.05f;
