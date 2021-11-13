@@ -45,6 +45,12 @@ float ControlOperatorInterface::getChassisXInput()
         drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S),
         CHASSIS_X_KEY_INPUT_FILTER_ALPHA);
 
+    if (drivers->remote.keyPressed(Remote::Key::CTRL)) {
+        chassisXKeyInputFiltered *= CROUCH_SCALAR;
+    } else if (drivers->remote.keyPressed(Remote::Key::SHIFT)) {
+        chassisXKeyInputFiltered *= WALK_SCALAR;
+    }
+
     return limitVal<float>(
         chassisXInput.getInterpolatedValue(currTime) + chassisXKeyInputFiltered,
         -1.0f,
@@ -67,6 +73,12 @@ float ControlOperatorInterface::getChassisYInput()
         chassisYKeyInputFiltered,
         drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A),
         CHASSIS_Y_KEY_INPUT_FILTER_ALPHA);
+
+    if (drivers->remote.keyPressed(Remote::Key::CTRL)) {
+        chassisYKeyInputFiltered *= CROUCH_SCALAR;
+    } else if (drivers->remote.keyPressed(Remote::Key::SHIFT)) {
+        chassisYKeyInputFiltered *= WALK_SCALAR;
+    }
 
     return limitVal<float>(
         chassisYInput.getInterpolatedValue(currTime) + chassisYKeyInputFiltered,
@@ -120,8 +132,9 @@ float ControlOperatorInterface::getTurretPitchInput()
 float ControlOperatorInterface::getSentinelSpeedInput()
 {
     return drivers->remote.getChannel(tap::Remote::Channel::LEFT_HORIZONTAL) *
-           USER_STICK_SENTINEL_DRIVE_SCALAR;
+        USER_STICK_SENTINEL_DRIVE_SCALAR;
 }
 }  // namespace control
 
 }  // namespace tap
+
