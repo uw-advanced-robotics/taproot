@@ -34,7 +34,6 @@ namespace tap
 {
 namespace control
 {
-bool CommandScheduler::safeDisconnectMode = false;
 bool CommandScheduler::masterSchedulerExists = false;
 Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBSYSTEM_COUNT];
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
@@ -182,13 +181,16 @@ void CommandScheduler::run()
         return;
     }
 
-    if (!drivers->remote.isConnected() && safeDisconnectMode) {
+    if (!drivers->remote.isConnected() && safeDisconnectMode)
+    {
         // End all commands running. They were interrupted by the remote disconnecting.
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
             removeCommand(*it, true);
         }
-    } else {
+    }
+    else
+    {
         // Execute commands in the addedCommandBitmap, remove any that are finished
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
@@ -209,9 +211,10 @@ void CommandScheduler::run()
             (*it)->refresh();
 
             Command *defaultCmd;
-            // If the current subsystem does not have an associated command and the current
+            // If the remote is connected given the scheduler is in safe disconnect mode and
+            // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if ((drivers->remote.isConnected() || !safeDisconnectMode) && 
+            if ((drivers->remote.isConnected() || !safeDisconnectMode) &&
                 !(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
@@ -328,15 +331,9 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
 }
 
-void CommandScheduler::enableSafeDisconnectMode()
-{
-    safeDisconnectMode = true;
-}
+void CommandScheduler::enableSafeDisconnectMode() { safeDisconnectMode = true; }
 
-void CommandScheduler::disableSafeDisconnectMode()
-{
-    safeDisconnectMode = false;
-}
+void CommandScheduler::disableSafeDisconnectMode() { safeDisconnectMode = false; }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {

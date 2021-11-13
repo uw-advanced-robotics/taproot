@@ -313,9 +313,9 @@ private:
     static bool masterSchedulerExists;
 
     /**
-     * A global flag indicating whether or not safe disconnect mode is enabled.
+     * An instance flag indicating whether or not safe disconnect mode is enabled.
      */
-    static bool safeDisconnectMode;
+    bool safeDisconnectMode = false;
 
     Drivers* drivers;
 
