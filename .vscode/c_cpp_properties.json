@@ -5,10 +5,9 @@
             "includePath": [
                 "${default}",
                 "test-project/taproot/test",
-                "test-project/taproot/sim-modm/modm/src"
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
-            "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
             "browse": { "limitSymbolsToIncludedHeaders": true }
         },
@@ -16,10 +15,9 @@
             "name": "Sim",
             "includePath": [
                 "${default}",
-                "test-project/taproot/sim-modm/modm/src"
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
-            "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
             "browse": { "limitSymbolsToIncludedHeaders": true }
         },
@@ -31,7 +29,6 @@
                 "test-project/taproot/modm/ext/cmsis/core",
                 "test-project/taproot/modm/ext/cmsis/device"
             ],
-            "compilerPath": "/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-g++",
             "intelliSenseMode": "gcc-arm",
             "browse": { "limitSymbolsToIncludedHeaders": true }
         }

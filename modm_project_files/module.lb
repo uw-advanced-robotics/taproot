@@ -15,10 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import platform
+import sys
+
+sys.path.append(repopath("scripts/lbuild-helpers"))
+
 MCU_VARIANTS_BY_BOARD = {
     "rm-dev-board-a": "stm32f427iih6",
     "rm-dev-board-c": "stm32f407igh6",
 }
+
+from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 
 def init(module):
     module.name = ":modm-project.xml"
@@ -36,8 +43,11 @@ def build(env):
 
     env.substitutions = {
         "modm_path": env[":modm_repo_lb"],
-        "mcu": mcu
+        "mcu": mcu,
     }
     env.outbasepath = "taproot"
     env.template("project.xml.in", "project.xml")
-    env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
+
+    for target in ALL_HOSTED_TARGET_NAMES:
+        env.substitutions["hosted_target"] = target
+        env.template("sim-modm/project.xml.in", f"sim-modm/{target}/project.xml")
