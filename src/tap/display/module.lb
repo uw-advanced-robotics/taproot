@@ -1,0 +1,35 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+# TODO this module needs some cleaning up, see this issue: https://gitlab.com/aruw/controls/taproot/-/issues/51
+
+def init(module):
+    module.name = ":display"
+    module.description = "Support for displaying information on an OLED display." \
+        "Currently this module contains sh1106-specific display code as well as " \
+        "generic menu objects that you can use. This software is designed and tested " \
+        "to be used on the RoboMaster Development Board OLED " \
+        "(https://www.robomaster.com/en-US/products/components/general/development-board)"
+
+def prepare(module, options):
+    module.depends(":core")
+
+    return True
+
+def build(env):
+    env.outbasepath = "taproot/src/tap/display"
+    env.copy(".")

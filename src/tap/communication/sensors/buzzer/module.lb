@@ -1,0 +1,44 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
+BUZZER_PIN = "Buzzer"
+
+buzzer_timer = None
+
+def init(module):
+    module.name = ":communication:sensors:buzzer"
+    module.description = "Analog buzzer API"
+
+def prepare(module, options):
+    metadata = board_info_parser.parse_board_info(options[":dev_board"])
+    pins = metadata.find("gpio-pins")
+    buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]
+    if len(buzzer_pins) == 1:
+        global buzzer_timer
+        buzzer_timer = buzzer_pins[0].find("timer").get("name")
+    return len(buzzer_pins) == 1
+
+def build(env):
+    global buzzer_timer
+    env.outbasepath = "taproot/src/tap/communication/sensors/buzzer"
+    env.substitutions = {"buzzer_timer": buzzer_timer}
+    env.template("buzzer.cpp.in", "buzzer.cpp")
+    env.copy("buzzer.hpp")

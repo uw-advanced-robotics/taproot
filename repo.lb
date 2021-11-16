@@ -17,42 +17,58 @@
 
 import subprocess
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+
+from hosted_platforms import ALL_HOSTED_TARGET_NAMES
+
 def init(repo):
     repo.name = "taproot"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
 
     repo.add_option(
-        StringOption(name="project_name",
-                     default="mcb-project",
-                     description="Project name"))
+        StringOption(
+            name="project_name",
+            default="mcb-project",
+            description="Project name"))
     repo.add_option(
-        StringOption(name="modm_repo_lb",
-                     default="../modm/repo.lb",
-                     description="Path to repo.lb file, relative to your project.xml file"))
+        StringOption(
+            name="modm_repo_lb",
+            default="../modm/repo.lb",
+            description="Path to repo.lb file, relative to your project.xml file"))
 
     repo.add_option(
-        BooleanOption(name="rebuild_modm",
-                      default=True,
-                      description="Whether or not to rebuild modm HALs"))
+        BooleanOption(
+            name="rebuild_modm",
+            default=True,
+            description="Whether or not to rebuild modm HALs"))
+
+    repo.add_option(
+        EnumerationOption(
+            name="dev_board",
+            description="Which development board to be used",
+            enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
     repo.add_modules_recursive("./build_tools", modulefile="*.lb")
+    repo.add_modules_recursive("./modm_project_files", modulefile="*.lb")
     repo.add_modules_recursive("./docs", modulefile="*.lb")
 
 def build(env):
-    if env["taproot:rebuild_modm"]:
-        print('building modm')
+    if env[":rebuild_modm"]:
+        print("building modm")
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)
 
-        print('building sim-modm')
+        print("building sim-modm")
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
+            for target in ALL_HOSTED_TARGET_NAMES:
+                subprocess.run(["lbuild", "build"], check=True, cwd=f"taproot/sim-modm/{target}")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)

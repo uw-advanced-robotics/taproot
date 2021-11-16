@@ -87,6 +87,22 @@ public:
      *      value and the center value as defined by a subclass.
      */
     virtual float getPitchAngleFromCenter() const = 0;
+
+    /**
+     * Sets yaw motor output. Limits the output based on the mechanical constraints
+     * of the turret.
+     */
+    virtual void setYawMotorOutput(float out) = 0;
+
+    /**
+     * @see setYawMotorOutput
+     */
+    virtual void setPitchMotorOutput(float out) = 0;
+
+    /**
+     * If `false`, the turret may spin 360 degrees freely, otherwise `true`.
+     */
+    virtual bool yawLimited() const = 0;
 };
 }  // namespace tap::control::turret
 

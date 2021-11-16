@@ -1,0 +1,126 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
+REMOTE_UART_PORTS_BY_BOARD = {
+    "rm-dev-board-a": "Uart1",
+    "rm-dev-board-c": "Uart3",
+}
+
+class Remote(Module):
+    def init(self, module):
+        module.name = ":communication:serial:remote"
+        module.description = "Remote control communication via DR16 receiver"
+
+    def prepare(self, module, options):
+        module.depends(":communication:gpio")
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/serial"
+        board_name = env[":dev_board"]
+        try:
+            uart_port = REMOTE_UART_PORTS_BY_BOARD[board_name]
+        except KeyError:
+            raise RuntimeError(f"Dev board {board_name} is not valid")
+        env.substitutions = {"uart_port": uart_port}
+        env.template("remote_serial_constants.hpp.in", "remote_serial_constants.hpp")
+        env.copy("remote.cpp")
+        env.copy("remote.hpp")
+
+class RefSerial(Module):
+    def init(self, module):
+        module.name = ":communication:serial:ref_serial"
+        module.description = "Ref serial communication"
+
+    def prepare(self, module, options):
+        module.depends(":communication:gpio")
+        module.add_option(
+            StringOption(
+                name="uart_port",
+                description="Which uart port the referee system is connected to."))
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/serial"
+        env.substitutions = {"uart_port": env["uart_port"]}
+        env.template("ref_serial_constants.hpp.in", "ref_serial_constants.hpp")
+        env.copy("ref_serial.cpp")
+        env.copy("ref_serial.hpp")
+
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":communication:serial:terminal_serial"
+        module.description = "Terminal serial communication"
+
+    def prepare(self, module, options):
+        module.depends(":communication:gpio")
+        module.add_option(
+            StringOption(
+                name="uart_port",
+                description="Which uart port the host device that is reading data" \
+                             "from the UART port is connected to."))
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/serial"
+        env.substitutions = {"uart_port": env["uart_port"]}
+        env.template("uart_terminal_device_constants.hpp.in", "uart_terminal_device_constants.hpp")
+        env.copy("uart_terminal_device.hpp")
+        env.copy("uart_terminal_device.cpp")
+        env.copy("terminal_serial.hpp")
+        env.copy("terminal_serial.cpp")
+        env.copy("hosted_terminal_device.hpp")
+        env.copy("hosted_terminal_device.cpp")
+        
+def init(module):
+    module.name = ":communication:serial"
+    module.description = "Various serial communication interfaces"
+
+def prepare(module, options):
+    module.depends("taproot:core")
+
+    module.add_submodule(Remote())
+    module.add_submodule(RefSerial())
+    module.add_submodule(TerminalSerial())
+
+    return True
+
+def build(env):
+    uart_ports = []
+    port_to_tx_pin = {}
+    port_to_rx_pin = {}
+
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    for port in metadata.find("uart-ports"):
+        uart_ports.append(port.get("name"))
+        port_to_rx_pin[port.get("name")] = port.get("rx")
+        port_to_tx_pin[port.get("name")] = port.get("tx")
+
+    env.substitutions = {
+        "uart_ports": uart_ports,
+        "port_to_rx_pin": port_to_rx_pin,
+        "port_to_tx_pin": port_to_tx_pin
+    }
+    env.outbasepath = "taproot/src/tap/communication/serial"
+    env.template("uart.cpp.in", "uart.cpp")
+    env.template("uart.hpp.in", "uart.hpp")
+    env.copy("dji_serial.hpp")
+    env.template("dji_serial.cpp.in", "dji_serial.cpp")

@@ -24,14 +24,18 @@
 #include <map>
 
 #ifdef PLATFORM_HOSTED
+#ifdef ENV_UNIT_TESTS
+#include "tap/stub/terminal_device_stub.hpp"
+#else
 #include "hosted_terminal_device.hpp"
+#endif  // ENV_UNIT_TESTS
 #else
 #include "uart_terminal_device.hpp"
 #endif
 
 #include "tap/architecture/periodic_timer.hpp"
+#include "tap/board/board.hpp"
 #include "tap/communication/serial/uart.hpp"
-#include "tap/rm-dev-board-a/board.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/io.hpp"
@@ -115,18 +119,31 @@ private:
 
     // Use either an IO device that interacts with UART or with stdin/stdout.
 #ifdef PLATFORM_HOSTED
+#ifdef ENV_UNIT_TESTS
+public:
+    stub::TerminalDeviceStub device;
+
+private:
+#else
     HostedTerminalDevice device;
+#endif  // ENV_UNIT_TESTS
 #else
     UartTerminalDevice device;
 #endif
 
-    ///< Hardware abstraction of a stream that provides utilities for tx/rx.
+    /**
+     * Hardware abstraction of a stream that provides utilities for tx/rx.
+     */
     modm::IOStream stream;
 
-    ///< A single line is parsed into this buffer.
+    /**
+     * A single line is parsed into this buffer.
+     */
     char rxBuff[MAX_LINE_LENGTH];
 
-    ///< Index into the rxBuff.
+    /**
+     * Index into the rxBuff.
+     */
     uint8_t currLineSize = 0;
 
     /**

@@ -825,7 +825,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../src/ {{ options["source_paths"] }}
+INPUT                  = ../src/ {{ source_paths }}
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -2166,7 +2166,7 @@ ENABLE_PREPROCESSING   = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2174,7 +2174,7 @@ MACRO_EXPANSION        = NO
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES, the include files in the
 # INCLUDE_PATH will be searched if a #include is found.
@@ -2206,7 +2206,19 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             =
+PREDEFINED             = __DOXYGEN__ \
+                         __cplusplus \
+                         "EXTERN_FLASH_STORAGE(x):=const x" \
+                         modm_always_inline=inline \
+                         "MODM_FLAGS8(x):=using x ## _t = modm::Flags8< x >" \
+                         "MODM_FLAGS16(x):=using x ## _t = modm::Flags16< x >" \
+                         "MODM_FLAGS32(x):=using x ## _t = modm::Flags32< x >" \
+                         MODM_TYPE_FLAGS(x)= \
+                         MODM_INT_TYPE_FLAGS(x)= \
+                         __attribute__(x)= \
+                         modm_packed= \
+                         modm_extern_c="extern \"C\"" \
+                         mockable=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

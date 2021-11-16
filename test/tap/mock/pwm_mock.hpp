@@ -35,7 +35,7 @@ public:
     virtual ~PwmMock();
 
     MOCK_METHOD(void, init, (), (override));
-    MOCK_METHOD(void, writeAll, (float), (override));
+    MOCK_METHOD(void, writeAllZeros, (), (override));
     MOCK_METHOD(void, write, (float duty, tap::gpio::Pwm::Pin), (override));
     MOCK_METHOD(void, setTimerFrequency, (tap::gpio::Pwm::Timer, uint32_t), (override));
     MOCK_METHOD(void, pause, (tap::gpio::Pwm::Timer), (override));
