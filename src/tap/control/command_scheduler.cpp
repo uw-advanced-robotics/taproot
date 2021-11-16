@@ -243,8 +243,11 @@ void CommandScheduler::run()
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    // TODO: don't add the command if the remote is disconnected
-    if (runningHardwareTests)
+    if (!drivers->remote.isConnected() && safeDisconnectMode)
+    {
+        return;
+    }
+    else if (runningHardwareTests)
     {
         RAISE_ERROR(
             drivers,
