@@ -1345,14 +1345,12 @@ TEST(CommandScheduler, iterators_many_cmds_subs_iterated_through_using_foreach)
         i++;
     });
 
-
     i = 0;
     // Foreach with command map
     std::for_each(scheduler.cmdMapBegin(), scheduler.cmdMapEnd(), [&](Command *cmd) {
         EXPECT_EQ(&cmds[i], cmd);
         i++;
     });
-
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
