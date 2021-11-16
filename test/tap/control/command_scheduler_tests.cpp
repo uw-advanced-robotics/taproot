@@ -1114,13 +1114,12 @@ TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    // FIX THIS EXPECT CALL STUFF TO BE CLEANER -- new issue
-
     EXPECT_CALL(c, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 }
 
@@ -1141,11 +1140,30 @@ TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
 
     EXPECT_CALL(c1, end);
     EXPECT_CALL(c2, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    scheduler.run();
+}
+
+TEST(CommandScheduler, command_not_added_when_remote_disconnected)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    scheduler.enableSafeDisconnectMode();
+
+    StrictMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c);
     scheduler.run();
 }
 
@@ -1322,17 +1340,25 @@ TEST(CommandScheduler, iterators_many_cmds_subs_iterated_through_using_foreach)
 
     int i = 0;
     // Foreach with subsystem map
-    std::for_each(scheduler.subMapBegin(), scheduler.subMapEnd(), [&](Subsystem *sub) {
-        EXPECT_EQ(subs[i], sub);
-        i++;
-    });
+    std::for_each(
+        scheduler.subMapBegin(),
+        scheduler.subMapEnd(),
+        [&](Subsystem *sub)
+        {
+            EXPECT_EQ(subs[i], sub);
+            i++;
+        });
 
     i = 0;
     // Foreach with command map
-    std::for_each(scheduler.cmdMapBegin(), scheduler.cmdMapEnd(), [&](Command *cmd) {
-        EXPECT_EQ(&cmds[i], cmd);
-        i++;
-    });
+    std::for_each(
+        scheduler.cmdMapBegin(),
+        scheduler.cmdMapEnd(),
+        [&](Command *cmd)
+        {
+            EXPECT_EQ(&cmds[i], cmd);
+            i++;
+        });
 
     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
