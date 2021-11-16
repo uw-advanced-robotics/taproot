@@ -85,8 +85,8 @@ protected:
     tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 
 private:
-    /** 
-     * target value for the subsystem to reach when command is called. 
+    /**
+     * target value for the subsystem to reach when command is called.
      */
     float setpoint;
 
@@ -94,7 +94,7 @@ private:
 
     /**
      * The speed the subsystem should attempt to move at in
-     * setpoint-units / second. 
+     * setpoint-units / second.
      */
     float speed;
 

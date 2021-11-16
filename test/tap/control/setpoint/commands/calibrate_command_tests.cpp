@@ -19,8 +19,8 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/drivers.hpp"
 #include "tap/control/setpoint/commands/calibrate_command.hpp"
+#include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
 using namespace tap::control::setpoint;
@@ -134,7 +134,7 @@ TEST(CalibrateCommand, command_calibrates_until_successful)
         .WillOnce(Return(false))
         .WillOnce(Return(false))
         .WillRepeatedly(Return(true));
-    
+
     // Used to break out of potential infinite loops
     int loopCounter = 0;
 

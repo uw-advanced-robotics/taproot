@@ -89,7 +89,7 @@ void MoveAbsoluteCommand::end(bool)
     // used to construct command.
     if (!setpointSubsystem->isJammed() && setSetpointToTargetOnEnd)
     {
-        setpointSubsystem->setSetpoint(setpoint);\
+        setpointSubsystem->setSetpoint(setpoint);
     }
     else
     {

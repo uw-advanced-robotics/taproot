@@ -23,7 +23,6 @@
 #include "tap/communication/can/can.hpp"
 #include "tap/communication/tcp-server/json_messages.hpp"
 #include "tap/drivers.hpp"
-
 #include "tap/mock/dji_motor_mock.hpp"
 
 using tap::Drivers;

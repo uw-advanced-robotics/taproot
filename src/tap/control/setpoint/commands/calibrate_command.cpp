@@ -41,9 +41,6 @@ void CalibrateCommand::execute() { calibrationSuccessful = setpointSubsystem->ca
 
 void CalibrateCommand::end(bool) {}
 
-bool CalibrateCommand::isFinished() const
-{
-    return calibrationSuccessful;
-}
+bool CalibrateCommand::isFinished() const { return calibrationSuccessful; }
 
 }  // namespace tap::control::setpoint

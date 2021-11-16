@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 #include "tap/architecture/clock.hpp"
-#include "tap/drivers.hpp"
 #include "tap/control/setpoint/commands/move_command.hpp"
+#include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
 using tap::arch::clock::setTime;
@@ -30,8 +30,8 @@ using tap::Drivers;
 using namespace tap::mock;
 using namespace testing;
 
-#define CREATE_COMMON_TEST_OBJECTS()                     \
-    Drivers drivers;                                     \
+#define CREATE_COMMON_TEST_OBJECTS() \
+    Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
 // constructor tests ------------------------------------
@@ -39,9 +39,7 @@ using namespace testing;
 TEST(MoveCommand, command_registers_subsystem_requirements)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    EXPECT_CALL(subsystem, getGlobalIdentifier)
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(3));
+    EXPECT_CALL(subsystem, getGlobalIdentifier).Times(AtLeast(1)).WillRepeatedly(Return(3));
     MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 0.001f);
 
     EXPECT_EQ(command.getRequirementsBitwise(), (1U << 3));
@@ -152,9 +150,7 @@ TEST(MoveCommand, command_is_finished_when_subsystem_jammed)
     CREATE_COMMON_TEST_OBJECTS();
     MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 0.001f);
 
-    EXPECT_CALL(subsystem, isJammed)
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(true));
+    EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(true));
 
     setTime(0);
     command.initialize();
@@ -187,14 +183,12 @@ TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_w
 
     EXPECT_CALL(subsystem, getSetpoint).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(8.5f));
-    EXPECT_CALL(subsystem, isJammed)
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(false));
+    EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     setTime(0);
     command.initialize();
-    // When command executes it should see that subsystem position is at target and start pause after
-    // rotate timeout
+    // When command executes it should see that subsystem position is at target and start pause
+    // after rotate timeout
     command.execute();
     // Provide sufficient time for pause after rotation
     setTime(15);
@@ -208,9 +202,7 @@ TEST(MoveCommand, command_pauses_after_move_time)
 
     EXPECT_CALL(subsystem, getSetpoint).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(8.5f));
-    EXPECT_CALL(subsystem, isJammed)
-        .Times(AtLeast(1))
-        .WillRepeatedly(Return(false));
+    EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     setTime(0);
     command.initialize();

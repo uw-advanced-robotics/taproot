@@ -47,8 +47,17 @@ TEST(UnjamCommand, command_registers_subsystem_requirements)
 
 // isReady() tests ------------------------------------
 
-// No expectations on isReady. UnjamCommand should be able
-// to run whenever
+TEST(UnjamCommand, command_not_ready_when_subsystem_offline)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
+
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+
+    setTime(0);
+
+    ASSERT_FALSE(command.isReady());
+}
 
 // initialize() tests ------------------------------------
 
@@ -92,26 +101,23 @@ TEST(UnjamCommand, command_moves_subsystem_back_and_forth_appropriate_number_of_
     }
 }
 
-TEST(UnjamCommand, command_does_not_execute_while_subsystem_offline)
+// isFinished() tests ------------------------------------
+
+TEST(UnjamCommand, command_is_finished_when_subsystem_offline)
 {
     CREATE_COMMON_TEST_OBJECTS();
     UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
-    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
-    // Allow setpoint to be set at most once during initialization step
-    EXPECT_CALL(subsystem, setSetpoint).Times(AtMost(1));
-
     setTime(0);
+    ASSERT_TRUE(command.isReady());
+    setTime(1);
     command.initialize();
+    command.execute();
 
-    for (int i = 200; i <= 3000; i += 200)
-    {
-        setTime(i);
-        command.execute();
-    }
+    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
+
+    ASSERT_TRUE(command.isFinished());
 }
-
-// isFinished() tests ------------------------------------
 
 // Test function for following test
 static float getCurrentValueSimulator()
@@ -133,18 +139,22 @@ static float getCurrentValueSimulator()
 }
 
 /**
- * Subsystem will be determined to be unjammed when unjam command
- * was able to successfully reach backwards and forwards `unjamDisplacement`
+ * Tests that command calls `clearJam()` when unjam successful and then reset subsystem
+ * setpoint to original value before command called.
  */
-TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_both_directions)
+TEST(UnjamCommand, successful_unjam_behavior)
 {
     CREATE_COMMON_TEST_OBJECTS();
     UnjamCommand command(&subsystem, 3.0f, 2.4f, 1000, 2);
 
-    EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(true));
+    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(420.0f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
+    // Simulate unjamming movement in scuffed as hecc way
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
+    // Expect that command clears jam
     EXPECT_CALL(subsystem, clearJam).Times(AtLeast(1));
+    // Expect that command resets setpoint to original value after successfully ending
+    EXPECT_CALL(subsystem, setSetpoint(FloatEq(420.0f)));
 
     setTime(0);
     command.initialize();
@@ -160,7 +170,6 @@ TEST(UnjamCommand, command_unjams_subsystem_when_unjam_displacement_reached_in_b
     command.isFinished();
 
     command.end(true);
-
 }
 
 // end() tests ------------------------------------
@@ -189,16 +198,18 @@ TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
     command.end(true);
 }
 
-TEST(UnjamCommand, command_resets_setpoint_on_end)
+TEST(UnjamCommand, command_sets_setpoint_to_current_value_when_unjam_failed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(-10.0f));
+    EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(Return(420.0f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
-    EXPECT_CALL(subsystem, setSetpoint(FloatEq(-10.0f)));
+    EXPECT_CALL(subsystem, setSetpoint(FloatEq(420.0f)));
 
     setTime(0);
+    command.isReady();
     command.initialize();
     for (int i = 50; i <= 1000; i += 50)
     {
@@ -206,5 +217,5 @@ TEST(UnjamCommand, command_resets_setpoint_on_end)
         command.execute();
     }
 
-    command.end(!command.isFinished());
+    command.end(true);
 }

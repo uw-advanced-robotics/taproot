@@ -55,7 +55,12 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
           pauseAfterMoveTime,
           setToTargetOnEnd,
           setpointTolerance),
-      agitatorUnjamCommand(setpointSubsystem, unjamDisplacement, unjamThreshold, maxUnjamWaitTime, unjamCycleCount),
+      agitatorUnjamCommand(
+          setpointSubsystem,
+          unjamDisplacement,
+          unjamThreshold,
+          maxUnjamWaitTime,
+          unjamCycleCount),
       unjamSequenceCommencing(false),
       agitatorDisconnectFault(false)
 {

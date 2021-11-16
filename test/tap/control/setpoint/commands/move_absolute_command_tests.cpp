@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 #include "tap/architecture/clock.hpp"
-#include "tap/drivers.hpp"
 #include "tap/control/setpoint/commands/move_absolute_command.hpp"
+#include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
 using tap::arch::clock::setTime;
@@ -30,8 +30,8 @@ using tap::Drivers;
 using namespace tap::mock;
 using namespace testing;
 
-#define CREATE_COMMON_TEST_OBJECTS()                     \
-    Drivers drivers;                                     \
+#define CREATE_COMMON_TEST_OBJECTS() \
+    Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
 // constructor tests ------------------------------------
@@ -58,7 +58,7 @@ TEST(MoveAbsoluteCommand, command_ready_when_subsystem_unjammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
-    
+
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     EXPECT_TRUE(command.isReady());
@@ -68,9 +68,9 @@ TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_jammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
-    
+
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    
+
     EXPECT_FALSE(command.isReady());
 }
 
@@ -78,9 +78,9 @@ TEST(MoveAbsoluteCommand, command_is_not_ready_when_subsystem_offline)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 0.0f, 0.0f, 0.0f, false, true);
-    
+
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
-    
+
     EXPECT_FALSE(command.isReady());
 }
 
@@ -158,7 +158,7 @@ TEST(MoveAbsoluteCommand, command_finishes_once_current_value_within_tolerable_d
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 1.0f, 6.5f, 0.15f, false, true);
-    
+
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(0.9f));
 
     setTime(0);
@@ -172,7 +172,7 @@ TEST(MoveAbsoluteCommand, command_finishes_if_subsystem_jammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 7.5f, 6.5f, 0.001f, false, true);
-    
+
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     ON_CALL(subsystem, isJammed).WillByDefault(Return(true));
     setTime(0);
@@ -200,7 +200,7 @@ TEST(MoveAbsoluteCommand, command_not_finished_when_system_unjammed_and_setpoint
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 7.0f, 6.5f, 0.001f, false, true);
-    
+
     ON_CALL(subsystem, isJammed).WillByDefault(Return(false));
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
 
@@ -217,10 +217,11 @@ TEST(MoveAbsoluteCommand, command_sets_setpoint_to_target_on_end_when_option_set
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 7.5f, 6.5f, 0.001f, false, true);
-    
+
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     // To not have failure due to unexpected calls to setSetpoint, we have a catch-all expectation.
-    // see: tip at bottom of http://google.github.io/googletest/gmock_for_dummies.html#MultiExpectations
+    // see: tip at bottom of
+    // http://google.github.io/googletest/gmock_for_dummies.html#MultiExpectations
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(7.5f))).Times(AtLeast(1));
 
@@ -235,7 +236,7 @@ TEST(MoveAbsoluteCommand, command_sets_setpoint_to_current_value_on_end_when_opt
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 2.0f, 6.5f, 0.001f, false, false);
-    
+
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(1.0f))).Times(AtLeast(1));
@@ -251,7 +252,7 @@ TEST(MoveAbsoluteCommand, command_clears_jam_on_end_if_option_set)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveAbsoluteCommand command(&subsystem, 1.0f, 6.5f, 0.001f, true, true);
-    
+
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     EXPECT_CALL(subsystem, clearJam);
 

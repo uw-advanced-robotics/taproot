@@ -20,8 +20,8 @@
 #include <gtest/gtest.h>
 
 #include "tap/architecture/clock.hpp"
-#include "tap/drivers.hpp"
 #include "tap/control/setpoint/algorithms/setpoint_continuous_jam_checker.hpp"
+#include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
 using namespace tap::arch::clock;

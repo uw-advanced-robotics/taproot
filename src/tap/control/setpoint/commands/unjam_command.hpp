@@ -21,6 +21,7 @@
 #define AGITATOR_UNJAM_COMMAND_HPP_
 
 #include <cstdint>
+
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/algorithms/ramp.hpp"
 #include "tap/architecture/timeout.hpp"
@@ -38,13 +39,16 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * Command that takes control of a setpoint subsystem moves it back and forth. 
+ * Command that takes control of a setpoint subsystem moves it back and forth.
  * One back and forward motion counts as a cycle. Unjamming cycles start by trying
- * to move in negative direction before trying to move in positive direction. 
+ * to move in negative direction before trying to move in positive direction.
  *
  * If successful the unjam command will return the setpoint of the subsystem back
  * to its original value. If not successful, setpoint is set to current value so as
  * to not damage motors.
+ *
+ * Like most setpoint commands this one will not schedule/will deschedule if setpointSubsystem
+ * goes offline.
  */
 class UnjamCommand : public tap::control::Command
 {
@@ -59,7 +63,7 @@ public:
      *      This value must be positive. Absolute value will be taken
      *      if negative.
      * @param[in] maxWaitTime The maximum amount of time the controller will
-     *      wait for the subsystem to reach unjam target in milliseconds before 
+     *      wait for the subsystem to reach unjam target in milliseconds before
      *      trying to move in the opposite direction.
      * @param[in] targetCycleCount the number of cycles to attempt to wiggle the subsystem
      */
@@ -69,6 +73,8 @@ public:
         float unjamThreshold,
         uint32_t maxWaitTime,
         uint_fast16_t targetCycleCount);
+
+    bool isReady() override;
 
     void initialize() override;
 
@@ -110,7 +116,7 @@ private:
     float unjamDisplacement;
 
     /**
-     * The minimum displacement in both directions at which point jam is 
+     * The minimum displacement in both directions at which point jam is
      * considered cleared
      */
     float unjamThreshold;

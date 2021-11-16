@@ -48,6 +48,8 @@ UnjamCommand::UnjamCommand(
     unjamRotateTimeout.stop();
 }
 
+bool UnjamCommand::isReady() { return setpointSubsystem->isOnline(); }
+
 void UnjamCommand::initialize()
 {
     unjamRotateTimeout.restart(maxWaitTime);
@@ -102,12 +104,17 @@ void UnjamCommand::end(bool)
     {
         setpointSubsystem->clearJam();
         setpointSubsystem->setSetpoint(setpointBeforeUnjam);
-    } else {
+    }
+    else
+    {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }
 }
 
-bool UnjamCommand::isFinished() const { return backwardsCount >= targetCycleCount + 1; }
+bool UnjamCommand::isFinished() const
+{
+    return !setpointSubsystem->isOnline() || backwardsCount >= targetCycleCount + 1;
+}
 
 void UnjamCommand::beginUnjamForwards()
 {
