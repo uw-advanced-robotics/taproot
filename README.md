@@ -130,7 +130,7 @@ badge at the top of this repo. **We do not recommend this approach for robot dev
 Sometimes setting up your machine can be tricky. If you are having trouble setting up your
 environment, feel free to ask for help on our [Discord server](https://discord.gg/jjDrGhrjMy).
 
-### Working with Taproot
+### Working on Taproot
 
 Most of the time, you want to interact with Taproot from within a project that uses it. Taproot
 itself is just a library of code templates; it becomes a fully-fledged buildable entity only when
@@ -174,6 +174,7 @@ can be used for basic testing and as a generation/build smoke-test. Note that ch
 members should typically be tested in the context of `aruw-mcb` before being merged here.
 
 To use the test project, `cd` into `taproot/test-project` (where the `project.xml` file is). Run
+`pipenv shell` to enter the environment with appropriate Python build tools. Then, run
 `lbuild build` as described below to generate an Taproot distribution. Then use `scons` to perform
 the desired builds.
 
@@ -181,7 +182,7 @@ The `test-project` is a normal Taproot user project, except it configures Taproo
 own unit tests into the project. This means that running `test-project`'s tests runs the tests for
 Taproot itself against the version of Taproot generated for the `test-project`.
 
-Likely commands are as follows:
+Likely commands are as follows (all from within a `pipenv shell` or prefixed with `pipenv run <command>`):
 
 - `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`.
 - `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder
