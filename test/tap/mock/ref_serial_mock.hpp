@@ -23,6 +23,7 @@
 #include <gmock/gmock.h>
 
 #include "tap/communication/serial/ref_serial.hpp"
+#include "tap/communication/serial/ref_serial_data.hpp"
 
 namespace tap
 {
@@ -40,55 +41,61 @@ public:
         (const tap::serial::DJISerial::SerialMessage&),
         (override));
     MOCK_METHOD(bool, getRefSerialReceivingData, (), (const override));
-    MOCK_METHOD(const RobotData&, getRobotData, (), (const override));
-    MOCK_METHOD(const GameData&, getGameData, (), (const override));
+    MOCK_METHOD(const Rx::RobotData&, getRobotData, (), (const override));
+    MOCK_METHOD(const Rx::GameData&, getGameData, (), (const override));
     MOCK_METHOD(
         void,
         configGraphicGenerics,
-        (GraphicData*, const uint8_t*, AddGraphicOperation, uint8_t, GraphicColor),
+        (Tx::GraphicData*, const uint8_t*, Tx::AddGraphicOperation, uint8_t, Tx::GraphicColor),
         (override));
     MOCK_METHOD(
         void,
         configLine,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configRectangle,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configCircle,
-        (uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configEllipse,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configArc,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configFloatingNumber,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, float, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, float, Tx::GraphicData*),
         (override));
     MOCK_METHOD(
         void,
         configInteger,
-        (uint16_t, uint16_t, uint16_t, uint16_t, int32_t, GraphicData*),
+        (uint16_t, uint16_t, uint16_t, uint16_t, int32_t, Tx::GraphicData*),
         (override));
-    MOCK_METHOD(void, updateInteger, (int32_t, GraphicData*), (override));
+    MOCK_METHOD(void, updateInteger, (int32_t, Tx::GraphicData*), (override));
     MOCK_METHOD(
         void,
         configCharacterMsg,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, const char*, GraphicCharacterMessage*),
+        (uint16_t,
+         uint16_t,
+         uint16_t,
+         uint16_t,
+         uint16_t,
+         const char*,
+         Tx::GraphicCharacterMessage*),
         (override));
-    MOCK_METHOD(void, deleteGraphicLayer, (DeleteGraphicOperation, uint8_t), (override));
+    MOCK_METHOD(void, deleteGraphicLayer, (Tx::DeleteGraphicOperation, uint8_t), (override));
 };  // class RefSerialMock
 }  // namespace mock
 }  // namespace tap
