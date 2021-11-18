@@ -28,5 +28,4 @@ SetpointSubsystemMock::SetpointSubsystemMock(Drivers *drivers) : Subsystem(drive
     ON_CALL(*this, isJammed).WillByDefault(testing::Return(false));
 }
 SetpointSubsystemMock::~SetpointSubsystemMock() {}
-}
-
+}  // namespace tap::mock
