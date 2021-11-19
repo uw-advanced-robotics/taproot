@@ -106,10 +106,10 @@ bool MoveAbsoluteCommand::isFinished() const
 {
     // Command is finished if we've reached target or if our subsystem is jammed
     // or offline
-    return algorithms::compareFloatClose(
-               setpointSubsystem->getCurrentValue(),
-               rampToSetpoint.getTarget(),
-               setpointTolerance) ||
+    return (rampToSetpoint.isTargetReached() && algorithms::compareFloatClose(
+                                                    setpointSubsystem->getCurrentValue(),
+                                                    rampToSetpoint.getTarget(),
+                                                    setpointTolerance)) ||
            setpointSubsystem->isJammed() || !setpointSubsystem->isOnline();
 }
 

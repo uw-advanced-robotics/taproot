@@ -154,16 +154,27 @@ TEST(MoveAbsoluteCommand, command_sleeps_while_subsystem_offline)
 
 // isFinished() tests ------------------------------------
 
-TEST(MoveAbsoluteCommand, command_finishes_once_current_value_within_tolerable_distance_to_target)
+TEST(
+    MoveAbsoluteCommand,
+    command_finishes_once_current_value_within_tolerable_distance_to_target_and_ramp_finished)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveAbsoluteCommand command(&subsystem, 1.0f, 6.5f, 0.15f, false, true);
+    MoveAbsoluteCommand command(&subsystem, 1.0f, 1.0f, 0.15f, false, true);
 
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(0.9f));
 
     setTime(0);
     command.initialize();
     setTime(1);
+    command.execute();
+    setTime(99);
+    command.execute();
+    // At this point ramp hasn't been given enough time to reach target, so command should not be
+    // finished
+    EXPECT_FALSE(command.isFinished());
+    // 100 ms * 1.0 units/second = displacement of 0.1 units which is all ramp should need from 0.9
+    // to 1.0, add 1 ms to account for
+    setTime(101);
     command.execute();
     EXPECT_TRUE(command.isFinished());
 }
