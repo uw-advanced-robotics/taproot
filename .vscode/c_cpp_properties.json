@@ -9,7 +9,8 @@
             ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "intelliSenseMode": "gcc-x64",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "g++"
         },
         {
             "name": "Sim",
@@ -19,7 +20,8 @@
             ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "intelliSenseMode": "gcc-x64",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "g++"
         },
         {
             "name": "MCB",
@@ -30,7 +32,8 @@
                 "test-project/taproot/modm/ext/cmsis/device"
             ],
             "intelliSenseMode": "gcc-arm",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "arm-none-eabi-g++"
         }
     ],
     "version": 4
