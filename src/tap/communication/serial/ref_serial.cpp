@@ -24,12 +24,11 @@
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/communication/serial/ref_serial_constants.hpp"
 #include "tap/drivers.hpp"
+#include "tap/errors/create_errors.hpp"
 
 using namespace tap::arch;
 
-namespace tap
-{
-namespace serial
+namespace tap::serial
 {
 RefSerial::RefSerial(Drivers* drivers)
     : DJISerial(drivers, bound_ports::REF_SERIAL_UART_PORT),
@@ -112,12 +111,20 @@ void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
             decodeToRFIDStatus(completeMessage);
             break;
         }
+        case REF_MESSAGE_TYPE_CUSTOM_DATA:
+        {
+            handleRobotToRobotCommunication(completeMessage);
+            break;
+        }
         default:
             break;
     }
 }
 
-uint16_t RefSerial::getRobotClientID(uint16_t robotId) { return 0x100 + robotId; }
+uint16_t RefSerial::getRobotClientID(RobotId robotId)
+{
+    return 0x100 + static_cast<uint16_t>(robotId);
+}
 
 const RefSerialData::Rx::RobotData& RefSerial::getRobotData() const { return robotData; }
 
@@ -273,7 +280,7 @@ bool RefSerial::decodeToProjectileLaunch(const SerialMessage& message)
     }
     robotData.turret.bulletType = static_cast<Rx::BulletType>(message.data[0]);
     robotData.turret.launchMechanismID = static_cast<Rx::MechanismID>(message.data[1]);
-    robotData.turret.firing_freq = message.data[2];
+    robotData.turret.firingFreq = message.data[2];
     convertFromLittleEndian(&robotData.turret.bulletSpeed, message.data + 3);
     return true;
 }
@@ -297,6 +304,29 @@ bool RefSerial::decodeToRFIDStatus(const SerialMessage& message)
         return false;
     }
     robotData.rfidStatus.value = message.data[0];
+    return true;
+}
+
+bool RefSerial::handleRobotToRobotCommunication(const SerialMessage& message)
+{
+    if (message.length < sizeof(Tx::RobotToRobotMessage::interactiveHeader))
+    {
+        return false;
+    }
+
+    if (msgIdToRobotToRobotHandlerMap.size() == 0)
+    {
+        return true;
+    }
+
+    const Tx::InteractiveHeader* interactiveHeader =
+        reinterpret_cast<const Tx::InteractiveHeader*>(message.data);
+
+    if (msgIdToRobotToRobotHandlerMap.count(interactiveHeader->dataCmdId))
+    {
+        (*msgIdToRobotToRobotHandlerMap[interactiveHeader->dataCmdId])(message);
+    }
+
     return true;
 }
 
@@ -502,13 +532,13 @@ void RefSerial::deleteGraphicLayer(
         &msg.frameHead,
         sizeof(msg.graphicHead) + sizeof(msg.deleteOperation) + sizeof(msg.layer));
 
-    msg.cmdId = 0x301;
+    msg.cmdId = REF_MESSAGE_TYPE_CUSTOM_DATA;
 
-    configGraphicHeader(&msg.graphicHead, 0x100, static_cast<uint16_t>(robotData.robotId));
+    configInteractiveHeader(&msg.graphicHead, 0x100, robotData.robotId);
 
     msg.crc16 = algorithms::calculateCRC16(
         reinterpret_cast<uint8_t*>(&msg),
-        sizeof(Tx::DeleteGraphicLayerMessage) - 2);
+        sizeof(Tx::DeleteGraphicLayerMessage) - sizeof(msg.crc16));
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
@@ -536,18 +566,16 @@ static void sendGraphicHelper(
     {
         RefSerial::configFrameHeader(
             &graphicMsg->msgHeader,
-            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->graphicHeader) + extraDataLength);
+            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) +
+                extraDataLength);
 
-        graphicMsg->cmdId = 0x301;
+        graphicMsg->cmdId = RefSerial::REF_MESSAGE_TYPE_CUSTOM_DATA;
 
-        RefSerial::configGraphicHeader(
-            &graphicMsg->graphicHeader,
-            cmdId,
-            static_cast<uint16_t>(robotId));
+        RefSerial::configInteractiveHeader(&graphicMsg->interactiveHeader, cmdId, robotId);
 
         graphicMsg->crc16 = algorithms::calculateCRC16(
             reinterpret_cast<uint8_t*>(graphicMsg),
-            sizeof(GraphicType) - 2);
+            sizeof(GraphicType) - sizeof(graphicMsg->crc16));
     }
 
     if (sendMsg)
@@ -593,6 +621,52 @@ void RefSerial::sendGraphic(
         GRAPHIC_MAX_CHARACTERS);
 }
 
+void RefSerial::configRobotToRobotMsgHeader(
+    Tx::RobotToRobotMessage* robotToRobotMsg,
+    uint16_t msgId,
+    RobotId receiverId,
+    uint16_t msgLen)
+{
+    if (msgId < 0x0200 || msgId >= 0x02ff)
+    {
+        RAISE_ERROR(
+            drivers,
+            "invalid msgId",
+            tap::errors::CAN_RX,
+            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+        return;
+    }
+
+    if (msgLen > 113)
+    {
+        RAISE_ERROR(
+            drivers,
+            "invalid msg len",
+            tap::errors::CAN_RX,
+            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+    }
+
+    configFrameHeader(
+        &robotToRobotMsg->msgHeader,
+        sizeof(robotToRobotMsg->interactiveHeader) + msgLen);
+
+    robotToRobotMsg->cmdId = REF_MESSAGE_TYPE_CUSTOM_DATA;
+
+    configInteractiveHeader(&robotToRobotMsg->interactiveHeader, msgId, receiverId);
+
+    uint16_t msgSizeToCRC16 =
+        sizeof(robotToRobotMsg->msgHeader) + sizeof(robotToRobotMsg->cmdId) + msgLen;
+    uint16_t* crc16Location = reinterpret_cast<uint16_t*>(robotToRobotMsg->dataAndCRC16 + msgLen);
+
+    *crc16Location =
+        algorithms::calculateCRC16(reinterpret_cast<uint8_t*>(&robotToRobotMsg), msgSizeToCRC16);
+
+    drivers->uart.write(
+        bound_ports::REF_SERIAL_UART_PORT,
+        reinterpret_cast<uint8_t*>(robotToRobotMsg),
+        msgSizeToCRC16 + sizeof(uint16_t));
+}
+
 void RefSerial::configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen)
 {
     header->SOF = 0xa5;
@@ -600,15 +674,47 @@ void RefSerial::configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen)
     header->seq = 0;
     header->CRC8 = algorithms::calculateCRC8(
         reinterpret_cast<const uint8_t*>(header),
-        sizeof(Tx::FrameHeader) - 1);
+        sizeof(Tx::FrameHeader) - sizeof(header->CRC8));
 }
 
-void RefSerial::configGraphicHeader(Tx::GraphicHeader* header, uint16_t cmdId, uint16_t robotId)
+void RefSerial::configInteractiveHeader(
+    Tx::InteractiveHeader* header,
+    uint16_t cmdId,
+    RobotId robotId)
 {
     header->dataCmdId = cmdId;
-    header->senderId = robotId;
+    header->senderId = static_cast<uint16_t>(robotId);
     header->receiverId = getRobotClientID(robotId);
 }
-}  // namespace serial
 
-}  // namespace tap
+RefSerial::RobotId RefSerial::getRobotIdBasedOnCurrentRobotTeam(RobotId id)
+{
+    if (!isBlueTeam(robotData.robotId) && isBlueTeam(id))
+    {
+        id = id - RobotId::BLUE_HERO + RobotId::RED_HERO;
+    }
+    else if (isBlueTeam(robotData.robotId) && !isBlueTeam(id))
+    {
+        id = id - RobotId::RED_HERO + RobotId::BLUE_HERO;
+    }
+    return id;
+}
+
+void RefSerial::attachRobotToRobotMessageHandler(
+    uint16_t msgId,
+    RobotToRobotMessageHandler* handler)
+{
+    if (msgIdToRobotToRobotHandlerMap.count(msgId) != 0 || msgId < 0x0200 || msgId > 0x02FF)
+    {
+        RAISE_ERROR(
+            drivers,
+            "error adding msg handler",
+            tap::errors::CAN_RX,
+            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+        return;
+    }
+
+    msgIdToRobotToRobotHandlerMap[msgId] = handler;
+}
+
+}  // namespace tap::serial

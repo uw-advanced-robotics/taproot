@@ -43,59 +43,23 @@ public:
     MOCK_METHOD(bool, getRefSerialReceivingData, (), (const override));
     MOCK_METHOD(const Rx::RobotData&, getRobotData, (), (const override));
     MOCK_METHOD(const Rx::GameData&, getGameData, (), (const override));
-    MOCK_METHOD(
-        void,
-        configGraphicGenerics,
-        (Tx::GraphicData*, const uint8_t*, Tx::AddGraphicOperation, uint8_t, Tx::GraphicColor),
-        (override));
-    MOCK_METHOD(
-        void,
-        configLine,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configRectangle,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configCircle,
-        (uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configEllipse,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configArc,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configFloatingNumber,
-        (uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, float, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(
-        void,
-        configInteger,
-        (uint16_t, uint16_t, uint16_t, uint16_t, int32_t, Tx::GraphicData*),
-        (override));
-    MOCK_METHOD(void, updateInteger, (int32_t, Tx::GraphicData*), (override));
-    MOCK_METHOD(
-        void,
-        configCharacterMsg,
-        (uint16_t,
-         uint16_t,
-         uint16_t,
-         uint16_t,
-         uint16_t,
-         const char*,
-         Tx::GraphicCharacterMessage*),
-        (override));
     MOCK_METHOD(void, deleteGraphicLayer, (Tx::DeleteGraphicOperation, uint8_t), (override));
+    MOCK_METHOD(void, sendGraphic, (Tx::Graphic1Message*, bool, bool), (override));
+    MOCK_METHOD(void, sendGraphic, (Tx::Graphic2Message*, bool, bool), (override));
+    MOCK_METHOD(void, sendGraphic, (Tx::Graphic5Message*, bool, bool), (override));
+    MOCK_METHOD(void, sendGraphic, (Tx::Graphic7Message*, bool, bool), (override));
+    MOCK_METHOD(void, sendGraphic, (Tx::GraphicCharacterMessage*, bool, bool), (override));
+    MOCK_METHOD(
+        void,
+        configRobotToRobotMsgHeader,
+        (Tx::RobotToRobotMessage*, uint16_t, RobotId, uint16_t),
+        (override));
+    MOCK_METHOD(RobotId, getRobotIdBasedOnCurrentRobotTeam, (RobotId), (override));
+    MOCK_METHOD(
+        void,
+        attachRobotToRobotMessageHandler,
+        (uint16_t, RobotToRobotMessageHandler*),
+        (override));
 };  // class RefSerialMock
 }  // namespace mock
 }  // namespace tap

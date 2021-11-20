@@ -22,30 +22,50 @@
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/communication/serial/ref_serial.hpp"
 #include "tap/drivers.hpp"
+#include "tap/mock/message_handler_mock.hpp"
 
 using namespace tap;
 using namespace tap::serial;
 using namespace tap::arch;
 
+template <typename T>
+static DJISerial::SerialMessage constructMsg(const T &data, int type)
+{
+    DJISerial::SerialMessage msg;
+    msg.sequenceNumber = 0;
+    msg.type = type;
+    msg.length = sizeof(T);
+    memset(msg.data, 0, sizeof(msg.data));
+    memcpy(msg.data, reinterpret_cast<const uint8_t *>(&data), sizeof(T));
+    return msg;
+}
+
 TEST(RefSerial, messageReceiveCallback__competition_status)
 {
+    struct GameStatus
+    {
+        uint8_t gameType : 4;
+        uint8_t gameProgress : 4;
+        uint16_t stageRemainTime;
+        uint64_t syncTimeStamp;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 11;
-    msg.sequenceNumber = 0;
-    msg.type = 1;
-    memset(msg.data, 0, sizeof(msg.data));
-    msg.data[0] = 2 << 4;
-    convertToLittleEndian<uint16_t>(200, msg.data + 1);
+    GameStatus testData;
+
+    testData.gameProgress = 2;
+    testData.stageRemainTime = 200;
+    msg = constructMsg(testData, 1);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(200, refSerial.getGameData().stageTimeRemaining);
     EXPECT_EQ(RefSerial::Rx::GameStage::INITIALIZATION, refSerial.getGameData().gameStage);
 
-    msg.data[0] = 4 << 4;
+    testData.gameProgress = 4;
+    msg = constructMsg(testData, 1);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -54,25 +74,30 @@ TEST(RefSerial, messageReceiveCallback__competition_status)
 
 TEST(RefSerial, messageReceiveCallback__competition_result)
 {
+    struct GameResult
+    {
+        uint8_t winner;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 1;
-    msg.sequenceNumber = 0;
-    msg.type = 2;
-    msg.data[0] = 0;
+    GameResult testData;
 
+    testData.winner = 0;
+    msg = constructMsg(testData, 2);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::GameWinner::DRAW, refSerial.getGameData().gameWinner);
 
-    msg.data[0] = 1;
+    testData.winner = 1;
+    msg = constructMsg(testData, 2);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::GameWinner::RED, refSerial.getGameData().gameWinner);
 
-    msg.data[0] = 2;
+    testData.winner = 2;
+    msg = constructMsg(testData, 2);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::GameWinner::BLUE, refSerial.getGameData().gameWinner);
@@ -80,29 +105,49 @@ TEST(RefSerial, messageReceiveCallback__competition_result)
 
 TEST(RefSerial, messageReceiveCallback__robot_hp)
 {
+    struct GameRobotHP
+    {
+        uint16_t red1RobotHP;
+        uint16_t red2RobotHP;
+        uint16_t red3RobotHP;
+        uint16_t red4RobotHP;
+        uint16_t red5RobotHP;
+        uint16_t red7RobotHP;
+        uint16_t redOutpostHP;
+        uint16_t redBaseHP;
+        uint16_t blue1RobotHP;
+        uint16_t blue2RobotHP;
+        uint16_t blue3RobotHP;
+        uint16_t blue4RobotHP;
+        uint16_t blue5RobotHP;
+        uint16_t blue7RobotHP;
+        uint16_t blueOutpostHP;
+        uint16_t blueBaseHP;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 32;
-    msg.sequenceNumber = 0;
-    msg.type = 3;
-    convertToLittleEndian<uint16_t>(1, msg.data);
-    convertToLittleEndian<uint16_t>(2, msg.data + 2);
-    convertToLittleEndian<uint16_t>(3, msg.data + 4);
-    convertToLittleEndian<uint16_t>(4, msg.data + 6);
-    convertToLittleEndian<uint16_t>(5, msg.data + 8);
-    convertToLittleEndian<uint16_t>(6, msg.data + 10);
-    convertToLittleEndian<uint16_t>(7, msg.data + 12);
-    convertToLittleEndian<uint16_t>(8, msg.data + 14);
-    convertToLittleEndian<uint16_t>(9, msg.data + 16);
-    convertToLittleEndian<uint16_t>(10, msg.data + 18);
-    convertToLittleEndian<uint16_t>(11, msg.data + 20);
-    convertToLittleEndian<uint16_t>(12, msg.data + 22);
-    convertToLittleEndian<uint16_t>(13, msg.data + 24);
-    convertToLittleEndian<uint16_t>(14, msg.data + 26);
-    convertToLittleEndian<uint16_t>(15, msg.data + 28);
-    convertToLittleEndian<uint16_t>(16, msg.data + 30);
+
+    GameRobotHP testData;
+
+    testData.red1RobotHP = 1;
+    testData.red2RobotHP = 2;
+    testData.red3RobotHP = 3;
+    testData.red4RobotHP = 4;
+    testData.red5RobotHP = 5;
+    testData.red7RobotHP = 6;
+    testData.redOutpostHP = 7;
+    testData.redBaseHP = 8;
+    testData.blue1RobotHP = 9;
+    testData.blue2RobotHP = 10;
+    testData.blue3RobotHP = 11;
+    testData.blue4RobotHP = 12;
+    testData.blue5RobotHP = 13;
+    testData.blue7RobotHP = 14;
+    testData.blueOutpostHP = 15;
+    testData.blueBaseHP = 16;
+    msg = constructMsg(testData, 3);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -124,23 +169,41 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     EXPECT_EQ(16, refSerial.getRobotData().allRobotHp.blue.base);
 }
 
+struct GameRobotStatus
+{
+    uint8_t robotId;
+    uint8_t robot_level;
+    uint16_t remain_HP;
+    uint16_t max_HP;
+    uint16_t shooterId117mmCoolingRate;
+    uint16_t shooterId117mmCoolingLimit;
+    uint16_t shooterId117mmSpeedLimit;
+    uint16_t shooterId217mmCoolingRate;
+    uint16_t shooterId217mmCoolingLimit;
+    uint16_t shooterId217mmSpeedLimit;
+    uint16_t shooterId142mmCoolingLate;
+    uint16_t shooterId142mmCoolingLimit;
+    uint16_t shooterId142mmSpeedLimit;
+    uint16_t chassisPowerLimit;
+    uint8_t mainsPowerGimbalOutput : 1;
+    uint8_t mainsPowerChassisOutput : 1;
+    uint8_t mainsPowerShooterOutput : 1;
+} modm_packed;
+
 TEST(RefSerial, messageReceiveCallback__robot_status)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 27;
-    memset(msg.data, 0, sizeof(msg.data));
-    msg.sequenceNumber = 0;
-    msg.type = 0x201;
+    GameRobotStatus testData;
 
     // red team
     for (int i = static_cast<int>(RefSerial::RobotId::RED_HERO);
          i <= static_cast<int>(RefSerial::RobotId::RED_RADAR_STATION);
          i++)
     {
-        msg.data[0] = i;
+        testData.robotId = i;
+        msg = constructMsg(testData, 0x0201);
 
         refSerial.messageReceiveCallback(msg);
 
@@ -152,29 +215,28 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
          i <= static_cast<int>(RefSerial::RobotId::BLUE_RADAR_STATION);
          i++)
     {
-        msg.data[0] = i;
+        testData.robotId = i;
+        msg = constructMsg(testData, 0x0201);
 
         refSerial.messageReceiveCallback(msg);
 
         EXPECT_EQ(i, static_cast<int>(refSerial.getRobotData().robotId));
     }
 
-    msg.data[1] = 3;                                      // Robot level
-    convertToLittleEndian<uint16_t>(1001, msg.data + 2);  // The robot’s remaining HP
-    convertToLittleEndian<uint16_t>(2001, msg.data + 4);  // Robot maximum HP
-    convertToLittleEndian<uint16_t>(120,
-                                    msg.data + 6);        // Robot 1 17mm barrel cooling value
-    convertToLittleEndian<uint16_t>(100, msg.data + 8);   // Robot 1 17mm barrel heat limit
-    convertToLittleEndian<uint16_t>(240, msg.data + 10);  // Robot 1 17mm barrel speed limit (m/s)
-    convertToLittleEndian<uint16_t>(4234,
-                                    msg.data + 12);      // Robot 2 17mm barrel cooling value
-    convertToLittleEndian<uint16_t>(12, msg.data + 14);  // Robot 2 17mm barrel heat limit
-    convertToLittleEndian<uint16_t>(15, msg.data + 16);  // Robot 2 17mm barrel speed limit (m/s)
-    convertToLittleEndian<uint16_t>(400,
-                                    msg.data + 18);       // Robot 42mm barrel cooling value
-    convertToLittleEndian<uint16_t>(439, msg.data + 20);  // Robot 42mm barrel heat limit
-    convertToLittleEndian<uint16_t>(13, msg.data + 22);   // Robot 42mm barrel speed limit (m/s)
-    convertToLittleEndian<uint16_t>(987, msg.data + 24);  // Robot chassis power consumption limit
+    testData.robot_level = 3;
+    testData.remain_HP = 1001;
+    testData.max_HP = 2001;
+    testData.shooterId117mmCoolingRate = 120;
+    testData.shooterId117mmCoolingLimit = 100;
+    testData.shooterId117mmSpeedLimit = 240;
+    testData.shooterId217mmCoolingRate = 4234;
+    testData.shooterId217mmCoolingLimit = 12;
+    testData.shooterId217mmSpeedLimit = 15;
+    testData.shooterId142mmCoolingLate = 400;
+    testData.shooterId142mmCoolingLimit = 439;
+    testData.shooterId142mmSpeedLimit = 13;
+    testData.chassisPowerLimit = 987;
+    msg = constructMsg(testData, 0x0201);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -193,25 +255,38 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
     EXPECT_EQ(987, refSerial.getRobotData().chassis.powerConsumptionLimit);
 
     // Main controller power supply condition
-    msg.data[26] = 0b001;
+
+    testData.mainsPowerGimbalOutput = 1;
+    testData.mainsPowerChassisOutput = 0;
+    testData.mainsPowerShooterOutput = 0;
+    msg = constructMsg(testData, 0x0201);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::RobotPower::GIMBAL_HAS_POWER, refSerial.getRobotData().robotPower);
 
-    msg.data[26] = 0b010;
+    testData.mainsPowerGimbalOutput = 0;
+    testData.mainsPowerChassisOutput = 1;
+    testData.mainsPowerShooterOutput = 0;
+    msg = constructMsg(testData, 0x0201);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::RobotPower::CHASSIS_HAS_POWER, refSerial.getRobotData().robotPower);
 
-    msg.data[26] = 0b100;
+    testData.mainsPowerGimbalOutput = 0;
+    testData.mainsPowerChassisOutput = 0;
+    testData.mainsPowerShooterOutput = 1;
+    msg = constructMsg(testData, 0x0201);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::RobotPower::SHOOTER_HAS_POWER, refSerial.getRobotData().robotPower);
 
-    msg.data[26] = 0b111;
+    testData.mainsPowerGimbalOutput = 1;
+    testData.mainsPowerChassisOutput = 1;
+    testData.mainsPowerShooterOutput = 1;
+    msg = constructMsg(testData, 0x0201);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -221,46 +296,12 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
         refSerial.getRobotData().robotPower);
 }
 
-TEST(RefSerial, messageReceiveCallback__power_and_heat)
-{
-    Drivers drivers;
-    RefSerial refSerial(&drivers);
-
-    DJISerial::SerialMessage msg;
-    msg.length = 16;
-    msg.sequenceNumber = 0;
-    msg.type = 0x202;
-    memset(msg.data, 0, sizeof(msg.data));
-
-    convertToLittleEndian<uint16_t>(1234, msg.data);      // Chassis output voltage (mV)
-    convertToLittleEndian<uint16_t>(4321, msg.data + 2);  // Chassis output current (mA)
-    convertToLittleEndian<float>(6789, msg.data + 4);     // Chassis output power (W)
-    convertToLittleEndian<uint16_t>(120, msg.data + 8);   // Chassis power buffer (J)
-    convertToLittleEndian<uint16_t>(145, msg.data + 10);  // No. 1 17mm barrel heat
-    convertToLittleEndian<uint16_t>(431, msg.data + 12);  // No. 2 17mm barrel heat
-    convertToLittleEndian<uint16_t>(900, msg.data + 14);  // 42mm barrel heat
-
-    refSerial.messageReceiveCallback(msg);
-
-    EXPECT_EQ(1234, refSerial.getRobotData().chassis.volt);
-    EXPECT_EQ(4321, refSerial.getRobotData().chassis.current);
-    EXPECT_EQ(6789, refSerial.getRobotData().chassis.power);
-    EXPECT_EQ(120, refSerial.getRobotData().chassis.powerBuffer);
-    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17ID1);
-    EXPECT_EQ(431, refSerial.getRobotData().turret.heat17ID2);
-    EXPECT_EQ(900, refSerial.getRobotData().turret.heat42);
-}
-
 TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 27;
-    memset(msg.data, 0, sizeof(msg.data));
-    msg.sequenceNumber = 0;
-    msg.type = 0x201;
+    GameRobotStatus testData;
 
     // vector of arrays of length 3 containing a time, current HP, and expected DPS
     std::vector<std::array<int, 3>> timeHPExpectedDPS{
@@ -274,8 +315,9 @@ TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
     for (const auto &triplet : timeHPExpectedDPS)
     {
         tap::arch::clock::setTime(triplet[0]);
-        convertToLittleEndian<uint16_t>(triplet[1], msg.data + 2);
 
+        testData.remain_HP = triplet[1];
+        msg = constructMsg(testData, 0x0201);
         refSerial.messageReceiveCallback(msg);
 
         EXPECT_EQ(triplet[1], refSerial.getRobotData().currentHp);
@@ -283,21 +325,64 @@ TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
     }
 }
 
-TEST(RefSerial, messageReceiveCallback__robot_position)
+TEST(RefSerial, messageReceiveCallback__power_and_heat)
 {
+    struct PowerHeatData
+    {
+        uint16_t chassisVolt;
+        uint16_t chassisCurrent;
+        float chassisPower;
+        uint16_t chassis_power_buffer;
+        uint16_t shooterId117mmCoolingHeat;
+        uint16_t shooterId217mmCoolingHeat;
+        uint16_t shooterId142mmCoolingHeat;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 16;
-    msg.sequenceNumber = 0;
-    msg.type = 0x203;
-    memset(msg.data, 0, sizeof(msg.data));
+    PowerHeatData testData;
 
-    convertToLittleEndian<float>(-89.31f, msg.data);
-    convertToLittleEndian<float>(45069.24f, msg.data + 4);
-    convertToLittleEndian<float>(90.12f, msg.data + 8);
-    convertToLittleEndian<float>(-799.87f, msg.data + 12);
+    testData.chassisVolt = 1234;
+    testData.chassisCurrent = 4321;
+    testData.chassisPower = 6789;
+    testData.chassis_power_buffer = 120;
+    testData.shooterId117mmCoolingHeat = 145;
+    testData.shooterId217mmCoolingHeat = 431;
+    testData.shooterId142mmCoolingHeat = 900;
+    msg = constructMsg(testData, 0x0202);
+
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_EQ(1234, refSerial.getRobotData().chassis.volt);
+    EXPECT_EQ(4321, refSerial.getRobotData().chassis.current);
+    EXPECT_EQ(6789, refSerial.getRobotData().chassis.power);
+    EXPECT_EQ(120, refSerial.getRobotData().chassis.powerBuffer);
+    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17ID1);
+    EXPECT_EQ(431, refSerial.getRobotData().turret.heat17ID2);
+    EXPECT_EQ(900, refSerial.getRobotData().turret.heat42);
+}
+
+TEST(RefSerial, messageReceiveCallback__robot_position)
+{
+    struct RobotPosData
+    {
+        float x;
+        float y;
+        float z;
+        float yaw;
+    } modm_packed;
+
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    DJISerial::SerialMessage msg;
+    RobotPosData testData;
+
+    testData.x = -89.31f;
+    testData.y = 45069.24f;
+    testData.z = 90.12f;
+    testData.yaw = -799.87f;
+    msg = constructMsg(testData, 0x0203);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -311,35 +396,30 @@ TEST(RefSerial, messageReceiveCallback__robot_buffs)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 1;
-    msg.sequenceNumber = 0;
-    msg.type = 0x204;
-    memset(msg.data, 0, sizeof(msg.data));
 
-    msg.data[0] = 0b0001;
+    msg = constructMsg(static_cast<uint8_t>(0b0001), 0x0204);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(
         RefSerial::Rx::RobotBuffStatus::ROBOT_HP_RESTORATION_STATUS,
         refSerial.getRobotData().robotBuffStatus);
 
-    msg.data[0] = 0b0010;
+    msg = constructMsg(static_cast<uint8_t>(0b0010), 0x0204);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(
         RefSerial::Rx::RobotBuffStatus::BARREL_HEAT_COOLING_ACCELERATION,
         refSerial.getRobotData().robotBuffStatus);
 
-    msg.data[0] = 0b0100;
+    msg = constructMsg(static_cast<uint8_t>(0b0100), 0x0204);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(
         RefSerial::Rx::RobotBuffStatus::ROBOT_DEFENSE_BUFF,
         refSerial.getRobotData().robotBuffStatus);
 
-    msg.data[0] = 0b1000;
+    msg = constructMsg(static_cast<uint8_t>(0b1000), 0x0204);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(
@@ -353,12 +433,7 @@ TEST(RefSerial, messageReceiveCallback__aerial_robot_energy_status)
     RefSerial refSerial(&drivers);
 
     DJISerial::SerialMessage msg;
-    msg.length = 2;
-    msg.sequenceNumber = 0;
-    msg.type = 0x205;
-    memset(msg.data, 0, sizeof(msg.data));
-
-    convertToLittleEndian(12345, msg.data);
+    msg = constructMsg(static_cast<uint16_t>(12345), 0x0205);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -367,31 +442,34 @@ TEST(RefSerial, messageReceiveCallback__aerial_robot_energy_status)
 
 TEST(RefSerial, messageReceiveCallback__damage_status)
 {
+    struct RobotDamage
+    {
+        uint8_t armorId : 4;
+        uint8_t hurtType : 4;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 1;
-    msg.sequenceNumber = 0;
-    msg.type = 0x206;
-    memset(msg.data, 0, sizeof(msg.data));
+    RobotDamage testData;
 
-    msg.data[0] = 0;
-
+    msg = constructMsg(testData, 0x0206);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::ArmorId::FRONT, refSerial.getRobotData().damagedArmorId);
     EXPECT_EQ(RefSerial::Rx::DamageType::ARMOR_DAMAGE, refSerial.getRobotData().damageType);
 
-    msg.data[0] = (0x2) | ((0x1) << 4);
-
+    testData.armorId = 2;
+    testData.hurtType = 1;
+    msg = constructMsg(testData, 0x0206);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::ArmorId::REAR, refSerial.getRobotData().damagedArmorId);
     EXPECT_EQ(RefSerial::Rx::DamageType::MODULE_OFFLINE, refSerial.getRobotData().damageType);
 
-    msg.data[0] = (0x4) | ((0x5) << 4);
-
+    testData.armorId = 4;
+    testData.hurtType = 5;
+    msg = constructMsg(testData, 0x0206);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::ArmorId::TOP, refSerial.getRobotData().damagedArmorId);
@@ -400,32 +478,64 @@ TEST(RefSerial, messageReceiveCallback__damage_status)
 
 TEST(RefSerial, messageReceiveCallback__launching_information)
 {
+    struct ShootData
+    {
+        uint8_t bulletType;
+        uint8_t shooterId;
+        uint8_t bulletFreq;
+        float bulletSpeed;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 6;
-    msg.sequenceNumber = 0;
-    msg.type = 0x207;
-    memset(msg.data, 0, sizeof(msg.data));
+    ShootData testData;
+
+    testData.bulletType = 1;
+    testData.shooterId = 1;
+    testData.bulletFreq = 45;
+    testData.bulletSpeed = 3452.12f;
+    msg = constructMsg(testData, 0x0207);
 
     refSerial.messageReceiveCallback(msg);
+
+    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_17, refSerial.getRobotData().turret.bulletType);
+    EXPECT_EQ(
+        RefSerial::Rx::MechanismID::TURRET_17MM_1,
+        refSerial.getRobotData().turret.launchMechanismID);
+    EXPECT_EQ(45, refSerial.getRobotData().turret.firingFreq);
+    EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
+
+    testData.bulletType = 2;
+    testData.shooterId = 2;
+    msg = constructMsg(testData, 0x0207);
+
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_42, refSerial.getRobotData().turret.bulletType);
+    EXPECT_EQ(
+        RefSerial::Rx::MechanismID::TURRET_17MM_2,
+        refSerial.getRobotData().turret.launchMechanismID);
 }
 
 TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
 {
+    struct BulletRemaining
+    {
+        uint16_t bulletRemainingNum17mm;
+        uint16_t bulletRemainingNum42mm;
+        uint16_t coinRemainingNum;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 6;
-    msg.sequenceNumber = 0;
-    msg.type = 0x208;
-    memset(msg.data, 0, sizeof(msg.data));
+    BulletRemaining testData;
 
-    convertToLittleEndian<uint16_t>(123, msg.data);
-    convertToLittleEndian<uint16_t>(1890, msg.data + 2);
-    convertToLittleEndian<uint16_t>(12892, msg.data + 4);
+    testData.bulletRemainingNum17mm = 123;
+    testData.bulletRemainingNum42mm = 1890;
+    testData.coinRemainingNum = 12892;
+    msg = constructMsg(testData, 0x0208);
 
     refSerial.messageReceiveCallback(msg);
 
@@ -438,43 +548,100 @@ TEST(RefSerial, messageReceiveCallback__RFID_status)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-
     DJISerial::SerialMessage msg;
-    msg.length = 4;
-    msg.sequenceNumber = 0;
-    msg.type = 0x209;
-    memset(msg.data, 0, sizeof(msg.data));
 
-    msg.data[0] = 0b00000101;
-
+    msg = constructMsg(static_cast<uint32_t>(0b00000101), 0x0209);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
 
-    msg.data[0] = 0b11111010;
-
+    msg = constructMsg(static_cast<uint32_t>(0b11111010), 0x0209);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
 }
 
-TEST(RefSerial, messageReceiveCallback__interaction_data_simple_message)
+TEST(RefSerial, configGraphicGenerics__sets_name_operation_layer_color)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
+    RefSerial::Tx::GraphicData data;
 
+    uint8_t name[3] = {0, 1, 0};
+
+    refSerial.configGraphicGenerics(
+        &data,
+        name,
+        RefSerial::Tx::AddGraphicOperation::ADD_GRAPHIC_MODIFY,
+        0,
+        RefSerial::Tx::GraphicColor::PINK);
+
+    EXPECT_TRUE(0 == std::memcmp(name, data.name, sizeof(name)));
+    EXPECT_EQ(RefSerial::Tx::AddGraphicOperation::ADD_GRAPHIC_MODIFY, data.operation);
+    EXPECT_EQ(static_cast<uint8_t>(RefSerial::Tx::GraphicColor::PINK), data.color);
+}
+
+TEST(RefSerial, deleteGraphicLayer__) {}
+TEST(RefSerial, sendGraphic__1) {}
+TEST(RefSerial, sendGraphic__2) {}
+TEST(RefSerial, sendGraphic__5) {}
+TEST(RefSerial, sendGraphic__7) {}
+TEST(RefSerial, sendGraphic__characterMessage) {}
+TEST(RefSerial, configRobotToRobotMessage__) {}
+TEST(RefSerial, getRobotIdBasedOnCurrentRobotTeam__) {}
+
+TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_out_of_bounsd)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    tap::mock::MessageHandlerMock handler;
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+
+    refSerial.attachRobotToRobotMessageHandler(0x014, &handler);
+    refSerial.attachRobotToRobotMessageHandler(0x3ff, &handler);
+}
+
+TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_already_added)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    tap::mock::MessageHandlerMock handler;
+
+    refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+
+    refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
+}
+
+TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
+{
+    struct SpecialData
+    {
+        RefSerial::Tx::InteractiveHeader interactiveHeader;
+        uint8_t hi[2];
+    } modm_packed;
+
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
     DJISerial::SerialMessage msg;
-    msg.length = 0;
-    msg.sequenceNumber = 0;
-    msg.type = 0x301;
-    memset(msg.data, 0, sizeof(msg.data));
+    SpecialData specialData;
 
-    msg.data[0] = 'h';
-    msg.data[1] = 'i';
+    tap::mock::MessageHandlerMock handler;
 
-    // refSerial.attachInteractionListener()
+    specialData.interactiveHeader.dataCmdId = 0x201;
+    specialData.hi[0] = 'h';
+    specialData.hi[1] = 'i';
+    msg = constructMsg(specialData, 0x301);
+
+    refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
+
+    EXPECT_CALL(handler, functorOp).WillOnce([&](const DJISerial::SerialMessage &message) {
+        EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
+        EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
+        EXPECT_EQ(sizeof(SpecialData), message.length);
+    });
 
     refSerial.messageReceiveCallback(msg);
-
-    // make sure listener is called
 }

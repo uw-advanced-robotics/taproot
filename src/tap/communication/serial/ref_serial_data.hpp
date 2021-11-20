@@ -28,6 +28,9 @@
 
 namespace tap::serial
 {
+/**
+ * Contains enum and struct definitions used in the `RefSerial` class.
+ */
 class RefSerialData
 {
 public:
@@ -60,6 +63,19 @@ public:
         BLUE_RADAR_STATION = 109
     };
 
+    static inline bool isBlueTeam(RobotId id) { return id >= RobotId::BLUE_HERO; }
+
+    class RobotToRobotMessageHandler
+    {
+    public:
+        RobotToRobotMessageHandler() {}
+        virtual void operator()(const DJISerial::SerialMessage &message) = 0;
+    };
+
+    /**
+     * Contains enum and struct definitions specific to receiving data from the referee serial
+     * class.
+     */
     class Rx
     {
     public:
@@ -150,7 +166,7 @@ public:
 
         struct GameData
         {
-            GameStage gameStage : 4;      /// Current stage in the game.
+            GameStage gameStage;          /// Current stage in the game.
             uint16_t stageTimeRemaining;  /// Remaining time in the current stage (in seconds).
             GameWinner gameWinner;        /// Results of the match.
         };
@@ -190,7 +206,7 @@ public:
         {
             BulletType bulletType;           /// 17mm or 42mm last projectile shot.
             MechanismID launchMechanismID;   /// Either 17mm mechanism 1, 3, or 42 mm mechanism.
-            uint8_t firing_freq;             /// Firing frequency (in Hz).
+            uint8_t firingFreq;              /// Firing frequency (in Hz).
             uint16_t heat17ID1;              /// Current 17mm turret heat, ID2.
             uint16_t heat17ID2;              /// ID2 turret heat.
             uint16_t heatCoolingRate17ID1;   /// 17mm turret cooling value per second, ID1.
@@ -213,22 +229,22 @@ public:
 
         struct RobotData
         {
-            RobotId robotId;             /// Robot type and team.
-            uint8_t robotLevel;          /// Current level of this robot (1-3).
-            uint16_t previousHp;         /// Health of this robot before damage was
-                                         /// received, used to calculate receivedDps
-                                         /// if no damage was received recently,
-                                         /// previousHp = currentHp.
-            uint16_t currentHp;          /// Current health of this robot.
-            uint16_t maxHp;              /// Max health of this robot.
-            RobotPower_t robotPower;     /// Flags indicating which parts of the robot have power
-            ArmorId damagedArmorId : 4;  /// Armor ID that was damaged.
-            DamageType damageType : 4;   /// Cause of damage.
-            float receivedDps;           /// Damage per second received.
-            ChassisData chassis;         /// Chassis power draw and position data.
-            TurretData turret;           /// Turret firing and heat data.
-            RobotHpData allRobotHp;      /// Current HP of all the robots.
-            uint16_t remainingCoins;     /// Number of remaining coins left to spend.
+            RobotId robotId;          /// Robot type and team.
+            uint8_t robotLevel;       /// Current level of this robot (1-3).
+            uint16_t previousHp;      /// Health of this robot before damage was
+                                      /// received, used to calculate receivedDps
+                                      /// if no damage was received recently,
+                                      /// previousHp = currentHp.
+            uint16_t currentHp;       /// Current health of this robot.
+            uint16_t maxHp;           /// Max health of this robot.
+            RobotPower_t robotPower;  /// Flags indicating which parts of the robot have power
+            ArmorId damagedArmorId;   /// Armor ID that was damaged.
+            DamageType damageType;    /// Cause of damage.
+            float receivedDps;        /// Damage per second received.
+            ChassisData chassis;      /// Chassis power draw and position data.
+            TurretData turret;        /// Turret firing and heat data.
+            RobotHpData allRobotHp;   /// Current HP of all the robots.
+            uint16_t remainingCoins;  /// Number of remaining coins left to spend.
             RobotBuffStatus_t robotBuffStatus;  /// Status of all buffs on the robot
             uint16_t aerialEnergyStatus;        /// Countdown timer that indicates how much time the
                                                 /// aerial has left to fire
@@ -237,6 +253,10 @@ public:
         };
     };
 
+    /**
+     * Contains enum and struct definitions specific to sending data to the referee serial class.
+     * Includes structure for sending different types of graphic messages.
+     */
     class Tx
     {
     public:
@@ -252,7 +272,7 @@ public:
             ADD_GRAPHIC_NO_OP = 0,
             ADD_GRAPHIC = 1,
             ADD_GRAPHIC_MODIFY = 2,
-            ADD_GRAPHIC_DELETE = 3  /// Not sure why you can specify delete when adding a graphic
+            ADD_GRAPHIC_DELETE = 3,
         };
 
         enum class GraphicType : uint8_t
@@ -285,13 +305,16 @@ public:
          */
         struct FrameHeader
         {
-            uint8_t SOF;
+            uint8_t SOF;  /// Also known as the "content ID" in the ref system protocol appendix
             uint16_t dataLength;
             uint8_t seq;
             uint8_t CRC8;
         } modm_packed;
 
-        struct GraphicHeader
+        /**
+         * Each graphic message has a graphic header inside of the message data.
+         */
+        struct InteractiveHeader
         {
             uint16_t dataCmdId;
             uint16_t senderId;
@@ -319,7 +342,7 @@ public:
         {
             FrameHeader frameHead;
             uint16_t cmdId;
-            GraphicHeader graphicHead;
+            InteractiveHeader graphicHead;
             uint8_t deleteOperation;
             uint8_t layer;
             uint16_t crc16;
@@ -329,16 +352,24 @@ public:
         {
             FrameHeader msgHeader;
             uint16_t cmdId;
-            GraphicHeader graphicHeader;
+            InteractiveHeader interactiveHeader;
             GraphicData graphicData;
             uint16_t crc16;
+        } modm_packed;
+
+        struct RobotToRobotMessage
+        {
+            FrameHeader msgHeader;
+            uint16_t cmdId;
+            InteractiveHeader interactiveHeader;
+            uint8_t dataAndCRC16[115];
         } modm_packed;
 
         struct Graphic2Message
         {
             FrameHeader msgHeader;
             uint16_t cmdId;
-            GraphicHeader graphicHeader;
+            InteractiveHeader interactiveHeader;
             GraphicData graphicData[2];
             uint16_t crc16;
         } modm_packed;
@@ -347,7 +378,7 @@ public:
         {
             FrameHeader msgHeader;
             uint16_t cmdId;
-            GraphicHeader graphicHeader;
+            InteractiveHeader interactiveHeader;
             GraphicData graphicData[5];
             uint16_t crc16;
         } modm_packed;
@@ -356,7 +387,7 @@ public:
         {
             FrameHeader msgHeader;
             uint16_t cmdId;
-            GraphicHeader graphicHeader;
+            InteractiveHeader interactiveHeader;
             GraphicData graphicData[7];
             uint16_t crc16;
         } modm_packed;
@@ -365,7 +396,7 @@ public:
         {
             FrameHeader msgHeader;
             uint16_t cmdId;
-            GraphicHeader graphicHeader;
+            InteractiveHeader interactiveHeader;
             GraphicData graphicData;
             char msg[30];
             uint16_t crc16;
@@ -373,6 +404,17 @@ public:
     };
 };
 
+inline RefSerialData::RobotId operator+(RefSerialData::RobotId id1, RefSerialData::RobotId id2)
+{
+    return static_cast<RefSerialData::RobotId>(
+        static_cast<uint16_t>(id1) + static_cast<uint16_t>(id2));
+}
+
+inline RefSerialData::RobotId operator-(RefSerialData::RobotId id1, RefSerialData::RobotId id2)
+{
+    return static_cast<RefSerialData::RobotId>(
+        static_cast<uint16_t>(id1) - static_cast<uint16_t>(id2));
+}
 }  // namespace tap::serial
 
 #endif  // REF_SERIAL_DATA_HPP_
