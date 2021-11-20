@@ -181,7 +181,7 @@ void CommandScheduler::run()
         return;
     }
 
-    if (!drivers->remote.isConnected() && safeDisconnectMode)
+    if (safeDisconnected())
     {
         // End all commands running. They were interrupted by the remote disconnecting.
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
@@ -214,7 +214,7 @@ void CommandScheduler::run()
             // If the remote is connected given the scheduler is in safe disconnect mode and
             // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if ((drivers->remote.isConnected() || !safeDisconnectMode) &&
+            if (!safeDisconnected() &&
                 !(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
@@ -243,7 +243,7 @@ void CommandScheduler::run()
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    if (!drivers->remote.isConnected() && safeDisconnectMode)
+    if (safeDisconnected())
     {
         return;
     }
@@ -337,6 +337,11 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
 void CommandScheduler::enableSafeDisconnectMode() { safeDisconnectMode = true; }
 
 void CommandScheduler::disableSafeDisconnectMode() { safeDisconnectMode = false; }
+
+bool CommandScheduler::safeDisconnected()
+{
+    return !drivers->remote.isConnected() && safeDisconnectMode;
+}
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {

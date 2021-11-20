@@ -317,6 +317,12 @@ private:
      */
     bool safeDisconnectMode = false;
 
+    /**
+     * Returns true if the remote is disconnected and the safeDisconnectMode flag is
+     * enabled.
+     */
+    bool safeDisconnected();
+
     Drivers* drivers;
 
     /**
