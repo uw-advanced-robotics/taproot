@@ -22,7 +22,7 @@
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/communication/serial/ref_serial.hpp"
 #include "tap/drivers.hpp"
-#include "tap/mock/message_handler_mock.hpp"
+#include "tap/mock/robot_to_robot_message_handler_mock.hpp"
 
 using namespace tap;
 using namespace tap::serial;
@@ -613,36 +613,41 @@ TEST(RefSerial, deleteGraphicLayer__sends_correct_msg)
     updateRobotId(refSerial, RefSerial::RobotId::RED_SOLDIER_3);
 
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
-            const RefSerial::Tx::DeleteGraphicLayerMessage *msg =
-                reinterpret_cast<const RefSerial::Tx::DeleteGraphicLayerMessage *>(data);
+        .WillOnce(
+            [&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length)
+            {
+                const RefSerial::Tx::DeleteGraphicLayerMessage *msg =
+                    reinterpret_cast<const RefSerial::Tx::DeleteGraphicLayerMessage *>(data);
 
-            EXPECT_EQ(
-                sizeof(msg->interactiveHeader) + sizeof(msg->deleteOperation) + sizeof(msg->layer),
-                msg->frameHeader.dataLength);
-            uint16_t cmdId = *reinterpret_cast<const uint16_t *>(data + sizeof(msg->frameHeader));
-            EXPECT_EQ(0x0301, cmdId);
-            EXPECT_EQ(0xa5, msg->frameHeader.SOF);
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC8(data, sizeof(msg->frameHeader) - 1),
-                msg->frameHeader.CRC8);
+                EXPECT_EQ(
+                    sizeof(msg->interactiveHeader) + sizeof(msg->deleteOperation) +
+                        sizeof(msg->layer),
+                    msg->frameHeader.dataLength);
+                uint16_t cmdId =
+                    *reinterpret_cast<const uint16_t *>(data + sizeof(msg->frameHeader));
+                EXPECT_EQ(0x0301, cmdId);
+                EXPECT_EQ(0xa5, msg->frameHeader.SOF);
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC8(data, sizeof(msg->frameHeader) - 1),
+                    msg->frameHeader.CRC8);
 
-            EXPECT_EQ(0x0100, msg->interactiveHeader.dataCmdId);
-            EXPECT_EQ(
-                0x0100 + static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
-                msg->interactiveHeader.receiverId);
-            EXPECT_EQ(
-                static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
-                msg->interactiveHeader.senderId);
+                EXPECT_EQ(0x0100, msg->interactiveHeader.dataCmdId);
+                EXPECT_EQ(
+                    0x0100 + static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
+                    msg->interactiveHeader.receiverId);
+                EXPECT_EQ(
+                    static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
+                    msg->interactiveHeader.senderId);
 
-            EXPECT_EQ(0x0301, msg->cmdId);
-            EXPECT_EQ(
-                static_cast<uint16_t>(RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER),
-                msg->deleteOperation);
-            EXPECT_EQ(2, msg->layer);
+                EXPECT_EQ(0x0301, msg->cmdId);
+                EXPECT_EQ(
+                    static_cast<uint16_t>(
+                        RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER),
+                    msg->deleteOperation);
+                EXPECT_EQ(2, msg->layer);
 
-            return length;
-        });
+                return length;
+            });
 
     refSerial.deleteGraphicLayer(RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER, 2);
 }
@@ -717,45 +722,48 @@ TEST(RefSerial, sendGraphic__characterMessage)
     EXPECT_CALL(
         drivers.uart,
         write(testing::_, testing::_, sizeof(RefSerial::Tx::GraphicCharacterMessage)))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
-            const auto header = reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
-            EXPECT_EQ(
-                sizeof(msg.interactiveHeader) + sizeof(msg.graphicData) + sizeof(msg.msg),
-                header->dataLength);
-
-            uint16_t cmdId = *reinterpret_cast<const uint16_t *>(data + sizeof(msg.frameHeader));
-            EXPECT_EQ(0x0301, cmdId);
-
-            const auto interactiveHeader =
-                reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
-                    data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
-            EXPECT_EQ(0x0110, interactiveHeader->dataCmdId);
-            EXPECT_EQ(
-                RefSerial::RobotId::BLUE_ENGINEER,
-                static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
-            EXPECT_EQ(
-                0x100 + static_cast<uint16_t>(RefSerial::RobotId::BLUE_ENGINEER),
-                interactiveHeader->receiverId);
-
-            // Don't care about graphic data, only msg
-
-            const uint8_t *msgData = data + sizeof(msg.frameHeader) + sizeof(msg.cmdId) +
-                                     sizeof(msg.interactiveHeader) + sizeof(msg.graphicData);
-            for (size_t i = 0; i < 6; i++)
+        .WillOnce(
+            [&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length)
             {
-                EXPECT_EQ(msg.msg[i], msgData[i]);
-            }
+                const auto header = reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+                EXPECT_EQ(
+                    sizeof(msg.interactiveHeader) + sizeof(msg.graphicData) + sizeof(msg.msg),
+                    header->dataLength);
 
-            // Validate crc16
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC16(
-                    data,
-                    sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)),
-                *reinterpret_cast<const uint16_t *>(
-                    data + sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)));
+                uint16_t cmdId =
+                    *reinterpret_cast<const uint16_t *>(data + sizeof(msg.frameHeader));
+                EXPECT_EQ(0x0301, cmdId);
 
-            return length;
-        });
+                const auto interactiveHeader =
+                    reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
+                        data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
+                EXPECT_EQ(0x0110, interactiveHeader->dataCmdId);
+                EXPECT_EQ(
+                    RefSerial::RobotId::BLUE_ENGINEER,
+                    static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
+                EXPECT_EQ(
+                    0x100 + static_cast<uint16_t>(RefSerial::RobotId::BLUE_ENGINEER),
+                    interactiveHeader->receiverId);
+
+                // Don't care about graphic data, only msg
+
+                const uint8_t *msgData = data + sizeof(msg.frameHeader) + sizeof(msg.cmdId) +
+                                         sizeof(msg.interactiveHeader) + sizeof(msg.graphicData);
+                for (size_t i = 0; i < 6; i++)
+                {
+                    EXPECT_EQ(msg.msg[i], msgData[i]);
+                }
+
+                // Validate crc16
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC16(
+                        data,
+                        sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)),
+                    *reinterpret_cast<const uint16_t *>(
+                        data + sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)));
+
+                return length;
+            });
 
     refSerial.sendGraphic(&msg);
 }
@@ -789,40 +797,42 @@ TEST(RefSerial, sendRobotToRobotMessage__validate_sending_msg_to_same_color_robo
                                         sizeof(msg.interactiveHeader) + msgLen + sizeof(uint16_t);
 
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, entireMsgLen))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
-            // Decode and validate header
-            const RefSerial::Tx::FrameHeader *header =
-                reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
-            EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
-            EXPECT_EQ(0xa5, header->SOF);
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC8(data, sizeof(RefSerial::Tx::FrameHeader) - 1),
-                header->CRC8);
+        .WillOnce(
+            [&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length)
+            {
+                // Decode and validate header
+                const RefSerial::Tx::FrameHeader *header =
+                    reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+                EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
+                EXPECT_EQ(0xa5, header->SOF);
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC8(data, sizeof(RefSerial::Tx::FrameHeader) - 1),
+                    header->CRC8);
 
-            // Decode and validate interactive header
-            const RefSerial::Tx::InteractiveHeader *interactiveHeader =
-                reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
-                    data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
-            EXPECT_EQ(0x0200, interactiveHeader->dataCmdId);
-            EXPECT_EQ(
-                RefSerial::RobotId::RED_HERO,
-                static_cast<RefSerial::RobotId>(interactiveHeader->receiverId));
-            EXPECT_EQ(
-                RefSerial::RobotId::RED_DRONE,
-                static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
+                // Decode and validate interactive header
+                const RefSerial::Tx::InteractiveHeader *interactiveHeader =
+                    reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
+                        data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
+                EXPECT_EQ(0x0200, interactiveHeader->dataCmdId);
+                EXPECT_EQ(
+                    RefSerial::RobotId::RED_HERO,
+                    static_cast<RefSerial::RobotId>(interactiveHeader->receiverId));
+                EXPECT_EQ(
+                    RefSerial::RobotId::RED_DRONE,
+                    static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
 
-            // Decode and validate message
-            static constexpr int START_DATA_OFFSET =
-                sizeof(msg.frameHeader) + sizeof(msg.cmdId) + sizeof(msg.interactiveHeader);
-            EXPECT_EQ('h', data[START_DATA_OFFSET]);
-            EXPECT_EQ('i', data[START_DATA_OFFSET + 1]);
+                // Decode and validate message
+                static constexpr int START_DATA_OFFSET =
+                    sizeof(msg.frameHeader) + sizeof(msg.cmdId) + sizeof(msg.interactiveHeader);
+                EXPECT_EQ('h', data[START_DATA_OFFSET]);
+                EXPECT_EQ('i', data[START_DATA_OFFSET + 1]);
 
-            // Validate crc16
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC16(data, entireMsgLen - sizeof(uint16_t)),
-                *reinterpret_cast<const uint16_t *>(data + entireMsgLen - sizeof(uint16_t)));
-            return length;
-        });
+                // Validate crc16
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC16(data, entireMsgLen - sizeof(uint16_t)),
+                    *reinterpret_cast<const uint16_t *>(data + entireMsgLen - sizeof(uint16_t)));
+                return length;
+            });
 
     refSerial.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 2);
 }
@@ -907,11 +917,14 @@ TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 
-    EXPECT_CALL(handler, functorOp).WillOnce([&](const DJISerial::SerialMessage &message) {
-        EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
-        EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
-        EXPECT_EQ(sizeof(SpecialData), message.length);
-    });
+    EXPECT_CALL(handler, functorOp)
+        .WillOnce(
+            [&](const DJISerial::SerialMessage &message)
+            {
+                EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
+                EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
+                EXPECT_EQ(sizeof(SpecialData), message.length);
+            });
 
     refSerial.messageReceiveCallback(msg);
 }

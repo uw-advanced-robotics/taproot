@@ -17,7 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "message_handler_mock.hpp"
+#include "robot_to_robot_message_handler_mock.hpp"
 
 namespace tap::mock
 {
