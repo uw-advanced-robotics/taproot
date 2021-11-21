@@ -336,7 +336,7 @@ public:
             uint32_t radius : 10;
             uint32_t endX : 11;
             uint32_t endY : 11;
-        };
+        } modm_packed;
 
         struct DeleteGraphicLayerMessage
         {
