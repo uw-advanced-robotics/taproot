@@ -70,25 +70,17 @@ before_script:
 .run_lbuild:
   script:
     - cd test-project && lbuild build && cd ..
-  cache:
-    untracked: true
-    key: ${BOARD_TYPE}_project
+  artifacts:
     paths:
       - test-project
 
-.type_a_config_cache:
+.type_a_config_dependencies:
   needs: ["Type A: Generate Test Project"]
   dependencies: ["Type A: Generate Test Project"]
-  cache:
-    key: type_a_project
-    untracked: true
 
-.type_c_config_cache:
+.type_c_config_dependencies:
   needs: ["Type C: Generate Test Project"]
   dependencies: ["Type C: Generate Test Project"]
-  cache:
-    key: type_c_project
-    untracked: true
 
 .mcb_build:
   stage: "Build all Targets"
@@ -146,33 +138,33 @@ before_script:
 # Type A CI
 "Type A: MCB Build":
   extends:
-    - .type_a_config_cache
+    - .type_a_config_dependencies
     - .mcb_build
 
 "Type A: Sim Build":
   extends:
-    - .type_a_config_cache
+    - .type_a_config_dependencies
     - .sim_build
 
 "Type A: Tests Build":
   extends:
-    - .type_a_config_cache
+    - .type_a_config_dependencies
     - .tests_build
 
 # Type C CI
 "Type C: MCB Build":
   extends:
-    - .type_c_config_cache
+    - .type_c_config_dependencies
     - .mcb_build
 
 "Type C: Sim Build":
   extends:
-    - .type_c_config_cache
+    - .type_c_config_dependencies
     - .sim_build
 
 "Type C: Tests Build":
   extends:
-    - .type_c_config_cache
+    - .type_c_config_dependencies
     - .tests_build
 
 # Pages deploy
