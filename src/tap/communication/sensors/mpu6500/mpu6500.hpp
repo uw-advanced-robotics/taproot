@@ -78,7 +78,7 @@ public:
      * To be safe, whenever you call the functions below, call this function to insure
      * the data you are about to receive is not garbage.
      */
-    mockable bool initialized() const;
+    mockable bool isReady() const;
 
     /**
      * Returns the acceleration reading in the x direction, in
@@ -141,6 +141,11 @@ public:
      * type A board lies on and of the angle directly upward.
      */
     mockable float getTiltAngle();
+
+    /**
+     * Uninitializes the mpu6500 and enters calibration mode.
+     */
+    mockable void requestCalibration();
 
     /**
      * Use for converting from gyro values we receive to more conventional degrees / second.
@@ -225,7 +230,7 @@ private:
 
     Drivers *drivers;
 
-    bool imuInitialized = false;
+    bool imuReady = false;
 
     tap::arch::MicroTimeout readRegistersTimeout;
     uint8_t tx = 0;  /// Byte used for reading data in the read protothread
@@ -244,15 +249,7 @@ private:
 
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
-    /**
-     * Compute the gyro offset values. @note this function blocks.
-     */
-    void calculateGyroOffset();
-
-    /**
-     * Calibrate accelerometer offset values. @note this function blocks.
-     */
-    void calculateAccOffset();
+    int calibrationSample = 0;
 
     // Functions for interacting with hardware directly.
 
@@ -288,12 +285,6 @@ private:
      * from that point.
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
-
-    /**
-     * Reads the temperature high/low registers of the mpu6500 in a
-     * blocking fashion.
-     */
-    void readTemperatureBlocking();
 };
 
 }  // namespace sensors
