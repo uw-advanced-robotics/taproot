@@ -17,20 +17,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <gmock/gmock.h>
-
-#include "tap/communication/serial/ref_serial.hpp"
+#include "message_handler_mock.hpp"
 
 namespace tap::mock
 {
-class MessageHandlerMock : public tap::serial::RefSerial::RobotToRobotMessageHandler
+RobotToRobotMessageHandlerMock::RobotToRobotMessageHandlerMock()
+    : tap::serial::RefSerial::RobotToRobotMessageHandler()
 {
-public:
-    MessageHandlerMock();
-    MOCK_METHOD1(functorOp, void(const tap::serial::DJISerial::SerialMessage &));
-    void operator()(const tap::serial::DJISerial::SerialMessage &message) override
-    {
-        return functorOp(message);
-    }
-};
+}
 }  // namespace tap::mock

@@ -864,7 +864,7 @@ TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_out_of_b
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    tap::mock::MessageHandlerMock handler;
+    tap::mock::RobotToRobotMessageHandlerMock handler;
 
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
 
@@ -876,7 +876,7 @@ TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_already_
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    tap::mock::MessageHandlerMock handler;
+    tap::mock::RobotToRobotMessageHandlerMock handler;
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 
@@ -898,7 +898,7 @@ TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
     DJISerial::SerialMessage msg;
     SpecialData specialData;
 
-    tap::mock::MessageHandlerMock handler;
+    tap::mock::RobotToRobotMessageHandlerMock handler;
 
     specialData.interactiveHeader.dataCmdId = 0x201;
     specialData.hi[0] = 'h';
