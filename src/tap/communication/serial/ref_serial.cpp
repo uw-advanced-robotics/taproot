@@ -121,11 +121,6 @@ void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
     }
 }
 
-uint16_t RefSerial::getRobotClientID(RobotId robotId)
-{
-    return 0x100 + static_cast<uint16_t>(robotId);
-}
-
 const RefSerialData::Rx::RobotData& RefSerial::getRobotData() const { return robotData; }
 
 const RefSerialData::Rx::GameData& RefSerial::getGameData() const { return gameData; }
@@ -520,21 +515,43 @@ void RefSerial::configCharacterMsg(
     strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS - 1);
 }
 
+/**
+ * Given RobotId, returns the client_id that the referee system uses to display
+ * the received messages to the given client_id robot.
+ *
+ * @param[in] robotId the id of the robot received from the referee system
+ *      to get the client_id of.
+ * @return the client_id of the robot requested.
+ */
+static uint16_t getRobotClientID(RefSerial::RobotId robotId)
+{
+    return 0x100 + static_cast<uint16_t>(robotId);
+}
+
 void RefSerial::deleteGraphicLayer(
     Tx::DeleteGraphicOperation graphicOperation,
     uint8_t graphicLayer)
 {
+    if (robotData.robotId == RefSerial::RobotId::INVALID)
+    {
+        return;
+    }
+
     Tx::DeleteGraphicLayerMessage msg;
     msg.deleteOperation = graphicOperation;
     msg.layer = graphicLayer;
 
     configFrameHeader(
-        &msg.frameHead,
-        sizeof(msg.graphicHead) + sizeof(msg.deleteOperation) + sizeof(msg.layer));
+        &msg.frameHeader,
+        sizeof(msg.interactiveHeader) + sizeof(msg.deleteOperation) + sizeof(msg.layer));
 
     msg.cmdId = REF_MESSAGE_TYPE_CUSTOM_DATA;
 
-    configInteractiveHeader(&msg.graphicHead, 0x100, robotData.robotId);
+    configInteractiveHeader(
+        &msg.interactiveHeader,
+        0x100,
+        robotData.robotId,
+        getRobotClientID(robotData.robotId));
 
     msg.crc16 = algorithms::calculateCRC16(
         reinterpret_cast<uint8_t*>(&msg),
@@ -562,16 +579,25 @@ static void sendGraphicHelper(
     Drivers* drivers,
     int extraDataLength = 0)
 {
+    if (robotId == RefSerial::RobotId::INVALID)
+    {
+        return;
+    }
+
     if (configMsgHeader)
     {
         RefSerial::configFrameHeader(
-            &graphicMsg->msgHeader,
+            &graphicMsg->frameHeader,
             sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) +
                 extraDataLength);
 
         graphicMsg->cmdId = RefSerial::REF_MESSAGE_TYPE_CUSTOM_DATA;
 
-        RefSerial::configInteractiveHeader(&graphicMsg->interactiveHeader, cmdId, robotId);
+        RefSerial::configInteractiveHeader(
+            &graphicMsg->interactiveHeader,
+            cmdId,
+            robotId,
+            getRobotClientID(robotId));
 
         graphicMsg->crc16 = algorithms::calculateCRC16(
             reinterpret_cast<uint8_t*>(graphicMsg),
@@ -621,7 +647,7 @@ void RefSerial::sendGraphic(
         GRAPHIC_MAX_CHARACTERS);
 }
 
-void RefSerial::configRobotToRobotMsgHeader(
+void RefSerial::sendRobotToRobotMsg(
     Tx::RobotToRobotMessage* robotToRobotMsg,
     uint16_t msgId,
     RobotId receiverId,
@@ -646,20 +672,30 @@ void RefSerial::configRobotToRobotMsgHeader(
             tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
     }
 
+    if (robotData.robotId == RobotId::INVALID)
+    {
+        return;
+    }
+
     configFrameHeader(
-        &robotToRobotMsg->msgHeader,
+        &robotToRobotMsg->frameHeader,
         sizeof(robotToRobotMsg->interactiveHeader) + msgLen);
 
     robotToRobotMsg->cmdId = REF_MESSAGE_TYPE_CUSTOM_DATA;
 
-    configInteractiveHeader(&robotToRobotMsg->interactiveHeader, msgId, receiverId);
+    configInteractiveHeader(
+        &robotToRobotMsg->interactiveHeader,
+        msgId,
+        robotData.robotId,
+        static_cast<uint16_t>(receiverId));
 
-    uint16_t msgSizeToCRC16 =
-        sizeof(robotToRobotMsg->msgHeader) + sizeof(robotToRobotMsg->cmdId) + msgLen;
+    uint16_t msgSizeToCRC16 = sizeof(robotToRobotMsg->frameHeader) +
+                              sizeof(robotToRobotMsg->cmdId) +
+                              sizeof(robotToRobotMsg->interactiveHeader) + msgLen;
     uint16_t* crc16Location = reinterpret_cast<uint16_t*>(robotToRobotMsg->dataAndCRC16 + msgLen);
 
     *crc16Location =
-        algorithms::calculateCRC16(reinterpret_cast<uint8_t*>(&robotToRobotMsg), msgSizeToCRC16);
+        algorithms::calculateCRC16(reinterpret_cast<uint8_t*>(robotToRobotMsg), msgSizeToCRC16);
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
@@ -680,15 +716,21 @@ void RefSerial::configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen)
 void RefSerial::configInteractiveHeader(
     Tx::InteractiveHeader* header,
     uint16_t cmdId,
-    RobotId robotId)
+    RobotId senderId,
+    uint16_t receiverId)
 {
     header->dataCmdId = cmdId;
-    header->senderId = static_cast<uint16_t>(robotId);
-    header->receiverId = getRobotClientID(robotId);
+    header->senderId = static_cast<uint16_t>(senderId);
+    header->receiverId = receiverId;
 }
 
 RefSerial::RobotId RefSerial::getRobotIdBasedOnCurrentRobotTeam(RobotId id)
 {
+    if (id == RobotId::INVALID || robotData.robotId == RobotId::INVALID)
+    {
+        return id;
+    }
+
     if (!isBlueTeam(robotData.robotId) && isBlueTeam(id))
     {
         id = id - RobotId::BLUE_HERO + RobotId::RED_HERO;

@@ -51,7 +51,7 @@ public:
     MOCK_METHOD(void, sendGraphic, (Tx::GraphicCharacterMessage*, bool, bool), (override));
     MOCK_METHOD(
         void,
-        configRobotToRobotMsgHeader,
+        sendRobotToRobotMsg,
         (Tx::RobotToRobotMessage*, uint16_t, RobotId, uint16_t),
         (override));
     MOCK_METHOD(RobotId, getRobotIdBasedOnCurrentRobotTeam, (RobotId), (override));

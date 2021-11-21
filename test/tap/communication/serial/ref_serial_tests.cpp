@@ -197,32 +197,6 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
     DJISerial::SerialMessage msg;
     GameRobotStatus testData;
 
-    // red team
-    for (int i = static_cast<int>(RefSerial::RobotId::RED_HERO);
-         i <= static_cast<int>(RefSerial::RobotId::RED_RADAR_STATION);
-         i++)
-    {
-        testData.robotId = i;
-        msg = constructMsg(testData, 0x0201);
-
-        refSerial.messageReceiveCallback(msg);
-
-        EXPECT_EQ(i, static_cast<int>(refSerial.getRobotData().robotId));
-    }
-
-    // blue team
-    for (int i = static_cast<int>(RefSerial::RobotId::BLUE_HERO);
-         i <= static_cast<int>(RefSerial::RobotId::BLUE_RADAR_STATION);
-         i++)
-    {
-        testData.robotId = i;
-        msg = constructMsg(testData, 0x0201);
-
-        refSerial.messageReceiveCallback(msg);
-
-        EXPECT_EQ(i, static_cast<int>(refSerial.getRobotData().robotId));
-    }
-
     testData.robot_level = 3;
     testData.remain_HP = 1001;
     testData.max_HP = 2001;
@@ -253,6 +227,32 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
     EXPECT_EQ(439, refSerial.getRobotData().turret.heatLimit42);
     EXPECT_EQ(13, refSerial.getRobotData().turret.barrelSpeedLimit42);
     EXPECT_EQ(987, refSerial.getRobotData().chassis.powerConsumptionLimit);
+
+    // red team
+    for (int i = static_cast<int>(RefSerial::RobotId::RED_HERO);
+         i <= static_cast<int>(RefSerial::RobotId::RED_RADAR_STATION);
+         i++)
+    {
+        testData.robotId = i;
+        msg = constructMsg(testData, 0x0201);
+
+        refSerial.messageReceiveCallback(msg);
+
+        EXPECT_EQ(i, static_cast<int>(refSerial.getRobotData().robotId));
+    }
+
+    // blue team
+    for (int i = static_cast<int>(RefSerial::RobotId::BLUE_HERO);
+         i <= static_cast<int>(RefSerial::RobotId::BLUE_RADAR_STATION);
+         i++)
+    {
+        testData.robotId = i;
+        msg = constructMsg(testData, 0x0201);
+
+        refSerial.messageReceiveCallback(msg);
+
+        EXPECT_EQ(i, static_cast<int>(refSerial.getRobotData().robotId));
+    }
 
     // Main controller power supply condition
 
@@ -453,6 +453,8 @@ TEST(RefSerial, messageReceiveCallback__damage_status)
     DJISerial::SerialMessage msg;
     RobotDamage testData;
 
+    testData.armorId = 0;
+    testData.hurtType = 0;
     msg = constructMsg(testData, 0x0206);
     refSerial.messageReceiveCallback(msg);
 
@@ -581,14 +583,282 @@ TEST(RefSerial, configGraphicGenerics__sets_name_operation_layer_color)
     EXPECT_EQ(static_cast<uint8_t>(RefSerial::Tx::GraphicColor::PINK), data.color);
 }
 
-TEST(RefSerial, deleteGraphicLayer__) {}
-TEST(RefSerial, sendGraphic__1) {}
-TEST(RefSerial, sendGraphic__2) {}
-TEST(RefSerial, sendGraphic__5) {}
-TEST(RefSerial, sendGraphic__7) {}
-TEST(RefSerial, sendGraphic__characterMessage) {}
-TEST(RefSerial, configRobotToRobotMessage__) {}
-TEST(RefSerial, getRobotIdBasedOnCurrentRobotTeam__) {}
+static void updateRobotId(RefSerial &refSerial, RefSerial::RobotId id)
+{
+    DJISerial::SerialMessage msg;
+    GameRobotStatus testData;
+    testData.remain_HP = 300;
+    testData.robotId = static_cast<uint16_t>(id);
+    msg = constructMsg(testData, 0x0201);
+    refSerial.messageReceiveCallback(msg);
+}
+
+TEST(RefSerial, deleteGraphicLayer__doesnt_send_if_robot_id_invalid)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::DeleteGraphicOperation op =
+        RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER;
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_)).Times(0);
+
+    refSerial.deleteGraphicLayer(op, 1);
+}
+
+TEST(RefSerial, deleteGraphicLayer__sends_correct_msg)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+
+    updateRobotId(refSerial, RefSerial::RobotId::RED_SOLDIER_3);
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_))
+        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+            const RefSerial::Tx::DeleteGraphicLayerMessage *msg =
+                reinterpret_cast<const RefSerial::Tx::DeleteGraphicLayerMessage *>(data);
+
+            EXPECT_EQ(
+                sizeof(msg->interactiveHeader) + sizeof(msg->deleteOperation) + sizeof(msg->layer),
+                msg->frameHeader.dataLength);
+            uint16_t cmdId = *reinterpret_cast<const uint16_t *>(data + sizeof(msg->frameHeader));
+            EXPECT_EQ(0x0301, cmdId);
+            EXPECT_EQ(0xa5, msg->frameHeader.SOF);
+            EXPECT_EQ(
+                tap::algorithms::calculateCRC8(data, sizeof(msg->frameHeader) - 1),
+                msg->frameHeader.CRC8);
+
+            EXPECT_EQ(0x0100, msg->interactiveHeader.dataCmdId);
+            EXPECT_EQ(
+                0x0100 + static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
+                msg->interactiveHeader.receiverId);
+            EXPECT_EQ(
+                static_cast<uint16_t>(RefSerial::RobotId::RED_SOLDIER_3),
+                msg->interactiveHeader.senderId);
+
+            EXPECT_EQ(0x0301, msg->cmdId);
+            EXPECT_EQ(
+                static_cast<uint16_t>(RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER),
+                msg->deleteOperation);
+            EXPECT_EQ(2, msg->layer);
+
+            return length;
+        });
+
+    refSerial.deleteGraphicLayer(RefSerial::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER, 2);
+}
+
+TEST(RefSerial, sendGraphic__1_doesnt_send_if_robot_id_invalid)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::Graphic1Message msg{};
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_)).Times(0);
+
+    refSerial.sendGraphic(&msg);
+}
+
+TEST(RefSerial, sendGraphic__1_doesnt_sen_but_configures_if_sendMsg_false)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::Graphic1Message msg{};
+
+    updateRobotId(refSerial, RefSerial::RobotId::BLUE_SOLDIER_1);
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_)).Times(0);
+
+    refSerial.sendGraphic(&msg, true, false);
+
+    // validate the msg header was still constructed
+    EXPECT_EQ(0x0301, msg.cmdId);
+    EXPECT_EQ(sizeof(msg.graphicData) + sizeof(msg.interactiveHeader), msg.frameHeader.dataLength);
+    EXPECT_EQ(0xa5, msg.frameHeader.SOF);
+    EXPECT_EQ(
+        static_cast<uint16_t>(RefSerial::RobotId::BLUE_SOLDIER_1),
+        msg.interactiveHeader.senderId);
+    EXPECT_EQ(
+        0x100 + static_cast<uint16_t>(RefSerial::RobotId::BLUE_SOLDIER_1),
+        msg.interactiveHeader.receiverId);
+}
+
+TEST(RefSerial, sendGraphic__1_doesnt_send_or_config_if_configMsgHeader_sendMsg_false)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::Graphic1Message msg{};
+    msg.cmdId = 0x1;
+
+    updateRobotId(refSerial, RefSerial::RobotId::BLUE_SOLDIER_1);
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_)).Times(0);
+
+    refSerial.sendGraphic(&msg, false, false);
+
+    // validate the msg header was still constructed
+    EXPECT_EQ(0x1, msg.cmdId);
+}
+
+TEST(RefSerial, sendGraphic__characterMessage)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::GraphicCharacterMessage msg{};
+
+    updateRobotId(refSerial, RefSerial::RobotId::BLUE_ENGINEER);
+
+    msg.msg[0] = 'h';
+    msg.msg[1] = 'e';
+    msg.msg[2] = 'l';
+    msg.msg[3] = 'l';
+    msg.msg[4] = 'o';
+    msg.msg[5] = '\0';
+
+    EXPECT_CALL(
+        drivers.uart,
+        write(testing::_, testing::_, sizeof(RefSerial::Tx::GraphicCharacterMessage)))
+        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+            const auto header = reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+            EXPECT_EQ(
+                sizeof(msg.interactiveHeader) + sizeof(msg.graphicData) + sizeof(msg.msg),
+                header->dataLength);
+
+            uint16_t cmdId = *reinterpret_cast<const uint16_t *>(data + sizeof(msg.frameHeader));
+            EXPECT_EQ(0x0301, cmdId);
+
+            const auto interactiveHeader =
+                reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
+                    data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
+            EXPECT_EQ(0x0110, interactiveHeader->dataCmdId);
+            EXPECT_EQ(
+                RefSerial::RobotId::BLUE_ENGINEER,
+                static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
+            EXPECT_EQ(
+                0x100 + static_cast<uint16_t>(RefSerial::RobotId::BLUE_ENGINEER),
+                interactiveHeader->receiverId);
+
+            // Don't care about graphic data, only msg
+
+            const uint8_t *msgData = data + sizeof(msg.frameHeader) + sizeof(msg.cmdId) +
+                                     sizeof(msg.interactiveHeader) + sizeof(msg.graphicData);
+            for (size_t i = 0; i < 6; i++)
+            {
+                EXPECT_EQ(msg.msg[i], msgData[i]);
+            }
+
+            // Validate crc16
+            EXPECT_EQ(
+                tap::algorithms::calculateCRC16(
+                    data,
+                    sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)),
+                *reinterpret_cast<const uint16_t *>(
+                    data + sizeof(RefSerial::Tx::GraphicCharacterMessage) - sizeof(uint16_t)));
+
+            return length;
+        });
+
+    refSerial.sendGraphic(&msg);
+}
+
+TEST(RefSerial, sendRobotToRobotMessage__invalid_id_fails_to_send)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::RobotToRobotMessage msg{};
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+
+    refSerial.sendRobotToRobotMsg(&msg, 0x01ff, RefSerial::RobotId::RED_HERO, 2);
+    refSerial.sendRobotToRobotMsg(&msg, 0x1000, RefSerial::RobotId::RED_HERO, 2);
+}
+
+TEST(RefSerial, sendRobotToRobotMessage__validate_sending_msg_to_same_color_robot_works)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    RefSerial::Tx::RobotToRobotMessage msg;
+
+    updateRobotId(refSerial, RefSerial::RobotId::RED_DRONE);
+
+    msg.dataAndCRC16[0] = 'h';
+    msg.dataAndCRC16[1] = 'i';
+
+    static constexpr int msgLen = 2;
+
+    static constexpr int entireMsgLen = sizeof(msg.frameHeader) + sizeof(msg.cmdId) +
+                                        sizeof(msg.interactiveHeader) + msgLen + sizeof(uint16_t);
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, entireMsgLen))
+        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+            // Decode and validate header
+            const RefSerial::Tx::FrameHeader *header =
+                reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+            EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
+            EXPECT_EQ(0xa5, header->SOF);
+            EXPECT_EQ(
+                tap::algorithms::calculateCRC8(data, sizeof(RefSerial::Tx::FrameHeader) - 1),
+                header->CRC8);
+
+            // Decode and validate interactive header
+            const RefSerial::Tx::InteractiveHeader *interactiveHeader =
+                reinterpret_cast<const RefSerial::Tx::InteractiveHeader *>(
+                    data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
+            EXPECT_EQ(0x0200, interactiveHeader->dataCmdId);
+            EXPECT_EQ(
+                RefSerial::RobotId::RED_HERO,
+                static_cast<RefSerial::RobotId>(interactiveHeader->receiverId));
+            EXPECT_EQ(
+                RefSerial::RobotId::RED_DRONE,
+                static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
+
+            // Decode and validate message
+            static constexpr int START_DATA_OFFSET =
+                sizeof(msg.frameHeader) + sizeof(msg.cmdId) + sizeof(msg.interactiveHeader);
+            EXPECT_EQ('h', data[START_DATA_OFFSET]);
+            EXPECT_EQ('i', data[START_DATA_OFFSET + 1]);
+
+            // Validate crc16
+            EXPECT_EQ(
+                tap::algorithms::calculateCRC16(data, entireMsgLen - sizeof(uint16_t)),
+                *reinterpret_cast<const uint16_t *>(data + entireMsgLen - sizeof(uint16_t)));
+            return length;
+        });
+
+    refSerial.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 2);
+}
+
+TEST(
+    RefSerial,
+    getRobotIdBasedOnCurrentRobotTeam__returns_proper_robot_id_based_on_current_robot_id)
+{
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+
+    EXPECT_EQ(
+        RefSerial::RobotId::INVALID,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::INVALID));
+
+    updateRobotId(refSerial, RefSerial::RobotId::BLUE_SENTINEL);
+
+    EXPECT_EQ(
+        RefSerial::RobotId::INVALID,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::INVALID));
+    EXPECT_EQ(
+        RefSerial::RobotId::BLUE_SOLDIER_2,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::BLUE_SOLDIER_2));
+    EXPECT_EQ(
+        RefSerial::RobotId::BLUE_SOLDIER_2,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::RED_SOLDIER_2));
+
+    updateRobotId(refSerial, RefSerial::RobotId::RED_RADAR_STATION);
+
+    EXPECT_EQ(
+        RefSerial::RobotId::RED_HERO,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::BLUE_HERO));
+    EXPECT_EQ(
+        RefSerial::RobotId::RED_HERO,
+        refSerial.getRobotIdBasedOnCurrentRobotTeam(RefSerial::RobotId::RED_HERO));
+}
 
 TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_out_of_bounsd)
 {

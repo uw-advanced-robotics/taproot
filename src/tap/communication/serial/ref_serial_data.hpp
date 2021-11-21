@@ -340,9 +340,9 @@ public:
 
         struct DeleteGraphicLayerMessage
         {
-            FrameHeader frameHead;
+            FrameHeader frameHeader;
             uint16_t cmdId;
-            InteractiveHeader graphicHead;
+            InteractiveHeader interactiveHeader;
             uint8_t deleteOperation;
             uint8_t layer;
             uint16_t crc16;
@@ -350,7 +350,7 @@ public:
 
         struct Graphic1Message
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;
@@ -359,7 +359,7 @@ public:
 
         struct RobotToRobotMessage
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             uint8_t dataAndCRC16[115];
@@ -367,7 +367,7 @@ public:
 
         struct Graphic2Message
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[2];
@@ -376,7 +376,7 @@ public:
 
         struct Graphic5Message
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[5];
@@ -385,7 +385,7 @@ public:
 
         struct Graphic7Message
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[7];
@@ -394,7 +394,7 @@ public:
 
         struct GraphicCharacterMessage
         {
-            FrameHeader msgHeader;
+            FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;

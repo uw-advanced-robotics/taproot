@@ -66,9 +66,7 @@ private:
      */
     static constexpr uint16_t DPS_TRACKER_DEQUE_SIZE = 20;
 
-    static constexpr int GRAPHIC_MSG_HEADER_LENGTH = 6;
     static constexpr int GRAPHIC_MAX_CHARACTERS = 30;
-    static constexpr int GRAPHIC_DATA_LENGTH = 15;
 
 public:
     // RX message type defines, ignored message types commented out, referred to as "Command ID"s in
@@ -147,7 +145,7 @@ public:
      * @param[out] graphicData The structure where generic data will be stored.
      * @param[in] name The name of the graphic.
      * @param[in] operation The graphic operation to be done (add/remove, etc).
-     * @param[in] layer The graphic layer the graphic will be located at.
+     * @param[in] layer The graphic layer the graphic will be located at. Must be between 0-9
      * @param[in] color The color of the graphic.
      */
     static void configGraphicGenerics(
@@ -281,13 +279,14 @@ public:
     static void configInteractiveHeader(
         Tx::InteractiveHeader* header,
         uint16_t cmdId,
-        RobotId robotId);
+        RobotId senderId,
+        uint16_t receiverId);
 
     /**
      * Deletes an entire graphic layer or the entire screen
      *
      * @param[in] graphicOperation Whether to delete a single layer or the entire screen.
-     * @param[in] graphicLayer The layer to remove.
+     * @param[in] graphicLayer The layer to remove. Must be between 0-9
      */
     mockable void deleteGraphicLayer(
         Tx::DeleteGraphicOperation graphicOperation,
@@ -323,7 +322,7 @@ public:
         bool configMsgHeader = true,
         bool sendMsg = true);
 
-    mockable void configRobotToRobotMsgHeader(
+    mockable void sendRobotToRobotMsg(
         Tx::RobotToRobotMessage* robotToRobotMsg,
         uint16_t msgId,
         RobotId receiverId,
@@ -347,16 +346,6 @@ private:
     modm::BoundedDeque<Rx::DamageEvent, DPS_TRACKER_DEQUE_SIZE> receivedDpsTracker;
     arch::MilliTimeout refSerialOfflineTimeout;
     std::unordered_map<uint16_t, RobotToRobotMessageHandler*> msgIdToRobotToRobotHandlerMap;
-
-    /**
-     * Given RobotId, returns the client_id that the referee system uses to display
-     * the received messages to the given client_id robot.
-     *
-     * @param[in] robotId the id of the robot received from the referee system
-     *      to get the client_id of.
-     * @return the client_id of the robot requested.
-     */
-    static uint16_t getRobotClientID(RobotId robotId);
 
     /**
      * Decodes ref serial message containing the game stage and time remaining
