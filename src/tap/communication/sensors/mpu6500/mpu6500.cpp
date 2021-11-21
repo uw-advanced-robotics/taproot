@@ -35,6 +35,8 @@ using namespace modm::literals;
 
 Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
 
+void Mpu6500::requestCalibration() { imuReady = false; }
+
 void Mpu6500::init()
 {
 #ifndef PLATFORM_HOSTED
@@ -96,54 +98,51 @@ void Mpu6500::init()
     spiWriteRegister(MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA);
     modm::delay_ms(1);
 
-    imuInitialized = true;
-
     imuHeater.initialize();
 
-    // Wait for the heater to warm the mpu6500 up
-    arch::MilliTimeout waitHeatTimeout(MAX_WAIT_FOR_IMU_TEMPERATURE_STABALIZE);
-    do
-    {
-        readTemperatureBlocking();
-        imuHeater.runTemperatureController(getTemp());
-        modm::delay_ms(2);
-    } while (!waitHeatTimeout.execute() && getTemp() < sensors::ImuHeater::IMU_DESIRED_TEMPERATURE);
-
-    // Wait for the IMU temperature to stabilize now that we are close to the correct temperature
-    waitHeatTimeout.restart(WAIT_TIME_AFTER_CALIBRATION);
-    while (!waitHeatTimeout.execute())
-    {
-        readTemperatureBlocking();
-        imuHeater.runTemperatureController(getTemp());
-        modm::delay_ms(2);
-    }
-
-    calculateAccOffset();
-    calculateGyroOffset();
-
     readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+
+    imuReady = true;
 #endif
 }
 
 void Mpu6500::periodicIMUUpdate()
 {
-    if (imuInitialized)
+    if (imuReady)
     {
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
-        readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
-
-        imuHeater.runTemperatureController(getTemp());
     }
     else
     {
-        RAISE_ERROR(
-            drivers,
-            "failed to initialize the imu properly",
-            tap::errors::Location::MPU6500,
-            tap::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
+        calibrationSample++;
+        raw.gyroOffset.x += raw.gyro.x;
+        raw.gyroOffset.y += raw.gyro.y;
+        raw.gyroOffset.z += raw.gyro.z;
+        raw.accelOffset.x += raw.accel.x;
+        raw.accelOffset.y += raw.accel.y;
+        raw.accelOffset.z += raw.accel.z;
+
+        calibrationSample++;
+
+        if (calibrationSample >= MPU6500_OFFSET_SAMPLES)
+        {
+            calibrationSample = 0;
+            raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
+            raw.gyroOffset.y /= MPU6500_OFFSET_SAMPLES;
+            raw.gyroOffset.z /= MPU6500_OFFSET_SAMPLES;
+            raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
+            raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
+            raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
+            imuReady = true;
+            mahonyAlgorithm = Mahony();
+        }
     }
+
+    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+
+    imuHeater.runTemperatureController(getTemp());
 }
 
 #define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
@@ -183,7 +182,7 @@ bool Mpu6500::read()
 
 // Getter functions.
 
-bool Mpu6500::initialized() const { return imuInitialized; }
+bool Mpu6500::isReady() const { return imuReady; }
 
 float Mpu6500::getAx() const
 {
@@ -242,7 +241,7 @@ float Mpu6500::getTiltAngle()
 
 float Mpu6500::validateReading(float reading) const
 {
-    if (imuInitialized)
+    if (imuReady)
     {
         return reading;
     }
@@ -252,48 +251,6 @@ float Mpu6500::validateReading(float reading) const
         tap::errors::Location::MPU6500,
         tap::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
     return 0.0f;
-}
-
-// Helper functions for calibration.
-
-void Mpu6500::calculateGyroOffset()
-{
-#ifndef PLATFORM_HOSTED
-    for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
-    {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
-        raw.gyroOffset.x += static_cast<int16_t>((rxBuff[8] << 8) | rxBuff[9]);
-        raw.gyroOffset.y += static_cast<int16_t>((rxBuff[10] << 8) | rxBuff[11]);
-        raw.gyroOffset.z += static_cast<int16_t>((rxBuff[12] << 8) | rxBuff[13]);
-        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        imuHeater.runTemperatureController(getTemp());
-        modm::delay_ms(2);
-    }
-
-    raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
-    raw.gyroOffset.y /= MPU6500_OFFSET_SAMPLES;
-    raw.gyroOffset.z /= MPU6500_OFFSET_SAMPLES;
-#endif
-}
-
-void Mpu6500::calculateAccOffset()
-{
-#ifndef PLATFORM_HOSTED
-    for (int i = 0; i < MPU6500_OFFSET_SAMPLES; i++)
-    {
-        spiReadRegisters(MPU6500_ACCEL_XOUT_H, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE);
-        raw.accelOffset.x += static_cast<int16_t>((rxBuff[0] << 8) | rxBuff[1]);
-        raw.accelOffset.y += static_cast<int16_t>((rxBuff[2] << 8) | rxBuff[3]);
-        raw.accelOffset.z += static_cast<int16_t>(((rxBuff[4] << 8) | rxBuff[5]) - 4096);
-        raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-        imuHeater.runTemperatureController(getTemp());
-        modm::delay_ms(2);
-    }
-
-    raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
-    raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
-    raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
-#endif
 }
 
 // Hardware interface functions (blocking functions, for initialization only)
@@ -359,12 +316,6 @@ void Mpu6500::mpuNssHigh()
 #ifndef PLATFORM_HOSTED
     Board::ImuNss::setOutput(modm::GpioOutput::High);
 #endif
-}
-
-void Mpu6500::readTemperatureBlocking()
-{
-    spiReadRegisters(MPU6500_TEMP_OUT_H, rxBuff, 2);
-    raw.temperature = rxBuff[0] << 8 | rxBuff[1];
 }
 
 }  // namespace sensors
