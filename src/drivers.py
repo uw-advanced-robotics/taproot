@@ -177,7 +177,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp",
         "mock-header": "tap/mock/mpu6500_terminal_serial_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": [":communication:serial:terminal_serial"],
+        "module-dependencies": [":communication:serial:terminal_serial", ":communication:sensors:mpu6500"],
     }
 ]
 

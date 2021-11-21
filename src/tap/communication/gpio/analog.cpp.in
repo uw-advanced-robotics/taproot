@@ -20,6 +20,7 @@
 #include "analog.hpp"
 
 #include "tap/board/board.hpp"
+#include "tap/util_macros.hpp"
 
 using namespace Board;
 
@@ -48,6 +49,7 @@ void Analog::init()
 uint16_t Analog::read(Pin pin) const
 {
 #ifdef PLATFORM_HOSTED
+    UNUSED(pin);
     return 0;
 #else
     switch (pin)

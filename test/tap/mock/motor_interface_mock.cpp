@@ -17,21 +17,11 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UTIL_MACROS_HPP_
-#define UTIL_MACROS_HPP_
+#include "motor_interface_mock.hpp"
 
-#define DISALLOW_COPY_AND_ASSIGN(Typename) \
-    Typename(const Typename &) = delete;   \
-    Typename &operator=(const Typename &) = delete;
+namespace tap::mock
+{
+MotorInterfaceMock::MotorInterfaceMock() : tap::motor::MotorInterface() {}
 
-#ifdef PLATFORM_HOSTED
-/// Wrap class functions that are not already virtual in this function if you wish to mock them.
-#define mockable virtual
-#else
-/// Wrap class functions that are not already virtual in this function if you wish to mock them.
-#define mockable
-#endif
-
-#define UNUSED(var) (void)(var)
-
-#endif  // UTIL_MACROS_HPP_
+MotorInterfaceMock::~MotorInterfaceMock() {}
+}  // namespace tap::mock

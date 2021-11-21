@@ -17,21 +17,27 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UTIL_MACROS_HPP_
-#define UTIL_MACROS_HPP_
+#ifndef MOTOR_INTERFACE_HPP_
+#define MOTOR_INTERFACE_HPP_
 
-#define DISALLOW_COPY_AND_ASSIGN(Typename) \
-    Typename(const Typename &) = delete;   \
-    Typename &operator=(const Typename &) = delete;
+#include <cstdint>
 
-#ifdef PLATFORM_HOSTED
-/// Wrap class functions that are not already virtual in this function if you wish to mock them.
-#define mockable virtual
-#else
-/// Wrap class functions that are not already virtual in this function if you wish to mock them.
-#define mockable
-#endif
+namespace tap::motor
+{
+class MotorInterface
+{
+public:
+    virtual void initialize() = 0;
+    virtual int64_t getEncoderUnwrapped() const = 0;
+    virtual uint16_t getEncoderWrapped() const = 0;
+    virtual void setDesiredOutput(int32_t desiredOutput) = 0;
+    virtual bool isMotorOnline() const = 0;
+    virtual int16_t getOutputDesired() const = 0;
+    virtual int8_t getTemperature() const = 0;
+    virtual int16_t getTorque() const = 0;
+    virtual int16_t getShaftRPM() const = 0;
+};
 
-#define UNUSED(var) (void)(var)
+}  // namespace tap::motor
 
-#endif  // UTIL_MACROS_HPP_
+#endif  //  MOTOR_INTERFACE_HPP_

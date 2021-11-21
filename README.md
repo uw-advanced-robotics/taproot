@@ -59,9 +59,8 @@ See ["Development guide"](#Development-guide) below for information on contribut
 
 ## Requirements for use
 
-- A robot operated by a [RoboMaster Development Board Type A](https://store.dji.com/product/rm-development-board-type-a).
-   - Support for the RoboMaster Development Board Type C is planned, tracked here: https://gitlab.com/aruw/controls/taproot/-/issues/9
-- A Linux environment. Virtual Machines work great. Documentation forthcoming (TODO).
+- A robot operated by a [RoboMaster Development Board Type A](https://store.dji.com/product/rm-development-board-type-a) or [Type C](https://www.robomaster.com/en-US/products/components/general/development-board-type-c/info).
+- A Linux, macOS or Windows computer
 - An ST-Link- or J-Link-compatible probe for flashing and debugging
 
 ## Contacting
@@ -100,34 +99,63 @@ To learn about contributing to upstream repositories via forks, see here: https:
 
 ## Development guide
 
-TODO: we are still working on selecting and fully documenting a recommended workflow. See https://gitlab.com/aruw/controls/taproot/-/issues/15.
+If you are looking to develop _your own_ Taproot-based project, refer to the README there for setup
+instructions. The below is for developing Taproot itself. The instructions are very similar but may
+be customized per project.
 
-To develop software for the simulator or unit test environment, a Debian Linux development
-environment is necessary. When developing software for the development board, Linux, Windows, or Mac
-OS operating systems all work. We recommend working in a Debian Linux environment so you can both
-run tests and deploy to the development board.
+### System setup
 
-If you do not have a native Linux environment, we recommend using a virtual machine. We have tested
-a virtual machine hosted using [VirtualBox](https://www.virtualbox.org). Once you have a virtual
-machine installed on your computer, follow
-[this](https://gitlab.com/aruw/controls/taproot/-/wikis/Debian-Linux-Setup) guide to set up the
-tooling necessary to build and deploy software.
+Follow the guide appropriate for your operating system.
+- Linux
+  - Debian: https://gitlab.com/aruw/controls/taproot/-/wikis/Debian-Linux-Setup
+  - Fedora: https://gitlab.com/aruw/controls/taproot/-/wikis/Fedora-Linux-Setup
+  - Other: follow one of the above guides, substituting your distribution's package names in place
+    of Debian or Fedora packages.
+- macOS: https://gitlab.com/aruw/controls/taproot/-/wikis/macOS-Setup
+- Windows: https://gitlab.com/aruw/controls/taproot/-/wikis/Windows-Setup
 
-Alternatively, we have guides for developing software in a [Docker
-container](https://gitlab.com/aruw/controls/taproot/-/wikis/Docker-Container-Setup), a [Windows
-machine](https://gitlab.com/aruw/controls/taproot/-/wikis/Windows-Setup), or by using [Windows
-Subsystem for Linux](https://gitlab.com/aruw/controls/taproot/-/wikis/Windows-WSL-Setup). Note that
-these have drawbacks because they either do not fully support both running unit tests on your local
-machine and deploying to the development board or have not been rigorously tested.
+Then install `pipenv` and set up the build tools:
+
+```
+pip3 install pipenv
+cd test-project/
+pipenv install
+```
+
+Alternately, you want the easiest setup experience and **_do not_ require deploying code to
+hardware**, consider developing within the provided [Docker container](https://gitlab.com/aruw/controls/taproot/-/wikis/Docker-Container-Setup).
+If you have Docker and vscode installed, you can access this environment in one click using the
+badge at the top of this repo. **We do not recommend this approach for robot development.**
 
 Sometimes setting up your machine can be tricky. If you are having trouble setting up your
-environment properly, feel free to ask for help on our [Discord server](https://discord.gg/jjDrGhrjMy).
+environment, feel free to ask for help on our [Discord server](https://discord.gg/jjDrGhrjMy).
 
-If you have your own Taproot-based project, you can also check out the Taproot `develop` branch
-directly within your own submodule and work from there.
+### Working on Taproot
 
-In all cases, pushing your changes will require a fork of this repository, from which you can
-[open a Merge Request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html).
+Most of the time, you want to interact with Taproot from within a project that uses it. Taproot
+itself is just a library of code templates; it becomes a fully-fledged buildable entity only when
+you configure it and generate an instance of it for your usage.
+
+See [here](https://gitlab.com/aruw/controls/taproot/-/wikis/Code-Generation-in-User-Projects) for
+more details on this flow.
+
+For these reasons, the typical way to work with Taproot is from within the project you use it in.
+You can edit the top-level `taproot` submodule and re-run `lbuild build` to update your in-project
+copy of Taproot according to the modifications you made to the templates.
+
+If you make changes to your `taproot` submodule and want to keep them, you'll need to commit it to
+a branch. Unless you have "push" access to the main Taproot repo, you'll need to:
+- Fork Taproot under your own name on GitLab
+- Push your changes to that fork
+- Either [open an MR](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
+  for those changes against our repo, or change your own project to use your fork's version
+
+This is not a trivial process, but please do let us know on Discord if you'd like some help!
+
+If you _aren't_ using Taproot within your own project, or would like to avoid the workflow above,
+this repo includes a dummy project in the `test-project` folder. You can run `lbuild build` within
+that directory to get a copy of Taproot generated locally. This copy supports building and running
+tests like any other.
 
 ### Branch naming conventions in the Taproot repository
 
@@ -138,21 +166,36 @@ Names should follow the format `FirstL/#{Issue Number}/short-description`. For e
 
 This library is configurable via `lbuild` parameters, and consumers use this tool to generate a full
 copy of the files in Taproot in their own projects. As such, there is no "one true configuration"
-for consumers using Taproot.
+for consumers using Taproot. See [here](https://gitlab.com/aruw/controls/taproot/-/wikis/Code-Generation-in-User-Projects)
+for more details on this flow.
 
 To facilitate testing, this repo has a project defined in `test-project/` which consumes Taproot. It
-can be used for basic testing and as a generation/build smoke-test. However, changes made by ARUW
+can be used for basic testing and as a generation/build smoke-test. Note that changes made by ARUW
 members should typically be tested in the context of `aruw-mcb` before being merged here.
 
-To use the test project, `cd` into `taproot/test-project` (where the `project.xml` file is). You
-will have to first use `lbuild` to generate an Taproot distribution before trying to build.
+To use the test project, `cd` into `taproot/test-project` (where the `project.xml` file is). Run
+`pipenv shell` to enter the environment with appropriate Python build tools. Then, run
+`lbuild build` as described below to generate an Taproot distribution. Then use `scons` to perform
+the desired builds.
 
-- `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`. Note that there is a _separate_ instance used for the unit tests, which can be build by running the same command from within the `sim-modm` subdirectory.
-- `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder located in `build/hardware/` which contains the final `.elf` file as well as the intermediate object files (`.o`).
-- `scons build-tests`: Builds a program which hosts our unit tests. This executable can be run on your host computer (only supported on Linux) and prints results for each unit test run.
-- `scons program`: Builds as with `scons build` and then programs the board.
-- `scons run-tests`: Builds and runs the unit test program.
-- `scons size`: Prints statistics on program size and (statically-)allocated memory. Note that the reported available heap space is an upper bound, and this tool has no way of knowing about the real size of dynamic allocations.
+The `test-project` is a normal Taproot user project, except it configures Taproot to generate its
+own unit tests into the project. This means that running `test-project`'s tests runs the tests for
+Taproot itself against the version of Taproot generated for the `test-project`.
+
+Likely commands are as follows (all from within a `pipenv shell` or prefixed with `pipenv run <command>`):
+
+- `lbuild build`: Re-generates our copy of modm according to the modules specified in `project.xml`.
+- `scons build`: Builds the firmware image for the hardware target. Creates a "release" folder
+  located in `build/hardware/` which contains the final `.elf` file as well as the intermediate
+  object files (`.o`).
+- `scons build-tests`: Builds a program which hosts our unit tests. This executable can be run on
+  your host computer and prints results for each unit test run.
+- `scons run`: Builds as with `scons build` and then programs the board.
+- `scons run-tests`: Builds and runs the unit test program. In `test-project`, this includes all of
+  the unit tests for Taproot itself. Same as `build-tests` but also runs the built file.
+- `scons size`: Prints statistics on program size and (statically-)allocated memory. Note that the
+  reported available heap space is an upper bound, and this tool has no way of knowing about the
+  real size of dynamic allocations.
 
 ## Working with modm
 
