@@ -15,14 +15,45 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
+def extractPinDefines(pins):
+    pins = [pin.strip() for pin in str.split(pins, ",")]
+    return [] if pins == [""] else pins
+
 def init(module):
     module.name = ":communication:sensors:imu_heater"
     module.description = "A driver that controls the robomaster development board "\
         "imu heating element"
 
+metadata = None
+
 def prepare(module, options):
+    module.depends(":board")
+    global metadata
+    metadata = board_info_parser.parse_board_info(options[":dev_board"])
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/imu_heater"
-    env.copy(".")
+    env.copy("imu_heater.hpp")
+    env.copy("imu_heater.cpp")
+
+    # find imu heater timer
+    user_pins = extractPinDefines(env[":board:pwm_pins"])
+    global metadata
+
+    for pin in metadata.find("gpio-pins"):
+        pin_name = pin.get("alias")
+        if pin_name in user_pins:
+            timer = pin.find("timer")
+            timer_name = timer.get("name")
+            if pin_name == "ImuHeater":
+                timer_to_use = timer_name
+
+    assert timer_to_use != None, "to GPIO pin named ImuHeater with a timer associated, must define a timer to control the heater on the IMU"
+
+    env.substitutions = {"timer": timer_to_use}
+    env.template("imu_heater_constants.hpp.in", "imu_heater_constants.hpp")

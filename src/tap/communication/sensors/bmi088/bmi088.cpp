@@ -3,6 +3,7 @@
 #include "tap/board/board.hpp"
 
 #include "modm/math/units.hpp"
+#include "bmi088_register_table.hpp"
 
 using namespace modm::literals;
 using namespace Board;
@@ -27,8 +28,8 @@ bool Bmi088::run()
     PT_BEGIN();
     while (true)
     {
-        PT_CALL(readGyroData());
-        PT_CALL(readAccData());
+        // PT_CALL(readGyroData());
+        // PT_CALL(readAccData());
     }
     PT_END();
 #else
@@ -46,25 +47,25 @@ void Bmi088::init()
     // using ImuInt1Gyro = GpioC5;
 }
 
-modm::ResumableResult<bool> Bmi088::readGyroData()
-{
-    RF_BEGIN(0);
-    tx = 0;
-    chipSelectGyro();
-    RF_CALL(ImuSpiMaster::transfer(&tx, nullptr, 1));
-    RF_CALL(
-        ImuSpiMaster::transfer(nullptr, reinterpret_cast<uint8_t *>(&rawGyro), sizeof(rawGyro)));
-    RF_END_RETURN(true);
-}
+// modm::ResumableResult<bool> Bmi088::readGyroData()
+// {
+//     RF_BEGIN(0);
+//     // tx = 0;
+//     // chipSelectGyro();
+//     // RF_CALL(ImuSpiMaster::transfer(&tx, nullptr, 1));
+//     // RF_CALL(
+//     //     ImuSpiMaster::transfer(nullptr, reinterpret_cast<uint8_t *>(&rawGyro), sizeof(rawGyro)));
+//     RF_END_RETURN(true);
+// }
 
-modm::ResumableResult<bool> Bmi088::readAccData()
-{
-    RF_BEGIN(1);
-    tx = static_cast<uint8_t>(Bmi088Acc::Register::ACC_X_LSB);
-    chipSelectAcc();
-    RF_CALL(ImuSpiMaster::transfer(&tx, nullptr, 1));
-    RF_CALL(ImuSpiMaster::transfer(nullptr, reinterpret_cast<uint8_t *>(&rawAcc), sizeof(rawAcc)));
-    RF_END_RETURN(true);
-}
+// modm::ResumableResult<bool> Bmi088::readAccData()
+// {
+//     RF_BEGIN(1);
+//     // tx = static_cast<uint8_t>(Bmi088Acc::Register::ACC_X_LSB);
+//     // chipSelectAcc();
+//     // RF_CALL(ImuSpiMaster::transfer(&tx, nullptr, 1));
+//     // RF_CALL(ImuSpiMaster::transfer(nullptr, reinterpret_cast<uint8_t *>(&rawAcc), sizeof(rawAcc)));
+//     RF_END_RETURN(true);
+// }
 
 }  // namespace sensors::bmi088
