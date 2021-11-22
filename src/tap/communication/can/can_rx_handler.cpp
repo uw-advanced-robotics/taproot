@@ -129,4 +129,4 @@ void CanRxHandler::removeReceiveHandler(
     messageHandlerStore[id] = nullptr;
 }
 
-}  // namespace can
+}  // namespace tap::can

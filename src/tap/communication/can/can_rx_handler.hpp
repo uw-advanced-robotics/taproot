@@ -31,10 +31,10 @@ namespace modm::can
 class Message;
 }
 
-namespace tap {
+namespace tap
+{
 class Drivers;
 }
-
 
 namespace tap::can
 {
@@ -61,12 +61,13 @@ class CanRxListener;
  * pollCanData function be called at a very high frequency,
  * so call this in a high frequency thread.
  *
+ * @note The CAN handler can handle 64 CAN ids between [`0x1E4`, `0x224`).
+ * @note The CAN ids `0x1FF` and `0x200` are reserved for sending stuff to motors
+ *      and thus you should not attach listeners for these ids
+ *
  * @see `CanRxListener` for information about how to properly create
  *      add a listener to the handler.
  * @see `Can` for modm CAN wrapper functions.
- * @note The CAN handler can handle 64 CAN ids between 0x1E4 and 0x224.
- * @note The CAN ids 0X1FF and 0x200 are reserved for sending stuff to motors
- *      and thus you should not attach listeners for these ids
  */
 class CanRxHandler
 {
@@ -105,8 +106,9 @@ public:
      *      something already in the `CanRxHandler`, an error is thrown and
      *      the handler does not add the listener.
      * @see `CanRxListener`
+     *
      * @param[in] listener the listener to be attached ot the handler.
-     * @return true if listener successfully added, false otherwise.
+     * @return `true` if listener successfully added, `false` otherwise.
      */
     mockable void attachReceiveHandler(CanRxListener* const listener);
 
@@ -117,13 +119,16 @@ public:
      * @attention you should call this function as frequently as you receive
      *      messages if you want to receive the most up to date messages.
      *      modm's IQR puts CAN messages in a queue, and this function
-     *      clears out the queue once it is calfled.
+     *      clears out the queue once it is called.
      */
     mockable void pollCanData();
 
     /**
      * Removes the passed in `CanRxListener` from the `CanRxHandler`. If the
-     * listener isn't in the handler, the
+     * listener isn't in the handler, an error will be added to the `ErrorController`
+     * and the state of the `CanRxHandler` will not change.
+     *
+     * @param[in] rxListener The listener to remove from the handler.
      */
     mockable void removeReceiveHandler(const CanRxListener& rxListener);
 
@@ -164,6 +169,6 @@ public:
     }
 };  // class CanRxHandler
 
-}  // namespace tap
+}  // namespace tap::can
 
 #endif  // CAN_RX_HANDLER_HPP_
