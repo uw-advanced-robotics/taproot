@@ -164,11 +164,6 @@ struct Bmi088Data
             FIFO_DATA = 0x26,
             ACC_CONF = 0x40,
             ACC_RANGE = 0x41,
-            FIFO_DOWNS = 0x45,
-            FIFO_WTM_0 = 0x46,
-            FIFO_WTM_1 = 0x47,
-            FIFO_CONFIG_0 = 0x48,
-            FIFO_CONFIG_1 = 0x49,
             INT1_IO_CTRL = 0x53,
             INT2_IO_CTRL = 0x54,
             INT_MAP_DATA = 0x58,
@@ -215,7 +210,7 @@ struct Bmi088Data
             OSR2_OVERSAMPLING = 0x09,
             NORMAL = 0x0a
         };
-        typedef Configuration<AccConf_t, AccBandwidth, 0b1111, 4> AccBandwidth_t;  // Bit 4..7
+        typedef modm::Configuration<AccConf_t, AccBandwidth, 0b1111, 4> AccBandwidth_t;  // Bit 4..7
 
         enum class AccOutputRate : uint8_t
         {
@@ -228,7 +223,7 @@ struct Bmi088Data
             Hz800 = 0x0b,
             Hz1600 = 0x0c
         };
-        typedef Configuration<AccConf_t, AccOutputRate, 0b1111, 0> AccOutputRate_t;  // Bit 0..3
+        MODM_FLAGS_CONFIG(AccConf, AccOutputRate);
 
         enum class AccRange : uint8_t
         {
@@ -244,36 +239,6 @@ struct Bmi088Data
             G24 = 0x03,
         };
         MODM_FLAGS_CONFIG(AccRange, AccRangeCtrl);
-
-        /**
-         * Reduction of sample rate by a factor of 2 ** fifo_downs
-         */
-        enum class FifoDowns : uint8_t
-        {
-            FifoDownsCtrl_Mask = modm::Bit4 | modm::Bit5 | modm::Bit6
-        };
-        MODM_FLAGS8(FifoDowns);
-
-        enum class FifoConfig0 : uint8_t
-        {
-            FifoCtrlMode_Mask = modm::Bit0
-        };
-        MODM_FLAGS8(FifoConfig0);
-
-        enum class FifoCtrlMode : uint8_t
-        {
-            STREAM_MODE = 0,
-            FIFO_MODE = 1,
-        };
-        MODM_FLAGS_CONFIG(FifoConfig0, FifoCtrlMode);
-
-        enum class FifoConfig1 : uint8_t
-        {
-            AccEn_Mask = modm::Bit6,
-            Int1En_Mask = modm::Bit3,
-            Int2En_Mask = modm::Bit2
-        };
-        MODM_FLAGS8(FifoConfig1);
 
         enum class Int1IoConf : uint8_t
         {
@@ -323,27 +288,52 @@ struct Bmi088Data
 
         enum class AccSelfTest : uint8_t
         {
+            AccSelfTestCtrl_Mask = 255,
+        };
+        MODM_FLAGS8(AccSelfTest);
+
+        enum class AccSelfTestCtrl : uint8_t
+        {
             SELF_TEST_OFF = 0x00,
             POSITIVE_SELF_TEST_SIGNAL = 0x0d,
             NEGATIVE_SELF_TEST_SIGNAL = 0x09
         };
+        MODM_FLAGS_CONFIG(AccSelfTest, AccSelfTestCtrl);
+
+        enum class AccPwrConf : uint8_t
+        {
+            AccPwrSave_Mask = 255,
+        };
+        MODM_FLAGS8(AccPwrConf);
 
         enum class AccPwrSave : uint8_t
         {
             ACTIVE_MODE = 0x00,
             SUSPEND_MODE = 0x03
         };
+        MODM_FLAGS_CONFIG(AccPwrConf, AccPwrSave);
+
+        enum class AccPwrCtrl : uint8_t
+        {
+            AccEnable_Mask = 255,
+        };
+        MODM_FLAGS8(AccPwrCtrl);
 
         enum class AccEnable : uint8_t
         {
             ACCELEROMETER_OFF = 0X00,
             ACCELEROMETER_ON = 0X04
         };
+        MODM_FLAGS_CONFIG(AccPwrCtrl, AccEnable);
 
         enum class AccSoftreset : uint8_t
         {
-            RESET_SENSOR = 0xb6
+            RESET_SENSOR = 255,
         };
+        MODM_FLAGS8(AccSoftreset);
+
+        /** Writing this to the AccSoftreset register will perform a soft reset of the IMU */
+        static constexpr uint8_t ACC_SOFTRESET_VAL = 0xb6;
 
         using Registers_t = modm::FlagsGroup<
             AccErr_t,
@@ -353,12 +343,13 @@ struct Bmi088Data
             AccBandwidth_t,
             AccOutputRate_t,
             AccRangeCtrl_t,
-            FifoDowns_t,
-            FifoConfig0_t,
-            FifoConfig1_t,
             Int1IoConf_t,
             Int1Od_t,
-            Int2IoConf_t>;
+            Int2IoConf_t,
+            AccSelfTest_t,
+            AccPwrConf_t,
+            AccPwrCtrl_t,
+            AccSoftreset_t>;
     };
 
     static constexpr float ACC_RANGE = 0;
@@ -368,15 +359,15 @@ struct Bmi088Data
         /** @return accel data in mg */
         inline float getAccX() const
         {
-            return raw.accX / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
+            return raw.acc.x / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
         }
         inline float getAccY() const
         {
-            return raw.accY / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
+            return raw.acc.y / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
         }
         inline float getAccZ() const
         {
-            return raw.accZ / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
+            return raw.acc.z / 32768 * 1000 * powf(2, ACC_RANGE + 1) * 1.5f;
         }
 
         /** @return temperature data in degrees C */
@@ -386,14 +377,15 @@ struct Bmi088Data
 
         struct
         {
-            struct RawAcc
+            struct
             {
                 int16_t x, y, z;
-            } modm_packed;
+            } modm_packed acc;
 
             int16_t rawTemp;
 
-            struct RawGyro {
+            struct RawGyro
+            {
                 int16_t x, y, z;
             };
         } modm_packed raw;

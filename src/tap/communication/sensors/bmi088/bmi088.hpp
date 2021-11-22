@@ -13,7 +13,7 @@ acc requires further steps for initialization when using spi
 
 namespace sensors::bmi088
 {
-class Bmi088 : public ::modm::pt::Protothread, modm::Resumable<2>
+class Bmi088 : public ::modm::pt::Protothread
 {
 public:
     void init();
@@ -22,20 +22,10 @@ public:
 private:
     uint8_t tx, rx;
 
-    struct GyroData
-    {
-        int16_t gx, gy, gz;
-    } rawGyro;
-
-    struct AccData
-    {
-        int16_t ax, ay, az;
-    } rawAcc;
-
     Mahony mahonyAlgorithm;
 
-    modm::ResumableResult<bool> readGyroData();
-    modm::ResumableResult<bool> readAccData();
+    // modm::ResumableResult<bool> readGyroData();
+    // modm::ResumableResult<bool> readAccData();
 };
 
 }  // namespace sensors::bmi088
