@@ -1,0 +1,52 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import os
+
+def init(module):
+    module.name = ":docs"
+    module.description = "Doxygen Doc Generation"
+
+def prepare(module, options):
+    module.add_option(StringOption(
+        name="source_paths",
+        default="",
+        description="A space-separated list of file directories to search" \
+                    "through recursively when generating documentation." \
+                    "These directories should be relative to the directory in"
+                    "which your project.xml is located"))
+
+    module.depends(":core")
+
+    return True
+
+def build(env):
+    # Parse source_paths. Since the user specifies a path relative to their
+    # project.xml file, we must add ../.. to the paths such that the paths are
+    # relative to taproot/docs
+    source_paths = env["source_paths"].split(" ")
+    source_paths = [ os.path.join("../..", path) for path in source_paths ]
+    source_paths = " ".join(source_paths)
+
+    env.substitutions = { "source_paths": source_paths }
+    env.outbasepath = "taproot/docs"
+    env.template("Doxyfile.in", "Doxyfile")
+    env.template("conf.py.in", "conf.py")
+    env.copy("index.rst")
+    env.copy("make.bat")
+    env.copy("Makefile")
+    env.copy("module.rst")

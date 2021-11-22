@@ -2,97 +2,140 @@
 #
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import os
+from os.path import join, dirname, splitext
 import sys
+import glob
 
-SCRIPT_DIR = os.path.dirname(__file__)
-# These should be relative to the directory that this script is housed in.
-PATHS_TO_CHECK = [ '../src/',
-                   '../test/' ]
-FILES_TO_IGNORE = [ '../src/aruwlib/algorithms/MahonyAHRS.cpp',
-                    '../src/aruwlib/algorithms/MahonyAHRS.h' ]
-
-PATHS_TO_CHECK = [ os.path.join(SCRIPT_DIR, path) for path in PATHS_TO_CHECK ]
-FILES_TO_IGNORE = [ os.path.join(SCRIPT_DIR, path) for path in FILES_TO_IGNORE ]
 
 USAGE = "usage: /usr/bin/python3 check_license_headers.py [--update] \n\
 options:\n\
     --update Adds licenses to files that don't have a license header (optional)"
-LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h']
-LICENSE_HEADER = '/*\n\
+
+
+FILE_GLOBS_TO_IGNORE = [
+    '../modm/**/*',
+    '../**/test-project/taproot/**/*',
+    '../docs/*',
+    '../**/__init__.py',
+    '../src/tap/algorithms/MahonyAHRS.*']
+SCRIPT_DIR = dirname(__file__)
+
+CPP_LICENSED_SOURCE_FILE_EXTENSIONS = ['.cpp', '.hpp', '.h', '.hpp.in', '.cpp.in']
+CPP_LICENSE_HEADER = '/*\n\
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
  *\n\
- * This file is part of aruwlib.\n\
+ * This file is part of Taproot.\n\
  *\n\
- * aruwlib is free software: you can redistribute it and/or modify\n\
+ * Taproot is free software: you can redistribute it and/or modify\n\
  * it under the terms of the GNU General Public License as published by\n\
  * the Free Software Foundation, either version 3 of the License, or\n\
  * (at your option) any later version.\n\
  *\n\
- * aruwlib is distributed in the hope that it will be useful,\n\
+ * Taproot is distributed in the hope that it will be useful,\n\
  * but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
  * GNU General Public License for more details.\n\
  *\n\
  * You should have received a copy of the GNU General Public License\n\
- * along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.\n\
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n\
  */\n'
 
-if len(sys.argv) not in [ 1, 2 ]:
-    print(USAGE)
-    sys.exit(2)
+SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS = ['.lb', '.py', '.sh', '.yml', '.py.in']
+SCRIPT_LICENSE_HEADER = '# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>\n\
+#\n\
+# This file is part of Taproot.\n\
+#\n\
+# Taproot is free software: you can redistribute it and/or modify\n\
+# it under the terms of the GNU General Public License as published by\n\
+# the Free Software Foundation, either version 3 of the License, or\n\
+# (at your option) any later version.\n\
+#\n\
+# Taproot is distributed in the hope that it will be useful,\n\
+# but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+# GNU General Public License for more details.\n\
+#\n\
+# You should have received a copy of the GNU General Public License\n\
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n'
+
+def find_files_to_check():
+    file_types_to_check = CPP_LICENSED_SOURCE_FILE_EXTENSIONS + SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS
+
+    files_to_check = []
+    for file_type in file_types_to_check:
+        files_to_check.extend(glob.glob(join(SCRIPT_DIR, '../**/*{}'.format(file_type)), recursive=True))
+
+    files_to_ignore = []
+    for file_glob in FILE_GLOBS_TO_IGNORE:
+        files_to_ignore.extend(glob.glob(join(SCRIPT_DIR, file_glob), recursive=True))
+
+    if files_to_ignore:
+        def excluded(file):
+            return file in files_to_ignore
+
+    return list(filter(lambda p: not excluded(p), files_to_check))
 
 def parse_args():
     update_files = sys.argv[-1] == "--update"
     return update_files
 
-def is_licensed_source_file(path, ignored_files):
-    if path in ignored_files:
-        return False
+def is_licensed_source_file(file, file_extensions):
+    _, file_extension = splitext(file)
+    return file_extension in file_extensions
 
-    _, file_extension = os.path.splitext(file)
-    return file_extension in LICENSED_SOURCE_FILE_EXTENSIONS
-
-def file_has_valid_license_header(file):
+def file_has_valid_license_header(file, expected_header):
     with open(file, 'r') as file_to_check:
-        if LICENSE_HEADER not in file_to_check.read():
+        if expected_header not in file_to_check.read():
             return False
     return True
 
-def add_license_to_file(file):
+def add_license_to_file(file, header):
     print("Adding license to {0}".format(file))
     with open(file, 'r+') as file_to_check:
         content = file_to_check.read()
         file_to_check.seek(0, 0)
-        file_to_check.write(LICENSE_HEADER.rstrip('\r\n') + '\n' + content)
+        file_to_check.write(header.rstrip('\r\n') + '\n' + content)
 
-update_files = parse_args()
-files_to_search = []
-for path in PATHS_TO_CHECK:
-    files_to_search.extend([ os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames ])
+def main():
+    if len(sys.argv) not in [ 1, 2 ]:
+        print(USAGE)
+        sys.exit(2)
+    
+    update_files = parse_args()
 
-result = False
-for file in files_to_search:
-    if is_licensed_source_file(file, FILES_TO_IGNORE):
-        if not file_has_valid_license_header(file):
-            result = True
-            print("{0} does not contain a license header".format(file))
-            if update_files:
-                add_license_to_file(file)
+    files_to_check = find_files_to_check()
 
-sys.exit(result)
+    result = False
+    for file in files_to_check:
+        if is_licensed_source_file(file, CPP_LICENSED_SOURCE_FILE_EXTENSIONS):
+            if not file_has_valid_license_header(file, CPP_LICENSE_HEADER):
+                result = True
+                print("{0} does not contain a license header".format(file))
+                if update_files:
+                    add_license_to_file(file, CPP_LICENSE_HEADER)
+        elif is_licensed_source_file(file, SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS):
+            if not file_has_valid_license_header(file, SCRIPT_LICENSE_HEADER):
+                result = True
+                print("{0} does not contain a license header".format(file))
+                if update_files:
+                    add_license_to_file(file, SCRIPT_LICENSE_HEADER)
+
+    sys.exit(result)
+
+if __name__ == '__main__':
+    main()

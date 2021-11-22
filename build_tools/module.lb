@@ -1,4 +1,19 @@
-import os
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
     module.name = ":build"
@@ -6,27 +21,19 @@ def init(module):
 
 def prepare(module, options):
     module.add_option(BooleanOption(
-        name="include_sconstruct", default=True,
+        name="include_sconstruct",
+        default=True,
         description=descr_include_sconstruct))
     module.add_option(BooleanOption(
-        name="include_openocd_cfg", default=True,
+        name="include_openocd_cfg",
+        default=True,
         description=descr_include_openocd_cfg))
-
     return True
 
 def build(env):
-    env.outbasepath = "aruwlib/build_tools"
+    env.outbasepath = "taproot/build_tools"
     env.copy("parse_args.py")
     env.copy("run_gcov.py")
-
-    env.outbasepath = "aruwlib"
-
-    properties = {}
-    properties["modm_path"] = env["aruwlib:modm_repo_lb"]
-    env.substitutions = properties
-
-    env.template("project.xml.in", "project.xml")
-    env.template("sim-modm/project.xml.in", "sim-modm/project.xml")
 
     env.outbasepath = "."
     if env["include_sconstruct"]:
@@ -34,13 +41,12 @@ def build(env):
     if env["include_openocd_cfg"]:
         env.copy("openocd.cfg")
 
-
-descr_include_sconstruct = """# Generate a SConstruct file
+descr_include_sconstruct = """Generate a SConstruct file
 
 !!! warning "This overwrites any top-level `SConstruct` file!"
 """
 
-descr_include_openocd_cfg = """# Generate openocd.cfg
+descr_include_openocd_cfg = """Generate openocd.cfg
 
 !!! warning "This overwrites any top-level `openocd.cfg` file!"
 """

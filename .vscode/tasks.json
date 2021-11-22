@@ -9,14 +9,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build",
-            "windows": {
-                "command": "conda run -n modm scons build"
-            },
+            "command": "pipenv run scons build",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -25,17 +22,14 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run",
-            "windows": {
-                "command": "conda run -n modm scons run"
-            },
+            "command": "pipenv run scons run",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -44,11 +38,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug",
+            "command": "pipenv run scons build-sim profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -57,24 +51,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run-sim profile=debug",
+            "command": "pipenv run scons run-sim profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
-            }
-        },
-        {
-            "label": "Run Sim - Valgrind Debug",
-            "type": "shell",
-            "presentation": {
-                "panel": "new"
-            },
-            "command": "/usr/bin/env python3 $(which scons) build-sim profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/sim/debug/aruwlib.elf",
-            "group": "build",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -83,11 +64,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug",
+            "command": "pipenv run scons build-tests profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -96,24 +77,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run-tests profile=debug",
+            "command": "pipenv run scons run-tests profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
-            }
-        },
-        {
-            "label": "Run Tests - Valgrind Debug",
-            "type": "shell",
-            "presentation": {
-                "panel": "new"
-            },
-            "command": "/usr/bin/env python3 $(which scons) build-tests profile=debug && valgrind --leak-check=full --show-leak-kinds=all ./build/tests/debug/aruwlib-tests.elf",
-            "group": "build",
-            "problemMatcher": [],
-            "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -122,14 +90,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) build profile=debug profiling=true",
-            "windows": {
-                "command": "conda run -n modm scons build profile=debug"
-            },
+            "command": "pipenv run scons build profile=debug profiling=true",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -138,14 +103,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "/usr/bin/env python3 $(which scons) run profile=debug",
-            "windows": {
-                "command": "conda run -n modm scons run profile=debug"
-            },
+            "command": "pipenv run scons run profile=debug",
             "group": "build",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -154,14 +116,11 @@
             "presentation": {
                 "panel": "new"
             },
-            "command": "lbuild build",
-            "windows": {
-                "command": "conda run -n modm lbuild build"
-            },
+            "command": "pipenv run lbuild build",
             "group": "none",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         },
         {
@@ -174,7 +133,7 @@
             "group": "none",
             "problemMatcher": [],
             "options": {
-                "cwd": "${workspaceRoot}/test-project/test-project"
+                "cwd": "${workspaceRoot}/test-project"
             }
         }
     ]

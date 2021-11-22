@@ -2,23 +2,38 @@
     "configurations": [
         {
             "name": "Test",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/test",
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
+            ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
-            "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "g++"
         },
         {
             "name": "Sim",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/sim-modm/hosted-linux/modm/src"
+            ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
-            "compilerPath": "/usr/bin/g++",
             "intelliSenseMode": "gcc-x64",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "g++"
         },
         {
             "name": "MCB",
-            "compilerPath": "/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-g++",
+            "includePath": [
+                "${default}",
+                "test-project/taproot/modm/src",
+                "test-project/taproot/modm/ext/cmsis/core",
+                "test-project/taproot/modm/ext/cmsis/device"
+            ],
             "intelliSenseMode": "gcc-arm",
-            "browse": { "limitSymbolsToIncludedHeaders": true }
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "arm-none-eabi-g++"
         }
     ],
     "version": 4

@@ -4,5 +4,6 @@
         "ms-vscode.cpptools",
         "aruwrobotchooser.robot-chooser",
         "ms-vscode-remote.remote-containers",
+        "samuelcolvin.jinjahtml"
     ]
 }

@@ -1,26 +1,27 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of aruwlib.
+# This file is part of Taproot.
 #
-# aruwlib is free software: you can redistribute it and/or modify
+# Taproot is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# aruwlib is distributed in the hope that it will be useful,
+# Taproot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with aruwlib.  If not, see <https://www.gnu.org/licenses/>.
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 default:
-  image: aruw/mcb-2020-gitlab-ci:2021-03-20.1
+  image: aruw/mcb-2020-gitlab-ci:2021-06-02.1
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   NUM_JOBS: 4
+  ADDITIONAL_CI_BUILD_ARGS: -j${NUM_JOBS} additional-ccflags=-Werror
 
 .default_only: &default_only
   - merge_requests
@@ -38,23 +39,26 @@ variables:
 
 stages:
   - Initial Verification
+  - Generate Test Project
   - Build all Targets
   - Deploy Pages
 
 before_script:
-  - python -V # Print out python version for debugging
+  - python3 -V # Print out python version for debugging
 
 # Initial verification
 
-clang-format:
+"Clang Format":
   stage: Initial Verification
+  needs: []
   script:
     - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r src/ test/
   only: *verification_only
   except: *verification_except
 
-policy checks:
+"Policy Checks":
   stage: Initial Verification
+  needs: []
   script:
     - python3 ./scripts/check_singleton_drivers.py src
     - python3 ./scripts/check_license_headers.py
@@ -63,42 +67,112 @@ policy checks:
   only: *verification_only
   except: *verification_except
 
-mcb build:
-  stage: Build all Targets
-  only: *default_only
+.run_lbuild:
   script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) build -j${NUM_JOBS} additional-ccflags=-Werror
+    - cd test-project && lbuild build && cd ..
+  artifacts:
+    paths:
+      - test-project
 
-sim build:
-  stage: Build all Targets
-  only: *default_only
-  script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) build-sim profile=fast -j${NUM_JOBS}
+.type_a_config_dependencies:
+  needs: ["Type A: Generate Test Project"]
+  dependencies: ["Type A: Generate Test Project"]
 
-tests build:
-  stage: Build all Targets
+.type_c_config_dependencies:
+  needs: ["Type C: Generate Test Project"]
+  dependencies: ["Type C: Generate Test Project"]
+
+.mcb_build:
+  stage: "Build all Targets"
   only: *default_only
   script:
-    - cd test-project && lbuild build
-    - python3 $(which scons) run-tests-gcov profile=fast -j${NUM_JOBS}
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/fast/mcb-project-tests.elf
+    - cd test-project
+    - scons build $ADDITIONAL_CI_BUILD_ARGS
+
+.sim_build:
+  stage: "Build all Targets"
+  only: *default_only
+  script:
+    - cd test-project
+    - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+
+.tests_build:
+  stage: "Build all Targets"
+  only: *default_only
+  script:
+    - cd test-project
+    - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
-    - 'sed -i "s=<source>.</source>=<source>./aruwlib-project-sim</source>=g" cobertura.xml'
-    - 'sed -i "s;filename=\";filename=\"aruwlib-project-sim/;g" cobertura.xml'
+    - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:
       cobertura: cobertura.xml
+    expire_in: 2 weeks
+
+"Type A: Generate Test Project":
+  needs: []
+  only: *default_only
+  stage: Generate Test Project
+  extends:
+    - .run_lbuild
+  variables:
+    BOARD_TYPE: type_a
+
+"Type C: Generate Test Project":
+  needs: []
+  stage: Generate Test Project
+  only: *default_only
+  extends:
+    - .run_lbuild
+  before_script:
+    - cd test-project
+    - sed -i '/<!-- For RoboMaster Development Board Type A -->/,/<!-- End For RoboMaster Development Board Type A -->/c\' project.xml
+    - sed -i '/<!-- For RoboMaster Development Board Type C --> <!--/c\' project.xml
+    - sed -i '/--> <!-- End For RoboMaster Development Board Type C -->/c\' project.xml
+    - cd ..
+  variables:
+    BOARD_TYPE: type_c
+
+# Type A CI
+"Type A: MCB Build":
+  extends:
+    - .type_a_config_dependencies
+    - .mcb_build
+
+"Type A: Sim Build":
+  extends:
+    - .type_a_config_dependencies
+    - .sim_build
+
+"Type A: Tests Build":
+  extends:
+    - .type_a_config_dependencies
+    - .tests_build
+
+# Type C CI
+"Type C: MCB Build":
+  extends:
+    - .type_c_config_dependencies
+    - .mcb_build
+
+"Type C: Sim Build":
+  extends:
+    - .type_c_config_dependencies
+    - .sim_build
+
+"Type C: Tests Build":
+  extends:
+    - .type_c_config_dependencies
+    - .tests_build
 
 # Pages deploy
 
-pages:
+"Generate Docs":
   image: alpine
+  needs: []
   stage: Deploy Pages
-  variables:
-    GIT_SUBMODULE_STRATEGY: none
   before_script:
     - apk update
     - apk add py-pip python3-dev
@@ -111,6 +185,24 @@ pages:
   script:
     - cd docs && make html
     - mv _build/html/ ../public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - develop
+    - merge_requests
+  environment:
+    name: "docs preview"
+    url: "https://aruw.gitlab.io/-/controls/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
+
+pages:
+  image: alpine
+  needs: ["Generate Docs"]
+  dependencies: ["Generate Docs"]
+  stage: Deploy Pages
+  before_script:
+    - "true"
+  script: "true"
   artifacts:
     paths:
       - public

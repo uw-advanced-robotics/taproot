@@ -1,37 +1,95 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+MOCK_DIRECTORY = "tap/mock"
+
+import sys
 import os
+sys.path.append(repopath("src"))
+import drivers
 
 class Mock(Module):
     def init(self, module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
+        module.depends(":core")
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib/test/aruwlib"
-        env.copy("mock")
+        mock_driver_headers_to_include = drivers.get_mock_headers_sorted(env)
 
-class ARUWLIBTests(Module):
+        # Ignore all mock driver files that are not being generated
+        mock_driver_files_to_ignore = []
+        for driver in drivers.DRIVERS_AND_MODULE_DEPENDENCIES:
+            if driver["mock-header"] not in mock_driver_headers_to_include:
+                # Add header and source files to the ignore list
+                mock_driver_files_to_ignore.append(driver["mock-header"])
+                mock_driver_files_to_ignore.append(os.path.splitext(driver["mock-header"])[0] + ".cpp")
+
+        env.outbasepath = "taproot/test"
+
+        mock_includes = []
+        # Copy all files from the mock directory except for driver mocks that should
+        # be ignored
+        files_to_copy = os.listdir(repopath(f"test/{MOCK_DIRECTORY}"))
+        for file in files_to_copy:
+            mock_file = f"{MOCK_DIRECTORY}/{file}"
+            if mock_file not in mock_driver_files_to_ignore:
+                env.copy(mock_file)
+                mock_includes.append(mock_file)
+
+        env.copy("tap/stub")
+
+class TaprootTests(Module):
     def init(self, module):
         module.name = ":testing:tests"
 
     def prepare(self, module, options):
         module.depends(
-            "aruwlib:testing:mock",
-            "aruwlib:core")
+            ":testing:mock",
+            ":core")
         return True
 
     def build(self, env):
-        env.outbasepath = "aruwlib/test/aruwlib"
-        env.copy(".", ignore=env.ignore_paths("*/mock/*"))
+        env.outbasepath = "taproot/test"
+        if env.has_module(":display"):
+            env.copy("tap/display")
+        if env.has_module(":core"):
+            env.copy("tap/algorithms")
+            env.copy("tap/architecture")
+            env.copy("tap/motor")
+        if env.has_module(":communication:can"):
+            env.copy("tap/communication/can")
+        if env.has_module(":communication:tcp-server"):
+            env.copy("tap/communication/tcp-server")
+        if env.has_module(":errors") and env[":dev_board"] == "rm-dev-board-a":
+            # Note: only dev board a can build these tests currently
+            # due to cross-compatibility issues.
+            env.copy("tap/errors")
+        env.copy("tap/control")
 
 def init(module):
     module.name = ":testing"
-    module.description = "aruwlib Test Framework"
+    module.description = "Taproot Test Framework"
 
 def prepare(module, options):
     module.add_submodule(Mock())
-    module.add_submodule(ARUWLIBTests())
+    module.add_submodule(TaprootTests())
     return True
 
 def build(env):
