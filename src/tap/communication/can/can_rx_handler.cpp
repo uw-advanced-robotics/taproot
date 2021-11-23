@@ -85,11 +85,7 @@ void CanRxHandler::processReceivedCanData(
 
     if (id >= MAX_CAN_ID)
     {
-        RAISE_ERROR(
-            drivers,
-            "Invalid can id received",
-            tap::errors::Location::CAN_RX,
-            tap::errors::CanRxErrorType::MOTOR_ID_OUT_OF_BOUNDS);
+        RAISE_ERROR(drivers, "Invalid can id received");
         return;
     }
 
@@ -119,11 +115,7 @@ void CanRxHandler::removeReceiveHandler(
 
     if (id >= MAX_CAN_ID)
     {
-        RAISE_ERROR(
-            drivers,
-            "index out of bounds",
-            tap::errors::CAN_RX,
-            tap::errors::CanRxErrorType::INVALID_REMOVE);
+        RAISE_ERROR(drivers, "index out of bounds");
         return;
     }
 
