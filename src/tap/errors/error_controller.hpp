@@ -31,11 +31,13 @@
 namespace tap
 {
 class Drivers;
-namespace errors
+}
+
+namespace tap::errors
 {
 /**
- * The ErrorController stores the errors that are currently active and displays errors
- * via the terminal serial.
+ * The ErrorController stores the errors that are currently active and allows
+ * the user to query errors via the terminal serial interface.
  *
  * Use the `RAISE_ERROR` macro to add errors to the main ErrorController.
  */
@@ -45,10 +47,6 @@ public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
     using error_index_t = modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE>::Index;
 
-    /**
-     * Constrcuts an ErrorController with a display time for each error specified
-     * by `ERROR_ROTATE_TIME`.
-     */
     ErrorController(Drivers* drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(ErrorController)
     mockable ~ErrorController() = default;
@@ -63,16 +61,20 @@ public:
 
     void init();
 
-    /**
-     * @param[in] inputLine The user input to be processed.
-     * @param[out] outputStream The stream to write information to.
-     * @return `true` if the inputLine was valid and was parsed correctly, `false` otherwise.
-     */
     bool terminalSerialCallback(char* inputLine, modm::IOStream& outputStream, bool) override;
 
     void terminalSerialStreamCallback(modm::IOStream&) override {}
 
 private:
+    static constexpr char USAGE[] =
+        "Usage: error <target>\n"
+        "  Where <target> is one of:\n"
+        "    - [-H]: displays possible commands.\n"
+        "    - [printall]: prints all errors in errorList, displaying their"
+        "description, lineNumber, fileName, and index.\n"
+        "    - [remove [index]]: removes the error at the given index. Example: error remove 1.\n"
+        "    - [removeall]: removes all errors from the errorList.\n";
+
     friend class ErrorControllerTester;
 
     Drivers* drivers;
@@ -88,10 +90,7 @@ private:
     void removeTerminalError(int index, modm::IOStream& outputStream);
 
     void clearAllTerminalErrors(modm::IOStream& outputStream);
-
-    void help(modm::IOStream& outputStream);
 };  // class ErrorController
-}  // namespace errors
-}  // namespace tap
+}  // namespace tap::errors
 
 #endif  // ERROR_CONTROLLER_HPP_
