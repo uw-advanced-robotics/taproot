@@ -16,3 +16,4 @@
 
 - "sim-modm" instance is now generated for all three major desktop platforms, with hardware builds
   and testing environments fully supported on each. (!73, #96, #15)
+- `CanRxHandler` class now supports can ids between `0x1e4` and `0x224`. (!84, #124)
