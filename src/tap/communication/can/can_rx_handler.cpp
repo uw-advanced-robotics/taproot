@@ -86,6 +86,7 @@ void CanRxHandler::processReceivedCanData(
     if (id >= MAX_CAN_ID)
     {
         RAISE_ERROR(drivers, "Invalid can id received");
+        return;
     }
 
     if (messageHandlerStore[id] != nullptr)
