@@ -77,9 +77,7 @@ class TaprootTests(Module):
             env.copy("tap/communication/can")
         if env.has_module(":communication:tcp-server"):
             env.copy("tap/communication/tcp-server")
-        if env.has_module(":errors") and env[":dev_board"] == "rm-dev-board-a":
-            # Note: only dev board a can build these tests currently
-            # due to cross-compatibility issues.
+        if env.has_module(":errors"):
             env.copy("tap/errors")
         env.copy("tap/control")
 
