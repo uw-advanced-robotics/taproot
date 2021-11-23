@@ -35,7 +35,20 @@ using namespace modm::literals;
 
 Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
 
-void Mpu6500::requestCalibration() { imuReady = false; }
+void Mpu6500::requestCalibration()
+{
+    if (imuReady)
+    {
+        raw.gyroOffset.x = 0;
+        raw.gyroOffset.y = 0;
+        raw.gyroOffset.z = 0;
+        raw.accelOffset.x = 0;
+        raw.accelOffset.y = 0;
+        raw.accelOffset.z = 0;
+        calibrationSample = 0;
+        imuReady = false;
+    }
+}
 
 void Mpu6500::init()
 {
