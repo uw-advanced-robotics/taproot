@@ -149,7 +149,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "errors::ErrorController",
-        "mock-object-name": nice_mock("mock::ErrorControllerMock"),
+        "mock-object-name": "testing::StrictMock<mock::ErrorControllerMock>",
         "src-file": "tap/errors/error_controller.hpp",
         "mock-header": "tap/mock/error_controller_mock.hpp",
         "constructor": "this",
