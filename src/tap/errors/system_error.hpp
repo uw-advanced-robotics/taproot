@@ -20,9 +20,7 @@
 #ifndef SYSTEM_ERROR_HPP_
 #define SYSTEM_ERROR_HPP_
 
-namespace tap
-{
-namespace errors
+namespace tap::errors
 {
 class SystemError
 {
@@ -49,7 +47,6 @@ private:
 
     const char *filename;
 };  // class SystemError
-}  // namespace errors
-}  // namespace tap
+}  // namespace tap::errors
 
 #endif  // SYSTEM_ERROR_HPP_

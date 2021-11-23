@@ -655,21 +655,13 @@ void RefSerial::sendRobotToRobotMsg(
 {
     if (msgId < 0x0200 || msgId >= 0x02ff)
     {
-        RAISE_ERROR(
-            drivers,
-            "invalid msgId",
-            tap::errors::CAN_RX,
-            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+        RAISE_ERROR(drivers, "invalid msgId not betweene [0x200, 0x2ff)");
         return;
     }
 
     if (msgLen > 113)
     {
-        RAISE_ERROR(
-            drivers,
-            "invalid msg len",
-            tap::errors::CAN_RX,
-            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+        RAISE_ERROR(drivers, "message length > 113-char maximum");
     }
 
     if (robotData.robotId == RobotId::INVALID)
@@ -748,11 +740,7 @@ void RefSerial::attachRobotToRobotMessageHandler(
 {
     if (msgIdToRobotToRobotHandlerMap.count(msgId) != 0 || msgId < 0x0200 || msgId > 0x02FF)
     {
-        RAISE_ERROR(
-            drivers,
-            "error adding msg handler",
-            tap::errors::CAN_RX,
-            tap::errors::OLEDErrors::INVAILD_VERT_SCROLL_SMALLEST_AND_LARGEST_INDEX);
+        RAISE_ERROR(drivers, "error adding msg handler");
         return;
     }
 
