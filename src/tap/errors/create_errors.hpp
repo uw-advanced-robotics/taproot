@@ -31,7 +31,7 @@ namespace tap::errors
  * @see SystemError
  *
  * ```cpp
- * RAISE_ERROR(drivers "CRC8 failure");
+ * RAISE_ERROR(drivers, "CRC8 failure");
  * ```
  */
 #define RAISE_ERROR(drivers, desc)                                      \
