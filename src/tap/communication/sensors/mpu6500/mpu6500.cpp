@@ -73,11 +73,7 @@ void Mpu6500::init()
     // verify mpu register ID
     if (MPU6500_ID != spiReadRegister(MPU6500_WHO_AM_I))
     {
-        RAISE_ERROR(
-            drivers,
-            "failed to initialize the imu properly",
-            tap::errors::Location::MPU6500,
-            tap::errors::Mpu6500ErrorType::IMU_NOT_RECEIVING_PROPERLY);
+        RAISE_ERROR(drivers, "failed to initialize the imu properly");
         return;
     }
 
@@ -245,11 +241,7 @@ float Mpu6500::validateReading(float reading) const
     {
         return reading;
     }
-    RAISE_ERROR(
-        drivers,
-        "failed to initialize the imu properly",
-        tap::errors::Location::MPU6500,
-        tap::errors::Mpu6500ErrorType::IMU_DATA_NOT_INITIALIZED);
+    RAISE_ERROR(drivers, "failed to initialize the imu properly");
     return 0.0f;
 }
 
