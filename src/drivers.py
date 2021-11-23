@@ -18,6 +18,9 @@
 def nice_mock(mock_name):
     return f"testing::NiceMock<{mock_name}>"
 
+def strict_mock(mock_name):
+    return f"testing::StrictMock<{mock_name}>"
+
 """
 A dictionary storing data about each driver that has
 been defined in code. This data is used to construct
@@ -149,7 +152,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "errors::ErrorController",
-        "mock-object-name": "testing::StrictMock<mock::ErrorControllerMock>",
+        "mock-object-name": strict_mock("mock::ErrorControllerMock"),
         "src-file": "tap/errors/error_controller.hpp",
         "mock-header": "tap/mock/error_controller_mock.hpp",
         "constructor": "this",
