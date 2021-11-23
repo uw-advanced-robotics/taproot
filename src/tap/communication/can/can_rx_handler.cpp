@@ -90,6 +90,7 @@ void CanRxHandler::processReceivedCanData(
             "Invalid can id received",
             tap::errors::Location::CAN_RX,
             tap::errors::CanRxErrorType::MOTOR_ID_OUT_OF_BOUNDS);
+        return;
     }
 
     if (messageHandlerStore[id] != nullptr)
