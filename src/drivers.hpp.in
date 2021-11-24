@@ -25,15 +25,11 @@
 #include "{{ include }}"
 %% endfor
 #include "tap/mock/command_scheduler_mock.hpp"
-/* Start user mock includes */
-/* End user mock includes */
 #else
 %% for include in src_driver_includes
 #include "{{ include }}"
 %% endfor
 #include "tap/control/command_scheduler.hpp"
-/* Start user mock includes */
-/* End user mock includes */
 #endif
 
 namespace tap
@@ -54,8 +50,6 @@ public:
 #else
           commandScheduler(this, true)
 #endif
-    /* Begin user constructor defines */
-    /* End user mock drivers defines */
           {}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
@@ -63,16 +57,12 @@ public:
     {{ object_and_mock["mock-object-name"] }} {{ object_and_mock["object-instance-name"] }};
 %% endfor
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
-/* Begin user mock drivers defines */
-/* End user mock drivers defines */
 #else
 public:
 %% for object_and_mock in object_and_mocks
     {{ object_and_mock["object-name"] }} {{ object_and_mock["object-instance-name"] }};
 %% endfor
     control::CommandScheduler commandScheduler;
-/* Begin user drivers defines */
-/* End user drivers defines */
 #endif
 };  // class Drivers
 

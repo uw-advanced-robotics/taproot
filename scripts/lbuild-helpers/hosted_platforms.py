@@ -15,15 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-def init(module):
-    module.name = ":errors"
-    module.description = "Error handler"
-
-def prepare(module, options):
-    module.depends(":core")
-
-    return options[":dev_board"] == "rm-dev-board-c"
-
-def build(env):
-    env.outbasepath = "taproot/src/tap/errors"
-    env.copy(".")
+ALL_HOSTED_TARGET_NAMES = [
+    "hosted-linux",
+    "hosted-darwin",
+    "hosted-windows",
+]

@@ -18,6 +18,9 @@
 def nice_mock(mock_name):
     return f"testing::NiceMock<{mock_name}>"
 
+def strict_mock(mock_name):
+    return f"testing::StrictMock<{mock_name}>"
+
 """
 A dictionary storing data about each driver that has
 been defined in code. This data is used to construct
@@ -149,7 +152,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
     },
     {
         "object-name": "errors::ErrorController",
-        "mock-object-name": nice_mock("mock::ErrorControllerMock"),
+        "mock-object-name": strict_mock("mock::ErrorControllerMock"),
         "src-file": "tap/errors/error_controller.hpp",
         "mock-header": "tap/mock/error_controller_mock.hpp",
         "constructor": "this",
@@ -177,7 +180,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp",
         "mock-header": "tap/mock/mpu6500_terminal_serial_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": [":communication:serial:terminal_serial"],
+        "module-dependencies": [":communication:serial:terminal_serial", ":communication:sensors:mpu6500"],
     }
 ]
 

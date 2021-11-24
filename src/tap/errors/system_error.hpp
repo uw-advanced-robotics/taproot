@@ -17,27 +17,36 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dji_motor_mock.hpp"
+#ifndef SYSTEM_ERROR_HPP_
+#define SYSTEM_ERROR_HPP_
 
-namespace tap::mock
+namespace tap::errors
 {
-DjiMotorMock::DjiMotorMock(
-    Drivers *drivers,
-    tap::motor::MotorId desMotorIdentifier,
-    tap::can::CanBus motorCanBus,
-    bool isInverted,
-    const char *name,
-    uint16_t encWrapped,
-    int64_t encRevolutions)
-    : DjiMotor(
-          drivers,
-          desMotorIdentifier,
-          motorCanBus,
-          isInverted,
-          name,
-          encWrapped,
-          encRevolutions)
+class SystemError
 {
-}
-DjiMotorMock::~DjiMotorMock() {}
-}  // namespace tap::mock
+public:
+    constexpr SystemError() : lineNumber(0), description("default"), filename("none") {}
+
+    constexpr SystemError(const char *desc, int line, const char *file)
+        : lineNumber(line),
+          description(desc),
+          filename(file)
+    {
+    }
+
+    constexpr int getLineNumber() const { return lineNumber; }
+
+    const char *getDescription() const { return description; }
+
+    const char *getFilename() const { return filename; }
+
+private:
+    int lineNumber;
+
+    const char *description;
+
+    const char *filename;
+};  // class SystemError
+}  // namespace tap::errors
+
+#endif  // SYSTEM_ERROR_HPP_

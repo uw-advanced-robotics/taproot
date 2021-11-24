@@ -18,6 +18,11 @@
 import subprocess
 import shutil
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+
+from hosted_platforms import ALL_HOSTED_TARGET_NAMES
+
 def init(repo):
     repo.name = "taproot"
     repo.description = "Robot-independent control system code generation for the RoboMaster robotics competition"
@@ -58,12 +63,13 @@ def build(env):
         try:
             subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)
 
         print("building sim-modm")
         try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="taproot/sim-modm")
+            for target in ALL_HOSTED_TARGET_NAMES:
+                subprocess.run(["lbuild", "build"], check=True, cwd=f"taproot/sim-modm/{target}")
         except subprocess.CalledProcessError as e:
-            print(e.output())
+            print(e)
             exit(1)

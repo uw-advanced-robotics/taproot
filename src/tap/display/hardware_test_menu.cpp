@@ -34,12 +34,19 @@ HardwareTestMenu::HardwareTestMenu(
     Drivers* drivers)
     : AbstractMenu<DummyAllocator<modm::IAbstractView> >(vs, HARDWARE_TEST_MENU_ID),
       drivers(drivers),
-      vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED)
+      vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED),
+      hardwareTestsStarted(false)
 {
-    drivers->commandScheduler.startHardwareTests();
 }
 
-void HardwareTestMenu::update() {}
+void HardwareTestMenu::update()
+{
+    if (!hardwareTestsStarted)
+    {
+        hardwareTestsStarted = true;
+        drivers->commandScheduler.startHardwareTests();
+    }
+}
 
 void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
