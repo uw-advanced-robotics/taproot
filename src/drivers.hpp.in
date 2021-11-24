@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DRIVERS_HPP_
-#define DRIVERS_HPP_
+#ifndef TAP_DRIVERS_HPP_
+#define TAP_DRIVERS_HPP_
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 %% for include in mock_driver_includes
@@ -40,6 +40,8 @@ class Drivers
 
 #ifdef ENV_UNIT_TESTS
 public:
+#else
+protected:
 #endif
     Drivers()
 %% for object_and_mock in object_and_mocks
@@ -68,5 +70,5 @@ public:
 
 }  // namespace tap
 
-#endif  // DRIVERS_HPP_
+#endif  // TAP_DRIVERS_HPP_
 
