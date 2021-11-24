@@ -76,7 +76,7 @@ public:
 /**
  * Handles incoming requests from the "terminal". The "terminal" is either
  * a uart line connected to a computer with a serial connection open or
- * when runing on the simulator, stdin/stdout.
+ * when running on the simulator, stdin/stdout.
  *
  * To add a handler to the terminal, extend the TerminalSerialCallbackInterface
  * and add it to an instance of the TerminalSerial class via `addHeader`.
