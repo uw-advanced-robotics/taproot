@@ -77,6 +77,8 @@ class TaprootTests(Module):
             env.copy("tap/communication/can")
         if env.has_module(":communication:tcp-server"):
             env.copy("tap/communication/tcp-server")
+        if env.has_module(":communication:serial:ref_serial"):
+            env.copy("tap/communication/serial/ref_serial_tests.cpp")
         if env.has_module(":errors"):
             env.copy("tap/errors")
         env.copy("tap/control")
