@@ -22,7 +22,8 @@
 - "sim-modm" instance is now generated for all three major desktop platforms, with hardware builds
   and testing environments fully supported on each. (!73, #96, #15)
 - Tests were added to the referee serial class. Minor logic/bug changes were made based on the
-  tests.
+  tests (!80, #80).
 - Robot-to-robot interaction handling was added to the `RefSerial` class. One can send a
   robot-to-robot message via `sendRobotToRobotMsg` and register a callback with the `RefSerial`
-  object via `attachRobotToRobotMessageHandler`.
+  object via `attachRobotToRobotMessageHandler`. This functionality is still in the beta-testing
+  phase and needs further validation.
