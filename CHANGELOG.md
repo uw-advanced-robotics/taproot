@@ -26,4 +26,4 @@
 - Robot-to-robot interaction handling was added to the `RefSerial` class. One can send a
   robot-to-robot message via `sendRobotToRobotMsg` and register a callback with the `RefSerial`
   object via `attachRobotToRobotMessageHandler`. This functionality is still in the beta-testing
-  phase and needs further validation.
+  phase and needs further validation (!80, #80).
