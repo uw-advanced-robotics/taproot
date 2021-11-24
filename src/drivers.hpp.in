@@ -17,23 +17,19 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DRIVERS_HPP_
-#define DRIVERS_HPP_
+#ifndef TAP_DRIVERS_HPP_
+#define TAP_DRIVERS_HPP_
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 %% for include in mock_driver_includes
 #include "{{ include }}"
 %% endfor
 #include "tap/mock/command_scheduler_mock.hpp"
-/* Start user mock includes */
-/* End user mock includes */
 #else
 %% for include in src_driver_includes
 #include "{{ include }}"
 %% endfor
 #include "tap/control/command_scheduler.hpp"
-/* Start user mock includes */
-/* End user mock includes */
 #endif
 
 namespace tap
@@ -44,6 +40,8 @@ class Drivers
 
 #ifdef ENV_UNIT_TESTS
 public:
+#else
+protected:
 #endif
     Drivers()
 %% for object_and_mock in object_and_mocks
@@ -54,8 +52,6 @@ public:
 #else
           commandScheduler(this, true)
 #endif
-    /* Begin user constructor defines */
-    /* End user mock drivers defines */
           {}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
@@ -63,20 +59,16 @@ public:
     {{ object_and_mock["mock-object-name"] }} {{ object_and_mock["object-instance-name"] }};
 %% endfor
     testing::NiceMock<mock::CommandSchedulerMock> commandScheduler;
-/* Begin user mock drivers defines */
-/* End user mock drivers defines */
 #else
 public:
 %% for object_and_mock in object_and_mocks
     {{ object_and_mock["object-name"] }} {{ object_and_mock["object-instance-name"] }};
 %% endfor
     control::CommandScheduler commandScheduler;
-/* Begin user drivers defines */
-/* End user drivers defines */
 #endif
 };  // class Drivers
 
 }  // namespace tap
 
-#endif  // DRIVERS_HPP_
+#endif  // TAP_DRIVERS_HPP_
 
