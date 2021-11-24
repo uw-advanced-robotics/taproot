@@ -52,10 +52,10 @@ void CanRxHandler::attachReceiveHandler(
     CanRxListener* const canRxListener,
     CanRxListener** messageHandlerStore)
 {
-    uint16_t id = normalizeCanId(canRxListener->canIdentifier);
+    uint16_t id = lookupTableIndexForCanId(canRxListener->canIdentifier);
 
-    bool receiveInterfaceOverloaded = messageHandlerStore[id] != nullptr;
-    modm_assert(!receiveInterfaceOverloaded || (id < MAX_CAN_ID), "can1", "overloading", 1);
+    modm_assert(id < MAX_CAN_ID, "CAN", "RX listener id out of bounds", 1);
+    modm_assert(messageHandlerStore[id] == nullptr, "CAN", "overloading", 1);
 
     messageHandlerStore[id] = canRxListener;
 }
@@ -81,7 +81,7 @@ void CanRxHandler::processReceivedCanData(
     const modm::can::Message& rxMessage,
     CanRxListener* const* messageHandlerStore)
 {
-    uint16_t id = normalizeCanId(rxMessage.getIdentifier());
+    uint16_t id = lookupTableIndexForCanId(rxMessage.getIdentifier());
 
     if (id >= MAX_CAN_ID)
     {
@@ -111,7 +111,7 @@ void CanRxHandler::removeReceiveHandler(
     const CanRxListener& canRxListener,
     CanRxListener** messageHandlerStore)
 {
-    int id = normalizeCanId(canRxListener.canIdentifier);
+    int id = lookupTableIndexForCanId(canRxListener.canIdentifier);
 
     if (id >= MAX_CAN_ID)
     {
