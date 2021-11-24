@@ -61,9 +61,12 @@ class CanRxListener;
  * pollCanData function be called at a very high frequency,
  * so call this in a high frequency thread.
  *
- * @note The CAN handler can handle 64 CAN ids between [`0x1E4`, `0x224`).
- * @note The CAN ids `0x1FF` and `0x200` are reserved for sending stuff to motors
- *      and thus you should not attach listeners for these ids
+ * @note The CAN handler can handle 64 CAN ids between [`0x1E4`, `0x224`). In the middle of this
+ *      range, CAN ids [`0x201`, `0x20B`] are used by the `DjiMotor` objects to receive data from
+ *      DJI branded motors. If you would like to define your own protocol, it is recommended to
+ *      avoid avoid using CAN ids in this range.
+ * @note the DjiMotor driver reserves `0x1FF` and `0x200` for commanding motors,
+ *      and thus you should not attach listeners for these ids.
  *
  * @see `CanRxListener` for information about how to properly create
  *      add a listener to the handler.
@@ -84,7 +87,7 @@ public:
      * Given a CAN identifier, returns the "normalized" id between [0, MAX_CAN_ID), or a
      * value >= MAX_CAN_ID if the canId is outside the range specified.
      */
-    static inline uint16_t normalizeCanId(uint16_t canId)
+    static inline uint16_t lookupTableIndexForCanId(uint16_t canId)
     {
         if (canId < MIN_CAN_ID)
         {

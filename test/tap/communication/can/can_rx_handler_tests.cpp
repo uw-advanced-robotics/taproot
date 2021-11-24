@@ -43,7 +43,7 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
     {
         tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
-        int normalizedId = tap::can::CanRxHandler::normalizeCanId(i);
+        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
 
         handler.attachReceiveHandler(&listener);
         EXPECT_EQ(&listener, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
@@ -74,7 +74,7 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
         EXPECT_EQ(
             nullptr,
             handler.getHandlerStore(
-                tap::can::CanBus::CAN_BUS1)[tap::can::CanRxHandler::normalizeCanId(i)]);
+                tap::can::CanBus::CAN_BUS1)[tap::can::CanRxHandler::lookupTableIndexForCanId(i)]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
     }
 }
