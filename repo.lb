@@ -16,7 +16,6 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import subprocess
-import shutil
 
 import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
