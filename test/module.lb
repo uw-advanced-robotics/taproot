@@ -79,11 +79,11 @@ class TaprootTests(Module):
             env.copy("tap/communication/tcp-server")
         if env.has_module(":communication:serial:ref_serial"):
             env.copy("tap/communication/serial/ref_serial_tests.cpp")
+        if env.has_module(":communication:serial:terminal_serial"):
+            env.copy("tap/communication/serial/terminal_serial_tests.cpp")
         if env.has_module(":errors"):
             env.copy("tap/errors")
         env.copy("tap/control")
-        if env.has_module("taproot:communication:serial"):
-            env.copy("tap/communication/serial")
         if env.has_module("taproot:communication:sensors:mpu6500"):
             env.copy("tap/communication/sensors/mpu6500")
 
