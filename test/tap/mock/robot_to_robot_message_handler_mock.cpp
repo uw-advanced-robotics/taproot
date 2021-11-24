@@ -17,25 +17,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ENV_UNIT_TESTS
+#include "robot_to_robot_message_handler_mock.hpp"
 
-#include "drivers_singleton.hpp"
-
-namespace tap
+namespace tap::mock
 {
-/**
- * Class that allows one to construct a Drivers instance because of frienship
- * with the Drivers class.
- */
-class DriversSingleton
+RobotToRobotMessageHandlerMock::RobotToRobotMessageHandlerMock()
+    : tap::serial::RefSerial::RobotToRobotMessageHandler()
 {
-public:
-    static Drivers drivers;
-};  // class DriversSingleton
-
-Drivers DriversSingleton::drivers;
-
-Drivers *DoNotUse_getDrivers() { return &DriversSingleton::drivers; }
-}  // namespace tap
-
-#endif
+}
+}  // namespace tap::mock

@@ -24,11 +24,6 @@ def init(module):
     module.description = "Core library features"
 
 def prepare(module, options):
-    module.add_option(BooleanOption(
-        name="generate_driver_hpp", default=True,
-        description="Specify whether or not to generate drivers.hpp." \
-                     "Set to false after you generate drivers.hpp the first time."))
-
     module.depends(
         ":testing:mock",
         ":modm-project.xml",
@@ -58,21 +53,16 @@ def build(env):
     # top level module
     env.outbasepath = "taproot/src"
     env.copy("tap/SConscript")
-    env.copy("tap/drivers_singleton.hpp")
     env.copy("tap/util_macros.hpp")
-    env.copy("tap/drivers.hpp")
-    env.copy("tap/drivers_singleton.cpp")
 
     env.copy("tap/algorithms")
     env.copy("tap/architecture")
     env.copy("tap/control")
     env.copy("tap/motor")
 
-    if (env["generate_driver_hpp"]):
-        env.outbasepath = "src"
-        env.substitutions = {
-            "object_and_mocks": drivers.get_object_and_mock_names(env),
-            "mock_driver_includes": drivers.get_mock_headers_sorted(env),
-            "src_driver_includes": drivers.get_src_files_sorted(env),
-        }
-        env.template("drivers.hpp.in", "drivers.hpp")
+    env.substitutions = {
+        "object_and_mocks": drivers.get_object_and_mock_names(env),
+        "mock_driver_includes": drivers.get_mock_headers_sorted(env),
+        "src_driver_includes": drivers.get_src_files_sorted(env),
+    }
+    env.template("drivers.hpp.in", "tap/drivers.hpp")
