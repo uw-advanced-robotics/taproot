@@ -44,11 +44,46 @@ public:
     MOCK_METHOD(const Rx::RobotData&, getRobotData, (), (const override));
     MOCK_METHOD(const Rx::GameData&, getGameData, (), (const override));
     MOCK_METHOD(void, deleteGraphicLayer, (Tx::DeleteGraphicOperation, uint8_t), (override));
-    MOCK_METHOD(void, sendGraphic, (Tx::Graphic1Message*, bool, bool), (override));
-    MOCK_METHOD(void, sendGraphic, (Tx::Graphic2Message*, bool, bool), (override));
-    MOCK_METHOD(void, sendGraphic, (Tx::Graphic5Message*, bool, bool), (override));
-    MOCK_METHOD(void, sendGraphic, (Tx::Graphic7Message*, bool, bool), (override));
-    MOCK_METHOD(void, sendGraphic, (Tx::GraphicCharacterMessage*, bool, bool), (override));
+    MOCK_METHOD3(sendGraphicImpl, void(Tx::Graphic1Message*, bool, bool));
+    MOCK_METHOD3(sendGraphicImpl, void(Tx::Graphic2Message*, bool, bool));
+    MOCK_METHOD3(sendGraphicImpl, void(Tx::Graphic5Message*, bool, bool));
+    MOCK_METHOD3(sendGraphicImpl, void(Tx::Graphic7Message*, bool, bool));
+    MOCK_METHOD3(sendGraphicImpl, void(Tx::GraphicCharacterMessage*, bool, bool));
+    virtual void sendGraphic(
+        Tx::Graphic1Message* msg,
+        bool configMsgHeader = true,
+        bool sendMsg = true)
+    {
+        sendGraphic(msg, configMsgHeader, sendMsg);
+    }
+    virtual void sendGraphic(
+        Tx::Graphic2Message* msg,
+        bool configMsgHeader = true,
+        bool sendMsg = true)
+    {
+        sendGraphic(msg, configMsgHeader, sendMsg);
+    }
+    virtual void sendGraphic(
+        Tx::Graphic5Message* msg,
+        bool configMsgHeader = true,
+        bool sendMsg = true)
+    {
+        sendGraphic(msg, configMsgHeader, sendMsg);
+    }
+    virtual void sendGraphic(
+        Tx::Graphic7Message* msg,
+        bool configMsgHeader = true,
+        bool sendMsg = true)
+    {
+        sendGraphic(msg, configMsgHeader, sendMsg);
+    }
+    virtual void sendGraphic(
+        Tx::GraphicCharacterMessage* msg,
+        bool configMsgHeader = true,
+        bool sendMsg = true)
+    {
+        sendGraphic(msg, configMsgHeader, sendMsg);
+    }
     MOCK_METHOD(
         void,
         sendRobotToRobotMsg,
