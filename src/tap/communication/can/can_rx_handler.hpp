@@ -84,14 +84,14 @@ public:
     DISALLOW_COPY_AND_ASSIGN(CanRxHandler)
 
     /**
-     * Given a CAN identifier, returns the "normalized" id between [0, MAX_CAN_ID), or a
-     * value >= MAX_CAN_ID if the canId is outside the range specified.
+     * Given a CAN identifier, returns the "normalized" id between [0, NUM_CAN_IDS), or a
+     * value >= NUM_CAN_IDS if the canId is outside the range specified.
      */
     static inline uint16_t lookupTableIndexForCanId(uint16_t canId)
     {
         if (canId < MIN_CAN_ID)
         {
-            return MAX_CAN_ID;
+            return NUM_CAN_IDS;
         }
 
         return canId - MIN_CAN_ID;

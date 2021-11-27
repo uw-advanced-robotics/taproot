@@ -54,7 +54,7 @@ void CanRxHandler::attachReceiveHandler(
 {
     uint16_t id = lookupTableIndexForCanId(canRxListener->canIdentifier);
 
-    modm_assert(id < MAX_CAN_ID, "CAN", "RX listener id out of bounds", 1);
+    modm_assert(id < NUM_CAN_IDS, "CAN", "RX listener id out of bounds", 1);
     modm_assert(messageHandlerStore[id] == nullptr, "CAN", "overloading", 1);
 
     messageHandlerStore[id] = canRxListener;
