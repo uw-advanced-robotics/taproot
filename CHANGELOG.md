@@ -16,6 +16,8 @@
   documentation](https://modm.io/reference/module/modm-architecture-register/) for how these work.
   Structs and enum values previously stored directly inside the `RefSerial` object now must be
   prefixed by `Rx` or `Tx`.
+- `tap::communication::serial::ITerminalSerialCallback` interface renamed to
+  `tap::communication::TerminalSerialCallbackInterface`.
 
 ### All changes
 
@@ -28,3 +30,4 @@
   object via `attachRobotToRobotMessageHandler`. This functionality is still in the beta-testing
   phase and needs further validation (!80, #80).
 - `CanRxHandler` class now supports can ids between `0x1e4` and `0x224`. (!84, #124)
+- Tests added to terminal serial and various bugs in related classes were removed (!67, #58).
