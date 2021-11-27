@@ -27,3 +27,4 @@
   robot-to-robot message via `sendRobotToRobotMsg` and register a callback with the `RefSerial`
   object via `attachRobotToRobotMessageHandler`. This functionality is still in the beta-testing
   phase and needs further validation (!80, #80).
+- `CanRxHandler` class now supports can ids between `0x1e4` and `0x224`. (!84, #124)
