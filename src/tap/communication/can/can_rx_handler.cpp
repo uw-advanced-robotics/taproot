@@ -83,7 +83,7 @@ void CanRxHandler::processReceivedCanData(
 {
     uint16_t id = lookupTableIndexForCanId(rxMessage.getIdentifier());
 
-    if (id >= MAX_CAN_ID)
+    if (id >= NUM_CAN_IDS)
     {
         RAISE_ERROR(drivers, "Invalid can id received");
         return;
@@ -113,7 +113,7 @@ void CanRxHandler::removeReceiveHandler(
 {
     int id = lookupTableIndexForCanId(canRxListener.canIdentifier);
 
-    if (id >= MAX_CAN_ID)
+    if (id >= NUM_CAN_IDS)
     {
         RAISE_ERROR(drivers, "index out of bounds");
         return;

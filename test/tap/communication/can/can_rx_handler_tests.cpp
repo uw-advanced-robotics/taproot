@@ -88,3 +88,16 @@ TEST(CanRxHandler, ErrorIsThrownWithOOBMessageID)
     EXPECT_CALL(drivers.errorController, addToErrorList);
     handler.processReceivedCanData(rxMessage, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
 }
+
+TEST(CanRxHandler, removeReceiveHandler__error_logged_with_oob_can_rx_listener_id)
+{
+    tap::Drivers drivers;
+    tap::can::CanRxHandler handler(&drivers);
+    tap::mock::CanRxListenerMock canRxListenerHi(&drivers, 0xffff, tap::can::CanBus::CAN_BUS1);
+    tap::mock::CanRxListenerMock canRxListenerLo(&drivers, 0x0, tap::can::CanBus::CAN_BUS1);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+
+    handler.removeReceiveHandler(canRxListenerHi);
+    handler.removeReceiveHandler(canRxListenerLo);
+}
