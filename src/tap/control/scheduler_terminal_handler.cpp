@@ -50,7 +50,7 @@ bool SchedulerTerminalHandler::terminalSerialCallback(
 {
     char* arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
 
-    if (strcmp(arg, "allsubcmd") == 0)
+    if (arg != nullptr && strcmp(arg, "allsubcmd") == 0)
     {
         printInfo(outputStream);
         return true;

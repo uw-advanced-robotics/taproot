@@ -43,6 +43,19 @@ TEST(SchedulerTerminalHandler, init__adds_to_terminal_handler)
     serialHandler.init();
 }
 
+TEST(SchedulerTerminalHandler, terminalSerialCallback__doesnt_crash_if_input_blank)
+{
+    Drivers drivers;
+    SchedulerTerminalHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    char input[] = "";
+    serialHandler.terminalSerialCallback(input, stream, false);
+
+    EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), HasSubstr("Usage"));
+}
+
 TEST(SchedulerTerminalHandler, terminalSerialCallback__prints_usage_if_invalid_input)
 {
     Drivers drivers;
