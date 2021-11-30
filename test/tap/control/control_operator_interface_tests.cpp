@@ -277,8 +277,8 @@ TEST(ControlOperatorInterface, getChassisInput_walk_and_crouch)
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        MAX_REMOTE * ControlOperatorInterface::WALK_SCALAR,
-        runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, true, false, true)); // walk forward
+        0.5f * ControlOperatorInterface::WALK_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, 0.5f, true, false, true)); // walk forward
     EXPECT_FLOAT_EQ(
         MAX_REMOTE * ControlOperatorInterface::CROUCH_SCALAR,
         runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, true, false, false, true)); // crouch forward
