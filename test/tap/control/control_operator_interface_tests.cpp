@@ -272,22 +272,28 @@ TEST(ControlOperatorInterface, getChassisInput_half_max_remote_and_max_and_min_k
         runChassisRInputTest(drivers, operatorInterface, MAX_REMOTE / 2.0f, true, true));
 }
 
-TEST(ControlOperatorInterface, getChassisInput_walk_and_crouch)
+TEST(ControlOperatorInterface, getChassisInput_shift)
 {
     INIT_TEST
-    setTime(1);
+    setTime(1); 
     EXPECT_FLOAT_EQ(
-        0.5f * ControlOperatorInterface::WALK_SCALAR,
-        runChassisXInputTest(drivers, operatorInterface, 0.5f, true, false, true)); // walk forward
+        1.0f * ControlOperatorInterface::SHIFT_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, 1.0f, true, false, true)); // walk forward
     EXPECT_FLOAT_EQ(
-        MAX_REMOTE * ControlOperatorInterface::CROUCH_SCALAR,
-        runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, true, false, false, true)); // crouch forward
+        1.0f * ControlOperatorInterface::SHIFT_SCALAR,
+        runChassisYInputTest(drivers, operatorInterface, 1.0f, true, false, true)); // walk left
+}
+
+TEST(ControlOperatorInterface, getChassisInput_ctrl)
+{
+    INIT_TEST
+    setTime(1); 
     EXPECT_FLOAT_EQ(
-        -MAX_REMOTE * ControlOperatorInterface::WALK_SCALAR,
-        runChassisXInputTest(drivers, operatorInterface, -MAX_REMOTE, false, true, true)); // walk backward
+        1.0f * ControlOperatorInterface::CTRL_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, 1.0f, true, false, false, true)); // crouch forward
     EXPECT_FLOAT_EQ(
-        -MAX_REMOTE * ControlOperatorInterface::CROUCH_SCALAR,
-        runChassisYInputTest(drivers, operatorInterface, -MAX_REMOTE, false, true, false, true)); // crouch backward
+        1.0f * ControlOperatorInterface::CTRL_SCALAR,
+        runChassisYInputTest(drivers, operatorInterface, 1.0f, true, false, false, true)); // crouch left
 }
 
 // Note: Remote input inverted for yaw control.
