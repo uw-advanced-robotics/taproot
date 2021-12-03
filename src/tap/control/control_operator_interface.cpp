@@ -41,20 +41,22 @@ float ControlOperatorInterface::getChassisXInput()
         prevUpdateCounterX = updateCounter;
     }
 
-    int16_t input = drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
+    int16_t input =
+        drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
     float prevOutput = chassisXKeyInputFiltered;
 
-    if (abs(prevOutput) < CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD || abs(input) <= abs(prevOutput)) {
-        chassisXKeyInputFiltered = algorithms::lowPassFilter(
-                prevOutput,
-                input,
-                CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
+    if (abs(prevOutput) < CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
+        abs(input) <= abs(prevOutput))
+    {
+        chassisXKeyInputFiltered =
+            algorithms::lowPassFilter(prevOutput, input, CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
     }
-    else {
+    else
+    {
         chassisXKeyInputFiltered = algorithms::lowPassFilter(
-                prevOutput,
-                input,
-                abs(prevOutput/input)*CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
+            prevOutput,
+            input,
+            abs(prevOutput / input) * CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
     }
 
     return limitVal<float>(
@@ -75,22 +77,23 @@ float ControlOperatorInterface::getChassisYInput()
         prevUpdateCounterY = updateCounter;
     }
 
-    int16_t input = drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
+    int16_t input =
+        drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
     float prevOutput = chassisYKeyInputFiltered;
 
-    if (abs(prevOutput) < CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD || abs(input) <= abs(prevOutput)) {
-        chassisYKeyInputFiltered = algorithms::lowPassFilter(
-                prevOutput,
-                input,
-                CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
+    if (abs(prevOutput) < CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
+        abs(input) <= abs(prevOutput))
+    {
+        chassisYKeyInputFiltered =
+            algorithms::lowPassFilter(prevOutput, input, CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
     }
-    else {
+    else
+    {
         chassisYKeyInputFiltered = algorithms::lowPassFilter(
-                prevOutput,
-                input,
-                abs(prevOutput/input)*CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
+            prevOutput,
+            input,
+            abs(prevOutput / input) * CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
     }
-    
 
     return limitVal<float>(
         chassisYInput.getInterpolatedValue(currTime) + chassisYKeyInputFiltered,
