@@ -17,25 +17,25 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ENV_UNIT_TESTS
+#ifndef TERMINAL_SERIAL_INTERFACE_MOCK_HPP_
+#define TERMINAL_SERIAL_INTERFACE_MOCK_HPP_
 
-#include "drivers_singleton.hpp"
+#include <gmock/gmock.h>
 
-namespace tap
+#include "tap/communication/serial/terminal_serial.hpp"
+
+namespace tap::mock
 {
-/**
- * Class that allows one to construct a Drivers instance because of frienship
- * with the Drivers class.
- */
-class DriversSingleton
+class TerminalSerialCallbackInterfaceMock
+    : public tap::communication::serial::TerminalSerialCallbackInterface
 {
 public:
-    static Drivers drivers;
-};  // class DriversSingleton
+    TerminalSerialCallbackInterfaceMock();
+    ~TerminalSerialCallbackInterfaceMock();
 
-Drivers DriversSingleton::drivers;
+    MOCK_METHOD(bool, terminalSerialCallback, (char *, modm::IOStream &, bool), (override));
+    MOCK_METHOD(void, terminalSerialStreamCallback, (modm::IOStream &), (override));
+};
+}  // namespace tap::mock
 
-Drivers *DoNotUse_getDrivers() { return &DriversSingleton::drivers; }
-}  // namespace tap
-
-#endif
+#endif  // TERMINAL_SERIAL_INTERFACE_MOCK_HPP_
