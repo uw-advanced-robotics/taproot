@@ -45,6 +45,14 @@ public:
      * @param[in] drivers A pointer to the `Drivers` struct.
      * @param[in] setpointSubsystem The subsystem to interact with.
      * @param[in] moveDisplacement The displacement the command will apply to the subsystem
+     * @param[in] moveTime See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
+     * @param[in] pauseAfterMoveTime See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
+     * @param[in] setToTargetOnEnd See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
+     * @param[in] setpointTolerance See `MoveCommand` for more details, passed on directly
+     *      to its constructor.
      * @param[in] unjamDisplacement See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
      * @param[in] unjamThreshold See `UnjamCommand`'s constructor for more details,
@@ -53,27 +61,19 @@ public:
      *      passed on directly to this command's constructor.
      * @param[in] maxUnjamWaitTime See `UnjamCommand`'s constructor for more details,
      *      passed on directly to this command's constructor.
-     * @param[in] moveTime The time it takes to rotate the agitator to the desired angle
-     *      in milliseconds.
-     * @param[in] pauseAfterMoveTime See `MoveCommand` for more details, passed on directly
-     *      to its constructor.
-     * @param[in] setToTargetOnEnd See `MoveCommand` for more details, passed on directly
-     *      to its constructor.
-     * @param[in] setpointTolerance See `MoveCommand` for more details, passed on directly
-     *      to its constructor.
      */
     MoveUnjamComprisedCommand(
         tap::Drivers* drivers,
         SetpointSubsystem* setpointSubsystem,
         float moveDisplacement,
-        float unjamDisplacement,
-        float unjamThreshold,
-        uint32_t maxUnjamWaitTime,
-        uint_fast16_t unjamCycleCount,
         uint32_t moveTime,
         uint32_t pauseAfterMoveTime,
         bool setToTargetOnEnd,
-        float setpointTolerance);
+        float setpointTolerance,
+        float unjamDisplacement,
+        float unjamThreshold,
+        uint32_t maxUnjamWaitTime,
+        uint_fast16_t unjamCycleCount);
 
     void initialize() override;
 

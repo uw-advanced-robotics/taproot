@@ -63,7 +63,7 @@ public:
      *      This value must be positive. Absolute value will be taken
      *      if negative.
      * @param[in] maxWaitTime The maximum amount of time the controller will
-     *      wait for the subsystem to reach unjam target in milliseconds before
+     *      wait for the subsystem to reach unjamDisplacement in milliseconds before
      *      trying to move in the opposite direction.
      * @param[in] targetCycleCount the number of cycles to attempt to wiggle the subsystem
      */

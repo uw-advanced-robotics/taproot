@@ -38,14 +38,14 @@ MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     tap::Drivers* drivers,
     SetpointSubsystem* setpointSubsystem,
     float moveDisplacement,
-    float unjamDisplacement,
-    float unjamThreshold,
-    uint32_t maxUnjamWaitTime,
-    uint_fast16_t unjamCycleCount,
     uint32_t moveTime,
     uint32_t pauseAfterMoveTime,
     bool setToTargetOnEnd,
-    float setpointTolerance)
+    float setpointTolerance,
+    float unjamDisplacement,
+    float unjamThreshold,
+    uint32_t maxUnjamWaitTime,
+    uint_fast16_t unjamCycleCount)
     : tap::control::ComprisedCommand(drivers),
       setpointSubsystem(setpointSubsystem),
       agitatorRotateCommand(
