@@ -113,7 +113,8 @@ void UnjamCommand::end(bool)
 
 bool UnjamCommand::isFinished() const
 {
-    return !setpointSubsystem->isOnline() || backwardsCount >= targetCycleCount + 1;
+    return !setpointSubsystem->isOnline() || (forwardsCleared && backwardsCleared) ||
+           backwardsCount >= targetCycleCount + 1;
 }
 
 void UnjamCommand::beginUnjamForwards()
