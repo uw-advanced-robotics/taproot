@@ -141,11 +141,7 @@ CommandScheduler::CommandScheduler(
 {
     if (masterScheduler && masterSchedulerExists)
     {
-        RAISE_ERROR(
-            drivers,
-            "master scheduler already exists",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::MASTER_SCHEDULER_ALREADY_EXISTS);
+        RAISE_ERROR(drivers, "master scheduler already exists");
     }
     else
     {
@@ -238,11 +234,7 @@ void CommandScheduler::run()
         // to complete all this stuff, if it does something
         // is seriously wrong (i.e. you are adding subsystems unchecked or the scheduler
         // itself is broken).
-        RAISE_ERROR(
-            drivers,
-            "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
+        RAISE_ERROR(drivers, "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME");
     }
 #endif
 }
@@ -255,20 +247,12 @@ void CommandScheduler::addCommand(Command *commandToAdd)
     }
     else if (runningHardwareTests)
     {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add command while running tests",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADD_COMMAND_WHILE_TESTING);
+        RAISE_ERROR(drivers, "attempting to add command while running tests");
         return;
     }
     else if (commandToAdd == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add nullptr command",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
+        RAISE_ERROR(drivers, "attempting to add nullptr command");
         return;
     }
     else if (!commandToAdd->isReady())
@@ -285,11 +269,7 @@ void CommandScheduler::addCommand(Command *commandToAdd)
     {
         // the command you are trying to add has a subsystem that is not in the
         // scheduler, so you cannot add it (will lead to undefined control behavior)
-        RAISE_ERROR(
-            drivers,
-            "Attempting to add a command without subsystem in the scheduler",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADD_COMMAND_WITHOUT_REGISTERED_SUB);
+        RAISE_ERROR(drivers, "Attempting to add a command without subsystem in the scheduler");
         return;
     }
 
@@ -319,11 +299,7 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
 {
     if (command == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "trying to remove nullptr command",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::REMOVE_NULLPTR_COMMAND);
+        RAISE_ERROR(drivers, "trying to remove nullptr command");
         return;
     }
     else if (!isCommandScheduled(command))
@@ -351,19 +327,11 @@ void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {
     if (subsystem == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "trying to register nullptr subsystem",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_NULLPTR_SUBSYSTEM);
+        RAISE_ERROR(drivers, "trying to register nullptr subsystem");
     }
     else if (isSubsystemRegistered(subsystem))
     {
-        RAISE_ERROR(
-            drivers,
-            "subsystem is already added",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_ALREADY_ADDED_SUBSYSTEM);
+        RAISE_ERROR(drivers, "subsystem is already added");
     }
     else
     {

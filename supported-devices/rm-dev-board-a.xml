@@ -42,6 +42,7 @@
         <gpio alias="ImuHeater" name="GpioB5">
             <timer name="Timer3" channel="Ch2"></timer>
         </gpio>
+        <gpio alias="Button" name="GpioB2"></gpio>
     </gpio-pins>
     <uart-ports>
         <uart name="1" rx="GpioB7"></uart>

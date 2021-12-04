@@ -21,33 +21,26 @@
 
 #include "system_error.hpp"
 
-namespace tap
-{
-namespace errors
+namespace tap::errors
 {
 /**
  * Example for how to create and add an error. `drivers` is a pointer to an
- * `taproot::Drivers`, which contains an instance of an `ErrorController`.
- *
- * Parameters l and et only exist for backwards compatibility with rm type a
- * board.
+ * `tap::Drivers`, which contains an instance of an `ErrorController`.
  *
  * @see ErrorController
  * @see SystemError
  *
  * ```cpp
- * RAISE_ERROR(drivers, "Error in DJI Serial");
+ * RAISE_ERROR(drivers, "CRC8 failure");
  * ```
  */
-#define RAISE_ERROR(drivers, desc, l, et)                               \
+#define RAISE_ERROR(drivers, desc)                                      \
     do                                                                  \
     {                                                                   \
         tap::errors::SystemError stringError(desc, __LINE__, __FILE__); \
         drivers->errorController.addToErrorList(stringError);           \
     } while (0);
 
-}  // namespace errors
-
-}  // namespace tap
+}  // namespace tap::errors
 
 #endif  // CREATE_ERRORS_HPP_

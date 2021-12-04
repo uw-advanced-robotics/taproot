@@ -17,6 +17,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
+#include "robot_to_robot_message_handler_mock.hpp"
 
-int main() { return 0; }
+namespace tap::mock
+{
+RobotToRobotMessageHandlerMock::RobotToRobotMessageHandlerMock()
+    : tap::serial::RefSerial::RobotToRobotMessageHandler()
+{
+}
+}  // namespace tap::mock
