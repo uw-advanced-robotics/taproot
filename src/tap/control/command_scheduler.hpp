@@ -188,6 +188,14 @@ public:
     mockable void registerSubsystem(Subsystem* subsystem);
 
     /**
+     * @brief Set the SafeDisconnectFunction to the given function.
+     * 
+     * @param func the 
+     * @return mockable 
+     */
+    mockable void setSafeDisconnectFunction(SafeDisconnectFunction* func);
+
+    /**
      * @param[in] subsystem the subsystem to check
      * @return `true` if the Subsystem is already scheduled, `false` otherwise.
      */
@@ -320,6 +328,14 @@ private:
     static bool masterSchedulerExists;
 
     /**
+     * Returns true if the remote is disconnected and the safeDisconnectMode flag is
+     * enabled.
+     */
+    bool safeDisconnected();
+
+    Drivers* drivers;
+
+    /**
      * A global SafeDisconnectFunction used by CommandScheduler by default.
      */
     static SafeDisconnectFunction defaultSafeDisconnectFunction;
@@ -329,14 +345,6 @@ private:
      * the "disconnected" state.
      */
     SafeDisconnectFunction* safeDisconnectFunction;
-
-    /**
-     * Returns true if the remote is disconnected and the safeDisconnectMode flag is
-     * enabled.
-     */
-    bool safeDisconnected();
-
-    Drivers* drivers;
 
     /**
      * Each bit in the bitmap represents a unique subsystem that has been constructed

@@ -340,6 +340,11 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
 }
 
+void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
+{
+    this->safeDisconnectFunction = &func;
+}
+
 bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
