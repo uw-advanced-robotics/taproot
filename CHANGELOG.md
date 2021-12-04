@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-- Almost everything in `tap::control::setpoint` has changed. Most will faily loudly (i.e.: will cause
+- Almost everything in `tap::control::setpoint` has changed. Most will fail loudly (i.e.: will cause
   compilation errors). Those that are potentially more insidious are documented below:
   - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand` changed
     (grouped by usage now) 
