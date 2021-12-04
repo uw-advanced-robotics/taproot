@@ -39,6 +39,7 @@ Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBS
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
 int CommandScheduler::maxSubsystemIndex = 0;
 int CommandScheduler::maxCommandIndex = 0;
+SafeDisconnectFunction CommandScheduler::defaultSafeDisconnectFunction;
 
 int CommandScheduler::constructCommand(Command *command)
 {
@@ -131,7 +132,12 @@ void CommandScheduler::destructSubsystem(Subsystem *subsystem)
     }
 }
 
-CommandScheduler::CommandScheduler(Drivers *drivers, bool masterScheduler) : drivers(drivers)
+CommandScheduler::CommandScheduler(
+    Drivers *drivers,
+    bool masterScheduler,
+    SafeDisconnectFunction *safeDisconnectFunction)
+    : drivers(drivers),
+      safeDisconnectFunction(safeDisconnectFunction)
 {
     if (masterScheduler && masterSchedulerExists)
     {
@@ -334,14 +340,7 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
 }
 
-void CommandScheduler::enableSafeDisconnectMode() { safeDisconnectMode = true; }
-
-void CommandScheduler::disableSafeDisconnectMode() { safeDisconnectMode = false; }
-
-bool CommandScheduler::safeDisconnected()
-{
-    return !drivers->remote.isConnected() && safeDisconnectMode;
-}
+bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {

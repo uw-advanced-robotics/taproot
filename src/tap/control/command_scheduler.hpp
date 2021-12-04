@@ -35,6 +35,23 @@ class Command;
 class Subsystem;
 
 /**
+ * Abstract base class for a functor that defines how a robot is considered
+ * "disconnected" in the CommandScheduler. When the functor returns true, the
+ * robot is then considered disconnected and will end all Commands in the
+ * CommandScheduler and disallow new Commands from being added.
+ *
+ * By default, the SafeDisconnectFunction will always return false, i.e.,
+ * allow the CommandScheduler to continue running Commands in a
+ * "disconnected" state.
+ */
+class SafeDisconnectFunction
+{
+public:
+    SafeDisconnectFunction(){};
+    virtual bool operator()() { return false; }
+};
+
+/**
  * Class for handling all the commands you would like to currently run.
  * Interfaces with the Subsystem and Command classes to provide a means
  * of safely scheduling multiple Commands and Subsystems. Checks are
@@ -91,7 +108,11 @@ class Subsystem;
 class CommandScheduler
 {
 public:
-    CommandScheduler(Drivers* drivers, bool masterScheduler = false);
+    CommandScheduler(
+        Drivers* drivers,
+        bool masterScheduler = false,
+        SafeDisconnectFunction* safeDisconnectFunction =
+            &CommandScheduler::defaultSafeDisconnectFunction);
     DISALLOW_COPY_AND_ASSIGN(CommandScheduler)
     mockable ~CommandScheduler();
 
@@ -149,20 +170,6 @@ public:
      *      function when removing the desired Command.
      */
     mockable void removeCommand(Command* command, bool interrupted);
-
-    /**
-     * Enables operation in safe disconnect mode. When operating with safe
-     * disconnect mode, the robot will end all of the Command Scheduler's
-     * Commands if the remote disconnects from the robot.
-     */
-    mockable void enableSafeDisconnectMode();
-
-    /**
-     * Disables operation in safe disconnect mode. When  operating without safe
-     * disconnect mode, the robot will continue to execute Commands in the
-     * Command Scheduler even if the remote disconnects from the robot.
-     */
-    mockable void disableSafeDisconnectMode();
 
     /**
      * @return `true` if the CommandScheduler contains the requrested Command.
@@ -313,9 +320,15 @@ private:
     static bool masterSchedulerExists;
 
     /**
-     * An instance flag indicating whether or not safe disconnect mode is enabled.
+     * A global SafeDisconnectFunction used by CommandScheduler by default.
      */
-    bool safeDisconnectMode = false;
+    static SafeDisconnectFunction defaultSafeDisconnectFunction;
+
+    /**
+     * The SafeDisconnectFunction used by the CommandScheduler to determine
+     * the "disconnected" state.
+     */
+    SafeDisconnectFunction* safeDisconnectFunction;
 
     /**
      * Returns true if the remote is disconnected and the safeDisconnectMode flag is
