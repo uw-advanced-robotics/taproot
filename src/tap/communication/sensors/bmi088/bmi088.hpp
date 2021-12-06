@@ -7,25 +7,42 @@
 
 #include "bmi088_register_table.hpp"
 
+namespace tap
+{
+class Drivers;
+}
+
 /*
 acc requires further steps for initialization when using spi
 */
 
-namespace sensors::bmi088
+namespace tap::sensors::bmi088
 {
-class Bmi088 : public ::modm::pt::Protothread
+class Bmi088 : private ::modm::pt::Protothread, private Bmi088Data
 {
 public:
-    void init();
+    /**
+     * Bit appended or removed from a register while reading/writing.
+     */
+    static constexpr uint8_t BMI088_READ_BIT = 0x80;
+    static constexpr uint32_t BMI088_COMM_WAIT_SENSOR_TIME = 150;
+    static constexpr uint32_t BMI088_COMM_LONG_WAIT_TIME = 80;
+
+    void initiailze();
+
     bool run();
 
+    void periodicIMUUpdate();
+
 private:
+    tap::Drivers *drivers;
+
     uint8_t tx, rx;
 
     Mahony mahonyAlgorithm;
 
-    // modm::ResumableResult<bool> readGyroData();
-    // modm::ResumableResult<bool> readAccData();
+    void initializeAcc();
+    void initializeGyro();
 };
 
 }  // namespace sensors::bmi088

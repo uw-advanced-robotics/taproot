@@ -4,7 +4,7 @@
 #include "modm/architecture/interface/register.hpp"
 #include "modm/math/utils.hpp"
 
-namespace sensors::bmi088
+namespace tap::sensors::bmi088
 {
 /**
  * See
