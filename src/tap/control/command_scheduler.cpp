@@ -318,7 +318,7 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
 
 void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
 {
-    this->safeDisconnectFunction = &func;
+    this->safeDisconnectFunction = func;
 }
 
 bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }

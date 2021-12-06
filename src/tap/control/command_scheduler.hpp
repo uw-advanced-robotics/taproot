@@ -189,9 +189,9 @@ public:
 
     /**
      * @brief Set the SafeDisconnectFunction to the given function.
-     * 
-     * @param func the 
-     * @return mockable 
+     *
+     * @param[in] func the function that the CommandScheduler will use to
+     *      determine what constitutes a "disconnected" state.
      */
     mockable void setSafeDisconnectFunction(SafeDisconnectFunction* func);
 
