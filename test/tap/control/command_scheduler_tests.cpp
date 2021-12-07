@@ -1116,8 +1116,8 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
 TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     NiceMock<CommandMock> c;
     SubsystemMock s(&drivers);
@@ -1132,14 +1132,13 @@ TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
     scheduler.addCommand(&c);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     NiceMock<CommandMock> c1;
     NiceMock<CommandMock> c2;
@@ -1159,14 +1158,13 @@ TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
     scheduler.addCommand(&c2);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, run_command_when_remote_reconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     NiceMock<CommandMock> c;
     SubsystemMock s(&drivers);
@@ -1188,14 +1186,13 @@ TEST(CommandScheduler, run_command_when_remote_reconnected)
     scheduler.addCommand(&c);
     scheduler.run();
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, default_command_added_when_remote_reconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
@@ -1216,14 +1213,13 @@ TEST(CommandScheduler, default_command_added_when_remote_reconnected)
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
     scheduler.run();
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, command_not_added_when_remote_disconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
@@ -1235,14 +1231,13 @@ TEST(CommandScheduler, command_not_added_when_remote_disconnected)
 
     scheduler.registerSubsystem(&s);
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
 {
     Drivers drivers;
-    SafeDisconnectFunction *func = new RemoteSafeDisconnectFunction(&drivers);
-    CommandScheduler scheduler(&drivers, true, func);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
 
     StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
@@ -1257,7 +1252,6 @@ TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c);
     scheduler.run();
-    delete (func);
 }
 
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
