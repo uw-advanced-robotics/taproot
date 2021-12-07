@@ -123,9 +123,7 @@ public:
      * @param[in] powerLimiterConfig Pre-configured struct that contains all the necessary
      * parameters for the power limiter to operate.
      */
-    PowerLimiter(
-        const tap::Drivers *drivers,
-        const PowerLimiterConfig &powerLimiterConfig);
+    PowerLimiter(const tap::Drivers *drivers, const PowerLimiterConfig &powerLimiterConfig);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example), that
