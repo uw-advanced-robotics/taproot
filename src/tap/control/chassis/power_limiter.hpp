@@ -33,11 +33,13 @@ namespace tap::control::chassis
 {
 struct PowerLimiterConfig
 {
-    float maxEnergyBuffer;
-    float energyBufferLimitThreshold;
-    float energyBufferCritThreshold;
-    float powerConsumptionThreshold;
-    float currentAllocatedForEnergyBufferLimiting;
+    tap::gpio::Analog::Pin currentPin;
+    float maxEnergyBuffer = 0.0f;
+    float energyBufferLimitThreshold = 0.0f;
+    float energyBufferCritThreshold = 0.0f;
+    float powerConsumptionThreshold = 0.0f;
+    float currentAllocatedForEnergyBufferLimiting = 0.0f;
+    const tap::motor::MotorConstants &motorConstants;
 };
 
 /**
@@ -118,18 +120,12 @@ public:
      * Constructs a power limiter helper object.
      *
      * @param[in] drivers Global drivers object.
-     * @param[in] currentPin The pin connected to a current sensor connected in series with the
-     *      chassis.
      * @param[in] powerLimiterConfig Pre-configured struct that contains all the necessary
      * parameters for the power limiter to operate.
-     * @param[in] motorConstants An object that contains motor constants specific to the
-     *      motor being used in power limiting.
      */
     PowerLimiter(
         const tap::Drivers *drivers,
-        tap::gpio::Analog::Pin currentPin,
-        const PowerLimiterConfig &powerLimiterConfig,
-        const tap::motor::MotorConstants &motorConstants);
+        const PowerLimiterConfig &powerLimiterConfig);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example), that
@@ -144,9 +140,8 @@ public:
 
 private:
     const tap::Drivers *drivers;
-    const tap::gpio::Analog::Pin currentPin;
-    const PowerLimiterConfig powerLimiterConfig;
-    const tap::motor::MotorConstants &motorConstants;
+    const PowerLimiterConfig config;
+
     float prevChassisCurrent;
     float energyBuffer;
     float consumedPower;

@@ -38,14 +38,14 @@ PowerLimiter::PowerLimiter(
     float currentAllocatedForEnergyBufferLimiting,
     const tap::motor::MotorConstants &motorConstants)
     : drivers(drivers),
-      currentPin(currentPin),
-      powerLimiterConfig(
-          {maxEnergyBuffer,
+      config(
+          {currentPin,
+           maxEnergyBuffer,
            energyBufferLimitThreshold,
            energyBufferCritThreshold,
            powerConsumptionThreshold,
-           currentAllocatedForEnergyBufferLimiting}),
-      motorConstants(motorConstants),
+           currentAllocatedForEnergyBufferLimiting,
+           motorConstants}),
       prevChassisCurrent(0),
       energyBuffer(maxEnergyBuffer),
       consumedPower(0),
@@ -55,13 +55,9 @@ PowerLimiter::PowerLimiter(
 
 PowerLimiter::PowerLimiter(
     const tap::Drivers *drivers,
-    tap::gpio::Analog::Pin currentPin,
-    const PowerLimiterConfig &powerLimiterConfig,
-    const tap::motor::MotorConstants &motorConstants)
+    const PowerLimiterConfig &powerLimiterConfig)
     : drivers(drivers),
-      currentPin(currentPin),
-      powerLimiterConfig(powerLimiterConfig),
-      motorConstants(motorConstants),
+      config(powerLimiterConfig),
       prevChassisCurrent(0),
       energyBuffer(powerLimiterConfig.maxEnergyBuffer),
       consumedPower(0),
@@ -103,13 +99,12 @@ void PowerLimiter::performPowerLimiting(tap::motor::DjiMotor *motors[], int numM
      */
     float powerConsumptionFrac = 1.0f;
 
-    if (energyBuffer < powerLimiterConfig.energyBufferLimitThreshold)
+    if (energyBuffer < config.energyBufferLimitThreshold)
     {
         // If we have eaten through the majority of our energy buffer, do harsher limiting
         // Cap the penalty at energyBufferCritThreshold / energyBufferLimitThreshold.
-        energyBufferFrac =
-            static_cast<float>(max(energyBuffer, powerLimiterConfig.energyBufferCritThreshold)) /
-            powerLimiterConfig.energyBufferLimitThreshold;
+        energyBufferFrac = static_cast<float>(max(energyBuffer, config.energyBufferCritThreshold)) /
+                           config.energyBufferLimitThreshold;
         powerConsumptionFrac = 0.0f;
     }
     else
@@ -121,8 +116,7 @@ void PowerLimiter::performPowerLimiting(tap::motor::DjiMotor *motors[], int numM
          *
          * Also note that energyBufferFrac is always 1 when entering this conditional
          */
-        if (consumedPower + powerLimiterConfig.powerConsumptionThreshold >
-            chassis.powerConsumptionLimit)
+        if (consumedPower + config.powerConsumptionThreshold > chassis.powerConsumptionLimit)
         {
             // If we are above a the power consumption limit but we haven't eaten into our
             // energy buffer enough to enter the if statement of the outermost conditional, do
@@ -132,7 +126,7 @@ void PowerLimiter::performPowerLimiting(tap::motor::DjiMotor *motors[], int numM
                 // Only do minimal limiting because we are not close to going over chassis power
                 powerConsumptionFrac =
                     (chassis.powerConsumptionLimit - consumedPower) /
-                    (chassis.powerConsumptionLimit - powerLimiterConfig.powerConsumptionThreshold);
+                    (chassis.powerConsumptionLimit - config.powerConsumptionThreshold);
             }
             else
             {
@@ -148,14 +142,14 @@ void PowerLimiter::performPowerLimiting(tap::motor::DjiMotor *motors[], int numM
      */
     float chassisCurrentLimit =
         powerConsumptionFrac * CURRENT_ALLOCATED_FOR_POWER_CONSUMPTION_LIMITING +
-        energyBufferFrac * powerLimiterConfig.currentAllocatedForEnergyBufferLimiting;
+        energyBufferFrac * config.currentAllocatedForEnergyBufferLimiting;
 
     float chassisCurrentOutput = 0.0f;
     for (int i = 0; i < numMotors; i++)
     {
         chassisCurrentOutput += fabsf(motors[i]->getOutputDesired());
     }
-    chassisCurrentOutput = motorConstants.convertOutputToCurrent(chassisCurrentOutput);
+    chassisCurrentOutput = config.motorConstants.convertOutputToCurrent(chassisCurrentOutput);
 
     if (!compareFloatClose(0, chassisCurrentOutput, 1E-5) &&
         chassisCurrentOutput > chassisCurrentLimit)
@@ -212,9 +206,9 @@ void PowerLimiter::updatePowerAndEnergyBuffer()
         energyBuffer = chassisData.powerBuffer;
     }
 
-    if (energyBuffer > powerLimiterConfig.maxEnergyBuffer)
+    if (energyBuffer > config.maxEnergyBuffer)
     {
-        energyBuffer = powerLimiterConfig.maxEnergyBuffer;
+        energyBuffer = config.maxEnergyBuffer;
     }
 
     consumedPower = newChassisPower;
@@ -224,7 +218,8 @@ float PowerLimiter::getChassisCurrent()
 {
     prevChassisCurrent = lowPassFilter(
         prevChassisCurrent,
-        (drivers->analog.read(currentPin) - CURRENT_SENSOR_ZERO_MA) * CURRENT_SENSOR_MV_PER_MA,
+        (drivers->analog.read(config.currentPin) - CURRENT_SENSOR_ZERO_MA) *
+            CURRENT_SENSOR_MV_PER_MA,
         CURRENT_SENSOR_LOW_PASS_ALPHA);
 
     return prevChassisCurrent;
