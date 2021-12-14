@@ -20,6 +20,7 @@
 #include "mpu6500.hpp"
 
 #include "tap/algorithms/math_user_utils.hpp"
+#include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
@@ -27,12 +28,13 @@
 #include "mpu6500_config.hpp"
 #include "mpu6500_reg.hpp"
 
+using namespace modm::literals;
+using namespace tap::arch;
+
 namespace tap
 {
 namespace sensors
 {
-using namespace modm::literals;
-
 Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
 
 void Mpu6500::requestCalibration()
@@ -49,6 +51,26 @@ void Mpu6500::requestCalibration()
         imuReady = false;
     }
 }
+
+void Mpu6500::sendCalibrationOffsetsToMpu6500()
+{
+    if (imuReady)
+    {
+        sendCalibrationOffsets = true;
+    }
+}
+
+struct gyroaccoffset
+{
+    int16_t gyroXoffset;
+    int16_t gyroYoffset;
+    int16_t gyroZoffset;
+    int16_t accelXoffset;
+    int16_t accelYoffset;
+    int16_t accelZoffset;
+};
+
+gyroaccoffset offsets;
 
 void Mpu6500::init()
 {
@@ -112,6 +134,9 @@ void Mpu6500::init()
     readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
 
     imuReady = true;
+
+    spiReadRegisters(MPU6500_XG_OFFSET_H, (uint8_t *)&offsets, 6);
+    spiReadRegisters(MPU6500_XA_OFFSET_H, ((uint8_t *)&offsets) + 6, 6);
 #endif
 }
 
@@ -166,7 +191,7 @@ bool Mpu6500::read()
         PT_WAIT_UNTIL(readRegistersTimeout.execute());
 
         mpuNssLow();
-        tx = MPU6500_ACCEL_XOUT_H | 0x80;
+        tx = MPU6500_ACCEL_XOUT_H | MPU6500_READ_BIT;
         rx = 0;
         txBuff[0] = tx;
         PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
@@ -182,6 +207,32 @@ bool Mpu6500::read()
         raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8) - raw.gyroOffset.x;
         raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10) - raw.gyroOffset.y;
         raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12) - raw.gyroOffset.z;
+
+        if (sendCalibrationOffsets)
+        {
+            // send gyro calibration offsets
+            mpuNssLow();
+            tx = MPU6500_XG_OFFSET_H & ~MPU6500_READ_BIT;
+            PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.x), txBuff);
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.y), txBuff + 2);
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.z), txBuff + 4);
+            PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
+
+            mpuNssLow();
+
+            // send acc calibration offsets
+            mpuNssHigh();
+            tx = MPU6500_XA_OFFSET_H & ~MPU6500_READ_BIT;
+            PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.x), txBuff);
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.y), txBuff + 2);
+            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.z), txBuff + 4);
+            PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
+            mpuNssLow();
+
+            sendCalibrationOffsets = false;
+        }
     }
     PT_END();
 #else

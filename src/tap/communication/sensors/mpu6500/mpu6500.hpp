@@ -148,6 +148,13 @@ public:
     mockable void requestCalibration();
 
     /**
+     * If calibrated, sends the calibration offsets to the mpu6500. The mpu6500 will then store the
+     * calibration offsets between power cycles, reducing the impact of initially using the mpu6500
+     * without computing calibration offsets.
+     */
+    mockable void sendCalibrationOffsetsToMpu6500();
+
+    /**
      * Use for converting from gyro values we receive to more conventional degrees / second.
      */
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
@@ -250,6 +257,8 @@ private:
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
     int calibrationSample = 0;
+
+    bool sendCalibrationOffsets = false;
 
     // Functions for interacting with hardware directly.
 
