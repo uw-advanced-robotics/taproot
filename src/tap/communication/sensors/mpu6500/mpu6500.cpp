@@ -31,15 +31,13 @@
 using namespace modm::literals;
 using namespace tap::arch;
 
-namespace tap
-{
-namespace sensors
+namespace tap::sensors
 {
 Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
 
 void Mpu6500::requestCalibration()
 {
-    if (imuReady)
+    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
         raw.gyroOffset.x = 0;
         raw.gyroOffset.y = 0;
@@ -48,27 +46,7 @@ void Mpu6500::requestCalibration()
         raw.accelOffset.y = 0;
         raw.accelOffset.z = 0;
         calibrationSample = 0;
-        imuReady = false;
-    }
-}
-
-struct gyroaccoffset
-{
-    int16_t gyroXoffset;
-    int16_t gyroYoffset;
-    int16_t gyroZoffset;
-    int16_t accelXoffset;
-    int16_t accelYoffset;
-    int16_t accelZoffset;
-};
-
-gyroaccoffset offsets;
-
-void Mpu6500::sendCalibrationOffsetsToMpu6500()
-{
-    if (imuReady)
-    {
-        sendCalibrationOffsets = true;
+        imuState = ImuState::IMU_CALIBRATING;
     }
 }
 
@@ -133,16 +111,13 @@ void Mpu6500::init()
 
     readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
 
-    imuReady = true;
-
-    spiReadRegisters(MPU6500_XG_OFFSET_H, (uint8_t *)&offsets, 6);
-    spiReadRegisters(MPU6500_XA_OFFSET_H, ((uint8_t *)&offsets) + 6, 6);
+    imuState = ImuState::IMU_NOT_CALIBRATED;
 #endif
 }
 
 void Mpu6500::periodicIMUUpdate()
 {
-    if (imuReady)
+    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
         tiltAngleCalculated = false;
@@ -157,7 +132,7 @@ void Mpu6500::periodicIMUUpdate()
         raw.gyroOffset.z += raw.gyro.z;
         raw.accelOffset.x += raw.accel.x;
         raw.accelOffset.y += raw.accel.y;
-        raw.accelOffset.z += raw.accel.z - 4906;
+        raw.accelOffset.z += raw.accel.z - ACCELERATION_SENSITIVITY;
 
         if (calibrationSample >= MPU6500_OFFSET_SAMPLES)
         {
@@ -168,7 +143,7 @@ void Mpu6500::periodicIMUUpdate()
             raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
             raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
             raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
-            imuReady = true;
+            imuState = ImuState::IMU_CALIBRATED;
             mahonyAlgorithm = Mahony();
         }
     }
@@ -206,35 +181,6 @@ bool Mpu6500::read()
         raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
         raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
         raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
-
-        if (sendCalibrationOffsets)
-        {
-            PT_WAIT_UNTIL(readRegistersTimeout.execute());
-
-            // send gyro calibration offsets
-            mpuNssLow();
-            tx = MPU6500_XG_OFFSET_H & ~MPU6500_READ_BIT;
-            PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.x), txBuff);
-            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.y), txBuff + 2);
-            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.z), txBuff + 4);
-            PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
-            mpuNssLow();
-
-            PT_WAIT_UNTIL(readRegistersTimeout.execute());
-
-            // send acc calibration offsets
-            mpuNssHigh();
-            tx = MPU6500_XA_OFFSET_H & ~MPU6500_READ_BIT;
-            PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.x), txBuff);
-            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.y), txBuff + 2);
-            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.z), txBuff + 4);
-            PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
-            mpuNssLow();
-
-            sendCalibrationOffsets = false;
-        }
     }
     PT_END();
 #else
@@ -244,7 +190,7 @@ bool Mpu6500::read()
 
 // Getter functions.
 
-bool Mpu6500::isReady() const { return imuReady; }
+Mpu6500::ImuState Mpu6500::getImuState() const { return imuState; }
 
 float Mpu6500::getAx() const
 {
@@ -309,12 +255,25 @@ float Mpu6500::getTiltAngle()
 
 float Mpu6500::validateReading(float reading) const
 {
-    if (imuReady)
+    if (imuState == ImuState::IMU_CALIBRATED)
     {
         return reading;
     }
-    RAISE_ERROR(drivers, "failed to initialize the imu properly");
-    return 0.0f;
+    else if (imuState == ImuState::IMU_NOT_CALIBRATED)
+    {
+        RAISE_ERROR(drivers, "imu data requested, imu not calibrated");
+        return reading;
+    }
+    else if (imuState == ImuState::IMU_CALIBRATING)
+    {
+        RAISE_ERROR(drivers, "reading imu data, imu calibrating");
+        return 0.0f;
+    }
+    else
+    {
+        RAISE_ERROR(drivers, "failed to initialize the imu properly");
+        return 0.0f;
+    }
 }
 
 // Hardware interface functions (blocking functions, for initialization only)
@@ -382,6 +341,4 @@ void Mpu6500::mpuNssHigh()
 #endif
 }
 
-}  // namespace sensors
-
-}  // namespace tap
+}  // namespace tap::sensors

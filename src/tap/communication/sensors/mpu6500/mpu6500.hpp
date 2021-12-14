@@ -47,6 +47,14 @@ namespace sensors
 class Mpu6500 : public ::modm::pt::Protothread
 {
 public:
+    enum class ImuState
+    {
+        IMU_NOT_CONNECTED,
+        IMU_NOT_CALIBRATED,
+        IMU_CALIBRATING,
+        IMU_CALIBRATED,
+    };
+
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
@@ -75,10 +83,16 @@ public:
     mockable bool read();
 
     /**
-     * To be safe, whenever you call the functions below, call this function to insure
+     * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
+     * calibrated. When not connected, IMU data will be garbage. When not calibrated, IMU data is
+     * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
+     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should not
+     * drift.
+     *
+     * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
-    mockable bool isReady() const;
+    mockable ImuState getImuState() const;
 
     /**
      * Returns the acceleration reading in the x direction, in
@@ -146,13 +160,6 @@ public:
      * Uninitializes the mpu6500 and enters calibration mode.
      */
     mockable void requestCalibration();
-
-    /**
-     * If calibrated, sends the calibration offsets to the mpu6500. The mpu6500 will then store the
-     * calibration offsets between power cycles, reducing the impact of initially using the mpu6500
-     * without computing calibration offsets.
-     */
-    mockable void sendCalibrationOffsetsToMpu6500();
 
     /**
      * Use for converting from gyro values we receive to more conventional degrees / second.
@@ -237,7 +244,7 @@ private:
 
     Drivers *drivers;
 
-    bool imuReady = false;
+    ImuState imuState = ImuState::IMU_NOT_CONNECTED;
 
     tap::arch::MicroTimeout readRegistersTimeout;
     uint8_t tx = 0;  /// Byte used for reading data in the read protothread

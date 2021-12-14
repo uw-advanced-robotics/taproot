@@ -18,8 +18,11 @@
   prefixed by `Rx` or `Tx`.
 - `tap::communication::serial::ITerminalSerialCallback` interface renamed to
   `tap::communication::TerminalSerialCallbackInterface`.
-- in the `Mpu6500` class, function called `initialized` changed to `isReady` since the mpu's
-  hardware can be "initialized" but not necessarily ready.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
 
 ### All changes
 
@@ -36,6 +39,3 @@
 - The `CommandScheduler` is now able to safely remove all commands when a user-specified 
   "disconnected" state occurs. One can pass a `SafeDisconnectFunction` functor to the
   `CommandScheduler` to determine what causes a "disconnected" state (!75).
-- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
-  calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
-  parameters (!12, #123).
