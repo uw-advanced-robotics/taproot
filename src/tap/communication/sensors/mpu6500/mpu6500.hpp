@@ -170,7 +170,7 @@ private:
     /**
      * The number of samples we take in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_OFFSET_SAMPLES = 500;
+    static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
 
     /**
      * The number of bytes read to read acceleration, gyro, and temperature.

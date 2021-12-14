@@ -52,14 +52,6 @@ void Mpu6500::requestCalibration()
     }
 }
 
-void Mpu6500::sendCalibrationOffsetsToMpu6500()
-{
-    if (imuReady)
-    {
-        sendCalibrationOffsets = true;
-    }
-}
-
 struct gyroaccoffset
 {
     int16_t gyroXoffset;
@@ -71,6 +63,14 @@ struct gyroaccoffset
 };
 
 gyroaccoffset offsets;
+
+void Mpu6500::sendCalibrationOffsetsToMpu6500()
+{
+    if (imuReady)
+    {
+        sendCalibrationOffsets = true;
+    }
+}
 
 void Mpu6500::init()
 {
@@ -151,14 +151,13 @@ void Mpu6500::periodicIMUUpdate()
     else
     {
         calibrationSample++;
+
         raw.gyroOffset.x += raw.gyro.x;
         raw.gyroOffset.y += raw.gyro.y;
         raw.gyroOffset.z += raw.gyro.z;
         raw.accelOffset.x += raw.accel.x;
         raw.accelOffset.y += raw.accel.y;
-        raw.accelOffset.z += raw.accel.z;
-
-        calibrationSample++;
+        raw.accelOffset.z += raw.accel.z - 4906;
 
         if (calibrationSample >= MPU6500_OFFSET_SAMPLES)
         {
@@ -198,36 +197,39 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
-        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2) - raw.accelOffset.y;
-        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4) - raw.accelOffset.z;
+        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
-        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8) - raw.gyroOffset.x;
-        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10) - raw.gyroOffset.y;
-        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12) - raw.gyroOffset.z;
+        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
+        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
+        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 
         if (sendCalibrationOffsets)
         {
+            PT_WAIT_UNTIL(readRegistersTimeout.execute());
+
             // send gyro calibration offsets
             mpuNssLow();
             tx = MPU6500_XG_OFFSET_H & ~MPU6500_READ_BIT;
             PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.x), txBuff);
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.y), txBuff + 2);
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.gyroOffset.z), txBuff + 4);
+            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.x), txBuff);
+            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.y), txBuff + 2);
+            convertToLittleEndian(static_cast<int16_t>(raw.gyroOffset.z), txBuff + 4);
             PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
-
             mpuNssLow();
+
+            PT_WAIT_UNTIL(readRegistersTimeout.execute());
 
             // send acc calibration offsets
             mpuNssHigh();
             tx = MPU6500_XA_OFFSET_H & ~MPU6500_READ_BIT;
             PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.x), txBuff);
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.y), txBuff + 2);
-            convertToLittleEndian<int16_t>(static_cast<int16_t>(raw.accelOffset.z), txBuff + 4);
+            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.x), txBuff);
+            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.y), txBuff + 2);
+            convertToLittleEndian(static_cast<int16_t>(raw.accelOffset.z), txBuff + 4);
             PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, 6));
             mpuNssLow();
 
@@ -247,34 +249,40 @@ bool Mpu6500::isReady() const { return imuReady; }
 float Mpu6500::getAx() const
 {
     return validateReading(
-        static_cast<float>(raw.accel.x) * ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
+        static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
+        ACCELERATION_SENSITIVITY);
 }
 
 float Mpu6500::getAy() const
 {
     return validateReading(
-        static_cast<float>(raw.accel.y) * ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
+        static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
+        ACCELERATION_SENSITIVITY);
 }
 
 float Mpu6500::getAz() const
 {
     return validateReading(
-        static_cast<float>(raw.accel.z) * ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY);
+        static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
+        ACCELERATION_SENSITIVITY);
 }
 
 float Mpu6500::getGx() const
 {
-    return validateReading(static_cast<float>(raw.gyro.x) / LSB_D_PER_S_TO_D_PER_S);
+    return validateReading(
+        static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
 }
 
 float Mpu6500::getGy() const
 {
-    return validateReading(static_cast<float>(raw.gyro.y) / LSB_D_PER_S_TO_D_PER_S);
+    return validateReading(
+        static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
 }
 
 float Mpu6500::getGz() const
 {
-    return validateReading(static_cast<float>(raw.gyro.z) / LSB_D_PER_S_TO_D_PER_S);
+    return validateReading(
+        static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
 }
 
 float Mpu6500::getTemp() const
