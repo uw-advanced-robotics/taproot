@@ -31,6 +31,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 // Forward declarations
 class SetpointSubsystem;
 
@@ -80,6 +82,8 @@ protected:
 
     bool agitatorDisconnectFault;
 };  // class MoveUnjamComprisedCommand
+
+}  // namespace commands
 
 }  // namespace setpoint
 

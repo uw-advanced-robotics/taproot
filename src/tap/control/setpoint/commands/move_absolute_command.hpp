@@ -32,6 +32,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 /**
  * A command that uses an `SetpointSubsystem` to rotate to the same
  * angle everytime, attemping to rotate at the given angular velocity.
@@ -97,6 +99,8 @@ private:
 
     bool automaticallyClearJam;
 };  // class MoveAbsoluteCommand
+
+}  // namespace commands
 
 }  // namespace setpoint
 

@@ -32,6 +32,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 // Forward declarations
 class SetpointSubsystem;
 
@@ -114,6 +116,8 @@ private:
 
     float agitatorSetpointBeforeUnjam;
 };  // class UnjamCommand
+
+}  // namespace commands
 
 }  // namespace setpoint
 

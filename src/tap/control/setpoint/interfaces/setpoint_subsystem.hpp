@@ -31,6 +31,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace interfaces
+{
 /**
  * An abstract class (usable as an interface) describing the functionalities
  * of a subsystem which uses a positional controller to rotate something.
@@ -101,6 +103,8 @@ public:
     virtual inline float getVelocity() = 0;
 
 };  // class SetpointSubsystem
+
+}  // namespace interfaces
 
 }  // namespace setpoint
 

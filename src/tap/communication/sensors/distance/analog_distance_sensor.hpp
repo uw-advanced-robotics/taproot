@@ -27,7 +27,11 @@
 namespace tap
 {
 class Drivers;
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 /**
  * Basic analog IR Sensor.
@@ -66,7 +70,7 @@ public:
         float m,
         float b,
         float offset,
-        gpio::Analog::Pin pin);
+        tap::communication::gpio::Analog::Pin pin);
 
     /**
      * Reads the sensor, updates the current distance, and returns this reading.
@@ -95,11 +99,14 @@ private:
     float offset;
 
     /// The analog pin which the sensor is connected to.
-    gpio::Analog::Pin pin;
+    tap::communication::gpio::Analog::Pin pin;
 };  // class AnalogDistanceSensor
+
+}  // namespace distance
 
 }  // namespace sensors
 
-}  // namespace tap
+}  // namespace communication
 
+}  // namespace tap
 #endif  // ANALOG_DISTANCE_SENSOR_H_

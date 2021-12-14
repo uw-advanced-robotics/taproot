@@ -30,6 +30,8 @@ using namespace tap::arch;
 
 namespace tap
 {
+namespace communication
+{
 namespace serial
 {
 RefSerial::RefSerial(Drivers* drivers)
@@ -552,5 +554,7 @@ void RefSerial::configGraphicHeader(GraphicHeader* header, uint16_t cmdId, uint1
     header->receiverId = getRobotClientID(robotId);
 }
 }  // namespace serial
+
+}  // namespace communication
 
 }  // namespace tap

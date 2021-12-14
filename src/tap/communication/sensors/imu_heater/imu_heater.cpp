@@ -21,7 +21,13 @@
 
 #include "tap/drivers.hpp"
 
-namespace tap::sensors
+namespace tap
+{
+namespace communication
+{
+namespace sensors
+{
+namespace imuheater
 {
 ImuHeater::ImuHeater(Drivers *drivers)
     : drivers(drivers),
@@ -48,6 +54,13 @@ void ImuHeater::runTemperatureController(float temperature)
     // Set heater PWM output, limit output so it is not < 0
     drivers->pwm.write(
         std::max(0.0f, imuTemperatureController.getValue()),
-        tap::gpio::Pwm::ImuHeater);
+        tap::communication::gpio::Pwm::ImuHeater);
 }
-}  // namespace tap::sensors
+
+}  // namespace imuheater
+
+}  // namespace sensors
+
+}  // namespace communication
+
+}  // namespace tap

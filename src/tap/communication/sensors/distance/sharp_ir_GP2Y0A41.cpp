@@ -21,11 +21,15 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 // Constructor to init Sharp IR analog pin
 // Uses preset values for boundary and distance conversion
-SharpIrGP2Y0A41::SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin)
+SharpIrGP2Y0A41::SharpIrGP2Y0A41(Drivers *drivers, tap::communication::gpio::Analog::Pin pin)
     : AnalogDistanceSensor(
           drivers,
           SHARP_IR_MIN,
@@ -36,6 +40,10 @@ SharpIrGP2Y0A41::SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin)
           pin)
 {
 }
+}  // namespace distance
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap

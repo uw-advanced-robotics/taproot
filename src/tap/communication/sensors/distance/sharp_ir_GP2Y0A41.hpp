@@ -25,7 +25,11 @@
 namespace tap
 {
 class Drivers;
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 /**
  * Basic SHARP IR Sensor via analog input.  Returns distance in cm.
@@ -40,7 +44,7 @@ public:
      *
      * @param[in] pin the analog pin to attach the sensor to.
      */
-    SharpIrGP2Y0A41(Drivers *drivers, gpio::Analog::Pin pin);
+    SharpIrGP2Y0A41(Drivers *drivers, tap::communication::gpio::Analog::Pin pin);
 
     /**
      * Init not needed for Sharp IR.
@@ -62,7 +66,11 @@ private:
     static constexpr float SHARP_IR_OFFSET = -0.42f;
 };  // class SharpIrGP2Y0A41
 
+}  // namespace distance
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap
 

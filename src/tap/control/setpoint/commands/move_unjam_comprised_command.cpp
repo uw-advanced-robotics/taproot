@@ -34,6 +34,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 MoveUnjamComprisedCommand::MoveUnjamComprisedCommand(
     tap::Drivers* drivers,
     SetpointSubsystem* setpointSubsystem,
@@ -112,6 +114,8 @@ bool MoveUnjamComprisedCommand::isFinished() const
             !comprisedCommandScheduler.isCommandScheduled(&agitatorUnjamCommand)) ||
            agitatorDisconnectFault;
 }
+
+}  // namespace commands
 
 }  // namespace setpoint
 

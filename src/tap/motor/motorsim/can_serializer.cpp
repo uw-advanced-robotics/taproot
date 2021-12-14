@@ -27,6 +27,8 @@
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 std::array<int16_t, 4> CanSerializer::parseMessage(const modm::can::Message* message)
@@ -73,6 +75,8 @@ int8_t CanSerializer::idToPort(tap::motor::MotorId id)
 }
 
 }  // namespace motorsim
+
+}  // namespace motor
 
 }  // namespace tap
 

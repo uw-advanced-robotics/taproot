@@ -22,7 +22,11 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace mpu6500
 {
 // mpu Reg -- Map
 #define MPU6500_SELF_TEST_XG (0x00)
@@ -130,7 +134,11 @@ namespace sensors
 #define MPU6500_ID (0x70)  // mpu6500 id = 0x70
 
 #define MPU_IIC_ADDR (0x68)
+}  // namespace mpu6500
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap
 

@@ -35,6 +35,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 /**
  * Rotates the connected agitator some angle in some desired time. Currently
  * pass in a rotate velocity and it uses `tap::arch::getTimeMilliseconds()`
@@ -108,10 +110,11 @@ private:
     bool agitatorSetToFinalAngle;
 };  // class MoveCommand
 
+}  // namespace commands
+
 }  // namespace setpoint
 
 }  // namespace control
 
 }  // namespace tap
-
 #endif  // AGITATOR_ROTATE_COMMAND_HPP_

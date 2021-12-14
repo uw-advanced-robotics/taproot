@@ -31,6 +31,8 @@ class Message;
 
 namespace tap
 {
+namespace communication
+{
 namespace can
 {
 /**
@@ -102,6 +104,9 @@ public:
 };  // class Can
 
 }  // namespace can
+
+}  // namespace communication
+
 }  // namespace tap
 
 #endif  // CAN_HPP_

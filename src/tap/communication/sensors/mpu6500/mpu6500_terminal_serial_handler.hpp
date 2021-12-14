@@ -28,8 +28,11 @@
 namespace tap
 {
 class Drivers;
-
+namespace communication
+{
 namespace sensors
+{
+namespace mpu6500
 {
 /**
  * Interface for reading IMU data. Connects to the terminal serial driver and allows
@@ -90,7 +93,12 @@ private:
 
     void printHeader(modm::IOStream& outputStream);
 };  // class Mpu6500TerminalSerialHandler
+}  // namespace mpu6500
+
 }  // namespace sensors
+
+}  // namespace communication
+
 }  // namespace tap
 
 #endif  // MPU6500_TERMINAL_SERIAL_HANDLER_HPP_

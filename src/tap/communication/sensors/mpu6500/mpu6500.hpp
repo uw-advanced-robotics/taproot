@@ -32,7 +32,11 @@
 namespace tap
 {
 class Drivers;
+namespace communication
+{
 namespace sensors
+{
+namespace mpu6500
 {
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
@@ -235,7 +239,7 @@ private:
 
     Mahony mahonyAlgorithm;
 
-    sensors::ImuHeater imuHeater;
+    tap::communication::sensors::imuheater::ImuHeater imuHeater;
 
     float tiltAngle = 0.0f;
     bool tiltAngleCalculated = false;
@@ -296,7 +300,11 @@ private:
     void readTemperatureBlocking();
 };
 
+}  // namespace mpu6500
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap
 

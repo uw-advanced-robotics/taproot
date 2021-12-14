@@ -26,6 +26,8 @@
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 MotorSim::MotorSim(MotorType type, float loading)
@@ -113,6 +115,8 @@ void MotorSim::initConstants(MotorType type)
     }
 }
 }  // namespace motorsim
+
+}  // namespace motor
 
 }  // namespace tap
 

@@ -22,7 +22,13 @@
 #include "tap/algorithms/strtok.hpp"
 #include "tap/drivers.hpp"
 
-namespace tap::sensors
+namespace tap
+{
+namespace communication
+{
+namespace sensors
+{
+namespace mpu6500
 {
 constexpr char Mpu6500TerminalSerialHandler::USAGE[];
 
@@ -158,4 +164,10 @@ void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
     }
     outputStream << modm::endl;
 }
-}  // namespace tap::sensors
+}  // namespace mpu6500
+
+}  // namespace sensors
+
+}  // namespace communication
+
+}  // namespace tap

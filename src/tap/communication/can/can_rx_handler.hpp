@@ -33,6 +33,8 @@ namespace tap
 {
 class Drivers;
 
+namespace communication
+{
 namespace can
 {
 class CanRxListener;
@@ -141,10 +143,12 @@ public:
         CanRxListener** messageHandlerStore,
         int messageHandlerStoreSize);
 
-    tap::can::CanRxListener** getHandlerStore(tap::can::CanBus bus);
+    tap::communication::can::CanRxListener** getHandlerStore(tap::communication::can::CanBus bus);
 };  // class CanRxHandler
 
 }  // namespace can
+
+}  // namespace communication
 
 }  // namespace tap
 

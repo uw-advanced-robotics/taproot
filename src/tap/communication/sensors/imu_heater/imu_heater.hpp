@@ -27,8 +27,11 @@
 namespace tap
 {
 class Drivers;
-
+namespace communication
+{
 namespace sensors
+{
+namespace imuheater
 {
 class ImuHeater
 {
@@ -75,7 +78,12 @@ private:
 
     modm::Pid<float> imuTemperatureController;
 };
+} // namespace imuheater
+
 }  // namespace sensors
+
+}  // namespace communication
+
 }  // namespace tap
 
 #endif  // MPU6500_HEATER_HPP_

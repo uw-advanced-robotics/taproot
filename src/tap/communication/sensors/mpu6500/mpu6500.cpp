@@ -29,7 +29,11 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace mpu6500
 {
 using namespace modm::literals;
 
@@ -39,13 +43,13 @@ void Mpu6500::init()
 {
 #ifndef PLATFORM_HOSTED
     // Configure NSS pin
-    Board::ImuNss::GpioOutput();
+    tap::board::ImuNss::GpioOutput();
 
     // connect GPIO pins to the alternate SPI function
-    Board::ImuSpiMaster::connect<Board::ImuMiso::Miso, Board::ImuMosi::Mosi, Board::ImuSck::Sck>();
+    tap::board::ImuSpiMaster::connect<tap::board::ImuMiso::Miso, tap::board::ImuMosi::Mosi, tap::board::ImuSck::Sck>();
 
     // initialize SPI with clock speed
-    Board::ImuSpiMaster::initialize<Board::SystemClock, 703125_Hz>();
+    tap::board::ImuSpiMaster::initialize<tap::board::SystemClock, 703125_Hz>();
 
     // See page 42 of the mpu6500 register map for initialization process:
     // https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
@@ -107,7 +111,7 @@ void Mpu6500::init()
         readTemperatureBlocking();
         imuHeater.runTemperatureController(getTemp());
         modm::delay_ms(2);
-    } while (!waitHeatTimeout.execute() && getTemp() < sensors::ImuHeater::IMU_DESIRED_TEMPERATURE);
+    } while (!waitHeatTimeout.execute() && getTemp() < tap::communication::sensors::imuheater::ImuHeater::IMU_DESIRED_TEMPERATURE);
 
     // Wait for the IMU temperature to stabilize now that we are close to the correct temperature
     waitHeatTimeout.restart(WAIT_TIME_AFTER_CALIBRATION);
@@ -161,8 +165,8 @@ bool Mpu6500::read()
         tx = MPU6500_ACCEL_XOUT_H | 0x80;
         rx = 0;
         txBuff[0] = tx;
-        PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-        PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
+        PT_CALL(tap::board::ImuSpiMaster::transfer(&tx, &rx, 1));
+        PT_CALL(tap::board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
         raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
@@ -307,9 +311,9 @@ void Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
     mpuNssLow();
     uint8_t tx = reg & ~MPU6500_READ_BIT;
     uint8_t rx = 0;  // Unused
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    tap::board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     tx = data;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    tap::board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
 #endif
 }
@@ -323,8 +327,8 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
     mpuNssLow();
     uint8_t tx = reg | MPU6500_READ_BIT;
     uint8_t rx = 0;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    tap::board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    tap::board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
     return rx;
 #endif
@@ -341,8 +345,8 @@ void Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
     uint8_t tx = regAddr | MPU6500_READ_BIT;
     uint8_t rx = 0;
     txBuff[0] = tx;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(txBuff, pData, len);
+    tap::board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    tap::board::ImuSpiMaster::transferBlocking(txBuff, pData, len);
     mpuNssHigh();
 #endif
 }
@@ -350,14 +354,14 @@ void Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
 void Mpu6500::mpuNssLow()
 {
 #ifndef PLATFORM_HOSTED
-    Board::ImuNss::setOutput(modm::GpioOutput::Low);
+    tap::board::ImuNss::setOutput(modm::GpioOutput::Low);
 #endif
 }
 
 void Mpu6500::mpuNssHigh()
 {
 #ifndef PLATFORM_HOSTED
-    Board::ImuNss::setOutput(modm::GpioOutput::High);
+    tap::board::ImuNss::setOutput(modm::GpioOutput::High);
 #endif
 }
 
@@ -367,6 +371,10 @@ void Mpu6500::readTemperatureBlocking()
     raw.temperature = rxBuff[0] << 8 | rxBuff[1];
 }
 
+}  // namespace mpu6500
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap

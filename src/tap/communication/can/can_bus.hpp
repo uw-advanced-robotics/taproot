@@ -20,13 +20,21 @@
 #ifndef CAN_BUS_HPP_
 #define CAN_BUS_HPP_
 
-namespace tap::can
+namespace tap
+{
+namespace communication
+{
+namespace can
 {
 enum class CanBus
 {
     CAN_BUS1,
     CAN_BUS2,
 };
-}
+}  // namespace can
+
+}  // namespace communication
+
+}  // namespace tap
 
 #endif  // CAN_BUS_HPP_

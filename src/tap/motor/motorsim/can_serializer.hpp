@@ -34,6 +34,8 @@ class Message;
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 class CanSerializer
@@ -66,6 +68,8 @@ private:
     static constexpr uint8_t FEEDBACK_MESSAGE_SEND_LENGTH = 8;
 };
 }  // namespace motorsim
+
+}  // namespace motor
 
 }  // namespace tap
 

@@ -34,7 +34,7 @@ using namespace modm::platform;
 #endif
 using namespace modm::literals;
 
-void tap::can::Can::initialize()
+void tap::communication::can::Can::initialize()
 {
 #ifndef PLATFORM_HOSTED
     CanFilter::setStartFilterBankForCan2(14);
@@ -58,7 +58,7 @@ void tap::can::Can::initialize()
 #endif
 }
 
-bool tap::can::Can::isMessageAvailable(tap::can::CanBus bus) const
+bool tap::communication::can::Can::isMessageAvailable(tap::communication::can::CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
     return tap::motorsim::SimHandler::readyToSend(bus);
@@ -75,7 +75,7 @@ bool tap::can::Can::isMessageAvailable(tap::can::CanBus bus) const
 #endif
 }
 
-bool tap::can::Can::getMessage(tap::can::CanBus bus, modm::can::Message* message)
+bool tap::communication::can::Can::getMessage(tap::communication::can::CanBus bus, modm::can::Message* message)
 {
 #ifdef PLATFORM_HOSTED
     return tap::motorsim::SimHandler::sendMessage(bus, message);
@@ -92,7 +92,7 @@ bool tap::can::Can::getMessage(tap::can::CanBus bus, modm::can::Message* message
 #endif
 }
 
-bool tap::can::Can::isReadyToSend(CanBus bus) const
+bool tap::communication::can::Can::isReadyToSend(CanBus bus) const
 {
 #ifdef PLATFORM_HOSTED
     UNUSED(bus);
@@ -110,7 +110,7 @@ bool tap::can::Can::isReadyToSend(CanBus bus) const
 #endif
 }
 
-bool tap::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
+bool tap::communication::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
 {
 #ifdef PLATFORM_HOSTED
     return tap::motorsim::SimHandler::getMessage(bus, message);

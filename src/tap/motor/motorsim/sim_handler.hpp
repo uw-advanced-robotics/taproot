@@ -30,6 +30,8 @@
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 class SimHandler
@@ -83,6 +85,9 @@ private:
     static std::array<uint8_t, CAN_BUSSES> nextCanSendIndex;
 };
 }  // namespace motorsim
+
+}  // namespace motor
+
 }  // namespace tap
 #endif  // SIM_HANDLER_HPP_
 #endif  // PLATFORM_HOSTED

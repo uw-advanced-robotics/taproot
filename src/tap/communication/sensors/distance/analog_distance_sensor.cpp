@@ -23,7 +23,11 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 AnalogDistanceSensor::AnalogDistanceSensor(
     Drivers *drivers,
@@ -32,7 +36,7 @@ AnalogDistanceSensor::AnalogDistanceSensor(
     float m,
     float b,
     float offset,
-    gpio::Analog::Pin pin)
+    tap::communication::gpio::Analog::Pin pin)
     : DistanceSensor(minDistance, maxDistance),
       drivers(drivers),
       m(m),
@@ -60,6 +64,10 @@ bool AnalogDistanceSensor::validReading() const
 {
     return (distance > minDistance) && (distance < maxDistance);
 }
+}  // namespace distance
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap

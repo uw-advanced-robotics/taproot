@@ -27,6 +27,8 @@
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 /* Singleton Class Variables */
@@ -172,6 +174,8 @@ void SimHandler::updateSims()
 }
 
 }  // namespace motorsim
+
+}  // namespace motor
 
 }  // namespace tap
 

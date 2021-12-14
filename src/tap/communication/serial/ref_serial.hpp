@@ -32,6 +32,8 @@
 namespace tap
 {
 class Drivers;
+namespace communication
+{
 namespace serial
 {
 /**
@@ -653,6 +655,8 @@ private:
 };
 
 }  // namespace serial
+
+}  // namespace communication
 
 }  // namespace tap
 

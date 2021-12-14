@@ -29,6 +29,8 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace can
 {
 CanRxHandler::CanRxHandler(Drivers* drivers)
@@ -132,14 +134,16 @@ void CanRxHandler::removeReceiveHandler(
     messageHandlerStore[id] = nullptr;
 }
 
-tap::can::CanRxListener** CanRxHandler::getHandlerStore(tap::can::CanBus bus)
+tap::communication::can::CanRxListener** CanRxHandler::getHandlerStore(tap::communication::can::CanBus bus)
 {
-    if (bus == tap::can::CanBus::CAN_BUS1)
+    if (bus == tap::communication::can::CanBus::CAN_BUS1)
     {
         return this->messageHandlerStoreCan1;
     }
     return this->messageHandlerStoreCan2;
 }
 }  // namespace can
+
+}  // namespace communication
 
 }  // namespace tap

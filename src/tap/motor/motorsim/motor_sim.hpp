@@ -27,6 +27,8 @@
 
 namespace tap
 {
+namespace motor
+{
 namespace motorsim
 {
 class MotorSim
@@ -119,6 +121,8 @@ private:
     uint32_t time = 0;  // Milliseconds
 };
 }  // namespace motorsim
+
+}  // namespace motor
 
 }  // namespace tap
 

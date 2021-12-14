@@ -30,6 +30,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace algorithms
+{
 /**
  * A functor (function object) to be used for setpoint subsystem jam detection.
  *
@@ -88,6 +90,8 @@ private:
     tap::arch::ConditionalMilliTimer jamTimeout;
     float distanceTolerance;
 };  // SetpointContinuousJamChecker
+
+}  // namespace algorithms
 
 }  // namespace setpoint
 

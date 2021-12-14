@@ -27,6 +27,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 MoveAbsoluteCommand::MoveAbsoluteCommand(
     SetpointSubsystem* setpointSubsystem,
     float targetAngle,
@@ -93,6 +95,8 @@ bool MoveAbsoluteCommand::isFinished() const
             agitatorSetpointTolerance) ||
            !setpointSubsystem->isOnline() || setpointSubsystem->isJammed();
 }
+
+}  // namespace commands
 
 }  // namespace setpoint
 

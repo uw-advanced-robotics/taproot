@@ -22,7 +22,11 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 class DistanceSensor
 {
@@ -75,7 +79,11 @@ protected:
     float maxDistance;
 };  // class DistanceSensor
 
+}  // namespace distance
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap
 

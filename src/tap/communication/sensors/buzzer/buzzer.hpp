@@ -24,11 +24,14 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace gpio
 {
 class Pwm;
 }
-
+namespace sensors
+{
 namespace buzzer
 {
 /**
@@ -46,6 +49,11 @@ void playNote(gpio::Pwm *pwmController, uint32_t frequency);
  */
 void silenceBuzzer(gpio::Pwm *pwmController);
 }  // namespace buzzer
+
+}  // namespace sensors
+
+}  // namespace communication
+
 }  // namespace tap
 
 #endif  // BUZZER_HPP_

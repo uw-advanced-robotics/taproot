@@ -27,6 +27,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 MoveCommand::MoveCommand(
     SetpointSubsystem* agitator,
     float agitatorAngleChange,
@@ -93,6 +95,8 @@ bool MoveCommand::isFinished() const
                 agitatorSetpointTolerance &&
             rampToTargetAngle.isTargetReached() && agitatorMinRotateTimeout.isExpired());
 }
+
+}  // namespace commands
 
 }  // namespace setpoint
 

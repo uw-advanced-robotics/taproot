@@ -25,6 +25,8 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace can
 {
 CanRxListener::CanRxListener(Drivers *drivers, uint32_t id, CanBus cB)
@@ -38,5 +40,7 @@ void CanRxListener::attachSelfToRxHandler() { drivers->canRxHandler.attachReceiv
 
 CanRxListener::~CanRxListener() { drivers->canRxHandler.removeReceiveHandler(*this); }
 }  // namespace can
+
+}  // namespace communication
 
 }  // namespace tap

@@ -27,6 +27,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 class SetpointSubsystem;  // forward declaration
 
 UnjamCommand::UnjamCommand(
@@ -147,6 +149,8 @@ void UnjamCommand::execute()
 void UnjamCommand::end(bool) { setpointSubsystem->clearJam(); }
 
 bool UnjamCommand::isFinished(void) const { return currUnjamstate == FINISHED; }
+
+}  // namespace commands
 
 }  // namespace setpoint
 

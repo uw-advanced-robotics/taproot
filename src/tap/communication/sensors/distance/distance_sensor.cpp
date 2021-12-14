@@ -21,7 +21,11 @@
 
 namespace tap
 {
+namespace communication
+{
 namespace sensors
+{
+namespace distance
 {
 // Constructor to init boundaries
 DistanceSensor::DistanceSensor(float minDistance, float maxDistance)
@@ -37,6 +41,10 @@ float DistanceSensor::getMaxDistance() const { return maxDistance; }
 
 float DistanceSensor::getDistance() const { return distance; }
 
+}  // namespace distance
+
 }  // namespace sensors
+
+}  // namespace communication
 
 }  // namespace tap

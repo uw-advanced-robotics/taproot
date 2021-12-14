@@ -29,6 +29,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 // Forward declarations
 class SetpointSubsystem;
 
@@ -61,6 +63,8 @@ public:
 private:
     tap::control::setpoint::SetpointSubsystem* setpointSubsystem;
 };  // class CalibrateCommand
+
+}  // namespace commands
 
 }  // namespace setpoint
 

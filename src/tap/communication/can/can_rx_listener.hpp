@@ -33,6 +33,8 @@ class Message;
 namespace tap
 {
 class Drivers;
+namespace communication
+{
 namespace can
 {
 /**
@@ -134,6 +136,8 @@ public:
 };  // class CanRxListener
 
 }  // namespace can
+
+}  // namespace communication
 
 }  // namespace tap
 

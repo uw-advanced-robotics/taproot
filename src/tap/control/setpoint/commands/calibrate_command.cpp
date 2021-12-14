@@ -30,6 +30,8 @@ namespace control
 {
 namespace setpoint
 {
+namespace commands
+{
 CalibrateCommand::CalibrateCommand(SetpointSubsystem* setpointSubsystem)
     : setpointSubsystem(setpointSubsystem)
 {
@@ -43,6 +45,8 @@ void CalibrateCommand::execute() { setpointSubsystem->calibrateHere(); }
 void CalibrateCommand::end(bool) {}
 
 bool CalibrateCommand::isFinished() const { return setpointSubsystem->isCalibrated(); }
+
+}  // namespace commands
 
 }  // namespace setpoint
 

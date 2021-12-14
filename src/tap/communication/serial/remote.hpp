@@ -31,6 +31,10 @@
 namespace tap
 {
 class Drivers;
+namespace communication
+{
+namespace serial
+{
 
 /**
  * A unique UART handler that uses timing in leu of DBUS communication (modm does not
@@ -220,6 +224,10 @@ private:
     /// Resets the current remote info.
     void reset();
 };  // class Remote
+
+}  // namespace serial
+
+}  // namespace communication
 
 }  // namespace tap
 
