@@ -204,7 +204,7 @@ float PowerLimiter::getChassisCurrent()
 {
     prevChassisCurrent = lowPassFilter(
         prevChassisCurrent,
-        (drivers->analog.read(currentPin) - CURRENT_SENSOR_ZERO_MA) * CURRENT_SENSOR_MV_PER_MA,
+        abs(drivers->analog.read(currentPin) - CURRENT_SENSOR_ZERO_MA) * CURRENT_SENSOR_MV_PER_MA,
         CURRENT_SENSOR_LOW_PASS_ALPHA);
 
     return prevChassisCurrent;
