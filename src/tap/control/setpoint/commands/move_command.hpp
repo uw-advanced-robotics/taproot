@@ -50,11 +50,12 @@ public:
      * @param[in] targetDisplacement The desired change in subsystem value in subsystem units.
      * @param[in] moveTime The time it takes to move the subsystem to the desired
      *      value in milliseconds.
-     * @param[in] pauseAfterMoveTime Time in milliseconds that the command will wait after reaching
-     *      the target displacement before the command is considered complete.
+     * @param[in] pauseAfterMoveTime Time in milliseconds that the command will wait after
+     *      reaching the target displacement before the command is considered complete.
      * @param[in] setToTargetOnEnd if `true` the command will set the subsystem setpoint
-     *      to the ideal target value during an uninterrupted `end()`, otherwise the subsystem will
-     *      always set the setpoint to the its current value on `end()`.
+     *      to the ideal target value on an uninterrupted `end()` if subsystem is online and
+     *      unjammed, otherwise the subsystem will always set the setpoint to the its current value
+     *      on `end()`.
      * @param[in] setpointTolerance The difference between current and desired value when the
      *      command will be considered to be completed (used in the `isFinished` function). Only set
      *      this if you want a different tolerance.

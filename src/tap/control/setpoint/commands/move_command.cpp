@@ -87,13 +87,14 @@ void MoveCommand::execute()
     }
 }
 
-void MoveCommand::end(bool)
+void MoveCommand::end(bool interrupted)
 {
     // if the subsystem is not interrupted, then it exited normally
     // (i.e. reached the desired value) and is not jammed. If it is
     // jammed we thus want to set the subsystem value to the current value,
     // so the motor does not attempt to keep rotating forward (and possible stalling)
-    if (setpointSubsystem->isJammed() || !setpointSubsystem->isOnline() || !setToTargetOnEnd)
+    if (interrupted || setpointSubsystem->isJammed() || !setpointSubsystem->isOnline() ||
+        !setToTargetOnEnd)
     {
         setpointSubsystem->setSetpoint(setpointSubsystem->getCurrentValue());
     }

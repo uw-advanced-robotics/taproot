@@ -215,7 +215,7 @@ TEST(MoveCommand, command_pauses_after_move_time)
 
 // end() tests ------------------------------------
 
-TEST(MoveCommand, command_sets_setpoint_to_ideal_target_on_end_when_option_enabled)
+TEST(MoveCommand, command_sets_setpoint_to_ideal_target_on_uninterrupted_end_when_option_enabled)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 1.0f);
@@ -227,9 +227,26 @@ TEST(MoveCommand, command_sets_setpoint_to_ideal_target_on_end_when_option_enabl
     setTime(0);
     command.initialize();
     setTime(10);
+    command.end(false);
+}
+
+TEST(MoveCommand, command_sets_setpoint_to_current_value_on_interrupted_end)
+{
+    CREATE_COMMON_TEST_OBJECTS();
+    MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 1.0f);
+
+    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(1.0f));
+    EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
+    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(50.0f));
+    EXPECT_CALL(subsystem, setSetpoint(FloatEq(50.0f)));
+
+    setTime(0);
+    command.initialize();
+    setTime(10);
     command.end(true);
 }
 
+// Even with option enabled
 TEST(MoveCommand, command_sets_setpoint_to_current_value_on_end_when_jammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
