@@ -17,26 +17,23 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "analog_current_sensor.hpp"
+#ifndef SENSOR_INTERFACE_HPP_
+#define SENSOR_INTERFACE_HPP_
 
-#include "tap/algorithms/math_user_utils.hpp"
-
-using namespace tap::algorithms;
-
-namespace tap::communication::sensors::current
+namespace tap::communication::sensors
 {
-AnalogCurrentSensor::AnalogCurrentSensor(const Config &config) : config(config) {}
-
-float AnalogCurrentSensor::getCurrentMa() const { return prevCurrent; }
-
-void AnalogCurrentSensor::update()
+/**
+ * Interface for generic sensor.
+ */
+class SensorInterface
 {
-    prevCurrent = lowPassFilter(
-        prevCurrent,
-        abs(static_cast<float>(config.analogDriver->read(config.analogSensorPin)) -
-            config.currentSensorZeroMv) *
-            config.currentSensorMaPerMv,
-        config.currentSensorLowPassAlpha);
-}
+public:
+    /**
+     * Function that one implements that reads data from the sensor and performs any filtering as
+     * required.
+     */
+    virtual void update() = 0;
+};
+}  // namespace tap::communication::sensors
 
-}  // namespace tap::communication::sensors::current
+#endif  // SENSOR_INTERFACE_HPP_

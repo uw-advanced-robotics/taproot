@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef POWER_LIMITOR_HPP_
-#define POWER_LIMITOR_HPP_
+#ifndef POWER_LIMITER_HPP_
+#define POWER_LIMITER_HPP_
 
 #include "tap/communication/gpio/analog.hpp"
 #include "tap/communication/sensors/current/current_sensor_interface.hpp"
@@ -36,8 +36,7 @@ namespace tap::control::chassis
  * and that the referee system is connected via UART.
  *
  * This class currently requires the referee system connected via its default UART port
- * and a current sensor interface (specified upon construction).
- *
+ * and an object that implements the current sensor interface (specified upon construction).
  * The following issues address improved versatility of this class:
  * - https://gitlab.com/aruw/controls/taproot/-/issues/45
  *
@@ -52,7 +51,7 @@ namespace tap::control::chassis
  * ```
  * // ... run some chassis control algorithm ...
  *
- * float powerLimitFrac = powerLimiter.performPowerLimiting();
+ * float powerLimitFrac = powerLimiter.getPowerLimitRatio();
  * leftWheel.setDesiredOutput(powerLimitFrac * leftWheel.getOutputDesired());
  * rightWheel.setDesiredOutput(powerLimitFrac * rightWheel.getOutputDesired());
  * ```
@@ -82,8 +81,7 @@ public:
         float energyBufferCritThreshold);
 
     /**
-     * A function to be called repeatedly (in a subsystem's refresh function, for example), that
-     * performs power limiting on the motors passed in.
+     * A function to be called repeatedly (in a subsystem's refresh function, for example).
      *
      * Must be called immediately *after* setpoints are configured. This function returns a value
      * between [0, 1] that you should then multiply the desired output of your motors by. See class
@@ -91,7 +89,7 @@ public:
      *
      * @note Tested with a normal four-wheel mecanum chassis and a two-wheel sentry chassis.
      */
-    float performPowerLimiting();
+    float getPowerLimitRatio();
 
 private:
     const tap::Drivers *drivers;
@@ -103,6 +101,7 @@ private:
     float energyBuffer;
     float consumedPower;
     uint32_t prevTime;
+    uint32_t prevRobotDataReceivedTimestamp;
 
     /**
      * Computes the chassis power and the energy remaining in the energy buffer.
@@ -111,4 +110,4 @@ private:
 };
 }  // namespace tap::control::chassis
 
-#endif  // POWER_LIMITOR_HPP_
+#endif  // POWER_LIMITER_HPP_

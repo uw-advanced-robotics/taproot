@@ -27,9 +27,9 @@
 namespace tap::communication::sensors::current
 {
 /**
- * Linear analog current sensor that reads current from a sensor attached to an analog pin, applying
- * a moving average to the read in data each time `getCurrentMa` is called. As such, for optimal
- * performance, call this function periodically at some consistent rate.
+ * Linear analog current sensor that reads current from a sensor attached to an analog pin,
+ * applying a moving average to data read each time `getCurrentMa` is called. As such, for optimal
+ * performance, call `getCurrentMa()` periodically at some consistent rate.
  */
 class AnalogCurrentSensor : public CurrentSensorInterface
 {
@@ -62,7 +62,9 @@ public:
 
     AnalogCurrentSensor(const Config &config);
 
-    float getCurrentMa() override;
+    float getCurrentMa() const override;
+
+    void update() override;
 
 private:
     const Config config;

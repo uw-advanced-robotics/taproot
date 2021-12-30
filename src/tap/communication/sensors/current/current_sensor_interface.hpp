@@ -20,18 +20,20 @@
 #ifndef CURRENT_SENSOR_INTERFACE_HPP_
 #define CURRENT_SENSOR_INTERFACE_HPP_
 
+#include "tap/communication/sensors/sensor_interface.hpp"
+
 namespace tap::communication::sensors::current
 {
 /**
  * Interface for a generic current sensor.
  */
-class CurrentSensorInterface
+class CurrentSensorInterface : public tap::communication::sensors::SensorInterface
 {
 public:
     /**
      * @return The current read by the current sensor, in milliamps.
      */
-    virtual float getCurrentMa() = 0;
+    virtual float getCurrentMa() const = 0;
 };
 }  // namespace tap::communication::sensors::current
 

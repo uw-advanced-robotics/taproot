@@ -41,11 +41,12 @@ PowerLimiter::PowerLimiter(
       energyBufferCritThreshold(energyBufferCritThreshold),
       energyBuffer(startingEnergyBuffer),
       consumedPower(0.0f),
-      prevTime(0)
+      prevTime(0),
+      prevRobotDataReceivedTimestamp(0)
 {
 }
 
-float PowerLimiter::performPowerLimiting()
+float PowerLimiter::getPowerLimitRatio()
 {
     if (!drivers->refSerial.getRefSerialReceivingData())
     {
@@ -72,20 +73,21 @@ float PowerLimiter::performPowerLimiting()
 
 void PowerLimiter::updatePowerAndEnergyBuffer()
 {
-    const auto &chassisData = drivers->refSerial.getRobotData().chassis;
+    const auto &robotData = drivers->refSerial.getRobotData();
+    const auto &chassisData = robotData.chassis;
     const float current = currentSensor->getCurrentMa();
-    const float newChassisPower =
-        drivers->refSerial.getRobotData().chassis.volt * current / 1'000'000.0f;
+    const float newChassisPower = chassisData.volt * current / 1'000'000.0f;
 
-    // See rules manual for reasoning behind the energy buffer calculation
+    // Manually compute energy buffer using consumedPower read from current sensor.
+    // See rules manual for reasoning behind the energy buffer calculation.
     const float dt = tap::arch::clock::getTimeMilliseconds() - prevTime;
     prevTime = tap::arch::clock::getTimeMilliseconds();
     energyBuffer -= (consumedPower - chassisData.powerConsumptionLimit) * dt / 1000.0f;
 
-    // To avoid large deviation from true power buffer, do this.
-    if (!tap::algorithms::compareFloatClose(energyBuffer, chassisData.powerBuffer, 5))
+    if (robotData.robotDataReceivedTimestamp != prevRobotDataReceivedTimestamp)
     {
         energyBuffer = chassisData.powerBuffer;
+        prevRobotDataReceivedTimestamp = robotData.robotDataReceivedTimestamp;
     }
 
     consumedPower = newChassisPower;
