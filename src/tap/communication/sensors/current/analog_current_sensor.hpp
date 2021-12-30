@@ -44,8 +44,11 @@ public:
         /**
          * The conversion factor from millivolts (read in by the analog driver) to current in
          * milliamps
+         *
+         * The sensor returns an analog reading in mV. `currentSensorMaPerMv` has units mA/mV, so
+         * multiplying the analog reading by `currentSensorMaPerMv` results in a value in mV.
          */
-        const float currentSensorMvPerMa;
+        const float currentSensorMaPerMv;
         /**
          * When zero milliamps are being read, the raw analog value that the sensor reports in
          * millivolts

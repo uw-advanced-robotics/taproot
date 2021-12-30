@@ -33,7 +33,7 @@ float AnalogCurrentSensor::getCurrentMa()
         prevCurrent,
         abs(static_cast<float>(config.analogDriver->read(config.analogSensorPin)) -
             config.currentSensorZeroMv) *
-            config.currentSensorMvPerMa,
+            config.currentSensorMaPerMv,
         config.currentSensorLowPassAlpha);
 
     return prevCurrent;
