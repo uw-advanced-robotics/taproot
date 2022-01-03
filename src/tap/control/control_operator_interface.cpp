@@ -51,10 +51,10 @@ float ControlOperatorInterface::getChassisXInput()
         1.0f);
 
     if (drivers->remote.keyPressed(Remote::Key::CTRL)) {
-        finalX = CTRL_SCALAR * finalX;
+        finalX *= CTRL_SCALAR;
     } 
     if (drivers->remote.keyPressed(Remote::Key::SHIFT)) {
-        finalX = SHIFT_SCALAR * finalX;
+        finalX *= SHIFT_SCALAR;
     }
 
     return finalX;
@@ -83,10 +83,10 @@ float ControlOperatorInterface::getChassisYInput()
         1.0f);
 
     if (drivers->remote.keyPressed(Remote::Key::CTRL)) {
-        finalY = CTRL_SCALAR * finalY;
+        finalY *= CTRL_SCALAR;
     } 
     if (drivers->remote.keyPressed(Remote::Key::SHIFT)) {
-        finalY = SHIFT_SCALAR * finalY;
+        finalY *= SHIFT_SCALAR;
     }
 
     return finalY;
