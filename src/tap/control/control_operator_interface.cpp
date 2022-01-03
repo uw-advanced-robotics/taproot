@@ -51,7 +51,7 @@ float ControlOperatorInterface::getChassisXInput()
         1.0f);
 
     if (drivers->remote.keyPressed(Remote::Key::CTRL)) {
-        finalX *= CTRL_SCALAR;
+        finalX *= CTRL_SCALAR; 
     } 
     if (drivers->remote.keyPressed(Remote::Key::SHIFT)) {
         finalX *= SHIFT_SCALAR;
