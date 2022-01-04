@@ -41,6 +41,8 @@ public:
     static constexpr int16_t USER_MOUSE_PITCH_MAX = 1000;
     static constexpr float USER_MOUSE_YAW_SCALAR = (1.0f / USER_MOUSE_YAW_MAX);
     static constexpr float USER_MOUSE_PITCH_SCALAR = (1.0f / USER_MOUSE_PITCH_MAX);
+    static constexpr float CTRL_SCALAR = (1.0f / 4);
+    static constexpr float SHIFT_SCALAR = (1.0f / 2);
     static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
 
     /** Maximum alpha value for the x-key low-pass filter. Must be in range (0, 1] (0 is only

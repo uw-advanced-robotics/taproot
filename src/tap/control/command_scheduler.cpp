@@ -39,6 +39,7 @@ Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBS
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
 int CommandScheduler::maxSubsystemIndex = 0;
 int CommandScheduler::maxCommandIndex = 0;
+SafeDisconnectFunction CommandScheduler::defaultSafeDisconnectFunction;
 
 int CommandScheduler::constructCommand(Command *command)
 {
@@ -131,7 +132,12 @@ void CommandScheduler::destructSubsystem(Subsystem *subsystem)
     }
 }
 
-CommandScheduler::CommandScheduler(Drivers *drivers, bool masterScheduler) : drivers(drivers)
+CommandScheduler::CommandScheduler(
+    Drivers *drivers,
+    bool masterScheduler,
+    SafeDisconnectFunction *safeDisconnectFunction)
+    : drivers(drivers),
+      safeDisconnectFunction(safeDisconnectFunction)
 {
     if (masterScheduler && masterSchedulerExists)
     {
@@ -177,13 +183,24 @@ void CommandScheduler::run()
         return;
     }
 
-    // Execute commands in the addedCommandBitmap, remove any that are finished
-    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+    if (safeDisconnected())
     {
-        (*it)->execute();
-        if ((*it)->isFinished())
+        // End all commands running. They were interrupted by the remote disconnecting.
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
-            removeCommand(*it, false);
+            removeCommand(*it, true);
+        }
+    }
+    else
+    {
+        // Execute commands in the addedCommandBitmap, remove any that are finished
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+        {
+            (*it)->execute();
+            if ((*it)->isFinished())
+            {
+                removeCommand(*it, false);
+            }
         }
     }
 
@@ -196,9 +213,11 @@ void CommandScheduler::run()
             (*it)->refresh();
 
             Command *defaultCmd;
-            // If the current subsystem does not have an associated command and the current
+            // If the remote is connected given the scheduler is in safe disconnect mode and
+            // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
+            if (!safeDisconnected() &&
+                !(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
                 addCommand(defaultCmd);
@@ -222,7 +241,11 @@ void CommandScheduler::run()
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    if (runningHardwareTests)
+    if (safeDisconnected())
+    {
+        return;
+    }
+    else if (runningHardwareTests)
     {
         RAISE_ERROR(drivers, "attempting to add command while running tests");
         return;
@@ -292,6 +315,13 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     // Remove the command from the command bitmap
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
 }
+
+void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
+{
+    this->safeDisconnectFunction = func;
+}
+
+bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {
