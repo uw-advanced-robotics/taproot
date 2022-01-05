@@ -10,9 +10,10 @@ namespace tap::sensors::bmi088
  * See
  * https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf
  */
-struct Bmi088Data
+class Bmi088Data
 {
-    struct Gryo
+public:
+    struct Gyro
     {
         enum class Register : uint8_t
         {
@@ -43,12 +44,12 @@ struct Bmi088Data
         /** The id of the gyroscope that will is stored in address `GYRO_CHIP_ID`. */
         static constexpr uint8_t GYRO_CHIP_ID = 0x0f;
 
-        enum class GryoIntStat1 : uint8_t
+        enum class GyroIntStat1 : uint8_t
         {
             GYRO_DRDY = modm::Bit7,
             FIFO_INT = modm::Bit4,
         };
-        MODM_FLAGS8(GryoIntStat1);
+        MODM_FLAGS8(GyroIntStat1);
 
         enum class FifoStatus : uint8_t
         {
@@ -110,6 +111,7 @@ struct Bmi088Data
         {
             RESET_SENSOR = 0xb6
         };
+        MODM_FLAGS8(GyroSoftreset);
 
         enum class GyroIntCtrl : uint8_t
         {
@@ -230,6 +232,22 @@ struct Bmi088Data
             STREAM = 0x80,
         };
         MODM_FLAGS_CONFIG(FifoConfig1, FifoMode);
+
+        using Registers_t = modm::FlagsGroup<
+            GyroIntStat1_t,
+            FifoStatus_t,
+            GyroRange_t,
+            GyroBandwidth_t,
+            GyroLpm1_t,
+            GyroSoftreset_t,
+            GyroIntCtrl_t,
+            Int3Int4IoConf_t,
+            Int3Int4IoMap_t,
+            FifoWmEnable_t,
+            FifoExtIntS_t,
+            GyroSelfTest_t,
+            FifoConfig0_t,
+            FifoConfig1_t>;
     };
 
     struct Acc
@@ -332,10 +350,21 @@ struct Bmi088Data
         };
         MODM_FLAGS_CONFIG(AccRange, AccRangeCtrl);
 
+        enum class IntMapData : uint8_t
+        {
+            INT2_DRDY = modm::Bit6,
+            Int2_FWRM = modm::Bit5,
+            INT2_FFULL = modm::Bit4,
+            INT1_DRDY = modm::Bit2,
+            INT1_FWM = modm::Bit1,
+            INT1_FFULL = modm::Bit0,
+        };
+        MODM_FLAGS8(IntMapData);
+
         enum class Int1IoConf : uint8_t
         {
-            Int1In_Mask = modm::Bit4,
-            Int1Out_Mask = modm::Bit3,
+            Int1In = modm::Bit4,
+            Int1Out = modm::Bit3,
             Int1Od_Mask = modm::Bit2,
             Int1Lvl_Mask = modm::Bit1,
         };
@@ -418,79 +447,29 @@ struct Bmi088Data
         };
         MODM_FLAGS_CONFIG(AccPwrCtrl, AccEnable);
 
+        /** Writing this to the AccSoftreset register will perform a soft reset of the IMU */
         enum class AccSoftreset : uint8_t
         {
-            RESET_SENSOR = 255,
+            ACC_SOFTRESET_VAL = 0xb6,
         };
         MODM_FLAGS8(AccSoftreset);
-
-        /** Writing this to the AccSoftreset register will perform a soft reset of the IMU */
-        static constexpr uint8_t ACC_SOFTRESET_VAL = 0xb6;
 
         using Registers_t = modm::FlagsGroup<
             AccErr_t,
             AccStatus_t,
             AccIntStat1_t,
             AccConf_t,
-            AccBandwidth_t,
-            AccOutputRate_t,
-            AccRangeCtrl_t,
             Int1IoConf_t,
-            Int1Od_t,
             Int2IoConf_t,
             AccSelfTest_t,
+            AccRange_t,
             AccPwrConf_t,
             AccPwrCtrl_t,
-            AccSoftreset_t>;
-    };
-
-    static constexpr Acc::AccRangeCtrl_t EXPECTED_ACC_RANGE =
-        Acc::AccRangeCtrl_t(Acc::AccRangeCtrl::G12);
-
-    struct Data
-    {
-        static constexpr float ACCEL_COUNTS_TO_MG =
-            1000.0f * modm::pow(2, EXPECTED_ACC_RANGE.value + 1) * 1.5f / 32768.0f;
-
-        static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
-
-        /** @return accel data in mg (m / s^2) */
-        inline float getAccX() const { return raw.accX * ACCEL_COUNTS_TO_MG; }
-        inline float getAccY() const { return raw.accY * ACCEL_COUNTS_TO_MG; }
-        inline float getAccZ() const { return raw.accZ * ACCEL_COUNTS_TO_MG; }
-
-        /** @return gyro data in deg/s */
-        inline float getGyroX() const { return raw.gyroX / LSB_D_PER_S_TO_D_PER_S; }
-        inline float getGyroY() const { return raw.gyroY / LSB_D_PER_S_TO_D_PER_S; }
-        inline float getGyroZ() const { return raw.gyroZ / LSB_D_PER_S_TO_D_PER_S; }
-
-        /** @return temperature data in degrees C */
-        inline float getTemp() const { return raw.rawTemp * 0.125 + 23; }
-
-        struct
-        {
-            int16_t accX, accY, accZ;
-            int16_t gyroX, gyroY, gyroZ;
-            int16_t rawTemp;
-        } modm_packed raw;
-
-        inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
-        {
-            uint16_t temp =
-                (static_cast<uint16_t>(tempMsb) * 8) + (static_cast<uint16_t>(tempLsb) / 32);
-
-            if (temp > 1023)
-            {
-                return static_cast<int16_t>(temp) - 2048;
-            }
-            else
-            {
-                return static_cast<int16_t>(temp);
-            }
-        }
+            AccSoftreset_t,
+            IntMapData_t>;
     };
 };
 
-}  // namespace sensors::bmi088
+}  // namespace tap::sensors::bmi088
 
 #endif  // BMI055_REGISTER_TABLE_HPP_
