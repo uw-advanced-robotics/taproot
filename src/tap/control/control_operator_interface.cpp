@@ -34,16 +34,33 @@ float ControlOperatorInterface::getChassisXInput()
 {
     uint32_t updateCounter = drivers->remote.getUpdateCounter();
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
+
     if (prevUpdateCounterX != updateCounter)
     {
         chassisXInput.update(drivers->remote.getChannel(Remote::Channel::LEFT_VERTICAL), currTime);
         prevUpdateCounterX = updateCounter;
     }
 
-    chassisXKeyInputFiltered = algorithms::lowPassFilter(
-        chassisXKeyInputFiltered,
-        drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S),
-        CHASSIS_X_KEY_INPUT_FILTER_ALPHA);
+    int16_t input =
+        drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
+
+    // Note for readability: chassisXKeyInputFiltered = The most recently filtered value computed by
+    // this function (which we update below)
+    if (abs(chassisXKeyInputFiltered) < CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
+        abs(input) <= abs(chassisXKeyInputFiltered))
+    {
+        chassisXKeyInputFiltered = algorithms::lowPassFilter(
+            chassisXKeyInputFiltered,
+            input,
+            CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
+    }
+    else
+    {
+        chassisXKeyInputFiltered = algorithms::lowPassFilter(
+            chassisXKeyInputFiltered,
+            input,
+            abs(chassisXKeyInputFiltered / input) * CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
+    }
 
     float finalX = limitVal<float>(
         chassisXInput.getInterpolatedValue(currTime) + chassisXKeyInputFiltered,
@@ -74,10 +91,26 @@ float ControlOperatorInterface::getChassisYInput()
         prevUpdateCounterY = updateCounter;
     }
 
-    chassisYKeyInputFiltered = algorithms::lowPassFilter(
-        chassisYKeyInputFiltered,
-        drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A),
-        CHASSIS_Y_KEY_INPUT_FILTER_ALPHA);
+    int16_t input =
+        drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
+
+    // Note for readability: chassisYKeyInputFiltered = The most recently filtered value computed by
+    // this function (which we update below)
+    if (abs(chassisYKeyInputFiltered) < CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
+        abs(input) <= abs(chassisYKeyInputFiltered))
+    {
+        chassisYKeyInputFiltered = algorithms::lowPassFilter(
+            chassisYKeyInputFiltered,
+            input,
+            CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
+    }
+    else
+    {
+        chassisYKeyInputFiltered = algorithms::lowPassFilter(
+            chassisYKeyInputFiltered,
+            input,
+            abs(chassisYKeyInputFiltered / input) * CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
+    }
 
     float finalY = limitVal<float>(
         chassisYInput.getInterpolatedValue(currTime) + chassisYKeyInputFiltered,
