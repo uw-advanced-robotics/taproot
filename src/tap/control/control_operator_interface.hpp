@@ -49,7 +49,7 @@ public:
      * previous value, 1 is no filter). */
     static constexpr float CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX = 0.05f;
 
-    /** Output magnitude in range [0, 1] at which the upward output ramp shallows (alpha becomes
+    /** Output magnitude in range [0, 1] above which the upward output ramp shallows (alpha becomes
      * dynamic) for the x-key low-pass filter. */
     static constexpr float CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD =
         0.1f;  // Must be in range [0, 1]
@@ -58,7 +58,7 @@ public:
      * previous value, 1 is no filter). */
     static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX = 0.025f;
 
-    /** Output magnitude in range [0, 1] at which the upward output ramp shallows (alpha becomes
+    /** Output magnitude in range [0, 1] above which the upward output ramp shallows (alpha becomes
      * dynamic) for the y-key low-pass filter. */
     static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD = 0.1f;
 
@@ -77,7 +77,8 @@ public:
      * the mechanum wheels slip as little as possible. To do this,
      * we let the alpha in our low-pass filter be a function of
      * the ratio between the previous output over the current input,
-     * i.e. alpha = [(prevOutput)/(input)] * (alpha_max).
+     * i.e. alpha = [(chassisXKeyInputFiltered)/(input)] * (alpha_max), where
+     * chassisXKeyInputFiltered is the last filtered value computed by this function.
      * We apply this ONLY if we are increasing in speed; if we are slowing down,
      * the low-pass filter works normally using alpha_max.
      *
@@ -92,7 +93,8 @@ public:
      * the mechanum wheels slip as little as possible. To do this,
      * we let the alpha in our low-pass filter be a function of
      * the ratio between the previous output over the current input,
-     * i.e. alpha = [(prevOutput)/(input)] * (alpha_max).
+     * i.e. alpha = [(chassisYKeyInputFiltered)/(input)] * (alpha_max), where
+     * chassisYKeyInputFiltered is the last filtered value computed by this function.
      * We apply this ONLY if we are increasing in speed; if we are slowing down,
      * the low-pass filter works normally using alpha_max.
      *
