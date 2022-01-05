@@ -39,6 +39,7 @@ Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBS
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
 int CommandScheduler::maxSubsystemIndex = 0;
 int CommandScheduler::maxCommandIndex = 0;
+SafeDisconnectFunction CommandScheduler::defaultSafeDisconnectFunction;
 
 int CommandScheduler::constructCommand(Command *command)
 {
@@ -131,15 +132,16 @@ void CommandScheduler::destructSubsystem(Subsystem *subsystem)
     }
 }
 
-CommandScheduler::CommandScheduler(Drivers *drivers, bool masterScheduler) : drivers(drivers)
+CommandScheduler::CommandScheduler(
+    Drivers *drivers,
+    bool masterScheduler,
+    SafeDisconnectFunction *safeDisconnectFunction)
+    : drivers(drivers),
+      safeDisconnectFunction(safeDisconnectFunction)
 {
     if (masterScheduler && masterSchedulerExists)
     {
-        RAISE_ERROR(
-            drivers,
-            "master scheduler already exists",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::MASTER_SCHEDULER_ALREADY_EXISTS);
+        RAISE_ERROR(drivers, "master scheduler already exists");
     }
     else
     {
@@ -181,13 +183,24 @@ void CommandScheduler::run()
         return;
     }
 
-    // Execute commands in the addedCommandBitmap, remove any that are finished
-    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+    if (safeDisconnected())
     {
-        (*it)->execute();
-        if ((*it)->isFinished())
+        // End all commands running. They were interrupted by the remote disconnecting.
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
-            removeCommand(*it, false);
+            removeCommand(*it, true);
+        }
+    }
+    else
+    {
+        // Execute commands in the addedCommandBitmap, remove any that are finished
+        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+        {
+            (*it)->execute();
+            if ((*it)->isFinished())
+            {
+                removeCommand(*it, false);
+            }
         }
     }
 
@@ -200,9 +213,11 @@ void CommandScheduler::run()
             (*it)->refresh();
 
             Command *defaultCmd;
-            // If the current subsystem does not have an associated command and the current
+            // If the remote is connected given the scheduler is in safe disconnect mode and
+            // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if (!(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
+            if (!safeDisconnected() &&
+                !(subsystemsAssociatedWithCommandBitmap & (1UL << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
                 addCommand(defaultCmd);
@@ -219,33 +234,25 @@ void CommandScheduler::run()
         // to complete all this stuff, if it does something
         // is seriously wrong (i.e. you are adding subsystems unchecked or the scheduler
         // itself is broken).
-        RAISE_ERROR(
-            drivers,
-            "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::RUN_TIME_OVERFLOW);
+        RAISE_ERROR(drivers, "scheduler took longer than MAX_ALLOWABLE_SCHEDULER_RUNTIME");
     }
 #endif
 }
 
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    if (runningHardwareTests)
+    if (safeDisconnected())
     {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add command while running tests",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADD_COMMAND_WHILE_TESTING);
+        return;
+    }
+    else if (runningHardwareTests)
+    {
+        RAISE_ERROR(drivers, "attempting to add command while running tests");
         return;
     }
     else if (commandToAdd == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "attempting to add nullptr command",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_NULLPTR_COMMAND);
+        RAISE_ERROR(drivers, "attempting to add nullptr command");
         return;
     }
     else if (!commandToAdd->isReady())
@@ -262,11 +269,7 @@ void CommandScheduler::addCommand(Command *commandToAdd)
     {
         // the command you are trying to add has a subsystem that is not in the
         // scheduler, so you cannot add it (will lead to undefined control behavior)
-        RAISE_ERROR(
-            drivers,
-            "Attempting to add a command without subsystem in the scheduler",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADD_COMMAND_WITHOUT_REGISTERED_SUB);
+        RAISE_ERROR(drivers, "Attempting to add a command without subsystem in the scheduler");
         return;
     }
 
@@ -296,11 +299,7 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
 {
     if (command == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "trying to remove nullptr command",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::REMOVE_NULLPTR_COMMAND);
+        RAISE_ERROR(drivers, "trying to remove nullptr command");
         return;
     }
     else if (!isCommandScheduled(command))
@@ -317,23 +316,22 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     addedCommandBitmap &= ~(1UL << command->getGlobalIdentifier());
 }
 
+void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
+{
+    this->safeDisconnectFunction = func;
+}
+
+bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }
+
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {
     if (subsystem == nullptr)
     {
-        RAISE_ERROR(
-            drivers,
-            "trying to register nullptr subsystem",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_NULLPTR_SUBSYSTEM);
+        RAISE_ERROR(drivers, "trying to register nullptr subsystem");
     }
     else if (isSubsystemRegistered(subsystem))
     {
-        RAISE_ERROR(
-            drivers,
-            "subsystem is already added",
-            Location::COMMAND_SCHEDULER,
-            CommandSchedulerErrorType::ADDING_ALREADY_ADDED_SUBSYSTEM);
+        RAISE_ERROR(drivers, "subsystem is already added");
     }
     else
     {

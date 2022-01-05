@@ -43,7 +43,7 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
     {
         tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
-        int normalizedId = DJI_MOTOR_NORMALIZED_ID(i);
+        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
 
         handler.attachReceiveHandler(&listener);
         EXPECT_EQ(&listener, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
@@ -68,13 +68,13 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
         const modm::can::Message rxMessage(i);
         handler.processReceivedCanData(
             rxMessage,
-            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1),
-            8);
+            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
 
         handler.removeReceiveHandler(listener);
         EXPECT_EQ(
             nullptr,
-            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[DJI_MOTOR_NORMALIZED_ID(i)]);
+            handler.getHandlerStore(
+                tap::can::CanBus::CAN_BUS1)[tap::can::CanRxHandler::lookupTableIndexForCanId(i)]);
         EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
     }
 }
@@ -86,8 +86,18 @@ TEST(CanRxHandler, ErrorIsThrownWithOOBMessageID)
     const modm::can::Message rxMessage(9);
 
     EXPECT_CALL(drivers.errorController, addToErrorList);
-    handler.processReceivedCanData(
-        rxMessage,
-        handler.getHandlerStore(tap::can::CanBus::CAN_BUS1),
-        8);
+    handler.processReceivedCanData(rxMessage, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
+}
+
+TEST(CanRxHandler, removeReceiveHandler__error_logged_with_oob_can_rx_listener_id)
+{
+    tap::Drivers drivers;
+    tap::can::CanRxHandler handler(&drivers);
+    tap::mock::CanRxListenerMock canRxListenerHi(&drivers, 0xffff, tap::can::CanBus::CAN_BUS1);
+    tap::mock::CanRxListenerMock canRxListenerLo(&drivers, 0x0, tap::can::CanBus::CAN_BUS1);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+
+    handler.removeReceiveHandler(canRxListenerHi);
+    handler.removeReceiveHandler(canRxListenerLo);
 }
