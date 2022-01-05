@@ -44,12 +44,15 @@ float ControlOperatorInterface::getChassisXInput()
     int16_t input =
         drivers->remote.keyPressed(Remote::Key::W) - drivers->remote.keyPressed(Remote::Key::S);
 
-    // Note for readability: chassisXKeyInputFiltered = The most recently filtered value computed by this function (which we update below)
+    // Note for readability: chassisXKeyInputFiltered = The most recently filtered value computed by
+    // this function (which we update below)
     if (abs(chassisXKeyInputFiltered) < CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
         abs(input) <= abs(chassisXKeyInputFiltered))
     {
-        chassisXKeyInputFiltered =
-            algorithms::lowPassFilter(chassisXKeyInputFiltered, input, CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
+        chassisXKeyInputFiltered = algorithms::lowPassFilter(
+            chassisXKeyInputFiltered,
+            input,
+            CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX);
     }
     else
     {
@@ -91,12 +94,15 @@ float ControlOperatorInterface::getChassisYInput()
     int16_t input =
         drivers->remote.keyPressed(Remote::Key::D) - drivers->remote.keyPressed(Remote::Key::A);
 
-    // Note for readability: chassisYKeyInputFiltered = The most recently filtered value computed by this function (which we update below)
+    // Note for readability: chassisYKeyInputFiltered = The most recently filtered value computed by
+    // this function (which we update below)
     if (abs(chassisYKeyInputFiltered) < CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD ||
         abs(input) <= abs(chassisYKeyInputFiltered))
     {
-        chassisYKeyInputFiltered =
-            algorithms::lowPassFilter(chassisYKeyInputFiltered, input, CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
+        chassisYKeyInputFiltered = algorithms::lowPassFilter(
+            chassisYKeyInputFiltered,
+            input,
+            CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX);
     }
     else
     {
