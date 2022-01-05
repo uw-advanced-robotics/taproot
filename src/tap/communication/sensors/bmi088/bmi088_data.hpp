@@ -1,5 +1,24 @@
-#ifndef BMI055_REGISTER_TABLE_HPP_
-#define BMI055_REGISTER_TABLE_HPP_
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef BMI088_DATA_HPP_
+#define BMI088_DATA_HPP_
 
 #include "modm/architecture/interface/register.hpp"
 #include "modm/math/utils.hpp"
@@ -13,6 +32,11 @@ namespace tap::sensors::bmi088
 class Bmi088Data
 {
 public:
+    /**
+     * Bit appended or removed from a register while reading/writing.
+     */
+    static constexpr uint8_t BMI088_READ_BIT = 0x80;
+
     struct Gyro
     {
         enum class Register : uint8_t
@@ -60,27 +84,15 @@ public:
 
         enum class GyroRange : uint8_t
         {
-            GyroRangeCtrl_Mask = 255,
-        };
-        MODM_FLAGS8(GyroRange);
-
-        enum class GyroRangeCtrl : uint8_t
-        {
             DPS2000 = 0x00,
             DPS1000 = 0x01,
             DPS500 = 0x02,
             DPS250 = 0x03,
             DPS125 = 0x04,
         };
-        MODM_FLAGS_CONFIG(GyroRange, GyroRangeCtrl);
+        MODM_FLAGS8(GyroRange);
 
         enum class GyroBandwidth : uint8_t
-        {
-            GyroBw_Mask = 255,
-        };
-        MODM_FLAGS8(GyroBandwidth);
-
-        enum class GyroBw : uint8_t
         {
             ODR2000_BANDWIDTH532 = 0x00,
             ODR2000_BANDWIDTH230 = 0x01,
@@ -91,21 +103,15 @@ public:
             ODR200_BANDWIDTH64 = 0x06,
             ODR100_BANDWIDTH32 = 0x07,
         };
-        MODM_FLAGS_CONFIG(GyroBandwidth, GyroBw);
+        MODM_FLAGS8(GyroBandwidth);
 
         enum class GyroLpm1
-        {
-            GyroPm_Mask = 255,
-        };
-        MODM_FLAGS8(GyroLpm1);
-
-        enum class GyroPm : uint8_t
         {
             PWRMODE_NORMAL = 0x00,
             PWRMODE_SUSPEND = 0x80,
             PWRMODE_DEEP_SUSPEND = 0x20
         };
-        MODM_FLAGS_CONFIG(GyroLpm1, GyroPm);
+        MODM_FLAGS8(GyroLpm1);
 
         enum class GyroSoftreset : uint8_t
         {
@@ -182,16 +188,10 @@ public:
 
         enum class FifoWmEnable : uint8_t
         {
-            FifoWmEnableCtrl_Mask = 255,
-        };
-        MODM_FLAGS8(FifoWmEnable);
-
-        enum class FifoWmEnableCtrl : uint8_t
-        {
             FIFO_WATERMARK_LVL_INT_DISABLED = 0x08,
             FIFO_WATERMARK_LVL_INT_ENABLED = 0x88,
         };
-        MODM_FLAGS_CONFIG(FifoWmEnable, FifoWmEnableCtrl);
+        MODM_FLAGS8(FifoWmEnable);
 
         enum class FifoExtIntS : uint8_t
         {
@@ -222,16 +222,10 @@ public:
 
         enum class FifoConfig1 : uint8_t
         {
-            FifoMode_Mask = 255,
-        };
-        MODM_FLAGS8(FifoConfig1);
-
-        enum class FifoMode : uint8_t
-        {
             FIFO = 0x40,
             STREAM = 0x80,
         };
-        MODM_FLAGS_CONFIG(FifoConfig1, FifoMode);
+        MODM_FLAGS8(FifoConfig1);
 
         using Registers_t = modm::FlagsGroup<
             GyroIntStat1_t,
@@ -382,7 +376,7 @@ public:
             ACTIVE_LOW = 0,
             ACTIVE_HIGH = 1,
         };
-        typedef modm::Configuration<Int1IoConf_t, Int1Lvl, 0b1, 1> Int1Lv1_t;
+        typedef modm::Configuration<Int1IoConf_t, Int1Lvl, 0b1, 1> Int1Lvl_t;
 
         enum class Int2IoConf : uint8_t
         {
@@ -409,43 +403,25 @@ public:
 
         enum class AccSelfTest : uint8_t
         {
-            AccSelfTestCtrl_Mask = 255,
-        };
-        MODM_FLAGS8(AccSelfTest);
-
-        enum class AccSelfTestCtrl : uint8_t
-        {
             SELF_TEST_OFF = 0x00,
             POSITIVE_SELF_TEST_SIGNAL = 0x0d,
             NEGATIVE_SELF_TEST_SIGNAL = 0x09,
         };
-        MODM_FLAGS_CONFIG(AccSelfTest, AccSelfTestCtrl);
+        MODM_FLAGS8(AccSelfTest);
 
         enum class AccPwrConf : uint8_t
-        {
-            AccPwrSave_Mask = 255,
-        };
-        MODM_FLAGS8(AccPwrConf);
-
-        enum class AccPwrSave : uint8_t
         {
             ACTIVE_MODE = 0x00,
             SUSPEND_MODE = 0x03
         };
-        MODM_FLAGS_CONFIG(AccPwrConf, AccPwrSave);
+        MODM_FLAGS8(AccPwrConf);
 
         enum class AccPwrCtrl : uint8_t
-        {
-            AccEnable_Mask = 255,
-        };
-        MODM_FLAGS8(AccPwrCtrl);
-
-        enum class AccEnable : uint8_t
         {
             ACCELEROMETER_OFF = 0X00,
             ACCELEROMETER_ON = 0X04
         };
-        MODM_FLAGS_CONFIG(AccPwrCtrl, AccEnable);
+        MODM_FLAGS8(AccPwrCtrl);
 
         /** Writing this to the AccSoftreset register will perform a soft reset of the IMU */
         enum class AccSoftreset : uint8_t
@@ -472,4 +448,4 @@ public:
 
 }  // namespace tap::sensors::bmi088
 
-#endif  // BMI055_REGISTER_TABLE_HPP_
+#endif  // BMI088_DATA_HPP_

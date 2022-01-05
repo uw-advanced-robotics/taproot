@@ -1,4 +1,24 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "bmi088.hpp"
+#include "bmi088_hal.hpp"
 
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
@@ -7,108 +27,31 @@
 
 #include "modm/math/units.hpp"
 
-#include "bmi088_register_table.hpp"
+#include "bmi088_data.hpp"
 
 using namespace modm::literals;
 using namespace Board;
 
 namespace tap::sensors::bmi088
 {
-static inline void chipSelectAccelLow() { ImuCS1Accel::set(false); }
-static inline void chipSelectAccelHigh() { ImuCS1Accel::set(true); }
-static inline void chipSelectGyroLow() { ImuCS1Gyro::set(false); }
-static inline void chipSelectGyroHigh() { ImuCS1Gyro::set(true); }
-
-static inline uint8_t bmi088ReadWriteByte(uint8_t reg)
-{
-#ifndef PLATFORM_HOSTED
-    uint8_t rx;
-    ImuSpiMaster::transferBlocking(&reg, &rx, 1);
-    return rx;
-#else
-    return 0;
-#endif
-}
-
-static inline void bmi088WriteSingleReg(uint8_t reg, uint8_t data)
-{
-    bmi088ReadWriteByte(reg);
-    bmi088ReadWriteByte(data);
-}
-
-static inline uint8_t bmi088ReadSingleReg(uint8_t reg)
-{
-    bmi088ReadWriteByte(reg | Bmi088::BMI088_READ_BIT);
-    return bmi088ReadWriteByte(0x55);
-}
-
-static inline void bmi088ReadMultiReg(uint8_t reg, uint8_t *rxBuff, uint8_t *txBuff, uint8_t len)
-{
-    uint8_t tx = reg | Bmi088::BMI088_READ_BIT;
-    uint8_t rx = 0;
-
-    txBuff[0] = tx;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(txBuff, rxBuff, len);
-}
-
-static inline void bmi088AccWriteSingleReg(
-    Bmi088Data::Acc::Register reg,
-    Bmi088Data::Acc::Registers_t data)
-{
-    chipSelectAccelHigh();
-    bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
-    chipSelectAccelLow();
-}
-
-static inline uint8_t bmi088AccReadSingleReg(Bmi088Data::Acc::Register reg)
-{
-    chipSelectAccelHigh();
-    uint8_t res = bmi088ReadSingleReg(static_cast<uint8_t>(reg));
-    chipSelectAccelLow();
-    return res;
-}
-
-static inline void bmi088AccReadMultiReg(
-    Bmi088Data::Acc::Register reg,
-    uint8_t *rxBuff,
-    uint8_t *txBuff,
-    uint8_t len)
-{
-    chipSelectAccelHigh();
-    bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, txBuff, len);
-    chipSelectAccelLow();
-}
-
-static inline void bmi088GyroWriteSingleReg(
-    Bmi088Data::Gyro::Register reg,
-    Bmi088Data::Gyro::Registers_t data)
-{
-    chipSelectGyroHigh();
-    bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
-    chipSelectGyroLow();
-}
-
-static inline uint8_t bmi088GyroReadSingleReg(Bmi088Data::Gyro::Register reg)
-{
-    chipSelectGyroHigh();
-    uint8_t res = bmi088ReadSingleReg(static_cast<uint8_t>(reg));
-    chipSelectGyroLow();
-    return res;
-}
-
-static inline void bmi088GyroReadMultiReg(
-    Bmi088Data::Gyro::Register reg,
-    uint8_t *rxBuff,
-    uint8_t *txBuff,
-    uint8_t len)
-{
-    chipSelectGyroHigh();
-    bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, txBuff, len);
-    chipSelectGyroLow();
-}
-
 Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
+
+Bmi088::ImuState Bmi088::getImuState() const { return imuState; }
+
+void Bmi088::requestRecalibration()
+{
+    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
+    {
+        data.gyroOffset[ImuData::Coordinate::X] = 0;
+        data.gyroOffset[ImuData::Coordinate::Y] = 0;
+        data.gyroOffset[ImuData::Coordinate::Z] = 0;
+        data.accOffset[ImuData::Coordinate::X] = 0;
+        data.accOffset[ImuData::Coordinate::Y] = 0;
+        data.accOffset[ImuData::Coordinate::Z] = 0;
+        calibrationSample = 0;
+        imuState = ImuState::IMU_CALIBRATING;
+    }
+}
 
 void Bmi088::initiailze()
 {
@@ -122,7 +65,7 @@ void Bmi088::initiailze()
 
     imuHeater.initialize();
 
-    ready = true;
+    imuState = ImuState::IMU_NOT_CALIBRATED;
 }
 
 void Bmi088::initializeAcc()
@@ -158,15 +101,15 @@ void Bmi088::initializeAcc()
     };
 
     AccTuple bmiAccRegData[] = {
-        {Acc::Register::ACC_PWR_CTRL, Acc::AccPwrConf(Acc::AccEnable::ACCELEROMETER_ON)},
-        {Acc::Register::ACC_PWR_CONF, Acc::AccPwrCtrl(Acc::AccPwrSave::ACTIVE_MODE)},
+        {Acc::Register::ACC_PWR_CTRL, Acc::AccPwrCtrl::ACCELEROMETER_ON},
+        {Acc::Register::ACC_PWR_CONF, Acc::AccPwrConf::ACTIVE_MODE},
         {Acc::Register::ACC_CONF,
-         Acc::AccConf(Acc::AccBandwidth::NORMAL) |
-             Acc::AccConf(Acc::AccOutputRate::Hz800)},  // potentially also | 0x80????
-        {Acc::Register::ACC_RANGE, Acc::AccRange(Acc::AccRangeCtrl::G3)},
+         Acc::AccBandwidth_t(Acc::AccBandwidth::NORMAL) |
+             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800)},  // potentially also | 0x80????
+        {Acc::Register::ACC_RANGE, Acc::AccRangeCtrl_t(Acc::AccRangeCtrl::G3)},
         {Acc::Register::INT1_IO_CTRL,
-         Acc::Int1IoConf::Int1Out | Acc::Int1IoConf(Acc::Int1Od::PUSH_PULL) |
-             Acc::Int1IoConf(Acc::Int1Lvl::ACTIVE_LOW)},
+         Acc::Int1IoConf::Int1Out | Acc::Int1Od_t(Acc::Int1Od::PUSH_PULL) |
+             Acc::Int1Lvl_t(Acc::Int1Lvl::ACTIVE_LOW)},
         {Acc::Register::INT_MAP_DATA, Acc::IntMapData::INT1_DRDY}};
 
     for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiAccRegData); i++)
@@ -215,13 +158,12 @@ void Bmi088::initializeGyro()
     };
 
     GyroTuple bmiGyroRegData[] = {
-        {Gyro::Register::GYRO_RANGE, Gyro::GyroRange(Gyro::GyroRangeCtrl::DPS2000)},
-        {Gyro::Register::GYRO_BANDWIDTH, Gyro::GyroBandwidth(Gyro::GyroBw::ODR1000_BANDWIDTH116)},
-        {Gyro::Register::GYRO_LPM1, Gyro::GyroLpm1(Gyro::GyroPm::PWRMODE_NORMAL)},
-        {Gyro::Register::GYRO_INT_CTRL, Gyro::GyroIntCtrl(Gyro::EnableNewDataInt::ENABLED)},
+        {Gyro::Register::GYRO_RANGE, Gyro::GyroRange::DPS2000},
+        {Gyro::Register::GYRO_BANDWIDTH, Gyro::GyroBandwidth::ODR1000_BANDWIDTH116},
+        {Gyro::Register::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
+        {Gyro::Register::GYRO_INT_CTRL, Gyro::EnableNewDataInt_t(Gyro::EnableNewDataInt::ENABLED)},
         {Gyro::Register::INT3_INT4_IO_CONF,
-         Gyro::Int3Int4IoConf(Gyro::Int3Od::PUSH_PULL) |
-             Gyro::Int3Int4IoConf(Gyro::Int3Lvl::ACTIVE_LOW)},
+         Gyro::Int3Od_t(Gyro::Int3Od::PUSH_PULL) | Gyro::Int3Lvl_t(Gyro::Int3Lvl::ACTIVE_LOW)},
         {Gyro::Register::INT3_INT4_IO_MAP, Gyro::Int3Int4IoMap::DATA_READY_INT3}};
 
     for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiGyroRegData); i++)
@@ -265,22 +207,59 @@ void Bmi088::periodicIMUUpdate()
     uint8_t rxBuff[6] = {};
 
     bmi088AccReadMultiReg(Acc::Register::ACC_X_LSB, rxBuff, txBuff, 6);
-    data.acc.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.acc.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.acc.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.acc[ImuData::Coordinate::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.acc[ImuData::Coordinate::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.acc[ImuData::Coordinate::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     bmi088GyroReadMultiReg(Gyro::Register::RATE_X_LSB, rxBuff, txBuff, 6);
-    data.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.gyro[ImuData::Coordinate::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.gyro[ImuData::Coordinate::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.gyro[ImuData::Coordinate::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     bmi088AccReadMultiReg(Acc::Register::TEMP_LSB, rxBuff, txBuff, 2);
     int16_t parsedTemp = parseTemp(rxBuff[0], rxBuff[1]);
     data.temperature = parsedTemp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
 
-    mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
+    {
+        mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+    }
+    else if (imuState == ImuState::IMU_CALIBRATING)
+    {
+        computeOffsets();
+    }
+    else
+    {
+        RAISE_ERROR(drivers, "imu not connected");
+    }
 
     imuHeater.runTemperatureController(data.temperature);
+}
+
+void Bmi088::computeOffsets()
+{
+    calibrationSample++;
+
+    data.gyroOffset[ImuData::Coordinate::X] += data.gyro[ImuData::Coordinate::X];
+    data.gyroOffset[ImuData::Coordinate::Y] += data.gyro[ImuData::Coordinate::Y];
+    data.gyroOffset[ImuData::Coordinate::Z] += data.gyro[ImuData::Coordinate::Z];
+    data.accOffset[ImuData::Coordinate::X] += data.acc[ImuData::Coordinate::X];
+    data.accOffset[ImuData::Coordinate::Y] += data.acc[ImuData::Coordinate::Y];
+    data.accOffset[ImuData::Coordinate::Z] +=
+        data.acc[ImuData::Coordinate::Z] - ACCELERATION_SENSITIVITY;
+
+    if (calibrationSample >= BMI088_OFFSET_SAMPLES)
+    {
+        calibrationSample = 0;
+        data.gyroOffset[ImuData::Coordinate::X] /= BMI088_OFFSET_SAMPLES;
+        data.gyroOffset[ImuData::Coordinate::Y] /= BMI088_OFFSET_SAMPLES;
+        data.gyroOffset[ImuData::Coordinate::Z] /= BMI088_OFFSET_SAMPLES;
+        data.accOffset[ImuData::Coordinate::X] /= BMI088_OFFSET_SAMPLES;
+        data.accOffset[ImuData::Coordinate::Y] /= BMI088_OFFSET_SAMPLES;
+        data.accOffset[ImuData::Coordinate::Z] /= BMI088_OFFSET_SAMPLES;
+        imuState = ImuState::IMU_CALIBRATED;
+        mahonyAlgorithm = Mahony();
+    }
 }
 
 }  // namespace tap::sensors::bmi088
