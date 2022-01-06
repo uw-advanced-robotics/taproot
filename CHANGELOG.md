@@ -18,6 +18,12 @@
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
   (!92). 
 - Taproot tests now build on Windows without warnings (!103).
+- The BMI088 IMU on the RoboMaster Development Board Type C is now supported. The API is very
+  similar to the `Mpu6500` class, with functions to get the accelerometer/gyroscope/angle data. The
+  IMU by default connects but doesn't calibrate when the `initialize` function is called. To
+  calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
+  computing angle data for a couple seconds while the IMU is calibration. For calibration to be
+  performed correctly, the BMI088 should be level.
 
 ## December 2021
 

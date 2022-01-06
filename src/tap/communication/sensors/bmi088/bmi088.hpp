@@ -49,6 +49,8 @@ public:
         IMU_CALIBRATED,
     };
 
+    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
+
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
     /**
@@ -71,7 +73,7 @@ public:
      * Used to convert raw accel values to units m/s^2. Ratio has units (m/s^2) / acc counts.
      */
     static constexpr float ACC_G_PER_ACC_COUNT =
-        modm::pow(2, ACC_RANGE.value + 1) * 1.5f * 9.807f / 32768.0f;
+        modm::pow(2, ACC_RANGE.value + 1) * 1.5f * ACCELERATION_GRAVITY / 32768.0f;
 
     /**
      * The number of samples we take in order to determine the mpu offsets.
@@ -88,6 +90,8 @@ public:
     /**
      * Call this function at 500 Hz. Reads IMU data and performs the mahony AHRS algorithm to
      * compute pitch/roll/yaw.
+     *
+     * @note This function blocks for 129 microseconds to read registers from the BMI088.
      */
     void periodicIMUUpdate();
 
@@ -106,7 +110,8 @@ public:
     /**
      * When this function is called, the bmi088 enters a calibration state during which time,
      * gyro/accel calibration offsets will be computed and the mahony algorithm reset. When
-     * calibrating, angle, accelerometer, and gyroscope values will return 0.
+     * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
+     * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
     void requestRecalibration();
 
