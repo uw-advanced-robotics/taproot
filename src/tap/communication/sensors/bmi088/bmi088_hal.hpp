@@ -25,99 +25,153 @@
 #include "bmi088_data.hpp"
 namespace tap::sensors::bmi088
 {
-inline void chipSelectAccelLow() { Board::ImuCS1Accel::set(false); }
-inline void chipSelectAccelHigh() { Board::ImuCS1Accel::set(true); }
-inline void chipSelectGyroLow() { Board::ImuCS1Gyro::set(false); }
-inline void chipSelectGyroHigh() { Board::ImuCS1Gyro::set(true); }
-
-inline uint8_t bmi088ReadWriteByte(uint8_t reg)
+class Bmi088Hal
 {
+private:
+    static inline void chipSelectAccelLow()
+    {
+        Board::ImuCS1Accel::setOutput(modm::GpioOutput::Low);
+    }
+    static inline void chipSelectAccelHigh()
+    {
+        Board::ImuCS1Accel::setOutput(modm::GpioOutput::High);
+    }
+    static inline void chipSelectGyroLow() { Board::ImuCS1Gyro::setOutput(modm::GpioOutput::Low); }
+    static inline void chipSelectGyroHigh()
+    {
+        Board::ImuCS1Gyro::setOutput(modm::GpioOutput::High);
+    }
+
+    // uint8_t spiReadRegister(uint8_t reg)
+    // {
+    // #ifdef PLATFORM_HOSTED
+    //     UNUSED(reg);
+    //     return 0;
+    // #else
+    //     mpuNssLow();
+    //     uint8_t tx = reg | MPU6500_READ_BIT;
+    //     uint8_t rx = 0;
+    //     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    //     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    //     mpuNssHigh();
+    //     return rx;
+    // #endif
+    // }
+
+    static inline uint8_t bmi088ReadWriteByte(uint8_t tx)
+    {
 #ifndef PLATFORM_HOSTED
-    uint8_t rx;
-    Board::ImuSpiMaster::transferBlocking(&reg, &rx, 1);
-    return rx;
+        uint8_t rx = 0;
+        Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+        return rx;
 #else
-    return 0;
+        return 0;
 #endif
-}
+    }
 
-inline void bmi088WriteSingleReg(uint8_t reg, uint8_t data)
-{
-    bmi088ReadWriteByte(reg);
-    bmi088ReadWriteByte(data);
-}
+    /**
+     * Primitive for writing some data to a register reg to the bmi088
+     */
+    static inline void bmi088WriteSingleReg(uint8_t reg, uint8_t data)
+    {
+        bmi088ReadWriteByte(reg & ~Bmi088Data::BMI088_READ_BIT);
+        bmi088ReadWriteByte(data);
+    }
 
-inline uint8_t bmi088ReadSingleReg(uint8_t reg)
-{
-    bmi088ReadWriteByte(reg | Bmi088Data::BMI088_READ_BIT);
-    return bmi088ReadWriteByte(0x55);
-}
+    /**
+     * Primitive for reading a single register's value from the bmi088
+     */
+    static inline uint8_t bmi088ReadSingleReg(uint8_t reg)
+    {
+        bmi088ReadWriteByte(reg | Bmi088Data::BMI088_READ_BIT);
+        return bmi088ReadWriteByte(0x55);
+    }
 
-inline void bmi088ReadMultiReg(uint8_t reg, uint8_t *rxBuff, uint8_t *txBuff, uint8_t len)
-{
-    uint8_t tx = reg | Bmi088Data::BMI088_READ_BIT;
-    uint8_t rx = 0;
+    static inline void bmi088ReadMultiReg(
+        uint8_t reg,
+        uint8_t *rxBuff,
+        uint8_t len,
+        bool readExtraByte)
+    {
+        bmi088ReadWriteByte(reg | Bmi088Data::BMI088_READ_BIT);
 
-    txBuff[0] = tx;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(txBuff, rxBuff, len);
-}
+        if (readExtraByte) {
+        bmi088ReadWriteByte(0x55);
+        }
 
-inline void bmi088AccWriteSingleReg(
-    Bmi088Data::Acc::Register reg,
-    Bmi088Data::Acc::Registers_t data)
-{
-    chipSelectAccelHigh();
-    bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
-    chipSelectAccelLow();
-}
+        while (len != 0)
+        {
+            *rxBuff = bmi088ReadWriteByte(0x55);
+            rxBuff++;
+            len--;
+        }
+    }
 
-inline uint8_t bmi088AccReadSingleReg(Bmi088Data::Acc::Register reg)
-{
-    chipSelectAccelHigh();
-    uint8_t res = bmi088ReadSingleReg(static_cast<uint8_t>(reg));
-    chipSelectAccelLow();
-    return res;
-}
+public:
+    static inline void bmi088AccWriteSingleReg(
+        Bmi088Data::Acc::Register reg,
+        Bmi088Data::Acc::Registers_t data)
+    {
+        chipSelectAccelLow();
+        bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
+        chipSelectAccelHigh();
+    }
 
-inline void bmi088AccReadMultiReg(
-    Bmi088Data::Acc::Register reg,
-    uint8_t *rxBuff,
-    uint8_t *txBuff,
-    uint8_t len)
-{
-    chipSelectAccelHigh();
-    bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, txBuff, len);
-    chipSelectAccelLow();
-}
+    /**
+     * From page 45 of the bmi088 datasheet: "In case of read operations, the SPI interface of the
+     * accelerometer does not send the requested information directly after the master has sent the
+     * corresponding register address, but sends a dummy byte first, whose content is not
+     * predictable."
+     *
+     * Because of this, call `bmi088ReadWriteByte` one time extra to get valid data.
+     */
+    static inline uint8_t bmi088AccReadSingleReg(Bmi088Data::Acc::Register reg)
+    {
+        chipSelectAccelLow();
+        bmi088ReadSingleReg(static_cast<uint8_t>(reg));
+        uint8_t res = bmi088ReadWriteByte(0x55);
+        chipSelectAccelHigh();
+        return res;
+    }
 
-inline void bmi088GyroWriteSingleReg(
-    Bmi088Data::Gyro::Register reg,
-    Bmi088Data::Gyro::Registers_t data)
-{
-    chipSelectGyroHigh();
-    bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
-    chipSelectGyroLow();
-}
+    static inline void bmi088AccReadMultiReg(
+        Bmi088Data::Acc::Register reg,
+        uint8_t *rxBuff,
+        uint8_t len)
+    {
+        chipSelectAccelLow();
+        bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, len, true);
+        chipSelectAccelHigh();
+    }
 
-inline uint8_t bmi088GyroReadSingleReg(Bmi088Data::Gyro::Register reg)
-{
-    chipSelectGyroHigh();
-    uint8_t res = bmi088ReadSingleReg(static_cast<uint8_t>(reg));
-    chipSelectGyroLow();
-    return res;
-}
+    static inline void bmi088GyroWriteSingleReg(
+        Bmi088Data::Gyro::Register reg,
+        Bmi088Data::Gyro::Registers_t data)
+    {
+        chipSelectGyroLow();
+        bmi088WriteSingleReg(static_cast<uint8_t>(reg), data.value);
+        chipSelectGyroHigh();
+    }
 
-inline void bmi088GyroReadMultiReg(
-    Bmi088Data::Gyro::Register reg,
-    uint8_t *rxBuff,
-    uint8_t *txBuff,
-    uint8_t len)
-{
-    chipSelectGyroHigh();
-    bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, txBuff, len);
-    chipSelectGyroLow();
-}
+    static inline uint8_t bmi088GyroReadSingleReg(Bmi088Data::Gyro::Register reg)
+    {
+        chipSelectGyroLow();
+        uint8_t res = bmi088ReadSingleReg(static_cast<uint8_t>(reg));
+        chipSelectGyroHigh();
+        return res;
+    }
+
+    static inline void bmi088GyroReadMultiReg(
+        Bmi088Data::Gyro::Register reg,
+        uint8_t *rxBuff,
+        uint8_t len)
+    {
+        chipSelectGyroLow();
+        bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, len, false);
+        chipSelectGyroHigh();
+    }
+};
+
 }  // namespace tap::sensors::bmi088
 
 #endif  // BMI088_HAL_HPP_

@@ -39,7 +39,7 @@ public:
 
     struct Gyro
     {
-        enum class Register : uint8_t
+        enum Register : uint8_t
         {
             GYRO_CHIP_ID = 0x00,
             RATE_X_LSB = 0X02,
@@ -66,7 +66,7 @@ public:
         };
 
         /** The id of the gyroscope that will is stored in address `GYRO_CHIP_ID`. */
-        static constexpr uint8_t GYRO_CHIP_ID = 0x0f;
+        static constexpr uint8_t GYRO_CHIP_ID_VALUE = 0x0f;
 
         enum class GyroIntStat1 : uint8_t
         {
@@ -247,7 +247,7 @@ public:
     struct Acc
     {
         /** List of register addresses for the bmi088's accelerometer */
-        enum class Register : uint8_t
+        enum Register : uint8_t
         {
             ACC_CHIP_ID = 0x00,
             ACC_ERR_REG = 0x02,
@@ -279,7 +279,7 @@ public:
         };
 
         /** The id of the accelerometer that will is stored in address `ACC_CHIP_ID`. */
-        static constexpr uint8_t ACC_CHIP_ID = 0x1e;
+        static constexpr uint8_t ACC_CHIP_ID_VALUE = 0x1e;
 
         enum class AccErr : uint8_t
         {
