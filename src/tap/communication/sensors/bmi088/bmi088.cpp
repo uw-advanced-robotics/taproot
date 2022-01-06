@@ -21,10 +21,10 @@
 
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
-#include "modm/math/geometry/angle.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
+#include "modm/math/geometry/angle.hpp"
 #include "modm/math/units.hpp"
 
 #include "bmi088_data.hpp"
@@ -43,12 +43,18 @@ void Bmi088::requestRecalibration()
 {
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        data.gyroOffset[ImuData::Coordinate::X] = 0;
-        data.gyroOffset[ImuData::Coordinate::Y] = 0;
-        data.gyroOffset[ImuData::Coordinate::Z] = 0;
-        data.accOffset[ImuData::Coordinate::X] = 0;
-        data.accOffset[ImuData::Coordinate::Y] = 0;
-        data.accOffset[ImuData::Coordinate::Z] = 0;
+        data.gyroOffsetRaw[ImuData::X] = 0;
+        data.gyroOffsetRaw[ImuData::Y] = 0;
+        data.gyroOffsetRaw[ImuData::Z] = 0;
+        data.accOffsetRaw[ImuData::X] = 0;
+        data.accOffsetRaw[ImuData::Y] = 0;
+        data.accOffsetRaw[ImuData::Z] = 0;
+        data.gyroDegPerSec[ImuData::X] = 0;
+        data.gyroDegPerSec[ImuData::Y] = 0;
+        data.gyroDegPerSec[ImuData::Z] = 0;
+        data.accG[ImuData::X] = 0;
+        data.accG[ImuData::Y] = 0;
+        data.accG[ImuData::Z] = 0;
         calibrationSample = 0;
         imuState = ImuState::IMU_CALIBRATING;
     }
@@ -101,6 +107,8 @@ void Bmi088::initializeAcc()
 
     // check communication is normal after reset
     uint8_t readChipID = Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
+    modm::delay_ms(1);
+
     if (readChipID != Acc::ACC_CHIP_ID_VALUE)
     {
         RAISE_ERROR(drivers, "bmi088 accel init failed");
@@ -108,37 +116,12 @@ void Bmi088::initializeAcc()
         return;
     }
 
-    // set acc sensor config and check
-    struct AccTuple
-    {
-        Acc::Register reg;
-        Acc::Registers_t value;
-    };
+    setAndCheckAccRegister(
+        Acc::ACC_CONF,
+        Acc::AccBandwidth_t(Acc::AccBandwidth::NORMAL) |
+            Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800));
 
-    AccTuple bmiAccRegData[] = {
-        {Acc::ACC_CONF,
-         Acc::AccBandwidth_t(Acc::AccBandwidth::NORMAL) |
-             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800)},
-        {Acc::ACC_RANGE, Acc::AccRangeCtrl_t(Acc::AccRangeCtrl::G3)},
-    };
-
-    modm::delay_ms(1);
-
-    for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiAccRegData); i++)
-    {
-        Bmi088Hal::bmi088AccWriteSingleReg(bmiAccRegData[i].reg, bmiAccRegData[i].value);
-        modm::delay_us(150);
-
-        uint8_t val = Bmi088Hal::bmi088AccReadSingleReg(bmiAccRegData[i].reg);
-        modm::delay_us(150);
-
-        if (val != bmiAccRegData[i].value.value)
-        {
-            RAISE_ERROR(drivers, "bmi088 acc config failed");
-            imuState = ImuState::IMU_NOT_CONNECTED;
-            return;
-        }
-    }
+    setAndCheckAccRegister(Acc::ACC_RANGE, ACC_RANGE);
 }
 
 void Bmi088::initializeGyro()
@@ -159,47 +142,16 @@ void Bmi088::initializeGyro()
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
 
-    struct GyroTuple
-    {
-        Gyro::Register reg;
-        Gyro::Registers_t value;
-    };
+    setAndCheckGyroRegister(Gyro::GYRO_RANGE, GYRO_RANGE);
 
-    // b'1000 0010
-    GyroTuple bmiGyroRegData[] = {
-        {Gyro::GYRO_RANGE, Gyro::GyroRange::DPS2000},
-        {Gyro::GYRO_BANDWIDTH,
-         Gyro::GyroBandwidth::ODR1000_BANDWIDTH116 | Gyro::GyroBandwidth_t(0x80)},
-        {Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
-    };
+    // extra 0x80 is because the bandwidth register will always have 0x80 masked
+    // so when checking, we want to mask as well to avoid an error
+    setAndCheckGyroRegister(
+        Gyro::GYRO_BANDWIDTH,
+        Gyro::GyroBandwidth::ODR1000_BANDWIDTH116 | Gyro::GyroBandwidth_t(0x80));
 
-    // GyroTuple bmiGyroRegData[] = {
-    //     {Gyro::GYRO_RANGE, Gyro::GyroRange::DPS2000},
-    //     {Gyro::GYRO_BANDWIDTH, Gyro::GyroBandwidth::ODR1000_BANDWIDTH116},
-    //     {Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
-    //     {Gyro::GYRO_INT_CTRL, Gyro::EnableNewDataInt_t(Gyro::EnableNewDataInt::ENABLED)},
-    //     {Gyro::INT3_INT4_IO_CONF,
-    //      Gyro::Int3Od_t(Gyro::Int3Od::PUSH_PULL) | Gyro::Int3Lvl_t(Gyro::Int3Lvl::ACTIVE_LOW)},
-    //     {Gyro::INT3_INT4_IO_MAP, Gyro::Int3Int4IoMap::DATA_READY_INT3}};
-
-    for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiGyroRegData); i++)
-    {
-        Bmi088Hal::bmi088GyroWriteSingleReg(bmiGyroRegData[i].reg, bmiGyroRegData[i].value);
-        modm::delay_us(150);
-
-        uint8_t val = Bmi088Hal::bmi088GyroReadSingleReg(bmiGyroRegData[i].reg);
-        modm::delay_us(150);
-
-        if (val != bmiGyroRegData[i].value.value)
-        {
-            RAISE_ERROR(drivers, "bmi088 gyro config failed");
-            imuState = ImuState::IMU_NOT_CONNECTED;
-            return;
-        }
-    }
+    setAndCheckGyroRegister(Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL);
 }
-
-bool Bmi088::run() { return false; }
 
 #define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
     (static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8))))
@@ -218,27 +170,29 @@ static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
     }
 }
 
-uint32_t dt = 0;
+uint32_t dt = 0;  // TODO remove
 
 void Bmi088::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_NOT_CONNECTED)
     {
+        RAISE_ERROR(drivers, "periodicIMUUpdate called w/ imu not connected");
         return;
     }
 
-    uint32_t currtime = tap::arch::clock::getTimeMicroseconds();
+    uint32_t currtime = tap::arch::clock::getTimeMicroseconds();  // TODO remove
+
     uint8_t rxBuff[6] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
-    data.acc[ImuData::Coordinate::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.acc[ImuData::Coordinate::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.acc[ImuData::Coordinate::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.accRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.accRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.accRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    data.gyro[ImuData::Coordinate::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.gyro[ImuData::Coordinate::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.gyro[ImuData::Coordinate::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.gyroRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.gyroRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.gyroRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
     data.temperature = static_cast<float>(parseTemp(rxBuff[0], rxBuff[1])) * BMI088_TEMP_FACTOR +
@@ -246,46 +200,90 @@ void Bmi088::periodicIMUUpdate()
 
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        // TODO fix
-        mahonyAlgorithm.updateIMU(modm::toDegree(getGx()), modm::toDegree(getGy()), modm::toDegree(getGz()), getAx(), getAy(), getAz());
-    }
-    else if (imuState == ImuState::IMU_CALIBRATING)
-    {
-        computeOffsets();
+        data.gyroDegPerSec[ImuData::X] =
+            GYRO_DS_PER_GYRO_COUNT * (data.gyroRaw[ImuData::X] - data.gyroOffsetRaw[ImuData::X]);
+        data.gyroDegPerSec[ImuData::Y] =
+            GYRO_DS_PER_GYRO_COUNT * (data.gyroRaw[ImuData::Y] - data.gyroOffsetRaw[ImuData::Y]);
+        data.gyroDegPerSec[ImuData::Z] =
+            GYRO_DS_PER_GYRO_COUNT * (data.gyroRaw[ImuData::Z] - data.gyroOffsetRaw[ImuData::Z]);
+
+        data.accG[ImuData::X] =
+            ACC_G_PER_ACC_COUNT * (data.accRaw[ImuData::X] - data.accOffsetRaw[ImuData::X]);
+        data.accG[ImuData::Y] =
+            ACC_G_PER_ACC_COUNT * (data.accRaw[ImuData::Y] - data.accOffsetRaw[ImuData::Y]);
+        data.accG[ImuData::Z] =
+            ACC_G_PER_ACC_COUNT * (data.accRaw[ImuData::Z] - data.accOffsetRaw[ImuData::Z]);
+
+        mahonyAlgorithm.updateIMU(
+            data.gyroDegPerSec[ImuData::X],
+            data.gyroDegPerSec[ImuData::Y],
+            data.gyroDegPerSec[ImuData::Z],
+            data.accG[ImuData::X],
+            data.accG[ImuData::Y],
+            data.accG[ImuData::Z]);
     }
     else
     {
-        RAISE_ERROR(drivers, "imu not connected");
+        computeOffsets();
     }
 
     imuHeater.runTemperatureController(data.temperature);
 
-    dt = tap::arch::clock::getTimeMicroseconds() - currtime;
+    dt = tap::arch::clock::getTimeMicroseconds() - currtime;  // TODO remove
 }
 
 void Bmi088::computeOffsets()
 {
     calibrationSample++;
 
-    data.gyroOffset[ImuData::Coordinate::X] += data.gyro[ImuData::Coordinate::X];
-    data.gyroOffset[ImuData::Coordinate::Y] += data.gyro[ImuData::Coordinate::Y];
-    data.gyroOffset[ImuData::Coordinate::Z] += data.gyro[ImuData::Coordinate::Z];
-    data.accOffset[ImuData::Coordinate::X] += data.acc[ImuData::Coordinate::X];
-    data.accOffset[ImuData::Coordinate::Y] += data.acc[ImuData::Coordinate::Y];
-    data.accOffset[ImuData::Coordinate::Z] +=
-        data.acc[ImuData::Coordinate::Z] - ACCELERATION_SENSITIVITY;
+    data.gyroOffsetRaw[ImuData::X] += data.gyroRaw[ImuData::X];
+    data.gyroOffsetRaw[ImuData::Y] += data.gyroRaw[ImuData::Y];
+    data.gyroOffsetRaw[ImuData::Z] += data.gyroRaw[ImuData::Z];
+    data.accOffsetRaw[ImuData::X] += data.accRaw[ImuData::X];
+    data.accOffsetRaw[ImuData::Y] += data.accRaw[ImuData::Y];
+    data.accOffsetRaw[ImuData::Z] += data.accRaw[ImuData::Z] - 1.0f / ACC_G_PER_ACC_COUNT;
 
     if (calibrationSample >= BMI088_OFFSET_SAMPLES)
     {
         calibrationSample = 0;
-        data.gyroOffset[ImuData::Coordinate::X] /= BMI088_OFFSET_SAMPLES;
-        data.gyroOffset[ImuData::Coordinate::Y] /= BMI088_OFFSET_SAMPLES;
-        data.gyroOffset[ImuData::Coordinate::Z] /= BMI088_OFFSET_SAMPLES;
-        data.accOffset[ImuData::Coordinate::X] /= BMI088_OFFSET_SAMPLES;
-        data.accOffset[ImuData::Coordinate::Y] /= BMI088_OFFSET_SAMPLES;
-        data.accOffset[ImuData::Coordinate::Z] /= BMI088_OFFSET_SAMPLES;
+        data.gyroOffsetRaw[ImuData::X] /= BMI088_OFFSET_SAMPLES;
+        data.gyroOffsetRaw[ImuData::Y] /= BMI088_OFFSET_SAMPLES;
+        data.gyroOffsetRaw[ImuData::Z] /= BMI088_OFFSET_SAMPLES;
+        data.accOffsetRaw[ImuData::X] /= BMI088_OFFSET_SAMPLES;
+        data.accOffsetRaw[ImuData::Y] /= BMI088_OFFSET_SAMPLES;
+        data.accOffsetRaw[ImuData::Z] /= BMI088_OFFSET_SAMPLES;
         imuState = ImuState::IMU_CALIBRATED;
         mahonyAlgorithm = Mahony();
+    }
+}
+
+void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
+{
+    Bmi088Hal::bmi088AccWriteSingleReg(reg, value);
+    modm::delay_us(150);
+
+    uint8_t val = Bmi088Hal::bmi088AccReadSingleReg(reg);
+    modm::delay_us(150);
+
+    if (val != value.value)
+    {
+        RAISE_ERROR(drivers, "bmi088 acc config failed");
+        imuState = ImuState::IMU_NOT_CONNECTED;
+    }
+}
+
+void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value)
+{
+    Bmi088Hal::bmi088GyroWriteSingleReg(reg, value);
+    modm::delay_us(150);
+
+    uint8_t val = Bmi088Hal::bmi088GyroReadSingleReg(reg);
+    modm::delay_us(150);
+
+    if (val != value.value)
+    {
+        RAISE_ERROR(drivers, "bmi088 gyro config failed");
+        imuState = ImuState::IMU_NOT_CONNECTED;
     }
 }
 

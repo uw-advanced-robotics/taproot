@@ -26,7 +26,7 @@
 namespace tap::sensors::bmi088
 {
 /**
- * See
+ * For register tables and descriptions, refer to the bmi088 datasheet:
  * https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf
  */
 class Bmi088Data
@@ -331,18 +331,12 @@ public:
 
         enum class AccRange : uint8_t
         {
-            AccRangeCtrl_Mask = modm::Bit0 | modm::Bit1,
-        };
-        MODM_FLAGS8(AccRange);
-
-        enum class AccRangeCtrl : uint8_t
-        {
             G3 = 0x0,
             G6 = 0x1,
             G12 = 0x2,
             G24 = 0x03,
         };
-        MODM_FLAGS_CONFIG(AccRange, AccRangeCtrl);
+        MODM_FLAGS8(AccRange);
 
         enum class IntMapData : uint8_t
         {
@@ -357,8 +351,8 @@ public:
 
         enum class Int1IoConf : uint8_t
         {
-            Int1In = modm::Bit4,
-            Int1Out = modm::Bit3,
+            INT1_IN = modm::Bit4,
+            INT1_OUT = modm::Bit3,
             Int1Od_Mask = modm::Bit2,
             Int1Lvl_Mask = modm::Bit1,
         };
@@ -380,8 +374,8 @@ public:
 
         enum class Int2IoConf : uint8_t
         {
-            Int2Io_Mask = modm::Bit4,
-            Int2Out_Mask = modm::Bit3,
+            INT2_IO = modm::Bit4,
+            INT2_OUT = modm::Bit3,
             Int2Od_Mask = modm::Bit2,
             Int2Lvl_Mask = modm::Bit1,
         };
