@@ -80,9 +80,6 @@ void Bmi088::initiailze()
 
 void Bmi088::initializeAcc()
 {
-    // Perform system restart
-    Bmi088Hal::bmi088AccWriteSingleReg(Acc::ACC_SOFTRESET, Acc::AccSoftreset::ACC_SOFTRESET_VAL);
-
     // Page 13 of the bmi088 datasheet states:
     // After the POR (power-on reset) the gyroscope is in normal mode, while the accelerometer is in
     // suspend mode. To switch the accelerometer into normal mode, the user must perform the
@@ -91,9 +88,6 @@ void Bmi088::initializeAcc()
     // b. Wait 1 ms
     // c. Enter normal mode by writing '4' to ACC_PWR_CTRL
     // d. Wait for 450 microseconds
-
-    // wait after reset
-    modm::delay_ms(1);
 
     Bmi088Hal::bmi088AccWriteSingleReg(Acc::ACC_PWR_CTRL, Acc::AccPwrCtrl::ACCELEROMETER_ON);
 
@@ -170,8 +164,6 @@ static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
     }
 }
 
-uint32_t dt = 0;  // TODO remove
-
 void Bmi088::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_NOT_CONNECTED)
@@ -179,8 +171,6 @@ void Bmi088::periodicIMUUpdate()
         RAISE_ERROR(drivers, "periodicIMUUpdate called w/ imu not connected");
         return;
     }
-
-    uint32_t currtime = tap::arch::clock::getTimeMicroseconds();  // TODO remove
 
     uint8_t rxBuff[6] = {};
 
@@ -228,8 +218,6 @@ void Bmi088::periodicIMUUpdate()
     }
 
     imuHeater.runTemperatureController(data.temperature);
-
-    dt = tap::arch::clock::getTimeMicroseconds() - currtime;  // TODO remove
 }
 
 void Bmi088::computeOffsets()
@@ -241,7 +229,7 @@ void Bmi088::computeOffsets()
     data.gyroOffsetRaw[ImuData::Z] += data.gyroRaw[ImuData::Z];
     data.accOffsetRaw[ImuData::X] += data.accRaw[ImuData::X];
     data.accOffsetRaw[ImuData::Y] += data.accRaw[ImuData::Y];
-    data.accOffsetRaw[ImuData::Z] += data.accRaw[ImuData::Z] - 1.0f / ACC_G_PER_ACC_COUNT;
+    data.accOffsetRaw[ImuData::Z] += data.accRaw[ImuData::Z] - ACCELERATION_GRAVITY / ACC_G_PER_ACC_COUNT;
 
     if (calibrationSample >= BMI088_OFFSET_SAMPLES)
     {
