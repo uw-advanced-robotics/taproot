@@ -52,17 +52,17 @@ enum MotorId : int32_t
  * A class for storing the state of, handling control of, and communicating
  * with a DJI motor controlled by a DJI C620 Motor controller.
  *
- * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted() 
- *      == false`) is counter clockwise when looking at the shaft from the side opposite 
+ * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted()
+ *      == false`) is counter clockwise when looking at the shaft from the side opposite
  *      the motor. This is specified in the C620 user manual (page 18).
  *
  * DJI motor encoders store a consistent encoding for a given angle across power-cycles.
  * This means the encoder angle reported by the motor can have meaning if the encoding
  * for an angle is unique as it is for the GM6020s. However for geared motors like the
- * M3508 where a full encoder revolution does not correspond 1:1 to a shaft revolution, 
+ * M3508 where a full encoder revolution does not correspond 1:1 to a shaft revolution,
  * it is impossible to know the orientation of the shaft given just the encoder value.
  *
- * Extends the CanRxListener class to attach a message handler for feedback data from the 
+ * Extends the CanRxListener class to attach a message handler for feedback data from the
  * motor to the CAN Rx dispatch handler.
  */
 class DjiMotor : public can::CanRxListener, public MotorInterface
@@ -76,7 +76,7 @@ public:
      * @param desMotorIdentifier the ID of this motor controller
      * @param motorCanBus the CAN bus the motor is on
      * @param isInverted if `false` the positive rotation direction of the shaft is
-     *      counter-clockwise when looking at the shaft from the side opposite the motor. 
+     *      counter-clockwise when looking at the shaft from the side opposite the motor.
      *      If `true` then the positive rotation direction will be clockwise.
      * @param name a name to associate with the motor for use in the motor menu
      * @param encoderWrapped the starting encoderValue to store for this motor.
