@@ -29,8 +29,13 @@
 
 namespace tap::motor
 {
-// for declaring a new motor, must be one of these motor
-// identifiers
+/**
+ * CAN IDs for the feedback messages sent by the C620. Motor `i` in the set
+ * {1, 2,...,8} sends feedback data with in a CAN message with ID 0x200 + `i`.
+ * for declaring a new motor, must be one of these motor
+ * identifiers
+ */
+
 enum MotorId : int32_t
 {
     MOTOR1 = 0X201,
@@ -43,24 +48,50 @@ enum MotorId : int32_t
     MOTOR8 = 0x208,
 };
 
-// extend the CanRxListener class, which allows one to connect a
-// motor to the receive handler and use the class's built in
-// receive handler
+/**
+ * A class for storing the state of, handling control of, and communicating
+ * with a DJI motor controlled by a DJI C620 Motor controller.
+ *
+ * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted() 
+ *      == false`) is counter clockwise when looking at the shaft from the side opposite 
+ *      the motor. This is specified in the C620 user manual (page 18).
+ *
+ * DJI motor encoders store a consistent encoding for a given angle across power-cycles.
+ * This means the encoder angle reported by the motor can have meaning if the encoding
+ * for an angle is unique as it is for the GM6020s. However for geared motors like the
+ * M3508 where a full encoder revolution does not correspond 1:1 to a shaft revolution, 
+ * it is impossible to know the orientation of the shaft given just the encoder value.
+ *
+ * Extends the CanRxListener class to attach a message handler for feedback data from the 
+ * motor to the CAN Rx dispatch handler.
+ */
 class DjiMotor : public can::CanRxListener, public MotorInterface
 {
 public:
     // 0 - 8191 for dji motors
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
-    // construct new motor
+    /**
+     * @param drivers a pointer to the drivers struct
+     * @param desMotorIdentifier the ID of this motor controller
+     * @param motorCanBus the CAN bus the motor is on
+     * @param isInverted if `false` the positive rotation direction of the shaft is
+     *      counter-clockwise when looking at the shaft from the side opposite the motor. 
+     *      If `true` then the positive rotation direction will be clockwise.
+     * @param name a name to associate with the motor for use in the motor menu
+     * @param encoderWrapped the starting encoderValue to store for this motor.
+     *      Will be overwritten by the first reported encoder value from the motor
+     * @param encoderRevolutions the starting number of encoder revolutions to store.
+     *      See comment for DjiMotor::encoderRevolutions for more details.
+     */
     DjiMotor(
         Drivers* drivers,
         MotorId desMotorIdentifier,
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
-        uint16_t encWrapped = ENC_RESOLUTION / 2,
-        int64_t encRevolutions = 0);
+        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
+        int64_t encoderRevolutions = 0);
 
     mockable ~DjiMotor();
 
@@ -82,6 +113,7 @@ public:
     // than 2^16, then limit it.
     // Limiting should typically be done on a motor by motor basis in a wrapper class, this
     // is simply a sanity check.
+    // For interpreting the sign of return value see class comment
     void setDesiredOutput(int32_t desiredOutput) override;
 
     bool isMotorOnline() const override;
@@ -98,6 +130,7 @@ public:
 
     int16_t getTorque() const override;
 
+    // For interpreting the sign of return value see class comment
     int16_t getShaftRPM() const override;
 
     mockable bool isMotorInverted() const;
@@ -135,7 +168,8 @@ private:
 
     const char* motorName;
 
-    // formerly encoderstore
+    // Updates the stored encoder value given a newly received encoder value
+    // special logic necessary for keeping track of unwrapped encoder value.
     void updateEncoderValue(uint16_t newEncWrapped);
 
     // Parses receive data given message with the correct identifier.
@@ -155,12 +189,20 @@ private:
 
     int16_t torque;
 
+    // If `false` the positive rotation direction of the shaft is counter-clockwise when
+    // looking at the shaft from the side opposite the motor. If `true` then the positive
+    // rotation direction will be clockwise.
     bool motorInverted;
 
-    // formerly encoderstore
+    // The raw encoder value reported by the C620. It wraps around from
+    // {0..8191}, hence "Wrapped"
     uint16_t encoderWrapped;
 
-    // formerly encoderstore
+    // Absolute unwrapped enoder position =
+    //      encoderRevolutions * ENCODER_RESOLUTION + encoderWrapped
+    // This lets us keep track of some sense of absolute position even while
+    // raw encoderValue continuosly loops within {0..8191}. Origin value is
+    // arbitrary.
     int64_t encoderRevolutions;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
