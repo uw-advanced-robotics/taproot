@@ -49,9 +49,6 @@ public:
         IMU_CALIBRATED,
     };
 
-    static constexpr uint32_t BMI088_COMM_WAIT_SENSOR_TIME = 150;
-    static constexpr uint32_t BMI088_COMM_LONG_WAIT_TIME = 80;
-
     static constexpr float BMI088_TEMP_FACTOR = 0.125f;
     static constexpr float BMI088_TEMP_OFFSET = 23.0f;
 
@@ -118,10 +115,10 @@ private:
             Z=2,
         };
 
-        float acc[3];
-        float gyro[3];
-        float accOffset[3];
-        float gyroOffset[3];
+        float acc[3] ={};
+        float gyro[3] = {};
+        float accOffset[3] = {};
+        float gyroOffset[3] = {};
 
         float temperature;
     } data;

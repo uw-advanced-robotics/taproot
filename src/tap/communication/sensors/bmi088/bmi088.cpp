@@ -18,16 +18,17 @@
  */
 
 #include "bmi088.hpp"
-#include "bmi088_hal.hpp"
 
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
+#include "modm/math/geometry/angle.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
 #include "modm/math/units.hpp"
 
 #include "bmi088_data.hpp"
+#include "bmi088_hal.hpp"
 
 using namespace modm::literals;
 using namespace Board;
@@ -55,41 +56,55 @@ void Bmi088::requestRecalibration()
 
 void Bmi088::initiailze()
 {
+    ImuCS1Accel::GpioOutput();
+    ImuCS1Gyro::GpioOutput();
+
     ImuSpiMaster::connect<ImuMiso::Miso, ImuMosi::Mosi, ImuSck::Sck>();
     ImuSpiMaster::initialize<SystemClock, 10_MHz>();
 
     modm::delay_ms(1);
 
+    imuState = ImuState::IMU_NOT_CALIBRATED;
+
     initializeAcc();
     initializeGyro();
 
     imuHeater.initialize();
-
-    imuState = ImuState::IMU_NOT_CALIBRATED;
 }
 
 void Bmi088::initializeAcc()
 {
-    // read ACC_CHIP_ID to start SPI communication
-    bmi088AccReadSingleReg(Acc::Register::ACC_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-    bmi088AccReadSingleReg(Acc::Register::ACC_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+    // Perform system restart
+    Bmi088Hal::bmi088AccWriteSingleReg(Acc::ACC_SOFTRESET, Acc::AccSoftreset::ACC_SOFTRESET_VAL);
 
-    // acc softreset
-    bmi088AccWriteSingleReg(Acc::Register::ACC_SOFTRESET, Acc::AccSoftreset::ACC_SOFTRESET_VAL);
-    modm::delay_us(BMI088_COMM_LONG_WAIT_TIME);
+    // Page 13 of the bmi088 datasheet states:
+    // After the POR (power-on reset) the gyroscope is in normal mode, while the accelerometer is in
+    // suspend mode. To switch the accelerometer into normal mode, the user must perform the
+    // following steps:
+    // a. Power up the sensor
+    // b. Wait 1 ms
+    // c. Enter normal mode by writing '4' to ACC_PWR_CTRL
+    // d. Wait for 450 microseconds
+
+    // wait after reset
+    modm::delay_ms(1);
+
+    Bmi088Hal::bmi088AccWriteSingleReg(Acc::ACC_PWR_CTRL, Acc::AccPwrCtrl::ACCELEROMETER_ON);
+
+    modm::delay_us(450);
+
+    // read ACC_CHIP_ID to start SPI communication
+    // Page 45 of the bmi088 datasheet states:
+    // "To change the sensor to SPI mode in the initialization phase, the user
+    // could perform a dummy SPI read operation"
+    Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
 
     // check communication is normal after reset
-    bmi088AccReadSingleReg(Acc::Register::ACC_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-    uint8_t res = bmi088AccReadSingleReg(Acc::Register::ACC_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-
-    // check chip ID
-    if (res != Acc::ACC_CHIP_ID)
+    uint8_t readChipID = Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
+    if (readChipID != Acc::ACC_CHIP_ID_VALUE)
     {
-        RAISE_ERROR(drivers, "bmi088 gyro init failed");
+        RAISE_ERROR(drivers, "bmi088 accel init failed");
+        imuState = ImuState::IMU_NOT_CONNECTED;
         return;
     }
 
@@ -101,28 +116,26 @@ void Bmi088::initializeAcc()
     };
 
     AccTuple bmiAccRegData[] = {
-        {Acc::Register::ACC_PWR_CTRL, Acc::AccPwrCtrl::ACCELEROMETER_ON},
-        {Acc::Register::ACC_PWR_CONF, Acc::AccPwrConf::ACTIVE_MODE},
-        {Acc::Register::ACC_CONF,
+        {Acc::ACC_CONF,
          Acc::AccBandwidth_t(Acc::AccBandwidth::NORMAL) |
-             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800)},  // potentially also | 0x80????
-        {Acc::Register::ACC_RANGE, Acc::AccRangeCtrl_t(Acc::AccRangeCtrl::G3)},
-        {Acc::Register::INT1_IO_CTRL,
-         Acc::Int1IoConf::Int1Out | Acc::Int1Od_t(Acc::Int1Od::PUSH_PULL) |
-             Acc::Int1Lvl_t(Acc::Int1Lvl::ACTIVE_LOW)},
-        {Acc::Register::INT_MAP_DATA, Acc::IntMapData::INT1_DRDY}};
+             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800)},
+        {Acc::ACC_RANGE, Acc::AccRangeCtrl_t(Acc::AccRangeCtrl::G3)},
+    };
+
+    modm::delay_ms(1);
 
     for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiAccRegData); i++)
     {
-        bmi088AccWriteSingleReg(bmiAccRegData[i].reg, bmiAccRegData[i].value);
-        modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+        Bmi088Hal::bmi088AccWriteSingleReg(bmiAccRegData[i].reg, bmiAccRegData[i].value);
+        modm::delay_us(150);
 
-        uint8_t val = bmi088AccReadSingleReg(bmiAccRegData[i].reg);
-        modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+        uint8_t val = Bmi088Hal::bmi088AccReadSingleReg(bmiAccRegData[i].reg);
+        modm::delay_us(150);
 
         if (val != bmiAccRegData[i].value.value)
         {
             RAISE_ERROR(drivers, "bmi088 acc config failed");
+            imuState = ImuState::IMU_NOT_CONNECTED;
             return;
         }
     }
@@ -130,25 +143,20 @@ void Bmi088::initializeAcc()
 
 void Bmi088::initializeGyro()
 {
-    // read GYRO_CHIP_ID to start SPI communication
-    bmi088GyroReadSingleReg(Gyro::Register::GYRO_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-    bmi088GyroReadSingleReg(Gyro::Register::GYRO_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-
     // reset gyro
-    bmi088GyroWriteSingleReg(Gyro::Register::GYRO_SOFTRESET, Gyro::GyroSoftreset::RESET_SENSOR);
-    modm::delay_us(BMI088_COMM_LONG_WAIT_TIME);
+    Bmi088Hal::bmi088GyroWriteSingleReg(Gyro::GYRO_SOFTRESET, Gyro::GyroSoftreset::RESET_SENSOR);
+    modm::delay_ms(80);
 
     // check communication normal after reset
-    bmi088GyroReadSingleReg(Gyro::Register::GYRO_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
-    uint8_t res = bmi088GyroReadSingleReg(Gyro::Register::GYRO_CHIP_ID);
-    modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+    Bmi088Hal::bmi088GyroReadSingleReg(Gyro::GYRO_CHIP_ID);
+    modm::delay_ms(1);
+    uint8_t res = Bmi088Hal::bmi088GyroReadSingleReg(Gyro::GYRO_CHIP_ID);
+    modm::delay_ms(1);
 
-    if (res != Gyro::GYRO_CHIP_ID)
+    if (res != Gyro::GYRO_CHIP_ID_VALUE)
     {
         RAISE_ERROR(drivers, "bmi088 gyro init failed");
+        imuState = ImuState::IMU_NOT_CONNECTED;
     }
 
     struct GyroTuple
@@ -157,32 +165,44 @@ void Bmi088::initializeGyro()
         Gyro::Registers_t value;
     };
 
+    // b'1000 0010
     GyroTuple bmiGyroRegData[] = {
-        {Gyro::Register::GYRO_RANGE, Gyro::GyroRange::DPS2000},
-        {Gyro::Register::GYRO_BANDWIDTH, Gyro::GyroBandwidth::ODR1000_BANDWIDTH116},
-        {Gyro::Register::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
-        {Gyro::Register::GYRO_INT_CTRL, Gyro::EnableNewDataInt_t(Gyro::EnableNewDataInt::ENABLED)},
-        {Gyro::Register::INT3_INT4_IO_CONF,
-         Gyro::Int3Od_t(Gyro::Int3Od::PUSH_PULL) | Gyro::Int3Lvl_t(Gyro::Int3Lvl::ACTIVE_LOW)},
-        {Gyro::Register::INT3_INT4_IO_MAP, Gyro::Int3Int4IoMap::DATA_READY_INT3}};
+        {Gyro::GYRO_RANGE, Gyro::GyroRange::DPS2000},
+        {Gyro::GYRO_BANDWIDTH,
+         Gyro::GyroBandwidth::ODR1000_BANDWIDTH116 | Gyro::GyroBandwidth_t(0x80)},
+        {Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
+    };
+
+    // GyroTuple bmiGyroRegData[] = {
+    //     {Gyro::GYRO_RANGE, Gyro::GyroRange::DPS2000},
+    //     {Gyro::GYRO_BANDWIDTH, Gyro::GyroBandwidth::ODR1000_BANDWIDTH116},
+    //     {Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL},
+    //     {Gyro::GYRO_INT_CTRL, Gyro::EnableNewDataInt_t(Gyro::EnableNewDataInt::ENABLED)},
+    //     {Gyro::INT3_INT4_IO_CONF,
+    //      Gyro::Int3Od_t(Gyro::Int3Od::PUSH_PULL) | Gyro::Int3Lvl_t(Gyro::Int3Lvl::ACTIVE_LOW)},
+    //     {Gyro::INT3_INT4_IO_MAP, Gyro::Int3Int4IoMap::DATA_READY_INT3}};
 
     for (size_t i = 0; i < MODM_ARRAY_SIZE(bmiGyroRegData); i++)
     {
-        bmi088GyroWriteSingleReg(bmiGyroRegData[i].reg, bmiGyroRegData[i].value);
-        modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+        Bmi088Hal::bmi088GyroWriteSingleReg(bmiGyroRegData[i].reg, bmiGyroRegData[i].value);
+        modm::delay_us(150);
 
-        uint8_t val = bmi088GyroReadSingleReg(bmiGyroRegData[i].reg);
-        modm::delay_us(BMI088_COMM_WAIT_SENSOR_TIME);
+        uint8_t val = Bmi088Hal::bmi088GyroReadSingleReg(bmiGyroRegData[i].reg);
+        modm::delay_us(150);
 
         if (val != bmiGyroRegData[i].value.value)
         {
-            RAISE_ERROR(drivers, "bmi088 acc config failed");
+            RAISE_ERROR(drivers, "bmi088 gyro config failed");
+            imuState = ImuState::IMU_NOT_CONNECTED;
             return;
         }
     }
 }
 
 bool Bmi088::run() { return false; }
+
+#define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
+    (static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8))))
 
 static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
 {
@@ -198,31 +218,36 @@ static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
     }
 }
 
-#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
-    (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
+uint32_t dt = 0;
 
 void Bmi088::periodicIMUUpdate()
 {
-    uint8_t txBuff[6] = {};
+    if (imuState == ImuState::IMU_NOT_CONNECTED)
+    {
+        return;
+    }
+
+    uint32_t currtime = tap::arch::clock::getTimeMicroseconds();
     uint8_t rxBuff[6] = {};
 
-    bmi088AccReadMultiReg(Acc::Register::ACC_X_LSB, rxBuff, txBuff, 6);
-    data.acc[ImuData::Coordinate::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.acc[ImuData::Coordinate::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.acc[ImuData::Coordinate::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
+    data.acc[ImuData::Coordinate::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.acc[ImuData::Coordinate::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.acc[ImuData::Coordinate::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
-    bmi088GyroReadMultiReg(Gyro::Register::RATE_X_LSB, rxBuff, txBuff, 6);
-    data.gyro[ImuData::Coordinate::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.gyro[ImuData::Coordinate::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.gyro[ImuData::Coordinate::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
+    data.gyro[ImuData::Coordinate::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.gyro[ImuData::Coordinate::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.gyro[ImuData::Coordinate::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
-    bmi088AccReadMultiReg(Acc::Register::TEMP_LSB, rxBuff, txBuff, 2);
-    int16_t parsedTemp = parseTemp(rxBuff[0], rxBuff[1]);
-    data.temperature = parsedTemp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
+    Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
+    data.temperature = static_cast<float>(parseTemp(rxBuff[0], rxBuff[1])) * BMI088_TEMP_FACTOR +
+                       BMI088_TEMP_OFFSET;
 
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+        // TODO fix
+        mahonyAlgorithm.updateIMU(modm::toDegree(getGx()), modm::toDegree(getGy()), modm::toDegree(getGz()), getAx(), getAy(), getAz());
     }
     else if (imuState == ImuState::IMU_CALIBRATING)
     {
@@ -234,6 +259,8 @@ void Bmi088::periodicIMUUpdate()
     }
 
     imuHeater.runTemperatureController(data.temperature);
+
+    dt = tap::arch::clock::getTimeMicroseconds() - currtime;
 }
 
 void Bmi088::computeOffsets()
