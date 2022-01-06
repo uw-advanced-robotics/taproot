@@ -95,8 +95,9 @@ private:
     {
         bmi088ReadWriteByte(reg | Bmi088Data::BMI088_READ_BIT);
 
-        if (readExtraByte) {
-        bmi088ReadWriteByte(0x55);
+        if (readExtraByte)
+        {
+            bmi088ReadWriteByte(0x55);
         }
 
         while (len != 0)

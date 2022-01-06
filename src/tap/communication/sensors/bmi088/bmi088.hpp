@@ -21,8 +21,8 @@
 #define BMI088_HPP_
 
 #include "tap/algorithms/MahonyAHRS.h"
-
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
+
 #include "modm/processing/protothread.hpp"
 
 #include "bmi088_data.hpp"
@@ -32,13 +32,13 @@ namespace tap
 class Drivers;
 }
 
-/*
-acc requires further steps for initialization when using spi
-*/
-
 namespace tap::sensors::bmi088
 {
-class Bmi088 : private ::modm::pt::Protothread, public Bmi088Data
+/**
+ * For register tables and descriptions, refer to the bmi088 datasheet:
+ * https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf
+ */
+class Bmi088 : public Bmi088Data
 {
 public:
     enum class ImuState
@@ -49,14 +49,29 @@ public:
         IMU_CALIBRATED,
     };
 
+    static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
+    static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
+    /**
+     * The maximum angular velocity in degrees / second that the gyro can read based on GYRO_RANGE
+     * specified above.
+     */
+    static constexpr float GYRO_RANGE_MAX_DS = 2000.0f;
+
     static constexpr float BMI088_TEMP_FACTOR = 0.125f;
     static constexpr float BMI088_TEMP_OFFSET = 23.0f;
 
-    //TODO
-    static constexpr float BMI088_GYRO_2000_SEN = 0.00106526443603169529841533860381f;
-    static constexpr float BMI088_ACCEL_3G_SEN = 0.0008974358974f;
+    /**
+     * Used to convert raw gyro values to units of degrees / second. Ratio has units
+     * (degrees / second) / gyro counts.
+     */
+    static constexpr float GYRO_DS_PER_GYRO_COUNT = GYRO_RANGE_MAX_DS / 32767.0f;
 
-    static constexpr float ACCELERATION_SENSITIVITY = 0;//TODO
+    /**
+     * Refer to page 27 of the bmi088 datasheet for explination of this equation.
+     * Used to convert raw accel values to units m/s^2. Ratio has units (m/s^2) / acc counts.
+     */
+    static constexpr float ACC_G_PER_ACC_COUNT =
+        modm::pow(2, ACC_RANGE.value + 1) * 1.5f * 9.807f / 32768.0f;
 
     /**
      * The number of samples we take in order to determine the mpu offsets.
@@ -65,60 +80,64 @@ public:
 
     Bmi088(tap::Drivers *drivers);
 
+    /**
+     * Starts and configures the bmi088. Blocks for < 200 ms.
+     */
     void initiailze();
 
-    bool run();
-
+    /**
+     * Call this function at 500 Hz. Reads IMU data and performs the mahony AHRS algorithm to
+     * compute pitch/roll/yaw.
+     */
     void periodicIMUUpdate();
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
      * calibrated. When not connected, IMU data will be garbage. When not calibrated, IMU data is
      * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
-     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should not
-     * drift.
+     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
+     * not drift.
      *
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
     ImuState getImuState() const;
 
+    /**
+     * When this function is called, the bmi088 enters a calibration state during which time,
+     * gyro/accel calibration offsets will be computed and the mahony algorithm reset. When
+     * calibrating, angle, accelerometer, and gyroscope values will return 0.
+     */
     void requestRecalibration();
 
     float getYaw() { return mahonyAlgorithm.getYaw(); }
     float getPitch() { return mahonyAlgorithm.getPitch(); }
     float getRoll() { return mahonyAlgorithm.getRoll(); }
 
-    int16_t getGxRaw() const { return data.gyro[ImuData::Coordinate::X]; }
-    int16_t getGyRaw() const { return data.gyro[ImuData::Coordinate::Y];}
-    int16_t getGzRaw() const { return data.gyro[ImuData::Coordinate::Z];}
+    float getGx() const { return data.gyroDegPerSec[ImuData::X]; }
+    float getGy() const { return data.gyroDegPerSec[ImuData::Y]; }
+    float getGz() const { return data.gyroDegPerSec[ImuData::Z]; }
 
-    int16_t getAxRaw() const { return data.acc[ImuData::Coordinate::X]; }
-    int16_t getAyRaw() const { return data.acc[ImuData::Coordinate::Y]; }
-    int16_t getAzRaw() const { return data.acc[ImuData::Coordinate::Z]; }
-
-    float getGx() const { return data.gyro[ImuData::Coordinate::X] * BMI088_GYRO_2000_SEN;  }
-    float getGy() const { return data.gyro[ImuData::Coordinate::Y] * BMI088_GYRO_2000_SEN;  }
-    float getGz() const { return data.gyro[ImuData::Coordinate::Z] * BMI088_GYRO_2000_SEN;  }
-
-    float getAx() const { return data.acc[ImuData::Coordinate::X] * BMI088_ACCEL_3G_SEN; }
-    float getAy() const { return data.acc[ImuData::Coordinate::Y] * BMI088_ACCEL_3G_SEN; }
-    float getAz() const { return data.acc[ImuData::Coordinate::Z] * BMI088_ACCEL_3G_SEN; }
+    float getAx() const { return data.accG[ImuData::X]; }
+    float getAy() const { return data.accG[ImuData::Y]; }
+    float getAz() const { return data.accG[ImuData::Z]; }
 
 private:
     struct ImuData
     {
         enum Coordinate
         {
-            X=0,
-            Y=1,
-            Z=2,
+            X = 0,
+            Y = 1,
+            Z = 2,
         };
 
-        float acc[3] ={};
-        float gyro[3] = {};
-        float accOffset[3] = {};
-        float gyroOffset[3] = {};
+        float accRaw[3] = {};
+        float gyroRaw[3] = {};
+        float accOffsetRaw[3] = {};
+        float gyroOffsetRaw[3] = {};
+        float accG[3] = {};
+        float gyroDegPerSec[3] = {};
 
         float temperature;
     } data;
@@ -137,6 +156,10 @@ private:
     void initializeGyro();
 
     void computeOffsets();
+
+    void setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value);
+
+    void setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value);
 };
 
 }  // namespace tap::sensors::bmi088
