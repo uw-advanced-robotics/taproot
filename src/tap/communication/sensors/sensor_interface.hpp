@@ -23,7 +23,9 @@
 namespace tap::communication::sensors
 {
 /**
- * Interface for generic sensor.
+ * Interface for generic sensor that requires a periodic update.
+ *
+ * This interface may be used in conjunction with a sensor scheduler (see #132).
  */
 class SensorInterface
 {

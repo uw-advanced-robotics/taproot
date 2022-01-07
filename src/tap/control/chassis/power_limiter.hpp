@@ -81,11 +81,15 @@ public:
         float energyBufferCritThreshold);
 
     /**
-     * A function to be called repeatedly (in a subsystem's refresh function, for example).
+     * A function to be called repeatedly (in a subsystem's refresh function, for example). Checks
+     * the voltage through the referee system and the current using the current sensor to calculate
+     * current power consumption, which is used to update the energy buffer by integrating power.
+     * Once the energy buffer is known, it is used in conjunction with the constants passed in
+     * through the constructor to compute a fraction that can be used to perform power limiting.
      *
-     * Must be called immediately *after* setpoints are configured. This function returns a value
-     * between [0, 1] that you should then multiply the desired output of your motors by. See class
-     * comment for more details.
+     * @note Must be called immediately *after* setpoints are configured. This function returns a
+     * value between [0, 1] that you should then multiply the desired output of your motors by. See
+     * class comment for more details.
      *
      * @note Tested with a normal four-wheel mecanum chassis and a two-wheel sentry chassis.
      */
