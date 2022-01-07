@@ -188,7 +188,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/communication/sensors/bmi088/bmi088.hpp",
         "mock-header": "tap/mock/bmi088_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":communication:sensors:bmi088"],
     }
 ]
 
