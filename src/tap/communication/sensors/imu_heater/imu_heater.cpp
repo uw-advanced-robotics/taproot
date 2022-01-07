@@ -44,6 +44,12 @@ void ImuHeater::initialize()
 
 void ImuHeater::runTemperatureController(float temperature)
 {
+    if (temperature < 0)
+    {
+        drivers->pwm.write(0.0f, tap::gpio::Pwm::ImuHeater);
+        return;
+    }
+
     // Run PID controller to find desired output, output units PWM frequency
     imuTemperatureController.update(IMU_DESIRED_TEMPERATURE - temperature);
 
