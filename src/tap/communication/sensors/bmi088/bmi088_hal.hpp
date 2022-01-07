@@ -30,33 +30,31 @@ class Bmi088Hal
 private:
     static inline void chipSelectAccelLow()
     {
+#ifndef PLATFORM_HOSTED
         Board::ImuCS1Accel::setOutput(modm::GpioOutput::Low);
-    }
-    static inline void chipSelectAccelHigh()
-    {
-        Board::ImuCS1Accel::setOutput(modm::GpioOutput::High);
-    }
-    static inline void chipSelectGyroLow() { Board::ImuCS1Gyro::setOutput(modm::GpioOutput::Low); }
-    static inline void chipSelectGyroHigh()
-    {
-        Board::ImuCS1Gyro::setOutput(modm::GpioOutput::High);
+#endif
     }
 
-    // uint8_t spiReadRegister(uint8_t reg)
-    // {
-    // #ifdef PLATFORM_HOSTED
-    //     UNUSED(reg);
-    //     return 0;
-    // #else
-    //     mpuNssLow();
-    //     uint8_t tx = reg | MPU6500_READ_BIT;
-    //     uint8_t rx = 0;
-    //     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    //     Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    //     mpuNssHigh();
-    //     return rx;
-    // #endif
-    // }
+    static inline void chipSelectAccelHigh()
+    {
+#ifndef PLATFORM_HOSTED
+        Board::ImuCS1Accel::setOutput(modm::GpioOutput::High);
+#endif
+    }
+
+    static inline void chipSelectGyroLow()
+    {
+#ifndef PLATFORM_HOSTED
+        Board::ImuCS1Gyro::setOutput(modm::GpioOutput::Low);
+#endif
+    }
+
+    static inline void chipSelectGyroHigh()
+    {
+#ifndef PLATFORM_HOSTED
+        Board::ImuCS1Gyro::setOutput(modm::GpioOutput::High);
+#endif
+    }
 
     static inline uint8_t bmi088ReadWriteByte(uint8_t tx)
     {
@@ -65,6 +63,7 @@ private:
         Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
         return rx;
 #else
+        UNUSED(tx);
         return 0;
 #endif
     }
