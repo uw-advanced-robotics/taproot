@@ -50,11 +50,15 @@ static float runChassisXInputTest(
     ControlOperatorInterface &operatorInterface,
     float remoteVal,
     bool wPressed,
-    bool sPressed)
+    bool sPressed,
+    bool shiftPressed = false,
+    bool ctrlPressed = false)
 {
     EXPECT_CALL(drivers.remote, getUpdateCounter).WillOnce(Return(1));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::W)).WillOnce(Return(wPressed));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::S)).WillOnce(Return(sPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::SHIFT)).WillOnce(Return(shiftPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::CTRL)).WillOnce(Return(ctrlPressed));
     EXPECT_CALL(drivers.remote, getChannel(Remote::Channel::LEFT_VERTICAL))
         .WillOnce(Return(remoteVal));
     return operatorInterface.getChassisXInput();
@@ -65,11 +69,15 @@ static float runChassisYInputTest(
     ControlOperatorInterface &operatorInterface,
     float remoteVal,
     bool dPressed,
-    bool aPressed)
+    bool aPressed,
+    bool shiftPressed = false,
+    bool ctrlPressed = false)
 {
     EXPECT_CALL(drivers.remote, getUpdateCounter).WillOnce(Return(1));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::A)).WillOnce(Return(aPressed));
     EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::D)).WillOnce(Return(dPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::SHIFT)).WillOnce(Return(shiftPressed));
+    EXPECT_CALL(drivers.remote, keyPressed(Remote::Key::CTRL)).WillOnce(Return(ctrlPressed));
     EXPECT_CALL(drivers.remote, getChannel(Remote::Channel::LEFT_HORIZONTAL))
         .WillOnce(Return(remoteVal));
     return operatorInterface.getChassisYInput();
@@ -139,10 +147,10 @@ TEST(ControlOperatorInterface, getChassisInput_min_key_user_input_limited)
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisXInputTest(drivers, operatorInterface, 0, false, true));
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisYInputTest(drivers, operatorInterface, 0, false, true));
     EXPECT_FLOAT_EQ(
         -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
@@ -154,10 +162,10 @@ TEST(ControlOperatorInterface, getChassisInput_max_key_user_input_limited)
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisXInputTest(drivers, operatorInterface, 0, true, false));
     EXPECT_FLOAT_EQ(
-        ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisYInputTest(drivers, operatorInterface, 0, true, false));
     EXPECT_FLOAT_EQ(
         ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
@@ -239,10 +247,10 @@ TEST(ControlOperatorInterface, getChassisInput_max_remote_and_min_key_pressed_ca
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX + MAX_REMOTE,
         runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX + MAX_REMOTE,
         runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
     EXPECT_FLOAT_EQ(
         -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
@@ -262,6 +270,45 @@ TEST(ControlOperatorInterface, getChassisInput_half_max_remote_and_max_and_min_k
     EXPECT_FLOAT_EQ(
         0.5f,
         runChassisRInputTest(drivers, operatorInterface, MAX_REMOTE / 2.0f, true, true));
+}
+
+TEST(ControlOperatorInterface, getChassisInput_shift)
+{
+    INIT_TEST
+    setTime(1);
+    EXPECT_FLOAT_EQ(
+        1.0f * ControlOperatorInterface::SHIFT_SCALAR,
+        runChassisXInputTest(drivers, operatorInterface, 1.0f, true, false, true));  // walk forward
+    EXPECT_FLOAT_EQ(
+        1.0f * ControlOperatorInterface::SHIFT_SCALAR,
+        runChassisYInputTest(drivers, operatorInterface, 1.0f, true, false, true));  // walk left
+}
+
+TEST(ControlOperatorInterface, getChassisInput_ctrl)
+{
+    INIT_TEST
+    setTime(1);
+    EXPECT_FLOAT_EQ(
+        1.0f * ControlOperatorInterface::CTRL_SCALAR,
+        runChassisXInputTest(
+            drivers,
+            operatorInterface,
+            1.0f,
+            true,
+            false,
+            false,
+            true));  // crouch forward
+    EXPECT_FLOAT_EQ(
+        1.0f * ControlOperatorInterface::CTRL_SCALAR,
+        runChassisYInputTest(
+            drivers,
+            operatorInterface,
+            1.0f,
+            true,
+            false,
+            false,
+            true));  // crouch
+                     // left
 }
 
 // Note: Remote input inverted for yaw control.
