@@ -39,4 +39,4 @@
   IMU by default connects but doesn't calibrate when the `initialize` function is called. To
   calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
   computing angle data for a couple seconds while the IMU is calibration. For calibration to be
-  performed correctly, the BMI088 should be level.
+  performed correctly, the BMI088 should be level (#18, !96).
