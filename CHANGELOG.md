@@ -18,6 +18,10 @@
   prefixed by `Rx` or `Tx`.
 - `tap::communication::serial::ITerminalSerialCallback` interface renamed to
   `tap::communication::TerminalSerialCallbackInterface`.
+- `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
+  less parameters than before and their purpose is different. Also, rather than modifying motor
+  outputs directly, the power limiter returns a fraction and it is the user's responsibility to
+  multiply the motor output by this fraction.
 
 ### All changes
 
@@ -34,4 +38,5 @@
 - The `CommandScheduler` is now able to safely remove all commands when a user-specified 
   "disconnected" state occurs. One can pass a `SafeDisconnectFunction` functor to the
   `CommandScheduler` to determine what causes a "disconnected" state (!75).
-  
+- `tap::communication::sensors::current::CurrentSensorInterface` and `AnalogCurrentSensor` added,
+  which are software constructs for current sensors.
