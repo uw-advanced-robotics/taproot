@@ -156,7 +156,7 @@ private:
 
     Mahony mahonyAlgorithm;
 
-    sensors::ImuHeater imuHeater;
+    tap::sensors::ImuHeater imuHeater;
 
     int calibrationSample = 0;
 

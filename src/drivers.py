@@ -183,7 +183,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": [":communication:serial:terminal_serial", ":communication:sensors:mpu6500"],
     },
     {
-        "object-name": "sensors::bmi088::Bmi088",
+        "object-name": "communication::sensors::bmi088::Bmi088",
         "mock-object-name": nice_mock("mock::Bmi088Mock"),
         "src-file": "tap/communication/sensors/bmi088/bmi088.hpp",
         "mock-header": "tap/mock/bmi088_mock.hpp",
