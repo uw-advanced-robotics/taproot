@@ -62,7 +62,7 @@ void Bmi088::requestRecalibration()
 
 void Bmi088::initiailze()
 {
-#ifndef ENV_UNIT_TESTS
+#ifndef PLATFORM_HOSTED
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 
@@ -84,7 +84,7 @@ void Bmi088::initiailze()
 
 void Bmi088::initializeAcc()
 {
-#ifndef ENV_UNIT_TESTS
+#ifndef PLATFORM_HOSTED
     // Write to the accelerometer a few times to get it to wake up (without this the bmi088 will not
     // turn on properly from cold boot).
     Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
@@ -133,7 +133,7 @@ void Bmi088::initializeAcc()
 
 void Bmi088::initializeGyro()
 {
-#ifndef ENV_UNIT_TESTS
+#ifndef PLATFORM_HOSTED
     // reset gyro
     Bmi088Hal::bmi088GyroWriteSingleReg(Gyro::GYRO_SOFTRESET, Gyro::GyroSoftreset::RESET_SENSOR);
     modm::delay_ms(80);
@@ -263,7 +263,7 @@ void Bmi088::computeOffsets()
 
 void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
 {
-#ifdef ENV_UNIT_TESTS
+#ifdef PLATFORM_HOSTED
     UNUSED(reg);
     UNUSED(value);
 #else
@@ -283,7 +283,7 @@ void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
 
 void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value)
 {
-#ifdef ENV_UNIT_TESTS
+#ifdef PLATFORM_HOSTED
     UNUSED(reg);
     UNUSED(value);
 #else
