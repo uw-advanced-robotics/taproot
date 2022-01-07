@@ -33,7 +33,7 @@
 using namespace modm::literals;
 using namespace Board;
 
-namespace tap::sensors::bmi088
+namespace tap::communication::sensors::bmi088
 {
 Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
 
@@ -301,4 +301,4 @@ void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value
 #endif
 }
 
-}  // namespace tap::sensors::bmi088
+}  // namespace tap::communication::sensors::bmi088

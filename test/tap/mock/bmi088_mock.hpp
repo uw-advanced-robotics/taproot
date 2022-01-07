@@ -26,7 +26,7 @@
 
 namespace tap::mock
 {
-class Bmi088Mock : public tap::sensors::bmi088::Bmi088
+class Bmi088Mock : public tap::communication::sensors::bmi088::Bmi088
 {
 public:
     Bmi088Mock(tap::Drivers *drivers);
