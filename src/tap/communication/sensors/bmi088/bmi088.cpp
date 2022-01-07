@@ -62,6 +62,7 @@ void Bmi088::requestRecalibration()
 
 void Bmi088::initiailze()
 {
+#ifndef ENV_UNIT_TESTS
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 
@@ -71,6 +72,7 @@ void Bmi088::initiailze()
     ImuSpiMaster::initialize<SystemClock, 10_MHz>();
 
     modm::delay_ms(1);
+#endif
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
 
@@ -82,6 +84,7 @@ void Bmi088::initiailze()
 
 void Bmi088::initializeAcc()
 {
+#ifndef ENV_UNIT_TESTS
     // Write to the accelerometer a few times to get it to wake up (without this the bmi088 will not
     // turn on properly from cold boot).
     Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
@@ -125,10 +128,12 @@ void Bmi088::initializeAcc()
             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800));
 
     setAndCheckAccRegister(Acc::ACC_RANGE, ACC_RANGE);
+#endif
 }
 
 void Bmi088::initializeGyro()
 {
+#ifndef ENV_UNIT_TESTS
     // reset gyro
     Bmi088Hal::bmi088GyroWriteSingleReg(Gyro::GYRO_SOFTRESET, Gyro::GyroSoftreset::RESET_SENSOR);
     modm::delay_ms(80);
@@ -154,6 +159,7 @@ void Bmi088::initializeGyro()
         Gyro::GyroBandwidth::ODR1000_BANDWIDTH116 | Gyro::GyroBandwidth_t(0x80));
 
     setAndCheckGyroRegister(Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL);
+#endif
 }
 
 #define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
@@ -257,6 +263,10 @@ void Bmi088::computeOffsets()
 
 void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
 {
+#ifdef ENV_UNIT_TESTS
+    UNUSED(reg);
+    UNUSED(value);
+#else
     Bmi088Hal::bmi088AccWriteSingleReg(reg, value);
     modm::delay_us(150);
 
@@ -268,10 +278,15 @@ void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
         RAISE_ERROR(drivers, "bmi088 acc config failed");
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
+#endif
 }
 
 void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value)
 {
+#ifdef ENV_UNIT_TESTS
+    UNUSED(reg);
+    UNUSED(value);
+#else
     Bmi088Hal::bmi088GyroWriteSingleReg(reg, value);
     modm::delay_us(150);
 
@@ -283,6 +298,7 @@ void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value
         RAISE_ERROR(drivers, "bmi088 gyro config failed");
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
+#endif
 }
 
 }  // namespace tap::sensors::bmi088
