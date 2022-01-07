@@ -21,6 +21,6 @@
 
 namespace tap::mock
 {
-Bmi088Mock::Bmi088Mock(tap::Drivers *drivers) : tap::sensors::bmi088::Bmi088(drivers) {}
+Bmi088Mock::Bmi088Mock(tap::Drivers *drivers) : tap::communication::sensors::bmi088::Bmi088(drivers) {}
 Bmi088Mock::~Bmi088Mock() {}
 }  // namespace tap::mock

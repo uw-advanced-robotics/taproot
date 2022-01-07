@@ -23,7 +23,7 @@
 #include "tap/board/board.hpp"
 
 #include "bmi088_data.hpp"
-namespace tap::sensors::bmi088
+namespace tap::communication::sensors::bmi088
 {
 class Bmi088Hal
 {
@@ -172,6 +172,6 @@ public:
     }
 };
 
-}  // namespace tap::sensors::bmi088
+}  // namespace tap::communication::sensors::bmi088
 
 #endif  // BMI088_HAL_HPP_

@@ -33,7 +33,7 @@ namespace tap
 class Drivers;
 }
 
-namespace tap::sensors::bmi088
+namespace tap::communication::sensors::bmi088
 {
 /**
  * For register tables and descriptions, refer to the bmi088 datasheet:
@@ -170,6 +170,6 @@ private:
     void setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value);
 };
 
-}  // namespace tap::sensors::bmi088
+}  // namespace tap::communication::sensors::bmi088
 
 #endif  // BMI088_HPP_
