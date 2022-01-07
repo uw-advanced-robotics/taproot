@@ -22,6 +22,7 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
+#include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
 
@@ -85,7 +86,7 @@ public:
     /**
      * Starts and configures the bmi088. Blocks for < 200 ms.
      */
-    void initiailze();
+    mockable void initiailze();
 
     /**
      * Call this function at 500 Hz. Reads IMU data and performs the mahony AHRS algorithm to
@@ -93,7 +94,7 @@ public:
      *
      * @note This function blocks for 129 microseconds to read registers from the BMI088.
      */
-    void periodicIMUUpdate();
+    mockable void periodicIMUUpdate();
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
@@ -105,7 +106,7 @@ public:
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
-    ImuState getImuState() const;
+    mockable ImuState getImuState() const;
 
     /**
      * When this function is called, the bmi088 enters a calibration state during which time,
@@ -113,21 +114,21 @@ public:
      * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
      * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
-    void requestRecalibration();
+    mockable void requestRecalibration();
 
-    float getYaw() { return mahonyAlgorithm.getYaw(); }
-    float getPitch() { return mahonyAlgorithm.getPitch(); }
-    float getRoll() { return mahonyAlgorithm.getRoll(); }
+    mockable float getYaw() { return mahonyAlgorithm.getYaw(); }
+    mockable float getPitch() { return mahonyAlgorithm.getPitch(); }
+    mockable float getRoll() { return mahonyAlgorithm.getRoll(); }
 
-    float getGx() const { return data.gyroDegPerSec[ImuData::X]; }
-    float getGy() const { return data.gyroDegPerSec[ImuData::Y]; }
-    float getGz() const { return data.gyroDegPerSec[ImuData::Z]; }
+    mockable float getGx() const { return data.gyroDegPerSec[ImuData::X]; }
+    mockable float getGy() const { return data.gyroDegPerSec[ImuData::Y]; }
+    mockable float getGz() const { return data.gyroDegPerSec[ImuData::Z]; }
 
-    float getAx() const { return data.accG[ImuData::X]; }
-    float getAy() const { return data.accG[ImuData::Y]; }
-    float getAz() const { return data.accG[ImuData::Z]; }
+    mockable float getAx() const { return data.accG[ImuData::X]; }
+    mockable float getAy() const { return data.accG[ImuData::Y]; }
+    mockable float getAz() const { return data.accG[ImuData::Z]; }
 
-    float getTemp() const { return data.temperature; }
+    mockable float getTemp() const { return data.temperature; }
 
 private:
     struct ImuData
