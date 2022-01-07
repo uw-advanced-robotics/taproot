@@ -127,6 +127,8 @@ public:
     float getAy() const { return data.accG[ImuData::Y]; }
     float getAz() const { return data.accG[ImuData::Z]; }
 
+    float getTemp() const { return data.temperature; }
+
 private:
     struct ImuData
     {

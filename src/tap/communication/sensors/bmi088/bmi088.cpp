@@ -65,6 +65,8 @@ void Bmi088::initiailze()
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 
+    modm::delay_ms(100);
+
     ImuSpiMaster::connect<ImuMiso::Miso, ImuMosi::Mosi, ImuSck::Sck>();
     ImuSpiMaster::initialize<SystemClock, 10_MHz>();
 
@@ -80,6 +82,13 @@ void Bmi088::initiailze()
 
 void Bmi088::initializeAcc()
 {
+    // Write to the accelerometer a few times to get it to wake up (without this the bmi088 will not
+    // turn on properly from cold boot).
+    Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
+    modm::delay_ms(1);
+    Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
+    modm::delay_ms(1);
+
     // Page 13 of the bmi088 datasheet states:
     // After the POR (power-on reset) the gyroscope is in normal mode, while the accelerometer is in
     // suspend mode. To switch the accelerometer into normal mode, the user must perform the
@@ -229,7 +238,8 @@ void Bmi088::computeOffsets()
     data.gyroOffsetRaw[ImuData::Z] += data.gyroRaw[ImuData::Z];
     data.accOffsetRaw[ImuData::X] += data.accRaw[ImuData::X];
     data.accOffsetRaw[ImuData::Y] += data.accRaw[ImuData::Y];
-    data.accOffsetRaw[ImuData::Z] += data.accRaw[ImuData::Z] - ACCELERATION_GRAVITY / ACC_G_PER_ACC_COUNT;
+    data.accOffsetRaw[ImuData::Z] +=
+        data.accRaw[ImuData::Z] - ACCELERATION_GRAVITY / ACC_G_PER_ACC_COUNT;
 
     if (calibrationSample >= BMI088_OFFSET_SAMPLES)
     {
