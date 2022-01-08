@@ -34,4 +34,4 @@
 - The `CommandScheduler` is now able to safely remove all commands when a user-specified 
   "disconnected" state occurs. One can pass a `SafeDisconnectFunction` functor to the
   `CommandScheduler` to determine what causes a "disconnected" state (!75).
-  
+- Print a clearer error message when the chosen compiler is not found on PATH. (!97)
