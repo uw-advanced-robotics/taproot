@@ -26,7 +26,7 @@
 
 namespace tap::control::odometry
 {
-MecanumVelocityOdometrySubsystem::MecanumVelocityOdometrySubsystem(
+VelocityOdometrySubsystem::VelocityOdometrySubsystem(
     tap::Drivers* drivers,
     ChassisOrientationGetterInterface* chassisOrientationGetter,
     ChassisVelocityGetterInterface* chassisVelocityGetter)
@@ -37,7 +37,7 @@ MecanumVelocityOdometrySubsystem::MecanumVelocityOdometrySubsystem(
 {
 }
 
-void MecanumVelocityOdometrySubsystem::refresh()
+void VelocityOdometrySubsystem::refresh()
 {
     // In the future it may be possible to just grab the scheduler tick
     // frequency if we had a freeRTOS like config file. Currently the subsystem

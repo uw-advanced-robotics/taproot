@@ -88,15 +88,14 @@ public:
 };
 
 /**
- * A subsystem for keeping track of the position of a standard 4-wheel
- * Mecanum drive chassis in the field using wheel movement reported
- * by a ChassisVelocityGetterInterface and chassis orientation reported by a
- * ChassisOrientationGetterInterface
+ * A subsystem for keeping track of the position of a chassis in the field
+ * using chassis velocity reported by a ChassisVelocityGetterInterface and
+ * chassis orientation reported by a ChassisOrientationGetterInterface
  *
  * Like controls subsystem, a fast and consistent refresh rate is necessary
  * for good output.
  */
-class MecanumVelocityOdometrySubsystem : public tap::control::Subsystem, public OdometryInterface
+class VelocityOdometrySubsystem : public tap::control::Subsystem, public OdometryInterface
 {
 public:
     /**
@@ -107,7 +106,7 @@ public:
      * @param chassisVelocityGetter pointer to an object which implements the
      *      ChassisVelocityGetterInterface. Used for getting the chassis velocity
      */
-    MecanumVelocityOdometrySubsystem(
+    VelocityOdometrySubsystem(
         tap::Drivers* drivers,
         ChassisOrientationGetterInterface* chassisOrientationGetter,
         ChassisVelocityGetterInterface* chassisVelocityGetter);
