@@ -250,6 +250,9 @@ public:
                                                 /// aerial has left to fire
             RFIDActivationStatus_t rfidStatus;  /// The current status of which RFID zones
                                                 /// are being activated by the current robot.
+            uint32_t robotDataReceivedTimestamp;  /// Most recent time at which data with message
+                                                  /// id `REF_MESSAGE_TYPE_ROBOT_STATUS` has been
+                                                  /// received.
         };
     };
 
