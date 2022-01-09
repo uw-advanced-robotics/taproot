@@ -65,6 +65,7 @@ class RefSerial(Module):
         env.copy("ref_serial.cpp")
         env.copy("ref_serial.hpp")
         env.copy("ref_serial_data.hpp")
+        env.copy("ref_serial_ui_wrappers")
 
 class TerminalSerial(Module):
     def init(self, module):
