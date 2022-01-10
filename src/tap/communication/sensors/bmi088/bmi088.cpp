@@ -60,7 +60,7 @@ void Bmi088::requestRecalibration()
     }
 }
 
-void Bmi088::initiailze()
+void Bmi088::initialize()
 {
 #ifndef PLATFORM_HOSTED
     ImuCS1Accel::GpioOutput();
