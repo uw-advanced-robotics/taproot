@@ -35,6 +35,15 @@ using namespace Board;
 
 namespace tap::communication::sensors::bmi088
 {
+#if defined(PLATFORM_HOSTED)
+#define DELAY_MS(ms)
+#define DELAY_US(us)
+#else
+#define DELAY_MS(ms) modm::delay_ms(ms);
+#define DELAY_US(us) modm::delay_us(us);
+#endif
+
+
 Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
 
 Bmi088::ImuState Bmi088::getImuState() const { return imuState; }
@@ -66,12 +75,12 @@ void Bmi088::initialize()
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 
-    modm::delay_ms(100);
+    DELAY_MS(100);
 
     ImuSpiMaster::connect<ImuMiso::Miso, ImuMosi::Mosi, ImuSck::Sck>();
     ImuSpiMaster::initialize<SystemClock, 10_MHz>();
 
-    modm::delay_ms(1);
+    DELAY_MS(1);
 #endif
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
@@ -84,13 +93,12 @@ void Bmi088::initialize()
 
 void Bmi088::initializeAcc()
 {
-#ifndef PLATFORM_HOSTED
     // Write to the accelerometer a few times to get it to wake up (without this the bmi088 will not
     // turn on properly from cold boot).
     Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
-    modm::delay_ms(1);
+    DELAY_MS(1);
     Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
-    modm::delay_ms(1);
+    DELAY_MS(1);
 
     // Page 13 of the bmi088 datasheet states:
     // After the POR (power-on reset) the gyroscope is in normal mode, while the accelerometer is in
@@ -103,7 +111,7 @@ void Bmi088::initializeAcc()
 
     Bmi088Hal::bmi088AccWriteSingleReg(Acc::ACC_PWR_CTRL, Acc::AccPwrCtrl::ACCELEROMETER_ON);
 
-    modm::delay_us(450);
+    DELAY_US(450);
 
     // read ACC_CHIP_ID to start SPI communication
     // Page 45 of the bmi088 datasheet states:
@@ -113,7 +121,7 @@ void Bmi088::initializeAcc()
 
     // check communication is normal after reset
     uint8_t readChipID = Bmi088Hal::bmi088AccReadSingleReg(Acc::ACC_CHIP_ID);
-    modm::delay_ms(1);
+    DELAY_MS(1);
 
     if (readChipID != Acc::ACC_CHIP_ID_VALUE)
     {
@@ -128,21 +136,19 @@ void Bmi088::initializeAcc()
             Acc::AccOutputRate_t(Acc::AccOutputRate::Hz800));
 
     setAndCheckAccRegister(Acc::ACC_RANGE, ACC_RANGE);
-#endif
 }
 
 void Bmi088::initializeGyro()
 {
-#ifndef PLATFORM_HOSTED
     // reset gyro
     Bmi088Hal::bmi088GyroWriteSingleReg(Gyro::GYRO_SOFTRESET, Gyro::GyroSoftreset::RESET_SENSOR);
-    modm::delay_ms(80);
+    DELAY_MS(80);
 
     // check communication normal after reset
     Bmi088Hal::bmi088GyroReadSingleReg(Gyro::GYRO_CHIP_ID);
-    modm::delay_ms(1);
+    DELAY_MS(1);
     uint8_t res = Bmi088Hal::bmi088GyroReadSingleReg(Gyro::GYRO_CHIP_ID);
-    modm::delay_ms(1);
+    DELAY_MS(1);
 
     if (res != Gyro::GYRO_CHIP_ID_VALUE)
     {
@@ -159,7 +165,6 @@ void Bmi088::initializeGyro()
         Gyro::GyroBandwidth::ODR1000_BANDWIDTH116 | Gyro::GyroBandwidth_t(0x80));
 
     setAndCheckGyroRegister(Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL);
-#endif
 }
 
 #define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
@@ -263,42 +268,32 @@ void Bmi088::computeOffsets()
 
 void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)
 {
-#ifdef PLATFORM_HOSTED
-    UNUSED(reg);
-    UNUSED(value);
-#else
     Bmi088Hal::bmi088AccWriteSingleReg(reg, value);
-    modm::delay_us(150);
+    DELAY_US(150);
 
     uint8_t val = Bmi088Hal::bmi088AccReadSingleReg(reg);
-    modm::delay_us(150);
+    DELAY_US(150);
 
     if (val != value.value)
     {
         RAISE_ERROR(drivers, "bmi088 acc config failed");
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
-#endif
 }
 
 void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value)
 {
-#ifdef PLATFORM_HOSTED
-    UNUSED(reg);
-    UNUSED(value);
-#else
     Bmi088Hal::bmi088GyroWriteSingleReg(reg, value);
-    modm::delay_us(150);
+    DELAY_US(150);
 
     uint8_t val = Bmi088Hal::bmi088GyroReadSingleReg(reg);
-    modm::delay_us(150);
+    DELAY_US(150);
 
     if (val != value.value)
     {
         RAISE_ERROR(drivers, "bmi088 gyro config failed");
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
-#endif
 }
 
 }  // namespace tap::communication::sensors::bmi088
