@@ -32,7 +32,7 @@ public:
     Bmi088Mock(tap::Drivers *drivers);
     virtual ~Bmi088Mock();
 
-    MOCK_METHOD(void, initiailze, (), (override));
+    MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(ImuState, getImuState, (), (const override));
     MOCK_METHOD(void, requestRecalibration, (), (override));
