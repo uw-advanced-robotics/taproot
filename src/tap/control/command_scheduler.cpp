@@ -204,11 +204,11 @@ void CommandScheduler::run()
         }
     }
 
-    // Refresh subsystems in the registeredSubsystemBitmap
-    for (auto it = subMapBegin(); it != subMapEnd(); it++)
+    // Only refresh subsystems if this is the master scheduler
+    if (isMasterScheduler)
     {
-        // Only subsystems in the master scheduler shall be refreshed
-        if (isMasterScheduler)
+        // Refresh subsystems in the registeredSubsystemBitmap
+        for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
             (*it)->refresh();
 

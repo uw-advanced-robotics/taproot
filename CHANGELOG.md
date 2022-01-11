@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## January 2022
+
+### Other changes
+
+- Small improvement to command scheduler subsystem refresh loop logic.
+
 ## December 2021
 
 ### Breaking changes
