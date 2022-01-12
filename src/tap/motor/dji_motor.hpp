@@ -35,7 +35,6 @@ namespace tap::motor
  * for declaring a new motor, must be one of these motor
  * identifiers
  */
-
 enum MotorId : int32_t
 {
     MOTOR1 = 0X201,
@@ -49,8 +48,9 @@ enum MotorId : int32_t
 };
 
 /**
- * A class for storing the state of, handling control of, and communicating
- * with a DJI motor controller over CAN.
+ * A class designed to interface with DJI brand motors and motor controllers over CAN.
+ * This includes the C610 and C620 motor controllers and the GM6020 motor (that has a
+ * built-in motor controller).
  *
  * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted()
  *      == false`) is counter clockwise when looking at the shaft from the side opposite
@@ -150,7 +150,7 @@ public:
 
     int16_t getTorque() const override;
 
-    // For interpreting the sign of return value see class comment
+    /** For interpreting the sign of return value see class comment */
     int16_t getShaftRPM() const override;
 
     mockable bool isMotorInverted() const;
@@ -228,7 +228,7 @@ private:
 
     /**
      * Absolute unwrapped encoder position =
-     *      encoderRevolutions  *ENCODER_RESOLUTION + encoderWrapped
+     *      encoderRevolutions * ENCODER_RESOLUTION + encoderWrapped
      * This lets us keep track of some sense of absolute position even while
      * raw encoderValue continuosly loops within {0..8191}. Origin value is
      * arbitrary.
