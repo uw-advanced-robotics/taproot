@@ -97,28 +97,42 @@ public:
 
     void initialize() override;
 
-    // formerly encoderstore
     int64_t getEncoderUnwrapped() const override;
 
-    // formerly encoderstore
     uint16_t getEncoderWrapped() const override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
-    // overrides virtual method in the can class, called every time a message is
-    // received by the can receive handler
+    /**
+     * Overrides virtual method in the can class, called every time a message with the
+     * CAN message id this class is attached to is received by the can receive handler.
+     * Parses the data in the message and updates this class's fields accordingly.
+     * 
+     * @param[in] message the message to be processed.
+     */
     void processMessage(const modm::can::Message& message) override { parseCanRxData(message); }
 
-    // Accept a larger value in case someone is stupid and gave something smaller or greater
-    // than 2^16, then limit it.
-    // Limiting should typically be done on a motor by motor basis in a wrapper class, this
-    // is simply a sanity check.
-    // For interpreting the sign of return value see class comment
+    /**
+     * Set the desired output current for the motor. According to the datasheet the range of
+     * values (-16384 to +16384) roughly corresponds to -20 to +20 Amps of current. For
+     * the physical meaning of the sign of `desiredOutput` see class comment.
+     * 
+     * @param[in] desiredOutput the desired motor output. Limited to the range of a 16-bit int.
+     * 
+     * @note: `desiredOutput` is cast to an int16_t and limited to an int16_t's range! The
+     *      user should make sure their value is in range.
+     */
     void setDesiredOutput(int32_t desiredOutput) override;
 
+    /**
+     * @return `true` if a CAN message has been received from the motor within the last
+     *      `MOTOR_DISCONNECT_TIME` ms, `false` otherwise.
+     */
     bool isMotorOnline() const override;
 
-    // Serializes send data and deposits it in a message to be sent.
+    /**
+     * Serializes send data and deposits it in a message to be sent.
+     */
     mockable void serializeCanSendData(modm::can::Message* txMessage) const;
 
     // getter functions
@@ -168,11 +182,15 @@ private:
 
     const char* motorName;
 
-    // Updates the stored encoder value given a newly received encoder value
-    // special logic necessary for keeping track of unwrapped encoder value.
+    /**
+     * Updates the stored encoder value given a newly received encoder value
+     * special logic necessary for keeping track of unwrapped encoder value.
+     */
     void updateEncoderValue(uint16_t newEncWrapped);
 
-    // Parses receive data given message with the correct identifier.
+    /**
+     * Parses the data from a C620 feedback CAN message.
+     */
     void parseCanRxData(const modm::can::Message& message);
 
     Drivers* drivers;
@@ -189,20 +207,26 @@ private:
 
     int16_t torque;
 
-    // If `false` the positive rotation direction of the shaft is counter-clockwise when
-    // looking at the shaft from the side opposite the motor. If `true` then the positive
-    // rotation direction will be clockwise.
+    /**
+     * If `false` the positive rotation direction of the shaft is counter-clockwise when
+     * looking at the shaft from the side opposite the motor. If `true` then the positive
+     * rotation direction will be clockwise.
+     */
     bool motorInverted;
 
-    // The raw encoder value reported by the C620. It wraps around from
-    // {0..8191}, hence "Wrapped"
+    /**
+     * The raw encoder value reported by the C620. It wraps around from {0..8191},
+     * hence "Wrapped"
+     */
     uint16_t encoderWrapped;
-
-    // Absolute unwrapped enoder position =
-    //      encoderRevolutions * ENCODER_RESOLUTION + encoderWrapped
-    // This lets us keep track of some sense of absolute position even while
-    // raw encoderValue continuosly loops within {0..8191}. Origin value is
-    // arbitrary.
+    
+    /**
+     * Absolute unwrapped enoder position =
+     *      encoderRevolutions  *ENCODER_RESOLUTION + encoderWrapped
+     * This lets us keep track of some sense of absolute position even while
+     * raw encoderValue continuosly loops within {0..8191}. Origin value is
+     * arbitrary.
+     */
     int64_t encoderRevolutions;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
