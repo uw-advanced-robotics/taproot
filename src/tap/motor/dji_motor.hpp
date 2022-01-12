@@ -30,7 +30,7 @@
 namespace tap::motor
 {
 /**
- * CAN IDs for the feedback messages sent by the C620. Motor `i` in the set
+ * CAN IDs for the feedback messages sent by DJI motor controllers. Motor `i` in the set
  * {1, 2,...,8} sends feedback data with in a CAN message with ID 0x200 + `i`.
  * for declaring a new motor, must be one of these motor
  * identifiers
@@ -50,7 +50,7 @@ enum MotorId : int32_t
 
 /**
  * A class for storing the state of, handling control of, and communicating
- * with a DJI motor controlled by a DJI C620 Motor controller.
+ * with a DJI motor controller over CAN.
  *
  * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted()
  *      == false`) is counter clockwise when looking at the shaft from the side opposite
@@ -107,20 +107,20 @@ public:
      * Overrides virtual method in the can class, called every time a message with the
      * CAN message id this class is attached to is received by the can receive handler.
      * Parses the data in the message and updates this class's fields accordingly.
-     * 
+     *
      * @param[in] message the message to be processed.
      */
     void processMessage(const modm::can::Message& message) override { parseCanRxData(message); }
 
     /**
-     * Set the desired output current for the motor. According to the datasheet the range of
-     * values (-16384 to +16384) roughly corresponds to -20 to +20 Amps of current. For
-     * the physical meaning of the sign of `desiredOutput` see class comment.
-     * 
+     * Set the desired output for the motor. The meaning of this value is motor
+     * controller specific.
+     *
      * @param[in] desiredOutput the desired motor output. Limited to the range of a 16-bit int.
-     * 
+     *
      * @note: `desiredOutput` is cast to an int16_t and limited to an int16_t's range! The
-     *      user should make sure their value is in range.
+     *      user should make sure their value is in range. The declaration takes an int32_t
+     *      in hopes to mitigate overflow.
      */
     void setDesiredOutput(int32_t desiredOutput) override;
 
@@ -135,11 +135,17 @@ public:
      */
     mockable void serializeCanSendData(modm::can::Message* txMessage) const;
 
-    // getter functions
+    /**
+     * @return the raw `desiredOutput` value which will be sent to the motor controller
+     *      (specified via `setDesiredOutput()`)
+     */
     int16_t getOutputDesired() const override;
 
     mockable uint32_t getMotorIdentifier() const;
 
+    /**
+     * @return the temperature of the motor as reported by the motor in degrees Celsius
+     */
     int8_t getTemperature() const override;
 
     int16_t getTorque() const override;
@@ -189,7 +195,7 @@ private:
     void updateEncoderValue(uint16_t newEncWrapped);
 
     /**
-     * Parses the data from a C620 feedback CAN message.
+     * Parses the data from a DJI motor feedback CAN message.
      */
     void parseCanRxData(const modm::can::Message& message);
 
@@ -215,13 +221,13 @@ private:
     bool motorInverted;
 
     /**
-     * The raw encoder value reported by the C620. It wraps around from {0..8191},
-     * hence "Wrapped"
+     * The raw encoder value reported by the motor controller. It wraps around from
+     * {0..8191}, hence "Wrapped"
      */
     uint16_t encoderWrapped;
-    
+
     /**
-     * Absolute unwrapped enoder position =
+     * Absolute unwrapped encoder position =
      *      encoderRevolutions  *ENCODER_RESOLUTION + encoderWrapped
      * This lets us keep track of some sense of absolute position even while
      * raw encoderValue continuosly loops within {0..8191}. Origin value is
