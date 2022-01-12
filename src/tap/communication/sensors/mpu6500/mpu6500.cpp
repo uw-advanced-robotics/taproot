@@ -138,7 +138,7 @@ void Mpu6500::periodicIMUUpdate()
     }
 }
 
-#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
+#define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
     (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
 
 bool Mpu6500::read()
@@ -157,15 +157,15 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
-        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2) - raw.accelOffset.y;
-        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4) - raw.accelOffset.z;
+        raw.accel.x = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff) - raw.accelOffset.x;
+        raw.accel.y = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2) - raw.accelOffset.y;
+        raw.accel.z = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4) - raw.accelOffset.z;
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
-        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8) - raw.gyroOffset.x;
-        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10) - raw.gyroOffset.y;
-        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12) - raw.gyroOffset.z;
+        raw.gyro.x = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 8) - raw.gyroOffset.x;
+        raw.gyro.y = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 10) - raw.gyroOffset.y;
+        raw.gyro.z = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 12) - raw.gyroOffset.z;
     }
     PT_END();
 #else

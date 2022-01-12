@@ -20,7 +20,12 @@
 #ifndef BMI088_HAL_HPP_
 #define BMI088_HAL_HPP_
 
+#ifdef ENV_UNIT_TESTS
+#include <deque>
+#endif
+
 #include "tap/board/board.hpp"
+#include "tap/util_macros.hpp"
 
 #include "bmi088_data.hpp"
 namespace tap::communication::sensors::bmi088
@@ -28,6 +33,11 @@ namespace tap::communication::sensors::bmi088
 class Bmi088Hal
 {
 private:
+#ifdef ENV_UNIT_TESTS
+    /** Data that is set by to the input to bmi088ReadWriteByte */
+    static std::deque<uint8_t> rxData;
+#endif
+
     static inline void chipSelectAccelLow()
     {
 #ifndef PLATFORM_HOSTED
@@ -64,7 +74,16 @@ private:
         return rx;
 #else
         UNUSED(tx);
-        return 0;
+        if (rxData.size() != 0)
+        {
+            uint8_t data = rxData.front();
+            rxData.pop_front();
+            return data;
+        }
+        else
+        {
+            return 255;
+        }
 #endif
     }
 
@@ -170,6 +189,60 @@ public:
         bmi088ReadMultiReg(static_cast<uint8_t>(reg), rxBuff, len, false);
         chipSelectGyroHigh();
     }
+
+#ifdef ENV_UNIT_TESTS
+    /**
+     * Insert some data into the queue so the next time bmi088ReadWriteByte is called,
+     * it will be returned by the function.
+     */
+    static void setRxData(uint8_t data) { rxData.push_back(data); }
+
+    static void expectAccWriteSingleReg()
+    {
+        setRxData(0);
+        setRxData(0);
+    }
+
+    static void expectAccReadSingleReg(uint8_t data)
+    {
+        setRxData(0);
+        setRxData(0);
+        setRxData(data);
+    }
+
+    static void expectAccMultiRead(uint8_t *data, uint8_t len)
+    {
+        setRxData(0);
+        setRxData(0);
+        for (uint8_t i = 0; i < len; i++)
+        {
+            setRxData(data[i]);
+        }
+    }
+
+    static void expectGyroWriteSingleReg()
+    {
+        setRxData(0);
+        setRxData(0);
+    }
+
+    static void expectGyroReadSingleReg(uint8_t data)
+    {
+        setRxData(0);
+        setRxData(data);
+    }
+
+    static void expectGyroMultiRead(uint8_t *data, uint8_t len)
+    {
+        setRxData(0);
+        for (uint8_t i = 0; i < len; i++)
+        {
+            setRxData(data[i]);
+        }
+    }
+
+    static void clearData() { rxData.clear(); }
+#endif
 };
 
 }  // namespace tap::communication::sensors::bmi088
