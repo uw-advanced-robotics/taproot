@@ -86,8 +86,8 @@ public:
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
      * calibrated. When not connected, IMU data will be garbage. When not calibrated, IMU data is
      * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
-     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should not
-     * drift.
+     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
+     * not drift.
      *
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
