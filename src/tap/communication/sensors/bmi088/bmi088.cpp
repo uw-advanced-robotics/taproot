@@ -70,7 +70,7 @@ void Bmi088::requestRecalibration()
 
 void Bmi088::initialize()
 {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 

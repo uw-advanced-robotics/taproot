@@ -33,46 +33,46 @@ namespace tap::communication::sensors::bmi088
 class Bmi088Hal
 {
 private:
-#ifdef ENV_UNIT_TESTS
+#if defined(ENV_UNIT_TESTS)
     /** Data that is set by to the input to bmi088ReadWriteByte */
     static std::deque<uint8_t> rxData;
 #endif
 
     static inline void chipSelectAccelLow()
     {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
         Board::ImuCS1Accel::setOutput(modm::GpioOutput::Low);
 #endif
     }
 
     static inline void chipSelectAccelHigh()
     {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
         Board::ImuCS1Accel::setOutput(modm::GpioOutput::High);
 #endif
     }
 
     static inline void chipSelectGyroLow()
     {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
         Board::ImuCS1Gyro::setOutput(modm::GpioOutput::Low);
 #endif
     }
 
     static inline void chipSelectGyroHigh()
     {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
         Board::ImuCS1Gyro::setOutput(modm::GpioOutput::High);
 #endif
     }
 
     static inline uint8_t bmi088ReadWriteByte(uint8_t tx)
     {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
         uint8_t rx = 0;
         Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
         return rx;
-#else
+#elif defined(ENV_UNIT_TESTS)
         UNUSED(tx);
         if (rxData.size() != 0)
         {
@@ -84,6 +84,9 @@ private:
         {
             return 255;
         }
+#else
+        UNUSED(tx);
+        return 255;
 #endif
     }
 
