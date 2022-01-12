@@ -44,8 +44,26 @@ public:
     static constexpr float CTRL_SCALAR = (1.0f / 4);
     static constexpr float SHIFT_SCALAR = (1.0f / 2);
     static constexpr float USER_STICK_SENTINEL_DRIVE_SCALAR = 5000.0f;
-    static constexpr float CHASSIS_X_KEY_INPUT_FILTER_ALPHA = 0.05f;
-    static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_ALPHA = 0.05f;
+
+    /** Maximum alpha value for the x-key low-pass filter. Must be in range (0, 1] (0 is only
+     * previous value, 1 is no filter). */
+    static constexpr float CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX = 0.05f;
+
+    /** Output magnitude in range [0, 1] above which the upward output ramp shallows (alpha becomes
+     * dynamic) for the x-key low-pass filter. */
+    static constexpr float CHASSIS_X_KEY_INPUT_FILTER_CHANGE_THRESHOLD =
+        0.1f;  // Must be in range [0, 1]
+
+    /** Maximum alpha value for the y-key low-pass filter. Must be in range (0, 1] (0 is only
+     * previous value, 1 is no filter). */
+    static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX = 0.025f;
+
+    /** Output magnitude in range [0, 1] above which the upward output ramp shallows (alpha becomes
+     * dynamic) for the y-key low-pass filter. */
+    static constexpr float CHASSIS_Y_KEY_INPUT_FILTER_CHANGE_THRESHOLD = 0.1f;
+
+    /** Alpha value for the rotation-key low-pass filter. Must be in range (0, 1] (0 is only
+     * previous value, 1 is no filter). */
     static constexpr float CHASSIS_R_KEY_INPUT_FILTER_ALPHA = 0.05f;
 
     ControlOperatorInterface(Drivers *drivers) : drivers(drivers) {}
@@ -53,11 +71,33 @@ public:
     mockable ~ControlOperatorInterface() = default;
 
     /**
+     * Filtering Method Explained: \n
+     * Because this output is contributing to the translation of our wheels,
+     * we would like to have a larger ramp time to full output so that
+     * the mechanum wheels slip as little as possible. To do this,
+     * we let the alpha in our low-pass filter be a function of
+     * the ratio between the previous output over the current input,
+     * i.e. alpha = [(chassisXKeyInputFiltered)/(input)] * (alpha_max), where
+     * chassisXKeyInputFiltered is the last filtered value computed by this function.
+     * We apply this ONLY if we are increasing in speed; if we are slowing down,
+     * the low-pass filter works normally using alpha_max.
+     *
      * @return the value used for chassis movement forward and backward, between -1 and 1.
      */
     mockable float getChassisXInput();
 
     /**
+     * Filtering Method Explained: \n
+     * Because this output is contributing to the translation of our wheels,
+     * we would like to have a larger ramp time to full output so that
+     * the mechanum wheels slip as little as possible. To do this,
+     * we let the alpha in our low-pass filter be a function of
+     * the ratio between the previous output over the current input,
+     * i.e. alpha = [(chassisYKeyInputFiltered)/(input)] * (alpha_max), where
+     * chassisYKeyInputFiltered is the last filtered value computed by this function.
+     * We apply this ONLY if we are increasing in speed; if we are slowing down,
+     * the low-pass filter works normally using alpha_max.
+     *
      * @return the value used for chassis movement side to side, between -1 and 1.
      */
     mockable float getChassisYInput();

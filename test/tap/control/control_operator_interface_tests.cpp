@@ -147,10 +147,10 @@ TEST(ControlOperatorInterface, getChassisInput_min_key_user_input_limited)
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisXInputTest(drivers, operatorInterface, 0, false, true));
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisYInputTest(drivers, operatorInterface, 0, false, true));
     EXPECT_FLOAT_EQ(
         -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
@@ -162,10 +162,10 @@ TEST(ControlOperatorInterface, getChassisInput_max_key_user_input_limited)
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA,
+        ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisXInputTest(drivers, operatorInterface, 0, true, false));
     EXPECT_FLOAT_EQ(
-        ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA,
+        ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX,
         runChassisYInputTest(drivers, operatorInterface, 0, true, false));
     EXPECT_FLOAT_EQ(
         ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA,
@@ -247,10 +247,10 @@ TEST(ControlOperatorInterface, getChassisInput_max_remote_and_min_key_pressed_ca
     INIT_TEST
     setTime(1);
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        -ControlOperatorInterface::CHASSIS_X_KEY_INPUT_FILTER_ALPHA_MAX + MAX_REMOTE,
         runChassisXInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
     EXPECT_FLOAT_EQ(
-        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,
+        -ControlOperatorInterface::CHASSIS_Y_KEY_INPUT_FILTER_ALPHA_MAX + MAX_REMOTE,
         runChassisYInputTest(drivers, operatorInterface, MAX_REMOTE, false, true));
     EXPECT_FLOAT_EQ(
         -ControlOperatorInterface::CHASSIS_R_KEY_INPUT_FILTER_ALPHA + MAX_REMOTE,

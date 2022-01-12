@@ -16,12 +16,12 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":communication:sensors"
-    module.description = "Various sensors"
+    module.name = ":communication:sensors:current"
+    module.description = "Current sensor interface and various current sensors"
 
 def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/sensors"
-    env.copy("sensor_interface.hpp")
+    env.outbasepath = "taproot/src/tap/communication/sensors/current"
+    env.copy(".")

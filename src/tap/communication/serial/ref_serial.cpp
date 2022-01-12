@@ -198,9 +198,10 @@ bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
     convertFromLittleEndian(&robotData.turret.barrelSpeedLimit42, message.data + 22);
     convertFromLittleEndian(&robotData.chassis.powerConsumptionLimit, message.data + 24);
     robotData.robotPower.value = message.data[26] & 0b111;
+    robotData.robotDataReceivedTimestamp = clock::getTimeMilliseconds();
 
     processReceivedDamage(
-        clock::getTimeMilliseconds(),
+        robotData.robotDataReceivedTimestamp,
         static_cast<int>(robotData.previousHp) - static_cast<int>(robotData.currentHp));
     robotData.previousHp = robotData.currentHp;
 

@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## January 2022
+
+### Other changes
+
+- Small improvement to command scheduler subsystem refresh loop logic.
+
 ## November 2021
 
 ### Breaking changes
@@ -18,6 +24,10 @@
   prefixed by `Rx` or `Tx`.
 - `tap::communication::serial::ITerminalSerialCallback` interface renamed to
   `tap::communication::TerminalSerialCallbackInterface`.
+- `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
+  less parameters than before and their purpose is different. Also, rather than modifying motor
+  outputs directly, the power limiter returns a fraction and it is the user's responsibility to
+  multiply the motor output by this fraction.
 
 ### All changes
 
@@ -40,3 +50,5 @@
   calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
   computing angle data for a couple seconds while the IMU is calibration. For calibration to be
   performed correctly, the BMI088 should be level (#18, !96).
+- `tap::communication::sensors::current::CurrentSensorInterface` and `AnalogCurrentSensor` added,
+  which are software constructs for current sensors.

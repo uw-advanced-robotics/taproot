@@ -166,7 +166,7 @@ void Bmi088::initializeGyro()
     setAndCheckGyroRegister(Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL);
 }
 
-#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
+#define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
     (static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8))))
 
 static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
@@ -194,14 +194,14 @@ void Bmi088::periodicIMUUpdate()
     uint8_t rxBuff[6] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
-    data.accRaw[ImuData::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.accRaw[ImuData::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.accRaw[ImuData::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.accRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.accRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.accRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    data.gyroRaw[ImuData::X] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.gyroRaw[ImuData::Y] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.gyroRaw[ImuData::Z] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.gyroRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    data.gyroRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    data.gyroRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
     data.temperature = static_cast<float>(parseTemp(rxBuff[0], rxBuff[1])) * BMI088_TEMP_FACTOR +
