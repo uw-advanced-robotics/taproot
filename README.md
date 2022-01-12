@@ -23,7 +23,7 @@ the RoboMaster robotics competition. Key functionality and features include:
 - Monitoring of key subsystems and status information via optional UART terminal or OLED display
 - First-class support for unit and integration testing (no hardware required)
 
-Taproot is a C++ library targeting modern C++ (C++17).
+Taproot is a C++ library targeting modern C++ (C++20).
 
 We use:
 - `modm`, a C++-native HAL
