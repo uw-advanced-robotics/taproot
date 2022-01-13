@@ -17,64 +17,69 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "bubble_drawer.hpp"
+#include "boolean_drawer.hpp"
 
 #include "tap/drivers.hpp"
 
 using namespace tap::serial;
 
-const uint32_t GRAPHIC_SEND_PERIOD = 10;
+const uint32_t GRAPHIC_SEND_PERIOD = 110;
 
 #define delay()                                \
     delayTimeout.restart(GRAPHIC_SEND_PERIOD); \
     RF_WAIT_UNTIL(delayTimeout.execute());
 
-namespace tap::communication::serial
+namespace tap::communication::serial::ref_serial_ui_wrapeprs
 {
-BubbleDrawer::BubbleDrawer(
+BooleanDrawer::BooleanDrawer(
     tap::Drivers *drivers,
-    tap::serial::RefSerial::Tx::Graphic1Message *bubbleMessage)
+    tap::serial::RefSerial::Tx::Graphic1Message *graphic,
+    tap::serial::RefSerial::Tx::GraphicColor boolFalseColor)
     : drivers(drivers),
-      bubble(bubbleMessage)
+      graphic(graphic),
+      boolFalseColor(boolFalseColor)
 {
 }
 
-modm::ResumableResult<bool> BubbleDrawer::initialize()
+modm::ResumableResult<bool> BooleanDrawer::initialize()
 {
     RF_BEGIN(0);
-    savedColor = static_cast<tap::serial::RefSerial::Tx::GraphicColor>(bubble->graphicData.color);
-    updateBubbleColor();
+    savedColor = static_cast<tap::serial::RefSerial::Tx::GraphicColor>(graphic->graphicData.color);
+    updateColor();
     // Initially add the graphic
-    bubble->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC;
-    drivers->refSerial.sendGraphic(bubble);
+    graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC;
+    drivers->refSerial.sendGraphic(graphic);
     // In future calls to sendGraphic only modify the graphic
-    bubble->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
+    graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
     delay();
     RF_END();
 }
 
-modm::ResumableResult<bool> BubbleDrawer::draw()
+modm::ResumableResult<bool> BooleanDrawer::draw()
 {
     RF_BEGIN(1);
-    updateBubbleColor();
+    updateColor();
     if (colorChanged)
     {
         // resend graphic if color changed
-        drivers->refSerial.sendGraphic(bubble);
+        drivers->refSerial.sendGraphic(graphic);
         colorChanged = false;
         delay();
     }
     RF_END();
 }
 
-void BubbleDrawer::setBubbleFilled(bool filled) { this->filled = filled; }
-
-void BubbleDrawer::updateBubbleColor()
+void BooleanDrawer::setDrawerColor(bool filledWithInitialColor)
 {
-    uint32_t prevColor = bubble->graphicData.color;
-    tap::serial::RefSerial::Tx::GraphicColor color;
-    color = filled ? savedColor : tap::serial::RefSerial::Tx::GraphicColor::WHITE;
-    bubble->graphicData.color = static_cast<uint32_t>(color) & 0b1111;
-    colorChanged = prevColor != bubble->graphicData.color;
+    this->filledWithInitialColor = filledWithInitialColor;
 }
-}  // namespace tap::communication::serial
+
+void BooleanDrawer::updateColor()
+{
+    uint32_t prevColor = graphic->graphicData.color;
+    tap::serial::RefSerial::Tx::GraphicColor color;
+    color = filledWithInitialColor ? savedColor : tap::serial::RefSerial::Tx::GraphicColor::WHITE;
+    graphic->graphicData.color = static_cast<uint32_t>(color) & 0b1111;
+    colorChanged = prevColor != graphic->graphicData.color;
+}
+}  // namespace tap::communication::serial::ref_serial_ui_wrapeprs
