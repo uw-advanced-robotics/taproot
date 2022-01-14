@@ -29,8 +29,14 @@ class ErrorControllerTester
 {
 public:
     ErrorControllerTester(tap::Drivers* drivers) : errorController(drivers) {}
-    bool removeSystemError(uint index) { return errorController.removeSystemErrorAtIndex(index); }
-    uint getErrorListSize() { return errorController.errorList.getSize(); }
+    bool removeSystemError(ErrorController::error_index_t index)
+    {
+        return errorController.removeSystemErrorAtIndex(index);
+    }
+    ErrorController::error_index_t getErrorListSize()
+    {
+        return errorController.errorList.getSize();
+    }
     bool removeSystemErrorAtIndex(ErrorController::error_index_t index)
     {
         return errorController.removeSystemErrorAtIndex(index);
