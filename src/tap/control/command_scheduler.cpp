@@ -218,7 +218,7 @@ void CommandScheduler::run()
             // subsystem has a default command, add it
             if (!safeDisconnected() &&
                 !(subsystemsAssociatedWithCommandBitmap &
-                  (static_cast<subsystem_scheduler_bitmap_t>(1) << (*it)->getGlobalIdentifier())) &&
+                  (LSB_ONE_HOT_SUBSYSTEM_BITMAP << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
                 addCommand(defaultCmd);
@@ -289,14 +289,13 @@ void CommandScheduler::addCommand(Command *commandToAdd)
     subsystemsAssociatedWithCommandBitmap |= requirementsBitwise;
     commandToAdd->initialize();
     // Add the command to the command bitmap
-    addedCommandBitmap |= static_cast<command_scheduler_bitmap_t>(1)
-                          << commandToAdd->getGlobalIdentifier();
+    addedCommandBitmap |= LSB_ONE_HOT_COMMAND_BITMAP << commandToAdd->getGlobalIdentifier();
 }
 
 bool CommandScheduler::isCommandScheduled(const Command *command) const
 {
-    return command != nullptr && (addedCommandBitmap & (static_cast<command_scheduler_bitmap_t>(1)
-                                                        << command->getGlobalIdentifier()));
+    return command != nullptr &&
+           (addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << command->getGlobalIdentifier()));
 }
 
 void CommandScheduler::removeCommand(Command *command, bool interrupted)
@@ -317,8 +316,7 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     subsystemsAssociatedWithCommandBitmap &= ~command->getRequirementsBitwise();
 
     // Remove the command from the command bitmap
-    addedCommandBitmap &=
-        ~(static_cast<command_scheduler_bitmap_t>(1) << command->getGlobalIdentifier());
+    addedCommandBitmap &= ~(LSB_ONE_HOT_COMMAND_BITMAP << command->getGlobalIdentifier());
 }
 
 void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
@@ -342,14 +340,14 @@ void CommandScheduler::registerSubsystem(Subsystem *subsystem)
     {
         // Add the subsystem to the registered subsystem bitmap
         registeredSubsystemBitmap |=
-            (static_cast<subsystem_scheduler_bitmap_t>(1) << subsystem->getGlobalIdentifier());
+            (LSB_ONE_HOT_SUBSYSTEM_BITMAP << subsystem->getGlobalIdentifier());
     }
 }
 
 bool CommandScheduler::isSubsystemRegistered(const Subsystem *subsystem) const
 {
     return subsystem != nullptr &&
-           ((static_cast<subsystem_scheduler_bitmap_t>(1) << subsystem->getGlobalIdentifier()) &
+           ((LSB_ONE_HOT_SUBSYSTEM_BITMAP << subsystem->getGlobalIdentifier()) &
             registeredSubsystemBitmap);
 }
 
@@ -389,7 +387,7 @@ int CommandScheduler::subsystemListSize() const
     int size = 0;
     for (int i = 0; i < maxSubsystemIndex; i++)
     {
-        if (registeredSubsystemBitmap & (static_cast<subsystem_scheduler_bitmap_t>(1) << i))
+        if (registeredSubsystemBitmap & (LSB_ONE_HOT_SUBSYSTEM_BITMAP << i))
         {
             size++;
         }
@@ -402,7 +400,7 @@ int CommandScheduler::commandListSize() const
     int size = 0;
     for (int i = 0; i < maxCommandIndex; i++)
     {
-        if (addedCommandBitmap & (static_cast<command_scheduler_bitmap_t>(1) << i))
+        if (addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << i))
         {
             size++;
         }
@@ -444,8 +442,7 @@ CommandScheduler::CommandIterator::CommandIterator(CommandScheduler *scheduler, 
         // If the curr index is pointing somewhere in the valid range of commands but the command
         // associated with the index is not in the current added commands bitmap, increment the
         // iterator to find the next valid index
-        if (!(scheduler->addedCommandBitmap &
-              (static_cast<command_scheduler_bitmap_t>(1) << currIndex)))
+        if (!(scheduler->addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << currIndex)))
         {
             (*this)++;
         }
@@ -468,8 +465,7 @@ CommandScheduler::CommandIterator &CommandScheduler::CommandIterator::operator++
     while (currIndex < maxCommandIndex)
     {
         // Is the current index in the bitmap of added commands?
-        if (scheduler->addedCommandBitmap &
-            (static_cast<command_scheduler_bitmap_t>(1) << currIndex))
+        if (scheduler->addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << currIndex))
         {
             // We found the correct index
             return *this;
@@ -516,8 +512,7 @@ CommandScheduler::SubsystemIterator::SubsystemIterator(CommandScheduler *schedul
         // If the curr index is pointing somewhere in the valid range of subsystems but the
         // subsystem associated with the index is not in the current registered subsystem bitmap,
         // increment the iterator to find the next valid index
-        if (!(scheduler->registeredSubsystemBitmap &
-              (static_cast<subsystem_scheduler_bitmap_t>(1) << currIndex)))
+        if (!(scheduler->registeredSubsystemBitmap & (LSB_ONE_HOT_SUBSYSTEM_BITMAP << currIndex)))
         {
             (*this)++;
         }
@@ -540,8 +535,7 @@ CommandScheduler::SubsystemIterator &CommandScheduler::SubsystemIterator::operat
     while (currIndex < maxSubsystemIndex)
     {
         // Is the current index in the bitmap of added commands?
-        if (scheduler->registeredSubsystemBitmap &
-            (static_cast<subsystem_scheduler_bitmap_t>(1) << currIndex))
+        if (scheduler->registeredSubsystemBitmap & (LSB_ONE_HOT_SUBSYSTEM_BITMAP << currIndex))
         {
             // We found the correct index
             return *this;
