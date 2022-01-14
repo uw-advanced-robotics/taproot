@@ -78,7 +78,7 @@ void BooleanDrawer::updateColor()
 {
     uint32_t prevColor = graphic->graphicData.color;
     tap::serial::RefSerial::Tx::GraphicColor color;
-    color = filledWithInitialColor ? savedColor : tap::serial::RefSerial::Tx::GraphicColor::WHITE;
+    color = filledWithInitialColor ? savedColor : boolFalseColor;
     graphic->graphicData.color = static_cast<uint32_t>(color) & 0b1111;
     colorChanged = prevColor != graphic->graphicData.color;
 }
