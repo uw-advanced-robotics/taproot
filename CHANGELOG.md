@@ -9,11 +9,14 @@
   outputs directly, the power limiter returns a fraction and it is the user's responsibility to
   multiply the motor output by this fraction.
 
-### Other changes
+### All changes
 
+- `DjiMotor` comments improved (!95).
 - Small improvement to command scheduler subsystem refresh loop logic.
 - `tap::communication::sensors::current::CurrentSensorInterface` and `AnalogCurrentSensor` added,
   which are software constructs for current sensors.
+- Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
+  (!92). 
 
 ## December 2021
 
@@ -29,20 +32,23 @@
   prefixed by `Rx` or `Tx`.
 - `tap::communication::serial::ITerminalSerialCallback` interface renamed to
   `tap::communication::TerminalSerialCallbackInterface`.
+- The drivers object is now generated in `taproot/src/tap` rather than in some user directory. To
+  append your own drivers to the `tap::Drivers` object, inherit `tap::Drivers`.
 
-### Other changes
+### All changes
 
-- Tests were added to the referee serial class. Minor logic/bug changes were made based on the
-  tests (!80, #80).
+- Tests were added to the referee serial class. Minor logic/bug changes were made based on the tests
+  (!80, #80).
 - Robot-to-robot interaction handling was added to the `RefSerial` class. One can send a
   robot-to-robot message via `sendRobotToRobotMsg` and register a callback with the `RefSerial`
   object via `attachRobotToRobotMessageHandler`. This functionality is still in the beta-testing
   phase and needs further validation (!80, #80).
 - `CanRxHandler` class now supports can ids between `0x1e4` and `0x224`. (!84, #124)
 - Tests added to terminal serial and various bugs in related classes were removed (!67, #58).
-- The `CommandScheduler` is now able to safely remove all commands when a user-specified 
+- The `CommandScheduler` is now able to safely remove all commands when a user-specified
   "disconnected" state occurs. One can pass a `SafeDisconnectFunction` functor to the
   `CommandScheduler` to determine what causes a "disconnected" state (!75).
+- `modm:math:interpolation` module now generated (!93).
 
 ## November 2021
 
@@ -53,7 +59,7 @@
   delete and cleanly re-generate your Taproot instance, and update your SConstruct file as shown in
   the template project.
 
-### Other changes
+### All changes
 
 - "sim-modm" instance is now generated for all three major desktop platforms, with hardware builds
   and testing environments fully supported on each. (!73, #96, #15)
