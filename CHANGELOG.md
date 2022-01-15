@@ -43,6 +43,15 @@
   `tap::communication::TerminalSerialCallbackInterface`.
 - The drivers object is now generated in `taproot/src/tap` rather than in some user directory. To
   append your own drivers to the `tap::Drivers` object, inherit `tap::Drivers`.
+- `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
+  less parameters than before and their purpose is different. Also, rather than modifying motor
+  outputs directly, the power limiter returns a fraction and it is the user's responsibility to
+  multiply the motor output by this fraction.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
 
 ### All changes
 
