@@ -119,6 +119,9 @@ TEST(UnjamCommand, command_is_finished_when_subsystem_offline)
     ASSERT_TRUE(command.isFinished());
 }
 
+static constexpr float ORIGIN_VALUE = 2.5f;
+static constexpr float DISPLACEMENT = 2.5f;
+
 // Test function for following test
 static float getCurrentValueSimulator()
 {
@@ -126,15 +129,19 @@ static float getCurrentValueSimulator()
     // Return initial position
     if (time <= 100)
     {
-        return 2.5f;
+        return ORIGIN_VALUE;
     }
     else if (time <= 400)
     {
-        return 0.0f;
+        return ORIGIN_VALUE - DISPLACEMENT;
     }
-    else
+    else if (time <= 800)
     {
-        return 5.0f;
+        return ORIGIN_VALUE + DISPLACEMENT;
+    }
+    else 
+    {
+        return ORIGIN_VALUE;
     }
 }
 
@@ -147,19 +154,23 @@ TEST(UnjamCommand, successful_unjam_behavior)
     CREATE_COMMON_TEST_OBJECTS();
     UnjamCommand command(&subsystem, 3.0f, 2.4f, 1000, 2);
 
-    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(420.0f));
+    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(ORIGIN_VALUE));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     // Simulate unjamming movement in scuffed as hecc way
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
-    // Expect that command clears jam
-    EXPECT_CALL(subsystem, clearJam).Times(AtLeast(1));
-    // Expect that command resets setpoint to original value after successfully ending
-    EXPECT_CALL(subsystem, setSetpoint(FloatEq(420.0f)));
+    // Ideally this should just work since we are returning the exact value, but with floating
+    // point operations it may not be the best.
+    EXPECT_CALL(subsystem, getSetpointTolerance).Times(AtLeast(1)).WillRepeatedly(Return(0.1f));
+    // Expect that command clears jam once at the end
+    EXPECT_CALL(subsystem, clearJam);
+    // Expect that command resets setpoint to original value after successfully clearing
+    // forwards and backwards. Should only need to be set once.
+    EXPECT_CALL(subsystem, setSetpoint(FloatEq(ORIGIN_VALUE)));
 
     setTime(0);
     command.initialize();
 
-    for (int i = 200; i <= 1200; i += 200)
+    for (int i = 50; i <= 1200; i += 50)
     {
         setTime(i);
         command.execute();

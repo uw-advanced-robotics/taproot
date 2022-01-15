@@ -120,31 +120,47 @@ static float getCurrentValueSimulator()
     {
         return 0.0f;
     }
-    else
+    else if (time <= 800)
     {
         return 6.0f;
     }
+    else
+    {
+        return 3.0f;
+    }
 }
 
+/**
+ * This test is fundamentally flawed as 
+ */
 TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
 {
     CREATE_COMMON_TEST_OBJECTS();
     MoveUnjamComprisedCommand
         command(&drivers, &subsystem, 7.5f, 1000, 15, true, 0.2f, 3.0f, 2.5f, 500, 3);
 
-    EXPECT_CALL(subsystem, isJammed).WillRepeatedly(Return(true));
+    bool jamStatus = true;
+    EXPECT_CALL(subsystem, isJammed).WillRepeatedly(ReturnPointee(&jamStatus));
+    EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(3.0f));
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
+    EXPECT_CALL(subsystem, getSetpointTolerance).WillRepeatedly(Return(0.01f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(Lt(0.1f))).Times(AtLeast(1));
     EXPECT_CALL(subsystem, setSetpoint(Gt(5.9f))).Times(AtLeast(1));
-    EXPECT_CALL(subsystem, clearJam).Times(AtLeast(1));
+    EXPECT_CALL(subsystem, clearJam).Times(1).WillRepeatedly(Assign(&jamStatus, false));
 
     setTime(0);
     command.initialize();
-    for (int i = 50; i <= 2000; i += 50)
+    // Note: time between clearing last thing needed to clear (happens for us at 400) 
+    // and calling end must be less than max unjam rotate time, otherwise next call 
+    // of execute() causes unjam to think it's failed to return to origin.
+    for (int i = 50; i <= 1200; i += 50)
     {
         setTime(i);
         command.execute();
+        if (command.isFinished()) {
+            break;
+        }
     }
 
     command.end(!command.isFinished());

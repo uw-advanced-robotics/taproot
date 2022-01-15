@@ -107,7 +107,7 @@ void UnjamCommand::execute()
     }
 
     // Forward and backward thresholds cleared, try to return to original setpoint.
-    if (forwardsCleared && backwardsCleared) {
+    if (currUnjamState != JAM_CLEARED && forwardsCleared && backwardsCleared) {
         currUnjamState = JAM_CLEARED;
         setpointSubsystem->setSetpoint(setpointBeforeUnjam);
         unjamRotateTimeout.restart(maxWaitTime);
@@ -119,7 +119,6 @@ void UnjamCommand::end(bool)
     if (currUnjamState == JAM_CLEARED)
     {
         setpointSubsystem->clearJam();
-        setpointSubsystem->setSetpoint(setpointBeforeUnjam);
     }
     else
     {
@@ -132,7 +131,7 @@ bool UnjamCommand::isFinished() const
     return !setpointSubsystem->isOnline() ||
            (currUnjamState == JAM_CLEARED && tap::algorithms::compareFloatClose(
                                                  setpointSubsystem->getCurrentValue(),
-                                                 setpointSubsystem->getSetpoint(),
+                                                 setpointBeforeUnjam,
                                                  0.9f * setpointSubsystem->getSetpointTolerance())) ||
            backwardsCount >= targetCycleCount + 1;
 }
