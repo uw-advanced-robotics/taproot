@@ -40,7 +40,7 @@ static subsystem_scheduler_bitmap_t calcRequirementsBitwise(const set<Subsystem 
     subsystem_scheduler_bitmap_t sum = 0;
     for (const auto sub : subRequirements)
     {
-        sum |= (1UL << sub->getGlobalIdentifier());
+        sum |= (static_cast<subsystem_scheduler_bitmap_t>(1) << sub->getGlobalIdentifier());
     }
     return sum;
 }
@@ -1325,7 +1325,7 @@ TEST(CommandScheduler, subsystemListSize_commandListSize_returns_number_of_subs_
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
     NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
 
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+    for (int i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
         EXPECT_EQ(i, scheduler.subsystemListSize());
         EXPECT_EQ(i, scheduler.commandListSize());
