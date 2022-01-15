@@ -20,7 +20,8 @@
   which are software constructs for current sensors.
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
   (!92). 
-- `tap::controls::ControlOperatorInterface` deprecated.
+- Taproot tests now build on Windows without warnings (!103).
+- `tap::controls::ControlOperatorInterface` deprecated (!105).
 
 ## December 2021
 

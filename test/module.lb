@@ -19,6 +19,7 @@ MOCK_DIRECTORY = "tap/mock"
 
 import sys
 import os
+import platform
 sys.path.append(repopath("src"))
 import drivers
 
@@ -75,7 +76,7 @@ class TaprootTests(Module):
             env.copy("tap/motor")
         if env.has_module(":communication:can"):
             env.copy("tap/communication/can")
-        if env.has_module(":communication:tcp-server"):
+        if env.has_module(":communication:tcp-server") and platform.system() == "Linux":
             env.copy("tap/communication/tcp-server")
         if env.has_module(":communication:serial:ref_serial"):
             env.copy("tap/communication/serial/ref_serial_tests.cpp")

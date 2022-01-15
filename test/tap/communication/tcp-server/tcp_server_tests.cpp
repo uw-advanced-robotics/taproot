@@ -17,9 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef __linux__
 #include <threads.h>
-#endif  // __linux__
 
 #include <string>
 
@@ -30,7 +28,6 @@
 
 #include "tcp_test_client.hpp"
 
-#ifdef __linux__
 using namespace tap::communication;
 using test::communication::TCPClient;
 
@@ -65,11 +62,3 @@ TEST(TCPServerTests, SendingCorrectMessages)
         ;
     EXPECT_STREQ(response, "Test message 1 2 3");
 }
-#else
-
-TEST(TCPServerTests, DISABLED_SendingCorrectMessages)
-{
-    // not supported on current host OS
-}
-
-#endif  // __linux__
