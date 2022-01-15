@@ -20,7 +20,7 @@
 #ifndef BMI088_HAL_HPP_
 #define BMI088_HAL_HPP_
 
-#ifdef ENV_UNIT_TESTS
+#if defined(ENV_UNIT_TESTS)
 #include <deque>
 #endif
 
@@ -194,7 +194,7 @@ public:
         chipSelectGyroHigh();
     }
 
-#ifdef ENV_UNIT_TESTS
+#if defined(ENV_UNIT_TESTS)
     /**
      * Insert some data into the queue so the next time bmi088ReadWriteByte is called,
      * it will be returned by the function.
