@@ -17,6 +17,25 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
+#ifndef SENSOR_INTERFACE_HPP_
+#define SENSOR_INTERFACE_HPP_
 
-int main() { return 0; }
+namespace tap::communication::sensors
+{
+/**
+ * Interface for generic sensor that requires a periodic update.
+ *
+ * This interface may be used in conjunction with a sensor scheduler (see #132).
+ */
+class SensorInterface
+{
+public:
+    /**
+     * Function that one implements that reads data from the sensor and performs any filtering as
+     * required.
+     */
+    virtual void update() = 0;
+};
+}  // namespace tap::communication::sensors
+
+#endif  // SENSOR_INTERFACE_HPP_

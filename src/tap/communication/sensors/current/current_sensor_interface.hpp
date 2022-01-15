@@ -17,6 +17,24 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
+#ifndef CURRENT_SENSOR_INTERFACE_HPP_
+#define CURRENT_SENSOR_INTERFACE_HPP_
 
-int main() { return 0; }
+#include "tap/communication/sensors/sensor_interface.hpp"
+
+namespace tap::communication::sensors::current
+{
+/**
+ * Interface for a generic current sensor.
+ */
+class CurrentSensorInterface : public tap::communication::sensors::SensorInterface
+{
+public:
+    /**
+     * @return The current read by the current sensor, in milliamps.
+     */
+    virtual float getCurrentMa() const = 0;
+};
+}  // namespace tap::communication::sensors::current
+
+#endif  // CURRENT_SENSOR_INTERFACE_HPP_

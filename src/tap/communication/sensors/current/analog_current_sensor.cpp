@@ -17,6 +17,26 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
+#include "analog_current_sensor.hpp"
 
-int main() { return 0; }
+#include "tap/algorithms/math_user_utils.hpp"
+
+using namespace tap::algorithms;
+
+namespace tap::communication::sensors::current
+{
+AnalogCurrentSensor::AnalogCurrentSensor(const Config &config) : config(config) {}
+
+float AnalogCurrentSensor::getCurrentMa() const { return prevCurrent; }
+
+void AnalogCurrentSensor::update()
+{
+    prevCurrent = lowPassFilter(
+        prevCurrent,
+        abs(static_cast<float>(config.analogDriver->read(config.analogSensorPin)) -
+            config.currentSensorZeroMv) *
+            config.currentSensorMaPerMv,
+        config.currentSensorLowPassAlpha);
+}
+
+}  // namespace tap::communication::sensors::current
