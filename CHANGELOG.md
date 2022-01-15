@@ -17,6 +17,7 @@
   which are software constructs for current sensors.
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
   (!92). 
+- Taproot tests now build on Windows without warnings (!103).
 
 ## December 2021
 
