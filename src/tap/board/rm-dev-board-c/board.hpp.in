@@ -123,10 +123,6 @@ struct SystemClock
 
 #ifndef PLATFORM_HOSTED
 
-// Initialize button
-
-using Button = GpioInputA0;
-
 // Initialize leds
 
 using LedRed = GpioOutputH12;
