@@ -37,6 +37,7 @@ BooleanDrawer::BooleanDrawer(
       graphic(graphic),
       boolFalseColor(boolFalseColor)
 {
+    minUpdatePeriodTimeout.stop();
 }
 
 modm::ResumableResult<bool> BooleanDrawer::initialize()
@@ -69,7 +70,11 @@ modm::ResumableResult<bool> BooleanDrawer::draw()
 
 void BooleanDrawer::setDrawerColor(bool filledWithInitialColor)
 {
-    this->filledWithInitialColor = filledWithInitialColor;
+    if (minUpdatePeriodTimeout.isExpired() || minUpdatePeriodTimeout.isStopped())
+    {
+        this->filledWithInitialColor = filledWithInitialColor;
+        minUpdatePeriodTimeout.restart(MIN_UPDATE_PERIOD);
+    }
 }
 
 void BooleanDrawer::updateColor()

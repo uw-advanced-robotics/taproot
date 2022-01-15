@@ -48,6 +48,12 @@ namespace tap::communication::serial::ref_serial_ui_wrapeprs
 class BooleanDrawer : public modm::Resumable<2>
 {
 public:
+    /**
+     * The boolean will ignore calls in `setDrawerColor` MIN_UPDATE_PERIOD ms after `setDrawerColor`
+     * is drawn. This is to avoid rapid back and forth updating of the graphic.
+     */
+    static constexpr uint32_t MIN_UPDATE_PERIOD = 500;
+
     BooleanDrawer(
         tap::Drivers *drivers,
         tap::serial::RefSerial::Tx::Graphic1Message *graphic,
@@ -76,6 +82,8 @@ private:
     bool colorChanged = false;
 
     tap::arch::MilliTimeout delayTimeout;
+
+    tap::arch::MilliTimeout minUpdatePeriodTimeout;
 
     void updateColor();
 };
