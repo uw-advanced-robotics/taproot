@@ -43,7 +43,6 @@ namespace tap::communication::sensors::bmi088
 #define DELAY_US(us) modm::delay_us(us);
 #endif
 
-
 Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
 
 Bmi088::ImuState Bmi088::getImuState() const { return imuState; }
@@ -71,7 +70,7 @@ void Bmi088::requestRecalibration()
 
 void Bmi088::initialize()
 {
-#ifndef PLATFORM_HOSTED
+#if !defined(PLATFORM_HOSTED)
     ImuCS1Accel::GpioOutput();
     ImuCS1Gyro::GpioOutput();
 

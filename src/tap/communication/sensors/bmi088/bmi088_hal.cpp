@@ -17,12 +17,11 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "bmi088_mock.hpp"
+#include "bmi088_hal.hpp"
 
-namespace tap::mock
+#ifdef ENV_UNIT_TESTS
+namespace tap::communication::sensors::bmi088
 {
-Bmi088Mock::Bmi088Mock(tap::Drivers *drivers) : tap::communication::sensors::bmi088::Bmi088(drivers)
-{
+std::deque<uint8_t> Bmi088Hal::rxData;
 }
-Bmi088Mock::~Bmi088Mock() {}
-}  // namespace tap::mock
+#endif
