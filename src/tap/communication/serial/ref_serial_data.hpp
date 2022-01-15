@@ -351,9 +351,16 @@ public:
             uint32_t lineWidth : 10;
             uint32_t startX : 11;
             uint32_t startY : 11;
-            uint32_t radius : 10;
-            uint32_t endX : 11;
-            uint32_t endY : 11;
+            union
+            {
+                struct
+                {
+                    uint32_t radius : 10;
+                    uint32_t endX : 11;
+                    uint32_t endY : 11;
+                } modm_packed;
+                int32_t value : 32;
+            } modm_packed;
         } modm_packed;
 
         struct DeleteGraphicLayerMessage

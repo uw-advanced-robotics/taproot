@@ -248,13 +248,6 @@ public:
         int32_t value,
         Tx::GraphicData* sharedData);
     /**
-     * Only updates the integer value stored in the `sharedData` (it is assumed that
-     * the `GraphicData` is already configured with `configInteger`).
-     *
-     * @param[out] sharedData The message with whose value to update.
-     */
-    static void updateInteger(int32_t value, Tx::GraphicData* sharedData);
-    /**
      * Configures a character message in the passed in `GraphicCharacterMessage`.
      *
      * @param[out] sharedData The message to configure.

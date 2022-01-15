@@ -465,11 +465,7 @@ void RefSerial::configFloatingNumber(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
-    // Do this janky stuff to get an int in a bitfield
-    int32_t valueInt = 1000 * value;
-    sharedData->radius = valueInt & 0x3fff;
-    sharedData->endX = (valueInt >> 10) & 0x7ff;
-    sharedData->endY = (valueInt >> 21) & 0x7ff;
+    sharedData->value = 1000 * value;
 }
 
 void RefSerial::configInteger(
@@ -486,16 +482,7 @@ void RefSerial::configInteger(
     sharedData->startX = startX;
     sharedData->startY = startY;
     // Do this janky stuff to get an int in a bitfield
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
-}
-
-void RefSerial::updateInteger(int32_t value, Tx::GraphicData* sharedData)
-{
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
+    sharedData->value = value;
 }
 
 void RefSerial::configCharacterMsg(
