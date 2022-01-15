@@ -22,7 +22,6 @@
 
 #include <cstdint>
 
-#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/algorithms/ramp.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
@@ -43,9 +42,15 @@ class SetpointSubsystem;
  * One back and forward motion counts as a cycle. Unjamming cycles start by trying
  * to move in negative direction before trying to move in positive direction.
  *
- * If successful the unjam command will return the setpoint of the subsystem back
- * to its original value. If not successful, setpoint is set to current value so as
- * to not damage motors.
+ * If the unjam command successfully clears its forward and backward threshold it will
+ * return the setpoint of the subsystem back to its original value and call the setpoint 
+ * subsystem's clear jam method once the subsystem has reached it's original value or 
+ * once interrupted. If not successful, setpoint is set to current value so as to not 
+ * damage motors.
+ * 
+ * If the subsystem fails to return to the original value after clearing its forward
+ * and backward thresholds it will continue the unjamming sequence with what remaining
+ * cycles it has.
  *
  * Like most setpoint commands this one will not schedule/will deschedule if setpointSubsystem
  * goes offline.
@@ -90,7 +95,8 @@ private:
     enum UnjamState
     {
         UNJAM_BACKWARD,
-        UNJAM_FORWARD
+        UNJAM_FORWARD,
+        JAM_CLEARED
     };
 
     void beginUnjamForwards();

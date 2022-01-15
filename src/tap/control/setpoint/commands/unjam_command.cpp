@@ -19,6 +19,7 @@
 
 #include "unjam_command.hpp"
 
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/control/setpoint/interfaces/setpoint_subsystem.hpp"
 
 namespace tap
@@ -95,12 +96,27 @@ void UnjamCommand::execute()
                 beginUnjamBackwards();
             }
             break;
+        case JAM_CLEARED:
+            // Jam has been cleared. If it's taken longer than unjamRotateTimeout
+            // resume unjamming
+            if (unjamRotateTimeout.isExpired()) {
+                backwardsCleared = false;
+                forwardsCleared = false;
+                beginUnjamForwards();
+            }
+    }
+
+    // Forward and backward thresholds cleared, try to return to original setpoint.
+    if (forwardsCleared && backwardsCleared) {
+        currUnjamState = JAM_CLEARED;
+        setpointSubsystem->setSetpoint(setpointBeforeUnjam);
+        unjamRotateTimeout.restart(maxWaitTime);
     }
 }
 
 void UnjamCommand::end(bool)
 {
-    if (forwardsCleared && backwardsCleared)
+    if (currUnjamState == JAM_CLEARED)
     {
         setpointSubsystem->clearJam();
         setpointSubsystem->setSetpoint(setpointBeforeUnjam);
@@ -113,7 +129,11 @@ void UnjamCommand::end(bool)
 
 bool UnjamCommand::isFinished() const
 {
-    return !setpointSubsystem->isOnline() || (forwardsCleared && backwardsCleared) ||
+    return !setpointSubsystem->isOnline() ||
+           (currUnjamState == JAM_CLEARED && tap::algorithms::compareFloatClose(
+                                                 setpointSubsystem->getCurrentValue(),
+                                                 setpointSubsystem->getSetpoint(),
+                                                 0.9f * setpointSubsystem->getSetpointTolerance())) ||
            backwardsCount >= targetCycleCount + 1;
 }
 

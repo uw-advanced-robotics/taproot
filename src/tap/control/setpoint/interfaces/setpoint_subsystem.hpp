@@ -64,6 +64,13 @@ public:
     virtual float getCurrentValue() const = 0;
 
     /**
+     * @return the setpoint tolerance. This is the maximum distance between
+     *      the ideal setpoint and current value of the controlled variable
+     *      at which the subsystem won't consider itself jammed.
+     */
+    virtual float getSetpointTolerance() const = 0;
+
+    /**
      * Attempts to calibrate the subsystem at the current position, such that
      * `getCurrentValue` will return 0 units at this position.
      *
