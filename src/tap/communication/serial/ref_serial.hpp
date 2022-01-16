@@ -254,7 +254,6 @@ public:
      */
     static void configCharacterMsg(
         uint16_t fontSize,
-        uint16_t charLen,
         uint16_t width,
         uint16_t startX,
         uint16_t startY,
