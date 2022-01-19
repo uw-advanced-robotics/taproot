@@ -139,7 +139,7 @@ static float getCurrentValueSimulator()
     {
         return ORIGIN_VALUE + DISPLACEMENT;
     }
-    else 
+    else
     {
         return ORIGIN_VALUE;
     }

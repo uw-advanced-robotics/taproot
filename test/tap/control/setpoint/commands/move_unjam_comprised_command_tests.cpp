@@ -131,7 +131,7 @@ static float getCurrentValueSimulator()
 }
 
 /**
- * This test is fundamentally flawed as 
+ * This test is fundamentally flawed as
  */
 TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
 {
@@ -151,14 +151,15 @@ TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
 
     setTime(0);
     command.initialize();
-    // Note: time between clearing last thing needed to clear (happens for us at 400) 
-    // and calling end must be less than max unjam rotate time, otherwise next call 
+    // Note: time between clearing last thing needed to clear (happens for us at 400)
+    // and calling end must be less than max unjam rotate time, otherwise next call
     // of execute() causes unjam to think it's failed to return to origin.
     for (int i = 50; i <= 1200; i += 50)
     {
         setTime(i);
         command.execute();
-        if (command.isFinished()) {
+        if (command.isFinished())
+        {
             break;
         }
     }

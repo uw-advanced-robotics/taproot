@@ -35,8 +35,14 @@ namespace setpoint
 class SetpointSubsystem;
 
 /**
- * A comprised command that combines the unjam and move commands and provides
- * unjam monitoring to perform a single agitator rotation with unjamming if necessary.
+ * A comprised command that combines the unjam and move commands.
+ *
+ * Assuming no jams occur, this command behaves like a MoveCommand. It will
+ * schedule once and end once the target displacement is reached. If it gets
+ * jammed while trying to move then the command will then schedule a UnjamCommand.
+ * At this point the command will end when the UnjamCommand ends.
+ *
+ * See `UnjamCommand` and `MoveCommand` for more details on their respective logic.
  */
 class MoveUnjamComprisedCommand : public tap::control::ComprisedCommand
 {
