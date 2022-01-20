@@ -17,10 +17,11 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BOOLEAN_HUD_INDICATOR_HPP_
-#define BOOLEAN_HUD_INDICATOR_HPP_
+#ifndef STATE_HUD_INDICATOR_HPP_
+#define STATE_HUD_INDICATOR_HPP_
 
 #include "tap/architecture/timeout.hpp"
+#include "tap/drivers.hpp"
 
 #include "../ref_serial.hpp"
 #include "modm/processing/resumable.hpp"
@@ -33,10 +34,11 @@ class Drivers;
 namespace tap::communication::serial::ref_serial_ui_wrapeprs
 {
 /**
- * Draws a graphic. Each graphic has an associated true/false state. When the state associated with
- * this object is updated, a function is called in which the user can update the graphic based on
- * the state. In this way, the user may select to update color or shape of a graphic based on the
- * indicator's state.
+ * Draws a graphic. Each graphic has an associated state (of type specified by the template
+ * parameter). Can be true/false, some enumeration type, or something else. When the state
+ * associated with this object is updated, a function is called in which the user can update the
+ * graphic based on the state. In this way, the user may select to update color or shape of a
+ * graphic based on the indicator's state.
  *
  * To use this drawer, pass in a `Graphic1Message` object that you must configure via calls to
  * `configGraphicGenerics` and `config<circle|line|etc.>`.
@@ -47,9 +49,8 @@ namespace tap::communication::serial::ref_serial_ui_wrapeprs
  *
  * Usage:
  *
- * To construct some `BooleanHUDIndicator indicator`
- * you must pass it an `UpdateHUDIndicatorState` function. For example, the function can be
- * something like this:
+ * To construct some `StateHUDIndicator<bool> indicator` you must pass it an
+ * `UpdateHUDIndicatorState` function. For example, the function can be something like this:
  *
  * ```
  * void updateColor(bool state, Tx::Graphic1Message *graphic) {
@@ -72,17 +73,24 @@ namespace tap::communication::serial::ref_serial_ui_wrapeprs
  * }
  * // Initialize the declare a drawer
  * ```
+ *
+ * @tparam T Type of the state associated with the HUD indicator.
  */
-class BooleanHUDIndicator : public modm::Resumable<2>
+template <typename T>
+class StateHUDIndicator : public modm::Resumable<2>
 {
 public:
+#define delay()                                                                      \
+    delayTimeout.restart(tap::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic)); \
+    RF_WAIT_UNTIL(delayTimeout.execute());
+
     /**
      * Function pointer, this type of function will be called when the state of the graphic needs
      * updating. Expected that the user will update the graphic appropriately based on the current
      * state.
      */
     using UpdateHUDIndicatorState =
-        void (*)(bool state, tap::serial::RefSerial::Tx::Graphic1Message *graphic);
+        void (*)(T state, tap::serial::RefSerial::Tx::Graphic1Message *graphic);
 
     /**
      * The boolean will ignore calls in `setIndicatorState` MIN_UPDATE_PERIOD ms after
@@ -90,15 +98,55 @@ public:
      */
     static constexpr uint32_t MIN_UPDATE_PERIOD = 500;
 
-    BooleanHUDIndicator(
+    StateHUDIndicator(
         tap::Drivers *drivers,
         tap::serial::RefSerial::Tx::Graphic1Message *graphic,
-        UpdateHUDIndicatorState updateFunction);
+        UpdateHUDIndicatorState updateFunction)
+        : drivers(drivers),
+          graphic(graphic),
+          updateFunction(updateFunction)
+    {
+        minUpdatePeriodTimeout.stop();
+    }
 
-    modm::ResumableResult<bool> initialize();
-    modm::ResumableResult<bool> draw();
+    modm::ResumableResult<bool> initialize()
+    {
+        RF_BEGIN(0);
+        // Initially add the graphic
+        graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC;
+        drivers->refSerial.sendGraphic(graphic);
+        // In future calls to sendGraphic only modify the graphic
+        graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
+        delay();
+        RF_END();
+    }
 
-    void setIndicatorState(bool newIndicatorState);
+    modm::ResumableResult<bool> draw()
+    {
+        RF_BEGIN(1);
+        if (indicatorChanged)
+        {
+            // resend graphic if color changed
+            drivers->refSerial.sendGraphic(graphic);
+            indicatorChanged = false;
+            delay();
+        }
+        RF_END();
+    }
+
+    void setIndicatorState(T newIndicatorState)
+    {
+        if (minUpdatePeriodTimeout.isExpired() || minUpdatePeriodTimeout.isStopped())
+        {
+            if (indicatorState != newIndicatorState)
+            {
+                indicatorState = newIndicatorState;
+                updateFunction(indicatorState, graphic);
+                indicatorChanged = true;
+                minUpdatePeriodTimeout.restart(MIN_UPDATE_PERIOD);
+            }
+        }
+    }
 
 private:
     tap::Drivers *drivers;
@@ -107,13 +155,16 @@ private:
 
     UpdateHUDIndicatorState updateFunction;
 
-    bool indicatorState = false;
+    T indicatorState = false;
     bool indicatorChanged = false;
 
     tap::arch::MilliTimeout delayTimeout;
 
     tap::arch::MilliTimeout minUpdatePeriodTimeout;
 };
+
+using BooleanHUDIndicator = StateHUDIndicator<bool>;
+
 }  // namespace tap::communication::serial::ref_serial_ui_wrapeprs
 
-#endif  // BOOLEAN_HUD_INDICATOR_HPP_
+#endif  // STATE_HUD_INDICATOR_HPP_
