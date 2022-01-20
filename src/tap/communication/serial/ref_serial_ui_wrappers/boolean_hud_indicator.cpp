@@ -17,7 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "boolean_drawer.hpp"
+#include "boolean_hud_indicator.hpp"
 
 #include "tap/drivers.hpp"
 
@@ -29,22 +29,20 @@ using namespace tap::serial;
 
 namespace tap::communication::serial::ref_serial_ui_wrapeprs
 {
-BooleanDrawer::BooleanDrawer(
+BooleanHUDIndicator::BooleanHUDIndicator(
     tap::Drivers *drivers,
     RefSerial::Tx::Graphic1Message *graphic,
-    RefSerial::Tx::GraphicColor boolFalseColor)
+    UpdateHUDIndicatorState updateFunction)
     : drivers(drivers),
       graphic(graphic),
-      boolFalseColor(boolFalseColor)
+      updateFunction(updateFunction)
 {
     minUpdatePeriodTimeout.stop();
 }
 
-modm::ResumableResult<bool> BooleanDrawer::initialize()
+modm::ResumableResult<bool> BooleanHUDIndicator::initialize()
 {
     RF_BEGIN(0);
-    savedColor = static_cast<tap::serial::RefSerial::Tx::GraphicColor>(graphic->graphicData.color);
-    updateColor();
     // Initially add the graphic
     graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC;
     drivers->refSerial.sendGraphic(graphic);
@@ -54,35 +52,31 @@ modm::ResumableResult<bool> BooleanDrawer::initialize()
     RF_END();
 }
 
-modm::ResumableResult<bool> BooleanDrawer::draw()
+modm::ResumableResult<bool> BooleanHUDIndicator::draw()
 {
     RF_BEGIN(1);
-    updateColor();
-    if (colorChanged)
+    if (indicatorChanged)
     {
         // resend graphic if color changed
         drivers->refSerial.sendGraphic(graphic);
-        colorChanged = false;
+        indicatorChanged = false;
         delay();
     }
     RF_END();
 }
 
-void BooleanDrawer::setDrawerColor(bool filledWithInitialColor)
+void BooleanHUDIndicator::setIndicatorState(bool newIndicatorState)
 {
     if (minUpdatePeriodTimeout.isExpired() || minUpdatePeriodTimeout.isStopped())
     {
-        this->filledWithInitialColor = filledWithInitialColor;
-        minUpdatePeriodTimeout.restart(MIN_UPDATE_PERIOD);
+        if (indicatorState != newIndicatorState)
+        {
+            indicatorState = newIndicatorState;
+            updateFunction(indicatorState, graphic);
+            indicatorChanged = true;
+            minUpdatePeriodTimeout.restart(MIN_UPDATE_PERIOD);
+        }
     }
 }
 
-void BooleanDrawer::updateColor()
-{
-    uint32_t prevColor = graphic->graphicData.color;
-    tap::serial::RefSerial::Tx::GraphicColor color;
-    color = filledWithInitialColor ? savedColor : boolFalseColor;
-    graphic->graphicData.color = static_cast<uint32_t>(color) & 0b1111;
-    colorChanged = prevColor != graphic->graphicData.color;
-}
 }  // namespace tap::communication::serial::ref_serial_ui_wrapeprs
