@@ -46,6 +46,9 @@ def prepare(module, options):
     # servo dependencies
     module.depends(":communication:gpio:pwm")
 
+    # power limiter dependencies
+    module.depends(":communication:sensors:current")
+
     return True
 
 def build(env):

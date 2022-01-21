@@ -43,7 +43,8 @@ struct SmoothPidConfig
                                         /// is applied to the proportional error
     float tRProportionalKalman = 0.0f;  /// the measurement noise covariance for the kalman filter
                                         /// that is applied to the proportional error
-    float errDeadzone = 0.0f;
+    float errDeadzone = 0.0f;           /// within [-errDeadzone, errDeadzone], the PID controller
+                                        /// error will be set to 0
 };
 
 class SmoothPid

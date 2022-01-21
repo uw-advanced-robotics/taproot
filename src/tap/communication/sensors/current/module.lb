@@ -1,5 +1,3 @@
-#!/bin/bash
-#
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
@@ -16,23 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
-#
-# This script builds the hardware profile for each robot target.
-# Assumes you are in the build directory (where the SConstruct file is) 
 
-set -e
+def init(module):
+    module.name = ":communication:sensors:current"
+    module.description = "Current sensor interface and various current sensors"
 
-targets="\
-    TARGET_SOLDIER \
-    TARGET_OLD_SOLDIER \
-    TARGET_ENGINEER \
-    TARGET_HERO \
-    TARGET_SENTINEL \
-    TARGET_DRONE"
+def prepare(module, options):
+    return True
 
-for target in $targets; do
-    echo ===============================================================================
-    echo building $target
-    echo ===============================================================================
-    /usr/bin/env python3 $(which scons) build robot=$target additional-ccflags=-Werror
-done
+def build(env):
+    env.outbasepath = "taproot/src/tap/communication/sensors/current"
+    env.copy(".")

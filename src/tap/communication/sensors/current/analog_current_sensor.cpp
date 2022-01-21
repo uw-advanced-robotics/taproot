@@ -17,13 +17,26 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "control_operator_interface_mock.hpp"
+#include "analog_current_sensor.hpp"
 
-namespace tap::mock
+#include "tap/algorithms/math_user_utils.hpp"
+
+using namespace tap::algorithms;
+
+namespace tap::communication::sensors::current
 {
-ControlOperatorInterfaceMock::ControlOperatorInterfaceMock(tap::Drivers *drivers)
-    : tap::control::ControlOperatorInterface(drivers)
+AnalogCurrentSensor::AnalogCurrentSensor(const Config &config) : config(config) {}
+
+float AnalogCurrentSensor::getCurrentMa() const { return prevCurrent; }
+
+void AnalogCurrentSensor::update()
 {
+    prevCurrent = lowPassFilter(
+        prevCurrent,
+        abs(static_cast<float>(config.analogDriver->read(config.analogSensorPin)) -
+            config.currentSensorZeroMv) *
+            config.currentSensorMaPerMv,
+        config.currentSensorLowPassAlpha);
 }
-ControlOperatorInterfaceMock::~ControlOperatorInterfaceMock() {}
-}  // namespace tap::mock
+
+}  // namespace tap::communication::sensors::current

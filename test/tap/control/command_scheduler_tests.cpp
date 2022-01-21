@@ -24,11 +24,13 @@
 #include "tap/control/command_scheduler.hpp"
 #include "tap/drivers.hpp"
 #include "tap/mock/command_mock.hpp"
+#include "tap/mock/remote_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
 
 using std::set;
 using tap::Drivers;
 using tap::mock::CommandMock;
+using tap::mock::RemoteMock;
 using tap::mock::SubsystemMock;
 using namespace tap::control;
 using namespace testing;
@@ -38,10 +40,20 @@ static subsystem_scheduler_bitmap_t calcRequirementsBitwise(const set<Subsystem 
     subsystem_scheduler_bitmap_t sum = 0;
     for (const auto sub : subRequirements)
     {
-        sum |= (1UL << sub->getGlobalIdentifier());
+        sum |= (static_cast<subsystem_scheduler_bitmap_t>(1) << sub->getGlobalIdentifier());
     }
     return sum;
 }
+
+class RemoteSafeDisconnectFunction : public tap::control::SafeDisconnectFunction
+{
+public:
+    RemoteSafeDisconnectFunction(Drivers *drivers) { this->drivers = drivers; };
+    virtual bool operator()() { return !drivers->remote.isConnected(); }
+
+private:
+    Drivers *drivers;
+};
 
 TEST(CommandScheduler, constructor_multiple_master_schedulers_throws_error)
 {
@@ -1101,6 +1113,147 @@ TEST(CommandScheduler, run_default_command_that_naturally_ends_always_reschedule
     scheduler.run();
 }
 
+TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    NiceMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    EXPECT_CALL(c, end);
+    EXPECT_CALL(s, refresh);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    scheduler.run();
+}
+
+TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c1, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(c2, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    EXPECT_CALL(s, refresh);
+    EXPECT_CALL(c1, end);
+    EXPECT_CALL(c2, end);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c1);
+    scheduler.addCommand(&c2);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    scheduler.run();
+}
+
+TEST(CommandScheduler, run_command_when_remote_reconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    NiceMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    EXPECT_CALL(s, refresh).Times(3);
+    EXPECT_CALL(c, initialize).Times(2);
+    EXPECT_CALL(c, execute).Times(2);
+    EXPECT_CALL(c, end);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    scheduler.run();
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+    scheduler.addCommand(&c);
+    scheduler.run();
+    scheduler.run();
+}
+
+TEST(CommandScheduler, default_command_added_when_remote_reconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    StrictMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    EXPECT_CALL(c, getRequirementsBitwise)
+        .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c));
+    EXPECT_CALL(c, isReady).WillOnce(Return(true));
+    EXPECT_CALL(c, initialize);
+    EXPECT_CALL(c, execute);
+    EXPECT_CALL(c, isFinished);
+    EXPECT_CALL(s, refresh).Times(3);
+
+    scheduler.registerSubsystem(&s);
+    scheduler.run();
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+    scheduler.run();
+    scheduler.run();
+}
+
+TEST(CommandScheduler, command_not_added_when_remote_disconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    StrictMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    EXPECT_CALL(s, refresh);
+
+    scheduler.registerSubsystem(&s);
+    scheduler.run();
+}
+
+TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    StrictMock<CommandMock> c;
+    SubsystemMock s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
+    EXPECT_CALL(c, initialize).Times(0);
+    EXPECT_CALL(s, refresh);
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c);
+    scheduler.run();
+}
+
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
 {
     Drivers drivers;
@@ -1172,7 +1325,7 @@ TEST(CommandScheduler, subsystemListSize_commandListSize_returns_number_of_subs_
     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
     NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
 
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+    for (int i = 0; i < SUBS_CMDS_TO_CREATE; i++)
     {
         EXPECT_EQ(i, scheduler.subsystemListSize());
         EXPECT_EQ(i, scheduler.commandListSize());
