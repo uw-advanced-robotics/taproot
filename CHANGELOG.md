@@ -3,7 +3,10 @@
 ## January 2022
 
 ### Breaking changes
-
+- `tap::controls::ControlOperatorInterface` has been removed from Taproot. We have added it to
+  [our personal open-source project, aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb) for those
+  who would like to keep up with our implementation of that feature, but it will need to be
+  added/implemented externally going forward in order to keep the functionality it provides.
 - `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
   less parameters than before and their purpose is different. Also, rather than modifying motor
   outputs directly, the power limiter returns a fraction and it is the user's responsibility to
@@ -23,6 +26,8 @@
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
   (!92). 
 - Taproot tests now build on Windows without warnings (!103).
+- `tap::controls::ControlOperatorInterface` deprecated (!105).
+- `tap::controls::turret::TurretSetpointCommand` deprecated.
 - `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
   calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
   parameters.
