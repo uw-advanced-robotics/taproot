@@ -47,11 +47,21 @@ namespace sensors
 class Mpu6500 : public ::modm::pt::Protothread
 {
 public:
+    /**
+     * Possible IMU states for the Mpu6500.
+     */
     enum class ImuState
     {
+        /** Indicates the IMU's init function was not called or initialization failed, so data from
+           this class will be undefined. */
         IMU_NOT_CONNECTED,
+        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
+           computed. */
         IMU_NOT_CALIBRATED,
+        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
+           IMU is in this state is undefined. */
         IMU_CALIBRATING,
+        /** Indicates the IMU is connected and calibration offsets have been computed. */
         IMU_CALIBRATED,
     };
 
@@ -84,7 +94,7 @@ public:
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
-     * calibrated. When not connected, IMU data will be garbage. When not calibrated, IMU data is
+     * calibrated. When not connected, IMU data is undefiend. When not calibrated, IMU data is
      * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
      * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
      * not drift.
@@ -175,7 +185,7 @@ private:
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
     /**
-     * The number of samples we take in order to determine the mpu offsets.
+     * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
     static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
 
