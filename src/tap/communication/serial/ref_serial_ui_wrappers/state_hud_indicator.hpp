@@ -80,10 +80,6 @@ template <typename T>
 class StateHUDIndicator : public modm::Resumable<2>
 {
 public:
-#define delay()                                                                      \
-    delayTimeout.restart(tap::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic)); \
-    RF_WAIT_UNTIL(delayTimeout.execute());
-
     /**
      * Function pointer, this type of function will be called when the state of the graphic needs
      * updating. Expected that the user will update the graphic appropriately based on the current
@@ -117,7 +113,11 @@ public:
         drivers->refSerial.sendGraphic(graphic);
         // In future calls to sendGraphic only modify the graphic
         graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
-        delay();
+
+        delayTimeout.restart(
+            tap::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic));
+        RF_WAIT_UNTIL(delayTimeout.execute());
+
         RF_END();
     }
 
@@ -129,7 +129,9 @@ public:
             // resend graphic if color changed
             drivers->refSerial.sendGraphic(graphic);
             indicatorChanged = false;
-            delay();
+            delayTimeout.restart(
+                tap::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic));
+            RF_WAIT_UNTIL(delayTimeout.execute());
         }
         RF_END();
     }
