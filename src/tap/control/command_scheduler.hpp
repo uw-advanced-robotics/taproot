@@ -293,6 +293,8 @@ private:
     static constexpr float MAX_ALLOWABLE_SCHEDULER_RUNTIME = 100;
     static constexpr int MAX_SUBSYSTEM_COUNT = sizeof(subsystem_scheduler_bitmap_t) * 8;
     static constexpr int MAX_COMMAND_COUNT = sizeof(command_scheduler_bitmap_t) * 8;
+    static constexpr subsystem_scheduler_bitmap_t LSB_ONE_HOT_SUBSYSTEM_BITMAP = 1;
+    static constexpr command_scheduler_bitmap_t LSB_ONE_HOT_COMMAND_BITMAP = 1;
     static constexpr int INVALID_ITER_INDEX = -1;
 
     /**
