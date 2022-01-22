@@ -55,7 +55,7 @@ public:
     virtual inline bool isRightFrontMotorOnline() const = 0;
     virtual inline bool isRightBackMotorOnline() const = 0;
 
-    // Returns true if all four motors are 
+    // Returns true if all four motors are
     inline bool areAllMotorsOnline()
     {
         return isLeftFrontMotorOnline() && isLeftBackMotorOnline && isRightFrontMotorOnline() &&

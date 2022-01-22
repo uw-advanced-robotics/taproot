@@ -42,10 +42,7 @@ public:
     /**
      * @param[out] output destination for the current odometry frame
      */
-    inline void getCurrentOdometryFrame(OdometryFrame* output)
-    {
-        *output = odometryFrame;
-    }
+    inline void getCurrentOdometryFrame(OdometryFrame* output) { *output = odometryFrame; }
 
     /**
      * Resets the stored odometry frame such that the current position of

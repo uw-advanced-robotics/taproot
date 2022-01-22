@@ -36,56 +36,9 @@ class ChassisSubsystemInterface;
 
 namespace tap::control::odometry
 {
-/**
- * Object used to get chassis orientation relative to field x-axis. Positive
- * angles sweep from field x-axis to field y-axis. It is important that
- * the positive z-axis that this orientation getter uses and the chassis velocity
- * getter uses point in the same direction to have a meaningful coordinate output!
- * (Either both up or both down and the same handedness, but only an insane person
- * would use a left-handed coordinate system)
- *
- * Implemented as interface to allow user implementation of how chassis
- * angle is determined.
- *
- * Getting chassis orientation may fail as implementor chooses by returning
- * `false` to indicate either values are too stale or sensor went offline etc.
- * If return value is `false` odometry logic won't run that tick.
- */
-class ChassisOrientationGetterInterface
-{
-public:
-    /**
-     * @param[out] output destination for chassis orientation in radians.
-     *      Value will be 0 if valid data unavailable
-     * @return `true` if valid chassis orientation data was available,
-     *      `false` otherwise.
-     */
-    virtual bool getChassisOrientation(float* output) = 0;
-};
-
-/**
- * Interface for getting chassis velocity in chassis frame
- *
- * Important that positive z-axis that this uses points in the same direction
- * as the positive z-axis which the orientation getter uses (and that they both
- * are the same handedness, but why would you ever use left-handed axes?!).
- *
- * Getting chassis velocity may fail as implementor chooses to indicate
- * either values are too stale or sensor went offline etc.
- * If return value is `false` odometry logic won't run that tick.
- */
-class ChassisVelocityGetterInterface
-{
-public:
-    /**
-     * @param[out] x destination for x component of chassis velocity in m/s. 0 if
-     *      valid data unavailable.
-     * @param[out] y destination for y component of chassis velocity in m/s. 0 if
-     *      valid data unavailable.
-     * @return `true` if valid chassis velocity data was available, `false` otherwise.
-     */
-    virtual bool getChassisVelocity(float* x, float* y) = 0;
-};
+// Forward declarations
+class ChassisOrientationGetterInterface;
+class ChassisVelocityGetterInterface;
 
 /**
  * A subsystem for keeping track of the position of a chassis in the field

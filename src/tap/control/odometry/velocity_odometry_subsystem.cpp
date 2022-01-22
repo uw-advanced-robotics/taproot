@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "velocity_odometry_subsystem.hpp"
 
 #include <cmath>
@@ -23,6 +24,9 @@
 #include "tap/architecture/clock.hpp"
 #include "tap/control/chassis/chassis_subsystem_interface.hpp"
 #include "tap/drivers.hpp"
+
+#include "chassis_orientation_getter_interface.hpp"
+#include "chassis_velocity_getter_interface.hpp"
 
 namespace tap::control::odometry
 {
