@@ -38,17 +38,16 @@ namespace tap::control::odometry
 {
 // Forward declarations
 class ChassisOrientationGetterInterface;
-class ChassisVelocityGetterInterface;
+class ChassisDisplacementGetterInterface;
 
 /**
  * A subsystem for keeping track of the position of a chassis in the field
- * using chassis velocity reported by a ChassisVelocityGetterInterface and
+ * using chassis displacement reported by a ChassisDisplacementGetterInterface and
  * chassis orientation reported by a ChassisOrientationGetterInterface
  *
- * Like controls subsystem, a fast and consistent refresh rate is necessary
- * for good output.
+ * Like almost any controls subsystem, faster refresh rate equals better results.
  */
-class VelocityOdometrySubsystem : public tap::control::Subsystem, public OdometryInterface
+class OdometrySubsystem : public tap::control::Subsystem, public OdometryInterface
 {
 public:
     /**
@@ -56,13 +55,13 @@ public:
      * @param chassisOrientationGetter pointer to an object which implements the
      *      ChassisOrientationGetterInterface. Should return the angle of the chassis
      *      forward vector relative to the x-axis of the field.
-     * @param chassisVelocityGetter pointer to an object which implements the
-     *      ChassisVelocityGetterInterface. Used for getting the chassis velocity
+     * @param chassisDisplacementGetter pointer to an object which implements the
+     *      ChassisDisplacementGetterInterface. Used for getting the chassis displacement
      */
-    VelocityOdometrySubsystem(
+    OdometrySubsystem(
         tap::Drivers* drivers,
         ChassisOrientationGetterInterface* chassisOrientationGetter,
-        ChassisVelocityGetterInterface* chassisVelocityGetter);
+        ChassisDisplacementGetterInterface* chassisDisplacementGetter);
 
     /**
      * Run subsystem logic and update subsystem position. Call frequently for better results.
@@ -71,11 +70,23 @@ public:
      */
     void refresh() final;
 
+    /**
+     * @return the current odometry frame
+     * @see OdometryInterface::getCurrentOdometryFrame()
+     */
+    inline OdometryFrame getCurrentOdometryFrame() override;
+
+    /**
+     * Set the current position of the robot as the origin.
+     * @see OdometryInterface::resetPositionOrigin()
+     */
+    inline void resetPositionOrigin() override;
+
 private:
     tap::Drivers* drivers;
     ChassisOrientationGetterInterface* chassisOrientationGetter;
-    ChassisVelocityGetterInterface* chassisVelocityGetter;
-    uint32_t prevTime;
+    ChassisDisplacementGetterInterface* chassisDisplacementGetter;
+    OdometryFrame odometryFrame;
 };
 
 }  // namespace tap::control::odometry

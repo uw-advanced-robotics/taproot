@@ -17,54 +17,41 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "velocity_odometry_subsystem.hpp"
+#include "odometry_subsystem.hpp"
 
 #include <cmath>
 
-#include "tap/architecture/clock.hpp"
 #include "tap/control/chassis/chassis_subsystem_interface.hpp"
 #include "tap/drivers.hpp"
 
+#include "chassis_displacement_getter_interface.hpp"
 #include "chassis_orientation_getter_interface.hpp"
-#include "chassis_velocity_getter_interface.hpp"
 
 namespace tap::control::odometry
 {
-VelocityOdometrySubsystem::VelocityOdometrySubsystem(
+OdometrySubsystem::OdometrySubsystem(
     tap::Drivers* drivers,
     ChassisOrientationGetterInterface* chassisOrientationGetter,
-    ChassisVelocityGetterInterface* chassisVelocityGetter)
+    ChassisDisplacementGetterInterface* chassisDisplacementGetter)
     : Subsystem(drivers),
       drivers(drivers),
       chassisOrientationGetter(chassisOrientationGetter),
-      chassisVelocityGetter(chassisVelocityGetter)
+      chassisDisplacementGetter(chassisDisplacementGetter)
 {
 }
 
-void VelocityOdometrySubsystem::refresh()
+void OdometrySubsystem::refresh()
 {
-    // In the future it may be possible to just grab the scheduler tick
-    // frequency if we had a freeRTOS like config file. Currently the subsystem
-    // has no way of knowing the scheduler frequency though, so we get it
-    // ourselves. Calculate the dt outside of the if statement to not let
-    // dt grow way too large while chassis offline.
-    uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
-    uint32_t dt = currTime - prevTime;
-    prevTime = currTime;
-
-    float xVelocity;
-    float yVelocity;
+    float dxChassisRelative;
+    float dyChassisRelative;
     float chassisAngle;
-    bool validVelocityAvailable = chassisVelocityGetter->getChassisVelocity(&xVelocity, &yVelocity);
+    bool validDisplacementAvailable =
+        chassisDisplacementGetter->getChassisDisplacement(&dxChassisRelative, &dyChassisRelative);
     bool validOrientationAvailable = chassisOrientationGetter->getChassisOrientation(&chassisAngle);
 
     // Only execute logic if velocity and orientation were available
-    if (validVelocityAvailable && validOrientationAvailable)
+    if (validDisplacementAvailable && validOrientationAvailable)
     {
-        // m/s * ms * (1s / 1000ms) = m
-        float dxChassisRelative = xVelocity * dt / 1000.0f;
-        float dyChassisRelative = yVelocity * dt / 1000.0f;
-
         const float sinTheta = sinf(chassisAngle);
         const float cosTheta = cosf(chassisAngle);
         odometryFrame.x += dxChassisRelative * cosTheta - dyChassisRelative * sinTheta;

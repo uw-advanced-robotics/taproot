@@ -24,10 +24,13 @@ namespace tap::control::odometry
 {
 /**
  * Object used to get chassis orientation relative to field x-axis. Positive
- * angles sweep from field x-axis to field y-axis.
+ * angles sweep from field x-axis to field y-axis (right-handed system).
  *
- * @note It is important that special attention is paid to the positive z-axis
- *  that this orientation getter uses
+ * Returned angle is from sweeping from field positive x-axis to chassis forward
+ * vector.
+ *
+ * @note Positive z-axis is straight upwards (opposite gravity). The orientation
+ *  of the positive x and positive y axes are implementation-defined.
  *
  * Getting chassis orientation may fail as implementor chooses by returning
  * `false` to indicate either values are too stale or sensor went offline etc.
@@ -37,7 +40,10 @@ class ChassisOrientationGetterInterface
 {
 public:
     /**
+     * Get the chassis' "Yaw" in the world frame. Angle sweeps from positive
+     * x-axis to positive y-axis. Positive z-axis is upwards.
      * @param[out] output destination for chassis orientation in radians.
+     *      Range is in [0, 2PI).
      *      Value will be 0 if valid data unavailable
      * @return `true` if valid chassis orientation data was available,
      *      `false` otherwise.
