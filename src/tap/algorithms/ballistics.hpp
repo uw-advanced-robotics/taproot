@@ -36,9 +36,9 @@ namespace algorithms
 class MeasuredKinematicState {
 public:
     /**
-     * @param position in 3D space, measured in meters.
-     * @param velocity in 3D space, measured in m/s.
-     * @param acceleration in 3D space, measured in m/s^2.
+     * @param position The position of this object in 3D space, measured in meters.
+     * @param velocity The velocity of this object in 3D space, measured in m/s.
+     * @param acceleration The acceleration of this object in 3D space, measured in m/s^2.
      */
     MeasuredKinematicState(
         modm::Vector<float, 3> position,
@@ -46,16 +46,22 @@ public:
         modm::Vector<float, 3> acceleration);
 
     /**
-     * Given the variables for a 1D kinematic state and an amount of time to project forward,
-     * predicts the future position of an object using a quadratic (constant acceleration) model.
+     * @param dt: The amount of time to project forward.
+     * @param s: The position of the object.
+     * @param v: The velocity of the object.
+     * @param a: The acceleration of the object.
+     * 
+     * @return The future position of an object using a quadratic (constant acceleration) model.
      */
     inline float quadraticKinematicProjection(float dt, float s, float v, float a) {
         return s + v*dt + 0.5f*a*powf(dt, 2.0f);
     }
 
     /**
-     * Given the 3D kinematic state of an object and an amount of time to project forward,
-     * predicts the future 3D position of the objust using a quadratic (constant acceleration) model.
+     * @param state: The kinematic state of the object to project forward.
+     * @param dt: The amount of time to project the state forward.
+     * 
+     * @return The future 3D position of the objust using a quadratic (constant acceleration) model.
      */
     inline modm::Vector<float, 3> projectForward(MeasuredKinematicState state, float dt) {
         return modm::Vector<float, 3>(
@@ -65,13 +71,16 @@ public:
     }
 
     /**
-     * Given our position and the position of the target,
-     * finds the expected travel time of a turret shot to hit a target.
+     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
+     * 
+     * @return The expected travel time of a turret shot to hit a target from this object's position.
      */
     float computeTravelTime(modm::Vector<float, 3> targetPosition);
 
     /**
-     * Given the state of a target that we want to fire at, compute where we should aim to hit that target
+     * @param targetInitialState The initial state of a target we want to fire at as a MeasuredKinematicState.
+     * 
+     * @return The position at which our robot should aim to hit the given target.
      */
     modm::Vector<float, 3> findIntersection(MeasuredKinematicState targetInitialState);
 
