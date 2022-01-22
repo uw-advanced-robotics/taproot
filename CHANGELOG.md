@@ -11,6 +11,11 @@
   less parameters than before and their purpose is different. Also, rather than modifying motor
   outputs directly, the power limiter returns a fraction and it is the user's responsibility to
   multiply the motor output by this fraction.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
 
 ### All changes
 
@@ -23,6 +28,9 @@
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
+  parameters.
 
 ## December 2021
 
@@ -40,6 +48,15 @@
   `tap::communication::TerminalSerialCallbackInterface`.
 - The drivers object is now generated in `taproot/src/tap` rather than in some user directory. To
   append your own drivers to the `tap::Drivers` object, inherit `tap::Drivers`.
+- `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
+  less parameters than before and their purpose is different. Also, rather than modifying motor
+  outputs directly, the power limiter returns a fraction and it is the user's responsibility to
+  multiply the motor output by this fraction.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
 
 ### All changes
 
@@ -64,6 +81,9 @@
   `sim-modm/hosted-TARGET/modm`, where `TARGET` is `linux`, `windows` or `darwin`. Make sure to
   delete and cleanly re-generate your Taproot instance, and update your SConstruct file as shown in
   the template project.
+- The `ErrorController` now no longer displays errors on the LEDs of the RoboMaster Type A board.
+  Now, to create an error using the `RAISE_ERROR` macro, you only pass in a pointer to a
+  `tap::Drivers` object and a description (i.e. `RAISE_ERROR(drivers, "crc failure")`).
 
 ### All changes
 
