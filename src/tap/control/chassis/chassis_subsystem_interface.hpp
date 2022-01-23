@@ -26,6 +26,9 @@
 
 namespace tap::control::chassis
 {
+/**
+ * @brief Abstract interface for a robot chassis.
+ */
 class ChassisSubsystemInterface : public Subsystem
 {
 public:
@@ -41,26 +44,8 @@ public:
     virtual inline int16_t getRightFrontRpmActual() const = 0;
     virtual inline int16_t getRightBackRpmActual() const = 0;
 
-    // Return the unwrapped angular position of the wheel. Value is undefined
-    // unless corresponding motor is online.
-    virtual inline float getLeftFrontAngleUnwrappedActual() const = 0;
-    virtual inline float getLeftBackAngleUnwrappedActual() const = 0;
-    virtual inline float getRightFrontAngleUnwrappedActual() const = 0;
-    virtual inline float getRightBackAngleUnwrappedActual() const = 0;
-
-    // Return whether the specified motor is online (must have received
-    // a message from the motor within some timeframe to be considered online)
-    virtual inline bool isLeftFrontMotorOnline() const = 0;
-    virtual inline bool isLeftBackMotorOnline() const = 0;
-    virtual inline bool isRightFrontMotorOnline() const = 0;
-    virtual inline bool isRightBackMotorOnline() const = 0;
-
-    // Returns true if all four motors are
-    inline bool areAllMotorsOnline()
-    {
-        return isLeftFrontMotorOnline() && isLeftBackMotorOnline && isRightFrontMotorOnline() &&
-               isRightBackMotorOnline();
-    }
+    // Returns true if all motors are online
+    virtual inline bool areAllMotorsOnline() const = 0
 };
 }  // namespace tap::control::chassis
 
