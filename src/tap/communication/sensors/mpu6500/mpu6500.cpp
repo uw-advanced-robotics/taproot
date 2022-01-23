@@ -190,8 +190,6 @@ bool Mpu6500::read()
 
 // Getter functions.
 
-Mpu6500::ImuState Mpu6500::getImuState() const { return imuState; }
-
 float Mpu6500::getAx() const
 {
     return validateReading(
