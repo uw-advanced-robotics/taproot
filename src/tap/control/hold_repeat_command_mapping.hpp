@@ -54,7 +54,7 @@ public:
         Drivers *drivers,
         const std::vector<Command *> cmds,
         const RemoteMapState &rms,
-        bool endCommandsWhenNotHeld = true)
+        bool endCommandsWhenNotHeld)
         : CommandMapping(drivers, cmds, rms),
           commandsScheduled(false),
           endCommandsWhenNotHeld(endCommandsWhenNotHeld)
