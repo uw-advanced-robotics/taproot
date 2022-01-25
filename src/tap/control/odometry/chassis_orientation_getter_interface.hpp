@@ -40,15 +40,16 @@ class ChassisOrientationGetterInterface
 {
 public:
     /**
-     * Get the chassis' "Yaw" in the world frame. Angle sweeps from positive
-     * x-axis to positive y-axis. Positive z-axis is upwards.
-     * @param[out] output destination for chassis orientation in radians.
+     * Get the chassis' "Yaw" in the world frame. Yaw is measured around the z-axis ("up") and
+     * sweeps from the positive x-axis of the world frame to the positive x-axis of the chassis.
+     * Positive rotation sweeps from world x-axis to world y-axis (standard right-hand rule).
+     * @param[out] yaw destination for chassis yaw in radians.
      *      Range is in [0, 2PI).
      *      Value will be 0 if valid data unavailable
      * @return `true` if valid chassis orientation data was available,
      *      `false` otherwise.
      */
-    virtual bool getChassisOrientation(float* output) = 0;
+    virtual bool getChassisYaw(float* yaw) = 0;
 };
 
 }  // namespace tap::control::odometry

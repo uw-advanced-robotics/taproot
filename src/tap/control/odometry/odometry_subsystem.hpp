@@ -43,7 +43,10 @@ class ChassisDisplacementGetterInterface;
 /**
  * A subsystem for keeping track of the position of a chassis in the field
  * using chassis displacement reported by a ChassisDisplacementGetterInterface and
- * chassis orientation reported by a ChassisOrientationGetterInterface
+ * chassis yaw reported by a ChassisOrientationGetterInterface
+ *
+ * This system is dumb about vertical movement. It is designed with primarily flat
+ * ground in mind and does not use chassis yaw or chassis pitch.
  *
  * Like almost any controls subsystem, faster refresh rate equals better results.
  */
@@ -74,13 +77,13 @@ public:
      * @return the current odometry frame
      * @see OdometryInterface::getCurrentOdometryFrame()
      */
-    inline OdometryFrame getCurrentOdometryFrame() override;
+    inline const OdometryFrame& getCurrentOdometryFrame() const final;
 
     /**
      * Set the current position of the robot as the origin.
      * @see OdometryInterface::resetPositionOrigin()
      */
-    inline void resetPositionOrigin() override;
+    inline void resetPositionOrigin() final;
 
 private:
     tap::Drivers* drivers;

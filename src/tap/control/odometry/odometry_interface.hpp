@@ -23,9 +23,10 @@
 namespace tap::control::odometry
 {
 /**
- * Struct for holding the position in meters and yaw and pitch (in radians)
- * of a chassis relative to some coordinate frame. Positive z-axis should
- * be "up" (opposite gravity).
+ * Struct for holding the position of a chassis in 3D-space. Positive z-axis should
+ * be "up" (opposite gravity). No guarantees are given on the direction of the
+ * positive x and y axes or on the position of the origin. Right handed coordinate
+ * system. Units in meters.
  */
 struct OdometryFrame
 {
@@ -33,8 +34,6 @@ public:
     float x = 0.0f;
     float y = 0.0f;
     float z = 0.0f;
-    float chassisYaw = 0.0f;
-    float chassisPitch = 0.0f;
 };
 
 /**
@@ -48,9 +47,9 @@ class OdometryInterface
 {
 public:
     /**
-     * @return the current odometry frame (the current state of the robot)
+     * @return the current odometry frame (the current x, y, z coordinates of the robot)
      */
-    virtual inline OdometryFrame getCurrentOdometryFrame() = 0;
+    virtual inline const OdometryFrame& getCurrentOdometryFrame() const = 0;
 
     /**
      * Calibrate the interface such that the current position of the robot

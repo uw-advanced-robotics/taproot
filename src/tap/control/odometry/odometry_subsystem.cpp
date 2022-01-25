@@ -42,12 +42,16 @@ OdometrySubsystem::OdometrySubsystem(
 
 void OdometrySubsystem::refresh()
 {
-    float dxChassisRelative;
-    float dyChassisRelative;
-    float chassisAngle;
-    bool validDisplacementAvailable =
-        chassisDisplacementGetter->getChassisDisplacement(&dxChassisRelative, &dyChassisRelative);
-    bool validOrientationAvailable = chassisOrientationGetter->getChassisOrientation(&chassisAngle);
+    float dxChassisRelative = 0.0f;
+    float dyChassisRelative = 0.0f;
+    float dzChassisRelative = 0.0f;
+    float chassisAngle = 0.0f;
+
+    bool validDisplacementAvailable = chassisDisplacementGetter->getChassisDisplacement(
+        &dxChassisRelative,
+        &dyChassisRelative,
+        &dzChassisRelative);
+    bool validOrientationAvailable = chassisOrientationGetter->getChassisYaw(&chassisAngle);
 
     // Only execute logic if velocity and orientation were available
     if (validDisplacementAvailable && validOrientationAvailable)
@@ -56,7 +60,20 @@ void OdometrySubsystem::refresh()
         const float cosTheta = cosf(chassisAngle);
         odometryFrame.x += dxChassisRelative * cosTheta - dyChassisRelative * sinTheta;
         odometryFrame.y += dxChassisRelative * sinTheta + dyChassisRelative * cosTheta;
+        odometryFrame.z += dzChassisRelative;
     }
+}
+
+inline const OdometryFrame& OdometrySubsystem::getCurrentOdometryFrame() const
+{
+    return odometryFrame;
+}
+
+inline void OdometrySubsystem::resetPositionOrigin()
+{
+    odometryFrame.x = 0.0f;
+    odometryFrame.y = 0.0f;
+    odometryFrame.z = 0.0f;
 }
 
 }  // namespace tap::control::odometry

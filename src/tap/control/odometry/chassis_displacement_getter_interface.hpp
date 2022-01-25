@@ -28,9 +28,9 @@ namespace tap::control::odometry
  * Each call to getChassisDisplacement should return the chassis displacement
  * in the chassis frame since the last call.
  *
- * Chassis positive z-axis is defined as "up" (opposite gravity), positive x-axis is
- * defined as the chassis forward vector, and thus consequently the positive y-axis
- * is chassis "left".
+ * While on flat ground, the chassis positive z-axis is defined as "up" (opposite
+ * gravity), positive x-axis is defined as the chassis forward vector, and
+ * thus consequently the positive y-axis is chassis "left".
  *
  * Unless you use GPS or some other absolute positioning system, it is expected
  * that over long periods the displacement may not be the most accurate. However
@@ -53,9 +53,15 @@ public:
      *      valid data unavailable.
      * @param[out] y destination for y component of chassis displacement in m. 0 if
      *      valid data unavailable.
+     * @param[out] z destination for z component of chassis displacement in m. 0 if
+     *      valid data unavailable.
+     *
+     * @note while valid data being unavailable implies x, y, and z are set to 0, it does not
+     *      mean that x, y, z being zero implies that valid data wasn't available.
+     *
      * @return `true` if valid chassis displacement data was available, `false` otherwise.
      */
-    virtual bool getChassisDisplacement(float* x, float* y) = 0;
+    virtual bool getChassisDisplacement(float* x, float* y, float* z) = 0;
 };
 
 }  // namespace tap::control::odometry
