@@ -31,9 +31,9 @@ TEST(
 
     li.reset(5, 10);
     li.update(6, 5);
-    EXPECT_FLOAT_EQ(5, li.getInterpolatedValue(100));
+    EXPECT_NEAR(5, li.getInterpolatedValue(100), 1E-3);
     li.update(3, 1);
-    EXPECT_FLOAT_EQ(5, li.getInterpolatedValue(100));
+    EXPECT_NEAR(5, li.getInterpolatedValue(100), 1E-3);
 }
 
 TEST(LinearInterpolationPredictorContiguous, after_reset_return_reset_initial_val)
@@ -41,9 +41,9 @@ TEST(LinearInterpolationPredictorContiguous, after_reset_return_reset_initial_va
     LinearInterpolationPredictorContiguous li(0, 10);
 
     li.reset(3, 5);
-    EXPECT_FLOAT_EQ(3, li.getInterpolatedValue(100));
+    EXPECT_NEAR(3, li.getInterpolatedValue(100), 1E-3);
     li.reset(7, 1);
-    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(100));
+    EXPECT_NEAR(7, li.getInterpolatedValue(100), 1E-3);
 }
 
 TEST(LinearInterpolationPredictorContiguous, normal_operation_no_wrapping)
@@ -51,13 +51,13 @@ TEST(LinearInterpolationPredictorContiguous, normal_operation_no_wrapping)
     LinearInterpolationPredictorContiguous li(0, 10);
 
     li.reset(3, 10);
-    EXPECT_FLOAT_EQ(3, li.getInterpolatedValue(15));
+    EXPECT_NEAR(3, li.getInterpolatedValue(15), 1E-3);
     li.update(4, 20);
-    EXPECT_FLOAT_EQ(4.5, li.getInterpolatedValue(25));
+    EXPECT_NEAR(4.5, li.getInterpolatedValue(25), 1E-3);
     li.update(6, 25);
-    EXPECT_FLOAT_EQ(6.4, li.getInterpolatedValue(26));
+    EXPECT_NEAR(6.4, li.getInterpolatedValue(26), 1E-3);
     li.update(4, 26);
-    EXPECT_FLOAT_EQ(2, li.getInterpolatedValue(27));
+    EXPECT_NEAR(2, li.getInterpolatedValue(27), 1E-3);
 }
 
 TEST(LinearInterpolationPredictorContiguous, normal_operation_wrapping)
@@ -65,21 +65,21 @@ TEST(LinearInterpolationPredictorContiguous, normal_operation_wrapping)
     LinearInterpolationPredictorContiguous li(0, 10);
 
     li.reset(1, 10);
-    EXPECT_FLOAT_EQ(1, li.getInterpolatedValue(11));
+    EXPECT_NEAR(1, li.getInterpolatedValue(11), 1E-3);
     li.update(9, 12);
-    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(14));
+    EXPECT_NEAR(7, li.getInterpolatedValue(14), 1E-3);
 
     li.reset(1, 10);
     li.update(0.5, 11);
-    EXPECT_FLOAT_EQ(9.5, li.getInterpolatedValue(13));
+    EXPECT_NEAR(9.5, li.getInterpolatedValue(13), 1E-3);
 
     li.reset(9, 10);
     li.update(1, 11);
-    EXPECT_FLOAT_EQ(3, li.getInterpolatedValue(12));
+    EXPECT_NEAR(3, li.getInterpolatedValue(12), 1E-3);
 
     li.reset(9, 10);
     li.update(9.5, 11);
-    EXPECT_FLOAT_EQ(0.5, li.getInterpolatedValue(13));
+    EXPECT_NEAR(0.5, li.getInterpolatedValue(13), 1E-3);
 }
 
 TEST(LinearInterpolationPredictorContiguous, after_update_with_bad_time_value_doesnt_change)
@@ -88,8 +88,8 @@ TEST(LinearInterpolationPredictorContiguous, after_update_with_bad_time_value_do
 
     li.reset(5, 1);
     li.update(6, 2);
-    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(3));
+    EXPECT_NEAR(7, li.getInterpolatedValue(3), 1E-3);
     li.update(7, 1);
     // Time before last update time, slope should be 0, getInterpolatedValue returns last value
-    EXPECT_FLOAT_EQ(6, li.getInterpolatedValue(4));
+    EXPECT_NEAR(6, li.getInterpolatedValue(4), 1E-3);
 }
