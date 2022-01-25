@@ -29,9 +29,9 @@ TEST(LinearInterpolationPredictor, update_return_same_value_as_reset_if_time_bef
 
     li.reset(5, 10);
     li.update(6, 5);
-    EXPECT_FLOAT_EQ(5, li.getInterpolatedValue(100));
+    EXPECT_NEAR(5, li.getInterpolatedValue(100), 1E-3);
     li.update(3, 1);
-    EXPECT_FLOAT_EQ(5, li.getInterpolatedValue(100));
+    EXPECT_NEAR(5, li.getInterpolatedValue(100), 1E-3);
 }
 
 TEST(LinearInterpolationPredictor, after_reset_return_reset_initial_val)
@@ -39,9 +39,9 @@ TEST(LinearInterpolationPredictor, after_reset_return_reset_initial_val)
     LinearInterpolationPredictor li;
 
     li.reset(3, 5);
-    EXPECT_FLOAT_EQ(3, li.getInterpolatedValue(100));
+    EXPECT_NEAR(3, li.getInterpolatedValue(100), 1E-3);
     li.reset(7, 1);
-    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(100));
+    EXPECT_NEAR(7, li.getInterpolatedValue(100), 1E-3);
 }
 
 TEST(LinearInterpolationPredictor, normal_operation_no_wrapping)
@@ -49,13 +49,13 @@ TEST(LinearInterpolationPredictor, normal_operation_no_wrapping)
     LinearInterpolationPredictor li;
 
     li.reset(3, 10);
-    EXPECT_FLOAT_EQ(3, li.getInterpolatedValue(15));
+    EXPECT_NEAR(3, li.getInterpolatedValue(15), 1E-3);
     li.update(4, 20);
-    EXPECT_FLOAT_EQ(4.5, li.getInterpolatedValue(25));
+    EXPECT_NEAR(4.5, li.getInterpolatedValue(25), 1E-3);
     li.update(6, 25);
-    EXPECT_FLOAT_EQ(6.4, li.getInterpolatedValue(26));
+    EXPECT_NEAR(6.4, li.getInterpolatedValue(26), 1E-3);
     li.update(4, 26);
-    EXPECT_FLOAT_EQ(2, li.getInterpolatedValue(27));
+    EXPECT_NEAR(2, li.getInterpolatedValue(27), 1E-3);
 }
 
 TEST(LinearInterpolationPredictor, after_update_with_bad_time_value_doesnt_change)
@@ -64,8 +64,8 @@ TEST(LinearInterpolationPredictor, after_update_with_bad_time_value_doesnt_chang
 
     li.reset(5, 1);
     li.update(6, 2);
-    EXPECT_FLOAT_EQ(7, li.getInterpolatedValue(3));
+    EXPECT_NEAR(7, li.getInterpolatedValue(3), 1E-3);
     li.update(7, 1);
     // Time before last update time, slope should be 0, getInterpolatedValue returns last value
-    EXPECT_FLOAT_EQ(6, li.getInterpolatedValue(4));
+    EXPECT_NEAR(6, li.getInterpolatedValue(4), 1E-3);
 }
