@@ -174,6 +174,25 @@ TEST(
 
 TEST(
     HoldRepeatCommandMapping,
+    executeCommandMapping_single_command_not_removed_if_switch_based_RMS_no_longer_equal_but_endCommandsWhenNotHeld_false)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    RemoteMapState ms2 = ms1;
+    HoldRepeatCommandMapping commandMapping(&drivers, {&tc}, ms1, false);
+    EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
+    EXPECT_CALL(drivers.commandScheduler, removeCommand(&tc, testing::_)).Times(0);
+    EXPECT_CALL(drivers.commandScheduler, isCommandScheduled(&tc)).Times(1);
+
+    commandMapping.executeCommandMapping(ms2);
+    ms2 = RemoteMapState();
+    commandMapping.executeCommandMapping(ms2);
+}
+
+TEST(
+    HoldRepeatCommandMapping,
     executeCommandMapping_single_command_not_removed_if_switch_based_RMS_still_subset)
 {
     Drivers drivers;

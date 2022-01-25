@@ -31,6 +31,8 @@
 - `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
   calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
   parameters.
+- `HoldRepeatCommandMapping` now has an extra optional parameter `endCommandsWhenNotHeld`. When set
+  to false, commands are not ended when the remote state transitions from being held to hot held.
 
 ## December 2021
 
