@@ -40,7 +40,7 @@ class ChassisSubsystemInterface;
 namespace tap::control::odometry
 {
 // Forward declarations
-class ChassisOrientationGetterInterface;
+class ChassisWorldYawGetterInterface;
 class ChassisDisplacementGetterInterface;
 
 /**
@@ -65,7 +65,7 @@ public:
      */
     Odometry2DSubsystem(
         tap::Drivers* drivers,
-        ChassisOrientationGetterInterface* chassisOrientationGetter,
+        ChassisWorldYawGetterInterface* chassisOrientationGetter,
         ChassisDisplacementGetterInterface* chassisDisplacementGetter);
 
     /**
@@ -79,23 +79,28 @@ public:
      * @return the current odometry frame
      * @see OdometryInterface::getCurrentOdometryFrame()
      */
-    inline const modm::Location2D<float>& getCurrentLocation2D() const final;
+    inline const modm::Location2D<float>& getCurrentLocation2D() const final { return location; }
 
     /**
      * @see OdometryInterface::resetPositionOrigin()
      */
-    inline void resetWorldFramePosition() final;
+    inline void resetWorldFramePosition() final { location.setPosition(0.0f, 0.0f); }
 
     /**
      * @see OdometryInterface::resetWorldFrameOrientation()
      */
-    inline void resetWorldFrameOrientation() final;
+    inline void resetWorldFrameOrientation() final
+    {
+        orientationOffset = location.getOrientation();
+    }
 
 private:
     tap::Drivers* drivers;
-    ChassisOrientationGetterInterface* chassisOrientationGetter;
+    ChassisWorldYawGetterInterface* chassisYawGetter;
     ChassisDisplacementGetterInterface* chassisDisplacementGetter;
-    modm::Location2D<float> odometryFrame;
+    modm::Location2D<float> location;
+    /** Yaw offset of the world frame's axes relative to what's reported by the sensor */
+    float orientationOffset;
 };
 
 }  // namespace tap::control::odometry

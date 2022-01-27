@@ -40,7 +40,7 @@ namespace tap::control::odometry
  *
  * Getting chassis displacement may fail as implementor chooses to indicate
  * either values are too stale or sensor went offline etc.
- * 
+ *
  * @note The RoboMaster robot building specification manual mentions a coordinate
  *      convention for chassis orientations. Their coordinate convention is different
  *      in that they assert positive z as pointing "towards the center of the Earth".
