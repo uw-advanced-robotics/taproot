@@ -35,6 +35,13 @@ namespace algorithms
  */
 class MeasuredKinematicState {
 public:
+    enum Axes
+    {
+        X = 0,
+        Y,
+        Z,
+    };
+
     /**
      * @param position The position of this object in 3D space, measured in meters.
      * @param velocity The velocity of this object in 3D space, measured in m/s.
@@ -43,8 +50,41 @@ public:
     MeasuredKinematicState(
         modm::Vector<float, 3> position,
         modm::Vector<float, 3> velocity,
-        modm::Vector<float, 3> acceleration);
+        modm::Vector<float, 3> acceleration,
+        float BULLET_VELOCITY);
 
+    /**
+     * @param state: The kinematic state of the object to project forward.
+     * @param dt: The amount of time to project the state forward.
+     * 
+     * @return The future 3D position of the objust using a quadratic (constant acceleration) model.
+     */
+    inline const modm::Vector<float, 3> projectForward(float dt) {
+        return modm::Vector<float, 3>(
+            {quadraticKinematicProjection(dt, position[X], velocity[X], acceleration[X]),
+            quadraticKinematicProjection(dt, position[Y], velocity[Y], acceleration[Y]),
+            quadraticKinematicProjection(dt, position[Z], velocity[Z], acceleration[Z])});
+    }
+
+    /**
+     * @param targetInitialState The initial state of a target we want to fire at as a MeasuredKinematicState.
+     * 
+     * @return The position at which our robot should aim to hit the given target, taking into account the path a projectile takes to hit the target.
+     */
+    static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState);
+
+    /**
+     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
+     * 
+     * @return The expected travel time of a turret shot to hit a target from this object's position.
+     */
+    const float computeTravelTime(const modm::Vector<float, 3> &targetPosition);
+
+    modm::Vector<float, 3> position; // m
+    modm::Vector<float, 3> velocity; // m/s
+    modm::Vector<float, 3> acceleration; // m/s^2
+
+private:
     /**
      * @param dt: The amount of time to project forward.
      * @param s: The position of the object.
@@ -53,44 +93,12 @@ public:
      * 
      * @return The future position of an object using a quadratic (constant acceleration) model.
      */
-    inline float quadraticKinematicProjection(float dt, float s, float v, float a) {
+    inline static float quadraticKinematicProjection(float dt, float s, float v, float a) {
         return s + v*dt + 0.5f*a*powf(dt, 2.0f);
     }
 
-    /**
-     * @param state: The kinematic state of the object to project forward.
-     * @param dt: The amount of time to project the state forward.
-     * 
-     * @return The future 3D position of the objust using a quadratic (constant acceleration) model.
-     */
-    inline modm::Vector<float, 3> projectForward(MeasuredKinematicState state, float dt) {
-        return modm::Vector<float, 3>(
-            {quadraticKinematicProjection(dt, state.position[0], state.velocity[0], state.acceleration[0]),
-            quadraticKinematicProjection(dt, state.position[1], state.velocity[1], state.acceleration[1]),
-            quadraticKinematicProjection(dt, state.position[2], state.velocity[2], state.acceleration[2])});
-    }
-
-    /**
-     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
-     * 
-     * @return The expected travel time of a turret shot to hit a target from this object's position.
-     */
-    float computeTravelTime(modm::Vector<float, 3> targetPosition);
-
-    /**
-     * @param targetInitialState The initial state of a target we want to fire at as a MeasuredKinematicState.
-     * 
-     * @return The position at which our robot should aim to hit the given target.
-     */
-    modm::Vector<float, 3> findIntersection(MeasuredKinematicState targetInitialState);
-
-private:
-    modm::Vector<float, 3> position; // m
-    modm::Vector<float, 3> velocity; // m/s
-    modm::Vector<float, 3> acceleration; // m/s^2
-
     static constexpr float G = 9.81; // m/s^2
-    static constexpr float BULLET_VELOCITY = 20; // m/s
+    float BULLET_VELOCITY; // m/s
 };
 
 }  // namespace algorithms

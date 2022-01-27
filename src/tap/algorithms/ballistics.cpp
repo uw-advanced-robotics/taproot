@@ -34,22 +34,22 @@ namespace algorithms
 
     float MeasuredKinematicState::computeTravelTime(modm::Vector<float, 3> targetPosition)
     {
-        float horizontalDist = hypot(targetPosition[0] - position[0], targetPosition[1] - position[1]);
-        float verticalDist = targetPosition[2] - position[2];
+        float horizontalDist = hypot(targetPosition[X] - position[X], targetPosition[Y] - position[Y]);
+        float verticalDist = targetPosition[Z] - position[Z];
         float pitchAngle = atan((powf(BULLET_VELOCITY, 2) - sqrt(powf(BULLET_VELOCITY, 4) - G*(G*powf(horizontalDist, 2) + 2*verticalDist*powf(BULLET_VELOCITY, 2))))/(G*horizontalDist));
 
         return horizontalDist / (BULLET_VELOCITY * cos(pitchAngle));
     }
 
-    modm::Vector<float, 3> MeasuredKinematicState::findIntersection(MeasuredKinematicState targetInitialState)
+    static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState)
     {
         modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
         float projectedTravelTime = 0;
 
         for (int i = 0; i < 5; i++)
         {
-            projectedTravelTime = computeTravelTime(projectedTargetPosition);
-            projectedTargetPosition = projectForward(targetInitialState, projectedTravelTime);
+            projectedTravelTime = turretState.computeTravelTime(projectedTargetPosition);
+            projectedTargetPosition = targetInitialState.projectForward(projectedTravelTime);
         }
 
         return projectedTargetPosition;
