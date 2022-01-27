@@ -62,6 +62,10 @@ public:
      *      forward vector relative to the x-axis of the field.
      * @param chassisDisplacementGetter pointer to an object which implements the
      *      ChassisDisplacementGetterInterface. Used for getting the chassis displacement
+     *
+     * @note it is essential that the chassisOrientationGetter and chassisDisplacementGetter
+     *      use the same positive z-axis. The getter interfaces should enforce that they
+     *      they use positive z-axis is up, but it's worth noting here again.
      */
     Odometry2DSubsystem(
         tap::Drivers* drivers,
