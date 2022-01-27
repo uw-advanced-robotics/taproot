@@ -17,12 +17,15 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ODOMETRY_SUBSYSTEM_HPP_
-#define ODOMETRY_SUBSYSTEM_HPP_
+#ifndef ODOMETRY_2D_SUBSYSTEM_HPP_
+#define ODOMETRY_2D_SUBSYSTEM_HPP_
 
+// Header included instead of forward declared because template uses default args
 #include "tap/control/subsystem.hpp"
 
-#include "odometry_interface.hpp"
+#include "modm/math/geometry/location_2d.hpp"
+
+#include "odometry_2d_interface.hpp"
 
 // Forward declarations
 namespace tap
@@ -41,35 +44,34 @@ class ChassisOrientationGetterInterface;
 class ChassisDisplacementGetterInterface;
 
 /**
- * A subsystem for keeping track of the position of a chassis in the field
+ * A subsystem for keeping track of the 2D-position of a chassis in the field
  * using chassis displacement reported by a ChassisDisplacementGetterInterface and
  * chassis yaw reported by a ChassisOrientationGetterInterface
  *
- * This system is dumb about vertical movement. It is designed with primarily flat
- * ground in mind and does not use chassis yaw or chassis pitch.
+ * This system ignores vertical movement.
  *
  * Like almost any controls subsystem, faster refresh rate equals better results.
  */
-class OdometrySubsystem : public tap::control::Subsystem, public OdometryInterface
+class Odometry2DSubsystem : public tap::control::Subsystem, public Odometry2DInterface
 {
 public:
     /**
-     * @param drivers pointer to drivers
+     * @param drivers pointer to drivers (for registering subsystem)
      * @param chassisOrientationGetter pointer to an object which implements the
      *      ChassisOrientationGetterInterface. Should return the angle of the chassis
      *      forward vector relative to the x-axis of the field.
      * @param chassisDisplacementGetter pointer to an object which implements the
      *      ChassisDisplacementGetterInterface. Used for getting the chassis displacement
      */
-    OdometrySubsystem(
+    Odometry2DSubsystem(
         tap::Drivers* drivers,
         ChassisOrientationGetterInterface* chassisOrientationGetter,
         ChassisDisplacementGetterInterface* chassisDisplacementGetter);
 
     /**
-     * Run subsystem logic and update subsystem position. Call frequently for better results.
-     * The main reason to use this class is for its implementation of this function, hence
-     * it doesn't make sense to modify it so it's declared final.
+     * Run subsystem logic and update tracked chassis position. Call frequently for better
+     * results. The main reason to use this class is for its implementation of this function,
+     * hence it doesn't make sense to modify it so it's declared final.
      */
     void refresh() final;
 
@@ -77,21 +79,25 @@ public:
      * @return the current odometry frame
      * @see OdometryInterface::getCurrentOdometryFrame()
      */
-    inline const OdometryFrame& getCurrentOdometryFrame() const final;
+    inline const modm::Location2D<float>& getCurrentLocation2D() const final;
 
     /**
-     * Set the current position of the robot as the origin.
      * @see OdometryInterface::resetPositionOrigin()
      */
-    inline void resetPositionOrigin() final;
+    inline void resetWorldFramePosition() final;
+
+    /**
+     * @see OdometryInterface::resetWorldFrameOrientation()
+     */
+    inline void resetWorldFrameOrientation() final;
 
 private:
     tap::Drivers* drivers;
     ChassisOrientationGetterInterface* chassisOrientationGetter;
     ChassisDisplacementGetterInterface* chassisDisplacementGetter;
-    OdometryFrame odometryFrame;
+    modm::Location2D<float> odometryFrame;
 };
 
 }  // namespace tap::control::odometry
 
-#endif  // ODOMETRY_SUBSYSTEM_HPP_
+#endif  // ODOMETRY_2D_SUBSYSTEM_HPP_

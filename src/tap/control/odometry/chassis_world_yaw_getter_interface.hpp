@@ -17,13 +17,13 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CHASSIS_ORIENTATION_GETTER_INTERFACE_HPP_
-#define CHASSIS_ORIENTATION_GETTER_INTERFACE_HPP_
+#ifndef CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
+#define CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
 
 namespace tap::control::odometry
 {
 /**
- * Object used to get chassis orientation relative to field x-axis. Positive
+ * Object used to get chassis yaw relative to world frame x-axis. Positive
  * angles sweep from field x-axis to field y-axis (right-handed system).
  *
  * Returned angle is from sweeping from field positive x-axis to chassis forward
@@ -34,24 +34,23 @@ namespace tap::control::odometry
  *
  * Getting chassis orientation may fail as implementor chooses by returning
  * `false` to indicate either values are too stale or sensor went offline etc.
- * If return value is `false` odometry logic won't run that tick.
  */
-class ChassisOrientationGetterInterface
+class ChassisWorldYawGetterInterface
 {
 public:
     /**
      * Get the chassis' "Yaw" in the world frame. Yaw is measured around the z-axis ("up") and
      * sweeps from the positive x-axis of the world frame to the positive x-axis of the chassis.
      * Positive rotation sweeps from world x-axis to world y-axis (standard right-hand rule).
-     * @param[out] yaw destination for chassis yaw in radians.
-     *      Range is in [0, 2PI).
-     *      Value will be 0 if valid data unavailable
+     * Positive z-axis of world frame is guaranteed to be up (opposite gravity).
+     * @param[out] yaw destination for chassis yaw in world frame in radians.
+     *      Range is in (-pi, pi).
      * @return `true` if valid chassis orientation data was available,
      *      `false` otherwise.
      */
-    virtual bool getChassisYaw(float* yaw) = 0;
+    virtual bool getWorldChassisYaw(float* yaw) = 0;
 };
 
 }  // namespace tap::control::odometry
 
-#endif  // CHASSIS_ORIENTATION_GETTER_INTERFACE_HPP_
+#endif  // CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
