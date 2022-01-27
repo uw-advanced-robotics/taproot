@@ -17,6 +17,8 @@
  * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "odometry_2d_subsystem.hpp"
+
 #include <cmath>
 
 #include "tap/control/chassis/chassis_subsystem_interface.hpp"
@@ -26,7 +28,6 @@
 
 #include "chassis_displacement_getter_interface.hpp"
 #include "chassis_world_yaw_getter_interface.hpp"
-#include "odometry_2d_subsystem.hpp"
 
 namespace tap::control::odometry
 {
@@ -35,7 +36,6 @@ Odometry2DSubsystem::Odometry2DSubsystem(
     ChassisWorldYawGetterInterface* chassisYawGetter,
     ChassisDisplacementGetterInterface* chassisDisplacementGetter)
     : Subsystem(drivers),
-      drivers(drivers),
       chassisYawGetter(chassisYawGetter),
       chassisDisplacementGetter(chassisDisplacementGetter),
       location(0.0f, 0.0f, 0.0f)
@@ -58,9 +58,9 @@ void Odometry2DSubsystem::refresh()
     // Only execute logic if velocity and orientation were available
     if (validDisplacementAvailable && validOrientationAvailable)
     {
-        // Spec for `Location2D` seems to suggest it should only use normalized angles, so make
-        // sure that is true here.
-        float worldRelativeOrientation = modm::Angle::normalize(chassisAngle - orientationOffset);
+        // Spec for `Location2D` seems to suggest it should only use normalized angles.
+        // chassisYawGetter is specified to return normalized angles
+        float worldRelativeOrientation = chassisAngle;
         location.setOrientation(worldRelativeOrientation);
         location.move(modm::Vector2f(dxChassisRelative, dyChassisRelative));
     }
