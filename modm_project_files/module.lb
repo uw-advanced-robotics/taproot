@@ -25,6 +25,29 @@ MCU_VARIANTS_BY_BOARD = {
     "rm-dev-board-c": "stm32f407igh6",
 }
 
+DEFAULT_MODM_OPTIONS_BY_BOARD = {
+    "rm-dev-board-a": "\
+        modm:platform:uart:1:buffer.rx 256\n\
+        modm:platform:uart:1:buffer.tx 256\n\
+        modm:platform:uart:2:buffer.rx 256\n\
+        modm:platform:uart:2:buffer.tx 256\n\
+        modm:platform:uart:3:buffer.tx 256\n\
+        modm:platform:uart:3:buffer.rx 256\n\
+        modm:platform:uart:6:buffer.rx 256\n\
+        modm:platform:uart:6:buffer.tx 256\n\
+        modm:platform:uart:7:buffer.tx 256\n\
+        modm:platform:uart:7:buffer.rx 256\n\
+        modm:platform:uart:8:buffer.tx 256\n\
+        modm:platform:uart:8:buffer.rx 256",
+    "rm-dev-board-c": "\
+        modm:platform:uart:1:buffer.rx 256\n\
+        modm:platform:uart:1:buffer.tx 256\n\
+        modm:platform:uart:3:buffer.tx 256\n\
+        modm:platform:uart:3:buffer.rx 256\n\
+        modm:platform:uart:6:buffer.rx 256\n\
+        modm:platform:uart:6:buffer.tx 256",
+}
+
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 
 def init(module):
@@ -32,6 +55,12 @@ def init(module):
     module.description = "project.xml files used to generate modm HALs"
 
 def prepare(module, options):
+    module.add_option(
+        StringOption(
+            name="modm_hal_options",
+            description=modm_hal_options_description,
+            default=""))
+
     return True
 
 def build(env):
@@ -41,13 +70,40 @@ def build(env):
     except KeyError:
         raise RuntimeError(f"Dev board {board_name} is not valid")
 
+    # set default options based on specified dev board if necessary
+    modm_hal_options = env["::modm_hal_options"]
+    if modm_hal_options == "":
+        modm_hal_options = DEFAULT_MODM_OPTIONS_BY_BOARD[board_name]
+    # split up options
+    modm_hal_options = modm_hal_options.split("\n")
+    # remove leading/trailing whitespace
+    modm_hal_options = [option.strip(" \t") for option in modm_hal_options]
+    # split up option names and values
+    modm_hal_options = [option.split(' ') for option in modm_hal_options]
+    # remove invalid options
+    modm_hal_options = list(filter(lambda o: len(o) == 2, modm_hal_options))
+
+    # stringify the options
+    try:
+        modm_hal_options = [f"<option name=\"{option[0]}\">{option[1]}</option>\n" for option in modm_hal_options]
+    except IndexError:
+        pass
+
     env.substitutions = {
         "modm_path": env[":modm_repo_lb"],
         "mcu": mcu,
+        "modm_hal_options": modm_hal_options,
     }
+
     env.outbasepath = "taproot"
     env.template("project.xml.in", "project.xml")
 
     for target in ALL_HOSTED_TARGET_NAMES:
         env.substitutions["hosted_target"] = target
         env.template("sim-modm/project.xml.in", f"sim-modm/{target}/project.xml")
+
+modm_hal_options_description = "\
+Add options to control modm generated files. For example, configure the modm UART buffer sizes. \
+Options will be passed to modm-specific project.xml file. Options should be of the form \
+\"modm:option:name value\". Multiple modm options may be added. They should be separated by \
+newlines. If no options specified, some default options will be used."
