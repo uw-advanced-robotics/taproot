@@ -3,11 +3,21 @@
 ## January 2022
 
 ### Breaking changes
-
+- `tap::controls::ControlOperatorInterface` has been removed from Taproot. We have added it to [our
+  personal open-source project, aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb) for those who
+  would like to keep up with our implementation of that feature, but it will need to be
+  added/implemented externally going forward in order to keep the functionality it provides.
 - `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
   less parameters than before and their purpose is different. Also, rather than modifying motor
   outputs directly, the power limiter returns a fraction and it is the user's responsibility to
   multiply the motor output by this fraction.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
+- The `HoldRepeatCommandMapping` requires an extra parameter in its constructor. See all changes for
+  more details.
 
 ### All changes
 
@@ -18,6 +28,14 @@
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
   (!92). 
 - Taproot tests now build on Windows without warnings (!103).
+- `tap::controls::ControlOperatorInterface` deprecated (!105).
+- `tap::controls::turret::TurretSetpointCommand` deprecated.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
+  parameters.
+- `HoldRepeatCommandMapping` now has an extra parameter `endCommandsWhenNotHeld`. When set to false,
+  commands are not forcibly ended when the remote state transitions from being held to hot held and
+  instead are left to end naturally (or until interrupted by something else) (#95, !114).
 - Print a clearer error message when the chosen compiler is not found on PATH. (!97)
 
 ## December 2021
@@ -36,6 +54,15 @@
   `tap::communication::TerminalSerialCallbackInterface`.
 - The drivers object is now generated in `taproot/src/tap` rather than in some user directory. To
   append your own drivers to the `tap::Drivers` object, inherit `tap::Drivers`.
+- `tap::controls::chassis::PowerLimiter` API changed significantly. The constructor now takes in
+  less parameters than before and their purpose is different. Also, rather than modifying motor
+  outputs directly, the power limiter returns a fraction and it is the user's responsibility to
+  multiply the motor output by this fraction.
+- in the `Mpu6500` class, function called `initialized` changed to `getImuState` since the mpu's
+  hardware can be "initialized" but not necessarily calibrated/ready to use.
+- `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
+  calibration state and the mpu6500 recomputes calibration parameters (!12, #123). You should call
+  this function in user code to ensure proper calibration of the IMU.
 
 ### All changes
 
@@ -50,9 +77,6 @@
 - The `CommandScheduler` is now able to safely remove all commands when a user-specified
   "disconnected" state occurs. One can pass a `SafeDisconnectFunction` functor to the
   `CommandScheduler` to determine what causes a "disconnected" state (!75).
-<<<<<<< CHANGELOG.md
-- Print a clearer error message when the chosen compiler is not found on PATH. (!97)
-=======
 - `modm:math:interpolation` module now generated (!93).
 
 ## November 2021
@@ -63,9 +87,11 @@
   `sim-modm/hosted-TARGET/modm`, where `TARGET` is `linux`, `windows` or `darwin`. Make sure to
   delete and cleanly re-generate your Taproot instance, and update your SConstruct file as shown in
   the template project.
+- The `ErrorController` now no longer displays errors on the LEDs of the RoboMaster Type A board.
+  Now, to create an error using the `RAISE_ERROR` macro, you only pass in a pointer to a
+  `tap::Drivers` object and a description (i.e. `RAISE_ERROR(drivers, "crc failure")`).
 
 ### All changes
 
 - "sim-modm" instance is now generated for all three major desktop platforms, with hardware builds
   and testing environments fully supported on each. (!73, #96, #15)
->>>>>>> CHANGELOG.md

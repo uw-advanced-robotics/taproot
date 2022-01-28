@@ -134,15 +134,6 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": "",
     },
     {
-        "object-name": "control::ControlOperatorInterface",
-        "mock-object-name": nice_mock("mock::ControlOperatorInterfaceMock"),
-
-        "src-file": "tap/control/control_operator_interface.hpp",
-        "mock-header": "tap/mock/control_operator_interface_mock.hpp",
-        "constructor": "this",
-        "module-dependencies": "",
-    },
-    {
         "object-name": "control::SchedulerTerminalHandler",
         "mock-object-name": nice_mock("mock::SchedulerTerminalHandlerMock"),
         "src-file": "tap/control/scheduler_terminal_handler.hpp",
