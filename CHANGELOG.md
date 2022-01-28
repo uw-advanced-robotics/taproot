@@ -36,6 +36,7 @@
 - `HoldRepeatCommandMapping` now has an extra parameter `endCommandsWhenNotHeld`. When set to false,
   commands are not forcibly ended when the remote state transitions from being held to hot held and
   instead are left to end naturally (or until interrupted by something else) (#95, !114).
+- Print a clearer error message when the chosen compiler is not found on PATH. (!97)
 
 ## December 2021
 
