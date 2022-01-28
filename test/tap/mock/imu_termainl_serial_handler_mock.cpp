@@ -17,13 +17,13 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "mpu6500_terminal_serial_handler_mock.hpp"
+#include "imu_terminal_serial_handler_mock.hpp"
 
 namespace tap::mock
 {
-Mpu6500TerminalSerialHandlerMock::Mpu6500TerminalSerialHandlerMock(tap::Drivers *drivers)
-    : tap::sensors::Mpu6500TerminalSerialHandler(drivers)
+ImuTerminalSerialHandlerMock::ImuTerminalSerialHandlerMock(tap::Drivers *drivers, tap::sensors::ImuInterface *imu)
+    : tap::sensors::ImuTerminalSerialHandler(drivers, imu)
 {
 }
-Mpu6500TerminalSerialHandlerMock::~Mpu6500TerminalSerialHandlerMock() {}
+ImuTerminalSerialHandlerMock::~ImuTerminalSerialHandlerMock() {}
 }  // namespace tap::mock

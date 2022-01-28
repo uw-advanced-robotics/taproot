@@ -25,6 +25,8 @@
 
 #include "modm/architecture/interface/register.hpp"
 
+#include "imu_interface.hpp"
+
 namespace tap
 {
 class Drivers;
@@ -36,12 +38,15 @@ namespace sensors
  * the user to query gyro, accel, angle, and temperature data. Single query and streaming
  * modes supported.
  */
-class Mpu6500TerminalSerialHandler : public communication::serial::TerminalSerialCallbackInterface
+class ImuTerminalSerialHandler : public communication::serial::TerminalSerialCallbackInterface
 {
 public:
-    static constexpr char HEADER[] = "mpu6500";
-
-    Mpu6500TerminalSerialHandler(Drivers* drivers) : drivers(drivers), subjectsBeingInspected(0) {}
+    ImuTerminalSerialHandler(Drivers* drivers, ImuInterface* imu)
+        : drivers(drivers),
+          imu(imu),
+          subjectsBeingInspected(0)
+    {
+    }
 
     mockable void init();
 
@@ -53,8 +58,9 @@ public:
     void terminalSerialStreamCallback(modm::IOStream& outputStream) override;
 
 private:
+    /** Usage without the name since this is dependent on the IMU. */
     static constexpr char USAGE[] =
-        "Usage: mpu6500 [-h] [angle] [gyro] [accel] [temp]\n"
+        " [-h] [angle] [gyro] [accel] [temp]\n"
         "  Where:\n"
         "    - [-h] Prints usage\n"
         "    - [angle] Prints angle data\n"
@@ -63,6 +69,8 @@ private:
         "    - [temp] Prints temp data\n";
 
     Drivers* drivers;
+
+    ImuInterface* imu;
 
     /**
      * Each element in the enum corresponds to a sensor that a user may query.
@@ -89,7 +97,7 @@ private:
     InspectSubject_t subjectsBeingInspected;
 
     void printHeader(modm::IOStream& outputStream);
-};  // class Mpu6500TerminalSerialHandler
+};  // class ImuTerminalSerialHandler
 }  // namespace sensors
 }  // namespace tap
 

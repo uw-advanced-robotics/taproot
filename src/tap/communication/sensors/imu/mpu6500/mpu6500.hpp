@@ -25,6 +25,7 @@
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
+#include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
@@ -44,27 +45,9 @@ namespace sensors
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 : public ::modm::pt::Protothread
+class Mpu6500 final : public ::modm::pt::Protothread, public ImuInterface
 {
 public:
-    /**
-     * Possible IMU states for the Mpu6500.
-     */
-    enum class ImuState
-    {
-        /** Indicates the IMU's init function was not called or initialization failed, so data from
-           this class will be undefined. */
-        IMU_NOT_CONNECTED,
-        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
-           computed. */
-        IMU_NOT_CALIBRATED,
-        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
-           IMU is in this state is undefined. */
-        IMU_CALIBRATING,
-        /** Indicates the IMU is connected and calibration offsets have been computed. */
-        IMU_CALIBRATED,
-    };
-
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
@@ -103,63 +86,124 @@ public:
      * temperature, and angle) data, call this function to ensure the data you are about to receive
      * is not undefined.
      */
-    mockable inline ImuState getImuState() const { return imuState; }
+    mockable inline ImuState getImuState() const final { return imuState; }
+
+    virtual inline const char *getName() const { return "mpu6500"; }
+
+    /**
+     * If the imu is not initializes, logs an error and returns 0,
+     * otherwise returns the value passed in.
+     */
+    inline float validateReading(float reading)
+    {
+        if (imuState == ImuState::IMU_CALIBRATED)
+        {
+            return reading;
+        }
+        else if (imuState == ImuState::IMU_NOT_CALIBRATED)
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CALIBRATED);
+            return reading;
+        }
+        else if (imuState == ImuState::IMU_CALIBRATING)
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_CALIBRATING);
+            return 0.0f;
+        }
+        else
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CONNECTED);
+            return 0.0f;
+        }
+    }
+
+    uint8_t errorState = 0;
 
     /**
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAx() const;
+    mockable inline float getAx() final
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAy() const;
+    mockable inline float getAy() final
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAz() const;
+    mockable inline float getAz() final
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGx() const;
+    mockable inline float getGx() final
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGy() const;
+    mockable inline float getGy() final
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGz() const;
+    mockable inline float getGz() final
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the temperature of the imu in degrees C.
      */
-    mockable float getTemp() const;
+    mockable inline float getTemp() final
+    {
+        return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
+    }
 
     /**
      * Returns yaw angle. in degrees.
      */
-    mockable float getYaw();
+    mockable inline float getYaw() final { return validateReading(mahonyAlgorithm.getYaw()); }
 
     /**
      * Returns pitch angle in degrees.
      */
-    mockable float getPitch();
+    mockable inline float getPitch() final { return validateReading(mahonyAlgorithm.getPitch()); }
 
     /**
      * Returns roll angle in degrees.
      */
-    mockable float getRoll();
+    mockable inline float getRoll() final { return validateReading(mahonyAlgorithm.getRoll()); }
 
     /**
      * Returns the angle difference between the normal vector of the plane that the
@@ -289,12 +333,6 @@ private:
     void mpuNssHigh();
 
     /**
-     * If the imu is not initializes, logs an error and returns 0,
-     * otherwise returns the value passed in.
-     */
-    inline float validateReading(float reading) const;
-
-    /**
      * Write to a given register.
      */
     void spiWriteRegister(uint8_t reg, uint8_t data);
@@ -310,6 +348,11 @@ private:
      * from that point.
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+
+    /**
+     * Add any errors to the error handler that have came up due to calls to validateReading.
+     */
+    void addValidationErrors();
 };
 
 }  // namespace sensors

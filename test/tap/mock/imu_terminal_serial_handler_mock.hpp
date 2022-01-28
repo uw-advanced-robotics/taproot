@@ -22,20 +22,20 @@
 
 #include <gmock/gmock.h>
 
-#include "tap/communication/sensors/mpu6500/mpu6500_terminal_serial_handler.hpp"
+#include "tap/communication/sensors/imu/imu_terminal_serial_handler.hpp"
 
 namespace tap
 {
 namespace mock
 {
-class Mpu6500TerminalSerialHandlerMock : public tap::sensors::Mpu6500TerminalSerialHandler
+class ImuTerminalSerialHandlerMock :public tap::sensors::ImuTerminalSerialHandler
 {
 public:
-    Mpu6500TerminalSerialHandlerMock(tap::Drivers *drivers);
-    virtual ~Mpu6500TerminalSerialHandlerMock();
+    ImuTerminalSerialHandlerMock(tap::Drivers *drivers, tap::sensors::ImuInterface *imu);
+    virtual ~ImuTerminalSerialHandlerMock();
 
     MOCK_METHOD(void, init, (), (override));
-};  // Mpu6500TerminalSerialHandlerMock
+};  // ImuTerminalSerialHandlerMock
 }  // namespace mock
 }  // namespace tap
 
