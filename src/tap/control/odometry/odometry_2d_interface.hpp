@@ -48,20 +48,6 @@ public:
      * @return the current location (x and y coordinate) and orientation (in radians)
      */
     virtual inline const modm::Location2D<float>& getCurrentLocation2D() const = 0;
-
-    /**
-     * Move the position of the world coordinate system to the chassis's current
-     * position, its orientation is preserved.
-     *
-     * This does not affect the rotation (yaw and pitch) of the reference frame.
-     */
-    virtual inline void resetWorldFramePosition() = 0;
-
-    /**
-     * Orient the world coordinate system's axes to match that of the chassis's current
-     * orientation.
-     */
-    virtual inline void resetWorldFrameOrientation() = 0;
 };
 
 }  // namespace tap::control::odometry
