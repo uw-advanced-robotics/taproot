@@ -51,7 +51,7 @@ public:
         modm::Vector<float, 3> position,
         modm::Vector<float, 3> velocity,
         modm::Vector<float, 3> acceleration,
-        float BULLET_VELOCITY);
+        float bulletVelocity);
 
     /**
      * @param state: The kinematic state of the object to project forward.
@@ -67,18 +67,13 @@ public:
     }
 
     /**
+     * The below states should be in the same coordinate frame in order for this method to work properly.
+     * @param turretInitialState The inital state of the turret that will be firing.
      * @param targetInitialState The initial state of a target we want to fire at as a MeasuredKinematicState.
      * 
      * @return The position at which our robot should aim to hit the given target, taking into account the path a projectile takes to hit the target.
      */
     static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState);
-
-    /**
-     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
-     * 
-     * @return The expected travel time of a turret shot to hit a target from this object's position.
-     */
-    const float computeTravelTime(const modm::Vector<float, 3> &targetPosition);
 
     modm::Vector<float, 3> position; // m
     modm::Vector<float, 3> velocity; // m/s
@@ -97,8 +92,15 @@ private:
         return s + v*dt + 0.5f*a*powf(dt, 2.0f);
     }
 
+    /**
+     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
+     * 
+     * @return The expected travel time of a turret shot to hit a target from this object's position.
+     */
+    float computeTravelTime(const modm::Vector<float, 3> &targetPosition) const;
+
     static constexpr float G = 9.81; // m/s^2
-    float BULLET_VELOCITY; // m/s
+    float bulletVelocity; // m/s
 };
 
 }  // namespace algorithms

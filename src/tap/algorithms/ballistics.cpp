@@ -26,19 +26,22 @@ namespace algorithms
     MeasuredKinematicState::MeasuredKinematicState(
         modm::Vector<float, 3> position,
         modm::Vector<float, 3> velocity,
-        modm::Vector<float, 3> acceleration) :
+        modm::Vector<float, 3> acceleration,
+        float bulletVelocity) :
         position(position),
         velocity(velocity),
-        acceleration(acceleration)
-    {}                   
+        acceleration(acceleration),
+        bulletVelocity(bulletVelocity)
+    {}
 
-    float MeasuredKinematicState::computeTravelTime(modm::Vector<float, 3> targetPosition)
+    float MeasuredKinematicState::computeTravelTime(const modm::Vector<float, 3> &targetPosition) const
     {
         float horizontalDist = hypot(targetPosition[X] - position[X], targetPosition[Y] - position[Y]);
         float verticalDist = targetPosition[Z] - position[Z];
-        float pitchAngle = atan((powf(BULLET_VELOCITY, 2) - sqrt(powf(BULLET_VELOCITY, 4) - G*(G*powf(horizontalDist, 2) + 2*verticalDist*powf(BULLET_VELOCITY, 2))))/(G*horizontalDist));
+        float bulletVelocitySquared = powf(bulletVelocity, 2);
+        float pitchAngle = atan((bulletVelocitySquared - sqrt(powf(bulletVelocitySquared, 2) - G*(G*powf(horizontalDist, 2) + 2*verticalDist*bulletVelocitySquared)))/(G*horizontalDist));
 
-        return horizontalDist / (BULLET_VELOCITY * cos(pitchAngle));
+        return horizontalDist / (bulletVelocity * cos(pitchAngle));
     }
 
     static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState)
