@@ -95,8 +95,10 @@ void RefSerialMenu::print17mmSpeed(modm::IOStream& stream)
     float bulletSpeed17 = robotData.turret.bulletType == serial::RefSerialData::Rx::AMMO_17
                               ? robotData.turret.bulletSpeed
                               : 0;
-    stream << "17mmSpeed: " << bulletSpeed17 << " / " << robotData.turret.barrelSpeedLimit17ID1
-           << modm::endl;
+    stream.printf(
+        "17mmSpeed: %.2f / %i\n",
+        static_cast<double>(bulletSpeed17),
+        robotData.turret.barrelSpeedLimit17ID1);
 }
 
 void RefSerialMenu::print17mmHeat(modm::IOStream& stream)
@@ -112,8 +114,10 @@ void RefSerialMenu::print42mmSpeed(modm::IOStream& stream)
     float bulletSpeed42 = robotData.turret.bulletType == serial::RefSerialData::Rx::AMMO_17
                               ? 0
                               : robotData.turret.bulletSpeed;
-    stream << "42mmSpeed: " << bulletSpeed42 << " / " << robotData.turret.barrelSpeedLimit42
-           << modm::endl;
+    stream.printf(
+        "42mmSpeed: %.2f / %i\n",
+        static_cast<double>(bulletSpeed42),
+        robotData.turret.barrelSpeedLimit42);
 }
 
 void RefSerialMenu::print42mmHeat(modm::IOStream& stream)
@@ -132,8 +136,10 @@ void RefSerialMenu::printPowerBuf(modm::IOStream& stream)
 void RefSerialMenu::printPower(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    stream << "Power: " << robotData.chassis.power << " / "
-           << robotData.chassis.powerConsumptionLimit << modm::endl;
+    stream.printf(
+        "Power: %.2f / %i",
+        static_cast<double>(robotData.chassis.power),
+        robotData.chassis.powerConsumptionLimit);
 }
 
 }  // namespace tap::display

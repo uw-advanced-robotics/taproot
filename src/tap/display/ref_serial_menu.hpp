@@ -67,7 +67,7 @@ public:
 
     bool hasChanged() override;
 
-    static const char *getMenuName() { return "Hardware Test Menu"; }
+    static const char *getMenuName() { return "Ref Serial Menu"; }
 
 private:
     using PrintRefSerialDataFncPtr = void (RefSerialMenu::*)(modm::IOStream &);
