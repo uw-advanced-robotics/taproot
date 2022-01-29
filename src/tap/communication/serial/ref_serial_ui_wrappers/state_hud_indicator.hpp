@@ -97,10 +97,13 @@ public:
     StateHUDIndicator(
         tap::Drivers *drivers,
         tap::serial::RefSerial::Tx::Graphic1Message *graphic,
-        UpdateHUDIndicatorState updateFunction)
+        UpdateHUDIndicatorState updateFunction,
+        T initialState)
         : drivers(drivers),
           graphic(graphic),
-          updateFunction(updateFunction)
+          updateFunction(updateFunction),
+          initialState(initialState),
+          indicatorState(initialState)
     {
         minUpdatePeriodTimeout.stop();
     }
@@ -108,6 +111,9 @@ public:
     modm::ResumableResult<bool> initialize()
     {
         RF_BEGIN(0);
+
+        indicatorState = initialState;
+
         // Initially add the graphic
         graphic->graphicData.operation = tap::serial::RefSerial::Tx::ADD_GRAPHIC;
         drivers->refSerial.sendGraphic(graphic);
@@ -157,7 +163,8 @@ private:
 
     UpdateHUDIndicatorState updateFunction;
 
-    T indicatorState = false;
+    const T initialState;
+    T indicatorState;
     bool indicatorChanged = false;
 
     tap::arch::MilliTimeout delayTimeout;
