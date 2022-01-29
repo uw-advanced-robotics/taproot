@@ -23,36 +23,36 @@ namespace tap
 {
 namespace algorithms
 {
-    MeasuredKinematicState::MeasuredKinematicState(
-        modm::Vector<float, 3> position,
-        modm::Vector<float, 3> velocity,
-        modm::Vector<float, 3> acceleration,
-        float bulletVelocity) :
-        position(position),
-        velocity(velocity),
-        acceleration(acceleration),
-        bulletVelocity(bulletVelocity)
+    Ballistics::Ballistics(
+        float bulletVelocity,
+        modm::Vector<float, 3> initialTurretPosition,
+        MeasuredKinematicState initialTargetState,
+        bool targetDataValid) :
+        bulletVelocity(bulletVelocity),
+        turretPosition(initialTurretPosition),
+        targetState(initialTargetState),
+        targetDataValid(targetDataValid)
     {}
 
-    float MeasuredKinematicState::computeTravelTime(const modm::Vector<float, 3> &targetPosition) const
+    float Ballistics::computeTravelTime(const modm::Vector<float, 3> &targetPosition) const
     {
-        float horizontalDist = hypot(targetPosition[X] - position[X], targetPosition[Y] - position[Y]);
-        float verticalDist = targetPosition[Z] - position[Z];
+        float horizontalDist = hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]);
+        float verticalDist = targetPosition[Z] - turretPosition[Z];
         float bulletVelocitySquared = powf(bulletVelocity, 2);
         float pitchAngle = atan((bulletVelocitySquared - sqrt(powf(bulletVelocitySquared, 2) - G*(G*powf(horizontalDist, 2) + 2*verticalDist*bulletVelocitySquared)))/(G*horizontalDist));
 
         return horizontalDist / (bulletVelocity * cos(pitchAngle));
     }
 
-    static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState)
+    modm::Vector<float, 3> Ballistics::findTargetProjectileIntersection()
     {
-        modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
+        modm::Vector<float, 3> projectedTargetPosition = targetState.position;
         float projectedTravelTime = 0;
 
         for (int i = 0; i < 5; i++)
         {
-            projectedTravelTime = turretState.computeTravelTime(projectedTargetPosition);
-            projectedTargetPosition = targetInitialState.projectForward(projectedTravelTime);
+            projectedTravelTime = computeTravelTime(projectedTargetPosition);
+            projectedTargetPosition = projectForward(targetState, projectedTravelTime);
         }
 
         return projectedTargetPosition;

@@ -28,30 +28,37 @@ namespace tap
 namespace algorithms
 {
 
+enum Axes
+    {
+    X = 0,
+    Y,
+    Z,
+};
+
 /**
  * Stores the 3D position, velocity, and acceleration of an object.
  * Functionality for finding a position for our robot to aim at a given target
  * is also built into this class.
  */
-class MeasuredKinematicState {
-public:
-    enum Axes
-    {
-        X = 0,
-        Y,
-        Z,
-    };
+struct MeasuredKinematicState
+{
+    modm::Vector<float, 3> position; // m
+    modm::Vector<float, 3> velocity; // m/s
+    modm::Vector<float, 3> acceleration; // m/s^2
+};
 
+class Ballistics {
+public:
     /**
      * @param position The position of this object in 3D space, measured in meters.
      * @param velocity The velocity of this object in 3D space, measured in m/s.
      * @param acceleration The acceleration of this object in 3D space, measured in m/s^2.
      */
-    MeasuredKinematicState(
-        modm::Vector<float, 3> position,
-        modm::Vector<float, 3> velocity,
-        modm::Vector<float, 3> acceleration,
-        float bulletVelocity);
+    Ballistics(
+        float bulletVelocity,
+        modm::Vector<float, 3> initialTurretPosition,
+        MeasuredKinematicState initialTargetState,
+        bool targetDataValid);
 
     /**
      * @param state: The kinematic state of the object to project forward.
@@ -59,11 +66,12 @@ public:
      * 
      * @return The future 3D position of the objust using a quadratic (constant acceleration) model.
      */
-    inline const modm::Vector<float, 3> projectForward(float dt) {
+    inline static modm::Vector<float, 3> projectForward(const MeasuredKinematicState &state, float dt)
+    {
         return modm::Vector<float, 3>(
-            {quadraticKinematicProjection(dt, position[X], velocity[X], acceleration[X]),
-            quadraticKinematicProjection(dt, position[Y], velocity[Y], acceleration[Y]),
-            quadraticKinematicProjection(dt, position[Z], velocity[Z], acceleration[Z])});
+            {quadraticKinematicProjection(dt, state.position[X], state.velocity[X], state.acceleration[X]),
+            quadraticKinematicProjection(dt, state.position[Y], state.velocity[Y], state.acceleration[Y]),
+            quadraticKinematicProjection(dt, state.position[Z], state.velocity[Z], state.acceleration[Z])});
     }
 
     /**
@@ -73,11 +81,7 @@ public:
      * 
      * @return The position at which our robot should aim to hit the given target, taking into account the path a projectile takes to hit the target.
      */
-    static modm::Vector<float, 3> findTargetProjectileIntersection(const MeasuredKinematicState &turretState, const MeasuredKinematicState &targetInitialState);
-
-    modm::Vector<float, 3> position; // m
-    modm::Vector<float, 3> velocity; // m/s
-    modm::Vector<float, 3> acceleration; // m/s^2
+    modm::Vector<float, 3> findTargetProjectileIntersection();
 
 private:
     /**
@@ -93,11 +97,13 @@ private:
     }
 
     /**
-     * @param targetPosition The position of a target we want to fire at as a 3x1 Vector.
-     * 
      * @return The expected travel time of a turret shot to hit a target from this object's position.
      */
     float computeTravelTime(const modm::Vector<float, 3> &targetPosition) const;
+
+    modm::Vector<float, 3> turretPosition;
+    MeasuredKinematicState targetState;
+    bool targetDataValid = false;
 
     static constexpr float G = 9.81; // m/s^2
     float bulletVelocity; // m/s
