@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-import platform
 import sys
 
 sys.path.append(repopath("scripts/lbuild-helpers"))
@@ -80,14 +79,16 @@ def build(env):
     modm_hal_options = [option.strip(" \t") for option in modm_hal_options]
     # split up option names and values
     modm_hal_options = [option.split(' ') for option in modm_hal_options]
-    # remove invalid options
-    modm_hal_options = list(filter(lambda o: len(o) == 2, modm_hal_options))
+    # remove blank options
+    modm_hal_options = list(filter(lambda o: o != [""], modm_hal_options))
+    # check invalid options
+    def check_modm_option_valid(o):
+        if len(o) != 2:
+            raise ValueError(f"Option {o} has {len(o)} arguments, must have 2 arguments of the form `modm:option:name option_value`")
+    [check_modm_option_valid(o) for o in modm_hal_options]
 
     # stringify the options
-    try:
-        modm_hal_options = [f"<option name=\"{option[0]}\">{option[1]}</option>\n" for option in modm_hal_options]
-    except IndexError:
-        pass
+    modm_hal_options = [f"<option name=\"{option[0]}\">{option[1]}</option>\n" for option in modm_hal_options]
 
     env.substitutions = {
         "modm_path": env[":modm_repo_lb"],
