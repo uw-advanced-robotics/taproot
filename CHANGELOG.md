@@ -35,12 +35,7 @@
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
-<<<<<<< HEAD
 - Tests added for commands in `tap::control::setpoint` (!49)
-- Various improvements to the commands in `tap::control::setpoint` (!49).
-  - Unjamming logic more straightforward.
-  - MoveCommand pause after rotate time now functions as described.
-=======
 - `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
   calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
   parameters.
@@ -48,7 +43,12 @@
   commands are not forcibly ended when the remote state transitions from being held to hot held and
   instead are left to end naturally (or until interrupted by something else) (#95, !114).
 - Print a clearer error message when the chosen compiler is not found on PATH. (!97)
->>>>>>> develop
+- HAL options may be now passed to modm's project.xml file (!116).
+- Support for UART ports 7 and 8 added to dev board type A (!116).
+- Baud rates in `dji_serial.cpp` configurable via the project.xml file (#50, !116).
+- Various improvements to the commands in `tap::control::setpoint` (!49).
+  - Unjamming logic more straightforward.
+  - MoveCommand pause after rotate time now functions as described.
 
 ## December 2021
 
