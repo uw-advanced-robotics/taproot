@@ -19,22 +19,9 @@
 
 #include "ballistics.hpp"
 
-namespace tap
+namespace tap::algorithms::ballistics
 {
-namespace algorithms
-{
-    Ballistics::Ballistics(
-        float bulletVelocity,
-        modm::Vector<float, 3> initialTurretPosition,
-        MeasuredKinematicState initialTargetState,
-        bool targetDataValid) :
-        bulletVelocity(bulletVelocity),
-        turretPosition(initialTurretPosition),
-        targetState(initialTargetState),
-        targetDataValid(targetDataValid)
-    {}
-
-    float Ballistics::computeTravelTime(const modm::Vector<float, 3> &targetPosition) const
+    float computeTravelTime(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition, float bulletVelocity)
     {
         float horizontalDist = hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]);
         float verticalDist = targetPosition[Z] - turretPosition[Z];
@@ -44,20 +31,18 @@ namespace algorithms
         return horizontalDist / (bulletVelocity * cos(pitchAngle));
     }
 
-    modm::Vector<float, 3> Ballistics::findTargetProjectileIntersection()
+    modm::Vector<float, 3> findTargetProjectileIntersection(modm::Vector<float, 3> turretPosition, MeasuredKinematicState targetInitialState, float bulletVelocity)
     {
-        modm::Vector<float, 3> projectedTargetPosition = targetState.position;
+        modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
         float projectedTravelTime = 0;
 
         for (int i = 0; i < 5; i++)
         {
-            projectedTravelTime = computeTravelTime(projectedTargetPosition);
-            projectedTargetPosition = projectForward(targetState, projectedTravelTime);
+            projectedTravelTime = computeTravelTime(turretPosition, projectedTargetPosition, bulletVelocity);
+            projectedTargetPosition = projectForward(targetInitialState, projectedTravelTime);
         }
 
         return projectedTargetPosition;
     }
 
-} // namespace algorithms
-
-} // namespace tap
+} // namespace tap::algorithms::ballistics
