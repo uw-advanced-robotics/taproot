@@ -8,15 +8,9 @@
     <option name="modm:build:project.name">taproot</option>
     <option name="modm:build:openocd.cfg">openocd.cfg</option>
     <option name="modm:build:scons:include_sconstruct">False</option>
-    <option name="modm:platform:uart:1:buffer.rx">256</option>
-    <option name="modm:platform:uart:1:buffer.tx">256</option>
-    <option name="modm:platform:uart:2:buffer.rx">256</option>
-    <option name="modm:platform:uart:2:buffer.tx">256</option>
-    <option name="modm:platform:uart:3:buffer.tx">512</option>
-    <option name="modm:platform:uart:3:buffer.rx">512</option>
-    <option name="modm:platform:uart:6:buffer.rx">256</option>
-    <option name="modm:platform:uart:6:buffer.tx">256</option>
     <option name="modm:target">{{ mcu }}</option>
+
+{% for o in modm_hal_options %}    {{ o }}{% endfor %}
   </options>
   <modules>
     <module>modm:architecture:clock</module>
@@ -57,6 +51,8 @@
     <module>modm:platform:timer:12</module>
     <module>modm:platform:spi:5</module>
     <module>modm:platform:uart:2</module>
+    <module>modm:platform:uart:7</module>
+    <module>modm:platform:uart:8</module>
     <module>modm:ui:display</module>
     <module>modm:ui:menu</module>
 %% elif options[":dev_board"] == "rm-dev-board-c"

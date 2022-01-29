@@ -42,8 +42,8 @@
         <gpio alias="Button" name="GpioA0"></gpio>
     </gpio-pins>
     <uart-ports>
-        <uart name="1" tx="GpioA9" rx="GpioB7"></uart>
-        <uart name="3" rx="GpioC11"></uart>
-        <uart name="6" tx="GpioG14" rx="GpioG9"></uart>
+        <uart sync="true" name="1" tx="GpioA9" rx="GpioB7"></uart>
+        <uart sync="true" name="3" rx="GpioC11"></uart>
+        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
     </uart-ports>
 </board>

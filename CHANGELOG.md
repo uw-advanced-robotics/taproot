@@ -37,6 +37,9 @@
   commands are not forcibly ended when the remote state transitions from being held to hot held and
   instead are left to end naturally (or until interrupted by something else) (#95, !114).
 - Print a clearer error message when the chosen compiler is not found on PATH. (!97)
+- HAL options may be now passed to modm's project.xml file (!116).
+- Support for UART ports 7 and 8 added to dev board type A (!116).
+- Baud rates in `dji_serial.cpp` configurable via the project.xml file (#50, !116).
 
 ## December 2021
 
