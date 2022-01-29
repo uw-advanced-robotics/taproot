@@ -53,6 +53,7 @@ void RefSerialMenu::draw()
          i <= verticalScroll.getLargestIndexDisplayed();
          i++)
     {
+        display << (i == verticalScroll.getCursorIndex() ? "> " : "  ");
         (this->*printRefSerialDataFncPtrs[i])(display);
     }
 }
@@ -79,7 +80,7 @@ bool RefSerialMenu::hasChanged()
 void RefSerialMenu::printRobotTypeId(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    stream << static_cast<int>(robotData.robotId) << ", "
+    stream << "Robot ID: " << static_cast<int>(robotData.robotId) << ", "
            << (serial::RefSerialData::isBlueTeam(robotData.robotId) ? "BLUE" : "RED") << modm::endl;
 }
 
@@ -130,7 +131,7 @@ void RefSerialMenu::print42mmHeat(modm::IOStream& stream)
 void RefSerialMenu::printPowerBuf(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    stream << "PowerBuf" << robotData.chassis.powerBuffer << modm::endl;
+    stream << "PowerBuf: " << robotData.chassis.powerBuffer << modm::endl;
 }
 
 void RefSerialMenu::printPower(modm::IOStream& stream)

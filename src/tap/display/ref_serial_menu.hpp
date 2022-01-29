@@ -55,7 +55,7 @@ public:
     /** Time between calls to `draw`, which will redraw the referee serial menu. */
     static constexpr uint32_t DISPLAY_DRAW_PERIOD = 500;
     static constexpr int REF_SERIAL_INFO_LINES = 8;
-    static constexpr int DISPLAY_MAX_ENTRIES = 7;
+    static constexpr int DISPLAY_MAX_ENTRIES = 8;
 
     RefSerialMenu(modm::ViewStack<DummyAllocator<modm::IAbstractView> > *stack, Drivers *drivers);
 
