@@ -45,9 +45,27 @@ namespace sensors
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 final : public ::modm::pt::Protothread, public ImuInterface
+class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterface
 {
 public:
+    /**
+     * Possible IMU states for an IMU.
+     */
+    enum class ImuState
+    {
+        /** Indicates the IMU's init function was not called or initialization failed, so data from
+           this class will be undefined. */
+        IMU_NOT_CONNECTED,
+        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
+           computed. */
+        IMU_NOT_CALIBRATED,
+        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
+           IMU is in this state is undefined. */
+        IMU_CALIBRATING,
+        /** Indicates the IMU is connected and calibration offsets have been computed. */
+        IMU_CALIBRATED,
+    };
+
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
@@ -86,7 +104,7 @@ public:
      * temperature, and angle) data, call this function to ensure the data you are about to receive
      * is not undefined.
      */
-    mockable inline ImuState getImuState() const final { return imuState; }
+    mockable inline ImuState getImuState() const final_mockable { return imuState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
@@ -123,7 +141,7 @@ public:
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAx() final
+    mockable inline float getAx() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
@@ -134,7 +152,7 @@ public:
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAy() final
+    mockable inline float getAy() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
@@ -145,7 +163,7 @@ public:
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAz() final
+    mockable inline float getAz() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
@@ -156,7 +174,7 @@ public:
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGx() final
+    mockable inline float getGx() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
@@ -166,7 +184,7 @@ public:
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGy() final
+    mockable inline float getGy() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
@@ -176,7 +194,7 @@ public:
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGz() final
+    mockable inline float getGz() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
@@ -185,7 +203,7 @@ public:
     /**
      * Returns the temperature of the imu in degrees C.
      */
-    mockable inline float getTemp() final
+    mockable inline float getTemp() final_mockable
     {
         return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
     }
@@ -193,17 +211,26 @@ public:
     /**
      * Returns yaw angle. in degrees.
      */
-    mockable inline float getYaw() final { return validateReading(mahonyAlgorithm.getYaw()); }
+    mockable inline float getYaw() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getYaw());
+    }
 
     /**
      * Returns pitch angle in degrees.
      */
-    mockable inline float getPitch() final { return validateReading(mahonyAlgorithm.getPitch()); }
+    mockable inline float getPitch() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getPitch());
+    }
 
     /**
      * Returns roll angle in degrees.
      */
-    mockable inline float getRoll() final { return validateReading(mahonyAlgorithm.getRoll()); }
+    mockable inline float getRoll() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getRoll());
+    }
 
     /**
      * Returns the angle difference between the normal vector of the plane that the

@@ -28,38 +28,7 @@ namespace tap::sensors
 class ImuInterface
 {
 public:
-    /**
-     * Possible IMU states for an IMU.
-     */
-    enum class ImuState
-    {
-        /** Indicates the IMU's init function was not called or initialization failed, so data from
-           this class will be undefined. */
-        IMU_NOT_CONNECTED,
-        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
-           computed. */
-        IMU_NOT_CALIBRATED,
-        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
-           IMU is in this state is undefined. */
-        IMU_CALIBRATING,
-        /** Indicates the IMU is connected and calibration offsets have been computed. */
-        IMU_CALIBRATED,
-    };
-
     virtual inline const char *getName() const = 0;
-
-    /**
-     * Returns the state of the IMU. Can be not connected, connected but not calibrated, calibrating
-     * or calibrated. When not connected, IMU data is undefiend. When not calibrated, IMU data is
-     * valid but IMU data might contain drift. When calibrating, the IMU data is invalid.
-     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
-     * not drift.
-     *
-     * To be safe, whenever you call functions that return IMU (acceleration, gyroscope,
-     * temperature, and angle) data, call this function to ensure the data you are about to receive
-     * is not undefined.
-     */
-    virtual inline ImuState getImuState() const = 0;
 
     /**
      * Returns the linear acceleration in the x direction, in
