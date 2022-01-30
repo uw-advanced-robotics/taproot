@@ -54,7 +54,11 @@ public:
 
     void shortButtonPress(modm::MenuButtons::Button button) override;
 
-    static const char *getMenuName() { return "IMU Menu"; }
+    /**
+     * @return The name of the menu, which happens to be the name of the IMU associated with this
+     * menu.
+     */
+    const char *getMenuName();
 
 private:
     ImuInterface *imu;

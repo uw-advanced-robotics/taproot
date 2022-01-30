@@ -70,4 +70,7 @@ void ImuMenu::shortButtonPress(modm::MenuButtons::Button button)
         this->remove();
     }
 }
+
+const char *ImuMenu::getMenuName() { return imu->getName(); }
+
 }  // namespace tap::sensors::imu
