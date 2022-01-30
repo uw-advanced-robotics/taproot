@@ -156,12 +156,19 @@ public:
      * be called.
      *
      * @param[in] commandToAdd the Command to be added to the scheduler.
-     * @param[in] queueIfSafeDisconnected `true` if the command should be queued if in safe
-     *      disconnect mode. In the vast majority of senarios this should be false, but for example
-     *      if you want to add a command on startup but the disconnect handler is returning true,
-     *      this option gives you the ability to add commands.
      */
-    mockable void addCommand(Command* commandToAdd, bool queueIfSafeDisconnected = false);
+    mockable void addCommand(Command* commandToAdd);
+
+    /**
+     * Attempts to add a command to the scheduler. If the command scheduler is in safe disconnect
+     * mode, the command will added once when the scheduler exits the safe disconnect mode.
+     * Otherwise will directly add the command.
+     *
+     * @see addCommand for more details about the mechanics of adding a command.
+     *
+     * @param[in] commandToAdd The Command to be added to the scheduler.
+     */
+    mockable void addOrQueueCommand(Command* commandToAdd);
 
     /**
      * Removes the given Command completely from the CommandScheduler. This

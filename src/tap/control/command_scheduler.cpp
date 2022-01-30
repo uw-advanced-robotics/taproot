@@ -253,15 +253,28 @@ void CommandScheduler::run()
 #endif
 }
 
-void CommandScheduler::addCommand(Command *commandToAdd, bool queueIfSafeDisconnected)
+void CommandScheduler::addOrQueueCommand(Command *commandToAdd)
+{
+    if (commandToAdd == nullptr)
+    {
+        RAISE_ERROR(drivers, "attempting to add nullptr command");
+        return;
+    }
+
+    if ((*safeDisconnectFunction)())
+    {
+        queuedCommandBitmap |= LSB_ONE_HOT_COMMAND_BITMAP << commandToAdd->getGlobalIdentifier();
+    }
+    else
+    {
+        addCommand(commandToAdd);
+    }
+}
+
+void CommandScheduler::addCommand(Command *commandToAdd)
 {
     if ((*safeDisconnectFunction)())
     {
-        if (queueIfSafeDisconnected)
-        {
-            queuedCommandBitmap |= LSB_ONE_HOT_COMMAND_BITMAP
-                                   << commandToAdd->getGlobalIdentifier();
-        }
         return;
     }
     else if (runningHardwareTests)

@@ -1256,7 +1256,7 @@ TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
 
 TEST(
     CommandScheduler,
-    addCommand_command_queued_when_remote_disconnected_and_added_when_no_longer_disconnected)
+    addOrQueueCommand_command_queued_when_remote_disconnected_and_added_when_no_longer_disconnected)
 {
     Drivers drivers;
     RemoteSafeDisconnectFunction func(&drivers);
@@ -1278,9 +1278,19 @@ TEST(
     EXPECT_CALL(c, execute).Times(2);
 
     scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c, true);  // command will be queued
-    scheduler.run();                 // command will be added and executed
-    scheduler.run();                 // command will be executed
+    scheduler.addOrQueueCommand(&c);  // command will be queued
+    scheduler.run();                  // command will be added and executed
+    scheduler.run();                  // command will be executed
+}
+
+TEST(CommandScheduler, addOrQueueCommand_nullptr_command_errors)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList);
+
+    scheduler.addOrQueueCommand(nullptr);
 }
 
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
