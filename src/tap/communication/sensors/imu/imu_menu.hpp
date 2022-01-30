@@ -20,18 +20,31 @@
 #ifndef IMU_MENU_HPP_
 #define IMU_MENU_HPP_
 
-#include "modm/ui/menu/abstract_menu.hpp"
-#include "imu_interface.hpp"
 #include "tap/architecture/periodic_timer.hpp"
 #include "tap/display/dummy_allocator.hpp"
 
-namespace tap::sensors::imu {
-class ImuMenu : public modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> > {
+#include "modm/ui/menu/abstract_menu.hpp"
+
+#include "imu_interface.hpp"
+
+namespace tap::sensors::imu
+{
+/**
+ * Menu that displays IMU readings from some particular `ImuInterfac`.
+ */
+class ImuMenu : public modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >
+{
 public:
-    static constexpr uint8_t IMU_MENU_ID = 10;
+    /** Time in milliseconds between calls to update the display. */
     static constexpr uint32_t IMU_UPDATE_TIME = 500;
 
-    ImuMenu(modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack, ImuInterface *imu);
+    /**
+     * @param[in] stack The `ViewStack` that this menu will is being added to.
+     * @param[in] imu The ImuInterface whose IMU information will be displayed.
+     */
+    ImuMenu(
+        modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
+        ImuInterface *imu);
 
     void draw() override;
 
@@ -48,6 +61,6 @@ private:
 
     tap::arch::PeriodicMilliTimer imuUpdateTimer{IMU_UPDATE_TIME};
 };
-}
+}  // namespace tap::sensors::imu
 
 #endif  // IMU_MENU_HPP_

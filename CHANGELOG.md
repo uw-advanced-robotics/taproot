@@ -18,6 +18,12 @@
   this function in user code to ensure proper calibration of the IMU.
 - The `HoldRepeatCommandMapping` requires an extra parameter in its constructor. See all changes for
   more details.
+- The `Mpu6500` object is now generated from the module `taproot:communication:sensors:imu:mpu6500`.
+  `mpu6500.hpp` is now in the directory `src/tap/communication/sensors/imu` (#18, !119).
+- The `Mpu6500TerminalSerialHandler` has been renamed to `ImuTerminalSerialHandler`. This driver is
+  no longer generated as part of `drivers.hpp`. You should put this object in your drivers object if
+  you want to use it. This serial handler now takes in a pointer to a `ImuInterface` object (#18,
+  !119).
 
 ### All changes
 
@@ -40,6 +46,8 @@
 - HAL options may be now passed to modm's project.xml file (!116).
 - Support for UART ports 7 and 8 added to dev board type A (!116).
 - Baud rates in `dji_serial.cpp` configurable via the project.xml file (#50, !116).
+- `ImuInterface` added such that IMUs can be interchanged in various situations (#18, !119).
+- `ImuMenu` added that prints information about an instance of an `ImuInterface` (#18, !119).
 
 ## December 2021
 

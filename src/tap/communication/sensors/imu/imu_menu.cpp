@@ -24,7 +24,7 @@ namespace tap::sensors::imu
 ImuMenu::ImuMenu(
     modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
     ImuInterface *imu)
-    : modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >(stack, IMU_MENU_ID),
+    : modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >(stack, 1),
       imu(imu)
 {
 }

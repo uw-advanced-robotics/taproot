@@ -24,8 +24,8 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
-#include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
+#include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
