@@ -156,8 +156,12 @@ public:
      * be called.
      *
      * @param[in] commandToAdd the Command to be added to the scheduler.
+     * @param[in] queueIfSafeDisconnected `true` if the command should be queued if in safe
+     *      disconnect mode. In the vast majority of senarios this should be false, but for example
+     *      if you want to add a command on startup but the disconnect handler is returning true,
+     *      this option gives you the ability to add commands.
      */
-    mockable void addCommand(Command* commandToAdd);
+    mockable void addCommand(Command* commandToAdd, bool queueIfSafeDisconnected = false);
 
     /**
      * Removes the given Command completely from the CommandScheduler. This
@@ -329,12 +333,6 @@ private:
      */
     static bool masterSchedulerExists;
 
-    /**
-     * Returns true if the remote is disconnected and the safeDisconnectMode flag is
-     * enabled.
-     */
-    bool safeDisconnected();
-
     Drivers* drivers;
 
     /**
@@ -367,6 +365,12 @@ private:
      * be set to 1.
      */
     command_scheduler_bitmap_t addedCommandBitmap = 0;
+
+    /**
+     * If a command has been queued up to start once the safe disconnect function returns false, it
+     * is added to this bitmap.
+     */
+    command_scheduler_bitmap_t queuedCommandBitmap = 0;
 
     bool isMasterScheduler = false;
 

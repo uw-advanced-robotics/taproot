@@ -183,7 +183,7 @@ void CommandScheduler::run()
         return;
     }
 
-    if (safeDisconnected())
+    if ((*safeDisconnectFunction)())
     {
         // End all commands running. They were interrupted by the remote disconnecting.
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
@@ -193,6 +193,19 @@ void CommandScheduler::run()
     }
     else
     {
+        // Add any queued commands
+        if (queuedCommandBitmap != static_cast<command_scheduler_bitmap_t>(0))
+        {
+            for (uint8_t i = 0; i < sizeof(command_scheduler_bitmap_t) * 8; i++)
+            {
+                if (queuedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << i))
+                {
+                    addCommand(globalCommandRegistrar[i]);
+                }
+            }
+            queuedCommandBitmap = 0;
+        }
+
         // Execute commands in the addedCommandBitmap, remove any that are finished
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {
@@ -216,7 +229,7 @@ void CommandScheduler::run()
             // If the remote is connected given the scheduler is in safe disconnect mode and
             // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if (!safeDisconnected() &&
+            if (!(*safeDisconnectFunction)() &&
                 !(subsystemsAssociatedWithCommandBitmap &
                   (LSB_ONE_HOT_SUBSYSTEM_BITMAP << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
@@ -240,10 +253,15 @@ void CommandScheduler::run()
 #endif
 }
 
-void CommandScheduler::addCommand(Command *commandToAdd)
+void CommandScheduler::addCommand(Command *commandToAdd, bool queueIfSafeDisconnected)
 {
-    if (safeDisconnected())
+    if ((*safeDisconnectFunction)())
     {
+        if (queueIfSafeDisconnected)
+        {
+            queuedCommandBitmap |= LSB_ONE_HOT_COMMAND_BITMAP
+                                   << commandToAdd->getGlobalIdentifier();
+        }
         return;
     }
     else if (runningHardwareTests)
@@ -323,8 +341,6 @@ void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
 {
     this->safeDisconnectFunction = func;
 }
-
-bool CommandScheduler::safeDisconnected() { return this->safeDisconnectFunction->operator()(); }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
 {

@@ -37,7 +37,11 @@ public:
     virtual ~CommandSchedulerMock();
 
     MOCK_METHOD(void, run, (), (override));
-    MOCK_METHOD(void, addCommand, (control::Command *), (override));
+    MOCK_METHOD(void, addCommandImpl, (control::Command *, bool));
+    void addCommand(control::Command *cmd, bool queueIfSafeDisconnected = false)
+    {
+        addCommandImpl(cmd, queueIfSafeDisconnected);
+    }
     MOCK_METHOD(void, removeCommand, (control::Command *, bool), (override));
     MOCK_METHOD(bool, isCommandScheduled, (const control::Command *), (const override));
     MOCK_METHOD(void, registerSubsystem, (control::Subsystem *), (override));

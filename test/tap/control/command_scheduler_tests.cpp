@@ -1254,6 +1254,35 @@ TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
     scheduler.run();
 }
 
+TEST(
+    CommandScheduler,
+    addCommand_command_queued_when_remote_disconnected_and_added_when_no_longer_disconnected)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    NiceMock<CommandMock> c;
+    NiceMock<SubsystemMock> s(&drivers);
+    set<Subsystem *> subRequirements{&s};
+    ON_CALL(c, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
+    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
+    ON_CALL(c, isReady).WillByDefault(Return(true));
+    ON_CALL(c, isFinished).WillByDefault(Return(false));
+    EXPECT_CALL(drivers.remote, isConnected)
+        .Times(6)
+        .WillOnce(Return(false))
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(c, initialize).Times(1);
+    EXPECT_CALL(c, execute).Times(2);
+
+    scheduler.registerSubsystem(&s);
+    scheduler.addCommand(&c, true);  // command will be queued
+    scheduler.run();                 // command will be added and executed
+    scheduler.run();                 // command will be executed
+}
+
 TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
 {
     Drivers drivers;
