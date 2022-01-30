@@ -56,7 +56,7 @@ void ImuMenu::draw()
             IMU_DATA_START_X + x * (display.getBufferWidth() - IMU_DATA_START_X) /
                                    MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs[0]),
             IMU_DATA_START_Y);
-        display.printf(IMU_DATA_COL_HEADERS[x]);
+        display.printf("%s", IMU_DATA_COL_HEADERS[x]);
 
         // print column
         for (size_t y = 0; y < MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs); y++)
