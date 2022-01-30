@@ -50,11 +50,12 @@ MoveCommand::MoveCommand(
 void MoveCommand::initialize()
 {
     // set the ramp start and target values
-    float targetValue = setpointSubsystem->getSetpoint() + targetDisplacement;
+    float currentSetpoint = setpointSubsystem->getSetpoint();
+    float targetValue = currentSetpoint + targetDisplacement;
     float currentValue = setpointSubsystem->getCurrentValue();
 
     rampToTargetValue.setTarget(targetValue);
-    rampToTargetValue.setValue(currentValue);
+    rampToTargetValue.setValue(currentSetpoint);
 
     trueDisplacement = targetValue - currentValue;
 
