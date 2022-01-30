@@ -25,8 +25,18 @@ ImuMenu::ImuMenu(
     modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
     ImuInterface *imu)
     : modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >(stack, 1),
-      imu(imu)
+      imu(imu),
+      imuAccelGyroAngleFnPtrs{
+          {&ImuInterface::getAx, &ImuInterface::getAy, &ImuInterface::getAz},
+          {&ImuInterface::getGx, &ImuInterface::getGy, &ImuInterface::getGz},
+          {&ImuInterface::getPitch, &ImuInterface::getRoll, &ImuInterface::getYaw},
+      }
 {
+}
+
+static void drawFloat(modm::GraphicDisplay &display, float val)
+{
+    display.printf("%.2f", static_cast<double>(val));
 }
 
 void ImuMenu::draw()
@@ -36,27 +46,28 @@ void ImuMenu::draw()
     display.setCursor(0, 2);
     display << getMenuName() << modm::endl;
 
-    display.printf("       x     y     z\n");
-    // draw accel data
-    display.printf(
-        "Accel: %.2f %.2f %.2f\n",
-        static_cast<double>(imu->getAx()),
-        static_cast<double>(imu->getAy()),
-        static_cast<double>(imu->getAz()));
-    // draw gyro data
-    display.printf(
-        "Gyro:  %.2f %.2f %.2f\n",
-        static_cast<double>(imu->getGx()),
-        static_cast<double>(imu->getGy()),
-        static_cast<double>(imu->getGz()));
-    // draw angle data
-    display.printf(
-        "Angle: %.2f %.2f %.2f\n",
-        static_cast<double>(imu->getPitch()),
-        static_cast<double>(imu->getRoll()),
-        static_cast<double>(imu->getYaw()));
-    // draw temp
-    display.printf("Temp:  %.2f", static_cast<double>(imu->getTemp()));
+    // print row headers and temperature
+    display.printf("\nAcc\nGyro\nAng\nTemp:  %.2f", static_cast<double>(imu->getTemp()));
+
+    for (size_t x = 0; x < MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs[0]); x++)
+    {
+        // print the column title
+        display.setCursor(
+            IMU_DATA_START_X + x * (display.getBufferWidth() - IMU_DATA_START_X) /
+                                   MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs[0]),
+            IMU_DATA_START_Y);
+        display.printf(IMU_DATA_COL_HEADERS[x]);
+
+        // print column
+        for (size_t y = 0; y < MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs); y++)
+        {
+            display.setCursor(
+                IMU_DATA_START_X + x * (display.getBufferWidth() - IMU_DATA_START_X) /
+                                       MODM_ARRAY_SIZE(imuAccelGyroAngleFnPtrs[0]),
+                IMU_DATA_START_Y + (y + 1) * display.getFontHeight());
+            drawFloat(display, (imu->*imuAccelGyroAngleFnPtrs[y][x])());
+        }
+    }
 }
 
 void ImuMenu::update() {}

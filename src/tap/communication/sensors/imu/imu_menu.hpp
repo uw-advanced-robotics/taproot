@@ -61,9 +61,18 @@ public:
     const char *getMenuName();
 
 private:
+    using ImuInterfaceFnPtr = float (ImuInterface::*)();
+
+    static constexpr int IMU_DATA_START_X = 20;
+    static constexpr int IMU_DATA_START_Y = 10;
+
+    static constexpr const char *IMU_DATA_COL_HEADERS[] = {"X", "Y", "Z"};
+
     ImuInterface *imu;
 
     tap::arch::PeriodicMilliTimer imuUpdateTimer{IMU_UPDATE_TIME};
+
+    ImuInterfaceFnPtr imuAccelGyroAngleFnPtrs[3][3];
 };
 }  // namespace tap::sensors::imu
 
