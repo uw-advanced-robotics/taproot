@@ -135,7 +135,7 @@ bool UnjamCommand::isFinished() const
             tap::algorithms::compareFloatClose(
                 setpointSubsystem->getCurrentValue(),
                 setpointBeforeUnjam,
-                0.9f * setpointSubsystem->getSetpointTolerance())) ||
+                0.9f * setpointSubsystem->getJamSetpointTolerance())) ||
            backwardsCount >= targetCycleCount + 1;
 }
 
