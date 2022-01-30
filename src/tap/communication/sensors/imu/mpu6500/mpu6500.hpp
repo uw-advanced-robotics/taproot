@@ -104,7 +104,7 @@ public:
      * temperature, and angle) data, call this function to ensure the data you are about to receive
      * is not undefined.
      */
-    mockable inline ImuState getImuState() const final_mockable { return imuState; }
+    mockable inline ImuState getImuState() const { return imuState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
@@ -141,7 +141,7 @@ public:
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAx() final_mockable
+    inline float getAx() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
@@ -152,7 +152,7 @@ public:
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAy() final_mockable
+    inline float getAy() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
@@ -163,7 +163,7 @@ public:
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable inline float getAz() final_mockable
+    inline float getAz() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
@@ -174,7 +174,7 @@ public:
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGx() final_mockable
+    inline float getGx() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
@@ -184,7 +184,7 @@ public:
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGy() final_mockable
+    inline float getGy() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
@@ -194,7 +194,7 @@ public:
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable inline float getGz() final_mockable
+    inline float getGz() final_mockable
     {
         return validateReading(
             static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
@@ -203,7 +203,7 @@ public:
     /**
      * Returns the temperature of the imu in degrees C.
      */
-    mockable inline float getTemp() final_mockable
+    inline float getTemp() final_mockable
     {
         return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
     }
@@ -211,7 +211,7 @@ public:
     /**
      * Returns yaw angle. in degrees.
      */
-    mockable inline float getYaw() final_mockable
+    inline float getYaw() final_mockable
     {
         return validateReading(mahonyAlgorithm.getYaw());
     }
@@ -219,7 +219,7 @@ public:
     /**
      * Returns pitch angle in degrees.
      */
-    mockable inline float getPitch() final_mockable
+    inline float getPitch() final_mockable
     {
         return validateReading(mahonyAlgorithm.getPitch());
     }
@@ -227,7 +227,7 @@ public:
     /**
      * Returns roll angle in degrees.
      */
-    mockable inline float getRoll() final_mockable
+    inline float getRoll() final_mockable
     {
         return validateReading(mahonyAlgorithm.getRoll());
     }
