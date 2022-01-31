@@ -196,7 +196,7 @@ void CommandScheduler::run()
         // Add any queued commands
         if (queuedCommandBitmap != static_cast<command_scheduler_bitmap_t>(0))
         {
-            for (uint8_t i = 0; i < sizeof(command_scheduler_bitmap_t) * 8; i++)
+            for (uint8_t i = 0; i < sizeof(command_scheduler_bitmap_t) * CHAR_BIT; i++)
             {
                 if (queuedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << i))
                 {
