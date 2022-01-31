@@ -178,7 +178,7 @@ TEST(CommandMapper, addHoldRepeatMapping_successfully_adds_mapping_normal_case)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldRepeatCommandMapping mappingForCompare(&drivers, {&tc}, ms);
+    HoldRepeatCommandMapping mappingForCompare(&drivers, {&tc}, ms, true);
 
     cm.addMap(&mappingForCompare);
     const HoldRepeatCommandMapping *holdRepeatMappingPtr =

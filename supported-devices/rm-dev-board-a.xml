@@ -45,9 +45,11 @@
         <gpio alias="Button" name="GpioB2"></gpio>
     </gpio-pins>
     <uart-ports>
-        <uart name="1" rx="GpioB7"></uart>
-        <uart name="2" tx="GpioD5" rx="GpioD6"></uart>
-        <uart name="3" tx="GpioD8" rx="GpioD9"></uart>
-        <uart name="6" tx="GpioG14" rx="GpioG9"></uart>
+        <uart sync="true" name="1" rx="GpioB7"></uart>
+        <uart sync="true" name="2" tx="GpioD5" rx="GpioD6"></uart>
+        <uart sync="true" name="3" tx="GpioD8" rx="GpioD9"></uart>
+        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
+        <uart sync="false" name="7" tx="GpioE8" rx="GpioE7"></uart>
+        <uart sync="false" name="8" tx="GpioE1" rx="GpioE0"></uart>
     </uart-ports>
 </board>
