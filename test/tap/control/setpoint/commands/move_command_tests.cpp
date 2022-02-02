@@ -179,29 +179,31 @@ TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_w
 {
     // Command being finished also requires sufficient time to have passed.
     CREATE_COMMON_TEST_OBJECTS();
-    MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 1.0f);
+    MoveCommand command(&subsystem, 1.0f, 1, 15, true, 0.1f);
 
     EXPECT_CALL(subsystem, getSetpoint).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
-    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(8.5f));
+    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(2.0f));
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     setTime(0);
     command.initialize();
     // When command executes it should see that subsystem position is at target and start pause
     // after rotate timeout
+    // Update time s.t. displacement setpoint increases
+    setTime(1);
     command.execute();
     // Provide sufficient time for pause after rotation
-    setTime(15);
+    setTime(16);
     EXPECT_TRUE(command.isFinished());
 }
 
 TEST(MoveCommand, command_pauses_after_move_time)
 {
     CREATE_COMMON_TEST_OBJECTS();
-    MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 1.0f);
+    MoveCommand command(&subsystem, 1.0f, 1000, 15, true, 0.1f);
 
     EXPECT_CALL(subsystem, getSetpoint).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
-    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(8.5f));
+    EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(2.0f));
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
     setTime(0);

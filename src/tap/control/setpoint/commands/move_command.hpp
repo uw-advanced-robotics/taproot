@@ -95,11 +95,6 @@ private:
      */
     float targetDisplacement;
 
-    /**
-     * Stores the actual distance between target endpoint and startpoint of movement
-     */
-    float trueDisplacement;
-
     tap::algorithms::Ramp rampToTargetValue;
 
     /**

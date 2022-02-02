@@ -86,7 +86,7 @@ public:
     /**
      * @return the jamming distance tolerance of this jam checker
      */
-    inline float getSetpointTolerance() const { return distanceTolerance; }
+    inline float getJamSetpointTolerance() const { return distanceTolerance; }
 
 private:
     SetpointSubsystem* setpointSubsystem;

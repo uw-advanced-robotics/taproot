@@ -52,12 +52,9 @@ void MoveCommand::initialize()
     // set the ramp start and target values
     float currentSetpoint = setpointSubsystem->getSetpoint();
     float targetValue = currentSetpoint + targetDisplacement;
-    float currentValue = setpointSubsystem->getCurrentValue();
 
     rampToTargetValue.setTarget(targetValue);
     rampToTargetValue.setValue(currentSetpoint);
-
-    trueDisplacement = targetValue - currentValue;
 
     previousMoveTime = tap::arch::clock::getTimeMilliseconds();
 
@@ -76,7 +73,7 @@ void MoveCommand::execute()
     // update the subsystem setpoint ramp
     uint32_t currTime = tap::arch::clock::getTimeMilliseconds();
     rampToTargetValue.update(
-        (currTime - previousMoveTime) * trueDisplacement / static_cast<float>(moveTime));
+        (currTime - previousMoveTime) * targetDisplacement / static_cast<float>(moveTime));
     previousMoveTime = currTime;
     setpointSubsystem->setSetpoint(rampToTargetValue.getValue());
 

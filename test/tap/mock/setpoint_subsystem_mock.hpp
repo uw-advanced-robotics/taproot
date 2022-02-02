@@ -44,7 +44,7 @@ public:
     MOCK_METHOD(float, getSetpoint, (), (const override));
     MOCK_METHOD(void, setSetpoint, (float), (override));
     MOCK_METHOD(float, getCurrentValue, (), (const override));
-    MOCK_METHOD(float, getSetpointTolerance, (), (const override));
+    MOCK_METHOD(float, getJamSetpointTolerance, (), (const override));
     MOCK_METHOD(bool, calibrateHere, (), (override));
     MOCK_METHOD(bool, isJammed, (), (override));
     MOCK_METHOD(void, clearJam, (), (override));

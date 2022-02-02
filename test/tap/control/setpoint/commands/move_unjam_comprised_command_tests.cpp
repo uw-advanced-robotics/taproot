@@ -143,7 +143,7 @@ TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
     EXPECT_CALL(subsystem, isJammed).WillRepeatedly(ReturnPointee(&jamStatus));
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(3.0f));
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
-    EXPECT_CALL(subsystem, getSetpointTolerance).WillRepeatedly(Return(0.01f));
+    EXPECT_CALL(subsystem, getJamSetpointTolerance).WillRepeatedly(Return(0.01f));
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(Lt(0.1f))).Times(AtLeast(1));
     EXPECT_CALL(subsystem, setSetpoint(Gt(5.9f))).Times(AtLeast(1));

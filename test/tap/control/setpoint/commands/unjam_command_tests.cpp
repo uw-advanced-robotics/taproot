@@ -160,7 +160,7 @@ TEST(UnjamCommand, successful_unjam_behavior)
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(getCurrentValueSimulator);
     // Ideally this should just work since we are returning the exact value, but with floating
     // point operations it may not be the best.
-    EXPECT_CALL(subsystem, getSetpointTolerance).Times(AtLeast(1)).WillRepeatedly(Return(0.1f));
+    EXPECT_CALL(subsystem, getJamSetpointTolerance).Times(AtLeast(1)).WillRepeatedly(Return(0.1f));
     // Expect that command clears jam once at the end
     EXPECT_CALL(subsystem, clearJam);
     // Expect that command resets setpoint to original value after successfully clearing
