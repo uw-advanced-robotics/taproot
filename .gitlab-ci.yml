@@ -52,7 +52,7 @@ before_script:
   stage: Initial Verification
   needs: []
   script:
-    - python3 /run-clang-format.py --clang-format-executable clang-format-10 -r src/ test/
+    - python3 ./scripts/clang_format_all.py -e clang-format-10 -d src/ test/
   only: *verification_only
   except: *verification_except
 
