@@ -21,28 +21,43 @@
 
 namespace tap::algorithms::ballistics
 {
-    float computeTravelTime(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition, float bulletVelocity)
-    {
-        float horizontalDist = hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]);
-        float verticalDist = targetPosition[Z] - turretPosition[Z];
-        float bulletVelocitySquared = powf(bulletVelocity, 2);
-        float pitchAngle = atan((bulletVelocitySquared - sqrt(powf(bulletVelocitySquared, 2) - G*(G*powf(horizontalDist, 2) + 2*verticalDist*bulletVelocitySquared)))/(G*horizontalDist));
 
-        return horizontalDist / (bulletVelocity * cos(pitchAngle));
+float computeTravelTime(
+    const modm::Vector<float, 3> &turretPosition,
+    const modm::Vector<float, 3> &targetPosition,
+    float bulletVelocity)
+{
+    float horizontalDist =
+        hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]);
+    float verticalDist = targetPosition[Z] - turretPosition[Z];
+    float bulletVelocitySquared = powf(bulletVelocity, 2);
+    float pitchAngle = atan(
+        (bulletVelocitySquared -
+         sqrt(
+             powf(bulletVelocitySquared, 2) -
+             G * (G * powf(horizontalDist, 2) + 2 * verticalDist * bulletVelocitySquared))) /
+        (G * horizontalDist));
+
+    return horizontalDist / (bulletVelocity * cos(pitchAngle));
+}
+
+modm::Vector<float, 3> findTargetProjectileIntersection(
+    modm::Vector<float, 3> turretPosition,
+    MeasuredKinematicState targetInitialState,
+    float bulletVelocity,
+    uint8_t numIterations)
+{
+    modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
+    float projectedTravelTime = 0;
+
+    for (int i = 0; i < numIterations; i++)
+    {
+        projectedTravelTime =
+            computeTravelTime(turretPosition, projectedTargetPosition, bulletVelocity);
+        projectedTargetPosition = projectForward(targetInitialState, projectedTravelTime);
     }
 
-    modm::Vector<float, 3> findTargetProjectileIntersection(modm::Vector<float, 3> turretPosition, MeasuredKinematicState targetInitialState, float bulletVelocity)
-    {
-        modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
-        float projectedTravelTime = 0;
+    return projectedTargetPosition;
+}
 
-        for (int i = 0; i < 5; i++)
-        {
-            projectedTravelTime = computeTravelTime(turretPosition, projectedTargetPosition, bulletVelocity);
-            projectedTargetPosition = projectForward(targetInitialState, projectedTravelTime);
-        }
-
-        return projectedTargetPosition;
-    }
-
-} // namespace tap::algorithms::ballistics
+}  // namespace tap::algorithms::ballistics

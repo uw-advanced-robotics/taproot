@@ -89,27 +89,62 @@ inline modm::Vector<float, 3> projectForward(const MeasuredKinematicState &state
 /**
  * The below positions should be in the same xyz coordinate frame in order for this method to work
  * properly. In this coordinate system, Z MUST BE DEFINED AS OPPOSITE TO GRAVITY.
- * 
+ *
  * @param turretPosition: The 3D position of the turret in m.
  * @param targetPosition: The 3D position of the target to be fired at in m.
  * @param bulletVelocity: The velocity of the projectile to be fired in m/s.
- * 
+ *
  * @return The expected travel time of a turret shot to hit a target from this object's position.
  */
-float computeTravelTime(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition, float bulletVelocity);
+float computeTravelTime(
+    const modm::Vector<float, 3> &turretPosition,
+    const modm::Vector<float, 3> &targetPosition,
+    float bulletVelocity);
 
 /**
  * The below states should be in the same xyz coordinate frame in order for this method to work
  * properly. In this coordinate system, Z MUST BE DEFINED AS OPPOSITE TO GRAVITY.
- * 
+ *
  * @param turretPosition: The current 3D position of the turret that will be firing in m.
  * @param targetInitialState: The initial 3D kinematic state of a target we want to fire at.
  * @param bulletVelocity: The velocity of the projectile to be fired in m/s.
+ * @param numIterations: The number of times to project the kinematics forward (theoretically 1 is enough,
+ * but more iterations could potentially reduce error).
  *
  * @return The position at which our robot should aim to hit the given target, taking into account
  * the path a projectile takes to hit the target.
  */
-modm::Vector<float, 3> findTargetProjectileIntersection(modm::Vector<float, 3> turretPosition, MeasuredKinematicState targetInitialState, float bulletVelocity);
+modm::Vector<float, 3> findTargetProjectileIntersection(
+    modm::Vector<float, 3> turretPosition,
+    MeasuredKinematicState targetInitialState,
+    float bulletVelocity,
+    uint8_t numIterations);
+
+/**
+ * The below positions must be in the same reference frame.
+ * 
+ * @param turretPosition: The position of the turret as a 3D Vector.
+ * @param targetPosition: The position of the target as a 3D Vector.
+ * 
+ * @return The appropriate pitch angle to hit the target.
+ */
+inline float computePitch(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition)
+{
+    return atanf((targetPosition[Z] - turretPosition[Z])/hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]));
+}
+
+/**
+ * The below positions must be in the same reference frame.
+ * 
+ * @param turretPosition: The position of the turret as a 3D Vector.
+ * @param targetPosition: The position of the target as a 3D Vector.
+ * 
+ * @return The appropriate yaw angle to hit the target.
+ */
+inline float computeYaw(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition)
+{
+    return atanf((targetPosition[Y] - turretPosition[Y])/(targetPosition[X] - turretPosition[X]));
+}
 
 static constexpr float G = 9.81;  // m/s^2
 
