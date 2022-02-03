@@ -465,6 +465,7 @@ void RefSerial::configFloatingNumber(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
+    // Store floating point value in fixed point with 3 decimal points precision
     sharedData->value = 1000 * value;
 }
 
