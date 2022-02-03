@@ -499,7 +499,7 @@ void RefSerial::configCharacterMsg(
     sharedData->graphicData.lineWidth = width;
     sharedData->graphicData.startX = startX;
     sharedData->graphicData.startY = startY;
-    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS - 1);
+    strncpy(sharedData->msg, dataToPrint, MODM_ARRAY_SIZE(sharedData->msg) - 1);
 }
 
 /**
@@ -631,7 +631,7 @@ void RefSerial::sendGraphic(
         sendMsg,
         robotData.robotId,
         drivers,
-        GRAPHIC_MAX_CHARACTERS);
+        MODM_ARRAY_SIZE(graphicMsg->msg));
 }
 
 void RefSerial::sendRobotToRobotMsg(
