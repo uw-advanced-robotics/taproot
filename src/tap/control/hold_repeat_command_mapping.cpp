@@ -37,19 +37,34 @@ void HoldRepeatCommandMapping::executeCommandMapping(const RemoteMapState &currS
         {
             if (!drivers->commandScheduler.isCommandScheduled(cmd))
             {
-                drivers->commandScheduler.addCommand(cmd);
+                if (okToScheduleCommand())
+                {
+                    drivers->commandScheduler.addCommand(cmd);
+                    incrementRescheduleCount();
+                }
+                else
+                {
+                    // stop iterating through list of commands
+                    break;
+                }
             }
         }
-        commandsScheduled = true;
+        held = true;
     }
     else
     {
-        // While Commands may not be scheduled this prevents the unnecessary call of the
-        // removeCommand function from the scheduler.
-        if (commandsScheduled && endCommandsWhenNotHeld)
+        // remove commands if the commands were previously scheduled and we actually want to end
+        // commands when not held
+        if (held)
         {
-            removeCommands();
-            commandsScheduled = false;
+            held = false;
+
+            if (endCommandsWhenNotHeld)
+            {
+                removeCommands();
+            }
+
+            rescheduleCount = 0;
         }
     }
 }

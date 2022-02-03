@@ -49,15 +49,22 @@ public:
      * @param[in] rms RemoteMapState that controls when commands will be scheduled.
      * @param[in] endCommandsWhenNotHeld If `true`, the commands will be forcibly ended by the
      * command mapping when no longer being held. Otherwise, the commands will naturally finish.
+     * @param[in] maxTimesToSchedule Number of times to reschedule all commands. If -1 is passed in,
+     * the command mapping will continue to reschedule the commands forever. If there are multiple
+     * commands that have the potential to end, each command that is rescheduled will count torwards
+     * the maxTimesToSchedule.
      */
     HoldRepeatCommandMapping(
         Drivers *drivers,
         const std::vector<Command *> cmds,
         const RemoteMapState &rms,
-        bool endCommandsWhenNotHeld)
+        bool endCommandsWhenNotHeld,
+        int maxTimesToSchedule = -1)
         : CommandMapping(drivers, cmds, rms),
-          commandsScheduled(false),
-          endCommandsWhenNotHeld(endCommandsWhenNotHeld)
+          held(false),
+          endCommandsWhenNotHeld(endCommandsWhenNotHeld),
+          maxTimesToSchedule(maxTimesToSchedule),
+          rescheduleCount(0)
     {
     }
 
@@ -68,9 +75,24 @@ public:
 
     void executeCommandMapping(const RemoteMapState &currState) override;
 
+    /** Set the maximum times the commands should be re-scheduled. */
+    inline void setMaxCommandsToSchedule(int maxTimes) { maxTimesToSchedule = maxTimes; }
+
 private:
-    bool commandsScheduled;
+    bool held;
     bool endCommandsWhenNotHeld;
+    int maxTimesToSchedule;
+    int rescheduleCount;
+
+    inline void incrementRescheduleCount()
+    {
+        rescheduleCount += (maxTimesToSchedule == -1) ? 0 : 1;
+    }
+
+    inline bool okToScheduleCommand() const
+    {
+        return (maxTimesToSchedule == -1) || (rescheduleCount < maxTimesToSchedule);
+    }
 };  // class HoldRepeatCommandMapping
 }  // namespace control
 }  // namespace tap
