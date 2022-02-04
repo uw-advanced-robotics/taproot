@@ -18,42 +18,40 @@
  */
 
 #include "ballistics.hpp"
+#include "math_user_utils.hpp"
 
 namespace tap::algorithms::ballistics
 {
 
 float computeTravelTime(
-    const modm::Vector<float, 3> &turretPosition,
-    const modm::Vector<float, 3> &targetPosition,
+    const modm::Vector3f &targetPosition,
     float bulletVelocity)
 {
     float horizontalDist =
-        hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]);
-    float verticalDist = targetPosition[Z] - turretPosition[Z];
+        hypot(targetPosition.x, targetPosition.y);
     float bulletVelocitySquared = powf(bulletVelocity, 2);
-    float pitchAngle = atan(
+    float pitchAngle = atan2(
         (bulletVelocitySquared -
          sqrt(
              powf(bulletVelocitySquared, 2) -
-             G * (G * powf(horizontalDist, 2) + 2 * verticalDist * bulletVelocitySquared))) /
+             G * (G * powf(horizontalDist, 2) + 2 * targetPosition.z * bulletVelocitySquared))),
         (G * horizontalDist));
 
     return horizontalDist / (bulletVelocity * cos(pitchAngle));
 }
 
-modm::Vector<float, 3> findTargetProjectileIntersection(
-    modm::Vector<float, 3> turretPosition,
+modm::Vector3f findTargetProjectileIntersection(
     MeasuredKinematicState targetInitialState,
     float bulletVelocity,
     uint8_t numIterations)
 {
-    modm::Vector<float, 3> projectedTargetPosition = targetInitialState.position;
+    modm::Vector3f projectedTargetPosition = targetInitialState.position;
     float projectedTravelTime = 0;
 
     for (int i = 0; i < numIterations; i++)
     {
         projectedTravelTime =
-            computeTravelTime(turretPosition, projectedTargetPosition, bulletVelocity);
+            computeTravelTime(projectedTargetPosition, bulletVelocity);
         projectedTargetPosition = projectForward(targetInitialState, projectedTravelTime);
     }
 

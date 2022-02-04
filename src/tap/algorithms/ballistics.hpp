@@ -22,29 +22,22 @@
 
 #include <cmath>
 
-#include "modm/math.hpp"
+#include "modm/math/geometry/vector.hpp"
 
 namespace tap::algorithms::ballistics
 {
 
-enum Axes
-{
-    X = 0,
-    Y,
-    Z,
-};
-
 /**
- * Stores the 3D position, velocity, and acceleration of an object as modm::Vectors.
+ * Stores the 3D position, velocity, and acceleration of an object as `modm::Vector3f`s.
  * Position Units: m
  * Velocity Units: m/s
  * Acceleration Units: m/s^2
  */
 struct MeasuredKinematicState
 {
-    modm::Vector<float, 3> position;      // m
-    modm::Vector<float, 3> velocity;      // m/s
-    modm::Vector<float, 3> acceleration;  // m/s^2
+    modm::Vector3f position;    // m
+    modm::Vector3f velocity;      // m/s
+    modm::Vector3f acceleration;  // m/s^2
 };
 
 /**
@@ -66,87 +59,72 @@ inline float quadraticKinematicProjection(float dt, float s, float v, float a)
  *
  * @return The future 3D position of the object using a quadratic (constant acceleration) model.
  */
-inline modm::Vector<float, 3> projectForward(const MeasuredKinematicState &state, float dt)
+inline modm::Vector3f projectForward(const MeasuredKinematicState &state, float dt)
 {
-    return modm::Vector<float, 3>(
-        {quadraticKinematicProjection(
+    return modm::Vector3f(
+        quadraticKinematicProjection(
              dt,
-             state.position[X],
-             state.velocity[X],
-             state.acceleration[X]),
+             state.position.x,
+             state.velocity.x,
+             state.acceleration.x),
          quadraticKinematicProjection(
              dt,
-             state.position[Y],
-             state.velocity[Y],
-             state.acceleration[Y]),
+             state.position.y,
+             state.velocity.y,
+             state.acceleration.y),
          quadraticKinematicProjection(
              dt,
-             state.position[Z],
-             state.velocity[Z],
-             state.acceleration[Z])});
+             state.position.z,
+             state.velocity.z,
+             state.acceleration.z));
 }
 
 /**
- * The below positions should be in the same xyz coordinate frame in order for this method to work
- * properly. In this coordinate system, Z MUST BE DEFINED AS OPPOSITE TO GRAVITY.
  *
- * @param turretPosition: The 3D position of the turret in m.
- * @param targetPosition: The 3D position of the target to be fired at in m.
+ * @param targetPosition: The 3D position of a target in m. Frame requirements: RELATIVE TO TURRET,
+ * Z IS OPPOSITE TO GRAVITY.
  * @param bulletVelocity: The velocity of the projectile to be fired in m/s.
  *
  * @return The expected travel time of a turret shot to hit a target from this object's position.
  */
 float computeTravelTime(
-    const modm::Vector<float, 3> &turretPosition,
-    const modm::Vector<float, 3> &targetPosition,
+    const modm::Vector3f &targetPosition,
     float bulletVelocity);
 
 /**
- * The below states should be in the same xyz coordinate frame in order for this method to work
- * properly. In this coordinate system, Z MUST BE DEFINED AS OPPOSITE TO GRAVITY.
- *
- * @param turretPosition: The current 3D position of the turret that will be firing in m.
- * @param targetInitialState: The initial 3D kinematic state of a target we want to fire at.
+ * @param targetInitialState: The initial 3D kinematic state of a target. Frame requirements: RELATIVE TO TURRET,
+ * Z IS OPPOSITE TO GRAVITY.
  * @param bulletVelocity: The velocity of the projectile to be fired in m/s.
  * @param numIterations: The number of times to project the kinematics forward (theoretically 1 is enough,
  * but more iterations could potentially reduce error).
  *
- * @return The position at which our robot should aim to hit the given target, taking into account
- * the path a projectile takes to hit the target.
+ * @return The position (in m, in the same frame as targetInitialState) at which our robot should aim to hit the given target,
+ * taking into account the path a projectile takes to hit the target.
  */
-modm::Vector<float, 3> findTargetProjectileIntersection(
-    modm::Vector<float, 3> turretPosition,
+modm::Vector3f findTargetProjectileIntersection(
     MeasuredKinematicState targetInitialState,
     float bulletVelocity,
     uint8_t numIterations);
 
 /**
- * The below positions must be in the same reference frame.
+ * @param targetPosition: The position of the target relative to the turret as a 3D Vector.
  * 
- * @param turretPosition: The position of the turret as a 3D Vector.
- * @param targetPosition: The position of the target as a 3D Vector.
- * 
- * @return The appropriate pitch angle to hit the target.
+ * @return The appropriate pitch angle in radians to hit the target, normalized in (-pi, pi].
  */
-inline float computePitch(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition)
+inline float computePitch(const modm::Vector3f &targetPosition)
 {
-    return atanf((targetPosition[Z] - turretPosition[Z])/hypot(targetPosition[X] - turretPosition[X], targetPosition[Y] - turretPosition[Y]));
+    return atan2f(targetPosition.z, hypot(targetPosition.x, targetPosition.y));
 }
 
 /**
- * The below positions must be in the same reference frame.
+ * @param targetPosition: The position of the target relative to the turret as a 3D Vector.
  * 
- * @param turretPosition: The position of the turret as a 3D Vector.
- * @param targetPosition: The position of the target as a 3D Vector.
- * 
- * @return The appropriate yaw angle to hit the target.
+ * @return The appropriate yaw angle in radians to hit the target, normalized in (-pi, pi].
  */
-inline float computeYaw(const modm::Vector<float, 3> &turretPosition, const modm::Vector<float, 3> &targetPosition)
+inline float computeYaw(const modm::Vector3f &targetPosition)
 {
-    return atanf((targetPosition[Y] - turretPosition[Y])/(targetPosition[X] - turretPosition[X]));
+    return atan2f(targetPosition.y, targetPosition.x);
 }
-
-static constexpr float G = 9.81;  // m/s^2
 
 }  // namespace tap::algorithms::ballistics
 

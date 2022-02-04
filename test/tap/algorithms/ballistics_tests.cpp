@@ -64,10 +64,9 @@ TEST(Ballistics, projectForward_returns_constant_delta_position_when_vel_positiv
 
 TEST(Ballistics, computeTravelTime_horizontal_distance_only_bulletVelocity_10)
 {
-    modm::Vector3f turretPosition(5, 0, 0);
-    modm::Vector3f targetPosition(15, 0, 0);
+    modm::Vector3f targetPosition(10, 0, 0);
 
-    float travelTime = computeTravelTime(turretPosition, targetPosition, 20);
+    float travelTime = computeTravelTime(targetPosition, 20);
 
     // 20 m/s velocity, 10 m target distance, time should be slightly greater than .5
     EXPECT_LT(1, travelTime);
@@ -76,20 +75,18 @@ TEST(Ballistics, computeTravelTime_horizontal_distance_only_bulletVelocity_10)
 
 TEST(Ballistics, computeTravelTime_vertical_distance_only_bulletVelocity_10)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(0, 0, 10);
 
-    float travelTime = computeTravelTime(turretPosition, targetPosition, 10);
+    float travelTime = computeTravelTime(targetPosition, 10);
 
     EXPECT_NEAR(10, travelTime, 1E-5);
 }
 
 TEST(Ballistics, computeTravelTime_bulletVelocity_0_travel_time_0)
 {
-    modm::Vector3f turretPosition(1, 2, 3);
-    modm::Vector3f targetPosition(4, 5, 5);
+    modm::Vector3f targetPosition(3, 3, 2);
 
-    float travelTime = computeTravelTime(turretPosition, targetPosition, 0);
+    float travelTime = computeTravelTime(targetPosition, 0);
 
     EXPECT_EQ(0, travelTime);
 }
@@ -98,14 +95,13 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_target_stationary)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
         .velocity = {0, 0, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 10, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 10, 3);
 
     EXPECT_NEAR(10, targetIntersection.x, 1E-5);
     EXPECT_NEAR(0, targetIntersection.y, 1E-5);
@@ -116,14 +112,13 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_target_moving_away_from_turret)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
         .velocity = {1, 0, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
 
     EXPECT_NEAR(10, targetIntersection.x, 1);
     EXPECT_LT(10, targetIntersection.x);
@@ -135,14 +130,13 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_moving_perpendicular_to_turret)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
         .velocity = {0, 1, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
 
     EXPECT_NEAR(10, targetIntersection.x, 1E-5);
     EXPECT_NEAR(0, targetIntersection.y, 1);
@@ -154,7 +148,6 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_velocity_increases_lead_position_decreases)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
         .velocity = {0, 1, 0},
@@ -162,11 +155,11 @@ TEST(
     };
 
     auto targetIntersection30ms =
-        findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+        findTargetProjectileIntersection(targetState, 30, 3);
     auto targetIntersection40ms =
-        findTargetProjectileIntersection(turretPosition, targetState, 40, 3);
+        findTargetProjectileIntersection(targetState, 40, 3);
     auto targetIntersection50ms =
-        findTargetProjectileIntersection(turretPosition, targetState, 50, 3);
+        findTargetProjectileIntersection(targetState, 50, 3);
 
     EXPECT_GT(targetIntersection30ms.y, targetIntersection40ms.y);
     EXPECT_GT(targetIntersection40ms.y, targetIntersection50ms.y);
@@ -176,14 +169,13 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_target_moving_torwards_turet)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
         .velocity = {-1, 0, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
 
     EXPECT_GT(10, targetIntersection.x);
     EXPECT_NEAR(10, targetIntersection.x, 1);
@@ -193,14 +185,13 @@ TEST(
 
 TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identical)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {0, 0, 0},
         .velocity = {0, 0, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
 
     EXPECT_NEAR(0, targetIntersection.x, 1E-5);
     EXPECT_NEAR(0, targetIntersection.y, 1E-5);
@@ -209,14 +200,13 @@ TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identic
 
 TEST(Ballistics, findTargetProjectileIntersection_target_out_of_range)
 {
-    modm::Vector3f turretPosition(20, 0, 0);
     MeasuredKinematicState targetState{
-        .position = {0, 0, 0},
+        .position = {-20, 0, 0},
         .velocity = {0, 0, 0},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 1, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 1, 3);
 
     EXPECT_NEAR(0, targetIntersection.x, 1E-5);
     EXPECT_NEAR(0, targetIntersection.y, 1E-5);
@@ -227,14 +217,13 @@ TEST(
     Ballistics,
     findTargetProjectileIntersection_only_vertical_dist_btwn_turret_and_target_target_moving_away_from_turret)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     MeasuredKinematicState targetState{
         .position = {0, 0, 10},
         .velocity = {0, 0, 1},
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
+    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
 
     EXPECT_NEAR(0, targetIntersection.x, 1E-5);
     EXPECT_NEAR(0, targetIntersection.y, 1E-5);
@@ -242,134 +231,81 @@ TEST(
     EXPECT_NEAR(10, targetIntersection.z, 1);
 }
 
-TEST(
-    Ballistics,
-    findTargetProjectileIntersection_vertical_and_hozirontal_dist_nonzero_turret_position_target_not_moving)
-{
-    modm::Vector3f turretPosition(0, 1, 2);
-    MeasuredKinematicState targetState{
-        .position = {turretPosition.x + 3, turretPosition.y - 4, turretPosition.z + 5},
-        .velocity = {0, 0, 0},
-        .acceleration = {0, 0, 0},
-    };
-
-    auto targetIntersection = findTargetProjectileIntersection(turretPosition, targetState, 30, 3);
-
-    EXPECT_NEAR(targetState.position.x, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(targetState.position.y, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(targetState.position.z, targetIntersection.z, 1E-5);
-}
-
 TEST(Ballistics, computePitch_same_turret_target_position)
 {
-    modm::Vector3f position(1, 2, 3);
+    modm::Vector3f position(0, 0, 0);
 
-    EXPECT_EQ(0, computePitch(position, position));
-}
-
-TEST(Ballistics, computePitch_positions_translated_no_angle_diff)
-{
-    modm::Vector3f turretPosition(1, 2, 3);
-    modm::Vector3f targetPosition(43, 42, 41);
-    modm::Vector3f translation(-100, 23, 90);
-
-    EXPECT_NEAR(
-        computePitch(turretPosition, targetPosition),
-        computePitch(turretPosition + translation, targetPosition + translation),
-        1E-5);
+    EXPECT_EQ(0, computePitch(position));
 }
 
 TEST(Ballistics, computePitch_isosceles_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(1, 0, 1);
 
-    EXPECT_NEAR(M_PI_4, computePitch(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(M_PI_4, computePitch(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computePitch_negative_isosceles_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(-1, 0, -1);
 
-    EXPECT_NEAR(M_PI_4 - M_PI, computePitch(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(M_PI_4 - M_PI, computePitch(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computePitch_uses_dist_in_xy_dir)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(3, 4, 5);
 
-    EXPECT_NEAR(M_PI_4, computePitch(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(M_PI_4, computePitch(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, pitch_special_right_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(1, 0, sqrt(3));
 
-    EXPECT_NEAR(modm::toRadian(60), computePitch(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(modm::toRadian(60), computePitch(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computePitch_multiples_of_pi_div_2)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
-
-    EXPECT_NEAR(0, computePitch(turretPosition, modm::Vector3f(1, 0, 0)), 1E-5);
-    EXPECT_NEAR(M_PI_2, computePitch(turretPosition, modm::Vector3f(0, 0, 1)), 1E-5);
-    EXPECT_NEAR(M_PI, computePitch(turretPosition, modm::Vector3f(-1, 0, 0)), 1E-5);
-    EXPECT_NEAR(-M_PI_2, computePitch(turretPosition, modm::Vector3f(0, 0, -1)), 1E-5);
+    EXPECT_NEAR(0, computePitch(modm::Vector3f(1, 0, 0)), 1E-5);
+    EXPECT_NEAR(M_PI_2, computePitch(modm::Vector3f(0, 0, 1)), 1E-5);
+    EXPECT_NEAR(M_PI, computePitch(modm::Vector3f(-1, 0, 0)), 1E-5);
+    EXPECT_NEAR(-M_PI_2, computePitch(modm::Vector3f(0, 0, -1)), 1E-5);
 }
 
 TEST(Ballistics, computeYaw_same_turret_target_position)
 {
     modm::Vector3f position(1, 2, 3);
 
-    EXPECT_EQ(0, computeYaw(position, position));
-}
-
-TEST(Ballistics, computeYaw_positions_translated_no_angle_diff)
-{
-    modm::Vector3f turretPosition(1, 2, 3);
-    modm::Vector3f targetPosition(43, 42, 41);
-    modm::Vector3f translation(-100, 23, 90);
-
-    EXPECT_NEAR(
-        computeYaw(turretPosition, targetPosition),
-        computeYaw(turretPosition + translation, targetPosition + translation),
-        1E-5);
+    EXPECT_EQ(0, computeYaw(position));
 }
 
 TEST(Ballistics, computeYaw_isosceles_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(1, 1, 0);
 
-    EXPECT_NEAR(M_PI_4, computeYaw(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(M_PI_4, computeYaw(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computeYaw_negative_isosceles_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(-1, -1, 0);
 
-    EXPECT_NEAR(M_PI_4 - M_PI, computeYaw(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(M_PI_4 - M_PI, computeYaw(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computeYaw_special_right_triangle)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
     modm::Vector3f targetPosition(1, sqrt(3), 0);
 
-    EXPECT_NEAR(modm::toRadian(60), computeYaw(turretPosition, targetPosition), 1E-5);
+    EXPECT_NEAR(modm::toRadian(60), computeYaw(targetPosition), 1E-5);
 }
 
 TEST(Ballistics, computeYaw_multiples_of_pi_div_2)
 {
-    modm::Vector3f turretPosition(0, 0, 0);
-
-    EXPECT_NEAR(0, computeYaw(turretPosition, modm::Vector3f(1, 0, 0)), 1E-5);
-    EXPECT_NEAR(M_PI_2, computeYaw(turretPosition, modm::Vector3f(0, 1, 0)), 1E-5);
-    EXPECT_NEAR(M_PI, computeYaw(turretPosition, modm::Vector3f(-1, 0, 0)), 1E-5);
-    EXPECT_NEAR(-M_PI_2, computeYaw(turretPosition, modm::Vector3f(0, -1, 0)), 1E-5);
+    EXPECT_NEAR(0, computeYaw(modm::Vector3f(1, 0, 0)), 1E-5);
+    EXPECT_NEAR(M_PI_2, computeYaw(modm::Vector3f(0, 1, 0)), 1E-5);
+    EXPECT_NEAR(M_PI, computeYaw(modm::Vector3f(-1, 0, 0)), 1E-5);
+    EXPECT_NEAR(-M_PI_2, computeYaw(modm::Vector3f(0, -1, 0)), 1E-5);
 }
