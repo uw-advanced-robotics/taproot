@@ -17,31 +17,15 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include "setpoint_subsystem_mock.hpp"
 
-#include "clock.hpp"
-
-namespace tap
+namespace tap::mock
 {
-namespace arch
+SetpointSubsystemMock::SetpointSubsystemMock(Drivers *drivers) : Subsystem(drivers)
 {
-namespace clock
-{
-/**
- * Global static variable storing time for testing. It's value is returned from the `getTime*()`
- * functions and is set by `setTime()`. Note this is a static global variable accessible
- * from _any_ test, so you must assume that `getTimeMilliseconds()` value is undefined until
- * you set it.
- */
-uint32_t currTimeMilliseconds = 0;
-
-void setTime(uint32_t timeMilliseconds) { currTimeMilliseconds = timeMilliseconds; }
-
-uint32_t getTimeMilliseconds() { return currTimeMilliseconds; }
-
-uint32_t getTimeMicroseconds() { return currTimeMilliseconds * 1000; }
-}  // namespace clock
-}  // namespace arch
-}  // namespace tap
-
-#endif
+    // Default to simulating an online and unjammed setpointSubsystem
+    ON_CALL(*this, isOnline).WillByDefault(testing::Return(true));
+    ON_CALL(*this, isJammed).WillByDefault(testing::Return(false));
+}
+SetpointSubsystemMock::~SetpointSubsystemMock() {}
+}  // namespace tap::mock
