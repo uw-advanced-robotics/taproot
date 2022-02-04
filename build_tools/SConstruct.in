@@ -32,6 +32,7 @@ SIM_MODM_PARENT_PATH = "taproot/sim-modm/"
 TAPROOT_SRC_PATH     = "taproot/src"
 TAPROOT_PATH         = join(TAPROOT_SRC_PATH, "tap")
 TAPROOT_TEST_PATH    = "taproot/test"
+TAPROOT_EXT_PATH    = "taproot/ext"
 
 # Define libraries
 HOSTED_LIBS          = ["pthread"]
@@ -92,7 +93,7 @@ print("Configured {0} parallel build jobs (-j{0})".format(GetOption("num_jobs"))
 
 # Building all libraries (read from sconscript files located in provided dirs)
 # Ensure that modm is first, since taproot depends on modm
-external_scons_libraries = [modm_path, TAPROOT_PATH]
+external_scons_libraries = [modm_path, TAPROOT_PATH, TAPROOT_EXT_PATH]
 env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # References:
