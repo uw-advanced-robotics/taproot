@@ -159,10 +159,6 @@ else:  # hardware target env
     env.AppendUnique(LINKFLAGS=["-T" + LINKERSCRIPT_FILE])
 
 
-# Append little endian flag to all
-env.AppendUnique(CPPFLAGS=["-DLITTLE_ENDIAN"])
-
-
 # Add any additional flags the user chooses specify
 if "additional-ccflags" in ARGUMENTS:
     env.AppendUnique(CCFLAGS=[*ARGUMENTS["additional-ccflags"].split(",")])
