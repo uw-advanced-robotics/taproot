@@ -24,13 +24,14 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
-using tap::arch::clock::setTime;
+using namespace tap::arch::clock;
 using namespace tap::control::setpoint;
 using tap::Drivers;
 using namespace tap::mock;
 using namespace testing;
 
 #define CREATE_COMMON_TEST_OBJECTS() \
+    ClockStub clock;                 \
     Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
@@ -95,11 +96,11 @@ TEST(MoveCommand, command_displaces_setpoint_by_target_amount_after_sufficient_t
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatNear(8.5f, 0.1f)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     for (int i = 200; i <= 1000; i += 200)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 }
@@ -114,14 +115,14 @@ TEST(MoveCommand, command_does_not_reach_setpoint_given_insufficient_time)
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(Ge(8.49999f))).Times(0);
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     for (int i = 200; i <= 800; i += 200)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
-    setTime(995);
+    clock.time = 995;
     command.execute();
 }
 
@@ -134,11 +135,11 @@ TEST(MoveCommand, command_does_not_execute_while_subsystem_offline)
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
     EXPECT_CALL(subsystem, setSetpoint).Times(0);
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     for (int i = 200; i <= 1000; i += 200)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 }
@@ -152,9 +153,9 @@ TEST(MoveCommand, command_is_finished_when_subsystem_jammed)
 
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(true));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(200);
+    clock.time = 200;
     command.execute();
     EXPECT_TRUE(command.isFinished());
 }
@@ -164,10 +165,10 @@ TEST(MoveCommand, command_is_finished_when_subsystem_offline)
     CREATE_COMMON_TEST_OBJECTS();
     MoveCommand command(&subsystem, 7.5f, 1000, 15, true, 0.001f);
 
-    setTime(0);
+    clock.time = 0;
     command.isReady();
     command.initialize();
-    setTime(200);
+    clock.time = 200;
     command.execute();
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
@@ -185,15 +186,15 @@ TEST(MoveCommand, command_is_finished_when_subsystem_unjammed_and_displacement_w
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(2.0f));
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     // When command executes it should see that subsystem position is at target and start pause
     // after rotate timeout
     // Update time s.t. displacement setpoint increases
-    setTime(1);
+    clock.time = 1;
     command.execute();
     // Provide sufficient time for pause after rotation
-    setTime(16);
+    clock.time = 16;
     EXPECT_TRUE(command.isFinished());
 }
 
@@ -206,12 +207,12 @@ TEST(MoveCommand, command_pauses_after_move_time)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(2.0f));
     EXPECT_CALL(subsystem, isJammed).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1000);
+    clock.time = 1000;
     command.execute();
     EXPECT_FALSE(command.isFinished());
-    setTime(1015);
+    clock.time = 1015;
     EXPECT_TRUE(command.isFinished());
 }
 
@@ -226,9 +227,9 @@ TEST(MoveCommand, command_sets_setpoint_to_ideal_target_on_uninterrupted_end_whe
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(8.5f)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(10);
+    clock.time = 10;
     command.end(false);
 }
 
@@ -242,9 +243,9 @@ TEST(MoveCommand, command_sets_setpoint_to_current_value_on_interrupted_end)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(50.0f));
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(50.0f)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(10);
+    clock.time = 10;
     command.end(true);
 }
 
@@ -259,9 +260,9 @@ TEST(MoveCommand, command_sets_setpoint_to_current_value_on_end_when_jammed)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(50.0f));
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(50.0f)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(10);
+    clock.time = 10;
     command.end(false);
 }
 
@@ -274,8 +275,8 @@ TEST(MoveCommand, command_sets_setpoint_to_current_value_on_end_based_on_option)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(50.0f));
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(50.0f)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(10);
+    clock.time = 10;
     command.end(false);
 }

@@ -298,6 +298,7 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
 
 TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
 {
+    tap::arch::clock::ClockStub clock;
     Drivers drivers;
     RefSerial refSerial(&drivers);
     DJISerial::SerialMessage msg;
@@ -314,7 +315,7 @@ TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
 
     for (const auto &triplet : timeHPExpectedDPS)
     {
-        tap::arch::clock::setTime(triplet[0]);
+        clock.time = triplet[0];
 
         testData.remain_HP = triplet[1];
         msg = constructMsg(testData, 0x0201);

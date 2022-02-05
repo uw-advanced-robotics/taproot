@@ -31,6 +31,7 @@ using namespace tap::mock;
 using namespace testing;
 
 #define CREATE_COMMON_TEST_OBJECTS() \
+    ClockStub clock;                 \
     Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
@@ -54,7 +55,7 @@ TEST(UnjamCommand, command_not_ready_when_subsystem_offline)
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
 
-    setTime(0);
+    clock.time = 0;
 
     ASSERT_FALSE(command.isReady());
 }
@@ -88,14 +89,14 @@ TEST(UnjamCommand, command_moves_subsystem_back_and_forth_appropriate_number_of_
     EXPECT_CALL(subsystem, setSetpoint(Ge(-7.5f))).Times(NUM_CYCLES);
     EXPECT_CALL(subsystem, setSetpoint(Le(-12.5f))).Times(NUM_CYCLES + 1);
 
-    setTime(0);
+    clock.time = 0;
     ASSERT_TRUE(command.isReady());
     command.initialize();
     command.execute();
     int i = 200;
     while (i <= 10000 && !command.isFinished())
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
         i += 200;
     }
@@ -108,9 +109,9 @@ TEST(UnjamCommand, command_is_finished_when_subsystem_offline)
     CREATE_COMMON_TEST_OBJECTS();
     UnjamCommand command(&subsystem, 3.0f, 2.5f, 400, 2);
 
-    setTime(0);
+    clock.time = 0;
     ASSERT_TRUE(command.isReady());
-    setTime(1);
+    clock.time = 1;
     command.initialize();
     command.execute();
 
@@ -167,12 +168,12 @@ TEST(UnjamCommand, successful_unjam_behavior)
     // forwards and backwards. Should only need to be set once.
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(ORIGIN_VALUE)));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
 
     for (int i = 50; i <= 1200; i += 50)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 
@@ -197,15 +198,15 @@ TEST(UnjamCommand, command_does_NOT_clear_jam_on_end)
 
     EXPECT_CALL(subsystem, clearJam).Times(0);
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
 
-    setTime(1);
+    clock.time = 1;
     command.execute();
 
     // Oh no! Command has been interrupted and ended, clearJam shouldn't be
     // called.
-    setTime(2);
+    clock.time = 2;
     command.end(true);
 }
 
@@ -219,12 +220,12 @@ TEST(UnjamCommand, command_sets_setpoint_to_current_value_when_unjam_failed)
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(420.0f)));
 
-    setTime(0);
+    clock.time = 0;
     command.isReady();
     command.initialize();
     for (int i = 50; i <= 1000; i += 50)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 
