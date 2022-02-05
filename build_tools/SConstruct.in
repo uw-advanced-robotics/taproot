@@ -35,12 +35,13 @@ TAPROOT_TEST_PATH    = "taproot/test"
 TAPROOT_EXT_PATH    = "taproot/ext"
 
 # Define libraries
+
 HOSTED_LIBS          = ["pthread"]
 GTEST_LIBS           = ["gtest", "gtest_main", "gmock", "gmock_main"]
 COVERAGE_LIBS        = ["-lgcov"]
 
 # Don't compile this stuff
-ignored_dirs         = [".lbuild_cache", BUILD_PATH, SIM_MODM_PARENT_PATH, HARDWARE_MODM_PATH, TAPROOT_PATH]
+ignored_dirs         = [".lbuild_cache", BUILD_PATH, SIM_MODM_PARENT_PATH, HARDWARE_MODM_PATH, TAPROOT_PATH, TAPROOT_EXT_PATH]
 ignored_files        = []
 # Don't compile this stuff when testing
 IGNORED_FILES_WHILE_TESTING = ["src/main.cpp"]
@@ -93,7 +94,7 @@ print("Configured {0} parallel build jobs (-j{0})".format(GetOption("num_jobs"))
 
 # Building all libraries (read from sconscript files located in provided dirs)
 # Ensure that modm is first, since taproot depends on modm
-external_scons_libraries = [modm_path, TAPROOT_PATH, TAPROOT_EXT_PATH]
+external_scons_libraries = [modm_path, TAPROOT_EXT_PATH, TAPROOT_PATH]
 env.SConscript(dirs=external_scons_libraries, exports="env")
 
 # References:
@@ -111,7 +112,8 @@ env.SConscript(dirs=external_scons_libraries, exports="env")
 # Add source directory to build path (for including header files)
 env.AppendUnique(CPPPATH=[
     abspath(TAPROOT_SRC_PATH),
-    abspath(TAPROOT_TEST_PATH)
+    abspath(TAPROOT_TEST_PATH),
+    abspath(TAPROOT_EXT_PATH),
 ])
 
 # Add build-specific flags
