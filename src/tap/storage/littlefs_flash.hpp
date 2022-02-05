@@ -26,29 +26,33 @@ namespace tap::storage {
 class LittleFSFlash {
    public:
     LittleFSFlash();
-    void initialize();
-    lfs_t *getFS() { return &fs; }
-    lfs_config *getFSConfig() { return &fsconfig; }
-
-
+    int initialize();
+    
+    lfs_t fs;
    private:
-    static constexpr size_t SECTOR_SIZE = 1ul << 17;  // 128kB
+    static int lfs_read(const struct lfs_config *c, lfs_block_t block,
+                        lfs_off_t off, void *buffer, lfs_size_t size);
+
+    static int lfs_program(const struct lfs_config *c, lfs_block_t block,
+                           lfs_off_t off, const void *buffer, lfs_size_t size);
+
+    static int lfs_erase(const struct lfs_config *c, lfs_block_t block);
+
+    static int lfs_sync(const struct lfs_config *c);
+
+    static constexpr size_t SECTOR_SIZE = 1ul << 17;
     static constexpr uint8_t SECTOR_ZERO = 17;
     static constexpr uint8_t BLOCK_COUNT = 7;
 
-    static constexpr int LFS_CACHE_SIZE = 256;
-    static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 256;
-    static constexpr int LFS_MAX_FILE_SIZE = 100 * 1024 * 1024; // 100kB
-    static constexpr int LFS_MAX_FILENAME_LENGTH = 64;
+    static constexpr int LFS_CACHE_SIZE = 64;
+    static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 64;
 
-    int lfs_read_buffer[LFS_CACHE_SIZE] = {0};
-    int lfs_prog_buffer[LFS_CACHE_SIZE] = {0};
-    int lfs_lookahead_buffer[LFS_LOOKAHEAD_BUFFER_SIZE] = {0};
+    static int lfs_read_buffer[LFS_CACHE_SIZE];
+    static int lfs_prog_buffer[LFS_CACHE_SIZE];
+    static int lfs_lookahead_buffer[LFS_LOOKAHEAD_BUFFER_SIZE];
 
     static constexpr uintptr_t OriginAddr{0x08120000};  // 128KiB Sector 17
     static inline uint8_t *const Origin{(uint8_t *)OriginAddr};
-
-    lfs_t fs;
 
     lfs_config fsconfig = {
         .context = 0,
@@ -68,22 +72,11 @@ class LittleFSFlash {
         .read_buffer = static_cast<void *>(lfs_read_buffer),
         .prog_buffer = static_cast<void *>(lfs_prog_buffer),
         .lookahead_buffer = static_cast<void *>(lfs_lookahead_buffer),
-        .name_max = LFS_MAX_FILENAME_LENGTH,
-        .file_max = LFS_MAX_FILE_SIZE,
+        .name_max = 16,
+        .file_max = 0,
         .attr_max = 0,
         .metadata_max = 2048,
     };
-
-    static int lfs_read(const struct lfs_config *c, lfs_block_t block,
-                        lfs_off_t off, void *buffer, lfs_size_t size);
-
-    static int lfs_program(const struct lfs_config *c, lfs_block_t block,
-                           lfs_off_t off, const void *buffer, lfs_size_t size);
-
-    static int lfs_erase(const struct lfs_config *c, lfs_block_t block);
-
-    static int lfs_sync(const struct lfs_config *c);
-
 };  // namespace tap::storage
 
 }  // namespace tap::storage
