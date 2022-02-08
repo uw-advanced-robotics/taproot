@@ -26,6 +26,7 @@
 #include "modm/math/geometry/location_2d.hpp"
 
 #include "odometry_2d_interface.hpp"
+#include "odometry_2d_tracker.hpp"
 
 // Forward declarations
 namespace tap
@@ -37,15 +38,15 @@ class ChassisSubsystemInterface;
 }
 }  // namespace tap
 
-namespace tap::control::odometry
+namespace tap::algorithms::odometry
 {
 // Forward declarations
 class ChassisWorldYawGetterInterface;
-class ChassisDisplacementGetterInterface;
+class ChassisDisplacementObserverInterface;
 
 /**
  * A subsystem for keeping track of the 2D-position of a chassis in the field
- * using chassis displacement reported by a ChassisDisplacementGetterInterface and
+ * using chassis displacement reported by a ChassisDisplacementObserverInterface and
  * chassis yaw reported by a ChassisOrientationGetterInterface
  *
  * This system ignores vertical movement.
@@ -61,7 +62,7 @@ public:
      *      ChassisOrientationGetterInterface. Should return the angle of the chassis
      *      forward vector relative to the x-axis of the field.
      * @param chassisDisplacementGetter pointer to an object which implements the
-     *      ChassisDisplacementGetterInterface. Used for getting the chassis displacement
+     *      ChassisDisplacementObserverInterface. Used for getting the chassis displacement
      *
      * @note it is essential that the chassisOrientationGetter and chassisDisplacementGetter
      *      use the same positive z-axis. The getter interfaces should enforce that they
@@ -69,28 +70,33 @@ public:
      */
     Odometry2DSubsystem(
         tap::Drivers* drivers,
-        ChassisWorldYawGetterInterface* chassisOrientationGetter,
-        ChassisDisplacementGetterInterface* chassisDisplacementGetter);
+        ChassisWorldYawGetterInterface* chassisYawGetter,
+        ChassisDisplacementObserverInterface* chassisDisplacementGetter)
+        : Subsystem(drivers),
+          odometryTracker(chassisYawGetter, chassisDisplacementGetter)
+    {
+    }
 
     /**
      * Run subsystem logic and update tracked chassis position. Call frequently for better
      * results. The main reason to use this class is for its implementation of this function,
      * hence it doesn't make sense to modify it so it's declared final.
      */
-    void refresh() final;
+    inline void refresh() final { odometryTracker.update(); }
 
     /**
      * @return the current odometry frame
      * @see OdometryInterface::getCurrentOdometryFrame()
      */
-    inline const modm::Location2D<float>& getCurrentLocation2D() const final { return location; }
+    inline modm::Location2D<float> getCurrentLocation2D() const final
+    {
+        return odometryTracker.getCurrentLocation2D();
+    }
 
 private:
-    ChassisWorldYawGetterInterface* chassisYawGetter;
-    ChassisDisplacementGetterInterface* chassisDisplacementGetter;
-    modm::Location2D<float> location;
+    Odometry2DTracker odometryTracker;
 };
 
-}  // namespace tap::control::odometry
+}  // namespace tap::algorithms::odometry
 
 #endif  // ODOMETRY_2D_SUBSYSTEM_HPP_

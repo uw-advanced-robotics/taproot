@@ -22,15 +22,19 @@
 
 #include "modm/math/geometry/vector.hpp"
 
-namespace tap::control::odometry
+namespace tap::algorithms::odometry
 {
 /**
  * Interface for getting chassis displacement in chassis frame
  *
- * Implementations of `getChassisDisplacement` should return the absolute chassis 
- * displacement in the chassis frame since some arbitrary time at startup.
- * 
- * To generate useful measurements in a non-rotating reference frame from this getter 
+ * Implementations of `getChassisDisplacement` should return the absolute chassis
+ * displacement in the chassis frame since some arbitrary time at startup. Note
+ * this value does not have a useful physical interpretation (e.g.: a robot that
+ * drives a complete circle going forward and returns to it's original point will
+ * have a positive absolute x-displacement in chassis frame corresponding to the
+ * circle's circumference).
+ *
+ * To generate useful measurements in a non-rotating reference frame from this getter
  * users should differentiate this returned value by sampling this value frequently,
  * finding the delta position, and orienting that displacement so that it matches
  * the reference frame, then adding that displacement to the tracked chassis position.
@@ -42,25 +46,28 @@ namespace tap::control::odometry
  * Getting chassis displacement may fail as implementor chooses to indicate
  * either values are too stale or sensor went offline etc.
  *
+ * Most implementations probably will not support getting z-displacement, and in
+ * that case should just return 0 for z-displacement.
+ *
  * @note The RoboMaster robot building specification manual mentions a coordinate
  *      convention for chassis orientations. Their coordinate convention is different
  *      in that they assert positive z as pointing "towards the center of the Earth".
  */
-class ChassisDisplacementGetterInterface
+class ChassisDisplacementObserverInterface
 {
 public:
     /**
      * Returns the chassis displacement in chassis frame since some fixed arbitrary
      * point in time near startup.
      *
-     * @param[out] displacement if valid data is available the x, y, and z of this vector
-     *      will be populated with the appropriate absolute displacement in meters.
+     * @param[out] displacement if valid data is available the x, y, and z of this pointed
+     *      to vector will be populated with the appropriate absolute displacement in meters.
      *
      * @return `true` if valid chassis displacement data was available, `false` otherwise.
      */
-    virtual bool getChassisDisplacement(modm::Vector<float, 3>& displacement) = 0;
+    virtual bool getChassisDisplacement(modm::Vector<float, 3>* displacement) = 0;
 };
 
-}  // namespace tap::control::odometry
+}  // namespace tap::algorithms::odometry
 
 #endif  // CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_

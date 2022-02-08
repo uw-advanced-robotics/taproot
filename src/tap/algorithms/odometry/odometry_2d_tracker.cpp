@@ -1,58 +1,52 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
- * This file is part of aruw-mcb.
+ * This file is part of taproot.
  *
- * aruw-mcb is free software: you can redistribute it and/or modify
+ * taproot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * aruw-mcb is distributed in the hope that it will be useful,
+ * taproot is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
+ * along with taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "odometry_2d_subsystem.hpp"
+#include "odometry_2d_tracker.hpp"
 
 #include <cmath>
 
 #include "tap/control/chassis/chassis_subsystem_interface.hpp"
-#include "tap/drivers.hpp"
 
 #include "modm/math/geometry/angle.hpp"
+#include "modm/math/geometry/vector.hpp"
 
 #include "chassis_displacement_getter_interface.hpp"
 #include "chassis_world_yaw_getter_interface.hpp"
 
-namespace tap::control::odometry
+namespace tap::algorithms::odometry
 {
-Odometry2DSubsystem::Odometry2DSubsystem(
-    tap::Drivers* drivers,
+Odometry2DTracker::Odometry2DTracker(
     ChassisWorldYawGetterInterface* chassisYawGetter,
-    ChassisDisplacementGetterInterface* chassisDisplacementGetter)
-    : Subsystem(drivers),
-      chassisYawGetter(chassisYawGetter),
+    ChassisDisplacementObserverInterface* chassisDisplacementGetter)
+    : chassisYawGetter(chassisYawGetter),
       chassisDisplacementGetter(chassisDisplacementGetter),
       location(0.0f, 0.0f, 0.0f)
 {
 }
 
-void Odometry2DSubsystem::refresh()
+void Odometry2DTracker::update()
 {
-    float dxChassisRelative = 0.0f;
-    float dyChassisRelative = 0.0f;
-    float dzChassisRelative = 0.0f;
+    modm::Vector<float, 3> displacementChassisRelative;
     float chassisAngle = 0.0f;
 
-    bool validDisplacementAvailable = chassisDisplacementGetter->getChassisDisplacement(
-        &dxChassisRelative,
-        &dyChassisRelative,
-        &dzChassisRelative);
+    bool validDisplacementAvailable =
+        chassisDisplacementGetter->getChassisDisplacement(&displacementChassisRelative);
     bool validOrientationAvailable = chassisYawGetter->getChassisWorldYaw(&chassisAngle);
 
     // Only execute logic if velocity and orientation were available
@@ -62,8 +56,8 @@ void Odometry2DSubsystem::refresh()
         // chassisYawGetter is specified to return normalized angles
         float worldRelativeOrientation = chassisAngle;
         location.setOrientation(worldRelativeOrientation);
-        location.move(modm::Vector2f(dxChassisRelative, dyChassisRelative));
+        location.move(modm::Vector2f(displacementChassisRelative.x, displacementChassisRelative.y));
     }
 }
 
-}  // namespace tap::control::odometry
+}  // namespace tap::algorithms::odometry

@@ -23,7 +23,7 @@
 // Include instead of forward declare because template uses default arguments
 #include "modm/math/geometry/location_2d.hpp"
 
-namespace tap::control::odometry
+namespace tap::algorithms::odometry
 {
 /**
  * @brief Interface for retrieving the position of a robot chassis in 2 dimensions.
@@ -47,9 +47,9 @@ public:
     /**
      * @return the current location (x and y coordinate) and orientation (in radians)
      */
-    virtual inline const modm::Location2D<float>& getCurrentLocation2D() const = 0;
+    virtual modm::Location2D<float> getCurrentLocation2D() const = 0;
 };
 
-}  // namespace tap::control::odometry
+}  // namespace tap::algorithms::odometry
 
 #endif  // ODOMETRY_2D_INTERFACE_HPP_

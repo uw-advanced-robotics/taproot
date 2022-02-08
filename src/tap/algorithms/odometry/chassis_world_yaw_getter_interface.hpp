@@ -20,7 +20,7 @@
 #ifndef CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
 #define CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
 
-namespace tap::control::odometry
+namespace tap::algorithms::odometry
 {
 /**
  * Object used to get chassis yaw relative to world frame x-axis. Positive
@@ -51,6 +51,6 @@ public:
     virtual bool getChassisWorldYaw(float* yaw) = 0;
 };
 
-}  // namespace tap::control::odometry
+}  // namespace tap::algorithms::odometry
 
 #endif  // CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
