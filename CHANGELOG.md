@@ -12,6 +12,8 @@
   calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
   computing angle data for a couple seconds while the IMU is calibration. For calibration to be
   performed correctly, the BMI088 should be level (#18, !96).
+- To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
+  update graphics based on its internal state (!102).
 
 ## January 2022
 

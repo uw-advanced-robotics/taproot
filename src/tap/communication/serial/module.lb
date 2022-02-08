@@ -66,7 +66,7 @@ class RefSerial(Module):
         env.copy("ref_serial.hpp")
         env.copy("ref_serial_data.hpp")
         env.outbasepath = "taproot/src/tap/communication/referee"
-        env.copy("ref_serial_ui_wrappers")
+        env.copy("../referee/state_hud_indicator.hpp")
 
 class TerminalSerial(Module):
     def init(self, module):
