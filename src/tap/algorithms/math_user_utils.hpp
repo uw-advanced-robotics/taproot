@@ -133,7 +133,7 @@ float fastInvSqrt(float x);
 void rotateVector(float* x, float* y, float radians);
 
 /** Acceleration due to gravity in m/s^2 */
-constexpr float G = 9.81;  // m/s^2
+constexpr float ACCELERATION_GRAVITY = 9.81;  // m/s^2
 
 }  // namespace algorithms
 

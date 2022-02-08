@@ -25,21 +25,21 @@ using namespace tap::algorithms::ballistics;
 
 TEST(Ballistics, quadraticKinematicProjection_dt_zero_pos_unmoving)
 {
-    EXPECT_EQ(1, quadraticKinematicProjection(0, 1, 2, 3));
+    EXPECT_EQ(1, MeasuredKinematicState::quadraticKinematicProjection(0, 1, 2, 3));
 }
 
 TEST(
     Ballistics,
     quadraticKinematicProjection_position_constantly_increasing_when_vel_positive_acc_zero)
 {
-    EXPECT_NEAR(2, quadraticKinematicProjection(1, 1, 1, 0), 1E-5);
+    EXPECT_NEAR(2, MeasuredKinematicState::quadraticKinematicProjection(1, 1, 1, 0), 1E-5);
 }
 
 TEST(Ballistics, quadraticKinematicProjection_position_increases_quadratically_when_acc_positive)
 {
-    EXPECT_NEAR(1, quadraticKinematicProjection(1, 0, 0, 2), 1e-5);
-    EXPECT_NEAR(4, quadraticKinematicProjection(2, 0, 0, 2), 1e-5);
-    EXPECT_NEAR(9, quadraticKinematicProjection(3, 0, 0, 2), 1e-5);
+    EXPECT_NEAR(1, MeasuredKinematicState::quadraticKinematicProjection(1, 0, 0, 2), 1e-5);
+    EXPECT_NEAR(4, MeasuredKinematicState::quadraticKinematicProjection(2, 0, 0, 2), 1e-5);
+    EXPECT_NEAR(9, MeasuredKinematicState::quadraticKinematicProjection(3, 0, 0, 2), 1e-5);
 }
 
 TEST(Ballistics, projectForward_returns_constant_delta_position_when_vel_positive_no_acc)
@@ -50,9 +50,9 @@ TEST(Ballistics, projectForward_returns_constant_delta_position_when_vel_positiv
         .acceleration = {0, 0, 0},
     };
 
-    auto position1 = projectForward(kinematicState, 1);
-    auto position2 = projectForward(kinematicState, 2);
-    auto position3 = projectForward(kinematicState, 3);
+    auto position1 = kinematicState.projectForward(1);
+    auto position2 = kinematicState.projectForward(2);
+    auto position3 = kinematicState.projectForward(3);
 
     auto diff12 = position2 - position1;
     auto diff23 = position3 - position2;
@@ -66,29 +66,58 @@ TEST(Ballistics, computeTravelTime_horizontal_distance_only_bulletVelocity_10)
 {
     modm::Vector3f targetPosition(10, 0, 0);
 
-    float travelTime = computeTravelTime(targetPosition, 20);
+    float travelTime = 0;
+    float turretPitch = 0;
+    bool timeFound = computeTravelTime(targetPosition, 20, &travelTime, &turretPitch);
 
     // 20 m/s velocity, 10 m target distance, time should be slightly greater than .5
-    EXPECT_LT(1, travelTime);
-    EXPECT_NEAR(1, travelTime, 0.3f);
+    EXPECT_EQ(true, timeFound);
+    EXPECT_LT(0.5, travelTime);
+    EXPECT_GT(0.75, travelTime);
 }
 
-TEST(Ballistics, computeTravelTime_vertical_distance_only_bulletVelocity_10)
+TEST(Ballistics, computeTravelTime_vertical_distance_only_hits_target)
 {
     modm::Vector3f targetPosition(0, 0, 10);
+    float travelTime = 0;
+    float turretPitch = 0;
+    bool timeFound = computeTravelTime(targetPosition, 20, &travelTime, &turretPitch);
 
-    float travelTime = computeTravelTime(targetPosition, 10);
-
-    EXPECT_NEAR(10, travelTime, 1E-5);
+    EXPECT_EQ(true, timeFound);
 }
 
-TEST(Ballistics, computeTravelTime_bulletVelocity_0_travel_time_0)
+TEST(Ballistics, computeTravelTime_vertical_distance_only_no_hit)
+{
+    modm::Vector3f targetPosition(0, 0, 10);
+    float travelTime = 0;
+    float turretPitch = 0;
+    bool timeFound = computeTravelTime(targetPosition, 10, &travelTime, &turretPitch);
+
+    EXPECT_EQ(false, timeFound);
+}
+
+TEST(Ballistics, computeTravelTime_bulletVelocity_0)
 {
     modm::Vector3f targetPosition(3, 3, 2);
 
-    float travelTime = computeTravelTime(targetPosition, 0);
+    float travelTime = 0;
+    float turretPitch = 0;
+    bool timeFound = computeTravelTime(targetPosition, 0, &travelTime, &turretPitch);
 
-    EXPECT_EQ(0, travelTime);
+    EXPECT_EQ(false, timeFound);
+}
+
+TEST(Ballistics, computeTravelTime_bulletVelocity_large)
+{
+    modm::Vector3f targetPosition(10, 10, 0);
+
+    float travelTime = 0;
+    float turretPitch = 0;
+    bool timeFound = computeTravelTime(targetPosition, 1E9, &travelTime, &turretPitch);
+
+    EXPECT_EQ(true, timeFound);
+    EXPECT_NEAR(0, travelTime, 1E-5);
+    EXPECT_NEAR(0, turretPitch, 1E-5);
 }
 
 TEST(
@@ -101,11 +130,15 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 10, 3);
+    float turretPitch = 0;
+    float turretYaw = 0;
 
-    EXPECT_NEAR(10, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 1E6, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(true, intersectionFound);
+    EXPECT_NEAR(0, turretPitch, 1E-5);
+    EXPECT_NEAR(0, turretYaw, 1E-5);
 }
 
 TEST(
@@ -118,12 +151,15 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
+    float turretPitch = 0;
+    float turretYaw = 0;
 
-    EXPECT_NEAR(10, targetIntersection.x, 1);
-    EXPECT_LT(10, targetIntersection.x);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(true, intersectionFound);
+    EXPECT_LT(-modm::toRadian(45), turretPitch);
+    EXPECT_NEAR(0, turretYaw, 1E-5);
 }
 
 TEST(
@@ -136,12 +172,16 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
+    float turretPitch = 0;
+    float turretYaw = 0;
 
-    EXPECT_NEAR(10, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.y, 1);
-    EXPECT_LT(0, targetIntersection.y);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(true, intersectionFound);
+    EXPECT_LT(0, turretYaw);
+    EXPECT_GT(modm::toRadian(30), turretYaw);
+    EXPECT_LT(-modm::toRadian(45), turretPitch);
 }
 
 TEST(
@@ -154,20 +194,27 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection30ms =
-        findTargetProjectileIntersection(targetState, 30, 3);
-    auto targetIntersection40ms =
-        findTargetProjectileIntersection(targetState, 40, 3);
-    auto targetIntersection50ms =
-        findTargetProjectileIntersection(targetState, 50, 3);
+    float turretPitch30ms, turretYaw30ms;
+    float turretPitch40ms, turretYaw40ms;
+    float turretPitch50ms, turretYaw50ms;
 
-    EXPECT_GT(targetIntersection30ms.y, targetIntersection40ms.y);
-    EXPECT_GT(targetIntersection40ms.y, targetIntersection50ms.y);
+    bool intersectionFound30ms =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch30ms, &turretYaw30ms);
+    bool intersectionFound40ms =
+        findTargetProjectileIntersection(targetState, 40, 3, &turretPitch40ms, &turretYaw40ms);
+    bool intersectionFound50ms =
+        findTargetProjectileIntersection(targetState, 50, 3, &turretPitch50ms, &turretYaw50ms);
+
+    EXPECT_EQ(true, intersectionFound30ms);
+    EXPECT_EQ(true, intersectionFound40ms);
+    EXPECT_EQ(true, intersectionFound50ms);
+    EXPECT_GT(turretYaw30ms, turretYaw40ms);
+    EXPECT_GT(turretYaw40ms, turretYaw50ms);
 }
 
 TEST(
     Ballistics,
-    findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_target_moving_torwards_turet)
+    findTargetProjectileIntersection_only_horizontal_distance_btwn_turret_and_target_with_target_moving_torwards_turret)
 {
     MeasuredKinematicState targetState{
         .position = {10, 0, 0},
@@ -175,12 +222,14 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
+    float turretPitch, turretYaw;
 
-    EXPECT_GT(10, targetIntersection.x);
-    EXPECT_NEAR(10, targetIntersection.x, 1);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(true, intersectionFound);
+    EXPECT_GT(0, turretPitch);
+    EXPECT_NEAR(0, turretYaw, 1E-5);
 }
 
 TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identical)
@@ -191,11 +240,12 @@ TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identic
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
+    float turretPitch, turretYaw;
 
-    EXPECT_NEAR(0, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(false, intersectionFound);
 }
 
 TEST(Ballistics, findTargetProjectileIntersection_target_out_of_range)
@@ -206,16 +256,17 @@ TEST(Ballistics, findTargetProjectileIntersection_target_out_of_range)
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 1, 3);
+    float turretPitch, turretYaw;
 
-    EXPECT_NEAR(0, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.z, 1E-5);
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 1, 3, &turretPitch, &turretYaw);
+
+    EXPECT_EQ(false, intersectionFound);
 }
 
 TEST(
     Ballistics,
-    findTargetProjectileIntersection_only_vertical_dist_btwn_turret_and_target_target_moving_away_from_turret)
+    findTargetProjectileIntersection_only_vertical_dist_btwn_turret_and_target_with_target_moving_away_from_turret)
 {
     MeasuredKinematicState targetState{
         .position = {0, 0, 10},
@@ -223,89 +274,12 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    auto targetIntersection = findTargetProjectileIntersection(targetState, 30, 3);
+    float turretPitch, turretYaw;
 
-    EXPECT_NEAR(0, targetIntersection.x, 1E-5);
-    EXPECT_NEAR(0, targetIntersection.y, 1E-5);
-    EXPECT_GT(10, targetIntersection.z);
-    EXPECT_NEAR(10, targetIntersection.z, 1);
-}
+    bool intersectionFound =
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
 
-TEST(Ballistics, computePitch_same_turret_target_position)
-{
-    modm::Vector3f position(0, 0, 0);
-
-    EXPECT_EQ(0, computePitch(position));
-}
-
-TEST(Ballistics, computePitch_isosceles_triangle)
-{
-    modm::Vector3f targetPosition(1, 0, 1);
-
-    EXPECT_NEAR(M_PI_4, computePitch(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computePitch_negative_isosceles_triangle)
-{
-    modm::Vector3f targetPosition(-1, 0, -1);
-
-    EXPECT_NEAR(M_PI_4 - M_PI, computePitch(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computePitch_uses_dist_in_xy_dir)
-{
-    modm::Vector3f targetPosition(3, 4, 5);
-
-    EXPECT_NEAR(M_PI_4, computePitch(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, pitch_special_right_triangle)
-{
-    modm::Vector3f targetPosition(1, 0, sqrt(3));
-
-    EXPECT_NEAR(modm::toRadian(60), computePitch(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computePitch_multiples_of_pi_div_2)
-{
-    EXPECT_NEAR(0, computePitch(modm::Vector3f(1, 0, 0)), 1E-5);
-    EXPECT_NEAR(M_PI_2, computePitch(modm::Vector3f(0, 0, 1)), 1E-5);
-    EXPECT_NEAR(M_PI, computePitch(modm::Vector3f(-1, 0, 0)), 1E-5);
-    EXPECT_NEAR(-M_PI_2, computePitch(modm::Vector3f(0, 0, -1)), 1E-5);
-}
-
-TEST(Ballistics, computeYaw_same_turret_target_position)
-{
-    modm::Vector3f position(1, 2, 3);
-
-    EXPECT_EQ(0, computeYaw(position));
-}
-
-TEST(Ballistics, computeYaw_isosceles_triangle)
-{
-    modm::Vector3f targetPosition(1, 1, 0);
-
-    EXPECT_NEAR(M_PI_4, computeYaw(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computeYaw_negative_isosceles_triangle)
-{
-    modm::Vector3f targetPosition(-1, -1, 0);
-
-    EXPECT_NEAR(M_PI_4 - M_PI, computeYaw(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computeYaw_special_right_triangle)
-{
-    modm::Vector3f targetPosition(1, sqrt(3), 0);
-
-    EXPECT_NEAR(modm::toRadian(60), computeYaw(targetPosition), 1E-5);
-}
-
-TEST(Ballistics, computeYaw_multiples_of_pi_div_2)
-{
-    EXPECT_NEAR(0, computeYaw(modm::Vector3f(1, 0, 0)), 1E-5);
-    EXPECT_NEAR(M_PI_2, computeYaw(modm::Vector3f(0, 1, 0)), 1E-5);
-    EXPECT_NEAR(M_PI, computeYaw(modm::Vector3f(-1, 0, 0)), 1E-5);
-    EXPECT_NEAR(-M_PI_2, computeYaw(modm::Vector3f(0, -1, 0)), 1E-5);
+    EXPECT_EQ(true, intersectionFound);
+    EXPECT_NEAR(0, turretYaw, 1E-5);
+    EXPECT_GT(0, turretPitch);
 }
