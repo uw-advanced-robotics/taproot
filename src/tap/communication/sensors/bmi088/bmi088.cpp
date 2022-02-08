@@ -31,6 +31,7 @@
 #include "bmi088_hal.hpp"
 
 using namespace modm::literals;
+using namespace tap::arch;
 using namespace Board;
 
 namespace tap::communication::sensors::bmi088
@@ -166,23 +167,6 @@ void Bmi088::initializeGyro()
     setAndCheckGyroRegister(Gyro::GYRO_LPM1, Gyro::GyroLpm1::PWRMODE_NORMAL);
 }
 
-#define BIG_ENDIAN_INT16_TO_FLOAT(buff) \
-    (static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8))))
-
-static inline int16_t parseTemp(uint8_t tempMsb, uint8_t tempLsb)
-{
-    uint16_t temp = (static_cast<uint16_t>(tempMsb) * 8) + (static_cast<uint16_t>(tempLsb) / 32);
-
-    if (temp > 1023)
-    {
-        return static_cast<int16_t>(temp) - 2048;
-    }
-    else
-    {
-        return static_cast<int16_t>(temp);
-    }
-}
-
 void Bmi088::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_NOT_CONNECTED)
@@ -194,20 +178,23 @@ void Bmi088::periodicIMUUpdate()
     uint8_t rxBuff[6] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
-    data.accRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.accRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.accRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.accRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
+    data.accRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
+    data.accRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
 
     Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    data.gyroRaw[ImuData::X] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff);
-    data.gyroRaw[ImuData::Y] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-    data.gyroRaw[ImuData::Z] = BIG_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+    data.gyroRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
+    data.gyroRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
+    data.gyroRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
-    data.temperature = static_cast<float>(parseTemp(rxBuff[0], rxBuff[1])) * BMI088_TEMP_FACTOR +
-                       BMI088_TEMP_OFFSET;
+    data.temperature = parseTemp(rxBuff[0], rxBuff[1]);
 
-    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
+    if (imuState == ImuState::IMU_CALIBRATING)
+    {
+        computeOffsets();
+    }
+    else
     {
         data.gyroDegPerSec[ImuData::X] =
             GYRO_DS_PER_GYRO_COUNT * (data.gyroRaw[ImuData::X] - data.gyroOffsetRaw[ImuData::X]);
@@ -231,10 +218,6 @@ void Bmi088::periodicIMUUpdate()
             data.accG[ImuData::Y],
             data.accG[ImuData::Z]);
     }
-    else
-    {
-        computeOffsets();
-    }
 
     imuHeater.runTemperatureController(data.temperature);
 }
@@ -249,7 +232,7 @@ void Bmi088::computeOffsets()
     data.accOffsetRaw[ImuData::X] += data.accRaw[ImuData::X];
     data.accOffsetRaw[ImuData::Y] += data.accRaw[ImuData::Y];
     data.accOffsetRaw[ImuData::Z] +=
-        data.accRaw[ImuData::Z] - ACCELERATION_GRAVITY / ACC_G_PER_ACC_COUNT;
+        data.accRaw[ImuData::Z] - (tap::algorithms::ACCELERATION_GRAVITY / ACC_G_PER_ACC_COUNT);
 
     if (calibrationSample >= BMI088_OFFSET_SAMPLES)
     {

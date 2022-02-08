@@ -21,6 +21,7 @@
 #define BMI088_HPP_
 
 #include "tap/algorithms/MahonyAHRS.h"
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
@@ -38,6 +39,17 @@ namespace tap::communication::sensors::bmi088
 /**
  * For register tables and descriptions, refer to the bmi088 datasheet:
  * https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf
+ *
+ * Important notes about using this class:
+ *
+ *  - This can only be used with the integrated IMU on the RoboMaster Development Board Type C.
+ *  - For best results, IMU calibration should be performed each time the robot is turned on. The
+ *    calibration parameters are not stored. Use `requestRecalibration` to recalibrate the IMU.
+ *  - When calibrating, the IMU should be level (i.e. it should be in the position where you would
+ *    consider the board to have 0 tilt in the pitch or roll axis relative to the z plane). Of
+ *  - course, this is different depending on how the board is mounted to the robot and what you
+ *    expect
+ *  - roll and pitch to be defined as.
  */
 class Bmi088 : public Bmi088Data
 {
@@ -49,8 +61,6 @@ public:
         IMU_CALIBRATING,
         IMU_CALIBRATED,
     };
-
-    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
@@ -74,7 +84,7 @@ public:
      * Used to convert raw accel values to units m/s^2. Ratio has units (m/s^2) / acc counts.
      */
     static constexpr float ACC_G_PER_ACC_COUNT =
-        modm::pow(2, ACC_RANGE.value + 1) * 1.5f * ACCELERATION_GRAVITY / 32768.0f;
+        modm::pow(2, ACC_RANGE.value + 1) * 1.5f * tap::algorithms::ACCELERATION_GRAVITY / 32768.0f;
 
     /**
      * The number of samples we take in order to determine the mpu offsets.
@@ -131,9 +141,13 @@ public:
     mockable float getTemp() const { return data.temperature; }
 
 private:
+    static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
+    /** Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET. */
+    static constexpr int16_t RAW_TEMPERATURE_OFFSET = -2048;
+
     struct ImuData
     {
-        enum Coordinate
+        enum Axis
         {
             X = 0,
             Y = 1,
@@ -168,6 +182,32 @@ private:
     void setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value);
 
     void setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value);
+
+    /**
+     * Parses raw temperature data from the IMU.
+     *
+     * tempMsg and tempLsb are registers containing the temperature sensor data output. The data is
+     * stored in an 11-bit value in 2's complement format. The resolution is 0.125 deg C / LSB. The
+     * temperature returned is as a float in degrees C.
+     */
+    static inline float parseTemp(uint8_t tempMsb, uint8_t tempLsb)
+    {
+        uint16_t temp =
+            (static_cast<uint16_t>(tempMsb) * 8) + (static_cast<uint16_t>(tempLsb) / 32);
+
+        int16_t shiftedTemp = 0;
+
+        if (temp > RAW_TEMPERATURE_TO_APPLY_OFFSET)
+        {
+            shiftedTemp = static_cast<int16_t>(temp) + RAW_TEMPERATURE_OFFSET;
+        }
+        else
+        {
+            shiftedTemp = static_cast<int16_t>(temp);
+        }
+
+        return static_cast<float>(shiftedTemp) * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
+    }
 };
 
 }  // namespace tap::communication::sensors::bmi088

@@ -163,6 +163,17 @@ void convertFromBigEndian(T *data, const uint8_t *bytesIn)
 #endif
 }
 
+/**
+ * Convert int16_t stored in big endian format in buff to a floating point value.
+ *
+ * @param[in] buff Buffer containing two bytes representing an int16_t in big endian format.
+ * @return A float, the converted int16_t in floating point form.
+ */
+inline float bigEndianInt16ToFloat(const uint8_t *buff)
+{
+    return static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8)));
+}
+
 }  // namespace arch
 }  // namespace tap
 
