@@ -21,9 +21,9 @@
 
 #include <gtest/gtest.h>
 
-#include "modm/io/iostream.hpp"
+#include "tap/stub/terminal_device_stub.hpp"
 
-#include "terminal_device_stub.hpp"
+#include "modm/io/iostream.hpp"
 
 using namespace tap::stub;
 
