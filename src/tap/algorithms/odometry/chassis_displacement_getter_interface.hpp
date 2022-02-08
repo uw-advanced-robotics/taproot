@@ -20,23 +20,24 @@
 #ifndef CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_
 #define CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_
 
+#include "modm/math/geometry/vector.hpp"
+
 namespace tap::control::odometry
 {
 /**
  * Interface for getting chassis displacement in chassis frame
  *
- * Each call to getChassisDisplacement should return the chassis displacement
- * in the chassis frame since the last call.
+ * Implementations of `getChassisDisplacement` should return the absolute chassis 
+ * displacement in the chassis frame since some arbitrary time at startup.
+ * 
+ * To generate useful measurements in a non-rotating reference frame from this getter 
+ * users should differentiate this returned value by sampling this value frequently,
+ * finding the delta position, and orienting that displacement so that it matches
+ * the reference frame, then adding that displacement to the tracked chassis position.
  *
  * While on flat ground, the chassis positive z-axis is defined as "up" (opposite
  * gravity), positive x-axis is defined as the chassis forward vector, and
  * thus consequently the positive y-axis is chassis "left".
- *
- * Unless you use GPS or some other absolute positioning system, it is expected
- * that over long periods the displacement may not be the most accurate. However
- * if the chassis displacement is queried fast and often the accuracy of the
- * accumulated displacement should be better than it would if it were queried
- * at a lower frequently (like any quasi-integration).
  *
  * Getting chassis displacement may fail as implementor chooses to indicate
  * either values are too stale or sensor went offline etc.
@@ -49,22 +50,15 @@ class ChassisDisplacementGetterInterface
 {
 public:
     /**
-     * Returns the chassis displacement in chassis frame since this method was
-     * last called. See class comment for more details on axis orientations.
+     * Returns the chassis displacement in chassis frame since some fixed arbitrary
+     * point in time near startup.
      *
-     * @param[out] x destination for x component of chassis displacement in m. 0 if
-     *      valid data unavailable.
-     * @param[out] y destination for y component of chassis displacement in m. 0 if
-     *      valid data unavailable.
-     * @param[out] z destination for z component of chassis displacement in m. 0 if
-     *      valid data unavailable.
-     *
-     * @note while valid data being unavailable implies x, y, and z are set to 0, it does not
-     *      mean that x, y, z being zero implies that valid data wasn't available.
+     * @param[out] displacement if valid data is available the x, y, and z of this vector
+     *      will be populated with the appropriate absolute displacement in meters.
      *
      * @return `true` if valid chassis displacement data was available, `false` otherwise.
      */
-    virtual bool getChassisDisplacement(float* x, float* y, float* z) = 0;
+    virtual bool getChassisDisplacement(modm::Vector<float, 3>& displacement) = 0;
 };
 
 }  // namespace tap::control::odometry
