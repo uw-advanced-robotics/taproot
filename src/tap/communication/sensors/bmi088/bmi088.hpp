@@ -195,15 +195,11 @@ private:
         uint16_t temp =
             (static_cast<uint16_t>(tempMsb) * 8) + (static_cast<uint16_t>(tempLsb) / 32);
 
-        int16_t shiftedTemp = 0;
+        int16_t shiftedTemp = static_cast<int16_t>(temp);
 
         if (temp > RAW_TEMPERATURE_TO_APPLY_OFFSET)
         {
-            shiftedTemp = static_cast<int16_t>(temp) + RAW_TEMPERATURE_OFFSET;
-        }
-        else
-        {
-            shiftedTemp = static_cast<int16_t>(temp);
+            shiftedTemp += RAW_TEMPERATURE_OFFSET;
         }
 
         return static_cast<float>(shiftedTemp) * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
