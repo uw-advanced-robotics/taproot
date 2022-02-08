@@ -18,6 +18,11 @@
   this function in user code to ensure proper calibration of the IMU.
 - The `HoldRepeatCommandMapping` requires an extra parameter in its constructor. See all changes for
   more details.
+- Almost everything in `tap::control::setpoint` has changed (!49). Most will fail loudly (i.e.: will
+  cause compilation errors). Those that are potentially more insidious are documented below:
+  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand` 
+    changed (grouped by usage now). This is VERY IMPORTANT to catch and check as compiler may not
+    throw warning.
 
 ### All changes
 
@@ -30,6 +35,7 @@
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
+- Tests added for commands in `tap::control::setpoint` (!49)
 - `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
   calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
   parameters.
@@ -40,6 +46,9 @@
 - HAL options may be now passed to modm's project.xml file (!116).
 - Support for UART ports 7 and 8 added to dev board type A (!116).
 - Baud rates in `dji_serial.cpp` configurable via the project.xml file (#50, !116).
+- Various improvements to the commands in `tap::control::setpoint` (!49).
+  - Unjamming logic more straightforward.
+  - MoveCommand pause after rotate time now functions as described.
 
 ## December 2021
 
