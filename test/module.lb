@@ -87,6 +87,8 @@ class TaprootTests(Module):
         env.copy("tap/control")
         if env.has_module("taproot:communication:sensors:mpu6500"):
             env.copy("tap/communication/sensors/mpu6500")
+        if env.has_module(":communication:sensors:bmi088"):
+            env.copy("tap/communication/sensors/bmi088")
 
 def init(module):
     module.name = ":testing"
