@@ -23,7 +23,7 @@
 #include "tap/architecture/timeout.hpp"
 #include "tap/drivers.hpp"
 
-#include "../ref_serial.hpp"
+#include "tap/communication/serial/ref_serial.hpp"
 #include "modm/processing/resumable.hpp"
 
 namespace tap
@@ -31,7 +31,7 @@ namespace tap
 class Drivers;
 }
 
-namespace tap::communication::serial::ref_serial_ui_wrapeprs
+namespace tap::communication::referee
 {
 /**
  * Draws a graphic. Each graphic has an associated state (of type specified by the template
@@ -89,7 +89,7 @@ public:
         void (*)(T state, tap::serial::RefSerial::Tx::Graphic1Message *graphic);
 
     /**
-     * The boolean will ignore calls in `setIndicatorState` MIN_UPDATE_PERIOD ms after
+     * The state HUD indicator will ignore calls in `setIndicatorState` MIN_UPDATE_PERIOD ms after
      * `setIndicatorState` is drawn. This is to avoid rapid back and forth updating of the graphic.
      */
     static constexpr uint32_t MIN_UPDATE_PERIOD = 500;
@@ -174,6 +174,6 @@ private:
 
 using BooleanHUDIndicator = StateHUDIndicator<bool>;
 
-}  // namespace tap::communication::serial::ref_serial_ui_wrapeprs
+}  // namespace tap::communication::referee
 
 #endif  // STATE_HUD_INDICATOR_HPP_
