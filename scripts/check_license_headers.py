@@ -22,8 +22,6 @@ import sys
 import os
 import glob
 
-from sqlalchemy import true
-
 
 USAGE = "usage: /usr/bin/python3 check_license_headers.py [--update] \n\
 options:\n\
