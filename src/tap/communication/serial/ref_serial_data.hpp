@@ -336,9 +336,16 @@ public:
             uint32_t lineWidth : 10;
             uint32_t startX : 11;
             uint32_t startY : 11;
-            uint32_t radius : 10;
-            uint32_t endX : 11;
-            uint32_t endY : 11;
+            union
+            {
+                struct
+                {
+                    uint32_t radius : 10;
+                    uint32_t endX : 11;
+                    uint32_t endY : 11;
+                } modm_packed;
+                int32_t value : 32;
+            } modm_packed;
         } modm_packed;
 
         struct DeleteGraphicLayerMessage
@@ -404,6 +411,40 @@ public:
             char msg[30];
             uint16_t crc16;
         } modm_packed;
+
+        /**
+         * You cannot send messages faster than this speed to the referee system.
+         *
+         * Source: https://bbs.robomaster.com/forum.php?mod=viewthread&tid=9120
+         */
+        static constexpr uint32_t MAX_TRANSMIT_SPEED_BYTES_PER_S = 1280;
+
+        /**
+         * Get the max wait time after which you can send more data to the client. Sending faster
+         * than this time may cause dropped packets.
+         *
+         * Pass a pointer to some graphic message. For example, if you have a `Graphic1Message`
+         * called `msg`, you can call `getWaitTimeAfterGraphicSendMs(&msg)`.
+         *
+         * @tparam T The type of the graphic message that jas just been sent.
+         */
+        template <typename T>
+        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T *)
+        {
+            // Must be a valid graphic message type
+            static_assert(
+                std::is_same<T, DeleteGraphicLayerMessage>::value ||
+                    std::is_same<T, Graphic1Message>::value ||
+                    std::is_same<T, RobotToRobotMessage>::value ||
+                    std::is_same<T, Graphic2Message>::value ||
+                    std::is_same<T, Graphic5Message>::value ||
+                    std::is_same<T, Graphic7Message>::value ||
+                    std::is_same<T, GraphicCharacterMessage>::value,
+                "Invalid type, getWaitTimeAfterGraphicSendMs only takes in ref serial message "
+                "types.");
+
+            return sizeof(T) * 1'000 / MAX_TRANSMIT_SPEED_BYTES_PER_S;
+        }
     };
 };
 

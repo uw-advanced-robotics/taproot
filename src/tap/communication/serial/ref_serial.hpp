@@ -66,13 +66,15 @@ private:
      */
     static constexpr uint16_t DPS_TRACKER_DEQUE_SIZE = 20;
 
-    static constexpr int GRAPHIC_MAX_CHARACTERS = 30;
-
 public:
-    // RX message type defines, ignored message types commented out, referred to as "Command ID"s in
+    /**
+     * RX message type defines, referred to as "Command ID"s in the RoboMaster Ref System
+     * Protocol Appendix. Ignored message types commented out because they are not handled by this
+     * parser yet. They are values that are used in message headers to indicate the type of message
+     * we have received.
+     */
     enum MessageType
     {
-        // the RoboMaster Ref System Protocol Appendix
         REF_MESSAGE_TYPE_GAME_STATUS = 0x1,
         REF_MESSAGE_TYPE_GAME_RESULT = 0x2,
         REF_MESSAGE_TYPE_ALL_ROBOT_HP = 0x3,
@@ -248,20 +250,12 @@ public:
         int32_t value,
         Tx::GraphicData* sharedData);
     /**
-     * Only updates the integer value stored in the `sharedData` (it is assumed that
-     * the `GraphicData` is already configured with `configInteger`).
-     *
-     * @param[out] sharedData The message with whose value to update.
-     */
-    static void updateInteger(int32_t value, Tx::GraphicData* sharedData);
-    /**
      * Configures a character message in the passed in `GraphicCharacterMessage`.
      *
      * @param[out] sharedData The message to configure.
      */
     static void configCharacterMsg(
         uint16_t fontSize,
-        uint16_t charLen,
         uint16_t width,
         uint16_t startX,
         uint16_t startY,

@@ -465,11 +465,8 @@ void RefSerial::configFloatingNumber(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
-    // Do this janky stuff to get an int in a bitfield
-    int32_t valueInt = 1000 * value;
-    sharedData->radius = valueInt & 0x3fff;
-    sharedData->endX = (valueInt >> 10) & 0x7ff;
-    sharedData->endY = (valueInt >> 21) & 0x7ff;
+    // Store floating point value in fixed point with 3 decimal points precision
+    sharedData->value = 1000 * value;
 }
 
 void RefSerial::configInteger(
@@ -485,22 +482,11 @@ void RefSerial::configInteger(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
-    // Do this janky stuff to get an int in a bitfield
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
-}
-
-void RefSerial::updateInteger(int32_t value, Tx::GraphicData* sharedData)
-{
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
+    sharedData->value = value;
 }
 
 void RefSerial::configCharacterMsg(
     uint16_t fontSize,
-    uint16_t charLen,
     uint16_t width,
     uint16_t startX,
     uint16_t startY,
@@ -509,11 +495,11 @@ void RefSerial::configCharacterMsg(
 {
     sharedData->graphicData.type = static_cast<uint8_t>(Tx::GraphicType::CHARACTER);
     sharedData->graphicData.startAngle = fontSize;
-    sharedData->graphicData.endAngle = charLen;
+    sharedData->graphicData.endAngle = strlen(dataToPrint);
     sharedData->graphicData.lineWidth = width;
     sharedData->graphicData.startX = startX;
     sharedData->graphicData.startY = startY;
-    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS - 1);
+    strncpy(sharedData->msg, dataToPrint, MODM_ARRAY_SIZE(sharedData->msg) - 1);
 }
 
 /**
@@ -645,7 +631,7 @@ void RefSerial::sendGraphic(
         sendMsg,
         robotData.robotId,
         drivers,
-        GRAPHIC_MAX_CHARACTERS);
+        MODM_ARRAY_SIZE(graphicMsg->msg));
 }
 
 void RefSerial::sendRobotToRobotMsg(
