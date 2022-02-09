@@ -31,23 +31,18 @@ bool computeTravelTime(
 {
     float horizontalDist = hypot(targetPosition.x, targetPosition.y);
     float bulletVelocitySquared = powf(bulletVelocity, 2);
+    float sqrtTerm = powf(bulletVelocitySquared, 2) -
+                     ACCELERATION_GRAVITY * (ACCELERATION_GRAVITY * powf(horizontalDist, 2) +
+                                             2 * targetPosition.z * bulletVelocitySquared);
 
-    if (powf(bulletVelocitySquared, 2) -
-            ACCELERATION_GRAVITY * (ACCELERATION_GRAVITY * powf(horizontalDist, 2) +
-                                    2 * targetPosition.z * bulletVelocitySquared) <
-        0)
+    if (sqrtTerm < 0)
     {
         return false;
     }
 
     // Equation obtained from the wikipedia page on projectile motion
-    *turretPitch = -atan2(
-        (bulletVelocitySquared -
-         sqrt(
-             powf(bulletVelocitySquared, 2) -
-             ACCELERATION_GRAVITY * (ACCELERATION_GRAVITY * powf(horizontalDist, 2) +
-                                     2 * targetPosition.z * bulletVelocitySquared))),
-        (ACCELERATION_GRAVITY * horizontalDist));
+    *turretPitch =
+        -atan2(bulletVelocitySquared - sqrt(sqrtTerm), (ACCELERATION_GRAVITY * horizontalDist));
 
     // For vertical aiming, y_f = v_0*t - 0.5*g*t^2 -> t = (v_0 - sqrt((v_0)^2 - 2*g*y_f))/g
     // We use the negative root since the collision will happen on the first instance that the
