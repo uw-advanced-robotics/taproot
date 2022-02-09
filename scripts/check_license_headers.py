@@ -19,7 +19,10 @@
 
 from os.path import join, dirname, splitext
 import sys
+import os
 import glob
+
+from sqlalchemy import true
 
 
 USAGE = "usage: /usr/bin/python3 check_license_headers.py [--update] \n\
@@ -78,11 +81,11 @@ def find_files_to_check():
 
     files_to_check = []
     for file_type in file_types_to_check:
-        files_to_check.extend(glob.glob(join(SCRIPT_DIR, '../**/*{}'.format(file_type)), recursive=True))
+        files_to_check.extend([os.path.normpath(path) for path in glob.glob(join(SCRIPT_DIR, '../**/*{}'.format(file_type)), recursive=True)])
 
     files_to_ignore = []
     for file_glob in FILE_GLOBS_TO_IGNORE:
-        files_to_ignore.extend(glob.glob(join(SCRIPT_DIR, file_glob), recursive=True))
+        files_to_ignore.extend([os.path.normpath(path) for path in glob.glob(join(SCRIPT_DIR, file_glob), recursive=True)])
 
     if files_to_ignore:
         def excluded(file):
