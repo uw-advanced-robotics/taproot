@@ -1,24 +1,24 @@
 /*
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
- * This file is part of aruw-mcb.
+ * This file is part of Taproot.
  *
- * aruw-mcb is free software: you can redistribute it and/or modify
+ * Taproot is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * aruw-mcb is distributed in the hope that it will be useful,
+ * Taproot is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with aruw-mcb.  If not, see <https://www.gnu.org/licenses/>.
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_
-#define CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_
+#ifndef CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
+#define CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
 
 #include "modm/math/geometry/vector.hpp"
 
@@ -33,6 +33,10 @@ namespace tap::algorithms::odometry
  * drives a complete circle going forward and returns to it's original point will
  * have a positive absolute x-displacement in chassis frame corresponding to the
  * circle's circumference).
+ *
+ * This absolute value return was chosen over a volatile getter that returned
+ * displacement since last call to avoid having getter modify the state of the class (and
+ * thus avoid concerns about multiple consumers sharing this object)
  *
  * To generate useful measurements in a non-rotating reference frame from this getter
  * users should differentiate this returned value by sampling this value frequently,
@@ -61,13 +65,14 @@ public:
      * point in time near startup.
      *
      * @param[out] displacement if valid data is available the x, y, and z of this pointed
-     *      to vector will be populated with the appropriate absolute displacement in meters.
+     *      to vector will be populated with the appropriate absolute displacement in implementation
+     *      specific units.
      *
      * @return `true` if valid chassis displacement data was available, `false` otherwise.
      */
-    virtual bool getChassisDisplacement(modm::Vector<float, 3>* displacement) = 0;
+    virtual bool getChassisDisplacement(modm::Vector<float, 3>* const displacement) const = 0;
 };
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // CHASSIS_DISPLACEMENT_GETTER_INTERFACE_HPP_
+#endif  // CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_

@@ -44,8 +44,10 @@ public:
     virtual inline int16_t getRightFrontRpmActual() const = 0;
     virtual inline int16_t getRightBackRpmActual() const = 0;
 
-    // Returns `true` if all motors are online
-    virtual inline bool areAllMotorsOnline() const = 0;
+    /**
+     * @return `true` iff all motors are online
+     */
+    virtual inline bool allMotorsOnline() const = 0;
 };
 }  // namespace tap::control::chassis
 
