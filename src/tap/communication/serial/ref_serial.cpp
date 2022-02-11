@@ -682,14 +682,14 @@ void RefSerial::sendRobotToRobotMsg(
         msgSizeToCRC16 + sizeof(uint16_t));
 }
 
-void RefSerial::configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen)
+void RefSerial::configFrameHeader(DJISerial::FrameHeader* header, uint16_t msgLen)
 {
-    header->SOF = 0xa5;
+    header->seq = 0xa5;
     header->dataLength = msgLen;
     header->seq = 0;
     header->CRC8 = algorithms::calculateCRC8(
         reinterpret_cast<const uint8_t*>(header),
-        sizeof(Tx::FrameHeader) - sizeof(header->CRC8));
+        sizeof(DJISerial::FrameHeader) - sizeof(header->CRC8));
 }
 
 void RefSerial::configInteractiveHeader(

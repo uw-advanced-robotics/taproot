@@ -722,7 +722,7 @@ TEST(RefSerial, sendGraphic__characterMessage)
         .WillOnce([&](tap::communication::serial::Uart::UartPort,
                       const uint8_t *data,
                       std::size_t length) {
-            const auto header = reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+            const auto header = reinterpret_cast<const RefSerial::FrameHeader *>(data);
             EXPECT_EQ(
                 sizeof(msg.interactiveHeader) + sizeof(msg.graphicData) + sizeof(msg.msg),
                 header->dataLength);
@@ -797,12 +797,12 @@ TEST(RefSerial, sendRobotToRobotMessage__validate_sending_msg_to_same_color_robo
                       const uint8_t *data,
                       std::size_t length) {
             // Decode and validate header
-            const RefSerial::Tx::FrameHeader *header =
-                reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
+            const RefSerial::FrameHeader *header =
+                reinterpret_cast<const RefSerial::FrameHeader *>(data);
             EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
             EXPECT_EQ(0xa5, header->SOF);
             EXPECT_EQ(
-                tap::algorithms::calculateCRC8(data, sizeof(RefSerial::Tx::FrameHeader) - 1),
+                tap::algorithms::calculateCRC8(data, sizeof(RefSerial::FrameHeader) - 1),
                 header->CRC8);
 
             // Decode and validate interactive header

@@ -271,7 +271,7 @@ public:
      * @param[in] msgLen The length of the message. This includes only the length of the data
      *      and not the length of the cmdId or frame tail.
      */
-    static void configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen);
+    static void configFrameHeader(FrameHeader* header, uint16_t msgLen);
     static void configInteractiveHeader(
         Tx::InteractiveHeader* header,
         uint16_t cmdId,
