@@ -48,7 +48,7 @@ public:
      * @return `true` if valid chassis orientation data was available,
      *      `false` otherwise.
      */
-    virtual bool getChassisWorldYaw(float* yaw) = 0;
+    virtual bool getChassisWorldYaw(float* yaw) const = 0;
 };
 
 }  // namespace tap::algorithms::odometry
