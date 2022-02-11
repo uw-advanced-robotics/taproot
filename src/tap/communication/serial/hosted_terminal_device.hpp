@@ -37,9 +37,9 @@ class thread;
 namespace tap
 {
 class Drivers;
-namespace communication
-{
-namespace serial
+}
+
+namespace tap::communication::serial
 {
 /**
  * A device that interacts with stdin and stdout to be used
@@ -79,8 +79,6 @@ private:
     void readCin();
 };  // class HostedTerminalDevice
 }  // namespace serial
-}  // namespace communication
-}  // namespace tap
 
 #endif
 

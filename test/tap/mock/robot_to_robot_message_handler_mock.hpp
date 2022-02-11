@@ -23,12 +23,16 @@
 
 namespace tap::mock
 {
-class RobotToRobotMessageHandlerMock : public tap::serial::RefSerial::RobotToRobotMessageHandler
+class RobotToRobotMessageHandlerMock
+    : public tap::communication::serial::RefSerial::RobotToRobotMessageHandler
 {
 public:
     RobotToRobotMessageHandlerMock();
-    MOCK_METHOD1(functorOp, void(const tap::serial::DJISerial::SerialMessage &));
-    void operator()(const tap::serial::DJISerial::SerialMessage &message) override
+    MOCK_METHOD1(
+        functorOp,
+        void(const tap::communication::serial::DJISerial::ReceivedSerialMessage &));
+    void operator()(
+        const tap::communication::serial::DJISerial::ReceivedSerialMessage &message) override
     {
         return functorOp(message);
     }

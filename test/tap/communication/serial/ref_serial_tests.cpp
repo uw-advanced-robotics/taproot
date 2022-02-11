@@ -25,16 +25,16 @@
 #include "tap/mock/robot_to_robot_message_handler_mock.hpp"
 
 using namespace tap;
-using namespace tap::serial;
+using namespace tap::communication::serial;
 using namespace tap::arch;
 
 template <typename T>
-static DJISerial::SerialMessage constructMsg(const T &data, int type)
+static DJISerial::ReceivedSerialMessage constructMsg(const T &data, int type)
 {
-    DJISerial::SerialMessage msg;
-    msg.sequenceNumber = 0;
-    msg.type = type;
-    msg.length = sizeof(T);
+    DJISerial::ReceivedSerialMessage msg;
+    msg.header.seq = 0;
+    msg.messageType = type;
+    msg.header.dataLength = sizeof(T);
     memset(msg.data, 0, sizeof(msg.data));
     memcpy(msg.data, reinterpret_cast<const uint8_t *>(&data), sizeof(T));
     return msg;
@@ -52,7 +52,7 @@ TEST(RefSerial, messageReceiveCallback__competition_status)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     GameStatus testData;
 
     testData.gameProgress = 2;
@@ -81,7 +81,7 @@ TEST(RefSerial, messageReceiveCallback__competition_result)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     GameResult testData;
 
     testData.winner = 0;
@@ -127,7 +127,7 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
 
     GameRobotHP testData;
 
@@ -194,7 +194,7 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     GameRobotStatus testData;
 
     testData.robot_level = 3;
@@ -300,7 +300,7 @@ TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     GameRobotStatus testData;
 
     // vector of arrays of length 3 containing a time, current HP, and expected DPS
@@ -340,7 +340,7 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     PowerHeatData testData;
 
     testData.chassisVolt = 1234;
@@ -375,7 +375,7 @@ TEST(RefSerial, messageReceiveCallback__robot_position)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     RobotPosData testData;
 
     testData.x = -89.31f;
@@ -396,7 +396,7 @@ TEST(RefSerial, messageReceiveCallback__robot_buffs)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
 
     msg = constructMsg(static_cast<uint8_t>(0b0001), 0x0204);
     refSerial.messageReceiveCallback(msg);
@@ -432,7 +432,7 @@ TEST(RefSerial, messageReceiveCallback__aerial_robot_energy_status)
     Drivers drivers;
     RefSerial refSerial(&drivers);
 
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     msg = constructMsg(static_cast<uint16_t>(12345), 0x0205);
 
     refSerial.messageReceiveCallback(msg);
@@ -450,7 +450,7 @@ TEST(RefSerial, messageReceiveCallback__damage_status)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     RobotDamage testData;
 
     testData.armorId = 0;
@@ -490,7 +490,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     ShootData testData;
 
     testData.bulletType = 1;
@@ -531,7 +531,7 @@ TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     BulletRemaining testData;
 
     testData.bulletRemainingNum17mm = 123;
@@ -550,7 +550,7 @@ TEST(RefSerial, messageReceiveCallback__RFID_status)
 {
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
 
     msg = constructMsg(static_cast<uint32_t>(0b00000101), 0x0209);
     refSerial.messageReceiveCallback(msg);
@@ -585,7 +585,7 @@ TEST(RefSerial, configGraphicGenerics__sets_name_operation_layer_color)
 
 static void updateRobotId(RefSerial &refSerial, RefSerial::RobotId id)
 {
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     GameRobotStatus testData;
     testData.remain_HP = 300;
     testData.robotId = static_cast<uint16_t>(id);
@@ -613,7 +613,7 @@ TEST(RefSerial, deleteGraphicLayer__sends_correct_msg)
     updateRobotId(refSerial, RefSerial::RobotId::RED_SOLDIER_3);
 
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+        .WillOnce([&](tap::communication::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
             const RefSerial::Tx::DeleteGraphicLayerMessage *msg =
                 reinterpret_cast<const RefSerial::Tx::DeleteGraphicLayerMessage *>(data);
 
@@ -717,7 +717,7 @@ TEST(RefSerial, sendGraphic__characterMessage)
     EXPECT_CALL(
         drivers.uart,
         write(testing::_, testing::_, sizeof(RefSerial::Tx::GraphicCharacterMessage)))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+        .WillOnce([&](tap::communication::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
             const auto header = reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
             EXPECT_EQ(
                 sizeof(msg.interactiveHeader) + sizeof(msg.graphicData) + sizeof(msg.msg),
@@ -789,7 +789,7 @@ TEST(RefSerial, sendRobotToRobotMessage__validate_sending_msg_to_same_color_robo
                                         sizeof(msg.interactiveHeader) + msgLen + sizeof(uint16_t);
 
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, entireMsgLen))
-        .WillOnce([&](tap::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
+        .WillOnce([&](tap::communication::serial::Uart::UartPort, const uint8_t *data, std::size_t length) {
             // Decode and validate header
             const RefSerial::Tx::FrameHeader *header =
                 reinterpret_cast<const RefSerial::Tx::FrameHeader *>(data);
@@ -895,7 +895,7 @@ TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
-    DJISerial::SerialMessage msg;
+    DJISerial::ReceivedSerialMessage msg;
     SpecialData specialData;
 
     tap::mock::RobotToRobotMessageHandlerMock handler;
@@ -907,10 +907,10 @@ TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 
-    EXPECT_CALL(handler, functorOp).WillOnce([&](const DJISerial::SerialMessage &message) {
+    EXPECT_CALL(handler, functorOp).WillOnce([&](const DJISerial::ReceivedSerialMessage &message) {
         EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
         EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
-        EXPECT_EQ(sizeof(SpecialData), message.length);
+        EXPECT_EQ(sizeof(SpecialData), message.header.dataLength);
     });
 
     refSerial.messageReceiveCallback(msg);

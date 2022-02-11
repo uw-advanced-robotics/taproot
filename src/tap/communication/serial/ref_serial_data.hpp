@@ -26,7 +26,7 @@
 
 #include "modm/architecture/utils.hpp"
 
-namespace tap::serial
+namespace tap::communication::serial
 {
 /**
  * Contains enum and struct definitions used in the `RefSerial` class.
@@ -69,7 +69,7 @@ public:
     {
     public:
         RobotToRobotMessageHandler() {}
-        virtual void operator()(const DJISerial::SerialMessage &message) = 0;
+        virtual void operator()(const DJISerial::ReceivedSerialMessage &message) = 0;
     };
 
     /**

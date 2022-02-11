@@ -26,9 +26,7 @@
 
 #include "remote_serial_constants.hpp"
 
-using namespace tap::serial;
-
-namespace tap
+namespace tap::communication::serial
 {
 void Remote::initialize()
 {
@@ -225,8 +223,8 @@ void Remote::reset()
     // state should do otherwise
     drivers->commandMapper.handleKeyStateChange(
         0,
-        tap::Remote::SwitchState::UNKNOWN,
-        tap::Remote::SwitchState::UNKNOWN,
+        SwitchState::UNKNOWN,
+        SwitchState::UNKNOWN,
         false,
         false);
 }
