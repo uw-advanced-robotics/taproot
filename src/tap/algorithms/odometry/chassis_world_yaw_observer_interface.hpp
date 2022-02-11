@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
-#define CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
+#ifndef CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
+#define CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
 
 namespace tap::algorithms::odometry
 {
@@ -35,7 +35,7 @@ namespace tap::algorithms::odometry
  * Getting chassis orientation may fail as implementor chooses by returning
  * `false` to indicate either values are too stale or sensor went offline etc.
  */
-class ChassisWorldYawGetterInterface
+class ChassisWorldYawObserverInterface
 {
 public:
     /**
@@ -53,4 +53,4 @@ public:
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // CHASSIS_WORLD_YAW_GETTER_INTERFACE_HPP_
+#endif  // CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_

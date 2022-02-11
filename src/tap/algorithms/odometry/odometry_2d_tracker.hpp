@@ -27,7 +27,7 @@
 namespace tap::algorithms::odometry
 {
 // Forward declarations
-class ChassisWorldYawGetterInterface;
+class ChassisWorldYawObserverInterface;
 class ChassisDisplacementObserverInterface;
 
 /**
@@ -50,7 +50,7 @@ public:
      *      they use positive z-axis is up, but it's worth noting here again.
      */
     Odometry2DTracker(
-        ChassisWorldYawGetterInterface* chassisYawGetter,
+        ChassisWorldYawObserverInterface* chassisYawGetter,
         ChassisDisplacementObserverInterface* chassisDisplacementGetter);
 
     /**
@@ -66,7 +66,7 @@ public:
     inline modm::Location2D<float> getCurrentLocation2D() const final { return location; }
 
 private:
-    ChassisWorldYawGetterInterface* chassisYawGetter;
+    ChassisWorldYawObserverInterface* chassisYawGetter;
     ChassisDisplacementObserverInterface* chassisDisplacementGetter;
     modm::Location2D<float> location;
     // Previous chassis absolute displacement in chassis frame

@@ -37,7 +37,7 @@ class Drivers;
 namespace tap::algorithms::odometry
 {
 // Forward declarations
-class ChassisWorldYawGetterInterface;
+class ChassisWorldYawObserverInterface;
 class ChassisDisplacementObserverInterface;
 
 /**
@@ -66,7 +66,7 @@ public:
      */
     Odometry2DSubsystem(
         tap::Drivers* drivers,
-        ChassisWorldYawGetterInterface* chassisYawGetter,
+        ChassisWorldYawObserverInterface* chassisYawGetter,
         ChassisDisplacementObserverInterface* chassisDisplacementGetter)
         : Subsystem(drivers),
           odometryTracker(chassisYawGetter, chassisDisplacementGetter)

@@ -25,20 +25,11 @@
 #include "modm/math/geometry/angle.hpp"
 #include "modm/math/geometry/vector.hpp"
 
-#include "chassis_displacement_getter_interface.hpp"
-#include "chassis_world_yaw_getter_interface.hpp"
+#include "chassis_displacement_observer_interface.hpp"
+#include "chassis_world_yaw_observer_interface.hpp"
 
 namespace tap::algorithms::odometry
 {
-Odometry2DTracker::Odometry2DTracker(
-    ChassisWorldYawGetterInterface* chassisYawGetter,
-    ChassisDisplacementObserverInterface* chassisDisplacementGetter)
-    : chassisYawGetter(chassisYawGetter),
-      chassisDisplacementGetter(chassisDisplacementGetter),
-      location(0.0f, 0.0f, 0.0f)
-{
-}
-
 void Odometry2DTracker::update()
 {
     modm::Vector<float, 3> chassisAbsoluteDisplacement;
