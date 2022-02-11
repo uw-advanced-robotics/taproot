@@ -624,7 +624,7 @@ TEST(RefSerial, deleteGraphicLayer__sends_correct_msg)
                 msg->frameHeader.dataLength);
             uint16_t cmdId = *reinterpret_cast<const uint16_t *>(data + sizeof(msg->frameHeader));
             EXPECT_EQ(0x0301, cmdId);
-            EXPECT_EQ(0xa5, msg->frameHeader.SOF);
+            EXPECT_EQ(0xa5, msg->frameHeader.headByte);
             EXPECT_EQ(
                 tap::algorithms::calculateCRC8(data, sizeof(msg->frameHeader) - 1),
                 msg->frameHeader.CRC8);
@@ -675,7 +675,7 @@ TEST(RefSerial, sendGraphic__1_doesnt_sen_but_configures_if_sendMsg_false)
     // validate the msg header was still constructed
     EXPECT_EQ(0x0301, msg.cmdId);
     EXPECT_EQ(sizeof(msg.graphicData) + sizeof(msg.interactiveHeader), msg.frameHeader.dataLength);
-    EXPECT_EQ(0xa5, msg.frameHeader.SOF);
+    EXPECT_EQ(0xa5, msg.frameHeader.headByte);
     EXPECT_EQ(
         static_cast<uint16_t>(RefSerial::RobotId::BLUE_SOLDIER_1),
         msg.interactiveHeader.senderId);
@@ -800,7 +800,7 @@ TEST(RefSerial, sendRobotToRobotMessage__validate_sending_msg_to_same_color_robo
             const RefSerial::FrameHeader *header =
                 reinterpret_cast<const RefSerial::FrameHeader *>(data);
             EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
-            EXPECT_EQ(0xa5, header->SOF);
+            EXPECT_EQ(0xa5, header->headByte);
             EXPECT_EQ(
                 tap::algorithms::calculateCRC8(data, sizeof(RefSerial::FrameHeader) - 1),
                 header->CRC8);

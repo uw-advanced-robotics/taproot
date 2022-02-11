@@ -684,7 +684,7 @@ void RefSerial::sendRobotToRobotMsg(
 
 void RefSerial::configFrameHeader(DJISerial::FrameHeader* header, uint16_t msgLen)
 {
-    header->seq = 0xa5;
+    header->headByte = 0xa5;
     header->dataLength = msgLen;
     header->seq = 0;
     header->CRC8 = algorithms::calculateCRC8(
