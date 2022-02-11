@@ -29,7 +29,7 @@
 
 using namespace tap::control;
 using tap::Drivers;
-using tap::Remote;
+using namespace tap::communication::serial;
 
 TEST(CommandMapperFormatGenerator, generateMappings_generates_nothing_if_no_mappings)
 {

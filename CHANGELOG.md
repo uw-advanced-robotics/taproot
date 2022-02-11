@@ -4,6 +4,9 @@
 
 ### Breaking changes
 
+- Namespace `tap::serial` renamed to `tap::communication::serial`.
+- `DJISerial` class no longer has a `send` function because it was clunky and unintuitive to use.
+
 ### All changes
 
 - The BMI088 IMU on the RoboMaster Development Board Type C is now supported. The API is very
@@ -14,6 +17,7 @@
   performed correctly, the BMI088 should be level (#18, !96).
 - To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
   update graphics based on its internal state (!102).
+- Minor cleanup to the `DJISerial` class (including tests).
 
 ## January 2022
 

@@ -32,7 +32,7 @@
 
 using namespace tap::control;
 using tap::Drivers;
-using tap::Remote;
+using namespace tap::communication::serial;
 
 TEST(CommandMapper, getSize_returns_number_of_valid_maps_added)
 {

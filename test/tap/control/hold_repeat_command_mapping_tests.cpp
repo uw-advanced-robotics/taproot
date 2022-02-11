@@ -28,7 +28,7 @@
 
 using namespace tap::control;
 using tap::Drivers;
-using tap::Remote;
+using namespace tap::communication::serial;
 
 // A HoldRepetCommandMapping should behave in every way like a HoldCommandMapping except in cases
 // where the command is completed while the hold mapping is still valid.

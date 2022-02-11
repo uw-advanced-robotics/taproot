@@ -22,7 +22,7 @@
 #include "tap/communication/serial/remote.hpp"
 #include "tap/control/remote_map_state.hpp"
 
-using tap::Remote;
+using namespace tap::communication::serial;
 using tap::control::RemoteMapState;
 
 TEST(RemoteMapState, default_constructor_default_remote_state)
