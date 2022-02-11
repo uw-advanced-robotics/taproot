@@ -26,6 +26,8 @@
 
 #include "modm/architecture/utils.hpp"
 
+#include "dji_serial.hpp"
+
 namespace tap::communication::serial
 {
 /**
@@ -304,17 +306,6 @@ public:
         };
 
         /**
-         * All referee data will be prefixed by a header of this structure
-         */
-        struct FrameHeader
-        {
-            uint8_t SOF;  /// Also known as the "content ID" in the ref system protocol appendix
-            uint16_t dataLength;
-            uint8_t seq;
-            uint8_t CRC8;
-        } modm_packed;
-
-        /**
          * Each graphic message has a graphic header inside of the message data.
          */
         struct InteractiveHeader
@@ -350,7 +341,7 @@ public:
 
         struct DeleteGraphicLayerMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             uint8_t deleteOperation;
@@ -360,7 +351,7 @@ public:
 
         struct Graphic1Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;
@@ -369,7 +360,7 @@ public:
 
         struct RobotToRobotMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             uint8_t dataAndCRC16[115];
@@ -377,7 +368,7 @@ public:
 
         struct Graphic2Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[2];
@@ -386,7 +377,7 @@ public:
 
         struct Graphic5Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[5];
@@ -395,7 +386,7 @@ public:
 
         struct Graphic7Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[7];
@@ -404,7 +395,7 @@ public:
 
         struct GraphicCharacterMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;
