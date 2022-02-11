@@ -26,6 +26,9 @@
 
 namespace tap::control::chassis
 {
+/**
+ * @brief Abstract interface for a robot chassis.
+ */
 class ChassisSubsystemInterface : public Subsystem
 {
 public:
@@ -40,6 +43,11 @@ public:
     virtual inline int16_t getLeftBackRpmActual() const = 0;
     virtual inline int16_t getRightFrontRpmActual() const = 0;
     virtual inline int16_t getRightBackRpmActual() const = 0;
+
+    /**
+     * @return `true` iff all motors are online
+     */
+    virtual inline bool allMotorsOnline() const = 0;
 };
 }  // namespace tap::control::chassis
 
