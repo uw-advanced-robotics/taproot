@@ -78,7 +78,7 @@ private:
 
     void readCin();
 };  // class HostedTerminalDevice
-}  // namespace serial
+}  // namespace tap::communication::serial
 
 #endif
 

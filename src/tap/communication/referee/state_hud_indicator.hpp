@@ -21,9 +21,9 @@
 #define STATE_HUD_INDICATOR_HPP_
 
 #include "tap/architecture/timeout.hpp"
+#include "tap/communication/serial/ref_serial.hpp"
 #include "tap/drivers.hpp"
 
-#include "tap/communication/serial/ref_serial.hpp"
 #include "modm/processing/resumable.hpp"
 
 namespace tap
@@ -118,7 +118,8 @@ public:
         graphic->graphicData.operation = tap::communication::serial::RefSerial::Tx::ADD_GRAPHIC;
         drivers->refSerial.sendGraphic(graphic);
         // In future calls to sendGraphic only modify the graphic
-        graphic->graphicData.operation = tap::communication::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
+        graphic->graphicData.operation =
+            tap::communication::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
 
         delayTimeout.restart(
             tap::communication::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic));
@@ -136,7 +137,8 @@ public:
             drivers->refSerial.sendGraphic(graphic);
             indicatorChanged = false;
             delayTimeout.restart(
-                tap::communication::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic));
+                tap::communication::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(
+                    graphic));
             RF_WAIT_UNTIL(delayTimeout.execute());
         }
         RF_END();

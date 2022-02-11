@@ -459,6 +459,6 @@ inline RefSerialData::RobotId operator-(RefSerialData::RobotId id1, RefSerialDat
     return static_cast<RefSerialData::RobotId>(
         static_cast<uint16_t>(id1) - static_cast<uint16_t>(id2));
 }
-}  // namespace tap::serial
+}  // namespace tap::communication::serial
 
 #endif  // REF_SERIAL_DATA_HPP_

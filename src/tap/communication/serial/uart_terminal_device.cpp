@@ -35,4 +35,4 @@ bool UartTerminalDevice::read(char &c)
 void UartTerminalDevice::write(char c) { drivers->uart.write(TERMINAL_UART_PORT, c); }
 
 void UartTerminalDevice::flush() { drivers->uart.flushWriteBuffer(TERMINAL_UART_PORT); }
-}  // namespace serial
+}  // namespace tap::communication::serial

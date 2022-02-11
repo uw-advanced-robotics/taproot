@@ -189,6 +189,6 @@ protected:
     Drivers *drivers;
 };
 
-}  // namespace serial
+}  // namespace tap::communication::serial
 
 #endif  // DJI_SERIAL_HPP_

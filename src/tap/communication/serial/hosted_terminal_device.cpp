@@ -72,6 +72,6 @@ bool HostedTerminalDevice::read(char &c)
 void HostedTerminalDevice::write(char c) { ::std::cout << c; }
 
 void HostedTerminalDevice::flush() { ::std::cout.flush(); }
-}  // namespace serial
+}  // namespace tap::communication::serial
 
 #endif

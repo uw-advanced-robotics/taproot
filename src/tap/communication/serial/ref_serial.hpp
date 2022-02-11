@@ -409,6 +409,6 @@ private:
     void processReceivedDamage(uint32_t timestamp, int32_t damageTaken);
 };
 
-}  // namespace serial
+}  // namespace tap::communication::serial
 
 #endif  // REF_SERIAL_HPP_

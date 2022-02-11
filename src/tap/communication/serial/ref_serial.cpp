@@ -734,4 +734,4 @@ void RefSerial::attachRobotToRobotMessageHandler(
     msgIdToRobotToRobotHandlerMap[msgId] = handler;
 }
 
-}  // namespace tap::serial
+}  // namespace tap::communication::serial
