@@ -39,19 +39,23 @@ class Odometry2DTracker : public Odometry2DInterface
 {
 public:
     /**
-     * @param chassisYawGetter pointer to an object which implements the
-     *      ChassisOrientationGetterInterface. Should return the angle of the chassis
+     * @param chassisYawObserver pointer to an object which implements the
+     *      ChassisWorldYawObserverInterface. Should return the angle of the chassis
      *      forward vector relative to the x-axis of the field.
-     * @param chassisDisplacementGetter pointer to an object which implements the
+     * @param chassisDisplacementObserver pointer to an object which implements the
      *      ChassisDisplacementObserverInterface. Used for getting the chassis displacement
      *
-     * @note it is essential that the chassisOrientationGetter and chassisDisplacementGetter
+     * @note it is essential that the chassisYawObserver and chassisDisplacementObserver
      *      use the same positive z-axis. The getter interfaces should enforce that they
      *      they use positive z-axis is up, but it's worth noting here again.
      */
     Odometry2DTracker(
-        ChassisWorldYawObserverInterface* chassisYawGetter,
-        ChassisDisplacementObserverInterface* chassisDisplacementGetter);
+        ChassisWorldYawObserverInterface* chassisYawObserver,
+        ChassisDisplacementObserverInterface* chassisDisplacementObserver)
+        : chassisYawObserver(chassisYawObserver),
+          chassisDisplacementObserver(chassisDisplacementObserver)
+    {
+    }
 
     /**
      * Run logic and update tracked chassis position. Call frequently for better
@@ -61,13 +65,14 @@ public:
 
     /**
      * @return the current odometry frame
-     * @see OdometryInterface::getCurrentOdometryFrame()
+     * @see Odometry2DInterface::getCurrentLocation2D()
      */
     inline modm::Location2D<float> getCurrentLocation2D() const final { return location; }
 
 private:
-    ChassisWorldYawObserverInterface* chassisYawGetter;
-    ChassisDisplacementObserverInterface* chassisDisplacementGetter;
+    ChassisWorldYawObserverInterface* chassisYawObserver;
+    ChassisDisplacementObserverInterface* chassisDisplacementObserver;
+    // Location in reference frame
     modm::Location2D<float> location;
     // Previous chassis absolute displacement in chassis frame
     modm::Vector<float, 3> prevChassisAbsoluteDisplacement;
