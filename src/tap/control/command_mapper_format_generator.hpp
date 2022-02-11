@@ -57,7 +57,8 @@ private:
 
     const std::string formattedRemoteMapState(const RemoteMapState &ms) const;
     const std::string formattedMappedCommands(const std::vector<Command *> mc) const;
-    constexpr std::string_view switchStateToString(Remote::SwitchState state) const;
+    constexpr std::string_view switchStateToString(
+        tap::communication::serial::Remote::SwitchState state) const;
     const std::string keyMapToString(uint16_t keys) const;
 };  // class CommandMapperFormatGenerator
 }  // namespace control

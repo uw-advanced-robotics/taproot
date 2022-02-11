@@ -23,6 +23,8 @@
 
 #include "tap/errors/create_errors.hpp"
 
+using namespace tap::communication::serial;
+
 namespace tap
 {
 namespace control

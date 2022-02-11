@@ -38,7 +38,11 @@ public:
     MOCK_METHOD(
         void,
         handleKeyStateChange,
-        (uint16_t, Remote::SwitchState, Remote::SwitchState, bool, bool),
+        (uint16_t,
+         tap::communication::serial::Remote::SwitchState,
+         tap::communication::serial::Remote::SwitchState,
+         bool,
+         bool),
         (override));
     MOCK_METHOD(void, addMap, (tap::control::CommandMapping *), (override));
     MOCK_METHOD(std::size_t, getSize, (), (const override));
