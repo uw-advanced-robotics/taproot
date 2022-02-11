@@ -36,8 +36,8 @@ void Odometry2DTracker::update()
     float chassisYaw = 0.0f;
 
     bool validDisplacementAvailable =
-        chassisDisplacementGetter->getChassisDisplacement(&chassisAbsoluteDisplacement);
-    bool validOrientationAvailable = chassisYawGetter->getChassisWorldYaw(&chassisYaw);
+        chassisDisplacementObserver->getChassisDisplacement(&chassisAbsoluteDisplacement);
+    bool validOrientationAvailable = chassisYawObserver->getChassisWorldYaw(&chassisYaw);
 
     if (validDisplacementAvailable)
     {
@@ -53,7 +53,7 @@ void Odometry2DTracker::update()
                 chassisAbsoluteDisplacement - prevChassisAbsoluteDisplacement;
 
             // Spec for `Location2D` seems to suggest it should only use normalized angles.
-            // chassisYawGetter is specified to return normalized angles
+            // chassisYawObserver is specified to return normalized angles
             location.setOrientation(chassisYaw);
             location.move(
                 modm::Vector2f(displacementChassisRelative.x, displacementChassisRelative.y));
