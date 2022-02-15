@@ -92,6 +92,32 @@ public:
     template <int DATA_SIZE>
     struct SerialMessage
     {
+        /**
+         * Constructs a SerialMessage. In doing so this constructor configures the message header.
+         *
+         * @param[in] seq Message sequence number, an optional parameter.
+         */
+        explicit SerialMessage(uint8_t seq = 0)
+        {
+            header.headByte = 0xa5;
+            header.dataLength = sizeof(data);
+            header.seq = seq;
+            header.CRC8 = tap::algorithms::calculateCRC8(
+                reinterpret_cast<uint8_t *>(&header),
+                sizeof(header) - 1);
+        }
+
+        /**
+         * Sets the CRC16 value in the struct. This should be called after writing data to the
+         * message struct.
+         */
+        void setCRC16()
+        {
+            CRC16 = tap::algorithms::calculateCRC16(
+                reinterpret_cast<uint8_t *>(this),
+                sizeof(*this) - 2);
+        }
+
         FrameHeader header;
         uint16_t messageType;
         uint8_t data[DATA_SIZE];
