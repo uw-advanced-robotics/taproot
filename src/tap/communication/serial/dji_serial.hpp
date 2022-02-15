@@ -100,7 +100,7 @@ public:
         explicit SerialMessage(uint8_t seq = 0)
         {
             header.headByte = 0xa5;
-            header.dataLength = sizeof(*this);
+            header.dataLength = sizeof(data);
             header.seq = seq;
             header.CRC8 = tap::algorithms::calculateCRC8(
                 reinterpret_cast<uint8_t *>(&header),
