@@ -92,6 +92,23 @@ public:
     template <int DATA_SIZE>
     struct SerialMessage
     {
+        SerialMessage()
+        {
+            header.headByte = 0xa5;
+            header.dataLength = sizeof(*this);
+            header.seq = 0;
+            header.CRC8 = tap::algorithms::calculateCRC8(
+                reinterpret_cast<uint8_t *>(&header),
+                sizeof(header) - 1);
+        }
+
+        void computeCRC16()
+        {
+            CRC16 = tap::algorithms::calculateCRC16(
+                reinterpret_cast<uint8_t *>(this),
+                sizeof(*this) - 2);
+        }
+
         FrameHeader header;
         uint16_t messageType;
         uint8_t data[DATA_SIZE];
