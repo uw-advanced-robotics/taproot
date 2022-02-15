@@ -18,6 +18,7 @@
 - To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
   update graphics based on its internal state (!102).
 - Minor cleanup to the `DJISerial` class (including tests).
+- Add some utilities to the `DJISerial::SerialMessage` class.
 
 ## January 2022
 
