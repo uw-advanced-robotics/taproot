@@ -27,9 +27,10 @@ class LittleFSFlash {
    public:
     LittleFSFlash();
     int initialize();
-    
+    int mount();
+    int format();
+
     lfs_t fs;
-   private:
     static int lfs_read(const struct lfs_config *c, lfs_block_t block,
                         lfs_off_t off, void *buffer, lfs_size_t size);
 
@@ -39,21 +40,7 @@ class LittleFSFlash {
     static int lfs_erase(const struct lfs_config *c, lfs_block_t block);
 
     static int lfs_sync(const struct lfs_config *c);
-
-    static constexpr size_t SECTOR_SIZE = 1ul << 17;
-    static constexpr uint8_t SECTOR_ZERO = 17;
-    static constexpr uint8_t BLOCK_COUNT = 7;
-
-    static constexpr int LFS_CACHE_SIZE = 64;
-    static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 64;
-
-    static int lfs_read_buffer[LFS_CACHE_SIZE];
-    static int lfs_prog_buffer[LFS_CACHE_SIZE];
-    static int lfs_lookahead_buffer[LFS_LOOKAHEAD_BUFFER_SIZE];
-
-    static constexpr uintptr_t OriginAddr{0x08120000};  // 128KiB Sector 17
-    static inline uint8_t *const Origin{(uint8_t *)OriginAddr};
-
+    
     lfs_config fsconfig = {
         .context = 0,
         .read = lfs_read,
@@ -77,6 +64,25 @@ class LittleFSFlash {
         .attr_max = 0,
         .metadata_max = 2048,
     };
+
+   private:
+
+    static constexpr size_t SECTOR_SIZE = 1ul << 17;
+    static constexpr uint8_t SECTOR_ZERO = 17;
+    static constexpr uint8_t BLOCK_COUNT = 7;
+
+    static constexpr int LFS_CACHE_SIZE = 256;
+    static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 256;
+
+    int lfs_read_buffer[LFS_CACHE_SIZE] = {0};
+    int lfs_prog_buffer[LFS_CACHE_SIZE] = {0};
+    int lfs_lookahead_buffer[LFS_LOOKAHEAD_BUFFER_SIZE] = {0};
+
+    
+    static constexpr uintptr_t OriginAddr{0x08120000};  // 128KiB Sector 17
+    static inline uint8_t *const Origin{(uint8_t *)OriginAddr};
+
+    
 };  // namespace tap::storage
 
 }  // namespace tap::storage
