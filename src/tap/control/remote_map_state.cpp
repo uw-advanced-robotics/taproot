@@ -29,6 +29,28 @@ namespace tap
 {
 namespace control
 {
+RemoteMapState::RemoteMapState(
+    tap::communication::serial::Remote::SwitchState leftss,
+    tap::communication::serial::Remote::SwitchState rightss,
+    const std::list<tap::communication::serial::Remote::Key> &keySet,
+    const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+    bool mouseButtonLeftPressed,
+    bool mouseButtonRightPressed)
+{
+    initLSwitch(leftss);
+    initRSwitch(rightss);
+    initKeys(keySet);
+    initNegKeys(negKeySet);
+    if (mouseButtonLeftPressed)
+    {
+        initLMouseButton();
+    }
+    if (mouseButtonRightPressed)
+    {
+        initRMouseButton();
+    }
+}
+
 RemoteMapState::RemoteMapState(Remote::Switch swh, Remote::SwitchState switchState)
 {
     if (swh == Remote::Switch::LEFT_SWITCH)
@@ -130,19 +152,22 @@ void RemoteMapState::initNegKeys(uint16_t negKeys)
 
 void RemoteMapState::initKeys(const std::list<Remote::Key> &keySet)
 {
-    uint16_t keys = std::accumulate(keySet.begin(), keySet.end(), 0, [](int acc, Remote::Key key) {
-        return acc |= 1 << static_cast<uint16_t>(key);
-    });
+    uint16_t keys = std::accumulate(
+        keySet.begin(),
+        keySet.end(),
+        0,
+        [](int acc, Remote::Key key) { return acc |= 1 << static_cast<uint16_t>(key); });
     initKeys(keys);
 }
 
 void RemoteMapState::initNegKeys(const std::list<Remote::Key> &negKeySet)
 {
     // extract a bit form of the key set.
-    uint16_t negKeys =
-        std::accumulate(negKeySet.begin(), negKeySet.end(), 0, [](int acc, Remote::Key key) {
-            return acc |= 1 << static_cast<uint16_t>(key);
-        });
+    uint16_t negKeys = std::accumulate(
+        negKeySet.begin(),
+        negKeySet.end(),
+        0,
+        [](int acc, Remote::Key key) { return acc |= 1 << static_cast<uint16_t>(key); });
     initNegKeys(negKeys);
 }
 
