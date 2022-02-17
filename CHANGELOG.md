@@ -19,6 +19,7 @@
   update graphics based on its internal state (!102).
 - Minor cleanup to the `DJISerial` class (including tests).
 - Add some utilities to the `DJISerial::SerialMessage` class.
+- Add generic `RemoteMapState` constructor (!137).
 
 ## January 2022
 
