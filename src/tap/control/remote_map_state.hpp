@@ -64,6 +64,31 @@ public:
     RemoteMapState() = default;
 
     /**
+     * Generic constructor that takes all possible remote map state configurations for maximum
+     * configurability, initializes the RemoteMapState with all given information.
+     *
+     * @param[in] leftss The switch state for the left switch. If `UNKNOWN`, the switch state will
+     * not be initialized.
+     * @param[in] rightss The switch state for the right switch. If `UNKNOWN`, the switch state will
+     * not be initialized.
+     * @param[in] keySet The set of keys to use for initialization.
+     * @param[in] negKeySet The set of keys to be used as negations in the RemoteMapState.
+     * @param[in] mouseButtonLeftPressed Initialize the RemoteMapState to match a remote map state
+     * when the left mouse button is pressed.
+     * @param[in] mouseButtonRightPressed Initialize the RemoteMapState to match a remote map state
+     * when the right mouse button is pressed.
+     * @note `keySet` and `negKeySet` must be mutally exclusive sets, otherwise the `negKeySet` will
+     * not be properly initialized.
+     */
+    RemoteMapState(
+        tap::communication::serial::Remote::SwitchState leftss,
+        tap::communication::serial::Remote::SwitchState rightss,
+        const std::list<tap::communication::serial::Remote::Key> &keySet,
+        const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+        bool mouseButtonLeftPressed,
+        bool mouseButtonRightPressed);
+
+    /**
      * Initializes a RemoteMapState with a single switch to the given switch state.
      *
      * @param[in] swh The switch to use in the map state.
