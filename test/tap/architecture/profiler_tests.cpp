@@ -154,9 +154,14 @@ TEST(Profiler, profile_macro)
 {
     clock::setTime(0);
 
+    // make sure if we have a variable called "key" in function scope the PROFILE macro still works
+    int key = 10;
+
     SETUP_TEST();
 
     PROFILE(profiler, testFunc, ());
+
+    EXPECT_EQ(10, key);
 
     Profiler::ProfilerData data = profiler.getData(0);
 
