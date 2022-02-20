@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,65 +17,97 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILER_HPP__
-#define PROFILER_HPP__
+#ifndef PROFILER_HPP_
+#define PROFILER_HPP_
+
+#include <unordered_map>
 
 #include "modm/container.hpp"
 
-#define PROFILE(profiler, func, params) func params
-
 #ifdef RUN_WITH_PROFILING
-#undef PROFILE
 #define PROFILE(profiler, func, params) \
-    profiler.push(#func);               \
-    func params;                        \
-    profiler.pop()
-
+    do                                  \
+    {                                   \
+        int key = profiler.push(#func); \
+        func params;                    \
+        profiler.pop(key);              \
+    } while (0);
+#else
+#define PROFILE(profiler, func, params) func params
 #endif
 
 namespace tap
 {
-namespace arch
+class Drivers;
+}
+
+namespace tap::arch
 {
 class Profiler
 {
-#ifdef RUN_WITH_PROFILING
-
 public:
-    void push(const char* profile);
-    void pop();
+    static constexpr std::size_t MAX_PROFILED_ELEMENTS = 128;
+    static constexpr float AVG_LOW_PASS_ALPHA = 0.01f;
 
-    const modm::DynamicArray<const char*>& getAllProfiles() const { return profiles; }
-
-    uint64_t getAvgTime(const char* profile);
-    uint64_t getMinTime(const char* profile);
-    uint64_t getMaxTime(const char* profile);
-    void reset(const char* profile);
-
-    struct MinMaxAvgStruct
+    struct ProfilerData
     {
-        uint64_t min = UINT32_MAX, max = 0, avg = 0;
-        int totalValues = 0;
+        const char* name;
+        uint32_t min = UINT32_MAX;
+        uint32_t max = 0;
+        uint32_t avg = 0;
+        uint32_t prevPushedTime = 0;
+
+        void reset()
+        {
+            min = UINT32_MAX;
+            max = 0;
+            avg = 0;
+        }
     };
 
+    Profiler(tap::Drivers* drivers);
+
+    std::size_t push(const char* profile);
+
+    void pop(std::size_t key);
+
+    inline ProfilerData getData(std::size_t key)
+    {
+        if (key >= profiledElements.getSize())
+        {
+            return ProfilerData();
+        }
+        else
+        {
+            return profiledElements.get(key);
+        }
+    }
+
+    inline void reset(std::size_t key)
+    {
+        if (key < profiledElements.getSize())
+        {
+            profiledElements[key].reset();
+        }
+    }
+
 private:
-    modm::DynamicArray<modm::Pair<const char*, MinMaxAvgStruct>> times;
-    modm::DynamicArray<const char*> profiles;
-    modm::LinkedList<const char*> profileStack;
-    modm::LinkedList<uint32_t> timeStack;
+    tap::Drivers* drivers;
 
-#else
+    /**
+     * Map element names (function names) to index in profiledElements. Don't directly store
+     * ProfilerData's in this map to allow for easier accessability of the elements during
+     * debugging. std::map on the embedded system is scuffed and doesn't allow for easy access to
+     * internal elements.
+     */
+    std::unordered_map<const char*, std::size_t> elementNameToIndexMap;
 
-public:
-    void push(const char*){};
-    void pop(){};
+    /**
+     * Array of profiling data information
+     */
+    modm::BoundedDeque<ProfilerData, MAX_PROFILED_ELEMENTS> profiledElements;
+};
 
-#endif
+}  // namespace tap::arch
 
-};  // class Profiler
-
-}  // namespace arch
-
-}  // namespace tap
-
-#endif
+#endif  // PROFILER_HPP_
