@@ -44,7 +44,7 @@ uint32_t getTimeMilliseconds()
 
 uint32_t getTimeMicroseconds()
 {
-    return globalStubInstance == nullptr ? 0 : globalStubInstance->time;
+    return globalStubInstance == nullptr ? 0 : 1000 * globalStubInstance->time;
 }
 }  // namespace tap::arch::clock
 
