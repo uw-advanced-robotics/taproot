@@ -41,9 +41,11 @@
   more details.
 - Almost everything in `tap::control::setpoint` has changed (!49). Most will fail loudly (i.e.: will
   cause compilation errors). Those that are potentially more insidious are documented below:
-  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand` 
+  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand`
     changed (grouped by usage now). This is VERY IMPORTANT to catch and check as compiler may not
     throw warning.
+- When testing, `setTime` has bene replaced by a `ClockStub` object that you should use to control
+  the time in the context of a test.
 
 ### All changes
 
@@ -70,6 +72,9 @@
 - Various improvements to the commands in `tap::control::setpoint` (!49).
   - Unjamming logic more straightforward.
   - MoveCommand pause after rotate time now functions as described.
+- A `ClockStub` object has been added to allow the user to control the time during testing. This is
+  a more refined approach that replaces the `setTime` function previously in
+  `src/tap/arch/clock.hpp`.
 
 ## December 2021
 
