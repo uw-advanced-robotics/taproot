@@ -28,7 +28,7 @@
 
 using namespace tap::arch;
 
-namespace tap::serial
+namespace tap::communication::serial
 {
 RefSerial::RefSerial(Drivers* drivers)
     : DJISerial(drivers, bound_ports::REF_SERIAL_UART_PORT),
@@ -44,12 +44,12 @@ bool RefSerial::getRefSerialReceivingData() const
     return !(refSerialOfflineTimeout.isStopped() || refSerialOfflineTimeout.isExpired());
 }
 
-void RefSerial::messageReceiveCallback(const SerialMessage& completeMessage)
+void RefSerial::messageReceiveCallback(const ReceivedSerialMessage& completeMessage)
 {
     refSerialOfflineTimeout.restart(TIME_OFFLINE_REF_DATA_MS);
 
     updateReceivedDamage();
-    switch (completeMessage.type)
+    switch (completeMessage.messageType)
     {
         case REF_MESSAGE_TYPE_GAME_STATUS:
         {
@@ -125,9 +125,9 @@ const RefSerialData::Rx::RobotData& RefSerial::getRobotData() const { return rob
 
 const RefSerialData::Rx::GameData& RefSerial::getGameData() const { return gameData; }
 
-bool RefSerial::decodeToGameStatus(const SerialMessage& message)
+bool RefSerial::decodeToGameStatus(const ReceivedSerialMessage& message)
 {
-    if (message.length != 11)
+    if (message.header.dataLength != 11)
     {
         return false;
     }
@@ -138,9 +138,9 @@ bool RefSerial::decodeToGameStatus(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToGameResult(const SerialMessage& message)
+bool RefSerial::decodeToGameResult(const ReceivedSerialMessage& message)
 {
-    if (message.length != 1)
+    if (message.header.dataLength != 1)
     {
         return false;
     }
@@ -148,9 +148,9 @@ bool RefSerial::decodeToGameResult(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToAllRobotHP(const SerialMessage& message)
+bool RefSerial::decodeToAllRobotHP(const ReceivedSerialMessage& message)
 {
-    if (message.length != 32)
+    if (message.header.dataLength != 32)
     {
         return false;
     }
@@ -175,11 +175,11 @@ bool RefSerial::decodeToAllRobotHP(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToSiteEventData(const SerialMessage&) { return false; }
+bool RefSerial::decodeToSiteEventData(const ReceivedSerialMessage&) { return false; }
 
-bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
+bool RefSerial::decodeToRobotStatus(const ReceivedSerialMessage& message)
 {
-    if (message.length != 27)
+    if (message.header.dataLength != 27)
     {
         return false;
     }
@@ -208,9 +208,9 @@ bool RefSerial::decodeToRobotStatus(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToPowerAndHeat(const SerialMessage& message)
+bool RefSerial::decodeToPowerAndHeat(const ReceivedSerialMessage& message)
 {
-    if (message.length != 16)
+    if (message.header.dataLength != 16)
     {
         return false;
     }
@@ -224,9 +224,9 @@ bool RefSerial::decodeToPowerAndHeat(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToRobotPosition(const SerialMessage& message)
+bool RefSerial::decodeToRobotPosition(const ReceivedSerialMessage& message)
 {
-    if (message.length != 16)
+    if (message.header.dataLength != 16)
     {
         return false;
     }
@@ -237,9 +237,9 @@ bool RefSerial::decodeToRobotPosition(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToRobotBuffs(const SerialMessage& message)
+bool RefSerial::decodeToRobotBuffs(const ReceivedSerialMessage& message)
 {
-    if (message.length != 1)
+    if (message.header.dataLength != 1)
     {
         return false;
     }
@@ -247,9 +247,9 @@ bool RefSerial::decodeToRobotBuffs(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToAerialEnergyStatus(const SerialMessage& message)
+bool RefSerial::decodeToAerialEnergyStatus(const ReceivedSerialMessage& message)
 {
-    if (message.length != 2)
+    if (message.header.dataLength != 2)
     {
         return false;
     }
@@ -257,9 +257,9 @@ bool RefSerial::decodeToAerialEnergyStatus(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToDamageStatus(const SerialMessage& message)
+bool RefSerial::decodeToDamageStatus(const ReceivedSerialMessage& message)
 {
-    if (message.length != 1)
+    if (message.header.dataLength != 1)
     {
         return false;
     }
@@ -268,9 +268,9 @@ bool RefSerial::decodeToDamageStatus(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToProjectileLaunch(const SerialMessage& message)
+bool RefSerial::decodeToProjectileLaunch(const ReceivedSerialMessage& message)
 {
-    if (message.length != 7)
+    if (message.header.dataLength != 7)
     {
         return false;
     }
@@ -281,9 +281,9 @@ bool RefSerial::decodeToProjectileLaunch(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToBulletsRemain(const SerialMessage& message)
+bool RefSerial::decodeToBulletsRemain(const ReceivedSerialMessage& message)
 {
-    if (message.length != 6)
+    if (message.header.dataLength != 6)
     {
         return false;
     }
@@ -293,9 +293,9 @@ bool RefSerial::decodeToBulletsRemain(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToRFIDStatus(const SerialMessage& message)
+bool RefSerial::decodeToRFIDStatus(const ReceivedSerialMessage& message)
 {
-    if (message.length != 4)
+    if (message.header.dataLength != 4)
     {
         return false;
     }
@@ -303,9 +303,9 @@ bool RefSerial::decodeToRFIDStatus(const SerialMessage& message)
     return true;
 }
 
-bool RefSerial::handleRobotToRobotCommunication(const SerialMessage& message)
+bool RefSerial::handleRobotToRobotCommunication(const ReceivedSerialMessage& message)
 {
-    if (message.length < sizeof(Tx::RobotToRobotMessage::interactiveHeader))
+    if (message.header.dataLength < sizeof(Tx::RobotToRobotMessage::interactiveHeader))
     {
         return false;
     }
@@ -465,11 +465,8 @@ void RefSerial::configFloatingNumber(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
-    // Do this janky stuff to get an int in a bitfield
-    int32_t valueInt = 1000 * value;
-    sharedData->radius = valueInt & 0x3fff;
-    sharedData->endX = (valueInt >> 10) & 0x7ff;
-    sharedData->endY = (valueInt >> 21) & 0x7ff;
+    // Store floating point value in fixed point with 3 decimal points precision
+    sharedData->value = 1000 * value;
 }
 
 void RefSerial::configInteger(
@@ -485,22 +482,11 @@ void RefSerial::configInteger(
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;
-    // Do this janky stuff to get an int in a bitfield
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
-}
-
-void RefSerial::updateInteger(int32_t value, Tx::GraphicData* sharedData)
-{
-    sharedData->radius = value & 0x3fff;
-    sharedData->endX = (value >> 10) & 0x7ff;
-    sharedData->endY = (value >> 21) & 0x7ff;
+    sharedData->value = value;
 }
 
 void RefSerial::configCharacterMsg(
     uint16_t fontSize,
-    uint16_t charLen,
     uint16_t width,
     uint16_t startX,
     uint16_t startY,
@@ -509,11 +495,11 @@ void RefSerial::configCharacterMsg(
 {
     sharedData->graphicData.type = static_cast<uint8_t>(Tx::GraphicType::CHARACTER);
     sharedData->graphicData.startAngle = fontSize;
-    sharedData->graphicData.endAngle = charLen;
+    sharedData->graphicData.endAngle = strlen(dataToPrint);
     sharedData->graphicData.lineWidth = width;
     sharedData->graphicData.startX = startX;
     sharedData->graphicData.startY = startY;
-    strncpy(sharedData->msg, dataToPrint, GRAPHIC_MAX_CHARACTERS - 1);
+    strncpy(sharedData->msg, dataToPrint, MODM_ARRAY_SIZE(sharedData->msg) - 1);
 }
 
 /**
@@ -645,7 +631,7 @@ void RefSerial::sendGraphic(
         sendMsg,
         robotData.robotId,
         drivers,
-        GRAPHIC_MAX_CHARACTERS);
+        MODM_ARRAY_SIZE(graphicMsg->msg));
 }
 
 void RefSerial::sendRobotToRobotMsg(
@@ -696,14 +682,14 @@ void RefSerial::sendRobotToRobotMsg(
         msgSizeToCRC16 + sizeof(uint16_t));
 }
 
-void RefSerial::configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen)
+void RefSerial::configFrameHeader(DJISerial::FrameHeader* header, uint16_t msgLen)
 {
-    header->SOF = 0xa5;
+    header->headByte = 0xa5;
     header->dataLength = msgLen;
     header->seq = 0;
     header->CRC8 = algorithms::calculateCRC8(
         reinterpret_cast<const uint8_t*>(header),
-        sizeof(Tx::FrameHeader) - sizeof(header->CRC8));
+        sizeof(DJISerial::FrameHeader) - sizeof(header->CRC8));
 }
 
 void RefSerial::configInteractiveHeader(
@@ -748,4 +734,4 @@ void RefSerial::attachRobotToRobotMessageHandler(
     msgIdToRobotToRobotHandlerMap[msgId] = handler;
 }
 
-}  // namespace tap::serial
+}  // namespace tap::communication::serial

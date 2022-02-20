@@ -20,6 +20,7 @@
 #ifndef MATH_USER_UTILS_HPP_
 #define MATH_USER_UTILS_HPP_
 
+#include <cinttypes>
 #include <cmath>
 #include <cstring>
 
@@ -29,6 +30,9 @@ namespace tap
 {
 namespace algorithms
 {
+/** Acceleration due to gravity, in m/s^2. */
+static constexpr float ACCELERATION_GRAVITY = 9.80665f;
+
 /**
  * Use this instead of the == operator when asserting equality for floats.
  * Performs \code fabsf(val1-val2)<=epsilon\endcode
@@ -131,6 +135,17 @@ float fastInvSqrt(float x);
  * @retval none.
  */
 void rotateVector(float* x, float* y, float radians);
+
+/**
+ * Constexpr ceil
+ * (https://stackoverflow.com/questions/31952237/looking-for-a-constexpr-ceil-function).
+ */
+constexpr int32_t ceil(float num)
+{
+    return (static_cast<float>(static_cast<int32_t>(num)) == num)
+               ? static_cast<int32_t>(num)
+               : static_cast<int32_t>(num) + ((num > 0) ? 1 : 0);
+}
 
 }  // namespace algorithms
 

@@ -57,8 +57,8 @@ public:
      *      unjammed, otherwise the subsystem will always set the setpoint to the its current value
      *      on `end()`.
      * @param[in] setpointTolerance The difference between current and desired value when the
-     *      command will be considered to be completed (used in the `isFinished` function). Only set
-     *      this if you want a different tolerance.
+     *      command will be considered to be completed (used in the `isFinished` function). Uses
+     *      the same units as the subsystem's setpoint.
      * @attention the ramp value is calculated by finding the rotation speed
      *      (\f$targetDisplacement / moveTime\f$), and then multiplying this by
      *      the period (how often the ramp is called)

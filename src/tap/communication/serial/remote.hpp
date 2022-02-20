@@ -31,10 +31,17 @@
 namespace tap
 {
 class Drivers;
+}
 
+namespace tap::communication::serial
+{
 /**
  * A unique UART handler that uses timing in leu of DBUS communication (modm does not
  * support DBUS) to interact with the DR16 receiver.
+ *
+ * Information for implementation was translated from a user manual for the DR16 that was
+ * only available in Chinese. AI-Translated version of document available here:
+ * https://drive.google.com/file/d/1-ZGe4mXVhxP4IEmHccphnzKzYWJyw3C3/view?usp=sharing
  */
 class Remote
 {
@@ -221,6 +228,6 @@ private:
     void reset();
 };  // class Remote
 
-}  // namespace tap
+}  // namespace tap::communication::serial
 
 #endif  // REMOTE_HPP_

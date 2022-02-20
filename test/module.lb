@@ -74,6 +74,7 @@ class TaprootTests(Module):
             env.copy("tap/algorithms")
             env.copy("tap/architecture")
             env.copy("tap/motor")
+            env.copy("tap/communication/serial/dji_serial_tests.cpp")
         if env.has_module(":communication:can"):
             env.copy("tap/communication/can")
         if env.has_module(":communication:tcp-server") and platform.system() == "Linux":
@@ -87,6 +88,8 @@ class TaprootTests(Module):
         env.copy("tap/control")
         if env.has_module("taproot:communication:sensors:mpu6500"):
             env.copy("tap/communication/sensors/mpu6500")
+        if env.has_module(":communication:sensors:bmi088"):
+            env.copy("tap/communication/sensors/bmi088")
 
 def init(module):
     module.name = ":testing"

@@ -1,5 +1,26 @@
 # Taproot Changelog
 
+## February 2022
+
+### Breaking changes
+
+- Namespace `tap::serial` renamed to `tap::communication::serial`.
+- `DJISerial` class no longer has a `send` function because it was clunky and unintuitive to use.
+
+### All changes
+
+- The BMI088 IMU on the RoboMaster Development Board Type C is now supported. The API is very
+  similar to the `Mpu6500` class, with functions to get the accelerometer/gyroscope/angle data. The
+  IMU by default connects but doesn't calibrate when the `initialize` function is called. To
+  calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
+  computing angle data for a couple seconds while the IMU is calibration. For calibration to be
+  performed correctly, the BMI088 should be level (#18, !96).
+- To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
+  update graphics based on its internal state (!102).
+- Minor cleanup to the `DJISerial` class (including tests).
+- Add some utilities to the `DJISerial::SerialMessage` class.
+- Add generic `RemoteMapState` constructor (!137).
+
 ## January 2022
 
 ### Breaking changes
