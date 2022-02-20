@@ -28,7 +28,7 @@ using namespace tap;
 using namespace tap::arch;
 
 #define SETUP_TEST()   \
-    clock::setTime(0); \
+    clock::ClockStub clock;\
     Drivers drivers;   \
     Profiler profiler(&drivers);
 
@@ -85,7 +85,7 @@ TEST(Profiler, getData_with_time_btwn_push_pop_populates_min_max_avg)
 
     std::size_t key = profiler.push("hi");
 
-    clock::setTime(12);  // 12 ms == 12'000 us
+    clock.time = 12;  // 12 ms == 12'000 us
 
     profiler.pop(key);
 
@@ -103,15 +103,15 @@ TEST(Profiler, getData_multiple_push_pops_chooses_correct_min_max)
     const char* hi = "hi";
 
     std::size_t key = profiler.push(hi);
-    clock::setTime(1);
+    clock.time = 1;
     profiler.pop(key);
 
     key = profiler.push(hi);
-    clock::setTime(3);
+    clock.time = 3;
     profiler.pop(key);
 
     key = profiler.push(hi);
-    clock::setTime(6);
+    clock.time = 6;
     profiler.pop(key);
 
     Profiler::ProfilerData data = profiler.getData(key);
@@ -148,18 +148,16 @@ TEST(Profiler, push_big_batch_insertion)
         profiler.pop(key);              \
     } while (0);
 
-void testFunc() { clock::setTime(clock::getTimeMilliseconds() + 1); }
+void testFunc(clock::ClockStub &clock) { clock.time += 1; }
 
 TEST(Profiler, profile_macro)
 {
-    clock::setTime(0);
-
     // make sure if we have a variable called "key" in function scope the PROFILE macro still works
     int key = 10;
 
     SETUP_TEST();
 
-    PROFILE(profiler, testFunc, ());
+    PROFILE(profiler, testFunc, (clock));
 
     EXPECT_EQ(10, key);
 
