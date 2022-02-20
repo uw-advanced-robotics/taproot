@@ -32,6 +32,7 @@ using namespace testing;
 
 TEST(SetpointContinuousJamChecker, detects_non_jams_correctly)
 {
+    ClockStub clock;
     Drivers drivers;
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
     SetpointContinuousJamChecker jamChecker(&subsystem, 0.6f, 200);
@@ -39,14 +40,15 @@ TEST(SetpointContinuousJamChecker, detects_non_jams_correctly)
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(Return(3.0f));
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(2.5f));
 
-    setTime(0);
+    clock.time = 0;
     jamChecker.restart();
-    setTime(300);
+    clock.time = 300;
     EXPECT_FALSE(jamChecker.check());
 }
 
 TEST(SetpointContinuousJamChecker, detects_jams_correctly)
 {
+    ClockStub clock;
     Drivers drivers;
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
     SetpointContinuousJamChecker jamChecker(&subsystem, 0.4f, 200);
@@ -54,23 +56,24 @@ TEST(SetpointContinuousJamChecker, detects_jams_correctly)
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(Return(3.0f));
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(2.5f));
 
-    setTime(0);
+    clock.time = 0;
     jamChecker.restart();
-    setTime(200);
+    clock.time = 200;
     EXPECT_TRUE(jamChecker.check());
 }
 
 // Jam timer shouldn't be started just by constructing it. That would be annoying.
 TEST(SetpointContinuousJamChecker, jam_timer_not_started_at_construction)
 {
+    ClockStub clock;
     Drivers drivers;
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
-    setTime(0);
+    clock.time = 0;
     SetpointContinuousJamChecker jamChecker(&subsystem, 0.4f, 200);
 
     EXPECT_CALL(subsystem, getCurrentValue).WillRepeatedly(Return(3.0f));
     EXPECT_CALL(subsystem, getSetpoint).WillRepeatedly(Return(2.5f));
 
-    setTime(300);
+    clock.time = 300;
     EXPECT_FALSE(jamChecker.check());
 }

@@ -24,13 +24,14 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/setpoint_subsystem_mock.hpp"
 
-using tap::arch::clock::setTime;
+using namespace tap::arch::clock;
 using namespace tap::control::setpoint;
 using tap::Drivers;
 using namespace tap::mock;
 using namespace testing;
 
 #define CREATE_COMMON_TEST_OBJECTS() \
+    ClockStub clock;                 \
     Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
@@ -104,9 +105,9 @@ TEST(MoveAbsoluteCommand, command_sets_setpoint_to_target_after_appropriate_time
     // least once (probably in initialize but we don't strictly require that)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1000);
+    clock.time = 1000;
     command.execute();
 }
 
@@ -121,9 +122,9 @@ TEST(MoveAbsoluteCommand, command_does_not_reach_setpoint_given_too_little_time)
     // least once (probably in initialize but we don't strictly require that)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(999);
+    clock.time = 999;
     command.execute();
 }
 
@@ -145,11 +146,11 @@ TEST(MoveAbsoluteCommand, command_sleeps_while_subsystem_offline)
     // subsystem online status should be checked every execution to determine whether or
     // not to execute regular logic.
     EXPECT_CALL(subsystem, isOnline).WillOnce(Return(false)).WillRepeatedly(Return(true));
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1000);
+    clock.time = 1000;
     command.execute();
-    setTime(2000);
+    clock.time = 2000;
 }
 
 // isFinished() tests ------------------------------------
@@ -163,18 +164,18 @@ TEST(
 
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(0.9f));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1);
+    clock.time = 1;
     command.execute();
-    setTime(99);
+    clock.time = 99;
     command.execute();
     // At this point ramp hasn't been given enough time to reach target, so command should not be
     // finished
     EXPECT_FALSE(command.isFinished());
     // 100 ms * 1.0 units/second = displacement of 0.1 units which is all ramp should need from 0.9
     // to 1.0, add 1 ms to account for
-    setTime(101);
+    clock.time = 101;
     command.execute();
     EXPECT_TRUE(command.isFinished());
 }
@@ -186,9 +187,9 @@ TEST(MoveAbsoluteCommand, command_finishes_if_subsystem_jammed)
 
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     ON_CALL(subsystem, isJammed).WillByDefault(Return(true));
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1);
+    clock.time = 1;
     command.execute();
     EXPECT_TRUE(command.isFinished());
 }
@@ -199,10 +200,10 @@ TEST(MoveAbsoluteCommand, command_finishes_if_subsystem_offline)
     MoveAbsoluteCommand command(&subsystem, 7.5f, 6.5f, 0.001f, false, true);
 
     EXPECT_CALL(subsystem, isOnline).Times(AtLeast(1)).WillRepeatedly(Return(false));
-    setTime(0);
+    clock.time = 0;
     command.isReady();
     command.initialize();
-    setTime(1);
+    clock.time = 1;
     command.execute();
     ASSERT_TRUE(command.isFinished());
 }
@@ -215,9 +216,9 @@ TEST(MoveAbsoluteCommand, command_not_finished_when_system_unjammed_and_setpoint
     ON_CALL(subsystem, isJammed).WillByDefault(Return(false));
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(100);
+    clock.time = 100;
     command.execute();
     EXPECT_FALSE(command.isFinished());
 }
@@ -236,9 +237,9 @@ TEST(MoveAbsoluteCommand, command_sets_setpoint_to_target_on_end_when_option_set
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(7.5f))).Times(AtLeast(1));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1);
+    clock.time = 1;
     command.execute();
     command.end(false);
 }
@@ -252,9 +253,9 @@ TEST(MoveAbsoluteCommand, command_sets_setpoint_to_current_value_on_end_when_opt
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatEq(1.0f))).Times(AtLeast(1));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(200);
+    clock.time = 200;
     command.execute();
     command.end(false);
 }
@@ -267,9 +268,9 @@ TEST(MoveAbsoluteCommand, command_clears_jam_on_end_if_option_set)
     EXPECT_CALL(subsystem, getCurrentValue).Times(AtLeast(1)).WillRepeatedly(Return(1.0f));
     EXPECT_CALL(subsystem, clearJam);
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
-    setTime(1);
+    clock.time = 1;
     command.execute();
     command.end(false);
 }
