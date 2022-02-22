@@ -1,6 +1,3 @@
-#ifndef MOCK_CAN_HPP_
-#define MOCK_CAN_HPP_
-
 /*
  * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
@@ -19,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#ifndef MOCK_CAN_HPP_
+#define MOCK_CAN_HPP_
 
 #include <gmock/gmock.h>
 
