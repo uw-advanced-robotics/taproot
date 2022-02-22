@@ -431,7 +431,9 @@ TEST(HoldRepeatCommandMapping, executeCommandMapping_maxTimesToSchedule_2_schedu
     commandMapping.executeCommandMapping(ms);
 }
 
-TEST(HoldRepeatCommandMapping, executeCommandMapping_maxTimesToSchedule_changes_from_1_to_2_allows_command_to_be_rescheduled_if_held)
+TEST(
+    HoldRepeatCommandMapping,
+    executeCommandMapping_maxTimesToSchedule_changes_from_1_to_2_allows_command_to_be_rescheduled_if_held)
 {
     Drivers drivers;
     TestSubsystem ts(&drivers);
