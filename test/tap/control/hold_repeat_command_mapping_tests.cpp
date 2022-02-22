@@ -398,7 +398,7 @@ TEST(HoldRepeatCommandMapping, executeCommandMapping_maxTimesToSchedule_1_comman
 
 TEST(
     HoldRepeatCommandMapping,
-    executeCommandMapping_maxTimesToSchedule_1_only_first_command_scheduled)
+    executeCommandMapping_maxTimesToSchedule_1_both_commands_scheduled_once)
 {
     Drivers drivers;
     TestSubsystem ts(&drivers);
@@ -408,7 +408,7 @@ TEST(
     HoldRepeatCommandMapping commandMapping(&drivers, {&tc1, &tc2}, ms, false, 1);
 
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc1)).Times(1);
-    EXPECT_CALL(drivers.commandScheduler, addCommand(&tc2)).Times(0);
+    EXPECT_CALL(drivers.commandScheduler, addCommand(&tc2)).Times(1);
     ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault(Return(false));
 
     commandMapping.executeCommandMapping(ms);
@@ -427,6 +427,23 @@ TEST(HoldRepeatCommandMapping, executeCommandMapping_maxTimesToSchedule_2_schedu
     ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault(Return(false));
 
     commandMapping.executeCommandMapping(ms);
+    commandMapping.executeCommandMapping(ms);
+    commandMapping.executeCommandMapping(ms);
+}
+
+TEST(HoldRepeatCommandMapping, executeCommandMapping_maxTimesToSchedule_changes_from_1_to_2_allows_command_to_be_rescheduled_if_held)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    HoldRepeatCommandMapping commandMapping(&drivers, {&tc}, ms, false, 1);
+
+    EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(2);
+    ON_CALL(drivers.commandScheduler, isCommandScheduled).WillByDefault(Return(false));
+
+    commandMapping.executeCommandMapping(ms);
+    commandMapping.setMaxTimesToSchedule(2);
     commandMapping.executeCommandMapping(ms);
     commandMapping.executeCommandMapping(ms);
 }
