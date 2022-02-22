@@ -51,11 +51,14 @@ public:
 
     struct ProfilerData
     {
-        const char* name;
+        const char* name = nullptr;
         uint32_t min = UINT32_MAX;
         uint32_t max = 0;
-        uint32_t avg = 0;
+        float avg = 0;
         uint32_t prevPushedTime = 0;
+
+        ProfilerData() {}
+        explicit ProfilerData(const char* name) : name(name) {}
 
         void reset()
         {

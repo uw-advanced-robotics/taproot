@@ -41,9 +41,10 @@ std::size_t Profiler::push(const char *profile)
     }
     else if (!profiledElements.isFull())
     {
-        profiledElements.append({profile});
+        profiledElements.append(ProfilerData(profile));
         std::size_t key = profiledElements.getSize() - 1;
         elementNameToIndexMap[profile] = key;
+        profiledElements[key].prevPushedTime = clock::getTimeMicroseconds();
         return key;
     }
     else
