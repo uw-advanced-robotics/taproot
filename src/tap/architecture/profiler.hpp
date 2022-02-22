@@ -45,14 +45,51 @@ namespace tap::arch
 {
 /**
  * An object that stores information about the time it takes to run code. User can add an item to
- * the profiler by pushing a profile to the profiler, running their function, then poping the
- * profile id from the profiler after the function has finished. The `PROFILE` macro allows you to
- * interact with the profiler without worrying about directly interacting with the profiler. The
- * profiler is limited in size to `MAX_PROFILED_ELEMENTS`. Once a element is registered with the
+ * the profiler by pushing a profile to the profiler, running their function, then popping the
+ * profile id from the profiler after the function has finished.
+ *
+ * The `PROFILE` macro allows you to interact with the profiler without using the profiler's
+ * functions directly. For example, the `PROFILE` can be used as follows:
+ *
+ * ```cpp
+ * void foo()
+ * {
+ * }
+ *
+ * void bar()
+ * {
+ *      PROFILE(profiler, foo, ());
+ * }
+ *
+ * void baz()
+ * {
+ *      PROFILE(profiler, bar, ());
+ * }
+ * ```
+ *
+ * In the example above, `profiler` is a pointer to a valid `Profiler` class. If you call `baz`, it
+ * will add the profile "bar" and "foo" to the profiler.
+ *
+ * The profiler is limited in size to `MAX_PROFILED_ELEMENTS`. Once a element is registered with the
  * profiler, the profiler will keep track of the min, max, and rolling average time (in
  * microseconds) it takes to run the code associated with the profile. The profiled elements can
  * then be inspected using a debugger, or in the future can be accessed via the terminal serial (not
  * yet implemented).
+ *
+ * One known limitation is this profiler doesn't handle recursion well. For example, consider the
+ * following:
+ *
+ * ```cpp
+ * void foo(int i)
+ * {
+ *      if (i == 0) return;
+ *      PROFILE(profiler, foo, (i - 1));
+ * }
+ * ```
+ *
+ * In this example, the `PROFILE` macro will overwrite the entry in the profiler in a way that makes
+ * the profiler information not useful for the `foo` function, so it is recommended that you do not
+ * use the `PROFILE` macro for a recursive call.
  */
 class Profiler
 {
