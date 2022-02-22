@@ -27,9 +27,9 @@
 using namespace tap;
 using namespace tap::arch;
 
-#define SETUP_TEST()   \
-    clock::ClockStub clock;\
-    Drivers drivers;   \
+#define SETUP_TEST()        \
+    clock::ClockStub clock; \
+    Drivers drivers;        \
     Profiler profiler(&drivers);
 
 TEST(Profiler, push_pop_normal_usage_no_errors)
@@ -148,7 +148,7 @@ TEST(Profiler, push_big_batch_insertion)
         profiler.pop(key);              \
     } while (0);
 
-void testFunc(clock::ClockStub &clock) { clock.time += 1; }
+void testFunc(clock::ClockStub& clock) { clock.time += 1; }
 
 TEST(Profiler, profile_macro)
 {
