@@ -34,7 +34,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "mock-object-name": "arch::Profiler",
         "src-file": "tap/architecture/profiler.hpp",
         "mock-header": "tap/architecture/profiler.hpp",
-        "constructor": "",
+        "constructor": "this",
         "module-dependencies": [":communication:gpio:analog"],
     },
     {
