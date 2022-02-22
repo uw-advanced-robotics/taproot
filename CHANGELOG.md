@@ -20,7 +20,8 @@
 - Minor cleanup to the `DJISerial` class (including tests).
 - Add some utilities to the `DJISerial::SerialMessage` class.
 - Add generic `RemoteMapState` constructor (!137).
-- Fixed `Profiler` class.
+- Fixed `Profiler` class. You can now use the `PROFILE` macro when profiling is enabled without the
+  system running out of memory.
 
 ## January 2022
 

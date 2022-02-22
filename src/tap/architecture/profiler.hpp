@@ -43,23 +43,46 @@ class Drivers;
 
 namespace tap::arch
 {
+/**
+ * An object that stores information about the time it takes to run code. User can add an item to
+ * the profiler by pushing a profile to the profiler, running their function, then poping the
+ * profile id from the profiler after the function has finished. The `PROFILE` macro allows you to
+ * interact with the profiler without worrying about directly interacting with the profiler. The
+ * profiler is limited in size to `MAX_PROFILED_ELEMENTS`. Once a element is registered with the
+ * profiler, the profiler will keep track of the min, max, and rolling average time (in
+ * microseconds) it takes to run the code associated with the profile. The profiled elements can
+ * then be inspected using a debugger, or in the future can be accessed via the terminal serial (not
+ * yet implemented).
+ */
 class Profiler
 {
 public:
+    /** Max number of profiles that the profiler can store information about. */
     static constexpr std::size_t MAX_PROFILED_ELEMENTS = 128;
+    /** Low pass alpha to be used when averaging time it takes for some code to run. */
     static constexpr float AVG_LOW_PASS_ALPHA = 0.01f;
 
+    /**
+     * Stores profile information.
+     */
     struct ProfilerData
     {
+        /** Name of the profile. */
         const char* name = nullptr;
+        /** Min value, in microseconds, ever recorded by the profiler. */
         uint32_t min = UINT32_MAX;
+        /** Max value, in microseconds, ever recorded by the profiler. */
         uint32_t max = 0;
+        /** Average value, in microseconds, averaged using a low pass filter. */
         float avg = 0;
+        /** Value used to measure a "dt" between pushing and popping the profile from the profiler.
+         */
         uint32_t prevPushedTime = 0;
 
         ProfilerData() {}
         explicit ProfilerData(const char* name) : name(name) {}
 
+        /** Resets the long term profile storage information. */
         void reset()
         {
             min = UINT32_MAX;
@@ -70,10 +93,27 @@ public:
 
     Profiler(tap::Drivers* drivers);
 
+    /**
+     * "Push" a profile to the profiler. Can be a new profile that the profiler has never seen or a
+     * profile that is already in the profiler. Starts the stopwatch timer associated with the
+     * profile.
+     *
+     * @param[in] profile The name of the profile. Should be a unique `const char *` (i.e. string
+     * comparison is not used, instead raw pointer comparison is used).
+     * @return A "key" that then must be passed to the `pop` function to stop the stopwatch timer
+     * and update the profiles associated `ProfilerData`.
+     */
     std::size_t push(const char* profile);
 
+    /**
+     * "Pops" a profile data, to stop the stopwatch that is timing how long some code takes to run.
+     *
+     * @param[in] key The key that was returned by `push` associated with the profile that you would
+     * like to stop timing.
+     */
     void pop(std::size_t key);
 
+    /** @return The data associated with some particular key. */
     inline ProfilerData getData(std::size_t key)
     {
         if (key >= profiledElements.getSize())
@@ -86,6 +126,7 @@ public:
         }
     }
 
+    /** Reset the ProfilerData associated with some particular key. */
     inline void reset(std::size_t key)
     {
         if (key < profiledElements.getSize())
