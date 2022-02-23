@@ -140,6 +140,8 @@ public:
 
     mockable float getTemp() const { return data.temperature; }
 
+    mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
+
 private:
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
     /** Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET. */
@@ -173,6 +175,8 @@ private:
     tap::sensors::ImuHeater imuHeater;
 
     int calibrationSample = 0;
+
+    uint32_t prevIMUDataReceivedTime = 0;
 
     void initializeAcc();
     void initializeGyro();

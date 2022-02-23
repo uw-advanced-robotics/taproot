@@ -178,6 +178,9 @@ void Bmi088::periodicIMUUpdate()
     uint8_t rxBuff[6] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
+
+    prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
+
     data.accRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
     data.accRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
     data.accRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);

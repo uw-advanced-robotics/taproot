@@ -46,6 +46,7 @@ public:
     MOCK_METHOD(float, getAy, (), (const override));
     MOCK_METHOD(float, getAz, (), (const override));
     MOCK_METHOD(float, getTemp, (), (const override));
+    MOCK_METHOD(uint32_t, getPrevIMUDataReceivedTime, (), (const override));
 };
 }  // namespace tap::mock
 
