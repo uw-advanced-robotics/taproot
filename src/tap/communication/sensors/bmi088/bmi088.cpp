@@ -69,7 +69,7 @@ void Bmi088::requestRecalibration()
     }
 }
 
-void Bmi088::initialize()
+void Bmi088::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
 #if !defined(PLATFORM_HOSTED)
     ImuCS1Accel::GpioOutput();
@@ -89,6 +89,8 @@ void Bmi088::initialize()
     initializeGyro();
 
     imuHeater.initialize();
+
+    mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
 }
 
 void Bmi088::initializeAcc()
@@ -247,7 +249,7 @@ void Bmi088::computeOffsets()
         data.accOffsetRaw[ImuData::Y] /= BMI088_OFFSET_SAMPLES;
         data.accOffsetRaw[ImuData::Z] /= BMI088_OFFSET_SAMPLES;
         imuState = ImuState::IMU_CALIBRATED;
-        mahonyAlgorithm = Mahony();
+        mahonyAlgorithm.reset();
     }
 }
 
