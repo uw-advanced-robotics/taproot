@@ -76,7 +76,8 @@
         "*.cpp.in": "jinja-cpp",
         "*.hpp.in": "jinja-cpp",
         "*.xml.in": "jinja-xml",
-        "*.py.in": "jinja-py"
+        "*.py.in": "jinja-py",
+        "*.lb": "python",
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
