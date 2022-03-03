@@ -227,6 +227,9 @@ public:
                                           /// in RMUC.
             float bulletSpeed;            /// Last bullet speed (in m/s).
             float yaw;                    /// Barrel yaw position (degree).
+            uint32_t lastReceivedLaunchingInfoTimestamp;  /// Last time in milliseconds that the
+                                                          /// real-time launching information
+                                                          /// message was received
         };
 
         struct RobotData
