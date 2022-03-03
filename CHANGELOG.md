@@ -22,6 +22,8 @@
 - Add generic `RemoteMapState` constructor (!137).
 - Fixed `Profiler` class. You can now use the `PROFILE` macro when profiling is enabled without the
   system running out of memory.
+- Add parameters to `Bmi088` `initialize` function to allow the user to configure gains on the
+  Mahony algorithm, add `reset` function to Mahony algorithm (!141)
 
 ## January 2022
 

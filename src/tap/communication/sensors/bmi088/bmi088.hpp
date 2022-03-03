@@ -96,7 +96,7 @@ public:
     /**
      * Starts and configures the bmi088. Blocks for < 200 ms.
      */
-    mockable void initialize();
+    mockable void initialize(float sampleFrequency, float mahonyKp, float mahonyKi);
 
     /**
      * Call this function at 500 Hz. Reads IMU data and performs the mahony AHRS algorithm to
