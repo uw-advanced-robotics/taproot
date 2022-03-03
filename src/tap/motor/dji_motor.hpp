@@ -148,6 +148,10 @@ public:
      */
     int8_t getTemperature() const override;
 
+    /**
+     * @return the current "Torque current" as Dji puts it. Units are some form of amps.
+     * It's (20/16384) Amps for the C620 for example.
+     */
     int16_t getTorque() const override;
 
     /** For interpreting the sign of return value see class comment */
