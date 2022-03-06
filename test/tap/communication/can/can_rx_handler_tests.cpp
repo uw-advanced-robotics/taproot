@@ -39,7 +39,7 @@ TEST(CanRxHandler, ListenerAttachesAndDetatchesInArray)
     tap::Drivers drivers;
     tap::can::CanRxHandler handler(&drivers);
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+    for (uint32_t i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
     {
         tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
@@ -58,7 +58,7 @@ TEST(CanRxHandler, MessageIsProcessedByCorrectListener)
 {
     tap::Drivers drivers;
     tap::can::CanRxHandler handler(&drivers);
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+    for (uint32_t i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
     {
         tap::mock::CanRxListenerMock listener(&drivers, i, tap::can::CanBus::CAN_BUS1);
 
