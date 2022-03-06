@@ -7,6 +7,7 @@
 ### All changes
 
 - Unit tests added for `Remote` class.
+- Minor improvements to `DjiMotorTxHandler` class. Some API function names have been changed.
 
 ## February 2022
 
