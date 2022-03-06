@@ -71,11 +71,13 @@ protected:
 
         for (auto *motor : motors)
         {
-            ON_CALL(*motor, getMotorIdentifier)
-                .WillByDefault([motor]() { return motor->DjiMotor::getMotorIdentifier(); });
+            ON_CALL(*motor, getMotorIdentifier).WillByDefault([motor]() {
+                return motor->DjiMotor::getMotorIdentifier();
+            });
 
-            ON_CALL(*motor, getCanBus)
-                .WillByDefault([motor]() { return motor->DjiMotor::getCanBus(); });
+            ON_CALL(*motor, getCanBus).WillByDefault([motor]() {
+                return motor->DjiMotor::getCanBus();
+            });
         }
     }
 
@@ -218,18 +220,18 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_valid_encoding)
         false);
     convertToLittleEndian<int16_t>(4, can2MessageHigh.data);
 
-    ON_CALL(*motors[0], serializeCanSendData)
-        .WillByDefault([](modm::can::Message *txMessage)
-                       { convertToLittleEndian(1, txMessage->data); });
-    ON_CALL(*motors[4], serializeCanSendData)
-        .WillByDefault([](modm::can::Message *txMessage)
-                       { convertToLittleEndian(2, txMessage->data); });
-    ON_CALL(*motors[8], serializeCanSendData)
-        .WillByDefault([](modm::can::Message *txMessage)
-                       { convertToLittleEndian(3, txMessage->data); });
-    ON_CALL(*motors[12], serializeCanSendData)
-        .WillByDefault([](modm::can::Message *txMessage)
-                       { convertToLittleEndian(4, txMessage->data); });
+    ON_CALL(*motors[0], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(1, txMessage->data);
+    });
+    ON_CALL(*motors[4], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(2, txMessage->data);
+    });
+    ON_CALL(*motors[8], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(3, txMessage->data);
+    });
+    ON_CALL(*motors[12], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(4, txMessage->data);
+    });
 
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS1, can1MessageLow));
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh));
