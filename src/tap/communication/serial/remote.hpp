@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -75,10 +75,10 @@ public:
      */
     enum class SwitchState
     {
-        UNKNOWN,
-        UP,
-        MID,
-        DOWN
+        UNKNOWN = 0,
+        UP = 1,
+        DOWN = 2,
+        MID = 3,
     };
 
     /**
@@ -136,37 +136,40 @@ public:
     /**
      * @return The current mouse x value.
      */
-    mockable int16_t getMouseX() const;
+    mockable inline int16_t getMouseX() const { return remote.mouse.x; }
 
     /**
      * @return The current mouse y value.
      */
-    mockable int16_t getMouseY() const;
+    mockable inline int16_t getMouseY() const { return remote.mouse.y; }
 
     /**
      * @return The current mouse z value.
      */
-    mockable int16_t getMouseZ() const;
+    mockable inline int16_t getMouseZ() const { return remote.mouse.z; }
 
     /**
      * @return The current mouse l value.
      */
-    mockable bool getMouseL() const;
+    mockable inline bool getMouseL() const { return remote.mouse.l; }
 
     /**
      * @return The current mouse r value.
      */
-    mockable bool getMouseR() const;
+    mockable inline bool getMouseR() const { return remote.mouse.r; }
 
     /**
      * @return `true` if the given `key` is pressed, `false` otherwise.
      */
-    mockable bool keyPressed(Key key) const;
+    mockable inline bool keyPressed(Key key) const
+    {
+        return (remote.key & (1 << static_cast<uint8_t>(key))) != 0;
+    }
 
     /**
      * @return the value of the wheel, between `[-STICK_MAX_VALUE, STICK_MAX_VALUE]`.
      */
-    mockable int16_t getWheel() const;
+    mockable inline int16_t getWheel() const { return remote.wheel; }
 
     /**
      * @return the number of times remote info has been received.
