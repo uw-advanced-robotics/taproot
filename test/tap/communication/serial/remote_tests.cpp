@@ -73,8 +73,8 @@ protected:
         {
             return false;
         }
-        *data = encodedRemoteData[0];
-        encodedRemoteData.erase(encodedRemoteData.begin());
+        *data = encodedRemoteData.front();
+        encodedRemoteData.pop_front();
         return true;
     }
 
@@ -102,7 +102,7 @@ protected:
     ClockStub clock;
     Drivers drivers;
     Remote remote;
-    std::vector<uint8_t> encodedRemoteData;
+    std::deque<uint8_t> encodedRemoteData;
 
     int16_t rh = 0;
     int16_t rv = 0;
@@ -149,7 +149,7 @@ TEST_F(RemoteTest, read_incomplete_message_thrown_away_connection_status_accurat
     encodeRemoteData();
 
     // first byte removed, incomplete.
-    encodedRemoteData.erase(encodedRemoteData.begin());
+    encodedRemoteData.pop_front();
 
     remote.read();
 
