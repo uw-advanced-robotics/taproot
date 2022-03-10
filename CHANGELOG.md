@@ -1,5 +1,13 @@
 # Taproot Changelog
 
+## March 2022
+
+### Breaking changes
+
+### All changes
+
+- Unit tests added for `Remote` class.
+
 ## February 2022
 
 ### Breaking changes
