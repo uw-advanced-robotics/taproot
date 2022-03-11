@@ -19,8 +19,8 @@
 
 #ifdef PLATFORM_HOSTED
 
-#ifndef CAN_SERIALIZER_HPP_
-#define CAN_SERIALIZER_HPP_
+#ifndef TAPROOT_CAN_SERIALIZER_HPP_
+#define TAPROOT_CAN_SERIALIZER_HPP_
 
 #include <array>
 #include <cstdint>
@@ -69,6 +69,6 @@ private:
 
 }  // namespace tap
 
-#endif  // CAN_SERIALIZER_HPP_
+#endif  // TAPROOT_CAN_SERIALIZER_HPP_
 
 #endif  // PLATFORM_HOSTED

@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BMI088_HAL_HPP_
-#define BMI088_HAL_HPP_
+#ifndef TAPROOT_BMI088_HAL_HPP_
+#define TAPROOT_BMI088_HAL_HPP_
 
 #if defined(ENV_UNIT_TESTS)
 #include <deque>
@@ -251,4 +251,4 @@ public:
 
 }  // namespace tap::communication::sensors::bmi088
 
-#endif  // BMI088_HAL_HPP_
+#endif  // TAPROOT_BMI088_HAL_HPP_

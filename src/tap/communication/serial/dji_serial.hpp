@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DJI_SERIAL_HPP_
-#define DJI_SERIAL_HPP_
+#ifndef TAPROOT_DJI_SERIAL_HPP_
+#define TAPROOT_DJI_SERIAL_HPP_
 
 #include <cstdint>
 
@@ -217,4 +217,4 @@ protected:
 
 }  // namespace tap::communication::serial
 
-#endif  // DJI_SERIAL_HPP_
+#endif  // TAPROOT_DJI_SERIAL_HPP_

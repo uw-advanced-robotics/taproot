@@ -19,8 +19,8 @@
 
 #ifdef PLATFORM_HOSTED
 
-#ifndef TCPSERVER_HPP_
-#define TCPSERVER_HPP_
+#ifndef TAPROOT_TCP_SERVER_HPP_
+#define TAPROOT_TCP_SERVER_HPP_
 
 #ifdef __linux__
 #include <netinet/in.h>
@@ -131,6 +131,6 @@ int32_t readInt32(int16_t fileDescriptor);
 
 }  // namespace tap
 
-#endif  // TCP_SERVER_HPP_
+#endif  // TAPROOT_TCP_SERVER_HPP_
 
 #endif  // PLATFORM_HOSTED

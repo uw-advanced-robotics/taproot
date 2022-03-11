@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ODOMETRY_2D_TRACKER_HPP_
-#define ODOMETRY_2D_TRACKER_HPP_
+#ifndef TAPROOT_ODOMETRY_2D_TRACKER_HPP_
+#define TAPROOT_ODOMETRY_2D_TRACKER_HPP_
 
 #include "modm/math/geometry/location_2d.hpp"
 
@@ -82,4 +82,4 @@ private:
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // ODOMETRY_2D_TRACKER_HPP_
+#endif  // TAPROOT_ODOMETRY_2D_TRACKER_HPP_

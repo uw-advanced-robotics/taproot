@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REF_SERIAL_HPP_
-#define REF_SERIAL_HPP_
+#ifndef TAPROOT_REF_SERIAL_HPP_
+#define TAPROOT_REF_SERIAL_HPP_
 
 #include <cstdint>
 #include <unordered_map>
@@ -411,4 +411,4 @@ private:
 
 }  // namespace tap::communication::serial
 
-#endif  // REF_SERIAL_HPP_
+#endif  // TAPROOT_REF_SERIAL_HPP_

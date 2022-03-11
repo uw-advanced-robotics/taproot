@@ -19,8 +19,8 @@
 
 #ifdef PLATFORM_HOSTED
 
-#ifndef MOTOR_SIM_HPP_
-#define MOTOR_SIM_HPP_
+#ifndef TAPROOT_MOTOR_SIM_HPP_
+#define TAPROOT_MOTOR_SIM_HPP_
 
 #include <cmath>
 #include <cstdint>
@@ -122,6 +122,6 @@ private:
 
 }  // namespace tap
 
-#endif  // MOTOR_SIM_HPP_
+#endif  // TAPROOT_MOTOR_SIM_HPP_
 
 #endif  // PLATFORM_HOSTED

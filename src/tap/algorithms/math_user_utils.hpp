@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MATH_USER_UTILS_HPP_
-#define MATH_USER_UTILS_HPP_
+#ifndef TAPROOT_MATH_USER_UTILS_HPP_
+#define TAPROOT_MATH_USER_UTILS_HPP_
 
 #include <cinttypes>
 #include <cmath>
@@ -161,4 +161,4 @@ int getSign(T val)
 
 }  // namespace tap
 
-#endif  // MATH_USER_UTILS_HPP_
+#endif  // TAPROOT_MATH_USER_UTILS_HPP_

@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __CAN_RX_LISTENER__
-#define __CAN_RX_LISTENER__
+#ifndef TAPROOT_CAN_RX_LISTENER_
+#define TAPROOT_CAN_RX_LISTENER_
 
 #include <cstdint>
 
@@ -137,4 +137,4 @@ public:
 
 }  // namespace tap
 
-#endif
+#endif  // TAPROOT_CAN_RX_LISTENER_

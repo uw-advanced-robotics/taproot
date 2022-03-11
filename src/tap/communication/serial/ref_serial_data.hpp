@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REF_SERIAL_DATA_HPP_
-#define REF_SERIAL_DATA_HPP_
+#ifndef TAPROOT_REF_SERIAL_DATA_HPP_
+#define TAPROOT_REF_SERIAL_DATA_HPP_
 
 #include <cinttypes>
 
@@ -455,4 +455,4 @@ inline RefSerialData::RobotId operator-(RefSerialData::RobotId id1, RefSerialDat
 }
 }  // namespace tap::communication::serial
 
-#endif  // REF_SERIAL_DATA_HPP_
+#endif  // TAPROOT_REF_SERIAL_DATA_HPP_

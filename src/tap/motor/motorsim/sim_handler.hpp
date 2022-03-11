@@ -18,8 +18,9 @@
  */
 
 #ifdef PLATFORM_HOSTED
-#ifndef SIM_HANDLER_HPP_
-#define SIM_HANDLER_HPP_
+
+#ifndef TAPROOT_SIM_HANDLER_HPP_
+#define TAPROOT_SIM_HANDLER_HPP_
 
 #include <array>
 
@@ -84,5 +85,7 @@ private:
 };
 }  // namespace motorsim
 }  // namespace tap
-#endif  // SIM_HANDLER_HPP_
+
+#endif  // TAPROOT_SIM_HANDLER_HPP_
+
 #endif  // PLATFORM_HOSTED

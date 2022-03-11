@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BALLISTICS_HPP_
-#define BALLISTICS_HPP_
+#ifndef TAPROOT_BALLISTICS_HPP_
+#define TAPROOT_BALLISTICS_HPP_
 
 #include <cmath>
 
@@ -113,4 +113,4 @@ bool findTargetProjectileIntersection(
 
 }  // namespace tap::algorithms::ballistics
 
-#endif  // BALLISTICS_HPP_
+#endif  // TAPROOT_BALLISTICS_HPP_
