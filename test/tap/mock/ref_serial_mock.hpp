@@ -29,7 +29,7 @@ namespace tap
 {
 namespace mock
 {
-class RefSerialMock : public serial::RefSerial
+class RefSerialMock : public tap::communication::serial::RefSerial
 {
 public:
     RefSerialMock(Drivers* drivers);
@@ -38,7 +38,7 @@ public:
     MOCK_METHOD(
         void,
         messageReceiveCallback,
-        (const tap::serial::DJISerial::SerialMessage&),
+        (const tap::communication::serial::DJISerial::ReceivedSerialMessage&),
         (override));
     MOCK_METHOD(bool, getRefSerialReceivingData, (), (const override));
     MOCK_METHOD(const Rx::RobotData&, getRobotData, (), (const override));

@@ -31,6 +31,7 @@ using namespace tap::mock;
 using namespace testing;
 
 #define CREATE_COMMON_TEST_OBJECTS() \
+    ClockStub clock;                 \
     Drivers drivers;                 \
     NiceMock<SetpointSubsystemMock> subsystem(&drivers);
 
@@ -84,11 +85,11 @@ TEST(MoveUnjamComprisedCommand, command_displaces_setpoint_by_target_amount_afte
     EXPECT_CALL(subsystem, setSetpoint).Times(AnyNumber());
     EXPECT_CALL(subsystem, setSetpoint(FloatNear(8.5f, 0.1f))).Times(AtLeast(1));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     for (int i = 200; i <= 1000; i += 200)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 
@@ -99,7 +100,7 @@ TEST(MoveUnjamComprisedCommand, command_displaces_setpoint_by_target_amount_afte
     EXPECT_FALSE(command.isFinished());
 
     // Account for pauseAfterRotateTime
-    setTime(1015);
+    clock.time = 1015;
     currentValue = 8.5f;
     command.execute();
 
@@ -149,14 +150,14 @@ TEST(MoveUnjamComprisedCommand, command_attempts_to_unjam_when_jammed)
     EXPECT_CALL(subsystem, setSetpoint(Gt(5.9f))).Times(AtLeast(1));
     EXPECT_CALL(subsystem, clearJam).Times(1).WillRepeatedly(Assign(&jamStatus, false));
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     // Note: time between clearing last thing needed to clear (happens for us at 400)
     // and calling end must be less than max unjam rotate time, otherwise next call
     // of execute() causes unjam to think it's failed to return to origin.
     for (int i = 50; i <= 1200; i += 50)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
         if (command.isFinished())
         {
@@ -176,11 +177,11 @@ TEST(MoveUnjamComprisedCommand, command_does_not_execute_while_offline)
     EXPECT_CALL(subsystem, isOnline).WillRepeatedly(Return(false));
     EXPECT_CALL(subsystem, setSetpoint).Times(0);
 
-    setTime(0);
+    clock.time = 0;
     command.initialize();
     for (int i = 200; i <= 1000; i += 200)
     {
-        setTime(i);
+        clock.time = i;
         command.execute();
     }
 }

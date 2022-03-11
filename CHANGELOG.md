@@ -1,8 +1,19 @@
 # Taproot Changelog
 
+## March 2022
+
+### Breaking changes
+
+### All changes
+
+- Unit tests added for `Remote` class.
+
 ## February 2022
 
 ### Breaking changes
+
+- Namespace `tap::serial` renamed to `tap::communication::serial`.
+- `DJISerial` class no longer has a `send` function because it was clunky and unintuitive to use.
 
 ### All changes
 
@@ -14,6 +25,13 @@
   performed correctly, the BMI088 should be level (#18, !96).
 - To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
   update graphics based on its internal state (!102).
+- Minor cleanup to the `DJISerial` class (including tests).
+- Add some utilities to the `DJISerial::SerialMessage` class.
+- Add generic `RemoteMapState` constructor (!137).
+- Fixed `Profiler` class. You can now use the `PROFILE` macro when profiling is enabled without the
+  system running out of memory.
+- Add parameters to `Bmi088` `initialize` function to allow the user to configure gains on the
+  Mahony algorithm, add `reset` function to Mahony algorithm (!141)
 
 ## January 2022
 
@@ -35,9 +53,11 @@
   more details.
 - Almost everything in `tap::control::setpoint` has changed (!49). Most will fail loudly (i.e.: will
   cause compilation errors). Those that are potentially more insidious are documented below:
-  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand` 
+  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand`
     changed (grouped by usage now). This is VERY IMPORTANT to catch and check as compiler may not
     throw warning.
+- When testing, `setTime` has bene replaced by a `ClockStub` object that you should use to control
+  the time in the context of a test.
 
 ### All changes
 
@@ -64,6 +84,9 @@
 - Various improvements to the commands in `tap::control::setpoint` (!49).
   - Unjamming logic more straightforward.
   - MoveCommand pause after rotate time now functions as described.
+- A `ClockStub` object has been added to allow the user to control the time during testing. This is
+  a more refined approach that replaces the `setTime` function previously in
+  `src/tap/arch/clock.hpp`.
 
 ## December 2021
 

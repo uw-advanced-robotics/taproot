@@ -73,6 +73,9 @@ SCRIPT_LICENSE_HEADER = '# Copyright (c) 2020-2021 Advanced Robotics at the Univ
 #\n\
 # You should have received a copy of the GNU General Public License\n\
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.\n'
+COPYRIGHT = "Copyright (c)"
+AUTHOR = "Advanced Robotics at the University of Washington <robomstr@uw.edu>"
+SHEBANG = "!"
 
 def find_files_to_check():
     file_types_to_check = CPP_LICENSED_SOURCE_FILE_EXTENSIONS + SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS
@@ -99,9 +102,26 @@ def is_licensed_source_file(file, file_extensions):
     _, file_extension = splitext(file)
     return file_extension in file_extensions
 
-def file_has_valid_license_header(file, expected_header):
+def file_has_valid_license_header(file, expected_header, copyright_line):
     with open(file, 'r') as file_to_check:
-        if expected_header not in file_to_check.read():
+        license_lines = expected_header.splitlines()
+        num_lines = len(license_lines)
+        license_lines_to_check = file_to_check.read().splitlines()
+        # shebang lines may appear at the top of the file; skip over these
+        offset = 0
+        while SHEBANG in license_lines_to_check[offset]:
+            offset += 1
+        # accomodate for one blank line after shebang lines, if any
+        if offset != 0:
+            offset += 1
+        # check before copyright line
+        if license_lines_to_check[offset:offset + copyright_line] != license_lines[0:copyright_line]:
+            return False
+        # check after copyright line
+        if license_lines_to_check[offset + copyright_line + 1:offset + num_lines] != license_lines[copyright_line + 1:]:
+            return False
+        # check copyright line
+        if COPYRIGHT not in license_lines_to_check[offset + copyright_line] or AUTHOR not in license_lines_to_check[offset + copyright_line]:
             return False
     return True
 
@@ -124,13 +144,13 @@ def main():
     result = False
     for file in files_to_check:
         if is_licensed_source_file(file, CPP_LICENSED_SOURCE_FILE_EXTENSIONS):
-            if not file_has_valid_license_header(file, CPP_LICENSE_HEADER):
+            if not file_has_valid_license_header(file, CPP_LICENSE_HEADER, 1):
                 result = True
                 print("{0} does not contain a license header".format(file))
                 if update_files:
                     add_license_to_file(file, CPP_LICENSE_HEADER)
         elif is_licensed_source_file(file, SCRIPT_LICENSED_SOURCE_FILE_EXTENSIONS):
-            if not file_has_valid_license_header(file, SCRIPT_LICENSE_HEADER):
+            if not file_has_valid_license_header(file, SCRIPT_LICENSE_HEADER, 0):
                 result = True
                 print("{0} does not contain a license header".format(file))
                 if update_files:

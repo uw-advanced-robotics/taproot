@@ -20,6 +20,7 @@
 #ifndef MATH_USER_UTILS_HPP_
 #define MATH_USER_UTILS_HPP_
 
+#include <cinttypes>
 #include <cmath>
 #include <cstring>
 
@@ -134,6 +135,27 @@ float fastInvSqrt(float x);
  * @retval none.
  */
 void rotateVector(float* x, float* y, float radians);
+
+/**
+ * Constexpr ceil
+ * (https://stackoverflow.com/questions/31952237/looking-for-a-constexpr-ceil-function).
+ */
+constexpr int32_t ceil(float num)
+{
+    return (static_cast<float>(static_cast<int32_t>(num)) == num)
+               ? static_cast<int32_t>(num)
+               : static_cast<int32_t>(num) + ((num > 0) ? 1 : 0);
+}
+
+/**
+ * Returns the sign of the value passed in. Either -1, 0, or 1. Works for all base types and any
+ * types that implement construction from an int. Faster than copysign.
+ */
+template <typename T>
+int getSign(T val)
+{
+    return (T(0) < val) - (val < T(0));
+}
 
 }  // namespace algorithms
 

@@ -32,7 +32,7 @@ public:
     Bmi088Mock(tap::Drivers *drivers);
     virtual ~Bmi088Mock();
 
-    MOCK_METHOD(void, initialize, (), (override));
+    MOCK_METHOD(void, initialize, (float, float, float), (override));
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(ImuState, getImuState, (), (const override));
     MOCK_METHOD(void, requestRecalibration, (), (override));
@@ -46,6 +46,7 @@ public:
     MOCK_METHOD(float, getAy, (), (const override));
     MOCK_METHOD(float, getAz, (), (const override));
     MOCK_METHOD(float, getTemp, (), (const override));
+    MOCK_METHOD(uint32_t, getPrevIMUDataReceivedTime, (), (const override));
 };
 }  // namespace tap::mock
 

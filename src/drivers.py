@@ -34,7 +34,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "mock-object-name": "arch::Profiler",
         "src-file": "tap/architecture/profiler.hpp",
         "mock-header": "tap/architecture/profiler.hpp",
-        "constructor": "",
+        "constructor": "this",
         "module-dependencies": [":communication:gpio:analog"],
     },
     {
@@ -94,7 +94,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": [":communication:sensors:mpu6500"],
     },
     {
-        "object-name": "serial::RefSerial",
+        "object-name": "communication::serial::RefSerial",
         "mock-object-name": nice_mock("mock::RefSerialMock"),
         "src-file": "tap/communication/serial/ref_serial.hpp",
         "mock-header": "tap/mock/ref_serial_mock.hpp",
@@ -102,7 +102,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": [":communication:serial:ref_serial"],
     },
     {
-        "object-name": "Remote",
+        "object-name": "communication::serial::Remote",
         "mock-object-name": nice_mock("mock::RemoteMock"),
         "src-file": "tap/communication/serial/remote.hpp",
         "mock-header": "tap/mock/remote_mock.hpp",
@@ -110,7 +110,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": [":communication:serial:remote"],
     },
     {
-        "object-name": "serial::Uart",
+        "object-name": "communication::serial::Uart",
         "mock-object-name": nice_mock("mock::UartMock"),
         "src-file": "tap/communication/serial/uart.hpp",
         "mock-header": "tap/mock/uart_mock.hpp",

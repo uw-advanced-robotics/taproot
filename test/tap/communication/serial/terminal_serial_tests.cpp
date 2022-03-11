@@ -149,7 +149,7 @@ TEST(
     TerminalSerial,
     update__with_some_header_enters_streaming_mode_if_streaming_enabled_and_exits_correctly)
 {
-    tap::arch::clock::setTime(0);
+    tap::arch::clock::ClockStub clock;
     tap::Drivers drivers;
     TerminalSerial serial(&drivers);
 
@@ -177,10 +177,9 @@ TEST(
     }
 
     serial.update();
-    tap::arch::clock::setTime(TerminalSerial::STREAMING_PERIOD + 1);
+    clock.time = TerminalSerial::STREAMING_PERIOD + 1;
     serial.update();
-    tap::arch::clock::setTime(
-        tap::arch::clock::getTimeMilliseconds() + TerminalSerial::STREAMING_PERIOD + 1);
+    clock.time = tap::arch::clock::getTimeMilliseconds() + TerminalSerial::STREAMING_PERIOD + 1;
     serial.update();
 
     std::string output = serial.device.readAllItemsFromWriteBufferToString();
@@ -188,7 +187,7 @@ TEST(
 
 TEST(TerminalSerial, update__with_some_header_doesnt_enter_streaming_mode_if_callback_return_false)
 {
-    tap::arch::clock::setTime(0);
+    tap::arch::clock::ClockStub clock;
     tap::Drivers drivers;
     TerminalSerial serial(&drivers);
 
@@ -214,8 +213,8 @@ TEST(TerminalSerial, update__with_some_header_doesnt_enter_streaming_mode_if_cal
     }
 
     serial.update();
-    tap::arch::clock::setTime(TerminalSerial::STREAMING_PERIOD + 1);
+    clock.time = TerminalSerial::STREAMING_PERIOD + 1;
     serial.update();
-    tap::arch::clock::setTime(TerminalSerial::STREAMING_PERIOD + 1);
+    clock.time = TerminalSerial::STREAMING_PERIOD + 1;
     serial.update();
 }

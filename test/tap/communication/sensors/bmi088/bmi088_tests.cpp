@@ -57,7 +57,7 @@ static void initializeBmi088(Bmi088 &bmi088)
     Bmi088Hal::expectGyroWriteSingleReg();
     Bmi088Hal::expectGyroReadSingleReg(0);  // gyro powermode
 
-    bmi088.initialize();
+    bmi088.initialize(1000, 0, 0);
 
     Bmi088Hal::clearData();
 }

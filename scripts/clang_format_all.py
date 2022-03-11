@@ -24,20 +24,28 @@ import os
 
 FILE_EXTENSIONS_TO_FORMAT = ['.c', '.cc', '.cpp', '.h', '.hh', '.hpp']
 
+# List of executable names to search for clang-format. In descending order of preference.
+# Prefer more specific names over less specific ones. We want clang-format-10 ideally
+CLANG_FMT_PATHS = ['clang-format-10', 'clang-format']
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Run clang-format on a list of specified directories.')
     parser.add_argument('-e', '--exe', type=str,
                         help='a clang-format executable (can be in your PATH) to use when running clang-format')
-    parser.add_argument('-d', '--dirs', type=str, nargs='+', required=True,
+    parser.add_argument('dirs', type=str, nargs='+',
                         help='a list of directories that will be formatted, relative to the current working directory')
     args = parser.parse_args()
 
     clang_fmt = args.exe
     clang_fmt_dirs = args.dirs
 
+    # find default clang-format exe if not passed in
     if clang_fmt == None:
-        # find default clang-format exe if not passed in
-        clang_fmt = shutil.which('clang-format')
+        clang_fmt_idx = 0
+        num_paths = len(CLANG_FMT_PATHS)
+        while clang_fmt == None and clang_fmt_idx < num_paths:
+            clang_fmt = shutil.which(CLANG_FMT_PATHS[clang_fmt_idx])
+            clang_fmt_idx += 1
 
     # check passed in clang-format or clang-format found when running `which`
     if shutil.which(clang_fmt) is None:
