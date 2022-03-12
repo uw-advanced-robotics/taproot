@@ -25,44 +25,42 @@
 #include "tap/drivers.hpp"
 
 using namespace tap;
+using namespace testing;
 using namespace tap::arch;
 
-#define SETUP_TEST()        \
-    clock::ClockStub clock; \
-    Drivers drivers;        \
-    Profiler profiler(&drivers);
-
-TEST(Profiler, push_pop_normal_usage_no_errors)
+class ProfilerTest : public Test
 {
-    SETUP_TEST();
+protected:
+    ProfilerTest() : profiler(&drivers) {}
 
+    clock::ClockStub clock;
+    Drivers drivers;
+    Profiler profiler;
+};
+
+TEST_F(ProfilerTest, push_pop_normal_usage_no_errors)
+{
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
 
     profiler.pop(profiler.push("hi"));
 }
 
-TEST(Profiler, push_returns_same_key_if_profiler_same)
+TEST_F(ProfilerTest, push_returns_same_key_if_profiler_same)
 {
-    SETUP_TEST();
-
     const char* hi = "hi";
 
     EXPECT_EQ(profiler.push(hi), profiler.push(hi));
 }
 
-TEST(Profiler, pop_without_push_errors)
+TEST_F(ProfilerTest, pop_without_push_errors)
 {
-    SETUP_TEST();
-
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
 
     profiler.pop(0);
 }
 
-TEST(Profiler, pop_without_previous_push_of_same_profile_errors)
+TEST_F(ProfilerTest, pop_without_previous_push_of_same_profile_errors)
 {
-    SETUP_TEST();
-
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
 
     profiler.push("Hi");
@@ -71,18 +69,14 @@ TEST(Profiler, pop_without_previous_push_of_same_profile_errors)
     profiler.pop(2);
 }
 
-TEST(Profiler, after_push_getData_valid)
+TEST_F(ProfilerTest, after_push_getData_valid)
 {
-    SETUP_TEST();
-
     std::size_t key = profiler.push("hi");
     EXPECT_EQ("hi", std::string(profiler.getData(key).name));
 }
 
-TEST(Profiler, getData_with_time_btwn_push_pop_populates_min_max_avg)
+TEST_F(ProfilerTest, getData_with_time_btwn_push_pop_populates_min_max_avg)
 {
-    SETUP_TEST();
-
     std::size_t key = profiler.push("hi");
 
     clock.time = 12;  // 12 ms == 12'000 us
@@ -96,10 +90,8 @@ TEST(Profiler, getData_with_time_btwn_push_pop_populates_min_max_avg)
     EXPECT_EQ(algorithms::lowPassFilter(0, 12'000, Profiler::AVG_LOW_PASS_ALPHA), data.avg);
 }
 
-TEST(Profiler, getData_multiple_push_pops_chooses_correct_min_max)
+TEST_F(ProfilerTest, getData_multiple_push_pops_chooses_correct_min_max)
 {
-    SETUP_TEST();
-
     const char* hi = "hi";
 
     std::size_t key = profiler.push(hi);
@@ -120,10 +112,8 @@ TEST(Profiler, getData_multiple_push_pops_chooses_correct_min_max)
     EXPECT_EQ(3000, data.max);
 }
 
-TEST(Profiler, push_big_batch_insertion)
+TEST_F(ProfilerTest, push_big_batch_insertion)
 {
-    SETUP_TEST();
-
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
 
     std::string strs[Profiler::MAX_PROFILED_ELEMENTS];
@@ -150,12 +140,10 @@ TEST(Profiler, push_big_batch_insertion)
 
 void testFunc(clock::ClockStub& clock) { clock.time += 1; }
 
-TEST(Profiler, profile_macro)
+TEST_F(ProfilerTest, profile_macro)
 {
     // make sure if we have a variable called "key" in function scope the PROFILE macro still works
     int key = 10;
-
-    SETUP_TEST();
 
     PROFILE(profiler, testFunc, (clock));
 
