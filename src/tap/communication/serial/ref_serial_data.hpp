@@ -161,9 +161,9 @@ public:
 
         enum MechanismID
         {
-            TURRET_17MM_1 = 1,
-            TURRET_17MM_2 = 2,
-            TURRET_42MM = 3,
+            TURRET_17MM_1 = 0,
+            TURRET_17MM_2 = 1,
+            TURRET_42MM = 2,
         };
 
         struct GameData
