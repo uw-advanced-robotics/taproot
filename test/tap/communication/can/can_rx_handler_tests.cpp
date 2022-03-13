@@ -90,31 +90,31 @@ TEST_F(CanRxHandlerTest, ListenerAttachesAndDetatchesInArray)
     destructListeners();
 }
 
-TEST_F(CanRxHandlerTest, MessageIsProcessedByCorrectListener)
-{
-    constructListeners();
+// TEST_F(CanRxHandlerTest, MessageIsProcessedByCorrectListener)
+// {
+//     constructListeners();
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
-    {
-        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
+//     for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+//     {
+//         int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
 
-        EXPECT_CALL(*listeners[normalizedId], processMessage);
-    }
+//         EXPECT_CALL(*listeners[normalizedId], processMessage);
+//     }
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
-    {
-        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
+//     for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+//     {
+//         int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
 
-        handler.attachReceiveHandler(listeners[normalizedId]);
+//         handler.attachReceiveHandler(listeners[normalizedId]);
 
-        const modm::can::Message rxMessage(i);
-        handler.processReceivedCanData(
-            rxMessage,
-            handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
-    }
+//         const modm::can::Message rxMessage(i);
+//         handler.processReceivedCanData(
+//             rxMessage,
+//             handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
+//     }
 
-    destructListeners();
-}
+//     destructListeners();
+// }
 
 TEST_F(CanRxHandlerTest, ErrorIsThrownWithOOBMessageID)
 {
