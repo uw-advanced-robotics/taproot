@@ -39,7 +39,6 @@
     <module>taproot:communication:sensors:distance</module>
     <module>taproot:communication:gpio:leds</module>
     <module>taproot:communication:gpio:digital</module>
-    <module>taproot:communication:tcp-server</module>
 
     <!-- For RoboMaster Development Board Type A -->
     <module>taproot:communication:sensors:mpu6500</module>

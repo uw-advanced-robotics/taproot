@@ -3,6 +3,9 @@
 ## March 2022
 
 ### Breaking changes
+- TCPServer removed from Taproot as well as JSONMessages
+  - Reasoning was it was a poor implementation with unclear usage. Should need for TCPServer arise
+    again in the future will re-implement
 
 ### All changes
 

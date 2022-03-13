@@ -22,15 +22,6 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/drivers.hpp"
 
-#ifdef PLATFORM_HOSTED
-#include <iostream>
-
-#include "tap/communication/tcp-server/json_messages.hpp"
-#include "tap/communication/tcp-server/tcp_server.hpp"
-
-#include "modm/architecture/interface/can_message.hpp"
-#endif
-
 namespace tap
 {
 namespace motor
@@ -87,17 +78,6 @@ void DjiMotor::parseCanRxData(const modm::can::Message& message)
     // invert motor if necessary
     encoderActual = motorInverted ? ENC_RESOLUTION - 1 - encoderActual : encoderActual;
     updateEncoderValue(encoderActual);
-
-#ifdef PLATFORM_HOSTED
-    /* So the trace of this function to main() goes through a lot, but inside of main
-     * this function is eventually called through a sequence of functions by
-     * canRxHandler.pollCanData(). In fact this seems to be the only driver that
-     * extends the can_rx_listener class... so it's the only thing that uses CAN? */
-    using namespace tap::communication;
-    std::string jsonMessage = json::makeMotorMessage(*this);
-    const char* jsonCString = jsonMessage.c_str();
-    TCPServer::MainServer()->writeToClient(jsonCString, strlen(jsonCString));
-#endif
 }
 
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)

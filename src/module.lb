@@ -31,7 +31,7 @@ def prepare(module, options):
         ":errors")
 
     # motor-specific dependencies
-    module.depends(":communication:can", ":communication:tcp-server")
+    module.depends(":communication:can")
 
     # command mapper dependencies
     module.depends(":communication:serial:remote")
