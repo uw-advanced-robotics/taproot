@@ -78,7 +78,7 @@ public:
     void executeCommandMapping(const RemoteMapState &currState) override;
 
     /** Set the maximum times each of commands should be re-scheduled. */
-    inline void setMaxTimesToSchedule(int maxTimes) { maxTimesToSchedule = maxTimes; }
+    inline mockable void setMaxTimesToSchedule(int maxTimes) { maxTimesToSchedule = maxTimes; }
 
 private:
     bool held;
