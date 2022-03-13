@@ -495,7 +495,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
     ShootData testData;
 
     testData.bulletType = 1;
-    testData.shooterId = 1;
+    testData.shooterId = 0;
     testData.bulletFreq = 45;
     testData.bulletSpeed = 3452.12f;
     msg = constructMsg(testData, 0x0207);
@@ -510,7 +510,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
     EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
 
     testData.bulletType = 2;
-    testData.shooterId = 2;
+    testData.shooterId = 1;
     msg = constructMsg(testData, 0x0207);
 
     refSerial.messageReceiveCallback(msg);
