@@ -183,6 +183,8 @@ public:
      */
     mockable void setSetSchedulerInertFn(SetSchedulerInertFn func);
 
+    mockable bool isSchedulerInert() const { return setSchedulerInertFn(); }
+
     /**
      * @param[in] subsystem the subsystem to check
      * @return `true` if the Subsystem is already scheduled, `false` otherwise.
