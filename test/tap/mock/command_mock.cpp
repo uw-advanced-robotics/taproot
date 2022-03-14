@@ -45,7 +45,7 @@ CommandMock::CommandMock() : Command()
     ON_CALL(*this, isFinished).WillByDefault(testing::Return(false));
 }
 
-CommandMock::CommandMock(const std::set<control::Subsystem *> &subsystemRequirements)
+CommandMock::CommandMock(const std::set<control::Subsystem *> subsystemRequirements)
 {
     ON_CALL(*this, isReady).WillByDefault(testing::Return(true));
     ON_CALL(*this, isFinished).WillByDefault(testing::Return(false));

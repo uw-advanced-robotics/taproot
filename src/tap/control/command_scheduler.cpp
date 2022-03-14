@@ -198,7 +198,7 @@ void CommandScheduler::run()
         // Refresh subsystems in the registeredSubsystemBitmap
         for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            if (setSchedulerInertFn())
+            if (setSchedulerInertFn != nullptr && setSchedulerInertFn())
             {
                 (*it)->inertRefresh();
             }
