@@ -7,6 +7,7 @@
 ### All changes
 
 - Unit tests added for `Remote` class.
+- Zero-length UART messages are no longer thrown out by DjiSerial class
 
 ## February 2022
 

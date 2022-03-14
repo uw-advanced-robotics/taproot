@@ -89,11 +89,10 @@ void DJISerial::updateSerial()
             {
                 frameCurrReadByte = 0;
 
-                if (newMessage.header.dataLength == 0 ||
-                    newMessage.header.dataLength >= SERIAL_RX_BUFF_SIZE)
+                if (newMessage.header.dataLength >= SERIAL_RX_BUFF_SIZE)
                 {
                     djiSerialRxState = SERIAL_HEADER_SEARCH;
-                    RAISE_ERROR(drivers, "invalid message length received");
+                    RAISE_ERROR(drivers, "received message length longer than allowed max");
                     return;
                 }
 
