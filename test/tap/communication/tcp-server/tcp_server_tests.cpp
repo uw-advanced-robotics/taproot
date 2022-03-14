@@ -21,7 +21,6 @@
 
 #include <string>
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include "tap/communication/tcp-server/tcp_server.hpp"

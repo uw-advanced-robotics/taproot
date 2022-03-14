@@ -29,9 +29,9 @@
 namespace tap
 {
 class Drivers;
-namespace communication
-{
-namespace serial
+}
+
+namespace tap::communication::serial
 {
 /**
  * A wrapper around UART3 used by the terminal handler. Allows for stream-based operations
@@ -72,11 +72,8 @@ private:
 
     Drivers *drivers;
 
-    static constexpr tap::serial::Uart::UartPort TERMINAL_UART_PORT =
-        tap::serial::bound_ports::TERMINAL_SERIAL_UART_PORT;
+    static constexpr Uart::UartPort TERMINAL_UART_PORT = bound_ports::TERMINAL_SERIAL_UART_PORT;
 };  // class UartTerminalDevice
-}  // namespace serial
-}  // namespace communication
-}  // namespace tap
+}  // namespace tap::communication::serial
 
 #endif  // TERMINAL_DEVICES_HPP_

@@ -1,5 +1,38 @@
 # Taproot Changelog
 
+## March 2022
+
+### Breaking changes
+
+### All changes
+
+- Unit tests added for `Remote` class.
+
+## February 2022
+
+### Breaking changes
+
+- Namespace `tap::serial` renamed to `tap::communication::serial`.
+- `DJISerial` class no longer has a `send` function because it was clunky and unintuitive to use.
+
+### All changes
+
+- The BMI088 IMU on the RoboMaster Development Board Type C is now supported. The API is very
+  similar to the `Mpu6500` class, with functions to get the accelerometer/gyroscope/angle data. The
+  IMU by default connects but doesn't calibrate when the `initialize` function is called. To
+  calibrate the IMU, call the `requestRecalibration` function, which will cause the IMU to stop
+  computing angle data for a couple seconds while the IMU is calibration. For calibration to be
+  performed correctly, the BMI088 should be level (#18, !96).
+- To compliment the referee serial class, a new `StateHudIndicator` object added to store state and
+  update graphics based on its internal state (!102).
+- Minor cleanup to the `DJISerial` class (including tests).
+- Add some utilities to the `DJISerial::SerialMessage` class.
+- Add generic `RemoteMapState` constructor (!137).
+- Fixed `Profiler` class. You can now use the `PROFILE` macro when profiling is enabled without the
+  system running out of memory.
+- Add parameters to `Bmi088` `initialize` function to allow the user to configure gains on the
+  Mahony algorithm, add `reset` function to Mahony algorithm (!141)
+
 ## January 2022
 
 ### Breaking changes
@@ -18,6 +51,13 @@
   this function in user code to ensure proper calibration of the IMU.
 - The `HoldRepeatCommandMapping` requires an extra parameter in its constructor. See all changes for
   more details.
+- Almost everything in `tap::control::setpoint` has changed (!49). Most will fail loudly (i.e.: will
+  cause compilation errors). Those that are potentially more insidious are documented below:
+  - Order of parameters in constructor for `tap::control::setpoint::MoveUnjamComprisedCommand`
+    changed (grouped by usage now). This is VERY IMPORTANT to catch and check as compiler may not
+    throw warning.
+- When testing, `setTime` has bene replaced by a `ClockStub` object that you should use to control
+  the time in the context of a test.
 
 ### All changes
 
@@ -30,6 +70,7 @@
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
+- Tests added for commands in `tap::control::setpoint` (!49)
 - `Mpu6500` class contains `requestCalibration` function, which when called the mpu6500 enters a
   calibration state when `isReady` returns `false` and the mpu6500 recomputes calibration
   parameters.
@@ -40,6 +81,12 @@
 - HAL options may be now passed to modm's project.xml file (!116).
 - Support for UART ports 7 and 8 added to dev board type A (!116).
 - Baud rates in `dji_serial.cpp` configurable via the project.xml file (#50, !116).
+- Various improvements to the commands in `tap::control::setpoint` (!49).
+  - Unjamming logic more straightforward.
+  - MoveCommand pause after rotate time now functions as described.
+- A `ClockStub` object has been added to allow the user to control the time during testing. This is
+  a more refined approach that replaces the `setTime` function previously in
+  `src/tap/arch/clock.hpp`.
 
 ## December 2021
 

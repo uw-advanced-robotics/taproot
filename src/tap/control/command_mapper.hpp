@@ -75,8 +75,8 @@ public:
      */
     mockable void handleKeyStateChange(
         uint16_t key,
-        Remote::SwitchState leftSwitch,
-        Remote::SwitchState rightSwitch,
+        tap::communication::serial::Remote::SwitchState leftSwitch,
+        tap::communication::serial::Remote::SwitchState rightSwitch,
         bool mouseL,
         bool mouseR);
 

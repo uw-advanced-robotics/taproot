@@ -23,6 +23,8 @@
 #include <cstdint>
 #include <cstring>
 
+#include "modm/architecture/detect.hpp"
+
 namespace tap
 {
 namespace arch
@@ -88,7 +90,7 @@ inline void byteArrayToData(T *data, const uint8_t *bytesIn, bool forward)
 template <typename T>
 void convertToLittleEndian(T data, uint8_t *bytesOut)
 {
-#ifdef LITTLE_ENDIAN
+#if MODM_IS_LITTLE_ENDIAN
     memcpy(bytesOut, &data, sizeof(T));
 #else
     dataToByteArray(data, bytesOut, false);
@@ -110,7 +112,7 @@ void convertToLittleEndian(T data, uint8_t *bytesOut)
 template <typename T>
 void convertToBigEndian(T data, uint8_t *bytesOut)
 {
-#ifdef LITTLE_ENDIAN
+#if MODM_IS_LITTLE_ENDIAN
     dataToByteArray(data, bytesOut, false);
 #else
     memcpy(bytesOut, &data, sizeof(T));
@@ -133,7 +135,7 @@ void convertToBigEndian(T data, uint8_t *bytesOut)
 template <typename T>
 void convertFromLittleEndian(T *data, const uint8_t *bytesIn)
 {
-#ifdef LITTLE_ENDIAN
+#if MODM_IS_LITTLE_ENDIAN
     *data = *reinterpret_cast<const T *>(bytesIn);
 #else
     byteArrayToData(data, bytesIn, false);
@@ -156,11 +158,22 @@ void convertFromLittleEndian(T *data, const uint8_t *bytesIn)
 template <typename T>
 void convertFromBigEndian(T *data, const uint8_t *bytesIn)
 {
-#ifdef LITTLE_ENDIAN
+#if MODM_IS_LITTLE_ENDIAN
     byteArrayToData(data, bytesIn, false);
 #else
     *data = *reinterpret_cast<const T *>(bytesIn);
 #endif
+}
+
+/**
+ * Convert int16_t stored in big endian format in buff to a floating point value.
+ *
+ * @param[in] buff Buffer containing two bytes representing an int16_t in big endian format.
+ * @return A float, the converted int16_t in floating point form.
+ */
+inline float bigEndianInt16ToFloat(const uint8_t *buff)
+{
+    return static_cast<float>(static_cast<int16_t>((*(buff)) | (*(buff + 1) << 8)));
 }
 
 }  // namespace arch

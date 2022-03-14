@@ -26,7 +26,9 @@
 
 #include "modm/architecture/utils.hpp"
 
-namespace tap::serial
+#include "dji_serial.hpp"
+
+namespace tap::communication::serial
 {
 /**
  * Contains enum and struct definitions used in the `RefSerial` class.
@@ -69,7 +71,7 @@ public:
     {
     public:
         RobotToRobotMessageHandler() {}
-        virtual void operator()(const DJISerial::SerialMessage &message) = 0;
+        virtual void operator()(const DJISerial::ReceivedSerialMessage &message) = 0;
     };
 
     /**
@@ -159,9 +161,9 @@ public:
 
         enum MechanismID
         {
-            TURRET_17MM_1 = 1,
-            TURRET_17MM_2 = 2,
-            TURRET_42MM = 3,
+            TURRET_17MM_1 = 0,
+            TURRET_17MM_2 = 1,
+            TURRET_42MM = 2,
         };
 
         struct GameData
@@ -225,6 +227,9 @@ public:
                                           /// in RMUC.
             float bulletSpeed;            /// Last bullet speed (in m/s).
             float yaw;                    /// Barrel yaw position (degree).
+            uint32_t lastReceivedLaunchingInfoTimestamp;  /// Last time in milliseconds that the
+                                                          /// real-time launching information
+                                                          /// message was received
         };
 
         struct RobotData
@@ -304,17 +309,6 @@ public:
         };
 
         /**
-         * All referee data will be prefixed by a header of this structure
-         */
-        struct FrameHeader
-        {
-            uint8_t SOF;  /// Also known as the "content ID" in the ref system protocol appendix
-            uint16_t dataLength;
-            uint8_t seq;
-            uint8_t CRC8;
-        } modm_packed;
-
-        /**
          * Each graphic message has a graphic header inside of the message data.
          */
         struct InteractiveHeader
@@ -336,14 +330,21 @@ public:
             uint32_t lineWidth : 10;
             uint32_t startX : 11;
             uint32_t startY : 11;
-            uint32_t radius : 10;
-            uint32_t endX : 11;
-            uint32_t endY : 11;
+            union
+            {
+                struct
+                {
+                    uint32_t radius : 10;
+                    uint32_t endX : 11;
+                    uint32_t endY : 11;
+                } modm_packed;
+                int32_t value : 32;
+            } modm_packed;
         } modm_packed;
 
         struct DeleteGraphicLayerMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             uint8_t deleteOperation;
@@ -353,7 +354,7 @@ public:
 
         struct Graphic1Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;
@@ -362,7 +363,7 @@ public:
 
         struct RobotToRobotMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             uint8_t dataAndCRC16[115];
@@ -370,7 +371,7 @@ public:
 
         struct Graphic2Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[2];
@@ -379,7 +380,7 @@ public:
 
         struct Graphic5Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[5];
@@ -388,7 +389,7 @@ public:
 
         struct Graphic7Message
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData[7];
@@ -397,13 +398,47 @@ public:
 
         struct GraphicCharacterMessage
         {
-            FrameHeader frameHeader;
+            DJISerial::FrameHeader frameHeader;
             uint16_t cmdId;
             InteractiveHeader interactiveHeader;
             GraphicData graphicData;
             char msg[30];
             uint16_t crc16;
         } modm_packed;
+
+        /**
+         * You cannot send messages faster than this speed to the referee system.
+         *
+         * Source: https://bbs.robomaster.com/forum.php?mod=viewthread&tid=9120
+         */
+        static constexpr uint32_t MAX_TRANSMIT_SPEED_BYTES_PER_S = 1280;
+
+        /**
+         * Get the max wait time after which you can send more data to the client. Sending faster
+         * than this time may cause dropped packets.
+         *
+         * Pass a pointer to some graphic message. For example, if you have a `Graphic1Message`
+         * called `msg`, you can call `getWaitTimeAfterGraphicSendMs(&msg)`.
+         *
+         * @tparam T The type of the graphic message that jas just been sent.
+         */
+        template <typename T>
+        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T *)
+        {
+            // Must be a valid graphic message type
+            static_assert(
+                std::is_same<T, DeleteGraphicLayerMessage>::value ||
+                    std::is_same<T, Graphic1Message>::value ||
+                    std::is_same<T, RobotToRobotMessage>::value ||
+                    std::is_same<T, Graphic2Message>::value ||
+                    std::is_same<T, Graphic5Message>::value ||
+                    std::is_same<T, Graphic7Message>::value ||
+                    std::is_same<T, GraphicCharacterMessage>::value,
+                "Invalid type, getWaitTimeAfterGraphicSendMs only takes in ref serial message "
+                "types.");
+
+            return sizeof(T) * 1'000 / MAX_TRANSMIT_SPEED_BYTES_PER_S;
+        }
     };
 };
 
@@ -418,6 +453,6 @@ inline RefSerialData::RobotId operator-(RefSerialData::RobotId id1, RefSerialDat
     return static_cast<RefSerialData::RobotId>(
         static_cast<uint16_t>(id1) - static_cast<uint16_t>(id2));
 }
-}  // namespace tap::serial
+}  // namespace tap::communication::serial
 
 #endif  // REF_SERIAL_DATA_HPP_

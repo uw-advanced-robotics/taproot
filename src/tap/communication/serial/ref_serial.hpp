@@ -34,7 +34,9 @@
 namespace tap
 {
 class Drivers;
-namespace serial
+}
+
+namespace tap::communication::serial
 {
 /**
  * A class designed to communicate with the 2021 version of the RoboMaster
@@ -66,13 +68,15 @@ private:
      */
     static constexpr uint16_t DPS_TRACKER_DEQUE_SIZE = 20;
 
-    static constexpr int GRAPHIC_MAX_CHARACTERS = 30;
-
 public:
-    // RX message type defines, ignored message types commented out, referred to as "Command ID"s in
+    /**
+     * RX message type defines, referred to as "Command ID"s in the RoboMaster Ref System
+     * Protocol Appendix. Ignored message types commented out because they are not handled by this
+     * parser yet. They are values that are used in message headers to indicate the type of message
+     * we have received.
+     */
     enum MessageType
     {
-        // the RoboMaster Ref System Protocol Appendix
         REF_MESSAGE_TYPE_GAME_STATUS = 0x1,
         REF_MESSAGE_TYPE_GAME_RESULT = 0x2,
         REF_MESSAGE_TYPE_ALL_ROBOT_HP = 0x3,
@@ -110,7 +114,7 @@ public:
     /**
      * Handles the types of messages defined above in the RX message handlers section.
      */
-    void messageReceiveCallback(const SerialMessage& completeMessage) override;
+    void messageReceiveCallback(const ReceivedSerialMessage& completeMessage) override;
 
     mockable bool getRefSerialReceivingData() const;
 
@@ -248,20 +252,12 @@ public:
         int32_t value,
         Tx::GraphicData* sharedData);
     /**
-     * Only updates the integer value stored in the `sharedData` (it is assumed that
-     * the `GraphicData` is already configured with `configInteger`).
-     *
-     * @param[out] sharedData The message with whose value to update.
-     */
-    static void updateInteger(int32_t value, Tx::GraphicData* sharedData);
-    /**
      * Configures a character message in the passed in `GraphicCharacterMessage`.
      *
      * @param[out] sharedData The message to configure.
      */
     static void configCharacterMsg(
         uint16_t fontSize,
-        uint16_t charLen,
         uint16_t width,
         uint16_t startX,
         uint16_t startY,
@@ -275,7 +271,7 @@ public:
      * @param[in] msgLen The length of the message. This includes only the length of the data
      *      and not the length of the cmdId or frame tail.
      */
-    static void configFrameHeader(Tx::FrameHeader* header, uint16_t msgLen);
+    static void configFrameHeader(FrameHeader* header, uint16_t msgLen);
     static void configInteractiveHeader(
         Tx::InteractiveHeader* header,
         uint16_t cmdId,
@@ -351,70 +347,68 @@ private:
      * Decodes ref serial message containing the game stage and time remaining
      * in the game.
      */
-    bool decodeToGameStatus(const SerialMessage& message);
+    bool decodeToGameStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the postmatch result of a game.
      */
-    bool decodeToGameResult(const SerialMessage& message);
+    bool decodeToGameResult(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the robot HP of all robots in the match.
      */
-    bool decodeToAllRobotHP(const SerialMessage& message);
+    bool decodeToAllRobotHP(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing occupation status of various field zones.
      */
-    bool decodeToSiteEventData(const SerialMessage& message);
+    bool decodeToSiteEventData(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the firing/driving heat limits and cooling
      * rates for the robot.
      */
-    bool decodeToRobotStatus(const SerialMessage& message);
+    bool decodeToRobotStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the actual power and heat data for the turret
      * and chassis.
      */
-    bool decodeToPowerAndHeat(const SerialMessage& message);
+    bool decodeToPowerAndHeat(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the position of the robot on the field and
      * the robot heading.
      */
-    bool decodeToRobotPosition(const SerialMessage& message);
+    bool decodeToRobotPosition(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the robot buff status of the robot.
      */
-    bool decodeToRobotBuffs(const SerialMessage& message);
+    bool decodeToRobotBuffs(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the energy status, a countdown timer from 30 seconds to
      * 0 seconds.
      */
-    bool decodeToAerialEnergyStatus(const SerialMessage& message);
+    bool decodeToAerialEnergyStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing containing the damaged armor and damage type
      * last taken by the robot.
      */
-    bool decodeToDamageStatus(const SerialMessage& message);
+    bool decodeToDamageStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the previously fired bullet type and firing
      * frequency.
      */
-    bool decodeToProjectileLaunch(const SerialMessage& message);
+    bool decodeToProjectileLaunch(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the number of bullets remaining in the robot
      * (only certain match types will send this information).
      */
-    bool decodeToBulletsRemain(const SerialMessage& message);
+    bool decodeToBulletsRemain(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing which RFID buff zones are currently activated.
      */
-    bool decodeToRFIDStatus(const SerialMessage& message);
-    bool handleRobotToRobotCommunication(const SerialMessage& message);
+    bool decodeToRFIDStatus(const ReceivedSerialMessage& message);
+    bool handleRobotToRobotCommunication(const ReceivedSerialMessage& message);
 
     void updateReceivedDamage();
     void processReceivedDamage(uint32_t timestamp, int32_t damageTaken);
 };
 
-}  // namespace serial
-
-}  // namespace tap
+}  // namespace tap::communication::serial
 
 #endif  // REF_SERIAL_HPP_
