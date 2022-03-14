@@ -193,21 +193,17 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
 
-    uint8_t rawMessage[19];
+    uint8_t rawMessage[9];
     uint16_t currByte = 0;
 
     convertToLittleEndian(static_cast<uint8_t>(0xa5), rawMessage);
     convertToLittleEndian(static_cast<uint16_t>(0), rawMessage + 1);
     convertToLittleEndian(static_cast<uint8_t>(123), rawMessage + 3);
-    convertToLittleEndian(calculateCRC8(rawMessage, 4) - 1, rawMessage + 4);
+    convertToLittleEndian(calculateCRC8(rawMessage, 4), rawMessage + 4);
     convertToLittleEndian(static_cast<uint16_t>(2), rawMessage + 5);
-    for (uint8_t i = 0; i < 10; i++)
-    {
-        rawMessage[i + 7] = i;
-    }
-    convertToLittleEndian(calculateCRC16(rawMessage, 17) - 1, rawMessage + 17);
+    convertToLittleEndian(calculateCRC16(rawMessage, 7), rawMessage + 7);
 
     ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
@@ -234,7 +230,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
 TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, Uart::Uart1, false);
 
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
 
@@ -244,13 +240,13 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
     convertToLittleEndian(static_cast<uint8_t>(0xa5), rawMessage);
     convertToLittleEndian(static_cast<uint16_t>(0xffff), rawMessage + 1);
     convertToLittleEndian(static_cast<uint8_t>(123), rawMessage + 3);
-    convertToLittleEndian(calculateCRC8(rawMessage, 4) - 1, rawMessage + 4);
+    convertToLittleEndian(calculateCRC8(rawMessage, 4), rawMessage + 4);
     convertToLittleEndian(static_cast<uint16_t>(2), rawMessage + 5);
     for (uint8_t i = 0; i < 10; i++)
     {
         rawMessage[i + 7] = i;
     }
-    convertToLittleEndian(calculateCRC16(rawMessage, 17) - 1, rawMessage + 17);
+    convertToLittleEndian(calculateCRC16(rawMessage, 17), rawMessage + 17);
 
     ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
