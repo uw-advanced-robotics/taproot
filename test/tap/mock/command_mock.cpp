@@ -19,6 +19,22 @@
 
 #include "command_mock.hpp"
 
+#include "tap/control/command_scheduler_types.hpp"
+#include "tap/control/subsystem.hpp"
+
+tap::control::subsystem_scheduler_bitmap_t calcRequirementsBitwise(
+    const std::set<tap::control::Subsystem *> subRequirements)
+{
+    tap::control::subsystem_scheduler_bitmap_t sum = 0;
+    for (const auto sub : subRequirements)
+    {
+        sum |=
+            (static_cast<tap::control::subsystem_scheduler_bitmap_t>(1)
+             << sub->getGlobalIdentifier());
+    }
+    return sum;
+}
+
 namespace tap::mock
 {
 CommandMock::CommandMock() : Command()
@@ -26,6 +42,16 @@ CommandMock::CommandMock() : Command()
     // Most of the time tests expect that we are adding commands that
     // are ready to be added. This makes tests cleaner
     ON_CALL(*this, isReady).WillByDefault(testing::Return(true));
+    ON_CALL(*this, isFinished).WillByDefault(testing::Return(false));
 }
+
+CommandMock::CommandMock(const std::set<control::Subsystem *> &subsystemRequirements)
+{
+    ON_CALL(*this, isReady).WillByDefault(testing::Return(true));
+    ON_CALL(*this, isFinished).WillByDefault(testing::Return(false));
+    ON_CALL(*this, getRequirementsBitwise)
+        .WillByDefault(testing::Return(calcRequirementsBitwise(subsystemRequirements)));
+}
+
 CommandMock::~CommandMock() {}
 }  // namespace tap::mock

@@ -38,10 +38,10 @@ public:
 
     MOCK_METHOD(void, run, (), (override));
     MOCK_METHOD(void, addCommand, (control::Command *), (override));
-    MOCK_METHOD(void, addOrQueueCommand, (control::Command *), (override));
     MOCK_METHOD(void, removeCommand, (control::Command *, bool), (override));
     MOCK_METHOD(bool, isCommandScheduled, (const control::Command *), (const override));
     MOCK_METHOD(void, registerSubsystem, (control::Subsystem *), (override));
+    MOCK_METHOD(void, setSetSchedulerInertFn, (control::SetSchedulerInertFn), (override));
     MOCK_METHOD(bool, isSubsystemRegistered, (const control::Subsystem *), (const override));
     MOCK_METHOD(void, startHardwareTests, (), (override));
     MOCK_METHOD(void, stopHardwareTests, (), (override));

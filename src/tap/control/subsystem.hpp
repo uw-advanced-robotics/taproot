@@ -93,6 +93,14 @@ public:
      */
     virtual void refresh() {}
 
+    /**
+     * Called by the scheduler's run function when the scheduler is inert. This function should
+     * render the subsystem inert. In other words, any motors or actuators should be disabled by
+     * this function. For something like a lift where it would be dangerous to completely disable
+     * motors, the subsystem may run some controller to hold it in place.
+     */
+    virtual void inertRefresh() {}
+
     mockable inline bool isHardwareTestComplete() const { return hardwareTestsComplete; }
 
     mockable inline void setHardwareTestsIncomplete()

@@ -32,6 +32,7 @@ class CommandMock : public control::Command
 {
 public:
     CommandMock();
+    CommandMock(const std::set<control::Subsystem *> &subsystemRequirements);
     virtual ~CommandMock();
 
     MOCK_METHOD(

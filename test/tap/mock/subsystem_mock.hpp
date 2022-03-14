@@ -38,6 +38,7 @@ public:
     MOCK_METHOD(void, setDefaultCommand, (control::Command * defaultCommand), (override));
     MOCK_METHOD(control::Command *, getDefaultCommand, (), (const override));
     MOCK_METHOD(void, refresh, (), (override));
+    MOCK_METHOD(void, inertRefresh, (), (override));
     MOCK_METHOD(bool, isHardwareTestComplete, (), (const override));
     MOCK_METHOD(void, setHardwareTestsComplete, (), (override));
     MOCK_METHOD(void, setHardwareTestsIncomplete, (), (override));

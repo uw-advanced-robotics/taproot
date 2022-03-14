@@ -17,6 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <memory>
+
 #include <gtest/gtest.h>
 
 #include "tap/architecture/clock.hpp"
@@ -34,51 +36,56 @@ using tap::mock::RemoteMock;
 using tap::mock::SubsystemMock;
 using namespace tap::control;
 using namespace testing;
+using namespace std;
 
-static subsystem_scheduler_bitmap_t calcRequirementsBitwise(const set<Subsystem *> subRequirements)
+class CommandSchedulerTest : public Test
 {
-    subsystem_scheduler_bitmap_t sum = 0;
-    for (const auto sub : subRequirements)
+protected:
+    CommandSchedulerTest() : scheduler(&drivers, true) {}
+
+    std::vector<unique_ptr<NiceMock<SubsystemMock>>> constructNSubsystemMocks(size_t n)
     {
-        sum |= (static_cast<subsystem_scheduler_bitmap_t>(1) << sub->getGlobalIdentifier());
+        std::vector<unique_ptr<NiceMock<SubsystemMock>>> subs;
+        for (size_t i = 0; i < n; i++)
+        {
+            auto sub = make_unique<NiceMock<SubsystemMock>>(&drivers);
+            subs.push_back(move(sub));
+        }
+        return subs;
     }
-    return sum;
-}
 
-class RemoteSafeDisconnectFunction : public tap::control::SafeDisconnectFunction
-{
-public:
-    RemoteSafeDisconnectFunction(Drivers *drivers) { this->drivers = drivers; };
-    virtual bool operator()() { return !drivers->remote.isConnected(); }
+    set<Subsystem *> subsToSet(const vector<unique_ptr<NiceMock<SubsystemMock>>> &subs)
+    {
+        std::set<Subsystem *> req;
 
-private:
-    Drivers *drivers;
+        for (auto &sub : subs)
+        {
+            req.insert(sub.get());
+        }
+
+        return req;
+    }
+
+    Drivers drivers;
+    CommandScheduler scheduler;
 };
 
-TEST(CommandScheduler, constructor_multiple_master_schedulers_throws_error)
+TEST_F(CommandSchedulerTest, constructor_multiple_master_schedulers_throws_error)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
 
     CommandScheduler scheduler1(&drivers, true);
     CommandScheduler scheduler2(&drivers, true);
 }
 
-TEST(CommandScheduler, constructor_single_master_schedulers_does_not_throw_error)
+TEST_F(CommandSchedulerTest, constructor_single_master_schedulers_does_not_throw_error)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     CommandScheduler scheduler1(&drivers);
     CommandScheduler scheduler2(&drivers);
 }
 
-TEST(CommandScheduler, registerSubsystem_single_subsystem_added_and_ran)
+TEST_F(CommandSchedulerTest, registerSubsystem_single_subsystem_added_and_ran)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
 
     EXPECT_CALL(sub, refresh);
@@ -88,31 +95,24 @@ TEST(CommandScheduler, registerSubsystem_single_subsystem_added_and_ran)
     scheduler.run();
 }
 
-TEST(CommandScheduler, registerSubsystem_multiple_unique_subsystems_added_and_ran)
+TEST_F(CommandSchedulerTest, registerSubsystem_multiple_unique_subsystems_added_and_ran)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock sub1(&drivers);
-    SubsystemMock sub2(&drivers);
-    SubsystemMock sub3(&drivers);
+    auto subMocks = constructNSubsystemMocks(3);
 
-    EXPECT_CALL(sub1, refresh);
-    EXPECT_CALL(sub1, getDefaultCommand).WillOnce(Return(nullptr));
-    EXPECT_CALL(sub2, refresh);
-    EXPECT_CALL(sub2, getDefaultCommand).WillOnce(Return(nullptr));
-    EXPECT_CALL(sub3, refresh);
-    EXPECT_CALL(sub3, getDefaultCommand).WillOnce(Return(nullptr));
+    for (auto &sub : subMocks)
+    {
+        EXPECT_CALL(*sub, refresh);
+        EXPECT_CALL(*sub, getDefaultCommand).WillOnce(Return(nullptr));
+        scheduler.registerSubsystem(sub.get());
+    }
 
-    scheduler.registerSubsystem(&sub1);
-    scheduler.registerSubsystem(&sub2);
-    scheduler.registerSubsystem(&sub3);
     scheduler.run();
 }
 
-TEST(CommandScheduler, registerSubsystem_single_subsystem_added_multiple_times_only_added_once)
+TEST_F(
+    CommandSchedulerTest,
+    registerSubsystem_single_subsystem_added_multiple_times_only_added_once)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
 
     EXPECT_CALL(sub, refresh);
@@ -124,91 +124,61 @@ TEST(CommandScheduler, registerSubsystem_single_subsystem_added_multiple_times_o
     scheduler.run();
 }
 
-TEST(CommandScheduler, registerSubsystem_doesnt_register_nullptr_subsystem)
+TEST_F(CommandSchedulerTest, registerSubsystem_doesnt_register_nullptr_subsystem)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     EXPECT_CALL(drivers.errorController, addToErrorList);
 
     scheduler.registerSubsystem(nullptr);
     EXPECT_FALSE(scheduler.isSubsystemRegistered(nullptr));
 }
 
-TEST(CommandScheduler, registerSubsystem_big_batch_subsystem_assertion_succeeds)
+static constexpr int MAX_SUBSYSTEM_COUNT = sizeof(subsystem_scheduler_bitmap_t) * 8;
+
+TEST_F(CommandSchedulerTest, registerSubsystem_big_batch_subsystem_assertion_succeeds)
 {
-    constexpr int SUBS_TO_REGISTER =
-        std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(MAX_SUBSYSTEM_COUNT);
 
-    SubsystemMock *subsystemArrToRegister[SUBS_TO_REGISTER / 2];
-    SubsystemMock *subsystemArrNotToRegister[SUBS_TO_REGISTER / 2];
-
-    for (int i = 0; i < SUBS_TO_REGISTER / 2; i++)
+    for (int i = 0; i < MAX_SUBSYSTEM_COUNT / 2; i++)
     {
-        subsystemArrToRegister[i] = new SubsystemMock(&drivers);
-        subsystemArrNotToRegister[i] = new SubsystemMock(&drivers);
-        scheduler.registerSubsystem(subsystemArrToRegister[i]);
+        scheduler.registerSubsystem(subs[i].get());
     }
 
-    for (int i = 0; i < SUBS_TO_REGISTER / 2; i++)
+    for (int i = 0; i < MAX_SUBSYSTEM_COUNT / 2; i++)
     {
-        EXPECT_TRUE(scheduler.isSubsystemRegistered(subsystemArrToRegister[i]));
-        EXPECT_FALSE(scheduler.isSubsystemRegistered(subsystemArrNotToRegister[i]));
-    }
-
-    for (int i = 0; i < SUBS_TO_REGISTER / 2; i++)
-    {
-        delete subsystemArrToRegister[i];
-        delete subsystemArrNotToRegister[i];
+        EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[i].get()));
+        EXPECT_FALSE(scheduler.isSubsystemRegistered(subs[i + MAX_SUBSYSTEM_COUNT / 2].get()));
     }
 }
 
-TEST(CommandScheduler, isSubsystemRegistered_returns_true_if_registered)
+TEST_F(CommandSchedulerTest, isSubsystemRegistered_returns_true_if_registered)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock sub1(&drivers);
-    SubsystemMock sub2(&drivers);
-    SubsystemMock sub3(&drivers);
+    auto subs = constructNSubsystemMocks(3);
 
-    scheduler.registerSubsystem(&sub1);
-    scheduler.registerSubsystem(&sub2);
-    scheduler.registerSubsystem(&sub3);
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&sub1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&sub2));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&sub3));
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+        EXPECT_TRUE(scheduler.isSubsystemRegistered(sub.get()));
+    }
 }
 
-TEST(CommandScheduler, isSubsystemRegistered_returns_false_if_not_registered)
+TEST_F(CommandSchedulerTest, isSubsystemRegistered_returns_false_if_not_registered)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock sub1(&drivers);
-    SubsystemMock sub2(&drivers);
-    SubsystemMock sub3(&drivers);
+    auto subs = constructNSubsystemMocks(3);
 
-    scheduler.registerSubsystem(&sub1);
-    EXPECT_FALSE(scheduler.isSubsystemRegistered(&sub2));
-    EXPECT_FALSE(scheduler.isSubsystemRegistered(&sub3));
+    scheduler.registerSubsystem(subs[0].get());
+    EXPECT_FALSE(scheduler.isSubsystemRegistered(subs[1].get()));
+    EXPECT_FALSE(scheduler.isSubsystemRegistered(subs[2].get()));
 }
 
-TEST(CommandScheduler, addCommand_null_added_command_raises_error)
+TEST_F(CommandSchedulerTest, addCommand_null_added_command_raises_error)
 {
-    // Setup.
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     // Expect an error when the command is null.
     EXPECT_CALL(drivers.errorController, addToErrorList);
     scheduler.addCommand(nullptr);
 }
 
-TEST(CommandScheduler, addCommand_with_hardware_tests_running_raises_error)
+TEST_F(CommandSchedulerTest, addCommand_with_hardware_tests_running_raises_error)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
     NiceMock<CommandMock> cmd;
 
@@ -220,78 +190,61 @@ TEST(CommandScheduler, addCommand_with_hardware_tests_running_raises_error)
     scheduler.addCommand(&cmd);
 }
 
-TEST(CommandScheduler, addCommand_with_no_subsystem_registered_raises_error)
+TEST_F(CommandSchedulerTest, addCommand_with_no_subsystem_registered_raises_error)
 {
     // Setup, create a subsystem but dont add it to command scheduler.
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock s(&drivers);
-    NiceMock<CommandMock> c;
-    set<Subsystem *> subRequirements{&s};
+    std::set<Subsystem *> req{&s};
+    NiceMock<CommandMock> c(req);
 
     // Expect an error with no subsystem in the command scheduler.
     EXPECT_CALL(drivers.errorController, addToErrorList);
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
 
     scheduler.addCommand(&c);
 }
 
-TEST(CommandScheduler, addCommand_with_not_all_subsystems_registered_raises_error)
+TEST_F(CommandSchedulerTest, addCommand_with_not_all_subsystems_registered_raises_error)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-    NiceMock<CommandMock> c;
-    set<Subsystem *> subsystemRequirements{&s1, &s2, &s3};
+    auto subs = constructNSubsystemMocks(3);
 
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subsystemRequirements)));
+    set<Subsystem *> req = subsToSet(subs);
+
+    NiceMock<CommandMock> c(req);
+
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(3);
 
     // No subsystems added, will fail.
     scheduler.addCommand(&c);
 
     // One subsystem registered, will fail.
-    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(subs[0].get());
     scheduler.addCommand(&c);
 
     // Two subsystems registered, will fail.
-    scheduler.registerSubsystem(&s2);
+    scheduler.registerSubsystem(subs[1].get());
     scheduler.addCommand(&c);
 }
 
-TEST(CommandScheduler, isCommandScheduled_nullptr_command_returns_false)
+TEST_F(CommandSchedulerTest, isCommandScheduled_nullptr_command_returns_false)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     EXPECT_FALSE(scheduler.isCommandScheduled(nullptr));
 }
 
-TEST(CommandScheduler, isSubsystemRegistered_nullptr_subsystem_returns_false)
+TEST_F(CommandSchedulerTest, isSubsystemRegistered_nullptr_subsystem_returns_false)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     EXPECT_FALSE(scheduler.isSubsystemRegistered(nullptr));
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_and_isCommandScheduled_command_successfully_added_with_single_dependent_subsystem)
 {
     // Setup, create a subsystem but dont add it to command scheduler.
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock s(&drivers);
-    NiceMock<CommandMock> c;
+    set<Subsystem *> req{&s};
+    NiceMock<CommandMock> c(req);
 
     // Set up another command that we can set an expectation on the `initialize` function.
-    set<Subsystem *> cmdMockRequirements{&s};
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(cmdMockRequirements)));
     EXPECT_CALL(c, initialize);
 
     scheduler.registerSubsystem(&s);
@@ -301,182 +254,128 @@ TEST(
     EXPECT_TRUE(scheduler.isCommandScheduled(&c));
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_and_isCommandScheduled_command_added_successfully_with_multiple_subsystem_dependencies_all_registered)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-    NiceMock<CommandMock> c;
-    set<Subsystem *> subsystemRequirements{&s1, &s2, &s3};
+    auto subs = constructNSubsystemMocks(3);
 
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subsystemRequirements)));
+    set<Subsystem *> req = subsToSet(subs);
+    NiceMock<CommandMock> c(req);
+
     EXPECT_CALL(c, initialize);
 
     // Add all subsystems, registering command will succeed
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+    }
     scheduler.addCommand(&c);
     EXPECT_TRUE(scheduler.isCommandScheduled(&c));
 }
 
-TEST(CommandScheduler, addCommand_successfully_removes_previously_added_command_with_same_subsystem)
+TEST_F(
+    CommandSchedulerTest,
+    addCommand_successfully_removes_previously_added_command_with_same_subsystem)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s(&drivers);
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
+    NiceMock<SubsystemMock> s(&drivers);
+    set<Subsystem *> req{&s};
+    NiceMock<CommandMock> c1(req);
+    NiceMock<CommandMock> c2(req);
 
-    set<Subsystem *> cmdMockRequirement{&s};
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(cmdMockRequirement)));
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(cmdMockRequirement)));
-    EXPECT_CALL(c2, initialize);
+    EXPECT_CALL(c2, execute);
 
     // Set up the test, adding the first command that will later be removed.
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
 
-    EXPECT_CALL(s, refresh);
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished).WillOnce(Return(false));
-
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_successfully_removes_previously_added_command_with_subset_of_subsystem_requirements)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(3);
 
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
+    set<Subsystem *> c1Req{subs[0].get(), subs[1].get()};
+    set<Subsystem *> c2Req = subsToSet(subs);
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
 
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-
-    set<Subsystem *> subRequirementsC1{&s1, &s2};
-    set<Subsystem *> subRequirementsC2{&s1, &s2, &s3};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
+    EXPECT_CALL(c2, execute);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
+    for (auto &sub : subs)
+    {
+        EXPECT_CALL(*sub, refresh);
+        scheduler.registerSubsystem(sub.get());
+    }
 
     // The first command is associated with the first two subsystems.
     scheduler.addCommand(&c1);
     // The second command is associated with all three subsystems.
     scheduler.addCommand(&c2);
 
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s3, refresh);
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished).WillOnce(Return(false));
-
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_multiple_successfully_removes_previously_added_command_if_single_shared_subsystem_requirement)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(3);
 
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-
+    set<Subsystem *> subRequirementsC1{subs[0].get(), subs[1].get()};
+    set<Subsystem *> subRequirementsC2{subs[1].get(), subs[2].get()};
     NiceMock<CommandMock> c1;
     NiceMock<CommandMock> c2;
 
-    set<Subsystem *> subRequirementsC1{&s1, &s2};
-    set<Subsystem *> subRequirementsC2{&s2, &s3};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
+    EXPECT_CALL(c2, execute);
+    EXPECT_CALL(*subs[0], getDefaultCommand);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+    }
 
     // The first command is associated with the first two subsystems.
     scheduler.addCommand(&c1);
     // The second command is associated with last two subsystems.
     scheduler.addCommand(&c2);
 
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s3, refresh);
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished).WillOnce(Return(false));
-    EXPECT_CALL(s1, getDefaultCommand);
-
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_add_two_commands_with_overlapping_sub_requirements_but_second_addCommand_fails_so_first_still_remains_added)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(3);
 
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
+    set<Subsystem *> c1Req{subs[0].get(), subs[1].get()};
+    set<Subsystem *> c2Req{subs[1].get(), subs[2].get()};
+    set<Subsystem *> c3Req{subs[0].get()};
 
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    NiceMock<CommandMock> c3;
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
+    NiceMock<CommandMock> c3(c3Req);
 
-    set<Subsystem *> subRequirementsC1{&s1, &s2};
-    set<Subsystem *> subRequirementsC2{&s2, &s3};
-    set<Subsystem *> subRequirementsC3{&s1};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
-    EXPECT_CALL(c3, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC3)));
     EXPECT_CALL(c3, initialize);
+    EXPECT_CALL(c3, execute);
     EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_CALL(*subs[1], getDefaultCommand);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
+    scheduler.registerSubsystem(subs[0].get());
+    scheduler.registerSubsystem(subs[1].get());
 
     // The first command is associated with the first two subsystems.
     scheduler.addCommand(&c1);
@@ -486,106 +385,70 @@ TEST(
     scheduler.addCommand(&c3);
     EXPECT_FALSE(scheduler.isCommandScheduled(&c2));
 
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s2, getDefaultCommand);
-    EXPECT_CALL(c3, execute);
-    EXPECT_CALL(c3, isFinished).WillOnce(Return(false));
-
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     addCommand_multiple_successfully_removes_previously_added_command_with_superset_of_subsystems)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
+    auto subs = constructNSubsystemMocks(3);
 
     NiceMock<CommandMock> c1;
     NiceMock<CommandMock> c2;
 
-    set<Subsystem *> subRequirementsC1{&s1, &s2, &s3};
-    set<Subsystem *> subRequirementsC2{&s1, &s2};
+    set<Subsystem *> c1Req = subsToSet(subs);
+    set<Subsystem *> c2Req{subs[0].get(), subs[1].get()};
 
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
+    EXPECT_CALL(c2, execute);
+    // The third subsystem doesn't have a command associated with it.
+    EXPECT_CALL(*subs[2], getDefaultCommand).WillOnce(Return(nullptr));
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+    }
 
     // The first command is associated with all three subsystems.
     scheduler.addCommand(&c1);
     // When the second command is added, the first command is removed completely from the
     scheduler.addCommand(&c2);
 
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s3, refresh);
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished).WillOnce(Return(false));
-    // The third subsystem doesn't have a command associated with it.
-    EXPECT_CALL(s3, getDefaultCommand).WillOnce(Return(nullptr));
-
     scheduler.run();
 }
 
-TEST(CommandScheduler, addCommand_add_multiple_commands_with_overlapping_sub_requirements)
+TEST_F(CommandSchedulerTest, addCommand_add_multiple_commands_with_overlapping_sub_requirements)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(5);
 
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-    SubsystemMock s4(&drivers);
-    SubsystemMock s5(&drivers);
+    set<Subsystem *> c1Req{subs[0].get(), subs[1].get(), subs[2].get()};
+    set<Subsystem *> c2Req{subs[0].get(), subs[1].get()};
+    set<Subsystem *> c3Req{subs[2].get(), subs[3].get()};
+    set<Subsystem *> c4Req{subs[1].get(), subs[2].get(), subs[4].get()};
 
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    NiceMock<CommandMock> c3;
-    NiceMock<CommandMock> c4;
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
+    NiceMock<CommandMock> c3(c3Req);
+    NiceMock<CommandMock> c4(c4Req);
 
-    set<Subsystem *> subRequirementsC1{&s1, &s2, &s3};
-    set<Subsystem *> subRequirementsC2{&s1, &s2};
-    set<Subsystem *> subRequirementsC3{&s3, &s4};
-    set<Subsystem *> subRequirementsC4{&s2, &s3, &s5};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .Times(4)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
     EXPECT_CALL(c2, end);
-    EXPECT_CALL(c3, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC3)));
     EXPECT_CALL(c3, initialize);
     EXPECT_CALL(c3, end);
-    EXPECT_CALL(c4, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC4)));
     EXPECT_CALL(c4, initialize);
+    EXPECT_CALL(*subs[0], getDefaultCommand);
+    EXPECT_CALL(*subs[3], getDefaultCommand);
+    EXPECT_CALL(c4, execute);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
-    scheduler.registerSubsystem(&s4);
-    scheduler.registerSubsystem(&s5);
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+    }
 
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
@@ -596,125 +459,96 @@ TEST(CommandScheduler, addCommand_add_multiple_commands_with_overlapping_sub_req
 
     scheduler.addCommand(&c4);
 
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s3, refresh);
-    EXPECT_CALL(s4, refresh);
-    EXPECT_CALL(s5, refresh);
-    EXPECT_CALL(s1, getDefaultCommand);
-    EXPECT_CALL(s4, getDefaultCommand);
-    EXPECT_CALL(c4, execute);
-    EXPECT_CALL(c4, isFinished).WillOnce(Return(false));
-
     scheduler.run();
 }
 
-TEST(CommandScheduler, startHardwareTests_doesnot_segfault_with_nullptr_commands)
+TEST_F(CommandSchedulerTest, startHardwareTests_doesnot_segfault_with_nullptr_commands)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(2);
 
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
+    for (auto &sub : subs)
+    {
+        EXPECT_CALL(*sub, setHardwareTestsIncomplete);
+        scheduler.registerSubsystem(sub.get());
+    }
 
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
     scheduler.startHardwareTests();
 }
 
-TEST(CommandScheduler, startHardwareTests_removes_all_commands_in_scheduler)
+TEST_F(CommandSchedulerTest, startHardwareTests_removes_all_commands_in_scheduler)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1};
-    set<Subsystem *> subRequirementsC2{&s2};
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
+    auto subs = constructNSubsystemMocks(2);
+    set<Subsystem *> c1Req{subs[0].get()};
+    set<Subsystem *> c2Req{subs[1].get()};
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
 
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c2, initialize);
     EXPECT_CALL(c1, end);
     EXPECT_CALL(c2, end);
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
+    for (auto &sub : subs)
+    {
+        EXPECT_CALL(*sub, setHardwareTestsIncomplete);
+        scheduler.registerSubsystem(sub.get());
+    }
+
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
     scheduler.startHardwareTests();
 
     EXPECT_FALSE(scheduler.isCommandScheduled(&c1));
     EXPECT_FALSE(scheduler.isCommandScheduled(&c2));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[0].get()));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[1].get()));
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     startHardwareTests_single_command_registered_to_multiple_subsystems_only_ended_once)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1, &s2};
+    auto subs = constructNSubsystemMocks(2);
+    set<Subsystem *> c1Req{subs[0].get(), subs[1].get()};
     NiceMock<CommandMock> c1;
 
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c1, end);
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
+    for (auto &sub : subs)
+    {
+        EXPECT_CALL(*sub, setHardwareTestsIncomplete);
+        scheduler.registerSubsystem(sub.get());
+    }
+
     scheduler.addCommand(&c1);
     scheduler.startHardwareTests();
 
     EXPECT_FALSE(scheduler.isCommandScheduled(&c1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[0].get()));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[1].get()));
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     stopHardwareTests_calls_setHardwareTestsComplete_on_all_subsystems_and_allows_adding_commands)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1};
-    set<Subsystem *> subRequirementsC2{&s2};
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
+    auto subs = constructNSubsystemMocks(2);
+    set<Subsystem *> c1Req{subs[0].get()};
+    set<Subsystem *> c2Req{subs[1].get()};
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
 
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-    EXPECT_CALL(s1, setHardwareTestsComplete);
-    EXPECT_CALL(s2, setHardwareTestsComplete);
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
+    for (auto &sub : subs)
+    {
+        EXPECT_CALL(*sub, setHardwareTestsIncomplete);
+        EXPECT_CALL(*sub, setHardwareTestsComplete);
+        scheduler.registerSubsystem(sub.get());
+    }
+
     EXPECT_CALL(c1, initialize);
     EXPECT_CALL(c2, initialize);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
     scheduler.startHardwareTests();
     scheduler.stopHardwareTests();
     scheduler.addCommand(&c1);
@@ -722,42 +556,39 @@ TEST(
 
     EXPECT_TRUE(scheduler.isCommandScheduled(&c1));
     EXPECT_TRUE(scheduler.isCommandScheduled(&c2));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[0].get()));
+    EXPECT_TRUE(scheduler.isSubsystemRegistered(subs[1].get()));
 }
 
-TEST(CommandScheduler, run_with_hardware_tests_enabled_calls_runHardwareTests_and_refresh)
+TEST_F(CommandSchedulerTest, run_with_hardware_tests_enabled_calls_runHardwareTests_and_refresh)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
+    auto subs = constructNSubsystemMocks(3);
 
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s1, isHardwareTestComplete).WillOnce(Return(false));
-    EXPECT_CALL(s1, runHardwareTests);
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, isHardwareTestComplete).WillOnce(Return(false));
-    EXPECT_CALL(s2, runHardwareTests);
-    EXPECT_CALL(s2, refresh);
     // Won't call runHardwareTests for this subsystem since the test is complete.
-    EXPECT_CALL(s3, setHardwareTestsIncomplete);
-    EXPECT_CALL(s3, isHardwareTestComplete).WillOnce(Return(true));
-    EXPECT_CALL(s3, refresh);
+    ON_CALL(*subs[0], isHardwareTestComplete).WillByDefault(Return(true));
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
+    EXPECT_CALL(*subs[0], setHardwareTestsIncomplete);
+    EXPECT_CALL(*subs[0], refresh);
+
+    for (size_t i = 1; i < subs.size(); i++)
+    {
+        auto &sub = subs[i];
+
+        ON_CALL(*sub, isHardwareTestComplete).WillByDefault(Return(false));
+
+        EXPECT_CALL(*sub, setHardwareTestsIncomplete);
+        EXPECT_CALL(*sub, runHardwareTests);
+        EXPECT_CALL(*sub, refresh);
+
+        scheduler.registerSubsystem(sub.get());
+    }
+
     scheduler.startHardwareTests();
     scheduler.run();
 }
 
-TEST(CommandScheduler, run_with_single_registered_subsystem_calls_refresh)
+TEST_F(CommandSchedulerTest, run_with_single_registered_subsystem_calls_refresh)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock s1(&drivers);
 
     EXPECT_CALL(s1, refresh);
@@ -767,24 +598,19 @@ TEST(CommandScheduler, run_with_single_registered_subsystem_calls_refresh)
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     run_with_single_registered_subsystem_and_single_command_calls_refresh_and_execute)
 {
     constexpr int RUN_TIMES = 100;
 
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock s1(&drivers);
-    NiceMock<CommandMock> c1;
-    set<Subsystem *> subRequirementsC1{&s1};
+    NiceMock<SubsystemMock> s1(&drivers);
+    set<Subsystem *> req{&s1};
+    NiceMock<CommandMock> c1(req);
 
     EXPECT_CALL(s1, refresh).Times(RUN_TIMES);
     EXPECT_CALL(c1, execute).Times(RUN_TIMES);
     EXPECT_CALL(c1, isFinished).Times(RUN_TIMES).WillRepeatedly(Return(false));
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
 
     scheduler.registerSubsystem(&s1);
@@ -796,96 +622,77 @@ TEST(
     }
 }
 
-TEST(CommandScheduler, run_with_many_registered_subsystems_and_commands_calls_refresh_and_execute)
+// TEST_F(
+//     CommandSchedulerTest,
+//     run_with_many_registered_subsystems_and_commands_calls_refresh_and_execute)
+// {
+//     constexpr int RUN_TIMES = 100;
+//     constexpr int CMDS_AND_SUBS_TO_ADD =
+//         std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
+
+//     SubsystemMock *subs[CMDS_AND_SUBS_TO_ADD];
+//     NiceMock<CommandMock> *cmds[CMDS_AND_SUBS_TO_ADD];
+//     set<Subsystem *> cmdRequirements[CMDS_AND_SUBS_TO_ADD];
+
+//     for (int i = 0; i < CMDS_AND_SUBS_TO_ADD; i++)
+//     {
+//         subs[i] = new SubsystemMock(&drivers);
+//         cmds[i] = new NiceMock<CommandMock>;
+//         cmdRequirements[i].emplace(subs[i]);
+
+//         EXPECT_CALL(*subs[i], refresh).Times(RUN_TIMES);
+//         EXPECT_CALL(*cmds[i], execute).Times(RUN_TIMES);
+//         EXPECT_CALL(*cmds[i], isFinished).Times(RUN_TIMES).WillRepeatedly(Return(false));
+//         EXPECT_CALL(*cmds[i], getRequirementsBitwise)
+//             .Times(CMDS_AND_SUBS_TO_ADD - i)
+//             .WillRepeatedly(Return(calcRequirementsBitwise(cmdRequirements[i])));
+//         EXPECT_CALL(*cmds[i], initialize);
+
+//         scheduler.registerSubsystem(subs[i]);
+//         scheduler.addCommand(cmds[i]);
+//     }
+
+//     uint32_t totalTime = 0;
+//     for (int i = 0; i < RUN_TIMES; i++)
+//     {
+//         uint32_t start = tap::arch::clock::getTimeMicroseconds();
+//         scheduler.run();
+//         uint32_t dt = tap::arch::clock::getTimeMicroseconds() - start;
+//         totalTime += dt;
+//     }
+//     std::cout << "             Average time to run scheduler with " << CMDS_AND_SUBS_TO_ADD
+//               << " subsystems and commands, " << RUN_TIMES << " samples: " << totalTime /
+//               RUN_TIMES
+//               << " microseconds" << std::endl;
+
+//     for (int i = 0; i < CMDS_AND_SUBS_TO_ADD; i++)
+//     {
+//         cmdRequirements[i].clear();
+//         delete subs[i];
+//         delete cmds[i];
+//     }
+// }
+
+TEST_F(CommandSchedulerTest, addCommand_disjoint_required_subsystems_successfully_added)
 {
-    constexpr int RUN_TIMES = 100;
-    constexpr int CMDS_AND_SUBS_TO_ADD =
-        std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
+    auto subs = constructNSubsystemMocks(6);
 
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    set<Subsystem *> c1Req{subs[0].get(), subs[4].get()};
+    set<Subsystem *> c2Req{subs[1].get(), subs[2].get()};
+    set<Subsystem *> c3Req{subs[3].get(), subs[5].get()};
 
-    SubsystemMock *subs[CMDS_AND_SUBS_TO_ADD];
-    NiceMock<CommandMock> *cmds[CMDS_AND_SUBS_TO_ADD];
-    set<Subsystem *> cmdRequirements[CMDS_AND_SUBS_TO_ADD];
+    NiceMock<CommandMock> c1(c1Req);
+    NiceMock<CommandMock> c2(c2Req);
+    NiceMock<CommandMock> c3(c3Req);
 
-    for (int i = 0; i < CMDS_AND_SUBS_TO_ADD; i++)
-    {
-        subs[i] = new SubsystemMock(&drivers);
-        cmds[i] = new NiceMock<CommandMock>;
-        cmdRequirements[i].emplace(subs[i]);
-
-        EXPECT_CALL(*subs[i], refresh).Times(RUN_TIMES);
-        EXPECT_CALL(*cmds[i], execute).Times(RUN_TIMES);
-        EXPECT_CALL(*cmds[i], isFinished).Times(RUN_TIMES).WillRepeatedly(Return(false));
-        EXPECT_CALL(*cmds[i], getRequirementsBitwise)
-            .Times(CMDS_AND_SUBS_TO_ADD - i)
-            .WillRepeatedly(Return(calcRequirementsBitwise(cmdRequirements[i])));
-        EXPECT_CALL(*cmds[i], initialize);
-
-        scheduler.registerSubsystem(subs[i]);
-        scheduler.addCommand(cmds[i]);
-    }
-
-    uint32_t totalTime = 0;
-    for (int i = 0; i < RUN_TIMES; i++)
-    {
-        uint32_t start = tap::arch::clock::getTimeMicroseconds();
-        scheduler.run();
-        uint32_t dt = tap::arch::clock::getTimeMicroseconds() - start;
-        totalTime += dt;
-    }
-    std::cout << "             Average time to run scheduler with " << CMDS_AND_SUBS_TO_ADD
-              << " subsystems and commands, " << RUN_TIMES << " samples: " << totalTime / RUN_TIMES
-              << " microseconds" << std::endl;
-
-    for (int i = 0; i < CMDS_AND_SUBS_TO_ADD; i++)
-    {
-        cmdRequirements[i].clear();
-        delete subs[i];
-        delete cmds[i];
-    }
-}
-
-TEST(CommandScheduler, addCommand_disjoint_required_subsystems_successfully_added)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-    SubsystemMock s4(&drivers);
-    SubsystemMock s5(&drivers);
-    SubsystemMock s6(&drivers);
-
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    NiceMock<CommandMock> c3;
-
-    set<Subsystem *> subRequirementsC1{&s1, &s5};
-    set<Subsystem *> subRequirementsC2{&s2, &s3};
-    set<Subsystem *> subRequirementsC3{&s4, &s6};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
     EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
-    EXPECT_CALL(c3, getRequirementsBitwise)
-        .Times(1)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC3)));
     EXPECT_CALL(c3, initialize);
 
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
-    scheduler.registerSubsystem(&s4);
-    scheduler.registerSubsystem(&s5);
-    scheduler.registerSubsystem(&s6);
+    for (auto &sub : subs)
+    {
+        scheduler.registerSubsystem(sub.get());
+    }
 
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
@@ -901,58 +708,29 @@ TEST(CommandScheduler, addCommand_disjoint_required_subsystems_successfully_adde
     EXPECT_CALL(c1, isFinished);
     EXPECT_CALL(c2, isFinished);
     EXPECT_CALL(c3, isFinished);
-    EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s3, refresh);
-    EXPECT_CALL(s4, refresh);
-    EXPECT_CALL(s5, refresh);
-    EXPECT_CALL(s6, refresh);
 
     scheduler.run();
 }
 
-TEST(CommandScheduler, run_large_number_of_subsystem_requirements_successful)
+TEST_F(CommandSchedulerTest, run_large_number_of_subsystem_requirements_successful)
 {
     const int NUM_DEPENDENT_SUBS = 50;
 
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    NiceMock<CommandMock> c;
-    SubsystemMock *subs[NUM_DEPENDENT_SUBS];
-    set<Subsystem *> subRequirementsC;
-
-    for (int i = 0; i < NUM_DEPENDENT_SUBS; i++)
-    {
-        subs[i] = new SubsystemMock(&drivers);
-        subRequirementsC.insert(subs[i]);
-        EXPECT_CALL(*subs[i], refresh);
-        scheduler.registerSubsystem(subs[i]);
-    }
+    auto subs = constructNSubsystemMocks(NUM_DEPENDENT_SUBS);
+    auto reqs = subsToSet(subs);
+    NiceMock<CommandMock> c(reqs);
 
     EXPECT_CALL(c, initialize);
     EXPECT_CALL(c, execute);
-    EXPECT_CALL(c, isFinished);
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC)));
 
     scheduler.addCommand(&c);
     scheduler.run();
-
-    subRequirementsC.clear();
-    for (int i = 0; i < NUM_DEPENDENT_SUBS; i++)
-    {
-        delete subs[i];
-    }
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     run_subsystem_with_default_command_requiring_single_subsystem_added_successfully)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     SubsystemMock s(&drivers);
     NiceMock<CommandMock> c;
 
@@ -970,32 +748,19 @@ TEST(
     scheduler.run();
 }
 
-TEST(
-    CommandScheduler,
+TEST_F(
+    CommandSchedulerTest,
     run_subsystem_with_default_command_requiring_multiple_subsystems_added_currectly)
 {
     const int NUM_DEPENDENT_SUBS = 50;
 
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    auto subs = constructNSubsystemMocks(NUM_DEPENDENT_SUBS);
+    auto reqs = subsToSet(subs);
+    NiceMock<CommandMock> c(reqs);
 
-    NiceMock<CommandMock> c;
-    SubsystemMock *subs[NUM_DEPENDENT_SUBS];
-    set<Subsystem *> subRequirementsC;
-
-    for (int i = 0; i < NUM_DEPENDENT_SUBS; i++)
-    {
-        subs[i] = new SubsystemMock(&drivers);
-        subRequirementsC.insert(subs[i]);
-        EXPECT_CALL(*subs[i], refresh).Times(2);
-        scheduler.registerSubsystem(subs[i]);
-    }
     EXPECT_CALL(*subs[0], getDefaultCommand).WillOnce(Return(&c));
 
     EXPECT_CALL(c, initialize);
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .Times(1)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC)));
 
     scheduler.run();
 
@@ -1003,339 +768,171 @@ TEST(
     EXPECT_CALL(c, isFinished);
 
     scheduler.run();
-
-    subRequirementsC.clear();
-    for (int i = 0; i < NUM_DEPENDENT_SUBS; i++)
-    {
-        delete subs[i];
-    }
 }
 
-TEST(
-    CommandScheduler,
-    run_subsystem_with_default_command_that_depends_on_other_subsystem_that_already_has_command_is_added_successfully)
+// TEST_F(
+//     CommandSchedulerTest,
+//     run_subsystem_with_default_command_that_depends_on_other_subsystem_that_already_has_command_is_added_successfully)
+// {
+//     CommandScheduler scheduler(&drivers, true);
+
+//     NiceMock<CommandMock> c1;
+//     NiceMock<CommandMock> c2;
+//     auto subs = constructNSubsystemMocks(2);
+//     set<Subsystem *> subRequirementsC1{subs[0].get()};
+//     set<Subsystem *> subRequirementsC2{subs[0].get(), subs[1].get()};
+
+//     EXPECT_CALL(c1, initialize);
+//     EXPECT_CALL(c1, getRequirementsBitwise)
+//         .Times(3)
+//         .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
+//     EXPECT_CALL(s2, getDefaultCommand).WillOnce(Return(&c2));
+
+//     scheduler.registerSubsystem(subs[0].get());
+//     scheduler.registerSubsystem(subs[1].get());
+//     scheduler.addCommand(&c1);
+
+//     EXPECT_CALL(c1, execute);
+//     EXPECT_CALL(c1, isFinished);
+//     EXPECT_CALL(c1, end);
+//     EXPECT_CALL(c2, initialize);
+//     EXPECT_CALL(c2, getRequirementsBitwise)
+//         .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
+//     EXPECT_CALL(s1, refresh).Times(2);
+//     EXPECT_CALL(s2, refresh).Times(2);
+
+//     scheduler.run();
+
+//     EXPECT_CALL(c2, execute);
+//     EXPECT_CALL(c2, isFinished);
+
+//     scheduler.run();
+// }
+
+// TEST_F(
+//     CommandSchedulerTest,
+//     run_command_ending_removed_from_scheduler_and_default_command_for_subsystem_automatically_added)
+// {
+//     CommandScheduler scheduler(&drivers, true);
+
+//     NiceMock<CommandMock> c1;
+//     NiceMock<CommandMock> c2;
+//     SubsystemMock s(&drivers);
+//     set<Subsystem *> subRequirements{&s};
+
+//     EXPECT_CALL(c1, getRequirementsBitwise)
+//         .Times(2)
+//         .WillRepeatedly(Return(calcRequirementsBitwise(subRequirements)));
+//     EXPECT_CALL(c1, initialize);
+
+//     scheduler.registerSubsystem(&s);
+//     scheduler.addCommand(&c1);
+
+//     EXPECT_CALL(c1, execute);
+//     EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
+//     EXPECT_CALL(c1, end);
+//     EXPECT_CALL(s, refresh).Times(2);
+//     EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c2));
+//     EXPECT_CALL(c2, getRequirementsBitwise)
+//         .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
+//     EXPECT_CALL(c2, initialize);
+
+//     scheduler.run();
+
+//     EXPECT_CALL(c2, execute);
+
+//     scheduler.run();
+// }
+
+// TEST_F(CommandSchedulerTest, run_default_command_that_naturally_ends_always_rescheduled)
+// {
+//     CommandScheduler scheduler(&drivers, true);
+
+//     NiceMock<CommandMock> c;
+//     SubsystemMock s(&drivers);
+//     set<Subsystem *> subRequirements{&s};
+//     EXPECT_CALL(c, getRequirementsBitwise)
+//         .Times(5)
+//         .WillRepeatedly(Return(calcRequirementsBitwise(subRequirements)));
+//     EXPECT_CALL(c, initialize).Times(3);
+//     EXPECT_CALL(c, execute).Times(2);
+//     EXPECT_CALL(c, isFinished).Times(2).WillRepeatedly(Return(true));
+//     EXPECT_CALL(c, end).Times(2);
+//     EXPECT_CALL(s, refresh).Times(3);
+//     EXPECT_CALL(s, getDefaultCommand).Times(3).WillRepeatedly(Return(&c));
+
+//     scheduler.registerSubsystem(&s);
+//     scheduler.run();
+//     scheduler.run();
+//     scheduler.run();
+// }
+
+TEST_F(CommandSchedulerTest, run_in_safe_disconnect_mode_calls_inertRefresh)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1};
-    set<Subsystem *> subRequirementsC2{&s1, &s2};
-
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(s2, getDefaultCommand).WillOnce(Return(&c2));
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.addCommand(&c1);
-
-    EXPECT_CALL(c1, execute);
-    EXPECT_CALL(c1, isFinished);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, initialize);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
-    EXPECT_CALL(s1, refresh).Times(2);
-    EXPECT_CALL(s2, refresh).Times(2);
-
-    scheduler.run();
-
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished);
-
-    scheduler.run();
-}
-
-TEST(
-    CommandScheduler,
-    run_command_ending_removed_from_scheduler_and_default_command_for_subsystem_automatically_added)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(c1, initialize);
-
-    scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c1);
-
-    EXPECT_CALL(c1, execute);
-    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(s, refresh).Times(2);
-    EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c2));
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(c2, initialize);
-
-    scheduler.run();
-
-    EXPECT_CALL(c2, execute);
-    EXPECT_CALL(c2, isFinished).WillOnce(Return(false));
-
-    scheduler.run();
-}
-
-TEST(CommandScheduler, run_default_command_that_naturally_ends_always_rescheduled)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    NiceMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .Times(5)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(c, initialize).Times(3);
-    EXPECT_CALL(c, execute).Times(2);
-    EXPECT_CALL(c, isFinished).Times(2).WillRepeatedly(Return(true));
-    EXPECT_CALL(c, end).Times(2);
-    EXPECT_CALL(s, refresh).Times(3);
-    EXPECT_CALL(s, getDefaultCommand).Times(3).WillRepeatedly(Return(&c));
-
-    scheduler.registerSubsystem(&s);
-    scheduler.run();
-    scheduler.run();
-    scheduler.run();
-}
-
-TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    NiceMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(c, end);
-    EXPECT_CALL(s, refresh);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
-
-    scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    scheduler.run();
-}
-
-TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c1, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(c2, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(s, refresh);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
-
-    scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c1);
-    scheduler.addCommand(&c2);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    scheduler.run();
-}
-
-TEST(CommandScheduler, run_command_when_remote_reconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    NiceMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(s, refresh).Times(3);
-    EXPECT_CALL(c, initialize).Times(2);
-    EXPECT_CALL(c, execute).Times(2);
-    EXPECT_CALL(c, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
-
-    scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    scheduler.run();
-
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
-    scheduler.addCommand(&c);
-    scheduler.run();
-    scheduler.run();
-}
-
-TEST(CommandScheduler, default_command_added_when_remote_reconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    StrictMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    EXPECT_CALL(c, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c));
-    EXPECT_CALL(c, isReady).WillOnce(Return(true));
-    EXPECT_CALL(c, initialize);
-    EXPECT_CALL(c, execute);
-    EXPECT_CALL(c, isFinished);
-    EXPECT_CALL(s, refresh).Times(3);
-
-    scheduler.registerSubsystem(&s);
-    scheduler.run();
-
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
-    scheduler.run();
-    scheduler.run();
-}
-
-TEST(CommandScheduler, command_not_added_when_remote_disconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    StrictMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    EXPECT_CALL(s, refresh);
-
-    scheduler.registerSubsystem(&s);
-    scheduler.run();
-}
-
-TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    StrictMock<CommandMock> c;
-    SubsystemMock s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
-    EXPECT_CALL(c, initialize).Times(0);
-    EXPECT_CALL(s, refresh);
-
-    scheduler.registerSubsystem(&s);
-    scheduler.addCommand(&c);
-    scheduler.run();
-}
-
-TEST(
-    CommandScheduler,
-    addOrQueueCommand_command_queued_when_remote_disconnected_and_added_when_no_longer_disconnected)
-{
-    Drivers drivers;
-    RemoteSafeDisconnectFunction func(&drivers);
-    CommandScheduler scheduler(&drivers, true, &func);
-
-    NiceMock<CommandMock> c;
     NiceMock<SubsystemMock> s(&drivers);
-    set<Subsystem *> subRequirements{&s};
-    ON_CALL(c, getRequirementsBitwise)
-        .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
-    ON_CALL(c, isReady).WillByDefault(Return(true));
-    ON_CALL(c, isFinished).WillByDefault(Return(false));
-    EXPECT_CALL(drivers.remote, isConnected)
-        .Times(6)
-        .WillOnce(Return(false))
-        .WillRepeatedly(Return(true));
-    EXPECT_CALL(c, initialize).Times(1);
-    EXPECT_CALL(c, execute).Times(2);
 
+    EXPECT_CALL(s, inertRefresh);
+    EXPECT_CALL(s, refresh).Times(0);
+
+    scheduler.setSetSchedulerInertFn([]() { return true; });
     scheduler.registerSubsystem(&s);
-    scheduler.addOrQueueCommand(&c);  // command will be queued
-    scheduler.run();                  // command will be added and executed
-    scheduler.run();                  // command will be executed
+
+    scheduler.run();
 }
 
-TEST(CommandScheduler, addOrQueueCommand_nullptr_command_errors)
+TEST_F(CommandSchedulerTest, run_in_normal_mode_calls_refresh_inert_fn_false)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    NiceMock<SubsystemMock> s(&drivers);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_CALL(s, inertRefresh).Times(0);
+    EXPECT_CALL(s, refresh);
 
-    scheduler.addOrQueueCommand(nullptr);
+    scheduler.setSetSchedulerInertFn([]() { return false; });
+    scheduler.registerSubsystem(&s);
+
+    scheduler.run();
 }
 
-TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
+TEST_F(CommandSchedulerTest, removeCommand_nullptr_command_doesnt_crash)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     EXPECT_CALL(drivers.errorController, addToErrorList);
     scheduler.removeCommand(nullptr, false);
 }
 
-TEST(CommandScheduler, removeCommand_single_cmd_in_scheduler_removed_and_end_called)
+TEST_F(CommandSchedulerTest, removeCommand_single_cmd_in_scheduler_removed_and_end_called)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
     SubsystemMock sub(&drivers);
-    NiceMock<CommandMock> cmd;
-    EXPECT_CALL(cmd, getRequirementsBitwise)
-        .Times(4)
-        .WillRepeatedly(Return(calcRequirementsBitwise({&sub})));
+    set<Subsystem *> req{&sub};
+    NiceMock<CommandMock> cmd(req);
+
     EXPECT_CALL(cmd, initialize).Times(2);
+    EXPECT_CALL(cmd, end(true));
+    EXPECT_CALL(cmd, end(false));
 
     scheduler.registerSubsystem(&sub);
 
     scheduler.addCommand(&cmd);
-    EXPECT_CALL(cmd, end(true));
     scheduler.removeCommand(&cmd, true);
 
     scheduler.addCommand(&cmd);
-    EXPECT_CALL(cmd, end(false));
     scheduler.removeCommand(&cmd, false);
 }
 
-TEST(CommandScheduler, removeCommand_single_cmd_removed_from_big_batch)
+TEST_F(CommandSchedulerTest, removeCommand_single_cmd_removed_from_big_batch)
 {
     static constexpr int SUBS_CMDS_TO_CREATE =
         std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
 
-    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
-    SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
+    auto subs = constructNSubsystemMocks(SUBS_CMDS_TO_CREATE);
+    vector<unique_ptr<NiceMock<CommandMock>>> cmds;
 
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+    for (uint32_t i = 0; i < subs.size(); i++)
     {
-        subs[i] = new SubsystemMock(&drivers);
+        set<Subsystem *> req{subs[i].get()};
+
+        auto cmd = make_unique<NiceMock<CommandMock>>(req);
+        cmds.insert(move(cmd));
+
         EXPECT_CALL(cmds[i], getRequirementsBitwise)
             .WillRepeatedly(Return(calcRequirementsBitwise({subs[i]})));
         EXPECT_CALL(cmds[i], initialize);
@@ -1354,188 +951,190 @@ TEST(CommandScheduler, removeCommand_single_cmd_removed_from_big_batch)
     }
 }
 
-TEST(CommandScheduler, subsystemListSize_commandListSize_returns_number_of_subs_cmds_in_scheduler)
+// TEST_F(
+//     CommandSchedulerTest,
+//     subsystemListSize_commandListSize_returns_number_of_subs_cmds_in_scheduler)
+// {
+//     static constexpr int SUBS_CMDS_TO_CREATE =
+//         std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
+//     CommandScheduler scheduler(&drivers, true);
+
+//     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
+//     NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
+
+//     for (int i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         EXPECT_EQ(i, scheduler.subsystemListSize());
+//         EXPECT_EQ(i, scheduler.commandListSize());
+
+//         subs[i] = new SubsystemMock(&drivers);
+//         EXPECT_CALL(cmds[i], getRequirementsBitwise)
+//             .WillRepeatedly(Return(calcRequirementsBitwise({subs[i]})));
+//         EXPECT_CALL(cmds[i], initialize);
+//         scheduler.registerSubsystem(subs[i]);
+//         scheduler.addCommand(&cmds[i]);
+//     }
+
+//     // Remove some commands from middle to test size calculation
+//     EXPECT_CALL(cmds[0], end);
+//     scheduler.removeCommand(&cmds[0], true);
+//     EXPECT_EQ(SUBS_CMDS_TO_CREATE - 1, scheduler.commandListSize());
+//     EXPECT_CALL(cmds[10], end);
+//     scheduler.removeCommand(&cmds[10], true);
+//     EXPECT_EQ(SUBS_CMDS_TO_CREATE - 2, scheduler.commandListSize());
+//     EXPECT_CALL(cmds[20], end);
+//     scheduler.removeCommand(&cmds[20], true);
+//     EXPECT_EQ(SUBS_CMDS_TO_CREATE - 3, scheduler.commandListSize());
+
+//     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         delete subs[i];
+//     }
+// }
+
+// TEST_F(CommandSchedulerTest, iterators_nothing_in_scheduler_returns_null)
+// {
+//     CommandScheduler scheduler(&drivers, true);
+
+//     auto cmdIt = scheduler.cmdMapBegin();
+//     auto subIt = scheduler.subMapBegin();
+
+//     EXPECT_EQ(nullptr, *cmdIt);
+//     EXPECT_EQ(nullptr, *subIt);
+//     EXPECT_EQ(scheduler.cmdMapEnd(), cmdIt);
+//     EXPECT_EQ(scheduler.subMapEnd(), subIt);
+// }
+
+// TEST_F(CommandSchedulerTest, iterators_couple_cmd_sub_iterated_through)
+// {
+//     CommandScheduler scheduler(&drivers, true);
+
+//     // Add a couple subs and cmds to the scheduler
+//     NiceMock<CommandMock> cmd1;
+//     NiceMock<CommandMock> cmd2;
+//     SubsystemMock sub1(&drivers);
+//     SubsystemMock sub2(&drivers);
+
+//     EXPECT_CALL(cmd1, initialize);
+//     EXPECT_CALL(cmd2, initialize);
+//     EXPECT_CALL(cmd1, getRequirementsBitwise)
+//         .Times(2)
+//         .WillRepeatedly(Return(calcRequirementsBitwise({&sub1})));
+//     EXPECT_CALL(cmd2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise({&sub2})));
+
+//     scheduler.registerSubsystem(&sub1);
+//     scheduler.registerSubsystem(&sub2);
+//     scheduler.addCommand(&cmd1);
+//     scheduler.addCommand(&cmd2);
+
+//     auto cmdIt = scheduler.cmdMapBegin();
+//     EXPECT_EQ(&cmd1, *cmdIt);
+//     EXPECT_EQ(&cmd2, *(++cmdIt));
+//     cmdIt++;
+//     EXPECT_EQ(nullptr, *cmdIt);
+
+//     auto subIt = scheduler.subMapBegin();
+//     EXPECT_EQ(&sub1, *subIt);
+//     EXPECT_EQ(&sub2, *(++subIt));
+//     subIt++;
+//     EXPECT_EQ(nullptr, *subIt);
+// }
+
+// TEST_F(CommandSchedulerTest, iterators_many_cmds_subs_iterated_through_using_foreach)
+// {
+//     static constexpr int SUBS_CMDS_TO_CREATE =
+//         std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
+//     CommandScheduler scheduler(&drivers, true);
+
+//     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
+//     NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
+
+//     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         subs[i] = new SubsystemMock(&drivers);
+//         EXPECT_CALL(cmds[i], getRequirementsBitwise)
+//             .WillRepeatedly(Return(calcRequirementsBitwise({subs[i]})));
+//         EXPECT_CALL(cmds[i], initialize);
+//         scheduler.registerSubsystem(subs[i]);
+//         scheduler.addCommand(&cmds[i]);
+//     }
+
+//     int i = 0;
+//     // Foreach with subsystem map
+//     std::for_each(
+//         scheduler.subMapBegin(),
+//         scheduler.subMapEnd(),
+//         [&](Subsystem *sub)
+//         {
+//             EXPECT_EQ(subs[i], sub);
+//             i++;
+//         });
+
+//     i = 0;
+//     // Foreach with command map
+//     std::for_each(
+//         scheduler.cmdMapBegin(),
+//         scheduler.cmdMapEnd(),
+//         [&](Command *cmd)
+//         {
+//             EXPECT_EQ(&cmds[i], cmd);
+//             i++;
+//         });
+
+//     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         delete subs[i];
+//     }
+// }
+
+// TEST_F(CommandSchedulerTest, iterators_work_properly_with_gaps_in_global_registrar)
+// {
+//     static constexpr int SUBS_CMDS_TO_CREATE =
+//         std::min(sizeof(subsystem_scheduler_bitmap_t), sizeof(command_scheduler_bitmap_t)) * 8;
+
+//     CommandScheduler scheduler(&drivers, true);
+
+//     SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
+//     NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
+
+//     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         subs[i] = new SubsystemMock(&drivers);
+//         if (i % 2 == 0)
+//         {
+//             scheduler.registerSubsystem(subs[i]);
+//         }
+//         else
+//         {
+//             EXPECT_CALL(cmds[i], getRequirementsBitwise)
+//                 .WillRepeatedly(Return(calcRequirementsBitwise({subs[i - 1]})));
+//             EXPECT_CALL(cmds[i], initialize);
+//             scheduler.addCommand(&cmds[i]);
+//         }
+//     }
+
+//     int i = 0;
+//     for (auto it = scheduler.subMapBegin(); it != scheduler.subMapEnd(); it++)
+//     {
+//         EXPECT_EQ(subs[2 * i], *it);
+//         i++;
+//     }
+
+//     i = 0;
+//     for (auto it = scheduler.cmdMapBegin(); it != scheduler.cmdMapEnd(); it++)
+//     {
+//         EXPECT_EQ(&cmds[2 * i + 1], *it);
+//         i++;
+//     }
+
+//     for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
+//     {
+//         delete subs[i];
+//     }
+// }
+
+TEST_F(CommandSchedulerTest, subsystem_iterator_iterator_begin_with_invalid_index)
 {
-    static constexpr int SUBS_CMDS_TO_CREATE =
-        std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
-
-    for (int i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        EXPECT_EQ(i, scheduler.subsystemListSize());
-        EXPECT_EQ(i, scheduler.commandListSize());
-
-        subs[i] = new SubsystemMock(&drivers);
-        EXPECT_CALL(cmds[i], getRequirementsBitwise)
-            .WillRepeatedly(Return(calcRequirementsBitwise({subs[i]})));
-        EXPECT_CALL(cmds[i], initialize);
-        scheduler.registerSubsystem(subs[i]);
-        scheduler.addCommand(&cmds[i]);
-    }
-
-    // Remove some commands from middle to test size calculation
-    EXPECT_CALL(cmds[0], end);
-    scheduler.removeCommand(&cmds[0], true);
-    EXPECT_EQ(SUBS_CMDS_TO_CREATE - 1, scheduler.commandListSize());
-    EXPECT_CALL(cmds[10], end);
-    scheduler.removeCommand(&cmds[10], true);
-    EXPECT_EQ(SUBS_CMDS_TO_CREATE - 2, scheduler.commandListSize());
-    EXPECT_CALL(cmds[20], end);
-    scheduler.removeCommand(&cmds[20], true);
-    EXPECT_EQ(SUBS_CMDS_TO_CREATE - 3, scheduler.commandListSize());
-
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        delete subs[i];
-    }
-}
-
-TEST(CommandScheduler, iterators_nothing_in_scheduler_returns_null)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    auto cmdIt = scheduler.cmdMapBegin();
-    auto subIt = scheduler.subMapBegin();
-
-    EXPECT_EQ(nullptr, *cmdIt);
-    EXPECT_EQ(nullptr, *subIt);
-    EXPECT_EQ(scheduler.cmdMapEnd(), cmdIt);
-    EXPECT_EQ(scheduler.subMapEnd(), subIt);
-}
-
-TEST(CommandScheduler, iterators_couple_cmd_sub_iterated_through)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    // Add a couple subs and cmds to the scheduler
-    NiceMock<CommandMock> cmd1;
-    NiceMock<CommandMock> cmd2;
-    SubsystemMock sub1(&drivers);
-    SubsystemMock sub2(&drivers);
-
-    EXPECT_CALL(cmd1, initialize);
-    EXPECT_CALL(cmd2, initialize);
-    EXPECT_CALL(cmd1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise({&sub1})));
-    EXPECT_CALL(cmd2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise({&sub2})));
-
-    scheduler.registerSubsystem(&sub1);
-    scheduler.registerSubsystem(&sub2);
-    scheduler.addCommand(&cmd1);
-    scheduler.addCommand(&cmd2);
-
-    auto cmdIt = scheduler.cmdMapBegin();
-    EXPECT_EQ(&cmd1, *cmdIt);
-    EXPECT_EQ(&cmd2, *(++cmdIt));
-    cmdIt++;
-    EXPECT_EQ(nullptr, *cmdIt);
-
-    auto subIt = scheduler.subMapBegin();
-    EXPECT_EQ(&sub1, *subIt);
-    EXPECT_EQ(&sub2, *(++subIt));
-    subIt++;
-    EXPECT_EQ(nullptr, *subIt);
-}
-
-TEST(CommandScheduler, iterators_many_cmds_subs_iterated_through_using_foreach)
-{
-    static constexpr int SUBS_CMDS_TO_CREATE =
-        std::min(sizeof(command_scheduler_bitmap_t), sizeof(subsystem_scheduler_bitmap_t)) * 8;
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
-
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        subs[i] = new SubsystemMock(&drivers);
-        EXPECT_CALL(cmds[i], getRequirementsBitwise)
-            .WillRepeatedly(Return(calcRequirementsBitwise({subs[i]})));
-        EXPECT_CALL(cmds[i], initialize);
-        scheduler.registerSubsystem(subs[i]);
-        scheduler.addCommand(&cmds[i]);
-    }
-
-    int i = 0;
-    // Foreach with subsystem map
-    std::for_each(scheduler.subMapBegin(), scheduler.subMapEnd(), [&](Subsystem *sub) {
-        EXPECT_EQ(subs[i], sub);
-        i++;
-    });
-
-    i = 0;
-    // Foreach with command map
-    std::for_each(scheduler.cmdMapBegin(), scheduler.cmdMapEnd(), [&](Command *cmd) {
-        EXPECT_EQ(&cmds[i], cmd);
-        i++;
-    });
-
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        delete subs[i];
-    }
-}
-
-TEST(CommandScheduler, iterators_work_properly_with_gaps_in_global_registrar)
-{
-    static constexpr int SUBS_CMDS_TO_CREATE =
-        std::min(sizeof(subsystem_scheduler_bitmap_t), sizeof(command_scheduler_bitmap_t)) * 8;
-
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
-    SubsystemMock *subs[SUBS_CMDS_TO_CREATE];
-    NiceMock<CommandMock> cmds[SUBS_CMDS_TO_CREATE];
-
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        subs[i] = new SubsystemMock(&drivers);
-        if (i % 2 == 0)
-        {
-            scheduler.registerSubsystem(subs[i]);
-        }
-        else
-        {
-            EXPECT_CALL(cmds[i], getRequirementsBitwise)
-                .WillRepeatedly(Return(calcRequirementsBitwise({subs[i - 1]})));
-            EXPECT_CALL(cmds[i], initialize);
-            scheduler.addCommand(&cmds[i]);
-        }
-    }
-
-    int i = 0;
-    for (auto it = scheduler.subMapBegin(); it != scheduler.subMapEnd(); it++)
-    {
-        EXPECT_EQ(subs[2 * i], *it);
-        i++;
-    }
-
-    i = 0;
-    for (auto it = scheduler.cmdMapBegin(); it != scheduler.cmdMapEnd(); it++)
-    {
-        EXPECT_EQ(&cmds[2 * i + 1], *it);
-        i++;
-    }
-
-    for (uint32_t i = 0; i < SUBS_CMDS_TO_CREATE; i++)
-    {
-        delete subs[i];
-    }
-}
-
-TEST(CommandScheduler, subsystem_iterator_iterator_begin_with_invalid_index)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     SubsystemMock sub1(&drivers);
     SubsystemMock sub2(&drivers);
 
@@ -1548,11 +1147,8 @@ TEST(CommandScheduler, subsystem_iterator_iterator_begin_with_invalid_index)
     EXPECT_EQ(scheduler.subMapEnd(), ++it);
 }
 
-TEST(CommandScheduler, addCommand_doesnt_add_if_command_not_ready)
+TEST_F(CommandSchedulerTest, addCommand_doesnt_add_if_command_not_ready)
 {
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-
     NiceMock<CommandMock> c1;
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(false));

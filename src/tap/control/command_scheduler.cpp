@@ -39,7 +39,6 @@ Subsystem *CommandScheduler::globalSubsystemRegistrar[CommandScheduler::MAX_SUBS
 Command *CommandScheduler::globalCommandRegistrar[CommandScheduler::MAX_COMMAND_COUNT];
 int CommandScheduler::maxSubsystemIndex = 0;
 int CommandScheduler::maxCommandIndex = 0;
-SafeDisconnectFunction CommandScheduler::defaultSafeDisconnectFunction;
 
 int CommandScheduler::constructCommand(Command *command)
 {
@@ -135,9 +134,9 @@ void CommandScheduler::destructSubsystem(Subsystem *subsystem)
 CommandScheduler::CommandScheduler(
     Drivers *drivers,
     bool masterScheduler,
-    SafeDisconnectFunction *safeDisconnectFunction)
+    SetSchedulerInertFn setSchedulerInertFn)
     : drivers(drivers),
-      safeDisconnectFunction(safeDisconnectFunction)
+      setSchedulerInertFn(setSchedulerInertFn)
 {
     if (masterScheduler && masterSchedulerExists)
     {
@@ -183,37 +182,13 @@ void CommandScheduler::run()
         return;
     }
 
-    if ((*safeDisconnectFunction)())
+    // Execute commands in the addedCommandBitmap, remove any that are finished
+    for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
     {
-        // End all commands running. They were interrupted by the remote disconnecting.
-        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
+        (*it)->execute();
+        if ((*it)->isFinished())
         {
-            removeCommand(*it, true);
-        }
-    }
-    else
-    {
-        // Add any queued commands
-        if (queuedCommandBitmap != static_cast<command_scheduler_bitmap_t>(0))
-        {
-            for (uint8_t i = 0; i < sizeof(command_scheduler_bitmap_t) * CHAR_BIT; i++)
-            {
-                if (queuedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << i))
-                {
-                    addCommand(globalCommandRegistrar[i]);
-                }
-            }
-            queuedCommandBitmap = 0;
-        }
-
-        // Execute commands in the addedCommandBitmap, remove any that are finished
-        for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
-        {
-            (*it)->execute();
-            if ((*it)->isFinished())
-            {
-                removeCommand(*it, false);
-            }
+            removeCommand(*it, false);
         }
     }
 
@@ -223,14 +198,20 @@ void CommandScheduler::run()
         // Refresh subsystems in the registeredSubsystemBitmap
         for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            (*it)->refresh();
+            if (setSchedulerInertFn())
+            {
+                (*it)->inertRefresh();
+            }
+            else
+            {
+                (*it)->refresh();
+            }
 
             Command *defaultCmd;
             // If the remote is connected given the scheduler is in safe disconnect mode and
             // the current subsystem does not have an associated command and the current
             // subsystem has a default command, add it
-            if (!(*safeDisconnectFunction)() &&
-                !(subsystemsAssociatedWithCommandBitmap &
+            if (!(subsystemsAssociatedWithCommandBitmap &
                   (LSB_ONE_HOT_SUBSYSTEM_BITMAP << (*it)->getGlobalIdentifier())) &&
                 ((defaultCmd = (*it)->getDefaultCommand()) != nullptr))
             {
@@ -253,31 +234,9 @@ void CommandScheduler::run()
 #endif
 }
 
-void CommandScheduler::addOrQueueCommand(Command *commandToAdd)
-{
-    if (commandToAdd == nullptr)
-    {
-        RAISE_ERROR(drivers, "attempting to add nullptr command");
-        return;
-    }
-
-    if ((*safeDisconnectFunction)())
-    {
-        queuedCommandBitmap |= LSB_ONE_HOT_COMMAND_BITMAP << commandToAdd->getGlobalIdentifier();
-    }
-    else
-    {
-        addCommand(commandToAdd);
-    }
-}
-
 void CommandScheduler::addCommand(Command *commandToAdd)
 {
-    if ((*safeDisconnectFunction)())
-    {
-        return;
-    }
-    else if (runningHardwareTests)
+    if (runningHardwareTests)
     {
         RAISE_ERROR(drivers, "attempting to add command while running tests");
         return;
@@ -350,9 +309,9 @@ void CommandScheduler::removeCommand(Command *command, bool interrupted)
     addedCommandBitmap &= ~(LSB_ONE_HOT_COMMAND_BITMAP << command->getGlobalIdentifier());
 }
 
-void CommandScheduler::setSafeDisconnectFunction(SafeDisconnectFunction *func)
+void CommandScheduler::setSetSchedulerInertFn(SetSchedulerInertFn func)
 {
-    this->safeDisconnectFunction = func;
+    setSchedulerInertFn = func;
 }
 
 void CommandScheduler::registerSubsystem(Subsystem *subsystem)
