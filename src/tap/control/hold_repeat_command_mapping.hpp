@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_HOLD_REPEAT_MAPPING_HPP_
-#define TAPROOT_HOLD_REPEAT_MAPPING_HPP_
+#ifndef TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_HPP_
+#define TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_HPP_
 
 #include "command_mapping.hpp"
 

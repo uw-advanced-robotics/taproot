@@ -17,10 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifdef PLATFORM_HOSTED
-
 #ifndef TAPROOT_SIM_HANDLER_HPP_
 #define TAPROOT_SIM_HANDLER_HPP_
+
+#ifdef PLATFORM_HOSTED
 
 #include <array>
 
@@ -86,6 +86,6 @@ private:
 }  // namespace motorsim
 }  // namespace tap
 
-#endif  // TAPROOT_SIM_HANDLER_HPP_
-
 #endif  // PLATFORM_HOSTED
+
+#endif  // TAPROOT_SIM_HANDLER_HPP_

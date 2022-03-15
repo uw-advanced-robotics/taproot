@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_CAN_RX_LISTENER_
-#define TAPROOT_CAN_RX_LISTENER_
+#ifndef TAPROOT_CAN_RX_LISTENER_HPP_
+#define TAPROOT_CAN_RX_LISTENER_HPP_
 
 #include <cstdint>
 

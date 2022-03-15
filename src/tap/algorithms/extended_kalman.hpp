@@ -21,8 +21,8 @@
  * Copyright (c) 2019 Sanger_X
  */
 
-#ifndef KALMAN_HPP_
-#define KALMAN_HPP_
+#ifndef TAPROOT_EXTENDED_KALMAN_HPP_
+#define TAPROOT_EXTENDED_KALMAN_HPP_
 
 namespace tap
 {
@@ -109,4 +109,4 @@ private:
 
 }  // namespace tap
 
-#endif  // TAPROOT_KALMAN_HPP_
+#endif  // TAPROOT_EXTENDED_KALMAN_HPP_

@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_TAPROOT_CLOCK_HPP_
-#define TAPROOT_TAPROOT_CLOCK_HPP_
+#ifndef TAPROOT_CLOCK_HPP_
+#define TAPROOT_CLOCK_HPP_
 
 #include <cstdint>
 
@@ -66,4 +66,4 @@ inline uint32_t getTimeMicroseconds()
 #endif
 }  // namespace tap::arch::clock
 
-#endif  // TAPROOT_TAPROOT_CLOCK_HPP_
+#endif  // TAPROOT_CLOCK_HPP_
