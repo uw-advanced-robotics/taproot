@@ -65,15 +65,12 @@ public:
     float getDistance() const;
 
 protected:
-    /// Distance from sensor
-    float distance;
+    float distance;  ///< Distance from sensor.
 
-    /// Lower boundary for reliable readings
-    float minDistance;
+    float minDistance;  ///< Lower boundary for reliable readings.
 
-    /// Upper boundary for reliable readings
-    float maxDistance;
-};  // class DistanceSensor
+    float maxDistance;  ///< Upper boundary for reliable readings.
+};
 
 }  // namespace sensors
 

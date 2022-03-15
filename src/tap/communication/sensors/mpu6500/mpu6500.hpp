@@ -61,7 +61,7 @@ public:
         /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
            IMU is in this state is undefined. */
         IMU_CALIBRATING,
-        /** Indicates the IMU is connected and calibration offsets have been computed. */
+        /// Indicates the IMU is connected and calibration offsets have been computed.
         IMU_CALIBRATED,
     };
 
@@ -258,8 +258,8 @@ private:
     ImuState imuState = ImuState::IMU_NOT_CONNECTED;
 
     tap::arch::MicroTimeout readRegistersTimeout;
-    uint8_t tx = 0;  /// Byte used for reading data in the read protothread
-    uint8_t rx = 0;  /// Byte used for reading data in the read protothread
+    uint8_t tx = 0;  ///< Byte used for reading data in the read protothread
+    uint8_t rx = 0;  ///< Byte used for reading data in the read protothread
 
     RawData raw;
 

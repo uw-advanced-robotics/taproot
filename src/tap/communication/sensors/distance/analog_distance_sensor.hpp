@@ -87,16 +87,13 @@ public:
 private:
     Drivers *drivers;
 
-    /// Distance calulation values for linear model \f$ y = mx + b \f$.
-    float m;
-    float b;
+    float m;  ///< Slope of linear model that converts raw analog values to distance values.
+    float b;  ///< Y-intercept of linear model taht converts raw analog values to distance values.
 
-    /// Offset value of inverse of the model.
-    float offset;
+    float offset;  ///< Offset value of inverse of the model.
 
-    /// The analog pin which the sensor is connected to.
-    gpio::Analog::Pin pin;
-};  // class AnalogDistanceSensor
+    gpio::Analog::Pin pin;  ///< The analog pin which the sensor is connected to.
+};
 
 }  // namespace sensors
 
