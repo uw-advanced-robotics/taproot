@@ -36,7 +36,7 @@ class CanRxListenerMock : public tap::can::CanRxListener
 {
 public:
     CanRxListenerMock(tap::Drivers* drivers, uint32_t id, tap::can::CanBus bus);
-    ~CanRxListenerMock();
+    virtual ~CanRxListenerMock();
 
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));
 
