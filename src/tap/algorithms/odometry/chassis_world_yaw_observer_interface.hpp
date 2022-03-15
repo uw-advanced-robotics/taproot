@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
-#define CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
+#ifndef TAPROOT_CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
+#define TAPROOT_CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
 
 namespace tap::algorithms::odometry
 {
@@ -53,4 +53,4 @@ public:
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_
+#endif  // TAPROOT_CHASSIS_WORLD_YAW_OBSERVER_INTERFACE_HPP_

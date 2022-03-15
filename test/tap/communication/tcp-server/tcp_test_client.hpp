@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TCP_TEST_CLIENT_HPP_
-#define TCP_TEST_CLIENT_HPP_
+#ifndef TAPROOT_TCP_TEST_CLIENT_HPP_
+#define TAPROOT_TCP_TEST_CLIENT_HPP_
 
 #include <netdb.h>
 #include <netinet/in.h>
@@ -68,4 +68,4 @@ private:
 
 }  // namespace test
 
-#endif
+#endif  // TAPROOT_TCP_TEST_CLIENT_HPP_

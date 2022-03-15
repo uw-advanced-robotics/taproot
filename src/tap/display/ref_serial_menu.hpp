@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REF_SERIAL_MENU_HPP_
-#define REF_SERIAL_MENU_HPP_
+#ifndef TAPROOT_REF_SERIAL_MENU_HPP_
+#define TAPROOT_REF_SERIAL_MENU_HPP_
 
 #include "tap/architecture/periodic_timer.hpp"
 
@@ -90,4 +90,4 @@ private:
 };
 }  // namespace tap::display
 
-#endif  // REF_SERIAL_MENU_HPP_
+#endif  // TAPROOT_REF_SERIAL_MENU_HPP_

@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOLD_REPEAT_MAPPING_HPP_
-#define HOLD_REPEAT_MAPPING_HPP_
+#ifndef TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_HPP_
+#define TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_HPP_
 
 #include "command_mapping.hpp"
 
@@ -102,4 +102,4 @@ private:
 }  // namespace control
 }  // namespace tap
 
-#endif  // HOLD_REPEAT_COMMAND_MAPPING_HPP_
+#endif  // TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_HPP_

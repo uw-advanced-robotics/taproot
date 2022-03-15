@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef STATE_HUD_INDICATOR_HPP_
-#define STATE_HUD_INDICATOR_HPP_
+#ifndef TAPROOT_STATE_HUD_INDICATOR_HPP_
+#define TAPROOT_STATE_HUD_INDICATOR_HPP_
 
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/serial/ref_serial.hpp"
@@ -178,4 +178,4 @@ using BooleanHUDIndicator = StateHUDIndicator<bool>;
 
 }  // namespace tap::communication::referee
 
-#endif  // STATE_HUD_INDICATOR_HPP_
+#endif  // TAPROOT_STATE_HUD_INDICATOR_HPP_

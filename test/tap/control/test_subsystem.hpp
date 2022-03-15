@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TEST_SUBSYSTEM_HPP_
-#define TEST_SUBSYSTEM_HPP_
+#ifndef TAPROOT_TEST_SUBSYSTEM_HPP_
+#define TAPROOT_TEST_SUBSYSTEM_HPP_
 
 #include "tap/control/subsystem.hpp"
 
@@ -35,4 +35,4 @@ public:
 }  // namespace control
 }  // namespace tap
 
-#endif  // TEST_SUBSYSTEM_HPP_
+#endif  // TAPROOT_TEST_SUBSYSTEM_HPP_

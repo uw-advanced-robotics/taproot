@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILER_HPP_
-#define PROFILER_HPP_
+#ifndef TAPROOT_PROFILER_HPP_
+#define TAPROOT_PROFILER_HPP_
 
 #include <unordered_map>
 
@@ -191,4 +191,4 @@ private:
 
 }  // namespace tap::arch
 
-#endif  // PROFILER_HPP_
+#endif  // TAPROOT_PROFILER_HPP_

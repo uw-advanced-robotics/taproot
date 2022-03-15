@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BMI088_MOCK_HP_
-#define BMI088_MOCK_HP_
+#ifndef TAPROOT_BMI088_MOCK_HPP_
+#define TAPROOT_BMI088_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
@@ -50,4 +50,4 @@ public:
 };
 }  // namespace tap::mock
 
-#endif  // BMI088_MOCK_HP_
+#endif  // TAPROOT_BMI088_MOCK_HPP_

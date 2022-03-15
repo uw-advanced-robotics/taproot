@@ -62,6 +62,7 @@ before_script:
   script:
     - python3 ./scripts/check_singleton_drivers.py src
     - python3 ./scripts/check_license_headers.py
+    - python3 ./scripts/check_header_guard.py src test -p TAPROOT_ -i src/tap/algorithms/MahonyAHRS.h src/tap/display/sh1106_impl.hpp src/tap/display/sh1106_mock_impl.hpp
   variables:
     GIT_SUBMODULE_STRATEGY: none
   only: *verification_only

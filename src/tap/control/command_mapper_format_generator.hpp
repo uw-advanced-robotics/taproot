@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMAND_MAPPER_FORMAT_GENERATOR_HPP_
-#define COMMAND_MAPPER_FORMAT_GENERATOR_HPP_
+#ifndef TAPROOT_COMMAND_MAPPER_FORMAT_GENERATOR_HPP_
+#define TAPROOT_COMMAND_MAPPER_FORMAT_GENERATOR_HPP_
 
 #include <string>
 #include <string_view>
@@ -64,4 +64,4 @@ private:
 }  // namespace control
 }  // namespace tap
 
-#endif  // COMMAND_MAPPER_FORMAT_GENERATOR_HPP_
+#endif  // TAPROOT_COMMAND_MAPPER_FORMAT_GENERATOR_HPP_

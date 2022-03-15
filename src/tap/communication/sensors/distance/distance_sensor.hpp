@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DISTANCE_SENSOR_H_
-#define DISTANCE_SENSOR_H_
+#ifndef TAPROOT_DISTANCE_SENSOR_HPP_
+#define TAPROOT_DISTANCE_SENSOR_HPP_
 
 namespace tap
 {
@@ -79,4 +79,4 @@ protected:
 
 }  // namespace tap
 
-#endif  // DISTANCE_SENSOR_H_
+#endif  // TAPROOT_DISTANCE_SENSOR_HPP_
