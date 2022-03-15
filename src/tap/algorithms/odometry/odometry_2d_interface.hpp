@@ -40,7 +40,7 @@ class Odometry2DInterface
 {
 public:
     /**
-     * @return the current location (x and y coordinate) and orientation (in radians)
+     * @return The current location (x and y coordinate) and orientation (in radians).
      */
     virtual modm::Location2D<float> getCurrentLocation2D() const = 0;
 };

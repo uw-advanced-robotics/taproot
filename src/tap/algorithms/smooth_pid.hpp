@@ -35,15 +35,15 @@ struct SmoothPidConfig
     float kd = 0.0f;
     float maxICumulative = 0.0f;
     float maxOutput = 0.0f;
-    float tQDerivativeKalman = 1.0f;   /**< the system noise covariance for the kalman filter that
+    float tQDerivativeKalman = 1.0f;   /**< The system noise covariance for the kalman filter that
                                         * is applied to the derivative of the error. */
-    float tRDerivativeKalman = 0.0f;   /**< the measurement noise covariance for the kalman filter
+    float tRDerivativeKalman = 0.0f;   /**< The measurement noise covariance for the kalman filter
                                         * that is applied to the derivative of the error. */
-    float tQProportionalKalman = 1.0f; /**< the system noise covariance for the kalman filter that
+    float tQProportionalKalman = 1.0f; /**< The system noise covariance for the kalman filter that
                                         *  is applied to the proportional error. */
-    float tRProportionalKalman = 0.0f; /**< the measurement noise covariance for the kalman filter
+    float tRProportionalKalman = 0.0f; /**< The measurement noise covariance for the kalman filter
                                         * that is applied to the proportional error. */
-    float errDeadzone = 0.0f;          /**< within [-errDeadzone, errDeadzone], the PID controller
+    float errDeadzone = 0.0f;          /**< Within [-errDeadzone, errDeadzone], the PID controller
                                         * error will be set to 0. */
 };
 

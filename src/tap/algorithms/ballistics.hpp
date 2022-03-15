@@ -93,10 +93,10 @@ bool computeTravelTime(
  * @param[in] bulletVelocity: The velocity of the projectile to be fired in m/s.
  * @param[in] numIterations: The number of times to project the kinematics forward.
  *      Guidelines on choosing this parameter:
- *      - If the target is moving very slow relative to bulletVelocity, 1 is probably enough
- *      - For higher target speeds, 2-3 is probably a good estimate
+ *      - If the target is moving very slow relative to bulletVelocity, 1 is probably enough.
+ *      - For higher target speeds, 2-3 is probably a good estimate.
  *      - If the target is approaching the projectile speed, this algorithm may have a difficult
- * time converging (but it may be possible with enough iterations)
+ *        time converging (but it may be possible with enough iterations).
  *      - If the target is moving faster than the projectile, this algorithm will diverge.
  * @param[out] projectileIntersection: The position (in m, in the same frame as targetInitialState)
  * at which our robot should aim to hit the given target, taking into account the path a projectile

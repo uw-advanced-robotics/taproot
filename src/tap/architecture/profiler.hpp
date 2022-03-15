@@ -112,7 +112,8 @@ public:
         uint32_t max = 0;
         /** Average value, in microseconds, averaged using a low pass filter. */
         float avg = 0;
-        /** Value used to measure a "dt" between pushing and popping the profile from the profiler.
+        /**
+         * Value used to measure a "dt" between pushing and popping the profile from the profiler.
          */
         uint32_t prevPushedTime = 0;
 
