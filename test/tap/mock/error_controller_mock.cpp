@@ -29,7 +29,7 @@ bool errorDescriptionContainsSubstr(
 
 namespace tap::mock
 {
-ErrorControllerMock::ErrorControllerMock(tap::Drivers *drivers)
+ErrorControllerMock::ErrorControllerMock(tap::Drivers* drivers)
     : tap::errors::ErrorController(drivers)
 {
 }
