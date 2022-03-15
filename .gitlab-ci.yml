@@ -100,6 +100,8 @@ before_script:
 .tests_build:
   stage: "Build all Targets"
   only: *default_only
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
   script:
     - cd test-project
     - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
