@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef SMOOTH_PID_HPP_
-#define SMOOTH_PID_HPP_
+#ifndef TAPROOT_SMOOTH_PID_HPP_
+#define TAPROOT_SMOOTH_PID_HPP_
 
 #include <cstdint>
 
@@ -98,4 +98,4 @@ private:
 
 }  // namespace tap
 
-#endif
+#endif  // TAPROOT_SMOOTH_PID_HPP_

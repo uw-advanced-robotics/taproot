@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UART_MOCK_HPP_
-#define UART_MOCK_HPP_
+#ifndef TAPROOT_UART_MOCK_HPP_
+#define TAPROOT_UART_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
@@ -73,4 +73,4 @@ public:
 }  // namespace mock
 }  // namespace tap
 
-#endif  // UART_MOCK_HPP_
+#endif  // TAPROOT_UART_MOCK_HPP_

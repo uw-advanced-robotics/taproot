@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UART_HPP
-#define UART_HPP
+#ifndef TAPROOT_UART_HPP_
+#define TAPROOT_UART_HPP_
 
 #include <cstdint>
 #include <cstdlib>
@@ -162,5 +162,5 @@ public:
 
 }  // namespace tap::communication::serial
 
-#endif
+#endif  // TAPROOT_UART_HPP_
 

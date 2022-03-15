@@ -17,6 +17,9 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef TAPROOT_ROBOT_TO_ROBOT_MESSAGE_HANDLER_MOCK_HPP_
+#define TAPROOT_ROBOT_TO_ROBOT_MESSAGE_HANDLER_MOCK_HPP_
+
 #include <gmock/gmock.h>
 
 #include "tap/communication/serial/ref_serial.hpp"
@@ -38,3 +41,5 @@ public:
     }
 };
 }  // namespace tap::mock
+
+#endif  // TAPROOT_ROBOT_TO_ROBOT_MESSAGE_HANDLER_MOCK_HPP_

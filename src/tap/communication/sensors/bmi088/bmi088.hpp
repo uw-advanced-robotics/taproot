@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BMI088_HPP_
-#define BMI088_HPP_
+#ifndef TAPROOT_BMI088_HPP_
+#define TAPROOT_BMI088_HPP_
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/algorithms/math_user_utils.hpp"
@@ -212,4 +212,4 @@ private:
 
 }  // namespace tap::communication::sensors::bmi088
 
-#endif  // BMI088_HPP_
+#endif  // TAPROOT_BMI088_HPP_

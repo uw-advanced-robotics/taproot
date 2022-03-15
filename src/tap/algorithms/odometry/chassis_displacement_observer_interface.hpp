@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
-#define CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
+#ifndef TAPROOT_CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
+#define TAPROOT_CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
 
 #include "modm/math/geometry/vector.hpp"
 
@@ -75,4 +75,4 @@ public:
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_
+#endif  // TAPROOT_CHASSIS_DISPLACEMENT_OBSERVER_INTERFACE_HPP_

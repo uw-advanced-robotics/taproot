@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BMI088_DATA_HPP_
-#define BMI088_DATA_HPP_
+#ifndef TAPROOT_BMI088_DATA_HPP_
+#define TAPROOT_BMI088_DATA_HPP_
 
 #include "modm/architecture/interface/register.hpp"
 #include "modm/math/utils.hpp"
@@ -442,4 +442,4 @@ public:
 
 }  // namespace tap::communication::sensors::bmi088
 
-#endif  // BMI088_DATA_HPP_
+#endif  // TAPROOT_BMI088_DATA_HPP_

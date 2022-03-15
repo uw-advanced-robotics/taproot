@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_
-#define HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_
+#ifndef TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_
+#define TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
@@ -42,4 +42,4 @@ public:
 };  // class HoldRepeatCommandMappingMock
 }  // namespace tap::mock
 
-#endif  // HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_
+#endif  // TAPROOT_HOLD_REPEAT_COMMAND_MAPPING_MOCK_HPP_

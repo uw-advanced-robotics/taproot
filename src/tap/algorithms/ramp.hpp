@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef RAMP_HPP_
-#define RAMP_HPP_
+#ifndef TAPROOT_RAMP_HPP_
+#define TAPROOT_RAMP_HPP_
 
 #include <cstdint>
 
@@ -94,4 +94,4 @@ private:
 
 }  // namespace tap
 
-#endif  // RAMP_HPP_
+#endif  // TAPROOT_RAMP_HPP_
