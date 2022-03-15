@@ -107,7 +107,10 @@ TEST(DJISerial, updateSerial_parseMessage_crc8_one_off)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_CALL(drivers.errorController, addToErrorList)
+        .WillOnce([&](const tap::errors::SystemError &error) {
+            EXPECT_TRUE(errorDescriptionContainsSubstr(error, "CRC8 failure"));
+        });
 
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
@@ -150,7 +153,10 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_CALL(drivers.errorController, addToErrorList)
+        .WillOnce([&](const tap::errors::SystemError &error) {
+            EXPECT_TRUE(errorDescriptionContainsSubstr(error, "CRC16 failure"));
+        });
 
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
@@ -158,7 +164,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
     convertToLittleEndian(static_cast<uint8_t>(0xa5), rawMessage);
     convertToLittleEndian(static_cast<uint16_t>(10), rawMessage + 1);
     convertToLittleEndian(static_cast<uint8_t>(123), rawMessage + 3);
-    convertToLittleEndian(calculateCRC8(rawMessage, 4) - 1, rawMessage + 4);
+    convertToLittleEndian(calculateCRC8(rawMessage, 4), rawMessage + 4);
     convertToLittleEndian(static_cast<uint16_t>(2), rawMessage + 5);
     for (uint8_t i = 0; i < 10; i++)
     {
@@ -232,7 +238,12 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, false);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_CALL(drivers.errorController, addToErrorList)
+        .WillOnce([&](const tap::errors::SystemError &error) {
+            EXPECT_TRUE(errorDescriptionContainsSubstr(
+                error,
+                "received message length longer than allowed max"));
+        });
 
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
