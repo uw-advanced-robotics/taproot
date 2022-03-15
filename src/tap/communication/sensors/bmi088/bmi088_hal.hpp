@@ -35,7 +35,7 @@ class Bmi088Hal
 {
 private:
 #if defined(ENV_UNIT_TESTS)
-    /** Data that is set by to the input to bmi088ReadWriteByte */
+    /// Data that is set by to the input to bmi088ReadWriteByte
     static std::deque<uint8_t> rxData;
 #endif
 

@@ -108,7 +108,7 @@ private:
     float KT = 0;                 // (N*m)/A
     float WT_GRAD = 0;            // RPM/(N*m)
 
-    /** Initializes constant variables based on motor type */
+    /// Initializes constant variables based on motor type
     void initConstants(MotorType type);
 
     /* Class Variables */

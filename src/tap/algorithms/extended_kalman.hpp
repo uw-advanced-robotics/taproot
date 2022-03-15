@@ -91,18 +91,18 @@ public:
     void reset();
 
 private:
-    float xLast;  /// last optimal prediction.
-    float xMid;   /// forcast optimal prediction.
-    float xNow;   /// current optimal prediction.
-    float pMid;   /// predicted covariance.
-    float pNow;   /// current covariance.
-    float pLast;  /// previous covariance.
-    float kg;     /// kalman gain.
-    float A;      /// system parameter.
-    float B;      /// system parameter.
-    float Q;      /// system parameter
-    float R;      /// system parameter.
-    float H;      /// system parameter.
+    float xLast;  ///< last optimal prediction.
+    float xMid;   ///< forcast optimal prediction.
+    float xNow;   ///< current optimal prediction.
+    float pMid;   ///< predicted covariance.
+    float pNow;   ///< current covariance.
+    float pLast;  ///< previous covariance.
+    float kg;     ///< kalman gain.
+    float A;      ///< system parameter.
+    float B;      ///< system parameter.
+    float Q;      ///< system parameter
+    float R;      ///< system parameter.
+    float H;      ///< system parameter.
 };                // class ExtendedKalman
 
 }  // namespace algorithms

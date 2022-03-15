@@ -30,7 +30,7 @@ namespace tap
 {
 namespace algorithms
 {
-/** Acceleration due to gravity, in m/s^2. */
+/// Acceleration due to gravity, in m/s^2.
 static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
 /**

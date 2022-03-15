@@ -94,9 +94,9 @@ namespace tap::arch
 class Profiler
 {
 public:
-    /** Max number of profiles that the profiler can store information about. */
+    /// Max number of profiles that the profiler can store information about.
     static constexpr std::size_t MAX_PROFILED_ELEMENTS = 128;
-    /** Low pass alpha to be used when averaging time it takes for some code to run. */
+    /// Low pass alpha to be used when averaging time it takes for some code to run.
     static constexpr float AVG_LOW_PASS_ALPHA = 0.01f;
 
     /**
@@ -104,13 +104,13 @@ public:
      */
     struct ProfilerData
     {
-        /** Name of the profile. */
+        /// Name of the profile.
         const char* name = nullptr;
-        /** Min value, in microseconds, ever recorded by the profiler. */
+        /// Min value, in microseconds, ever recorded by the profiler.
         uint32_t min = UINT32_MAX;
-        /** Max value, in microseconds, ever recorded by the profiler. */
+        /// Max value, in microseconds, ever recorded by the profiler.
         uint32_t max = 0;
-        /** Average value, in microseconds, averaged using a low pass filter. */
+        /// Average value, in microseconds, averaged using a low pass filter.
         float avg = 0;
         /**
          * Value used to measure a "dt" between pushing and popping the profile from the profiler.
@@ -120,7 +120,7 @@ public:
         ProfilerData() {}
         explicit ProfilerData(const char* name) : name(name) {}
 
-        /** Resets the long term profile storage information. */
+        /// Resets the long term profile storage information.
         void reset()
         {
             min = UINT32_MAX;
@@ -151,7 +151,7 @@ public:
      */
     void pop(std::size_t key);
 
-    /** @return The data associated with some particular key. */
+    /// @return The data associated with some particular key.
     inline ProfilerData getData(std::size_t key)
     {
         if (key >= profiledElements.getSize())
@@ -164,7 +164,7 @@ public:
         }
     }
 
-    /** Reset the ProfilerData associated with some particular key. */
+    /// Reset the ProfilerData associated with some particular key.
     inline void reset(std::size_t key)
     {
         if (key < profiledElements.getSize())
