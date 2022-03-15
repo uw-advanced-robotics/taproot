@@ -24,10 +24,6 @@ from sre_constants import SUCCESS
 
 import utils
 
-
-#ifndef TAPROOT_SH1106_DEFINES_HPP_
-#define TAPROOT_SH1106_DEFINES_HPP_
-
 HEADER_EXTENSIONS = [ '.hpp', '.h' ]
 
 def parse_args():
@@ -73,7 +69,6 @@ def main():
         split = os.path.splitext(file)
         if len(split) > 1 and split[1] in HEADER_EXTENSIONS:
             files_to_validate.append(file)
-
 
     exit_code = 0
 
