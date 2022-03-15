@@ -64,7 +64,7 @@ before_script:
     - python3 ./taproot-scripts/check_license_headers.py
     - python3 ./taproot-scripts/check_header_guard.py src test -p TAPROOT_ -i src/tap/algorithms/MahonyAHRS.h src/tap/display/sh1106_impl.hpp src/tap/display/sh1106_mock_impl.hpp
   variables:
-    GIT_SUBMODULE_STRATEGY: none
+    GIT_SUBMODULE_STRATEGY: normal
   only: *verification_only
   except: *verification_except
 

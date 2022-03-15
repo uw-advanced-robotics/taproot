@@ -21,7 +21,7 @@ from os.path import join, abspath
 
 from SCons.Script import *
 
-from taproot.build_tools import parse_args
+from build_tools import parse_args
 
 # Define project settings and build paths
 PROJECT_NAME         = "mcb-project"
