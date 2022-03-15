@@ -1,19 +1,19 @@
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
-# This file is part of {{ options["taproot:project_name"] }}.
+# This file is part of mcb-project.
 #
-# {{ options["taproot:project_name"] }} is free software: you can redistribute it and/or modify
+# mcb-project is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# {{ options["taproot:project_name"] }} is distributed in the hope that it will be useful,
+# mcb-project is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with {{ options["taproot:project_name"] }}.  If not, see <https://www.gnu.org/licenses/>.
+# along with mcb-project.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import platform
@@ -24,7 +24,7 @@ from SCons.Script import *
 from taproot.build_tools import parse_args
 
 # Define project settings and build paths
-PROJECT_NAME         = "{{ options['taproot:project_name'] }}"
+PROJECT_NAME         = "mcb-project"
 BUILD_PATH           = "build"
 HARDWARE_MODM_PATH   = "taproot/modm"
 LINKERSCRIPT_FILE    = join(HARDWARE_MODM_PATH, "link/linkerscript.ld")
@@ -184,7 +184,7 @@ if args["TARGET_ENV"] == "hardware":
     env.Default("all")  # For the hardware target env, "all" runs if you don't
                         # specify anything (i.e. just type "scons")
 elif args["TARGET_ENV"] == "tests":
-    env.Append(toolpath=[abspath(r"taproot/build_tools")])
+    env.Append(toolpath=[abspath(r"../taproot-scripts/lbuild-tools/run_gcov.py")])
     env.Tool("run_gcov")
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
@@ -202,4 +202,3 @@ else:
     # WARNING: all aliases must be checked during argument validation
     env.Alias("build-sim", program)
     env.Alias("run-sim", env.Run(program))
-

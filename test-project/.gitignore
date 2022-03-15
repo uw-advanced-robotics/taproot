@@ -1,7 +1,6 @@
 taproot
 openocd.cfg
 project.xml.log
-SConstruct
 build
 src/drivers.hpp
 pipfile.lock

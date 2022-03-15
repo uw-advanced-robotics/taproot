@@ -27,4 +27,4 @@ def repo_path_rel_repolb(file, path):
     - file: __file__ that the function is called in
     - path: path relative to repo.lb file that you want get
     """
-    return (Path(os.path.abspath(file)).parents[2] / path)
+    return (Path(os.path.abspath(file)).parents[1] / path)
