@@ -17,6 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <memory>
+
 #include <gtest/gtest.h>
 
 #include "tap/drivers.hpp"
@@ -24,6 +26,7 @@
 #include "tap/mock/can_rx_listener_mock.hpp"
 
 using namespace testing;
+using namespace std;
 using namespace tap::mock;
 
 class CanRxHandlerTest : public Test
@@ -35,26 +38,14 @@ protected:
     {
         for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
         {
-            int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
-
-            listeners[normalizedId] =
-                new NiceMock<CanRxListenerMock>(&drivers, i, tap::can::CanBus::CAN_BUS1);
-        }
-    }
-
-    void destructListeners()
-    {
-        for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
-        {
-            int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
-
-            delete listeners[normalizedId];
+            auto listener = make_unique<CanRxListenerMock>(&drivers, i, tap::can::CanBus::CAN_BUS1);
+            listeners.push_back(move(listener));
         }
     }
 
     tap::Drivers drivers;
     tap::can::CanRxHandler handler;
-    CanRxListenerMock *listeners[tap::motor::MOTOR8 - tap::motor::MOTOR1 + 1];
+    vector<unique_ptr<CanRxListenerMock>> listeners;
 };
 
 TEST(CanRxHandler, ListenerAttachesSelf)
@@ -72,48 +63,42 @@ TEST_F(CanRxHandlerTest, ListenerAttachesAndDetatchesInArray)
 {
     constructListeners();
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+    for (auto &listener : listeners)
     {
-        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
+        handler.attachReceiveHandler(listener.get());
 
-        handler.attachReceiveHandler(listeners[normalizedId]);
+        int normalizedId =
+            tap::can::CanRxHandler::lookupTableIndexForCanId(listener->canIdentifier);
 
         EXPECT_EQ(
-            listeners[normalizedId],
+            listener.get(),
             handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
 
-        handler.removeReceiveHandler(*listeners[normalizedId]);
+        handler.removeReceiveHandler(*listener);
 
         EXPECT_EQ(nullptr, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[normalizedId]);
     }
-
-    destructListeners();
 }
 
 TEST_F(CanRxHandlerTest, MessageIsProcessedByCorrectListener)
 {
     constructListeners();
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+    for (auto &listener : listeners)
     {
-        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
-
-        EXPECT_CALL(*listeners[normalizedId], processMessage);
+        EXPECT_CALL(*listener, processMessage);
     }
 
-    for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+    for (auto &listener : listeners)
     {
-        int normalizedId = tap::can::CanRxHandler::lookupTableIndexForCanId(i);
+        handler.attachReceiveHandler(listener.get());
 
-        handler.attachReceiveHandler(listeners[normalizedId]);
+        const modm::can::Message rxMessage(listener->canIdentifier);
 
-        const modm::can::Message rxMessage(i);
         handler.processReceivedCanData(
             rxMessage,
             handler.getHandlerStore(tap::can::CanBus::CAN_BUS1));
     }
-
-    destructListeners();
 }
 
 TEST_F(CanRxHandlerTest, ErrorIsThrownWithOOBMessageID)
