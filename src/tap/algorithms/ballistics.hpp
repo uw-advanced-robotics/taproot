@@ -28,9 +28,9 @@ namespace tap::algorithms::ballistics
 {
 /**
  * Stores the 3D position, velocity, and acceleration of an object as `modm::Vector3f`s.
- * Position Units: m
- * Velocity Units: m/s
- * Acceleration Units: m/s^2
+ * - Position Units: m
+ * - Velocity Units: m/s
+ * - Acceleration Units: m/s^2
  */
 struct MeasuredKinematicState
 {
