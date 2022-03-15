@@ -64,7 +64,7 @@ public:
      * Runs the kalman filter, returning the current prediction.
      *
      * @note description of data:<br>
-     * $x(k | k)$ is the current prediction (filtered output)<br>
+     * \f$x(k | k)\f$ is the current prediction (filtered output)<br>
      * (and then \f$k - 1\f$ would be the previous output)<br>
      * Corresponding formula:<br>
      * \f{eqnarray*}{
