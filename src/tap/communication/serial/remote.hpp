@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REMOTE_HPP_
-#define REMOTE_HPP_
+#ifndef TAPROOT_REMOTE_HPP_
+#define TAPROOT_REMOTE_HPP_
 
 #include <cstdint>
 
@@ -233,4 +233,4 @@ private:
 
 }  // namespace tap::communication::serial
 
-#endif  // REMOTE_HPP_
+#endif  // TAPROOT_REMOTE_HPP_

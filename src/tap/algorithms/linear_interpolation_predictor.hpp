@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LINEAR_INTERPOLATION_PREDICTOR_HPP_
-#define LINEAR_INTERPOLATION_PREDICTOR_HPP_
+#ifndef TAPROOT_LINEAR_INTERPOLATION_PREDICTOR_HPP_
+#define TAPROOT_LINEAR_INTERPOLATION_PREDICTOR_HPP_
 
 #include <cstdint>
 
@@ -98,4 +98,4 @@ private:
 
 }  // namespace tap::algorithms
 
-#endif  // LINEAR_INTERPOLATION_PREDICTOR_HPP_
+#endif  // TAPROOT_LINEAR_INTERPOLATION_PREDICTOR_HPP_

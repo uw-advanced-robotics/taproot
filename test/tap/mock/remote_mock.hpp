@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REMOTE_MOCK_HPP_
-#define REMOTE_MOCK_HPP_
+#ifndef TAPROOT_REMOTE_MOCK_HPP_
+#define TAPROOT_REMOTE_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
@@ -59,4 +59,4 @@ public:
 }  // namespace mock
 }  // namespace tap
 
-#endif  // REMOTE_MOCK_HPP_
+#endif  // TAPROOT_REMOTE_MOCK_HPP_

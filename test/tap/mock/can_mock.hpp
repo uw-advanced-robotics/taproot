@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MOCK_CAN_HPP_
-#define MOCK_CAN_HPP_
+#ifndef TAPROOT_CAN_MOCK_HPP_
+#define TAPROOT_CAN_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
@@ -49,4 +49,4 @@ public:
 }  // namespace mock
 }  // namespace tap
 
-#endif  // MOCK_CAN_HPP_
+#endif  // TAPROOT_CAN_MOCK_HPP_
