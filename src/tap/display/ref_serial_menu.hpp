@@ -52,7 +52,7 @@ namespace tap::display
 class RefSerialMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
 {
 public:
-    /** Time between calls to `draw`, which will redraw the referee serial menu. */
+    /// Time between calls to `draw`, which will redraw the referee serial menu.
     static constexpr uint32_t DISPLAY_DRAW_PERIOD = 500;
     static constexpr int REF_SERIAL_INFO_LINES = 8;
     static constexpr int DISPLAY_MAX_ENTRIES = 8;

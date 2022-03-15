@@ -144,7 +144,7 @@ public:
 
 private:
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
-    /** Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET. */
+    /// Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET.
     static constexpr int16_t RAW_TEMPERATURE_OFFSET = -2048;
 
     struct ImuData

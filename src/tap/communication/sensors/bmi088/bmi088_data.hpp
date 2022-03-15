@@ -65,7 +65,7 @@ public:
             FIFO_DATA = 0x3f,
         };
 
-        /** The id of the gyroscope that will is stored in address `GYRO_CHIP_ID`. */
+        /// The id of the gyroscope that will is stored in address `GYRO_CHIP_ID`.
         static constexpr uint8_t GYRO_CHIP_ID_VALUE = 0x0f;
 
         enum class GyroIntStat1 : uint8_t
@@ -246,7 +246,7 @@ public:
 
     struct Acc
     {
-        /** List of register addresses for the bmi088's accelerometer */
+        /// List of register addresses for the bmi088's accelerometer
         enum Register : uint8_t
         {
             ACC_CHIP_ID = 0x00,
@@ -278,7 +278,7 @@ public:
             ACC_SOFTRESET = 0x7e,
         };
 
-        /** The id of the accelerometer that will is stored in address `ACC_CHIP_ID`. */
+        /// The id of the accelerometer that will is stored in address `ACC_CHIP_ID`.
         static constexpr uint8_t ACC_CHIP_ID_VALUE = 0x1e;
 
         enum class AccErr : uint8_t
@@ -307,7 +307,7 @@ public:
         };
         MODM_FLAGS8(AccConf);
 
-        /** @see section 4.4.1 of the bmi088 datasheet. */
+        /// @see section 4.4.1 of the bmi088 datasheet.
         enum class AccBandwidth : uint8_t
         {
             OSR4_OVERSAMPLING = 0x08,
@@ -417,7 +417,7 @@ public:
         };
         MODM_FLAGS8(AccPwrCtrl);
 
-        /** Writing this to the AccSoftreset register will perform a soft reset of the IMU */
+        /// Writing this to the AccSoftreset register will perform a soft reset of the IMU
         enum class AccSoftreset : uint8_t
         {
             ACC_SOFTRESET_VAL = 0xb6,

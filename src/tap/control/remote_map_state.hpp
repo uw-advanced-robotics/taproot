@@ -57,8 +57,8 @@ public:
      */
     enum class MouseButton
     {
-        LEFT,  /// The left mouse button.
-        RIGHT  /// The right mouse button.
+        LEFT,  ///< The left mouse button.
+        RIGHT  ///< The right mouse button.
     };
 
     RemoteMapState() = default;
