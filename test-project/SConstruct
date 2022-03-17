@@ -184,7 +184,7 @@ if args["TARGET_ENV"] == "hardware":
     env.Default("all")  # For the hardware target env, "all" runs if you don't
                         # specify anything (i.e. just type "scons")
 elif args["TARGET_ENV"] == "tests":
-    env.Append(toolpath=[abspath(r"../taproot-scripts/lbuild-tools/run_gcov.py")])
+    env.Append(toolpath=[abspath(r"../taproot-scripts/scons-tools")])
     env.Tool("run_gcov")
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
