@@ -161,7 +161,7 @@ public:
     mockable const char* getName() const;
 
     // Informs the client if a gear ratio has been assigned
-    mockable const bool hasGearRatio() const;
+    mockable bool hasGearRatio() const;
 
     inline void attachGearRatio(float gearRatio) { this->gearRatio = gearRatio; }
 

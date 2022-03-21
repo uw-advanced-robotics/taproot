@@ -147,7 +147,7 @@ tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
 
-const bool DjiMotor::hasGearRatio() const { return this->gearRatio == 0.0f; }
+bool DjiMotor::hasGearRatio() const { return this->gearRatio == 0.0f; }
 
 float DjiMotor::getMotorAngle() const
 {
