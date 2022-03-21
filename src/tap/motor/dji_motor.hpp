@@ -91,7 +91,8 @@ public:
         bool isInverted,
         const char* name,
         uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0);
+        int64_t encoderRevolutions = 0,
+        float gearRatio = 0.0f);
 
     mockable ~DjiMotor();
 
@@ -158,6 +159,14 @@ public:
     mockable tap::can::CanBus getCanBus() const;
 
     mockable const char* getName() const;
+
+    // Informs the client if a gear ratio has been assigned
+    mockable const bool hasGearRatio() const;
+
+    inline void attachGearRatio(float gearRatio) { this->gearRatio = gearRatio; }
+
+    // Get raw angle from the shaft to the motor
+    mockable float getMotorAngle() const;
 
     template <typename T>
     static void assertEncoderType()
@@ -234,6 +243,11 @@ private:
      * arbitrary.
      */
     int64_t encoderRevolutions;
+
+    /**
+     *
+     */
+    float gearRatio;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
 };
