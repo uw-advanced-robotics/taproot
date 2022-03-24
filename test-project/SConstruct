@@ -17,6 +17,7 @@
 
 import os
 import platform
+import glob
 from os.path import join, abspath
 
 from SCons.Script import *
@@ -193,7 +194,10 @@ elif args["TARGET_ENV"] == "tests":
     # WARNING: all aliases must be checked during argument validation
     env.Alias("build-tests", program)
     env.Alias("run-tests", env.Run(program))
-    env.Alias("run-tests-gcov", [env.RunGCOV(program, True)])
+
+    files_to_exclude_from_coverage = glob.glob(os.path.abspath('taproot/src/**/MahonyAHRS.*'), recursive=True)
+
+    env.Alias("run-tests-gcov", [env.RunGCOV(program, True, files_to_exclude_from_coverage)])
 
 else:
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
