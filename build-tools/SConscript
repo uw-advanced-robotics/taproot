@@ -28,7 +28,7 @@ GTEST_LIBS           = ["gtest", "gtest_main", "gmock", "gmock_main"]
 COVERAGE_LIBS        = ["-lgcov"]
 
 
-args["LINKERSCRIPT_FILE"] = LINKERSCRIPT_FILE
+env["LINKERSCRIPT_FILE"] = LINKERSCRIPT_FILE
 
 
 # Set the number of threads unless it has already been set to anything but 1
