@@ -39,13 +39,13 @@ class Odometry2DTracker : public Odometry2DInterface
 {
 public:
     /**
-     * @param chassisYawObserver pointer to an object which implements the
+     * @param[in] chassisYawObserver pointer to an object which implements the
      *      ChassisWorldYawObserverInterface. Should return the angle of the chassis
      *      forward vector relative to the x-axis of the field.
-     * @param chassisDisplacementObserver pointer to an object which implements the
+     * @param[in] chassisDisplacementObserver pointer to an object which implements the
      *      ChassisDisplacementObserverInterface. Used for getting the chassis displacement
      *
-     * @note it is essential that the chassisYawObserver and chassisDisplacementObserver
+     * @note It is essential that the chassisYawObserver and chassisDisplacementObserver
      *      use the same positive z-axis. The getter interfaces should enforce that they
      *      they use positive z-axis is up, but it's worth noting here again.
      */
@@ -64,7 +64,7 @@ public:
     void update();
 
     /**
-     * @return the current odometry frame
+     * @return The current odometry frame.
      * @see Odometry2DInterface::getCurrentLocation2D()
      */
     inline modm::Location2D<float> getCurrentLocation2D() const final { return location; }

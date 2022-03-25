@@ -150,7 +150,7 @@ public:
 
     int16_t getTorque() const override;
 
-    /** For interpreting the sign of return value see class comment */
+    /// For interpreting the sign of return value see class comment
     int16_t getShaftRPM() const override;
 
     mockable bool isMotorInverted() const;

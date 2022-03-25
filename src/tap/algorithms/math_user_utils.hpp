@@ -30,7 +30,7 @@ namespace tap
 {
 namespace algorithms
 {
-/** Acceleration due to gravity, in m/s^2. */
+/// Acceleration due to gravity, in m/s^2.
 static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
 /**
@@ -81,7 +81,7 @@ inline T limitVal(T val, T min, T max)
 
 /**
  * A simple floating point low pass filter, e.g.
- * \f$y_{filtered} = \alpha * y_{n+1} + (1-\alpha) \cdot y_n\f$
+ * \f$y_{filtered} = \alpha \cdot y_{n+1} + (1-\alpha) \cdot y_n\f$
  *
  * Here is a simple use case. To use the low pass filter, pass
  * in the val you are low passing in as the first parameter and
@@ -90,15 +90,15 @@ inline T limitVal(T val, T min, T max)
  * val = lowPassFilter(val, newValue, 0.1f);
  * \endcode
  *
- * @note only use this if you are willing to introduce some lag into
+ * @note Only use this if you are willing to introduce some lag into
  *      your system, and be careful if you do.
- * @param[in] prevValue the previous low passed value.
- * @param[in] newValue the new data to be passed into the low pass filter.
- * @param[in] alpha the amount of smoothing. The larger the alpha, the
+ * @param[in] prevValue The previous low passed value.
+ * @param[in] newValue The new data to be passed into the low pass filter.
+ * @param[in] alpha The amount of smoothing. The larger the alpha, the
  *      less smoothing occurs. An alpha of 1 means that you want to favor
  *      the newValue and thus is not doing any filtering. Must be between
  *      [0, 1].
- * @return the newly low passed filter data.
+ * @return The newly low passed filter data.
  */
 inline float lowPassFilter(float prevValue, float newValue, float alpha)
 {
