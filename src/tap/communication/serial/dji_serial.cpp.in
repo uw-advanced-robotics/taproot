@@ -89,14 +89,6 @@ void DJISerial::updateSerial()
             {
                 frameCurrReadByte = 0;
 
-                if (newMessage.header.dataLength == 0 ||
-                    newMessage.header.dataLength >= SERIAL_RX_BUFF_SIZE)
-                {
-                    djiSerialRxState = SERIAL_HEADER_SEARCH;
-                    RAISE_ERROR(drivers, "invalid message length received");
-                    return;
-                }
-
                 // check crc8 on header
                 if (rxCrcEnabled)
                 {
@@ -110,6 +102,13 @@ void DJISerial::updateSerial()
                         RAISE_ERROR(drivers, "CRC8 failure");
                         return;
                     }
+                }
+
+                if (newMessage.header.dataLength >= SERIAL_RX_BUFF_SIZE)
+                {
+                    djiSerialRxState = SERIAL_HEADER_SEARCH;
+                    RAISE_ERROR(drivers, "received message length longer than allowed max");
+                    return;
                 }
 
                 // move on to processing message body

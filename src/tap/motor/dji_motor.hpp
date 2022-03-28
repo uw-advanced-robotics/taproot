@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __DJI_MOTOR_HPP__
-#define __DJI_MOTOR_HPP__
+#ifndef TAPROOT_DJI_MOTOR_HPP_
+#define TAPROOT_DJI_MOTOR_HPP_
 
 #include <string>
 
@@ -153,7 +153,7 @@ public:
 
     int16_t getTorque() const override;
 
-    /** For interpreting the sign of return value see class comment */
+    /// For interpreting the sign of return value see class comment
     int16_t getShaftRPM() const override;
 
     mockable bool isMotorInverted() const;
@@ -243,4 +243,4 @@ private:
 
 }  // namespace tap::motor
 
-#endif
+#endif  // TAPROOT_DJI_MOTOR_HPP_

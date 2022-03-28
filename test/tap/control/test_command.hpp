@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TEST_COMMAND_HPP_
-#define TEST_COMMAND_HPP_
+#ifndef TAPROOT_TEST_COMMAND_HPP_
+#define TAPROOT_TEST_COMMAND_HPP_
 
 #include "tap/control/command.hpp"
 
@@ -47,4 +47,4 @@ private:
 }  // namespace control
 }  // namespace tap
 
-#endif  // TEST_COMMAND_HPP_
+#endif  // TAPROOT_TEST_COMMAND_HPP_

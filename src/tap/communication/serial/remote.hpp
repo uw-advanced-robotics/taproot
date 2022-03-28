@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REMOTE_HPP_
-#define REMOTE_HPP_
+#ifndef TAPROOT_REMOTE_HPP_
+#define TAPROOT_REMOTE_HPP_
 
 #include <cstdint>
 
@@ -177,11 +177,11 @@ public:
     mockable uint32_t getUpdateCounter() const;
 
 private:
-    static const int REMOTE_BUF_LEN = 18;              /// Length of the remote recieve buffer.
-    static const int REMOTE_READ_TIMEOUT = 6;          /// Timeout delay between valid packets.
-    static const int REMOTE_DISCONNECT_TIMEOUT = 100;  /// Timeout delay for remote disconnect.
-    static const int REMOTE_INT_PRI = 12;              /// Interrupt priority.
-    static constexpr float STICK_MAX_VALUE = 660.0f;   /// Max value received by one of the sticks.
+    static const int REMOTE_BUF_LEN = 18;              ///< Length of the remote recieve buffer.
+    static const int REMOTE_READ_TIMEOUT = 6;          ///< Timeout delay between valid packets.
+    static const int REMOTE_DISCONNECT_TIMEOUT = 100;  ///< Timeout delay for remote disconnect.
+    static const int REMOTE_INT_PRI = 12;              ///< Interrupt priority.
+    static constexpr float STICK_MAX_VALUE = 660.0f;   ///< Max value received by one of the sticks.
 
     /// The current remote information
     struct RemoteInfo
@@ -193,16 +193,17 @@ private:
         int16_t leftVertical = 0;
         SwitchState leftSwitch = SwitchState::UNKNOWN;
         SwitchState rightSwitch = SwitchState::UNKNOWN;
+        /// Mouse information
         struct
-        {  /// Mouse information
+        {
             int16_t x = 0;
             int16_t y = 0;
             int16_t z = 0;
             bool l = false;
             bool r = false;
         } mouse;
-        uint16_t key = 0;   /// Keyboard information
-        int16_t wheel = 0;  /// Remote wheel information
+        uint16_t key = 0;   ///< Keyboard information
+        int16_t wheel = 0;  ///< Remote wheel information
     };
 
     Drivers *drivers;
@@ -233,4 +234,4 @@ private:
 
 }  // namespace tap::communication::serial
 
-#endif  // REMOTE_HPP_
+#endif  // TAPROOT_REMOTE_HPP_

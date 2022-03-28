@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TERMINAL_DEVICES_HPP_
-#define TERMINAL_DEVICES_HPP_
+#ifndef TAPROOT_UART_TERMINAL_DEVICE_HPP_
+#define TAPROOT_UART_TERMINAL_DEVICE_HPP_
 
 #include "tap/communication/serial/uart.hpp"
 
@@ -76,4 +76,4 @@ private:
 };  // class UartTerminalDevice
 }  // namespace tap::communication::serial
 
-#endif  // TERMINAL_DEVICES_HPP_
+#endif  // TAPROOT_UART_TERMINAL_DEVICE_HPP_

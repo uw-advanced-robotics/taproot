@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef REMOTE_MAP_STATE_HPP_
-#define REMOTE_MAP_STATE_HPP_
+#ifndef TAPROOT_REMOTE_MAP_STATE_HPP_
+#define TAPROOT_REMOTE_MAP_STATE_HPP_
 
 #include <cstdint>
 #include <list>
@@ -57,8 +57,8 @@ public:
      */
     enum class MouseButton
     {
-        LEFT,  /// The left mouse button.
-        RIGHT  /// The right mouse button.
+        LEFT,  ///< The left mouse button.
+        RIGHT  ///< The right mouse button.
     };
 
     RemoteMapState() = default;
@@ -264,4 +264,4 @@ private:
 }  // namespace control
 }  // namespace tap
 
-#endif  // REMOTE_MAP_STATE_HPP_
+#endif  // TAPROOT_REMOTE_MAP_STATE_HPP_

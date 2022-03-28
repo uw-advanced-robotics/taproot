@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef ODOMETRY_2D_INTERFACE_HPP_
-#define ODOMETRY_2D_INTERFACE_HPP_
+#ifndef TAPROOT_ODOMETRY_2D_INTERFACE_HPP_
+#define TAPROOT_ODOMETRY_2D_INTERFACE_HPP_
 
 // Include instead of forward declare because template uses default arguments
 #include "modm/math/geometry/location_2d.hpp"
@@ -40,11 +40,11 @@ class Odometry2DInterface
 {
 public:
     /**
-     * @return the current location (x and y coordinate) and orientation (in radians)
+     * @return The current location (x and y coordinate) and orientation (in radians).
      */
     virtual modm::Location2D<float> getCurrentLocation2D() const = 0;
 };
 
 }  // namespace tap::algorithms::odometry
 
-#endif  // ODOMETRY_2D_INTERFACE_HPP_
+#endif  // TAPROOT_ODOMETRY_2D_INTERFACE_HPP_
