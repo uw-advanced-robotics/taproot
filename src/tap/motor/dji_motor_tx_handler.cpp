@@ -19,6 +19,8 @@
 
 #include "dji_motor_tx_handler.hpp"
 
+#include <cassert>
+
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
