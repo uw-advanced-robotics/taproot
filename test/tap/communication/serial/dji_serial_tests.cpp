@@ -170,7 +170,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
     {
         rawMessage[i + 7] = i;
     }
-    convertToLittleEndian(calculateCRC16(rawMessage, 17) - 1, rawMessage + 17);
+    convertToLittleEndian<uint16_t>(calculateCRC16(rawMessage, 17) - 1, rawMessage + 17);
 
     ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {

@@ -36,7 +36,7 @@ GCOV_SOURCES_TO_IGNORE = glob.glob(os.path.abspath('taproot/src/**/MahonyAHRS.*'
 
 
 # Don't compile this when testing
-IGNORED_FILES_WHILE_TESTING = ["src/main.cpp"]
+IGNORED_FILES_WHILE_TESTING = ["main.cpp"]
 
 
 # Parse and validate arguments
