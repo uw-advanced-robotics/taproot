@@ -79,6 +79,11 @@ sources = env.FindSourceFiles(
     "src",
     ignoreFiles=IGNORED_FILES_WHILE_TESTING if args["TARGET_ENV"] == "tests" else [])
 
+# Tests must be included as sources (rather than built as a separate library) in order for
+# googletest to identify any tests that need to be run
+if args["TARGET_ENV"] == "tests":
+    sources.extend(env.FindSourceFiles("taproot/test"))
+
 
 if args["TARGET_ENV"] == "hardware":
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
