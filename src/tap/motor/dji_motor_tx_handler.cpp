@@ -35,7 +35,7 @@ void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor* co
     assert(motor != nullptr);
     uint32_t idIndex = DJI_MOTOR_TO_NORMALIZED_ID(motor->getMotorIdentifier());
     bool motorOverloaded = canMotorStore[idIndex] != nullptr;
-    bool motorOutOfBounds = (idIndex < 0) || (idIndex >= DJI_MOTORS_PER_CAN);
+    bool motorOutOfBounds = idIndex >= DJI_MOTORS_PER_CAN;
     modm_assert(!motorOverloaded && !motorOutOfBounds, "DjiMotorTxHandler", "overloading");
     canMotorStore[idIndex] = motor;
 }
