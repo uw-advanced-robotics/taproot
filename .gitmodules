@@ -2,3 +2,6 @@
 	path = modm
 	url = https://github.com/uw-advanced-robotics/modm.git
 	branch = aruw-master
+[submodule "ext/littlefs"]
+	path = ext/littlefs
+	url = https://github.com/littlefs-project/littlefs
