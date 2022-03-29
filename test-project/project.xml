@@ -45,5 +45,9 @@
     <module>taproot:communication:sensors:imu:mpu6500</module>
     <module>taproot:display</module>
     <!-- End For RoboMaster Development Board Type A -->
+
+    <!-- For RoboMaster Development Board Type C --> <!--
+    <module>taproot:communication:sensors:bmi088</module>
+    --> <!-- End For RoboMaster Development Board Type C -->
   </modules>
 </library>

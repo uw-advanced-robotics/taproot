@@ -28,7 +28,7 @@
 
 using namespace tap::control;
 using tap::Drivers;
-using tap::Remote;
+using namespace tap::communication::serial;
 
 // Adding command with switch state RemoteMapState (RMS)
 
