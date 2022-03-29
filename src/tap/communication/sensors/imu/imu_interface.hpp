@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef IMU_INTERFACE_HPP_
-#define IMU_INTERFACE_HPP_
+#ifndef TAPROOT_IMU_INTERFACE_HPP_
+#define TAPROOT_IMU_INTERFACE_HPP_
 
 namespace tap::sensors
 {
