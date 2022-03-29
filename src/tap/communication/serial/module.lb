@@ -65,6 +65,8 @@ class RefSerial(Module):
         env.copy("ref_serial.cpp")
         env.copy("ref_serial.hpp")
         env.copy("ref_serial_data.hpp")
+        env.copy("ref_serial_transmitter.cpp")
+        env.copy("ref_serial_transmitter.hpp")
         env.outbasepath = "taproot/src/tap/communication/referee"
         env.copy("../referee/state_hud_indicator.hpp")
 
