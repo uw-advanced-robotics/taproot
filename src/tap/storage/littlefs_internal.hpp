@@ -23,9 +23,9 @@
 #include "littlefs/lfs.h"
 
 namespace tap::storage {
-class LittleFSFlash {
+class LittleFSInternal {
    public:
-    LittleFSFlash();
+    LittleFSInternal();
     void initialize();
     lfs_t *getFS() { return &fs; }
     lfs_config *getFSConfig() { return &fsconfig; }
