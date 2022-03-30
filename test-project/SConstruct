@@ -27,7 +27,6 @@ from build_tools import parse_args
 # Define project settings and build paths
 PROJECT_NAME         = "test-project"
 BUILD_PATH           = "build"
-HARDWARE_MODM_PATH   = "taproot/modm"
 TAPROOT_PATH         = "taproot"
 SRC_PATH             = "src"
 TAPROOT_SCRIPTS_TOOLPATH = abspath("../taproot-scripts/scons-tools")
@@ -49,25 +48,12 @@ env["CONFIG_ARTIFACT_PATH"] = join(env["CONFIG_BUILD_BASE"], "artifact")
 env["CONFIG_PROFILE"] = args["BUILD_PROFILE"]
 
 
-# Add scons-tools directory to toolpath so we can use the various tools inside it,
-# then add various tools
-env.Append(toolpath=[TAPROOT_SCRIPTS_TOOLPATH])
+# Building all libraries (read from sconscript files located in provided dirs)
+# Ensure that modm is first, since Taproot depends on modm
+env.SConscript(dirs=[TAPROOT_PATH], exports=["env", "args"])
 
 
 print("Configured {0} parallel build jobs (-j{0})".format(GetOption("num_jobs")))
-
-
-# Set up target environment-specific paths
-if args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim":
-    env.Tool("get_sim_modm_instance_path")
-    modm_path = env.GetSimModmInstancePath()
-elif args["TARGET_ENV"] == "hardware":
-    modm_path = HARDWARE_MODM_PATH
-
-
-# Building all libraries (read from sconscript files located in provided dirs)
-# Ensure that modm is first, since Taproot depends on modm
-env.SConscript(dirs=[modm_path, TAPROOT_PATH], exports=["env", "args"])
 
 
 env.AppendUnique(CPPPATH=[SRC_PATH])
@@ -94,6 +80,9 @@ if args["TARGET_ENV"] == "hardware":
     env.Default("all")  # For the hardware target env, "all" runs if you don't
                         # specify anything (i.e. just type "scons")
 elif args["TARGET_ENV"] == "tests":
+    # Add scons-tools directory to toolpath so we can use the various tools inside it,
+    # then add various tools
+    env.Append(toolpath=[TAPROOT_SCRIPTS_TOOLPATH])
     env.Tool("run_gcov")
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
