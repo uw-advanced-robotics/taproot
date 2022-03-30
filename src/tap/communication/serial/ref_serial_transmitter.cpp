@@ -20,7 +20,6 @@
 #include "ref_serial_transmitter.hpp"
 
 #include <cstring>
-#include <iostream>
 
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
@@ -368,9 +367,6 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
         drivers->refSerial.getRobotData().robotId,
         drivers,
         MODM_ARRAY_SIZE(graphicMsg->msg));
-
-    static constexpr int f = MODM_ARRAY_SIZE(graphicMsg->msg);
-    std::cout << f << std::endl;
     RF_END();
 }
 
