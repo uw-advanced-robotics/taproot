@@ -118,7 +118,7 @@ before_script:
   script:
     - cd test-project
     - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/mcb-project-tests.elf
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
   artifacts:

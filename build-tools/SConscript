@@ -19,6 +19,7 @@ Import("env")
 Import("args")
 
 import sys
+import platform
 from os.path import abspath
 
 
@@ -161,8 +162,6 @@ if args["TARGET_ENV"] == "tests":
 # Find all files that need to be built with the library (files in src, files
 # in test if target environment is tests)
 files = env.FindSourceFiles("src")
-if args["TARGET_ENV"] == "tests":
-    files.extend(env.FindSourceFiles("test"))
 
 # Construct the static library
 library = env.StaticLibrary(target="taproot", source=files)
