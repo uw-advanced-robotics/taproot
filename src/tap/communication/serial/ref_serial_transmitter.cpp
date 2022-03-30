@@ -20,6 +20,7 @@
 #include "ref_serial_transmitter.hpp"
 
 #include <cstring>
+#include <iostream>
 
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
@@ -246,42 +247,43 @@ modm::ResumableResult<bool> RefSerialTransmitter::deleteGraphicLayer(
  * header and whether or not the actually send the message. This helper function is needed because
  * the sendGraphic functions all send messages the same way with only minor differences.
  */
-#define SEND_GRAPHIC_HELPER(                                                              \
-    graphicMsg,                                                                           \
-    messageId,                                                                            \
-    configMsgHeader,                                                                      \
-    sendMsg,                                                                              \
-    robotId,                                                                              \
-    drivers,                                                                              \
-    extraDataLength)                                                                      \
-    if (robotId == RefSerialTransmitter::RobotId::INVALID)                                \
-    {                                                                                     \
-        RF_RETURN_1();                                                                    \
-    }                                                                                     \
-    if (configMsgHeader)                                                                  \
-    {                                                                                     \
-        RefSerialTransmitter::configFrameHeader(                                          \
-            &graphicMsg->frameHeader,                                                     \
-            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) + 0); \
-        graphicMsg->cmdId = RefSerial::REF_MESSAGE_TYPE_CUSTOM_DATA;                      \
-        RefSerialTransmitter::configInteractiveHeader(                                    \
-            &graphicMsg->interactiveHeader,                                               \
-            messageId,                                                                    \
-            robotId,                                                                      \
-            getRobotClientID(robotId));                                                   \
-        graphicMsg->crc16 = algorithms::calculateCRC16(                                   \
-            reinterpret_cast<uint8_t*>(graphicMsg),                                       \
-            sizeof(graphicMsg) - sizeof(graphicMsg->crc16));                              \
-    }                                                                                     \
-    if (sendMsg)                                                                          \
-    {                                                                                     \
-        drivers->refSerial.acquireTransmissionSemaphore();                                \
-        drivers->uart.write(                                                              \
-            bound_ports::REF_SERIAL_UART_PORT,                                            \
-            reinterpret_cast<uint8_t*>(graphicMsg),                                       \
-            sizeof(graphicMsg));                                                          \
-        DELAY_REF_GRAPHIC(graphicMsg);                                                    \
-        drivers->refSerial.releaseTransmissionSemaphore();                                \
+#define SEND_GRAPHIC_HELPER(                                                          \
+    graphicMsg,                                                                       \
+    messageId,                                                                        \
+    configMsgHeader,                                                                  \
+    sendMsg,                                                                          \
+    robotId,                                                                          \
+    drivers,                                                                          \
+    extraDataLength)                                                                  \
+    if (robotId == RefSerialTransmitter::RobotId::INVALID)                            \
+    {                                                                                 \
+        RF_RETURN_1();                                                                \
+    }                                                                                 \
+    if (configMsgHeader)                                                              \
+    {                                                                                 \
+        RefSerialTransmitter::configFrameHeader(                                      \
+            &graphicMsg->frameHeader,                                                 \
+            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) + \
+                extraDataLength);                                                     \
+        graphicMsg->cmdId = RefSerial::REF_MESSAGE_TYPE_CUSTOM_DATA;                  \
+        RefSerialTransmitter::configInteractiveHeader(                                \
+            &graphicMsg->interactiveHeader,                                           \
+            messageId,                                                                \
+            robotId,                                                                  \
+            getRobotClientID(robotId));                                               \
+        graphicMsg->crc16 = algorithms::calculateCRC16(                               \
+            reinterpret_cast<uint8_t*>(graphicMsg),                                   \
+            sizeof(*graphicMsg) - sizeof(graphicMsg->crc16));                         \
+    }                                                                                 \
+    if (sendMsg)                                                                      \
+    {                                                                                 \
+        drivers->refSerial.acquireTransmissionSemaphore();                            \
+        drivers->uart.write(                                                          \
+            bound_ports::REF_SERIAL_UART_PORT,                                        \
+            reinterpret_cast<uint8_t*>(graphicMsg),                                   \
+            sizeof(*graphicMsg));                                                     \
+        DELAY_REF_GRAPHIC(graphicMsg);                                                \
+        drivers->refSerial.releaseTransmissionSemaphore();                            \
     }
 
 modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
@@ -366,6 +368,9 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
         drivers->refSerial.getRobotData().robotId,
         drivers,
         MODM_ARRAY_SIZE(graphicMsg->msg));
+
+    static constexpr int f = MODM_ARRAY_SIZE(graphicMsg->msg);
+    std::cout << f << std::endl;
     RF_END();
 }
 
@@ -405,8 +410,9 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendRobotToRobotMsg(
         drivers->refSerial.getRobotData().robotId,
         static_cast<uint16_t>(receiverId));
 
-    static constexpr int FULL_MSG_SIZE_LESS_MSGLEN =
-        sizeof(robotToRobotMsg->frameHeader) + sizeof(robotToRobotMsg->cmdId);
+    static constexpr int FULL_MSG_SIZE_LESS_MSGLEN = sizeof(robotToRobotMsg->frameHeader) +
+                                                     sizeof(robotToRobotMsg->cmdId) +
+                                                     sizeof(robotToRobotMsg->interactiveHeader);
 
     *reinterpret_cast<uint16_t*>(robotToRobotMsg->dataAndCRC16 + msgLen) =
         algorithms::calculateCRC16(

@@ -4,6 +4,11 @@
 
 ### Breaking changes
 
+- Ref serial transmitter class added, which pulls out transmission-related code from the `RefSerial`
+  class. Furthermore, functions that transmit directly handle bandwidth considerations in the
+  `RefSerialTransmitter` class. An instance of this class should be instantiated for each
+  protothread that ref serial transmissions will be performed in (!161, #175).
+
 ### All changes
 
 - Unit tests added for `Remote` class.
