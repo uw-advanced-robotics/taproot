@@ -194,7 +194,7 @@ static uint16_t getRobotClientID(RefSerialTransmitter::RobotId robotId)
     return 0x100 + static_cast<uint16_t>(robotId);
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::deleteGraphicLayer(
+modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
     Tx::DeleteGraphicOperation graphicOperation,
     uint8_t graphicLayer)
 {
@@ -285,7 +285,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::deleteGraphicLayer(
         drivers->refSerial.releaseTransmissionSemaphore();                            \
     }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
+modm::ResumableResult<void> RefSerialTransmitter::sendGraphic(
     Tx::Graphic1Message* graphicMsg,
     bool configMsgHeader,
     bool sendMsg)
@@ -302,7 +302,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
     RF_END();
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
+modm::ResumableResult<void> RefSerialTransmitter::sendGraphic(
     Tx::Graphic2Message* graphicMsg,
     bool configMsgHeader,
     bool sendMsg)
@@ -319,7 +319,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
     RF_END();
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
+modm::ResumableResult<void> RefSerialTransmitter::sendGraphic(
     Tx::Graphic5Message* graphicMsg,
     bool configMsgHeader,
     bool sendMsg)
@@ -336,7 +336,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
     RF_END();
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
+modm::ResumableResult<void> RefSerialTransmitter::sendGraphic(
     Tx::Graphic7Message* graphicMsg,
     bool configMsgHeader,
     bool sendMsg)
@@ -353,7 +353,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
     RF_END();
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
+modm::ResumableResult<void> RefSerialTransmitter::sendGraphic(
     Tx::GraphicCharacterMessage* graphicMsg,
     bool configMsgHeader,
     bool sendMsg)
@@ -370,7 +370,7 @@ modm::ResumableResult<bool> RefSerialTransmitter::sendGraphic(
     RF_END();
 }
 
-modm::ResumableResult<bool> RefSerialTransmitter::sendRobotToRobotMsg(
+modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
     Tx::RobotToRobotMessage* robotToRobotMsg,
     uint16_t msgId,
     RobotId receiverId,

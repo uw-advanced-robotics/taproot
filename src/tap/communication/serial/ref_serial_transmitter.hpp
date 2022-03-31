@@ -36,6 +36,18 @@ class Drivers;
 
 namespace tap::communication::serial
 {
+/**
+ * Encapsulates logic for sending messages to the referee system. This includes sending
+ * robot-to-robot communication messages and UI drawing instructions to the RoboMaster client.
+ *
+ * The instance member functions of this class that return a `modm::ResumableResult<void>` must be
+ * used in a protothread or resumable function. In other words, member functions such as
+ * `sendGraphic` must be in a call of `PT_CALL` or `RF_CALL`.
+ *
+ * This transmitter allows the user to send data to the referee system from multiple protothreads.
+ * An instance of the ref serial transmitter should be instantiated for each protothread. If unique
+ * instances are not used, behavior is undefined.
+ */
 class RefSerialTransmitter : public RefSerialData, public modm::Resumable<7>
 {
 public:
@@ -132,9 +144,10 @@ public:
         uint16_t xLen,
         uint16_t yLen,
         Tx::GraphicData* sharedData);
-    // Recommended font size and line width ratio is 10:1.
     /**
      * Configures `sharedData` with a floating point number.
+     * 
+     * Recommended font size and line width ratio is 10:1.
      *
      * @note This function doesn't work because of known issues in the referee system
      *      server.
@@ -151,6 +164,8 @@ public:
         Tx::GraphicData* sharedData);
     /**
      * Configures `sharedData` with an integer.
+     * 
+     * Recommended font size and line width ratio is 10:1.
      *
      * @note This function doesn't display negative numbers properly because of known
      *      issues in the referee system server.
@@ -166,6 +181,8 @@ public:
         Tx::GraphicData* sharedData);
     /**
      * Configures a character message in the passed in `GraphicCharacterMessage`.
+     * 
+     * Recommended font size and line width ratio is 10:1.
      *
      * @param[out] sharedData The message to configure.
      */
@@ -197,7 +214,7 @@ public:
      * @param[in] graphicOperation Whether to delete a single layer or the entire screen.
      * @param[in] graphicLayer The layer to remove. Must be between 0-9
      */
-    mockable modm::ResumableResult<bool> deleteGraphicLayer(
+    mockable modm::ResumableResult<void> deleteGraphicLayer(
         Tx::DeleteGraphicOperation graphicOperation,
         uint8_t graphicLayer);
 
@@ -210,28 +227,28 @@ public:
      * @param[in] configMsgHeader Whether or not to update the `graphicMsg`'s header information.
      * @param[in] sendMsg Whether or not to send the message.
      */
-    mockable modm::ResumableResult<bool> sendGraphic(
+    mockable modm::ResumableResult<void> sendGraphic(
         Tx::Graphic1Message* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
-    mockable modm::ResumableResult<bool> sendGraphic(
+    mockable modm::ResumableResult<void> sendGraphic(
         Tx::Graphic2Message* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
-    mockable modm::ResumableResult<bool> sendGraphic(
+    mockable modm::ResumableResult<void> sendGraphic(
         Tx::Graphic5Message* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
-    mockable modm::ResumableResult<bool> sendGraphic(
+    mockable modm::ResumableResult<void> sendGraphic(
         Tx::Graphic7Message* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
-    mockable modm::ResumableResult<bool> sendGraphic(
+    mockable modm::ResumableResult<void> sendGraphic(
         Tx::GraphicCharacterMessage* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
 
-    mockable modm::ResumableResult<bool> sendRobotToRobotMsg(
+    mockable modm::ResumableResult<void> sendRobotToRobotMsg(
         Tx::RobotToRobotMessage* robotToRobotMsg,
         uint16_t msgId,
         RobotId receiverId,
