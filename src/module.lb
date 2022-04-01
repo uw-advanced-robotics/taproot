@@ -30,6 +30,9 @@ def prepare(module, options):
         ":board",
         ":errors")
 
+    # build system dependencies
+    module.depends(":build")
+
     # motor-specific dependencies
     module.depends(":communication:can", ":communication:tcp-server")
 
@@ -55,7 +58,6 @@ def build(env):
     # Copy all folders and files that are not configurable in this
     # top level module
     env.outbasepath = "taproot/src"
-    env.copy("tap/SConscript")
     env.copy("tap/util_macros.hpp")
 
     env.copy("tap/algorithms")
