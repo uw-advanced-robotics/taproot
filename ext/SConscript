@@ -21,16 +21,16 @@ from os.path import abspath
 
 files = env.FindSourceFiles(".")
 
-library = env.StaticLibrary(target="taproot-ext", source=files)
-
-env.AppendUnique(LIBS=[
-    library,
-])
-
-env.Append(CCFLAGS=["-w"]) # suppress all warnings
+newenv = env.Clone()
+newenv.Append(CCFLAGS=["-w"]) # suppress all warnings
+library = newenv.StaticLibrary(target="taproot-ext", source=files)
 
 env.AppendUnique(LIBPATH=[
     abspath(str(library[0].get_dir())),
+])
+
+env.AppendUnique(LIBS=[
+    library,
 ])
 
 Return("library")

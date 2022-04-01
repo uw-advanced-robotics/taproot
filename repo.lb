@@ -54,6 +54,7 @@ def prepare(repo, options):
     repo.add_modules_recursive("./test", modulefile="*.lb")
     repo.add_modules_recursive("./modm-project-files", modulefile="*.lb")
     repo.add_modules_recursive("./docs", modulefile="*.lb")
+    repo.add_modules_recursive("./build-tools", modulefile="*.lb")
     repo.add_modules_recursive("./ext", modulefile="*.lb")
 
 def build(env):
