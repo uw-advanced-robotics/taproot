@@ -22,24 +22,25 @@
 
 #include "littlefs/lfs.h"
 
-namespace tap::storage {
-class LittleFSInternal {
-   public:
+namespace tap::storage
+{
+class LittleFSInternal
+{
+public:
     LittleFSInternal();
     void initialize();
     lfs_t *getFS() { return &fs; }
     lfs_config *getFSConfig() { return &fsconfig; }
 
-
-   private:
+private:
     // See RM0090 Page 77
     static constexpr size_t SECTOR_SIZE = 1ul << 17;  // Use 128kB Sectors
-    static constexpr uint8_t SECTOR_ZERO = 17;  // 128kB Sector 17 to 23
-    static constexpr uint8_t BLOCK_COUNT = 7;  // 17 to 23, 7 blocks in total
+    static constexpr uint8_t SECTOR_ZERO = 17;        // 128kB Sector 17 to 23
+    static constexpr uint8_t BLOCK_COUNT = 7;         // 17 to 23, 7 blocks in total
 
     static constexpr int LFS_CACHE_SIZE = 256;
     static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 256;
-    static constexpr int LFS_MAX_FILE_SIZE = 100 * 1024 * 1024; // 100kB
+    static constexpr int LFS_MAX_FILE_SIZE = 100 * 1024 * 1024;  // 100kB
     static constexpr int LFS_MAX_FILENAME_LENGTH = 64;
 
     int lfs_read_buffer[LFS_CACHE_SIZE] = {0};
@@ -75,16 +76,23 @@ class LittleFSInternal {
         .metadata_max = 2048,
     };
 
-    static int lfs_read(const struct lfs_config *c, lfs_block_t block,
-                        lfs_off_t off, void *buffer, lfs_size_t size);
+    static int lfs_read(
+        const struct lfs_config *c,
+        lfs_block_t block,
+        lfs_off_t off,
+        void *buffer,
+        lfs_size_t size);
 
-    static int lfs_program(const struct lfs_config *c, lfs_block_t block,
-                           lfs_off_t off, const void *buffer, lfs_size_t size);
+    static int lfs_program(
+        const struct lfs_config *c,
+        lfs_block_t block,
+        lfs_off_t off,
+        const void *buffer,
+        lfs_size_t size);
 
     static int lfs_erase(const struct lfs_config *c, lfs_block_t block);
 
     static int lfs_sync(const struct lfs_config *c);
-
 };
 
 }  // namespace tap::storage

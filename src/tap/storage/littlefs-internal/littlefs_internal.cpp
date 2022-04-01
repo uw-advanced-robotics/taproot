@@ -24,41 +24,56 @@
 using namespace tap::storage;
 using namespace modm::platform;
 
-LittleFSInternal::LittleFSInternal() {
-}
+LittleFSInternal::LittleFSInternal() {}
 
-void LittleFSInternal::initialize() {
+void LittleFSInternal::initialize()
+{
     Flash::enable();
     Flash::unlock();
 }
 
-int LittleFSInternal::lfs_read(const struct lfs_config *c, lfs_block_t block,
-                            lfs_off_t off, void *buffer, lfs_size_t size) {
+int LittleFSInternal::lfs_read(
+    const struct lfs_config *c,
+    lfs_block_t block,
+    lfs_off_t off,
+    void *buffer,
+    lfs_size_t size)
+{
     // Offset and size must be aligned
-    if (block >= c->block_count || (size % c->read_size) != 0 || (off % c->read_size) != 0) {
+    if (block >= c->block_count || (size % c->read_size) != 0 || (off % c->read_size) != 0)
+    {
         return LFS_ERR_IO;
     }
 
     uintptr_t startAddr = OriginAddr + block * c->block_size + off;
 
-    for (size_t i = 0; i < size / sizeof(uint32_t); i++) {
+    for (size_t i = 0; i < size / sizeof(uint32_t); i++)
+    {
         ((uint32_t *)buffer)[i] = *(reinterpret_cast<uint32_t *>(startAddr) + i);
     }
 
     return LFS_ERR_OK;
 }
 
-int LittleFSInternal::lfs_program(const struct lfs_config *c, lfs_block_t block,
-                               lfs_off_t off, const void *buffer, lfs_size_t size) {
+int LittleFSInternal::lfs_program(
+    const struct lfs_config *c,
+    lfs_block_t block,
+    lfs_off_t off,
+    const void *buffer,
+    lfs_size_t size)
+{
     // Offset and size must be aligned
-    if (block >= c->block_count || (size % c->prog_size) != 0 || (off % c->prog_size) != 0) {
+    if (block >= c->block_count || (size % c->prog_size) != 0 || (off % c->prog_size) != 0)
+    {
         return LFS_ERR_IO;
     }
 
     uintptr_t startAddr = OriginAddr + block * c->block_size + off;
 
-    for (size_t i = 0; i < size / sizeof(uint32_t); i++) {
-        if (Flash::program(startAddr + i * sizeof(uint32_t), ((uint32_t *)buffer)[i]) != 0) {
+    for (size_t i = 0; i < size / sizeof(uint32_t); i++)
+    {
+        if (Flash::program(startAddr + i * sizeof(uint32_t), ((uint32_t *)buffer)[i]) != 0)
+        {
             return LFS_ERR_IO;
         }
     }
@@ -66,15 +81,18 @@ int LittleFSInternal::lfs_program(const struct lfs_config *c, lfs_block_t block,
     return LFS_ERR_OK;
 }
 
-int LittleFSInternal::lfs_erase(const struct lfs_config *c, lfs_block_t block) {
+int LittleFSInternal::lfs_erase(const struct lfs_config *c, lfs_block_t block)
+{
     static constexpr int BANK2_INDEX_OFFSET = 4;
-    if (block >= c->block_count) {
+    if (block >= c->block_count)
+    {
         return LFS_ERR_IO;
     }
     return (Flash::erase(SECTOR_ZERO + block + BANK2_INDEX_OFFSET) == 0 ? LFS_ERR_OK : LFS_ERR_IO);
 }
 
-int LittleFSInternal::lfs_sync(__unused const struct lfs_config *c) {
+int LittleFSInternal::lfs_sync(__unused const struct lfs_config *c)
+{
     // Return OK since all changes are immediately written to FLASH on Flash::program()
     return LFS_ERR_OK;
 }
