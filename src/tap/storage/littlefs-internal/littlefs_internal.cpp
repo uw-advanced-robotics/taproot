@@ -17,7 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "littlefs_flash.hpp"
+#include "littlefs_internal.hpp"
 
 #include "modm/platform/flash/flash.hpp"
 
