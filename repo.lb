@@ -18,7 +18,7 @@
 import subprocess
 
 import sys
-sys.path.append(repopath("scripts/lbuild-helpers"))
+sys.path.append(repopath("lbuild-scripts"))
 
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 
@@ -52,9 +52,9 @@ def init(repo):
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
-    repo.add_modules_recursive("./build_tools", modulefile="*.lb")
-    repo.add_modules_recursive("./modm_project_files", modulefile="*.lb")
+    repo.add_modules_recursive("./modm-project-files", modulefile="*.lb")
     repo.add_modules_recursive("./docs", modulefile="*.lb")
+    repo.add_modules_recursive("./build-tools", modulefile="*.lb")
 
 def build(env):
     if env[":rebuild_modm"]:
