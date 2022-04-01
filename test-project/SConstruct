@@ -1,0 +1,108 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import os
+import glob
+
+from os.path import join, abspath
+
+from SCons.Script import *
+
+from build_tools import parse_args
+
+
+# Define project settings and build paths
+PROJECT_NAME         = "test-project"
+BUILD_PATH           = "build"
+TAPROOT_PATH         = "taproot"
+SRC_PATH             = "src"
+TAPROOT_SCRIPTS_TOOLPATH = abspath("../taproot-scripts/scons-tools")
+GCOV_SOURCES_TO_IGNORE = glob.glob(os.path.abspath('taproot/src/**/MahonyAHRS.*'), recursive=True)
+
+
+# Don't compile this when testing
+IGNORED_FILES_WHILE_TESTING = ["main.cpp"]
+
+
+# Parse and validate arguments
+args = parse_args.parse_args()
+
+
+# Define a new SCons environment and set up basic build variables
+env = DefaultEnvironment(ENV=os.environ)
+env["CONFIG_BUILD_BASE"] = abspath(join(BUILD_PATH, args["TARGET_ENV"]))
+env["CONFIG_PROJECT_NAME"] = PROJECT_NAME
+env["CONFIG_ARTIFACT_PATH"] = join(env["CONFIG_BUILD_BASE"], "artifact")
+env["CONFIG_PROFILE"] = args["BUILD_PROFILE"]
+
+
+# Building all libraries (read from sconscript files located in provided dirs)
+# Ensure that modm is first, since Taproot depends on modm
+env.SConscript(dirs=[TAPROOT_PATH], exports=["env", "args"])
+
+
+print("Configured {0} parallel build jobs (-j{0})".format(GetOption("num_jobs")))
+
+
+env.AppendUnique(CPPPATH=[SRC_PATH])
+
+
+sources = env.FindSourceFiles(
+    "src",
+    ignoreFiles=IGNORED_FILES_WHILE_TESTING if args["TARGET_ENV"] == "tests" else [])
+
+# Tests must be included as sources (rather than built as a separate library) in order for
+# googletest to identify any tests that need to be run
+if args["TARGET_ENV"] == "tests":
+    sources.extend(env.FindSourceFiles("taproot/test"))
+
+
+if args["TARGET_ENV"] == "hardware":
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
+
+    # The executable depends on the linkerscript
+    env.Depends(target=program, dependency=env["LINKERSCRIPT_FILE"])
+
+    # Add target environment-specific SCons aliases
+    # WARNING: all aliases must be checked during argument validation
+    env.Alias("build", program)
+    env.Alias("size", env.Size(program))
+    env.Alias("gdb", env.DebugGdbRemote(program))
+    env.Alias("run", [env.ProgramOpenOcd(program)])
+    env.Alias("all", ["build", "size"])
+    env.Default("all")  # For the hardware target env, "all" runs if you don't
+                        # specify anything (i.e. just type "scons")
+elif args["TARGET_ENV"] == "tests":
+    # Add scons-tools directory to toolpath so we can use the various tools inside it,
+    # then add various tools
+    env.Append(toolpath=[TAPROOT_SCRIPTS_TOOLPATH])
+    env.Tool("run_gcov")
+
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
+
+    # Add target environment-specific SCons aliases
+    # WARNING: all aliases must be checked during argument validation
+    env.Alias("build-tests", program)
+    env.Alias("run-tests", env.Run(program))
+    env.Alias("run-tests-gcov", [env.RunGCOV(program, True, GCOV_SOURCES_TO_IGNORE)])
+else:
+    program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
+
+    # Add target environment-specific SCons aliases
+    # WARNING: all aliases must be checked during argument validation
+    env.Alias("build-sim", program)
+    env.Alias("run-sim", env.Run(program))
