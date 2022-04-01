@@ -6,5 +6,5 @@
 	path = taproot-scripts
 	url = https://gitlab.com/aruw/controls/taproot-scripts.git
 [submodule "ext/littlefs"]
-	path = ext/littlefs
+	path = ext/littlefs-project/littlefs
 	url = https://github.com/littlefs-project/littlefs
