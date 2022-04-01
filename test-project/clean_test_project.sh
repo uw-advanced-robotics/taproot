@@ -26,6 +26,4 @@ cd $SCRIPT_DIR
 rm -rf taproot
 rm -rf build
 rm -f .sconsign.dblite
-rm -f openocd.cfg
 rm -f project.xml.log
-rm -f SConstruct
