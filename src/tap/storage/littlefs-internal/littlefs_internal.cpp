@@ -75,5 +75,6 @@ int LittleFSInternal::lfs_erase(const struct lfs_config *c, lfs_block_t block) {
 }
 
 int LittleFSInternal::lfs_sync(__unused const struct lfs_config *c) {
+    // Return OK since all changes are immediately written to FLASH on Flash::program()
     return LFS_ERR_OK;
 }

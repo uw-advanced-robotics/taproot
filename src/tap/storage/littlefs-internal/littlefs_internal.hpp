@@ -32,9 +32,10 @@ class LittleFSInternal {
 
 
    private:
-    static constexpr size_t SECTOR_SIZE = 1ul << 17;  // 128kB
-    static constexpr uint8_t SECTOR_ZERO = 17;
-    static constexpr uint8_t BLOCK_COUNT = 7;
+    // See RM0090 Page 77
+    static constexpr size_t SECTOR_SIZE = 1ul << 17;  // Use 128kB Sectors
+    static constexpr uint8_t SECTOR_ZERO = 17;  // 128kB Sector 17 to 23
+    static constexpr uint8_t BLOCK_COUNT = 7;  // 17 to 23, 7 blocks in total
 
     static constexpr int LFS_CACHE_SIZE = 256;
     static constexpr int LFS_LOOKAHEAD_BUFFER_SIZE = 256;
@@ -84,7 +85,7 @@ class LittleFSInternal {
 
     static int lfs_sync(const struct lfs_config *c);
 
-};  // namespace tap::storage
+};
 
 }  // namespace tap::storage
 

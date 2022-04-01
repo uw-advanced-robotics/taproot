@@ -15,22 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-Import("env")
+def init(module):
+    module.name = ":ext:littlefs"
+    module.description = "littleFS: A little fail-safe filesystem designed for microcontrollers"
 
-from os.path import abspath
+def prepare(module, options):
+    return True
 
-files = env.FindSourceFiles(".")
-
-library = env.StaticLibrary(target="taproot-ext", source=files)
-
-env.AppendUnique(LIBS=[
-    library,
-])
-
-env.Append(CCFLAGS=["-w"]) # suppress all warnings
-
-env.AppendUnique(LIBPATH=[
-    abspath(str(library[0].get_dir())),
-])
-
-Return("library")
+def build(env):
+    # Copy all folders and files that are not configurable in this
+    # top level module
+    env.outbasepath = "taproot/ext"
+    env.copy("littlefs/lfs_util.h")
+    env.copy("littlefs/lfs_util.c")
+    env.copy("littlefs/lfs.c")
+    env.copy("littlefs/lfs.h")
