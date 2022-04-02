@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LITTLEFS_FLASH_HPP_
-#define LITTLEFS_FLASH_HPP_
+#ifndef TAPROOT_LITTLEFS_INTERNAL_HPP_
+#define TAPROOT_LITTLEFS_INTERNAL_HPP_
 
 #include "littlefs/lfs.h"
 
