@@ -63,7 +63,7 @@ before_script:
     - python3 ./taproot-scripts/check_singleton_drivers.py DoNotUse_getDrivers -p src
     - python3 ./taproot-scripts/check_license_headers.py
         -p Taproot
-        -o 'Advanced Robotics at the University of Washington'Washington'kWashington'Washington'
+        -o 'Advanced Robotics at the University of Washington'
         -i './modm/**/*'
           './test-project/taproot/**/*'
           './taproot-scripts/**/*'
