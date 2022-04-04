@@ -36,7 +36,7 @@ protected:
 
     void constructListeners()
     {
-        for (int i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+        for (uint32_t i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
         {
             auto listener = make_unique<CanRxListenerMock>(&drivers, i, tap::can::CanBus::CAN_BUS1);
             listeners.push_back(move(listener));

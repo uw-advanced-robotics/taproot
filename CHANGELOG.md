@@ -14,6 +14,7 @@
 ### All changes
 
 - Unit tests added for `Remote` class.
+- Minor improvements to `DjiMotorTxHandler` class. Some API function names have been changed.
 - Zero-length UART messages are no longer thrown out by DjiSerial class
 - `ImuInterface` added such that IMUs can be interchanged in various situations (#18, !119).
 - `ImuMenu` added that prints information about an instance of an `ImuInterface` (#18, !119).
