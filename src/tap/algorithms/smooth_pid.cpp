@@ -27,7 +27,6 @@ namespace tap
 {
 namespace algorithms
 {
-
 SmoothPid::SmoothPid(const SmoothPidConfig &pidConfig)
     : config(pidConfig),
       proportionalKalman(pidConfig.tQProportionalKalman, pidConfig.tRProportionalKalman),

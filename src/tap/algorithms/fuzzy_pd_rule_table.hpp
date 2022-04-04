@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
@@ -22,9 +21,11 @@
 #define TAPROOT_FUZZY_PD_RULE_TABLE_HPP_
 
 #include <array>
+
 #include "fuzzy_rule_table.hpp"
 
-namespace tap::algorithms {
+namespace tap::algorithms
+{
 class FuzzyPDRuleTable : public FuzzyRuleTable<2>
 {
 public:
@@ -101,6 +102,6 @@ private:
     std::array<float, 3> kpArray;
     std::array<float, 3> kdArray;
 };
-}
+}  // namespace tap::algorithms
 
 #endif  // TAPROOT_FUZZY_PD_RULE_TABLE_HPP_
