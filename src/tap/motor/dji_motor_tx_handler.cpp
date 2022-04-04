@@ -145,12 +145,12 @@ void DjiMotorTxHandler::serializeMotorStoreSendData(
                 DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR4))
             {
                 motor->serializeCanSendData(messageLow);
-                *validMotorMessageHigh = true;
+                *validMotorMessageLow = true;
             }
             else
             {
                 motor->serializeCanSendData(messageHigh);
-                *validMotorMessageLow = true;
+                *validMotorMessageHigh = true;
             }
         }
     }
