@@ -135,8 +135,6 @@ public:
         }
     }
 
-    uint8_t errorState = 0;
-
     /**
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
@@ -337,6 +335,8 @@ private:
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
     int calibrationSample = 0;
+
+    uint8_t errorState = 0;
 
     // Functions for interacting with hardware directly.
 
