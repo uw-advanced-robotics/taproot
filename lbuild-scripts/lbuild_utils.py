@@ -15,20 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-Import("env")
+import os
 
-from os.path import abspath
+from pathlib import Path
 
-files = env.FindSourceFiles(".")
+def repo_path_rel_repolb(file, path):
+    """
+    Relocate given path to the path of the repo file.
+    Copied from `modm/test/all/run_all.py`
 
-library = env.StaticLibrary(target="taproot", source=files)
-
-env.AppendUnique(LIBS=[
-    library,
-])
-
-env.AppendUnique(LIBPATH=[
-    abspath(str(library[0].get_dir())),
-])
-
-Return("library")
+    - file: __file__ that the function is called in
+    - path: path relative to repo.lb file that you want get
+    """
+    return (Path(os.path.abspath(file)).parents[1] / path)

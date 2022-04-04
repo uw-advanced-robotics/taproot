@@ -34,7 +34,6 @@
     <module>taproot:core</module>
     <module>taproot:docs</module>
     <module>taproot:testing:tests</module>
-    <module>taproot:build</module>
     <module>taproot:communication:sensors:buzzer</module>
     <module>taproot:communication:sensors:distance</module>
     <module>taproot:communication:gpio:leds</module>
