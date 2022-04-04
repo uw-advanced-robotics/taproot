@@ -16,14 +16,15 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":communication:sensors:bmi088"
+    module.name = ":communication:sensors:imu:bmi088"
     module.description = "Robomaster Development Board Type C specific communication" \
         "with the on board bmi088"
 
 def prepare(module, options):
     module.depends(":communication:sensors:imu_heater")
+    module.depends(":communication:sensors:imu")
     return options[":dev_board"] == "rm-dev-board-c"
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/sensors/bmi088"
+    env.outbasepath = "taproot/src/tap/communication/sensors/imu/bmi088"
     env.copy(".")
