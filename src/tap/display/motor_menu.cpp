@@ -120,20 +120,20 @@ bool MotorMenu::hasChanged()
 {
     uint8_t newCan1MotorStatus = 0;
     uint8_t newCan2MotorStatus = 0;
-    for (int motorId = MotorId::MOTOR1; motorId <= MotorId::MOTOR8; ++motorId)
+    for (uint32_t motorId = MotorId::MOTOR1; motorId <= MotorId::MOTOR8; ++motorId)
     {
         DjiMotor const* currMotor = NULL;
 
         currMotor = drivers->djiMotorTxHandler.getCan1Motor(static_cast<MotorId>(motorId));
         if (currMotor != nullptr && currMotor->isMotorOnline())
         {
-            newCan1MotorStatus |= (1 << DJI_MOTOR_NORMALIZED_ID(motorId));
+            newCan1MotorStatus |= (1 << DJI_MOTOR_TO_NORMALIZED_ID(motorId));
         }
 
         currMotor = drivers->djiMotorTxHandler.getCan2Motor(static_cast<MotorId>(motorId));
         if (currMotor != nullptr && currMotor->isMotorOnline())
         {
-            newCan2MotorStatus |= (1 << DJI_MOTOR_NORMALIZED_ID(motorId));
+            newCan2MotorStatus |= (1 << DJI_MOTOR_TO_NORMALIZED_ID(motorId));
         }
     }
 
