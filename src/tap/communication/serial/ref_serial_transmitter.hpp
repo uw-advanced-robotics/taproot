@@ -146,7 +146,7 @@ public:
         Tx::GraphicData* sharedData);
     /**
      * Configures `sharedData` with a floating point number.
-     * 
+     *
      * Recommended font size and line width ratio is 10:1.
      *
      * @note This function doesn't work because of known issues in the referee system
@@ -164,7 +164,7 @@ public:
         Tx::GraphicData* sharedData);
     /**
      * Configures `sharedData` with an integer.
-     * 
+     *
      * Recommended font size and line width ratio is 10:1.
      *
      * @note This function doesn't display negative numbers properly because of known
@@ -181,7 +181,7 @@ public:
         Tx::GraphicData* sharedData);
     /**
      * Configures a character message in the passed in `GraphicCharacterMessage`.
-     * 
+     *
      * Recommended font size and line width ratio is 10:1.
      *
      * @param[out] sharedData The message to configure.
