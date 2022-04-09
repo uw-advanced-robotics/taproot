@@ -98,11 +98,9 @@ public:
 
     void initialize() override;
 
-    int64_t getEncoderUnwrapped()
-        const override;
+    int64_t getEncoderUnwrapped() const override;
 
-    uint16_t getEncoderWrapped()
-        const override;
+    uint16_t getEncoderWrapped() const override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
