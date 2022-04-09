@@ -107,8 +107,8 @@ TEST(
     tap::stub::TerminalDeviceStub terminalDevice(&drivers);
     modm::IOStream stream(terminalDevice);
 
-    DjiMotor m1(&drivers, MotorId::MOTOR7, tap::can::CanBus::CAN_BUS1, false, "cool motor");
-    DjiMotor m2(&drivers, MotorId::MOTOR7, tap::can::CanBus::CAN_BUS2, true, "coolest motorino");
+    DjiMotor m1(&drivers, MotorId::MOTOR7, tap::can::CanBus::CAN_BUS1, false, "cool motor", 1.0f);
+    DjiMotor m2(&drivers, MotorId::MOTOR7, tap::can::CanBus::CAN_BUS2, true, "coolest motorino", 1.0f);
     ON_CALL(drivers.djiMotorTxHandler, getCan1Motor).WillByDefault([&](tap::motor::MotorId mid) {
         return (mid == MotorId::MOTOR7) ? &m1 : nullptr;
     });
@@ -143,11 +143,11 @@ TEST(
 
     DjiMotor *motors[DjiMotorTxHandler::DJI_MOTORS_PER_CAN] = {};
     motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR1)] =
-        new DjiMotor(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "m1");
+        new DjiMotor(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "m1", 1.0f);
     motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR3)] =
-        new DjiMotor(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS1, false, "m2");
+        new DjiMotor(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS1, false, "m2", 1.0f);
     motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR6)] =
-        new DjiMotor(&drivers, MotorId::MOTOR6, tap::can::CanBus::CAN_BUS1, false, "m3");
+        new DjiMotor(&drivers, MotorId::MOTOR6, tap::can::CanBus::CAN_BUS1, false, "m3", 1.0f);
 
     ON_CALL(drivers.djiMotorTxHandler, getCan1Motor).WillByDefault([&](tap::motor::MotorId mid) {
         return motors[DJI_MOTOR_NORMALIZED_ID(mid)];
@@ -209,8 +209,8 @@ TEST(DjiMotorTerminalSerialHandler, terminalSerialCallback__all_prints_all_motor
     tap::stub::TerminalDeviceStub terminalDevice(&drivers);
     modm::IOStream stream(terminalDevice);
 
-    DjiMotor m1(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
-    DjiMotor m2(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS2, true, "coolest motorino");
+    DjiMotor m1(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor", 1.0f);
+    DjiMotor m2(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS2, true, "coolest motorino", 1.0f);
     ON_CALL(drivers.djiMotorTxHandler, getCan1Motor).WillByDefault([&](tap::motor::MotorId mid) {
         return (mid == MotorId::MOTOR1) ? &m1 : nullptr;
     });
@@ -233,7 +233,7 @@ TEST(DjiMotorTerminalSerialHandler, terminalSerialStreamCallback__prints_motor_i
     tap::stub::TerminalDeviceStub terminalDevice(&drivers);
     modm::IOStream stream(terminalDevice);
 
-    DjiMotor m1(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+    DjiMotor m1(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor", 1.0f);
     ON_CALL(drivers.djiMotorTxHandler, getCan1Motor).WillByDefault([&](tap::motor::MotorId mid) {
         return (mid == MotorId::MOTOR1) ? &m1 : nullptr;
     });

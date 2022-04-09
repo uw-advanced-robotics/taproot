@@ -35,7 +35,7 @@ using namespace testing;
 TEST(JSONMessages, ReturnsCorrectString)
 {
     Drivers drivers;
-    DjiMotorMock mockMotor(&drivers, MotorId::MOTOR1, CanBus::CAN_BUS1, false, "MockMotor");
+    DjiMotorMock mockMotor(&drivers, MotorId::MOTOR1, CanBus::CAN_BUS1, false, "MockMotor", 1.0f);
     EXPECT_CALL(mockMotor, getCanBus()).Times(1).WillOnce(Return(tap::can::CanBus::CAN_BUS2));
     EXPECT_CALL(mockMotor, getMotorIdentifier()).Times(1);
     EXPECT_CALL(mockMotor, getShaftRPM()).Times(1);

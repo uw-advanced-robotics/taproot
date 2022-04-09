@@ -40,13 +40,15 @@ public:
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
-        uint16_t encWrapped = ENC_RESOLUTION / 2,
-        int64_t encRevolutions = 0);
+        float gearRatio,
+        uint16_t encWrapped = ENC_RESOLUTION / 2);
     virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));
     MOCK_METHOD(int64_t, getEncoderUnwrapped, (), (const override));
     MOCK_METHOD(uint16_t, getEncoderWrapped, (), (const override));
+    MOCK_METHOD(float, getShaftAngleUnwrapped, (), (const override));
+    MOCK_METHOD(float, getShaftAngleWrapped, (), (const override));
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));
     MOCK_METHOD(void, setDesiredOutput, (int32_t desiredOutput), (override));
     MOCK_METHOD(bool, isMotorOnline, (), (const override));

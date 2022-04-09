@@ -98,10 +98,10 @@ public:
 
     void initialize() override;
 
-    [[deprecated("Use `getShaftAngleUnwrapped` instead!")]] int64_t getEncoderUnwrapped()
+    int64_t getEncoderUnwrapped()
         const override;
 
-    [[deprecated("Use `getShaftAngleWrapped` instead!")]] uint16_t getEncoderWrapped()
+    uint16_t getEncoderWrapped()
         const override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
@@ -166,7 +166,7 @@ public:
      * @return wrapped shaft angle in radians normalized to [0, 2PI) relative to the
      * zero-encoder value
      */
-    mockable inline float DjiMotor::getShaftAngleWrapped() const
+    mockable inline float getShaftAngleWrapped() const
     {
         // position = (2 * PI / encoder resolution * unwrapped encoder value / gear ratio) % (2 *
         // PI)
@@ -178,7 +178,7 @@ public:
     /**
      * @return unwrapped shaft angle in radians relative to the zero-encoder value
      */
-    mockable inline float DjiMotor::getShaftAngleUnwrapped() const
+    mockable inline float getShaftAngleUnwrapped() const
     {
         // position = 2 * PI / encoder resolution * unwrapped encoder value / gear ratio
         return 2.0f * M_PI / static_cast<float>(DjiMotor::ENC_RESOLUTION) *
