@@ -19,7 +19,8 @@
 
 #include "dji_motor.hpp"
 
-#include "tap/algorithms/math_user_utils.hpp"
+#include <cassert>
+
 #include "tap/drivers.hpp"
 
 #ifdef PLATFORM_HOSTED
@@ -43,9 +44,8 @@ DjiMotor::DjiMotor(
     tap::can::CanBus motorCanBus,
     bool isInverted,
     const char* name,
-    uint16_t encoderWrapped,
-    int64_t encoderRevolutions,
-    float gearRatio)
+    float gearRatio,
+    uint16_t encoderWrapped)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       motorName(name),
       drivers(drivers),
@@ -57,9 +57,9 @@ DjiMotor::DjiMotor(
       torque(0),
       motorInverted(isInverted),
       encoderWrapped(encoderWrapped),
-      encoderRevolutions(encoderRevolutions),
       gearRatio(gearRatio)
 {
+    assert(gearRatio > 0.0f);
     motorDisconnectTimeout.stop();
 }
 
@@ -146,21 +146,6 @@ bool DjiMotor::isMotorInverted() const { return motorInverted; }
 tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
-
-bool DjiMotor::hasGearRatio() const { return this->gearRatio == 0.0f; }
-
-float DjiMotor::getMotorAngle() const
-{
-    if (!this->hasGearRatio())
-    {
-        // TODO: determine behavior of no gear ratio assigned
-        return 0.0f;
-    }
-    // position is equal to the following equation:
-    // position = 2 * PI / encoder resolution * unwrapped encoder value / gear ratio
-    return (2.0f * M_PI / static_cast<float>(DjiMotor::ENC_RESOLUTION)) *
-           this->getEncoderUnwrapped() / this->gearRatio;
-}
 
 int64_t DjiMotor::getEncoderUnwrapped() const
 {

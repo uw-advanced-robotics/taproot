@@ -22,8 +22,11 @@
 
 #include <string>
 
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/can/can_rx_listener.hpp"
+
+#include "modm/math/geometry/angle.hpp"
 
 #include "motor_interface.hpp"
 
@@ -81,8 +84,6 @@ public:
      * @param name a name to associate with the motor for use in the motor menu
      * @param encoderWrapped the starting encoderValue to store for this motor.
      *      Will be overwritten by the first reported encoder value from the motor
-     * @param encoderRevolutions the starting number of encoder revolutions to store.
-     *      See comment for DjiMotor::encoderRevolutions for more details.
      */
     DjiMotor(
         Drivers* drivers,
@@ -90,17 +91,18 @@ public:
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
-        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0,
-        float gearRatio = 0.0f);
+        float gearRatio,
+        uint16_t encoderWrapped = ENC_RESOLUTION / 2);
 
     mockable ~DjiMotor();
 
     void initialize() override;
 
-    int64_t getEncoderUnwrapped() const override;
+    [[deprecated("Use `getShaftAngleUnwrapped` instead!")]] int64_t getEncoderUnwrapped()
+        const override;
 
-    uint16_t getEncoderWrapped() const override;
+    [[deprecated("Use `getShaftAngleWrapped` instead!")]] uint16_t getEncoderWrapped()
+        const override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
@@ -160,35 +162,27 @@ public:
 
     mockable const char* getName() const;
 
-    // Informs the client if a gear ratio has been assigned
-    mockable bool hasGearRatio() const;
-
-    inline void attachGearRatio(float gearRatio) { this->gearRatio = gearRatio; }
-
-    // Get raw angle from the shaft to the motor
-    mockable float getMotorAngle() const;
-
-    template <typename T>
-    static void assertEncoderType()
+    /**
+     * @return wrapped shaft angle in radians normalized to [0, 2PI) relative to the
+     * zero-encoder value
+     */
+    mockable inline float DjiMotor::getShaftAngleWrapped() const
     {
-        constexpr bool good_type =
-            std::is_same<typename std::decay<T>::type, std::int64_t>::value ||
-            std::is_same<typename std::decay<T>::type, std::uint16_t>::value;
-        static_assert(good_type, "x is not of the correct type");
+        // position = (2 * PI / encoder resolution * unwrapped encoder value / gear ratio) % (2 *
+        // PI)
+        return modm::Angle::normalize(
+            2.0f * M_PI / static_cast<float>(DjiMotor::ENC_RESOLUTION) *
+            this->getEncoderUnwrapped() / this->gearRatio);
     }
 
-    template <typename T>
-    static T degreesToEncoder(float angle)
+    /**
+     * @return unwrapped shaft angle in radians relative to the zero-encoder value
+     */
+    mockable inline float DjiMotor::getShaftAngleUnwrapped() const
     {
-        assertEncoderType<T>();
-        return static_cast<T>((ENC_RESOLUTION * angle) / 360);
-    }
-
-    template <typename T>
-    static float encoderToDegrees(T encoder)
-    {
-        assertEncoderType<T>();
-        return (360.0f * static_cast<float>(encoder)) / ENC_RESOLUTION;
+        // position = 2 * PI / encoder resolution * unwrapped encoder value / gear ratio
+        return 2.0f * M_PI / static_cast<float>(DjiMotor::ENC_RESOLUTION) *
+               this->getEncoderUnwrapped() / this->gearRatio;
     }
 
 private:
@@ -242,10 +236,10 @@ private:
      * raw encoderValue continuosly loops within {0..8191}. Origin value is
      * arbitrary.
      */
-    int64_t encoderRevolutions;
+    int64_t encoderRevolutions = 0;
 
     /**
-     *
+     * Ratio of motor revolutions to shaft revolutions (input:output).
      */
     float gearRatio;
 
