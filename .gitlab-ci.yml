@@ -70,6 +70,7 @@ before_script:
           './**/__init__.py'
           './docs/**/*.py'
           './src/tap/algorithms/MahonyAHRS.*'
+          './ext/**/*'
     - python3 ./taproot-scripts/check_header_guard.py
         src test
         -p TAPROOT_
