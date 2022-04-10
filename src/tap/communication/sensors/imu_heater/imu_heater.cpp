@@ -58,4 +58,4 @@ void ImuHeater::runTemperatureController(float temperature)
         std::max(0.0f, imuTemperatureController.getValue()),
         tap::gpio::Pwm::ImuHeater);
 }
-}  // namespace tap::sensors
+}  // namespace tap::communication::sensors::imu_heater

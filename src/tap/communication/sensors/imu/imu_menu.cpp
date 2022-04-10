@@ -85,4 +85,4 @@ void ImuMenu::shortButtonPress(modm::MenuButtons::Button button)
 
 const char *ImuMenu::getMenuName() { return imu->getName(); }
 
-}  // namespace tap::sensors::imu
+}  // namespace tap::communication::sensors::imu

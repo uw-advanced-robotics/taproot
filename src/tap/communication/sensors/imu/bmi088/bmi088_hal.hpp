@@ -249,6 +249,6 @@ public:
 #endif
 };
 
-}  // namespace tap::communication::sensors::bmi088
+}  // namespace tap::communication::sensors::imu::bmi088
 
 #endif  // TAPROOT_BMI088_HAL_HPP_

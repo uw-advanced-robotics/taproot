@@ -22,8 +22,8 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/algorithms/math_user_utils.hpp"
-#include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
+#include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
@@ -205,6 +205,6 @@ private:
     }
 };
 
-}  // namespace tap::communication::sensors::bmi088
+}  // namespace tap::communication::sensors::imu::bmi088
 
 #endif  // TAPROOT_BMI088_HPP_

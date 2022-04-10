@@ -104,6 +104,6 @@ public:
      */
     virtual inline float getRoll() = 0;
 };
-}  // namespace tap::sensors
+}  // namespace tap::communication::sensors::imu
 
 #endif  // IMU_INTERFACE_HPP_

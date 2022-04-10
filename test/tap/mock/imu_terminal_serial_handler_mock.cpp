@@ -23,8 +23,8 @@ namespace tap::mock
 {
 ImuTerminalSerialHandlerMock::ImuTerminalSerialHandlerMock(
     tap::Drivers* drivers,
-    sensors::ImuInterface* imu)
-    : sensors::ImuTerminalSerialHandler(drivers, imu)
+    communication::sensors::imu::ImuInterface* imu)
+    : communication::sensors::imu::ImuTerminalSerialHandler(drivers, imu)
 {
 }
 ImuTerminalSerialHandlerMock::~ImuTerminalSerialHandlerMock() {}

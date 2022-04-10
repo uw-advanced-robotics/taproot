@@ -157,4 +157,4 @@ void ImuTerminalSerialHandler::printHeader(modm::IOStream& outputStream)
     }
     outputStream << modm::endl;
 }
-}  // namespace tap::sensors
+}  // namespace tap::communication::sensors::imu

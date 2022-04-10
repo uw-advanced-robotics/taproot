@@ -76,6 +76,6 @@ private:
 
     modm::Pid<float> imuTemperatureController;
 };
-}  // namespace sensors
+}  // namespace tap::communication::sensors::imu_heater
 
 #endif  // TAPROOT_MPU6500_HEATER_HPP_

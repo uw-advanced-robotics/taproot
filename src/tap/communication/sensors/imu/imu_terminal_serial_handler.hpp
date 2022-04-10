@@ -99,6 +99,6 @@ private:
 
     void printHeader(modm::IOStream& outputStream);
 };  // class ImuTerminalSerialHandler
-}  // namespace sensors
+}  // namespace tap::communication::sensors::imu
 
 #endif  // TAPROOT_MPU6500_TERMINAL_SERIAL_HANDLER_HPP_

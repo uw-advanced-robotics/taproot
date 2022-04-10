@@ -74,6 +74,6 @@ private:
 
     ImuInterfaceFnPtr imuAccelGyroAngleFnPtrs[3][3];
 };
-}  // namespace tap::sensors::imu
+}  // namespace tap::communication::sensors::imu
 
 #endif  // IMU_MENU_HPP_

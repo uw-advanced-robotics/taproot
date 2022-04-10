@@ -283,4 +283,4 @@ void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value
     }
 }
 
-}  // namespace tap::communication::sensors::bmi088
+}  // namespace tap::communication::sensors::imu::bmi088

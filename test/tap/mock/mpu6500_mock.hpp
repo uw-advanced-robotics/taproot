@@ -28,7 +28,7 @@ namespace tap
 {
 namespace mock
 {
-class Mpu6500Mock : public tap::sensors::imu::mpu6500::Mpu6500
+class Mpu6500Mock : public tap::communication::sensors::imu::mpu6500::Mpu6500
 {
 public:
     Mpu6500Mock(tap::Drivers *drivers);

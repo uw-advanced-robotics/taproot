@@ -184,8 +184,10 @@ public:
 
     /**
      * Returns the temperature of the imu in degrees C.
-     * 
-     * @see page 33 of this datasheet: https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf for what the magic numbers are used.
+     *
+     * @see page 33 of this datasheet:
+     * https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
+     * for what the magic numbers are used.
      */
     inline float getTemp() final_mockable
     {
@@ -359,6 +361,6 @@ private:
     void addValidationErrors();
 };
 
-}  // namespace sensors
+}  // namespace tap::communication::sensors::imu::mpu6500
 
 #endif  // TAPROOT_MPU6500_HPP_

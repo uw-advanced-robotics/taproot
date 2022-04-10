@@ -287,4 +287,4 @@ void Mpu6500::addValidationErrors()
     errorState = 0;
 }
 
-}  // namespace tap::sensors
+}  // namespace tap::communication::sensors::imu::mpu6500
