@@ -22,7 +22,7 @@
 #include "tap/algorithms/strtok.hpp"
 #include "tap/drivers.hpp"
 
-namespace tap::sensors
+namespace tap::communication::sensors::imu
 {
 constexpr char ImuTerminalSerialHandler::USAGE[];
 

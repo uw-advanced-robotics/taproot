@@ -20,9 +20,7 @@
 #ifndef TAPROOT_MPU6500_REG_HPP_
 #define TAPROOT_MPU6500_REG_HPP_
 
-namespace tap
-{
-namespace sensors
+namespace tap::communication::sensors::imu::mpu6500
 {
 // mpu Reg -- Map
 #define MPU6500_SELF_TEST_XG (0x00)
@@ -131,7 +129,5 @@ namespace sensors
 
 #define MPU_IIC_ADDR (0x68)
 }  // namespace sensors
-
-}  // namespace tap
 
 #endif  // TAPROOT_MPU6500_REG_HPP_

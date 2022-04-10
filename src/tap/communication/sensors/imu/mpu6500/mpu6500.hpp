@@ -35,7 +35,7 @@ namespace tap
 class Drivers;
 }
 
-namespace tap::communication::sensors::imu
+namespace tap::communication::sensors::imu::mpu6500
 {
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
@@ -93,8 +93,8 @@ public:
     virtual inline const char *getName() const { return "mpu6500"; }
 
     /**
-     * If the imu is not initializes, logs an error and returns 0,
-     * otherwise returns the value passed in.
+     * If the imu is not initialized, logs an error and returns 0.
+     * Otherwise, returns the value passed in.
      */
     inline float validateReading(float reading)
     {
@@ -184,6 +184,8 @@ public:
 
     /**
      * Returns the temperature of the imu in degrees C.
+     * 
+     * @see page 33 of this datasheet: https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf for what the magic numbers are used.
      */
     inline float getTemp() final_mockable
     {
@@ -309,7 +311,7 @@ private:
 
     Mahony mahonyAlgorithm;
 
-    sensors::ImuHeater imuHeater;
+    imu_heater::ImuHeater imuHeater;
 
     float tiltAngle = 0.0f;
     bool tiltAngleCalculated = false;

@@ -35,7 +35,7 @@ namespace tap
 class Drivers;
 }
 
-namespace tap::communication::sensors::imu
+namespace tap::communication::sensors::imu::bmi088
 {
 /**
  * For register tables and descriptions, refer to the bmi088 datasheet:
@@ -119,6 +119,8 @@ public:
      */
     mockable void requestRecalibration();
 
+    inline const char *getName() const final_mockable { return "bmi088"; }
+
     mockable inline float getYaw() final_mockable { return mahonyAlgorithm.getYaw(); }
     mockable inline float getPitch() final_mockable { return mahonyAlgorithm.getPitch(); }
     mockable inline float getRoll() final_mockable { return mahonyAlgorithm.getRoll(); }
@@ -165,7 +167,7 @@ private:
 
     Mahony mahonyAlgorithm;
 
-    tap::sensors::ImuHeater imuHeater;
+    imu_heater::ImuHeater imuHeater;
 
     int calibrationSample = 0;
 

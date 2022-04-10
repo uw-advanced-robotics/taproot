@@ -23,7 +23,7 @@
 #include "modm/architecture/interface/register.hpp"
 #include "modm/math/utils.hpp"
 
-namespace tap::communication::sensors::imu
+namespace tap::communication::sensors::imu::bmi088
 {
 /**
  * For register tables and descriptions, refer to the bmi088 datasheet:

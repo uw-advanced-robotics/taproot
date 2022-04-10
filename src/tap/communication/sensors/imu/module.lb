@@ -17,7 +17,7 @@
 
 def init(module):
     module.name = ":communication:sensors:imu"
-    module.description = "IMU sensors"
+    module.description = "Drivers, OLED menu, and terminal serial handler for various IMU sensors"
 
 def prepare(module, options):
     return True

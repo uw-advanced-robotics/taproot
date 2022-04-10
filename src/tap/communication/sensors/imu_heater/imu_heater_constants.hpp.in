@@ -22,7 +22,7 @@
 
 #include "tap/communication/gpio/pwm.hpp"
 
-namespace tap::sensors::bound_ports
+namespace tap::communication::sensors::imu_heater::bound_ports
 {
     static constexpr tap::gpio::Pwm::Timer IMU_HEATER_TIMER = tap::gpio::Pwm::Timer::{{ timer|upper }};
 }  // tap::sensors

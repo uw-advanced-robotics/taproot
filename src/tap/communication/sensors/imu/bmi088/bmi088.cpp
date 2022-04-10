@@ -34,7 +34,7 @@ using namespace modm::literals;
 using namespace tap::arch;
 using namespace Board;
 
-namespace tap::communication::sensors::imu
+namespace tap::communication::sensors::imu::bmi088
 {
 #if defined(PLATFORM_HOSTED)
 #define DELAY_MS(ms)

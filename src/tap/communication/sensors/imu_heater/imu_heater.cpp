@@ -23,7 +23,7 @@
 
 #include "imu_heater_constants.hpp"
 
-namespace tap::sensors
+namespace tap::communication::sensors::imu_heater
 {
 ImuHeater::ImuHeater(Drivers *drivers)
     : drivers(drivers),

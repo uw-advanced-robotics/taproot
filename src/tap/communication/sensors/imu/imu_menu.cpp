@@ -19,7 +19,7 @@
 
 #include "imu_menu.hpp"
 
-namespace tap::sensors::imu
+namespace tap::communication::sensors::imu
 {
 ImuMenu::ImuMenu(
     modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
@@ -76,6 +76,7 @@ bool ImuMenu::hasChanged() { return imuUpdateTimer.execute(); }
 
 void ImuMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
+    // when left button pressed, remove the IMU menu
     if (button == modm::MenuButtons::Button::LEFT)
     {
         this->remove();

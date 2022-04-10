@@ -28,7 +28,7 @@ namespace tap
 {
 namespace mock
 {
-class Mpu6500Mock : public tap::sensors::Mpu6500
+class Mpu6500Mock : public tap::sensors::imu::mpu6500::Mpu6500
 {
 public:
     Mpu6500Mock(tap::Drivers *drivers);
@@ -37,7 +37,7 @@ public:
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(bool, read, (), (override));
-    MOCK_METHOD(tap::sensors::Mpu6500::ImuState, getImuState, (), (const override));
+    MOCK_METHOD(ImuState, getImuState, (), (const override));
     MOCK_METHOD(float, getAx, (), (override));
     MOCK_METHOD(float, getAy, (), (override));
     MOCK_METHOD(float, getAz, (), (override));

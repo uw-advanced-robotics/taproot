@@ -27,10 +27,10 @@
 
 #include "imu_interface.hpp"
 
-namespace tap::sensors::imu
+namespace tap::communication::sensors::imu
 {
 /**
- * Menu that displays IMU readings from some particular `ImuInterfac`.
+ * Menu that displays IMU readings from some particular `ImuInterface`.
  */
 class ImuMenu : public modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >
 {
