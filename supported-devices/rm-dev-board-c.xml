@@ -1,4 +1,10 @@
 <board>
+    <can-pins>
+        <gpio alias="Can1Rx" name="GpioD0"></gpio>
+        <gpio alias="Can1Tx" name="GpioD1"></gpio>
+        <gpio alias="Can2Rx" name="GpioB5"></gpio>
+        <gpio alias="Can2Tx" name="GpioB6"></gpio>
+    </can-pins>
     <gpio-pins>
         <gpio alias="C1" name="GpioE9">
             <timer name="Timer1" channel="Ch1"></timer>
