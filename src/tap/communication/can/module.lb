@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
 def init(module):
     module.name = ":communication:can"
     module.description = "CAN I/O interface wrappers"
@@ -23,5 +27,20 @@ def prepare(module, options):
     return True
 
 def build(env):
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+
+    can_pins = metadata.find("can-pins")
+    can_pins = { pin.get("alias"): pin.get("name") for pin in can_pins }
+
+    env.substitutions = {
+        "can_pins": can_pins,
+    }
+
     env.outbasepath = "taproot/src/tap/communication/can"
-    env.copy(".")
+    env.copy("can_bus.hpp")
+    env.copy("can_rx_handler.cpp")
+    env.copy("can_rx_handler.hpp")
+    env.copy("can_rx_listener.cpp")
+    env.copy("can_rx_listener.hpp")
+    env.copy("can.hpp")
+    env.template("can.cpp.in", "can.cpp")
