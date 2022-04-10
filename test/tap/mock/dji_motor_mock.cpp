@@ -29,14 +29,7 @@ DjiMotorMock::DjiMotorMock(
     const char *name,
     float gearRatio,
     uint16_t encWrapped)
-    : DjiMotor(
-          drivers,
-          desMotorIdentifier,
-          motorCanBus,
-          isInverted,
-          name,
-          gearRatio,
-          encWrapped)
+    : DjiMotor(drivers, desMotorIdentifier, motorCanBus, isInverted, name, gearRatio, encWrapped)
 {
 }
 DjiMotorMock::~DjiMotorMock() {}
