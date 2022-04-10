@@ -33,7 +33,9 @@
 namespace tap
 {
 class Drivers;
-namespace sensors
+}
+
+namespace tap::communication::sensors::imu
 {
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
@@ -48,24 +50,6 @@ namespace sensors
 class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterface
 {
 public:
-    /**
-     * Possible IMU states for an IMU.
-     */
-    enum class ImuState
-    {
-        /** Indicates the IMU's init function was not called or initialization failed, so data from
-           this class will be undefined. */
-        IMU_NOT_CONNECTED,
-        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
-           computed. */
-        IMU_NOT_CALIBRATED,
-        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
-           IMU is in this state is undefined. */
-        IMU_CALIBRATING,
-        /// Indicates the IMU is connected and calibration offsets have been computed.
-        IMU_CALIBRATED,
-    };
-
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
@@ -374,7 +358,5 @@ private:
 };
 
 }  // namespace sensors
-
-}  // namespace tap
 
 #endif  // TAPROOT_MPU6500_HPP_

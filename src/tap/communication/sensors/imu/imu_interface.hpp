@@ -20,7 +20,7 @@
 #ifndef TAPROOT_IMU_INTERFACE_HPP_
 #define TAPROOT_IMU_INTERFACE_HPP_
 
-namespace tap::sensors
+namespace tap::communication::sensors::imu
 {
 /**
  * An interface for interacting with a 6 axis IMU.
@@ -28,6 +28,24 @@ namespace tap::sensors
 class ImuInterface
 {
 public:
+    /**
+     * Possible IMU states for an IMU.
+     */
+    enum class ImuState
+    {
+        /** Indicates the IMU's init function was not called or initialization failed, so data from
+           this class will be undefined. */
+        IMU_NOT_CONNECTED,
+        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
+           computed. */
+        IMU_NOT_CALIBRATED,
+        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
+           IMU is in this state is undefined. */
+        IMU_CALIBRATING,
+        /// Indicates the IMU is connected and calibration offsets have been computed.
+        IMU_CALIBRATED,
+    };
+
     virtual inline const char *getName() const = 0;
 
     /**

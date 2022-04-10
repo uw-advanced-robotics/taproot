@@ -29,7 +29,7 @@
 
 #include "bmi088_data.hpp"
 
-namespace tap::communication::sensors::bmi088
+namespace tap::communication::sensors::imu
 {
 class Bmi088Hal
 {

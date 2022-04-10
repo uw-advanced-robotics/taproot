@@ -20,7 +20,7 @@
 #include "bmi088_hal.hpp"
 
 #if defined(ENV_UNIT_TESTS)
-namespace tap::communication::sensors::bmi088
+namespace tap::communication::sensors::imu
 {
 std::deque<uint8_t> Bmi088Hal::rxData;
 }

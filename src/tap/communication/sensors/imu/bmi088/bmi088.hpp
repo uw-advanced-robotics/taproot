@@ -23,6 +23,7 @@
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
+#include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
@@ -34,7 +35,7 @@ namespace tap
 class Drivers;
 }
 
-namespace tap::communication::sensors::bmi088
+namespace tap::communication::sensors::imu
 {
 /**
  * For register tables and descriptions, refer to the bmi088 datasheet:
@@ -51,17 +52,9 @@ namespace tap::communication::sensors::bmi088
  *    expect
  *  - roll and pitch to be defined as.
  */
-class Bmi088 : public Bmi088Data
+class Bmi088 final_mockable : public Bmi088Data, public ImuInterface
 {
 public:
-    enum class ImuState
-    {
-        IMU_NOT_CONNECTED,
-        IMU_NOT_CALIBRATED,
-        IMU_CALIBRATING,
-        IMU_CALIBRATED,
-    };
-
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
     /**
@@ -126,19 +119,19 @@ public:
      */
     mockable void requestRecalibration();
 
-    mockable float getYaw() { return mahonyAlgorithm.getYaw(); }
-    mockable float getPitch() { return mahonyAlgorithm.getPitch(); }
-    mockable float getRoll() { return mahonyAlgorithm.getRoll(); }
+    mockable inline float getYaw() final_mockable { return mahonyAlgorithm.getYaw(); }
+    mockable inline float getPitch() final_mockable { return mahonyAlgorithm.getPitch(); }
+    mockable inline float getRoll() final_mockable { return mahonyAlgorithm.getRoll(); }
 
-    mockable float getGx() const { return data.gyroDegPerSec[ImuData::X]; }
-    mockable float getGy() const { return data.gyroDegPerSec[ImuData::Y]; }
-    mockable float getGz() const { return data.gyroDegPerSec[ImuData::Z]; }
+    mockable inline float getGx() final_mockable { return data.gyroDegPerSec[ImuData::X]; }
+    mockable inline float getGy() final_mockable { return data.gyroDegPerSec[ImuData::Y]; }
+    mockable inline float getGz() final_mockable { return data.gyroDegPerSec[ImuData::Z]; }
 
-    mockable float getAx() const { return data.accG[ImuData::X]; }
-    mockable float getAy() const { return data.accG[ImuData::Y]; }
-    mockable float getAz() const { return data.accG[ImuData::Z]; }
+    mockable inline float getAx() final_mockable { return data.accG[ImuData::X]; }
+    mockable inline float getAy() final_mockable { return data.accG[ImuData::Y]; }
+    mockable inline float getAz() final_mockable { return data.accG[ImuData::Z]; }
 
-    mockable float getTemp() const { return data.temperature; }
+    mockable inline float getTemp() final_mockable { return data.temperature; }
 
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
