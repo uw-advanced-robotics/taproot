@@ -15,19 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import shutil
+from os.path import abspath
+import platform
+import sys
 Import("env")
 Import("args")
 
-import sys
-import platform
-from os.path import abspath
 
-
-LINKERSCRIPT_FILE    = abspath("modm/link/linkerscript.ld")
-HOSTED_LIBS          = ["pthread"]
-GTEST_LIBS           = ["gtest", "gtest_main", "gmock", "gmock_main"]
-COVERAGE_LIBS        = ["-lgcov"]
-HARDWARE_MODM_PATH   = "modm"
+LINKERSCRIPT_FILE = abspath("modm/link/linkerscript.ld")
+HOSTED_LIBS = ["pthread"]
+GTEST_LIBS = ["gtest", "gtest_main", "gmock", "gmock_main"]
+COVERAGE_LIBS = ["-lgcov"]
+HARDWARE_MODM_PATH = "modm"
 
 
 def _get_hosted_target_name_for_current_platform():
@@ -41,6 +41,7 @@ def _get_hosted_target_name_for_current_platform():
     except KeyError:
         raise ValueError(f"Unknown host OS {os_type}")
 
+
 def _get_sim_modm_instance_path():
     return f"sim-modm/{_get_hosted_target_name_for_current_platform()}/modm"
 
@@ -52,12 +53,21 @@ elif args["TARGET_ENV"] == "hardware":
     modm_path = HARDWARE_MODM_PATH
 
 
-# Build modm library, modm' SConscript should be ran before any of the build code defined below
+# Build modm library, modm's SConscript should be ran before any of the build code defined below
 env.SConscript(dirs=[modm_path], exports=["env"])
 
+if ((args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim") and
+        sys.platform == "win32" and shutil.which("lld") != None):
+    # Use lld for linking when on Windows targeting the hosted environment
+    # as MinGW linking is slow as hecc. Do this after modm's SConscript
+    # is run as otherwise all LINKFLAGS are overwritten
+    env.AppendUnique(LINKFLAGS=["-fuse-ld=lld"])
+    # remove modm linkflags which lld won't accept, it seems lld uses --relax
+    # by default anyways: plus this flag shouldn't have any effects when linking
+    # for x86_64
+    env["LINKFLAGS"].remove("-Wl,--relax")
 
 env["LINKERSCRIPT_FILE"] = LINKERSCRIPT_FILE
-
 
 # Set the number of threads unless it has already been set to anything but 1
 if GetOption("num_jobs") == 1:
@@ -70,6 +80,7 @@ if sys.platform == "win32":
     # Adapted from: https://github.com/SCons/scons/wiki/LongCmdLinesOnWin32
 
     import subprocess
+
     def win32_spawn_via_popen(_sh, _escape, cmd, args, env):
         # Blind argument concatenation is generally dangerous but args seem to already come in
         # escaped+quoted.
@@ -84,11 +95,11 @@ if sys.platform == "win32":
 
         proc = subprocess.Popen(
             command_with_args,
-            stdin = None,
-            stdout = None,
-            stderr = None,
-            shell = False,
-            env = env
+            stdin=None,
+            stdout=None,
+            stderr=None,
+            shell=False,
+            env=env
         )
         _stdout, _stderr = proc.communicate()
         status_code = proc.wait()
@@ -100,7 +111,7 @@ if sys.platform == "win32":
 # References:
 #   GCC flags: https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
 #   Scons API: https://www.scons.org/doc/latest/HTML/scons-user/apa.html
-# 
+#
 # You can append one or multiple options like this
 #     env.Append(CCFLAGS="-pedantic")
 #     env.Append(CCFLAGS=["-pedantic", "-pedantic-errors"])
@@ -156,10 +167,14 @@ if "additional-ccflags" in ARGUMENTS:
 
 # Add src and (optionally) test directory to environment's include path
 env.AppendUnique(CPPPATH=[abspath("src")])
+env.AppendUnique(CPPPATH=[abspath("ext")])
 if args["TARGET_ENV"] == "tests":
     env.AppendUnique(CPPPATH=[abspath("test")])
 
-# Find all files that need to be built with the library (files in src, files
+# Build external library, external SConscript should be ran before any of the build code defined below
+env.SConscript(dirs=["ext"], exports=["env"])
+
+# Find all files that need to be built with the library (files in src and ext, files
 # in test if target environment is tests)
 files = env.FindSourceFiles("src")
 
