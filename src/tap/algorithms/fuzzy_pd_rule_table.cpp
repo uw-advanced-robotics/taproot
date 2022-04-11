@@ -19,89 +19,109 @@
 
 #include "fuzzy_pd_rule_table.hpp"
 
+using namespace std;
+
 namespace tap::algorithms
 {
-void FuzzyPDRuleTable::fuzzification(float e, float d)
+void FuzzyPDRuleTable::performFuzzification(float e, float d)
 {
-    fuzzification(e, errorFuzzificationMemberValues);
-    fuzzification(d, derivativeFuzzificationMemberValues);
+    performSingleValueFuzzification(e, errorFuzzificationMemberValues);
+    performSingleValueFuzzification(d, derivativeFuzzificationMemberValues);
 }
 
 void FuzzyPDRuleTable::updateFuzzyMatrix()
 {
-    fuzzyMatrix[N][N] =
-        std::min(errorFuzzificationMemberValues[N], derivativeFuzzificationMemberValues[N]);
-    fuzzyMatrix[N][Z] =
-        std::min(errorFuzzificationMemberValues[N], derivativeFuzzificationMemberValues[Z]);
-    fuzzyMatrix[N][P] =
-        std::min(errorFuzzificationMemberValues[N], derivativeFuzzificationMemberValues[P]);
-
-    fuzzyMatrix[Z][N] =
-        std::min(errorFuzzificationMemberValues[Z], derivativeFuzzificationMemberValues[N]);
-    fuzzyMatrix[Z][Z] =
-        std::min(errorFuzzificationMemberValues[Z], derivativeFuzzificationMemberValues[Z]);
-    fuzzyMatrix[Z][P] =
-        std::min(errorFuzzificationMemberValues[Z], derivativeFuzzificationMemberValues[P]);
-
-    fuzzyMatrix[P][N] =
-        std::min(errorFuzzificationMemberValues[P], derivativeFuzzificationMemberValues[N]);
-    fuzzyMatrix[P][Z] =
-        std::min(errorFuzzificationMemberValues[P], derivativeFuzzificationMemberValues[Z]);
-    fuzzyMatrix[P][P] =
-        std::min(errorFuzzificationMemberValues[P], derivativeFuzzificationMemberValues[P]);
+    // Insert elements into the fuzzy matrix
+    // Fuzzy multiply the 2 3x1 fuzzy vectors together to product the single matrix
+    for (size_t i = 0; i < NUM_FUZZY_MEMBERS; i++)
+    {
+        for (size_t j = 0; j < NUM_FUZZY_MEMBERS; j++)
+        {
+            fuzzyMatrix[i][j] =
+                min(errorFuzzificationMemberValues[i], derivativeFuzzificationMemberValues[j]);
+        }
+    }
 }
 
-void FuzzyPDRuleTable::defuzzification()
+/// Computes dot product of weights and values, in essence computing the weighted gain, a linear
+/// combination of the values
+inline float computeGain(
+    const array<float, FuzzyPDRuleTable::NUM_FUZZY_MEMBERS> &weights,
+    const array<float, FuzzyPDRuleTable::NUM_FUZZY_MEMBERS> &values)
 {
-    float kpSmallWeight = fuzzyMatrix[Z][Z];
-    float kpMediumWeight = std::max(
-        std::max(
-            std::max(fuzzyMatrix[Z][N], fuzzyMatrix[N][Z]),
-            std::max(fuzzyMatrix[P][Z], fuzzyMatrix[Z][P])),
-        std::max(fuzzyMatrix[N][N], fuzzyMatrix[P][P]));
-    float kpLargeWeight = std::max(fuzzyMatrix[N][P], fuzzyMatrix[P][N]);
-
-    if (kpSmallWeight + kpMediumWeight + kpLargeWeight > 0)
+    float weightSum = 0;
+    for (size_t i = 0; i < weights.size(); i++)
     {
-        float kp = (kpSmallWeight * kpArray[0] + kpMediumWeight * kpArray[1] +
-                    kpLargeWeight * kpArray[2]) /
-                   (kpSmallWeight + kpMediumWeight + kpLargeWeight);
+        weightSum += weights[i];
+    }
 
-        fuzzyGains[0][0] = kp;
+    if (weightSum > 0)
+    {
+        float gain = 0;
+        for (size_t i = 0; i < weights.size(); i++)
+        {
+            gain += weights[i] * values[i];
+        }
+
+        return gain / weightSum;
     }
     else
     {
-        fuzzyGains[0][0] = 0;
+        return 0;
     }
+}
 
-    float kdSmallWeight =
-        std::max(std::max(fuzzyMatrix[Z][P], fuzzyMatrix[Z][N]), fuzzyMatrix[Z][Z]);
+void FuzzyPDRuleTable::performDefuzzification()
+{
+    // Choosen based on what "feels" right (very experimental)
+    // In general, the following rules are followed when selecting which weight is associated with
+    // which gain:
+    // - the P gain should be small when error & derivative is small
+    // - the P gain should be large when the error is large and the derivative indicates the error
+    //   is increasing
+    // - otherwise the P gain should be medium
+    // - the D gain should be small when the error is large and the derivative is increasing the
+    //   error or if the error and derivative are close to 0
+    // - the D gain should be large when the error is 0 but the derivative is large (either negative
+    //   or positive)
+    // - otherwise the D gain should be medium
 
-    float kdMediumWeight = std::max(
-        std::max(fuzzyMatrix[N][N], fuzzyMatrix[N][Z]),
-        std::max(fuzzyMatrix[P][Z], fuzzyMatrix[P][P]));
+    array<float, NUM_FUZZY_MEMBERS> kpWeights;
 
-    float kdLargeWeight = std::max(fuzzyMatrix[Z][N], fuzzyMatrix[Z][P]);
+    // small weight
+    kpWeights[0] = fuzzyMatrix[Z][Z];
 
-    if (kdSmallWeight + kdMediumWeight + kdLargeWeight)
-    {
-        float kd = (kdSmallWeight * kdArray[0] + kdMediumWeight * kdArray[1] +
-                    kdLargeWeight * kdArray[2]) /
-                   (kdSmallWeight + kdMediumWeight + kdLargeWeight);
+    // medium weight
+    kpWeights[1] = max(
+        max(max(fuzzyMatrix[Z][N], fuzzyMatrix[N][Z]), max(fuzzyMatrix[P][Z], fuzzyMatrix[Z][P])),
+        max(fuzzyMatrix[N][N], fuzzyMatrix[P][P]));
 
-        fuzzyGains[1][0] = kd;
-    }
-    else
-    {
-        fuzzyGains[1][0] = 0;
-    }
+    // large weight
+    kpWeights[2] = max(fuzzyMatrix[N][P], fuzzyMatrix[P][N]);
+
+    fuzzyGains[0][0] = computeGain(kpWeights, kpArray);
+
+    array<float, NUM_FUZZY_MEMBERS> kdWeights;
+
+    // small weight
+    kdWeights[0] = max(max(fuzzyMatrix[N][P], fuzzyMatrix[P][N]), fuzzyMatrix[Z][Z]);
+    // kdWeights[0] = max(max(fuzzyMatrix[Z][P], fuzzyMatrix[Z][N]), fuzzyMatrix[Z][Z]);
+
+    // medium weight
+    kdWeights[1] =
+        max(max(fuzzyMatrix[N][N], fuzzyMatrix[N][Z]), max(fuzzyMatrix[P][Z], fuzzyMatrix[P][P]));
+
+    // large weight
+    kdWeights[2] = max(fuzzyMatrix[Z][N], fuzzyMatrix[Z][P]);
+
+    fuzzyGains[1][0] = computeGain(kdWeights, kdArray);
 }
 
 modm::Matrix<float, 2, 1> FuzzyPDRuleTable::performFuzzyUpdate(float e, float d)
 {
-    fuzzification(e, d);
+    performFuzzification(e, d);
     updateFuzzyMatrix();
-    defuzzification();
+    performDefuzzification();
     return fuzzyGains;
 }
 }  // namespace tap::algorithms

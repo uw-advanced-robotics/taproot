@@ -29,6 +29,7 @@
 
 namespace tap::algorithms
 {
+/// Specifies Fuzzy-specific configurable parameters in the PD controller
 struct FuzzyPDConfig
 {
     float maxError = 0.0f;
@@ -37,13 +38,35 @@ struct FuzzyPDConfig
 };
 
 /**
- * Fuzzy PID controller.
+ * Fuzzy PD controller. A controller that is built on top of the SmoothPid object.
+ *
+ * Fuzzy logic is used to adaptively change the proportional and derivative gains at runtime,
+ * whereas they are hard-coded in the SmoothPid object. This allows the controller to adapt to more
+ * complex situations (such as overcoming sticktion, varying loads, etc.). Aside from adaptively
+ * changing the gains, this controller behaves the same was as the SmoothPid object.
+ *
+ * For more general information about fuzzy PID, refer to this paper:
+ * https://ieeexplore.ieee.org/document/937407. You can also find others online. For a more generic
+ * look at fuzzy logic, you can refer to this paper:
+ * https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=488475.
+ *
+ * @note While it is not explicitly disallowed, the integral gain is not intended to be used in this
+ * implementation. The FuzzyPDRuleTable is used in this controller, which does not have any fuzzy
+ * logic for the integral term.
  */
 class FuzzyPD : public SmoothPid
 {
 public:
-    FuzzyPD(const FuzzyPDConfig &pidConfig, const SmoothPidConfig &smoothPidConfig);
+    /**
+     * @param[in] pdConfig Fuzzy-specific configuration.
+     * @param[in] smoothPidConfig PID-specific configuration.
+     */
+    FuzzyPD(const FuzzyPDConfig &pdConfig, const SmoothPidConfig &smoothPidConfig);
 
+    /**
+     * @see SmoothPID::runController. Identical except that before the PID update step, new
+     * parameters are computed.
+     */
     float runController(float error, float errorDerivative, float dt) override;
 
 private:
