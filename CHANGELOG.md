@@ -7,7 +7,9 @@
 ### All changes
 
 - Unit tests added for `Remote` class.
-- Zero-length UART messages are no longer thrown out by DjiSerial class
+- Minor improvements to `DjiMotorTxHandler` class. Some API function names have been changed.
+- Zero-length UART messages are no longer thrown out by DjiSerial class.
+- CAN 2 pin defines for the Type C board are no longer incorrect (!165).
 
 ## February 2022
 
