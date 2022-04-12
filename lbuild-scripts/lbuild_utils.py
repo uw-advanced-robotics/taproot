@@ -1,5 +1,3 @@
-# !/bin/bash
-#
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
@@ -17,13 +15,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-# See https://stackoverflow.com/questions/39340169/dir-cd-dirname-bash-source0-pwd-how-does-that-work/39340259
-# for how the following line works.
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+import os
 
-cd $SCRIPT_DIR
+from pathlib import Path
 
-rm -rf taproot
-rm -rf build
-rm -f .sconsign.dblite
-rm -f project.xml.log
+def repo_path_rel_repolb(file, path):
+    """
+    Relocate given path to the path of the repo file.
+    Copied from `modm/test/all/run_all.py`
+
+    - file: __file__ that the function is called in
+    - path: path relative to repo.lb file that you want get
+    """
+    return (Path(os.path.abspath(file)).parents[1] / path)

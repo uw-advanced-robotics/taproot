@@ -1,5 +1,3 @@
-# !/bin/bash
-#
 # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
@@ -17,13 +15,22 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-# See https://stackoverflow.com/questions/39340169/dir-cd-dirname-bash-source0-pwd-how-does-that-work/39340259
-# for how the following line works.
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+Import("env")
 
-cd $SCRIPT_DIR
+from os.path import abspath
 
-rm -rf taproot
-rm -rf build
-rm -f .sconsign.dblite
-rm -f project.xml.log
+files = env.FindSourceFiles(".")
+
+newenv = env.Clone()
+newenv.Append(CCFLAGS=["-w"]) # suppress all warnings
+library = newenv.StaticLibrary(target="taproot-ext", source=files)
+
+env.AppendUnique(LIBPATH=[
+    abspath(str(library[0].get_dir())),
+])
+
+env.AppendUnique(LIBS=[
+    library,
+])
+
+Return("library")

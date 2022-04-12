@@ -143,15 +143,15 @@ TEST(
     modm::IOStream stream(terminalDevice);
 
     DjiMotor *motors[DjiMotorTxHandler::DJI_MOTORS_PER_CAN] = {};
-    motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR1)] =
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)] =
         new DjiMotor(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS1, false, "m1", 1.0f);
-    motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR3)] =
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR3)] =
         new DjiMotor(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS1, false, "m2", 1.0f);
-    motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR6)] =
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR6)] =
         new DjiMotor(&drivers, MotorId::MOTOR6, tap::can::CanBus::CAN_BUS1, false, "m3", 1.0f);
 
     ON_CALL(drivers.djiMotorTxHandler, getCan1Motor).WillByDefault([&](tap::motor::MotorId mid) {
-        return motors[DJI_MOTOR_NORMALIZED_ID(mid)];
+        return motors[DJI_MOTOR_TO_NORMALIZED_ID(mid)];
     });
 
     char input[] = "can 1";
@@ -162,9 +162,9 @@ TEST(
     EXPECT_THAT(output, HasSubstr("3. m2"));
     EXPECT_THAT(output, HasSubstr("6. m3"));
 
-    delete motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR1)];
-    delete motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR3)];
-    delete motors[DJI_MOTOR_NORMALIZED_ID(MotorId::MOTOR6)];
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)];
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR3)];
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR6)];
 }
 
 TEST(

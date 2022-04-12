@@ -15,20 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
-Import("env")
+def init(module):
+    module.name = ":storage:littlefs-internal"
+    module.description = "LittleFS port on STM32F427II"
 
-from os.path import abspath
+def prepare(module, options):
+    module.depends(":core")
+    module.depends(":ext:littlefs")
+    return True
 
-files = env.FindSourceFiles(".")
-
-library = env.StaticLibrary(target="taproot", source=files)
-
-env.AppendUnique(LIBS=[
-    library,
-])
-
-env.AppendUnique(LIBPATH=[
-    abspath(str(library[0].get_dir())),
-])
-
-Return("library")
+def build(env):
+    env.outbasepath = "taproot/src/tap/storage/littlefs-internal"
+    env.copy(".")
