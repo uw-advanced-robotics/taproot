@@ -23,7 +23,7 @@
 #include "tap/communication/sensors/imu_heater/imu_heater_constants.hpp"
 #include "tap/drivers.hpp"
 
-using namespace tap::sensors;
+using namespace tap::communication::sensors::imu_heater;
 using namespace testing;
 
 class ImuHeaterTest : public Test

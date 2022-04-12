@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,21 +17,21 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "mpu6500_terminal_serial_handler.hpp"
+#include "imu_terminal_serial_handler.hpp"
 
 #include "tap/algorithms/strtok.hpp"
 #include "tap/drivers.hpp"
 
-namespace tap::sensors
+namespace tap::communication::sensors::imu
 {
-constexpr char Mpu6500TerminalSerialHandler::USAGE[];
+constexpr char ImuTerminalSerialHandler::USAGE[];
 
 #define SUBJECT_BEING_INSPECTED(subjectsBeingInspected, subject) \
     ((subjectsBeingInspected & subject) == subject)
 
-void Mpu6500TerminalSerialHandler::init() { drivers->terminalSerial.addHeader(HEADER, this); }
+void ImuTerminalSerialHandler::init() { drivers->terminalSerial.addHeader(imu->getName(), this); }
 
-bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
+bool ImuTerminalSerialHandler::terminalSerialCallback(
     char* inputLine,
     modm::IOStream& outputStream,
     bool streamingEnabled)
@@ -68,14 +68,14 @@ bool Mpu6500TerminalSerialHandler::terminalSerialCallback(
         }
         else if (strcmp(arg, "-h"))
         {
-            outputStream << USAGE;
+            outputStream << "Usage: " << imu->getName() << USAGE;
             return false;
         }
     }
 
     if (!subjectsBeingInspected)
     {
-        outputStream << USAGE;
+        outputStream << "Usage: " << imu->getName() << USAGE;
         return !streamingEnabled;
     }
 
@@ -106,34 +106,33 @@ static void printFloatVector(modm::IOStream& outputStream, float x, float y, flo
         static_cast<double>(z));
 }
 
-void Mpu6500TerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& outputStream)
+void ImuTerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& outputStream)
 {
     bool needsTab = false;
-    Mpu6500& mpu = drivers->mpu6500;
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::ANGLES))
     {
         checkNeedsTab(needsTab, outputStream);
-        printFloatVector(outputStream, mpu.getPitch(), mpu.getRoll(), mpu.getYaw());
+        printFloatVector(outputStream, imu->getPitch(), imu->getRoll(), imu->getYaw());
     }
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::GYRO))
     {
         checkNeedsTab(needsTab, outputStream);
-        printFloatVector(outputStream, mpu.getGx(), mpu.getGy(), mpu.getGz());
+        printFloatVector(outputStream, imu->getGx(), imu->getGy(), imu->getGz());
     }
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::ACCEL))
     {
         checkNeedsTab(needsTab, outputStream);
-        printFloatVector(outputStream, mpu.getAx(), mpu.getAy(), mpu.getAz());
+        printFloatVector(outputStream, imu->getAx(), imu->getAy(), imu->getAz());
     }
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::TEMP))
     {
         checkNeedsTab(needsTab, outputStream);
-        outputStream.printf("%.2f", static_cast<double>(mpu.getTemp()));
+        outputStream.printf("%.2f", static_cast<double>(imu->getTemp()));
     }
     outputStream << modm::endl;
 }
 
-void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
+void ImuTerminalSerialHandler::printHeader(modm::IOStream& outputStream)
 {
     bool needsTab = false;
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::ANGLES))
@@ -158,4 +157,4 @@ void Mpu6500TerminalSerialHandler::printHeader(modm::IOStream& outputStream)
     }
     outputStream << modm::endl;
 }
-}  // namespace tap::sensors
+}  // namespace tap::communication::sensors::imu

@@ -22,13 +22,13 @@
 
 #include <gmock/gmock.h>
 
-#include "tap/communication/sensors/mpu6500/mpu6500.hpp"
+#include "tap/communication/sensors/imu/mpu6500/mpu6500.hpp"
 
 namespace tap
 {
 namespace mock
 {
-class Mpu6500Mock : public tap::sensors::Mpu6500
+class Mpu6500Mock : public tap::communication::sensors::imu::mpu6500::Mpu6500
 {
 public:
     Mpu6500Mock(tap::Drivers *drivers);
@@ -37,14 +37,14 @@ public:
     MOCK_METHOD(void, init, (), (override));
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(bool, read, (), (override));
-    MOCK_METHOD(tap::sensors::Mpu6500::ImuState, getImuState, (), (const override));
-    MOCK_METHOD(float, getAx, (), (const override));
-    MOCK_METHOD(float, getAy, (), (const override));
-    MOCK_METHOD(float, getAz, (), (const override));
-    MOCK_METHOD(float, getGx, (), (const override));
-    MOCK_METHOD(float, getGy, (), (const override));
-    MOCK_METHOD(float, getGz, (), (const override));
-    MOCK_METHOD(float, getTemp, (), (const override));
+    MOCK_METHOD(ImuState, getImuState, (), (const override));
+    MOCK_METHOD(float, getAx, (), (override));
+    MOCK_METHOD(float, getAy, (), (override));
+    MOCK_METHOD(float, getAz, (), (override));
+    MOCK_METHOD(float, getGx, (), (override));
+    MOCK_METHOD(float, getGy, (), (override));
+    MOCK_METHOD(float, getGz, (), (override));
+    MOCK_METHOD(float, getTemp, (), (override));
     MOCK_METHOD(float, getYaw, (), (override));
     MOCK_METHOD(float, getPitch, (), (override));
     MOCK_METHOD(float, getRoll, (), (override));

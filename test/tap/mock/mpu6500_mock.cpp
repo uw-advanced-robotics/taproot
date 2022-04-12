@@ -21,6 +21,9 @@
 
 namespace tap::mock
 {
-Mpu6500Mock::Mpu6500Mock(tap::Drivers *drivers) : tap::sensors::Mpu6500(drivers) {}
+Mpu6500Mock::Mpu6500Mock(tap::Drivers *drivers)
+    : communication::sensors::imu::mpu6500::Mpu6500(drivers)
+{
+}
 Mpu6500Mock::~Mpu6500Mock() {}
 }  // namespace tap::mock

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -24,6 +24,7 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
+#include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
@@ -32,7 +33,9 @@
 namespace tap
 {
 class Drivers;
-namespace sensors
+}
+
+namespace tap::communication::sensors::imu::mpu6500
 {
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
@@ -44,27 +47,9 @@ namespace sensors
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 : public ::modm::pt::Protothread
+class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterface
 {
 public:
-    /**
-     * Possible IMU states for the Mpu6500.
-     */
-    enum class ImuState
-    {
-        /** Indicates the IMU's init function was not called or initialization failed, so data from
-           this class will be undefined. */
-        IMU_NOT_CONNECTED,
-        /** Indicates the IMU is connected and reading data, but calibration offsets have not been
-           computed. */
-        IMU_NOT_CALIBRATED,
-        /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
-           IMU is in this state is undefined. */
-        IMU_CALIBRATING,
-        /// Indicates the IMU is connected and calibration offsets have been computed.
-        IMU_CALIBRATED,
-    };
-
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
@@ -105,61 +90,124 @@ public:
      */
     mockable inline ImuState getImuState() const { return imuState; }
 
+    virtual inline const char *getName() const { return "mpu6500"; }
+
+    /**
+     * If the imu is not initialized, logs an error and returns 0.
+     * Otherwise, returns the value passed in.
+     */
+    inline float validateReading(float reading)
+    {
+        if (imuState == ImuState::IMU_CALIBRATED)
+        {
+            return reading;
+        }
+        else if (imuState == ImuState::IMU_NOT_CALIBRATED)
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CALIBRATED);
+            return reading;
+        }
+        else if (imuState == ImuState::IMU_CALIBRATING)
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_CALIBRATING);
+            return 0.0f;
+        }
+        else
+        {
+            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CONNECTED);
+            return 0.0f;
+        }
+    }
+
     /**
      * Returns the acceleration reading in the x direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAx() const;
+    inline float getAx() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the acceleration reading in the y direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAy() const;
+    inline float getAy() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the acceleration reading in the z direction, in
      * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
      */
-    mockable float getAz() const;
+    inline float getAz() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
+            ACCELERATION_SENSITIVITY);
+    }
 
     /**
      * Returns the gyroscope reading in the x direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGx() const;
+    inline float getGx() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the gyroscope reading in the y direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGy() const;
+    inline float getGy() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the gyroscope reading in the z direction, in
      * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
      */
-    mockable float getGz() const;
+    inline float getGz() final_mockable
+    {
+        return validateReading(
+            static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
+    }
 
     /**
      * Returns the temperature of the imu in degrees C.
+     *
+     * @see page 33 of this datasheet:
+     * https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
+     * for what the magic numbers are used.
      */
-    mockable float getTemp() const;
+    inline float getTemp() final_mockable
+    {
+        return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
+    }
 
     /**
      * Returns yaw angle. in degrees.
      */
-    mockable float getYaw();
+    inline float getYaw() final_mockable { return validateReading(mahonyAlgorithm.getYaw()); }
 
     /**
      * Returns pitch angle in degrees.
      */
-    mockable float getPitch();
+    inline float getPitch() final_mockable { return validateReading(mahonyAlgorithm.getPitch()); }
 
     /**
      * Returns roll angle in degrees.
      */
-    mockable float getRoll();
+    inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
 
     /**
      * Returns the angle difference between the normal vector of the plane that the
@@ -265,7 +313,7 @@ private:
 
     Mahony mahonyAlgorithm;
 
-    sensors::ImuHeater imuHeater;
+    imu_heater::ImuHeater imuHeater;
 
     float tiltAngle = 0.0f;
     bool tiltAngleCalculated = false;
@@ -275,6 +323,8 @@ private:
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
 
     int calibrationSample = 0;
+
+    uint8_t errorState = 0;
 
     // Functions for interacting with hardware directly.
 
@@ -287,12 +337,6 @@ private:
      * Pull the NSS pin high to end contact with the imu.
      */
     void mpuNssHigh();
-
-    /**
-     * If the imu is not initializes, logs an error and returns 0,
-     * otherwise returns the value passed in.
-     */
-    inline float validateReading(float reading) const;
 
     /**
      * Write to a given register.
@@ -310,10 +354,13 @@ private:
      * from that point.
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
+
+    /**
+     * Add any errors to the error handler that have came up due to calls to validateReading.
+     */
+    void addValidationErrors();
 };
 
-}  // namespace sensors
-
-}  // namespace tap
+}  // namespace tap::communication::sensors::imu::mpu6500
 
 #endif  // TAPROOT_MPU6500_HPP_
