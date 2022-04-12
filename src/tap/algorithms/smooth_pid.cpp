@@ -53,6 +53,7 @@ float SmoothPid::runController(float error, float errorDerivative, float dt)
     if (fabs(error) < config.errorDerivativeFloor)
     {
         // the error is less than some amount, so round derivative output to 0
+        // done to avoid high frequency control oscilations in some systems
         currErrorD = 0.0f;
     }
     // total
