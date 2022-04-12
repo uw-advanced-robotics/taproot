@@ -23,5 +23,5 @@
 namespace tap::communication::sensors::imu::bmi088
 {
 std::deque<uint8_t> Bmi088Hal::rxData;
-}
+}  // namespace tap::communication::sensors::imu::bmi088
 #endif
