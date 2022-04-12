@@ -126,3 +126,4 @@ bool tap::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
     }
 #endif
 }
+

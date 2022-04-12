@@ -11,6 +11,7 @@
   no longer generated as part of `drivers.hpp`. You should put this object in your drivers object if
   you want to use it. This serial handler now takes in a pointer to a `ImuInterface` object (#18,
   !119).
+- `SmoothPid` constructor that takes in individual gains (as opposed to a parameter struct) removed (!163).
 
 ### All changes
 
