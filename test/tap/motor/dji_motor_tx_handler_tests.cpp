@@ -129,8 +129,8 @@ TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_motor_not_added_errors)
 {
     EXPECT_CALL(drivers.errorController, addToErrorList);
 
-    DjiMotor m1(&drivers, motor::MOTOR1, can::CanBus::CAN_BUS1, false, "hi");
-    DjiMotor m2(&drivers, motor::MOTOR2, can::CanBus::CAN_BUS1, false, "hi");
+    DjiMotor m1(&drivers, motor::MOTOR1, can::CanBus::CAN_BUS1, false, "hi", 1.0f);
+    DjiMotor m2(&drivers, motor::MOTOR2, can::CanBus::CAN_BUS1, false, "hi", 1.0f);
 
     djiMotorTxHandler.addMotorToManager(&m1);
 
