@@ -4,6 +4,8 @@
 
 ### Breaking changes
 
+- `SmoothPid` constructor that takes in individual gains (as opposed to a parameter struct) removed (!163).
+
 ### All changes
 
 - Unit tests added for `Remote` class.
