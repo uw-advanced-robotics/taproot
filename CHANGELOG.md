@@ -1,5 +1,19 @@
 # Taproot Changelog
 
+## April 2022
+
+### Breaking changes
+
+- Ref serial transmitter class added, which pulls out transmission-related code from the `RefSerial`
+  class. Furthermore, functions that transmit directly handle bandwidth considerations in the
+  `RefSerialTransmitter` class. An instance of this class should be instantiated for each
+  protothread that ref serial transmissions will be performed in (!161, #175).
+
+### All changes
+
+- Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
+  with the ref serial UART port (!161, #175). 
+
 ## March 2022
 
 ### Breaking changes
