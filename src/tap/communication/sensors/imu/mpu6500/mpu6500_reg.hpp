@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -20,9 +20,7 @@
 #ifndef TAPROOT_MPU6500_REG_HPP_
 #define TAPROOT_MPU6500_REG_HPP_
 
-namespace tap
-{
-namespace sensors
+namespace tap::communication::sensors::imu::mpu6500
 {
 // mpu Reg -- Map
 #define MPU6500_SELF_TEST_XG (0x00)
@@ -130,8 +128,6 @@ namespace sensors
 #define MPU6500_ID (0x70)  // mpu6500 id = 0x70
 
 #define MPU_IIC_ADDR (0x68)
-}  // namespace sensors
-
-}  // namespace tap
+}  // namespace tap::communication::sensors::imu::mpu6500
 
 #endif  // TAPROOT_MPU6500_REG_HPP_

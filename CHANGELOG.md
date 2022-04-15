@@ -1,6 +1,6 @@
 # Taproot Changelog
 
-## March 2022
+## April 2022
 
 ### Breaking changes
 
@@ -11,8 +11,28 @@
 
 ### All changes
 
+- Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
+  with the ref serial UART port (!161, #175). 
+
+## March 2022
+
+### Breaking changes
+
+- The `Mpu6500` object is now generated from the module `taproot:communication:sensors:imu:mpu6500`.
+  `mpu6500.hpp` is now in the directory `src/tap/communication/sensors/imu`. The namespace structure
+  has been updated accordingly (#18, !119).
+- The `Mpu6500TerminalSerialHandler` has been renamed to `ImuTerminalSerialHandler`. This driver is
+  no longer generated as part of `drivers.hpp`. You should put this object in your drivers object if
+  you want to use it. This serial handler now takes in a pointer to a `ImuInterface` object (#18,
+  !119).
+- `SmoothPid` constructor that takes in individual gains (as opposed to a parameter struct) removed (!163).
+
+### All changes
+
 - Unit tests added for `Remote` class.
 - Minor improvements to `DjiMotorTxHandler` class. Some API function names have been changed.
+- `ImuInterface` added such that IMUs can be interchanged in various situations (#18, !119).
+- `ImuMenu` added that prints information about an instance of an `ImuInterface` (#18, !119).
 - Zero-length UART messages are no longer thrown out by DjiSerial class.
 - CAN 2 pin defines for the Type C board are no longer incorrect (!165).
 

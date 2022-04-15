@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -31,7 +31,7 @@
 using namespace modm::literals;
 using namespace tap::arch;
 
-namespace tap::sensors
+namespace tap::communication::sensors::imu::mpu6500
 {
 Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
 
@@ -86,7 +86,7 @@ void Mpu6500::init()
     // verify mpu register ID
     if (MPU6500_ID != spiReadRegister(MPU6500_WHO_AM_I))
     {
-        RAISE_ERROR(drivers, "failed to initialize the imu properly");
+        RAISE_ERROR(drivers, "Failed to initialize the IMU properly");
         return;
     }
 
@@ -151,6 +151,8 @@ void Mpu6500::periodicIMUUpdate()
     readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
 
     imuHeater.runTemperatureController(getTemp());
+
+    addValidationErrors();
 }
 
 #define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
@@ -188,58 +190,6 @@ bool Mpu6500::read()
 #endif
 }
 
-// Getter functions.
-
-float Mpu6500::getAx() const
-{
-    return validateReading(
-        static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
-        ACCELERATION_SENSITIVITY);
-}
-
-float Mpu6500::getAy() const
-{
-    return validateReading(
-        static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
-        ACCELERATION_SENSITIVITY);
-}
-
-float Mpu6500::getAz() const
-{
-    return validateReading(
-        static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
-        ACCELERATION_SENSITIVITY);
-}
-
-float Mpu6500::getGx() const
-{
-    return validateReading(
-        static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
-}
-
-float Mpu6500::getGy() const
-{
-    return validateReading(
-        static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
-}
-
-float Mpu6500::getGz() const
-{
-    return validateReading(
-        static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
-}
-
-float Mpu6500::getTemp() const
-{
-    return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
-}
-
-float Mpu6500::getYaw() { return validateReading(mahonyAlgorithm.getYaw()); }
-
-float Mpu6500::getPitch() { return validateReading(mahonyAlgorithm.getPitch()); }
-
-float Mpu6500::getRoll() { return validateReading(mahonyAlgorithm.getRoll()); }
-
 float Mpu6500::getTiltAngle()
 {
     if (!tiltAngleCalculated)
@@ -249,29 +199,6 @@ float Mpu6500::getTiltAngle()
         tiltAngleCalculated = true;
     }
     return validateReading(tiltAngle);
-}
-
-float Mpu6500::validateReading(float reading) const
-{
-    if (imuState == ImuState::IMU_CALIBRATED)
-    {
-        return reading;
-    }
-    else if (imuState == ImuState::IMU_NOT_CALIBRATED)
-    {
-        RAISE_ERROR(drivers, "imu data requested, imu not calibrated");
-        return reading;
-    }
-    else if (imuState == ImuState::IMU_CALIBRATING)
-    {
-        RAISE_ERROR(drivers, "reading imu data, imu calibrating");
-        return 0.0f;
-    }
-    else
-    {
-        RAISE_ERROR(drivers, "failed to initialize the imu properly");
-        return 0.0f;
-    }
 }
 
 // Hardware interface functions (blocking functions, for initialization only)
@@ -339,4 +266,25 @@ void Mpu6500::mpuNssHigh()
 #endif
 }
 
-}  // namespace tap::sensors
+/**
+ * Add any errors to the error handler that have came up due to calls to validateReading.
+ */
+void Mpu6500::addValidationErrors()
+{
+    if (errorState & (1 << static_cast<uint8_t>(ImuState::IMU_NOT_CALIBRATED)))
+    {
+        RAISE_ERROR(drivers, "IMU data requested but IMU not calibrated");
+    }
+    else if (errorState & (1 << static_cast<uint8_t>(ImuState::IMU_CALIBRATING)))
+    {
+        RAISE_ERROR(drivers, "Reading IMU data but IMU calibrating");
+    }
+    else if (errorState & (1 << static_cast<uint8_t>(ImuState::IMU_NOT_CONNECTED)))
+    {
+        RAISE_ERROR(drivers, "Failed to initialize IMU properly");
+    }
+
+    errorState = 0;
+}
+
+}  // namespace tap::communication::sensors::imu::mpu6500

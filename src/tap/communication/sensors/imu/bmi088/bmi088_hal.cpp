@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -20,8 +20,8 @@
 #include "bmi088_hal.hpp"
 
 #if defined(ENV_UNIT_TESTS)
-namespace tap::communication::sensors::bmi088
+namespace tap::communication::sensors::imu::bmi088
 {
 std::deque<uint8_t> Bmi088Hal::rxData;
-}
+}  // namespace tap::communication::sensors::imu::bmi088
 #endif
