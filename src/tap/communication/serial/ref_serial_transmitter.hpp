@@ -227,6 +227,7 @@ public:
      * @param[in] configMsgHeader Whether or not to update the `graphicMsg`'s header information.
      * @param[in] sendMsg Whether or not to send the message.
      */
+    ///@{
     mockable modm::ResumableResult<void> sendGraphic(
         Tx::Graphic1Message* graphicMsg,
         bool configMsgHeader = true,
@@ -247,6 +248,7 @@ public:
         Tx::GraphicCharacterMessage* graphicMsg,
         bool configMsgHeader = true,
         bool sendMsg = true);
+    ///@}
 
     mockable modm::ResumableResult<void> sendRobotToRobotMsg(
         Tx::RobotToRobotMessage* robotToRobotMsg,
