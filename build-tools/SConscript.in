@@ -170,10 +170,10 @@ env.AppendUnique(CPPPATH=[abspath("src")])
 env.AppendUnique(CPPPATH=[abspath("ext")])
 if args["TARGET_ENV"] == "tests":
     env.AppendUnique(CPPPATH=[abspath("test")])
-
+{% if has_ext %}
 # Build external library, external SConscript should be ran before any of the build code defined below
 env.SConscript(dirs=["ext"], exports=["env"])
-
+{% endif %}
 # Find all files that need to be built with the library (files in src and ext, files
 # in test if target environment is tests)
 files = env.FindSourceFiles("src")
@@ -186,3 +186,4 @@ env.AppendUnique(LIBS=[library])
 env.AppendUnique(LIBPATH=[abspath(str(library[0].get_dir()))])
 
 Return("library")
+

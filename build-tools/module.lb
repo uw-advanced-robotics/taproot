@@ -28,4 +28,7 @@ def build(env):
     # Copy all folders and files that are not configurable in this
     # top level module
     env.outbasepath = "taproot"
-    env.copy("SConscript")
+    env.substitutions = {
+        "has_ext": env.has_module(":ext"),
+    }
+    env.template("SConscript.in", "SConscript")
