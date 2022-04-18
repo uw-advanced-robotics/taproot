@@ -28,7 +28,8 @@ def prepare(module, options):
         ":testing:mock",
         ":modm-project.xml",
         ":board",
-        ":errors")
+        ":errors",
+        ":ext")
 
     # build system dependencies
     module.depends(":build")
