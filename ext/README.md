@@ -6,6 +6,7 @@ up the library as follows:
 
 1. Add a new directory in the `ext/` directory. If the third party library is called `<cool-lib>`,
    call the directory `<cool-lib>-project`.
+1. Add the third party as a submodule in `<cool-lib>-project`.
 1. Create a `module.lb` file in `<cool-lib>-project`. This will be used to copy files from the
    library upon code generation.
 1. The file should look like the following. Replace `<cool-lib>` with the third party library and
