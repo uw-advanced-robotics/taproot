@@ -51,10 +51,11 @@ public:
     /**
      * Initializes a kalman filter with the given covariances.
      *
-     * @note R is fixed. Larger Q means more trust in the
-     *      data we are measuring. Conversely, a smaller Q means more
-     *      trust in the model's prediction (rather than the measured) value.
-     * @param[in] p the kalaman struct.
+     * @note tR can be fixed at 1 and then tQ can be modified (since the
+     *      magnitude of tQ and tR are relative to each other). Larger
+     *      tQ means more trust in the data we are measuring. Conversely,
+     *      a smaller tQ means more trust in the model's prediction (rather
+     *      than the measured) value.
      * @param[in] tQ the system noise covariance.
      * @param[in] tR the measurement noise covariance.
      */
