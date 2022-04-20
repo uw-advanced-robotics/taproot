@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,13 +17,11 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "mpu6500_terminal_serial_handler_mock.hpp"
+#include "bmi088_hal.hpp"
 
-namespace tap::mock
+#if defined(ENV_UNIT_TESTS)
+namespace tap::communication::sensors::imu::bmi088
 {
-Mpu6500TerminalSerialHandlerMock::Mpu6500TerminalSerialHandlerMock(tap::Drivers *drivers)
-    : tap::sensors::Mpu6500TerminalSerialHandler(drivers)
-{
-}
-Mpu6500TerminalSerialHandlerMock::~Mpu6500TerminalSerialHandlerMock() {}
-}  // namespace tap::mock
+std::deque<uint8_t> Bmi088Hal::rxData;
+}  // namespace tap::communication::sensors::imu::bmi088
+#endif
