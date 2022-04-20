@@ -42,7 +42,8 @@ protected:
                 NORMALIZED_ID_TO_DJI_MOTOR(i),
                 can::CanBus::CAN_BUS1,
                 false,
-                ""));
+                "",
+                1.0f));
         }
 
         for (size_t i = 0; i < DjiMotorTxHandler::DJI_MOTORS_PER_CAN; i++)
@@ -52,7 +53,8 @@ protected:
                 NORMALIZED_ID_TO_DJI_MOTOR(i),
                 can::CanBus::CAN_BUS2,
                 false,
-                ""));
+                "",
+                1.0f));
         }
     }
 
