@@ -65,6 +65,7 @@ public:
         BLUE_RADAR_STATION = 109
     };
 
+    /// @return `true` if the specified `id` is on the blue team, `false` if on the red team.
     static inline bool isBlueTeam(RobotId id) { return id >= RobotId::BLUE_HERO; }
 
     class RobotToRobotMessageHandler
@@ -127,23 +128,26 @@ public:
 
         enum class RobotBuffStatus : uint8_t
         {
-            ROBOT_HP_RESTORATION_STATUS = modm::Bit0,
-            BARREL_HEAT_COOLING_ACCELERATION = modm::Bit1,
-            ROBOT_DEFENSE_BUFF = modm::Bit2,
-            ROBOT_ATTACK_BUFF = modm::Bit3,
+            ROBOT_HP_RESTORATION_STATUS = modm::Bit0,       ///< Robot in the HP restoration zone
+            BARREL_HEAT_COOLING_ACCELERATION = modm::Bit1,  ///< Robot in the cooling buff zone
+            ROBOT_DEFENSE_BUFF = modm::Bit2,                ///< Rboot in a defense buff zone
+            ROBOT_ATTACK_BUFF = modm::Bit3,                 ///< Robot in an attack buff zone
         };
         MODM_FLAGS8(RobotBuffStatus);
 
+        /// Activation status flags for the RFID module (for RMUC only).
         enum class RFIDActivationStatus : uint8_t
         {
-            BASE_GAIN_ZONE = modm::Bit0,
-            ELEVATED_GROUND_ZONE = modm::Bit1,
-            POWER_RUNE_ACTIVATION_POINT = modm::Bit2,
-            LAUNCH_RAMP = modm::Bit3,
-            OUTPOST_ZONE = modm::Bit4,
-            RESOURCE_ISLAND_ZONE = modm::Bit5,
-            RESTORATION_ZONE = modm::Bit6,
-            ENGINEER_RESTORATION = modm::Bit7,
+            BASE_GAIN_ZONE = modm::Bit0,               ///< Robot in the base zone
+            ELEVATED_GROUND_ZONE = modm::Bit1,         ///< Robot in the elevated ground zone
+            POWER_RUNE_ACTIVATION_POINT = modm::Bit2,  ///< Robot in rune game activation zone
+            LAUNCH_RAMP = modm::Bit3,                  ///< Robot in launch ramp zone (section
+                                                       ///< before the actual ramp)
+            OUTPOST_ZONE = modm::Bit4,                 ///< Robot adjacent to the outpost
+            RESOURCE_ISLAND_ZONE = modm::Bit5,         ///< Robot adjacent to the resource island
+            RESTORATION_ZONE = modm::Bit6,             ///< Robot in restoration zone
+            ENGINEER_RESTORATION = modm::Bit7,  ///< Engineer's RFID swipe card is beneath RFID card
+                                                ///< and is activating the card
         };
         MODM_FLAGS8(RFIDActivationStatus);
 
@@ -159,11 +163,15 @@ public:
             AMMO_42 = 2,  ///< 42 mm projectile ammo.
         };
 
+        /**
+         * Barrel identifier associated with the projectile launch message (which is sent when a
+         * projectile has been launched).
+         */
         enum MechanismID
         {
-            TURRET_17MM_1 = 0,
-            TURRET_17MM_2 = 1,
-            TURRET_42MM = 2,
+            TURRET_17MM_1 = 0,  ///< 17mm barrel ID 1
+            TURRET_17MM_2 = 1,  ///< 17mm barrel ID 2
+            TURRET_42MM = 2,    ///< 42mm barrel
         };
 
         struct GameData
@@ -196,12 +204,12 @@ public:
 
         struct ChassisData
         {
-            uint16_t volt;         ///< Output voltage to the chassis (in mV).
-            uint16_t current;      ///< Output current to the chassis (in mA).
-            float power;           ///< Output power to the chassis (in W).
-            uint16_t powerBuffer;  ///< Chassis power buffer (in J).
-            float x, y, z;         ///< x, y, z coordinate of the chassis.
-            uint16_t powerConsumptionLimit;
+            uint16_t volt;                   ///< Output voltage to the chassis (in mV).
+            uint16_t current;                ///< Output current to the chassis (in mA).
+            float power;                     ///< Output power to the chassis (in W).
+            uint16_t powerBuffer;            ///< Chassis power buffer (in J).
+            float x, y, z;                   ///< x, y, z coordinate of the chassis.
+            uint16_t powerConsumptionLimit;  ///< The current chassis power limit (in W)
         };
 
         struct TurretData
@@ -268,21 +276,30 @@ public:
     class Tx
     {
     public:
+        /// Graphic operations that can be passed in a delete individual graphic layers or all
+        /// graphics
         enum DeleteGraphicOperation
         {
-            DELETE_GRAPHIC_NO_OP = 0,
-            DELETE_GRAPHIC_LAYER = 1,
-            DELETE_ALL = 2,
+            DELETE_GRAPHIC_NO_OP = 0,  ///< Do nothing, no-op
+            DELETE_GRAPHIC_LAYER = 1,  ///< Delete a particular graphic layer (specified later on)
+            DELETE_ALL = 2,            ///< Delete all graphic in all graphic layers
         };
 
-        enum AddGraphicOperation
+        /// Graphic operations that can be passed in an add graphic operation
+        enum GraphicOperation
         {
-            ADD_GRAPHIC_NO_OP = 0,
-            ADD_GRAPHIC = 1,
-            ADD_GRAPHIC_MODIFY = 2,
-            ADD_GRAPHIC_DELETE = 3,
+            GRAPHIC_NO_OP = 0,   ///< Do nothing, no-op
+            GRAPHIC_ADD = 1,     /**< Add a new graphic. If the graphic has a unique id not
+                                  * already registered with the UI, the graphic will be uniquely added,
+                                  * otherwise the graphic with the same graphic ID will be replaced. If
+                                  * you have a graphic that is already drawn that you want to change,
+                                  * you should use GRAPHIC_MODIFY instead */
+            GRAPHIC_MODIFY = 2,  /**< Modify an existing graphic (by graphic ID). The graphic must
+                                  * already exist for this to work properly. */
+            GRAPHIC_DELETE = 3,  ///< Delete a particular graphic.
         };
 
+        /// The type of graphic being drawn (some geometry, or a string/number)
         enum class GraphicType : uint8_t
         {
             STRAIGHT_LINE = 0,
@@ -295,6 +312,7 @@ public:
             CHARACTER = 7,
         };
 
+        /// The color of the graphic being drawn
         enum class GraphicColor : uint8_t
         {
             RED_AND_BLUE = 0,
