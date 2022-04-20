@@ -1,16 +1,16 @@
 ## Integrating Third Party Libraries
 
-This directory contains all third party libraries that taproot depends on. If you would like to add
-a new third-party library, you should add it as a submodule in this directory. In particular, set
-up the library as follows:
+This directory contains all third party libraries that taproot depends on (excluding modm and its
+dependencies). If you would like to add a new third-party library, you should add it as a
+submodule in this directory. In particular, to integrate a library follow the following steps:
 
 1. Add a new directory in the `ext/` directory. If the third party library is called `<cool-lib>`,
    call the directory `<cool-lib>-project`.
-1. Add the third party as a submodule in `<cool-lib>-project`.
+1. Add the third party library as a submodule in `<cool-lib>-project` (`git submodule add <sha>`).
 1. Create a `module.lb` file in `<cool-lib>-project`. This will be used to copy files from the
    library upon code generation.
-1. The file should look like the following. Replace `<cool-lib>` with the third party library and
-   `<cool-file>` with the third party library file(s) to copy when generating software:
+1. The `module.lb` file should look like the following. Replace `<cool-lib>` with the third party
+   library and `<cool-file>` with the third party library file(s) to copy when generating software:
 
    ```
     # Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
