@@ -66,7 +66,7 @@ public:
      *
      * ```
      * Graphic1Message msg;
-     * refSerial->configGraphicGenerics(&msg.graphicData, "\x00\x00\x01", RefSerial::ADD_GRAPHIC,1,
+     * refSerial->configGraphicGenerics(&msg.graphicData, "\x00\x00\x01", RefSerial::GRAPHIC_ADD,1,
      * YELLOW); refSerial->configLine(4, 100, 100, 200, 200, &msg.graphicData);
      * refSerial->sendGraphic(&msg);
      * ```
@@ -80,7 +80,7 @@ public:
     static void configGraphicGenerics(
         Tx::GraphicData* graphicData,
         const uint8_t* name,
-        Tx::AddGraphicOperation operation,
+        Tx::GraphicOperation operation,
         uint8_t layer,
         Tx::GraphicColor color);
     /**

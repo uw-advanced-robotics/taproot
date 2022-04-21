@@ -50,12 +50,12 @@ TEST_F(RefSerialTransmitterTest, configGraphicGenerics__sets_name_operation_laye
     RefSerialTransmitter::configGraphicGenerics(
         &data,
         name,
-        RefSerial::Tx::AddGraphicOperation::ADD_GRAPHIC_MODIFY,
+        RefSerial::Tx::GraphicOperation::GRAPHIC_MODIFY,
         0,
         RefSerial::Tx::GraphicColor::PINK);
 
     EXPECT_TRUE(0 == std::memcmp(name, data.name, sizeof(name)));
-    EXPECT_EQ(RefSerial::Tx::AddGraphicOperation::ADD_GRAPHIC_MODIFY, data.operation);
+    EXPECT_EQ(RefSerial::Tx::GraphicOperation::GRAPHIC_MODIFY, data.operation);
     EXPECT_EQ(static_cast<uint8_t>(RefSerial::Tx::GraphicColor::PINK), data.color);
 }
 

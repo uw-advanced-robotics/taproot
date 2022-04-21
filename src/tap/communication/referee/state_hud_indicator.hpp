@@ -115,11 +115,10 @@ public:
         indicatorState = initialState;
 
         // Initially add the graphic
-        graphic->graphicData.operation = tap::communication::serial::RefSerial::Tx::ADD_GRAPHIC;
+        graphic->graphicData.operation = tap::communication::serial::RefSerial::Tx::GRAPHIC_ADD;
         RF_CALL(refSerialTransmitter.sendGraphic(graphic));
         // In future calls to sendGraphic only modify the graphic
-        graphic->graphicData.operation =
-            tap::communication::serial::RefSerial::Tx::ADD_GRAPHIC_MODIFY;
+        graphic->graphicData.operation = tap::communication::serial::RefSerial::Tx::GRAPHIC_MODIFY;
 
         delayTimeout.restart(
             tap::communication::serial::RefSerialData::Tx::getWaitTimeAfterGraphicSendMs(graphic));
