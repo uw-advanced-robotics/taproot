@@ -58,10 +58,7 @@ void DoubleDjiMotor::initialize()
     motorTwo.initialize();
 }
 
-int64_t DoubleDjiMotor::getEncoderUnwrapped() const
-{
-    return motorOne.getEncoderUnwapped();
-}
+int64_t DoubleDjiMotor::getEncoderUnwrapped() const { return motorOne.getEncoderUnwrapped(); }
 
 uint16_t DoubleDjiMotor::getEncoderWrapped() const { return motorOne.getEncoderWrapped(); }
 
