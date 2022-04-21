@@ -48,7 +48,7 @@ TEST(DoubleDjiMotor, initialize__both_motors_initialized)
     motor.initialize();
 }
 
-TEST(DoubleDjiMotor, getEncoderUnwrapped__returns_average)
+TEST(DoubleDjiMotor, getEncoderUnwrapped__returns_m1_enc)
 {
     SETUP_TEST();
 
@@ -64,7 +64,7 @@ TEST(DoubleDjiMotor, getEncoderUnwrapped__returns_average)
 
     motorOneEnc = -1000;
     motorTwoEnc = 1000;
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
+    EXPECT_EQ(-1000, motor.getEncoderUnwrapped());
 
     motorOneEnc = 1500;
     motorTwoEnc = 1500;
@@ -72,7 +72,7 @@ TEST(DoubleDjiMotor, getEncoderUnwrapped__returns_average)
 
     motorOneEnc = 20000;
     motorTwoEnc = 30000;
-    EXPECT_EQ(25000, motor.getEncoderUnwrapped());
+    EXPECT_EQ(20000, motor.getEncoderUnwrapped());
 }
 
 TEST(DoubleDjiMotor, getEncoderWrapped__returns_motor_one_enc)
