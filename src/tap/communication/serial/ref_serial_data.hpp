@@ -208,7 +208,7 @@ public:
             uint16_t current;                ///< Output current to the chassis (in mA).
             float power;                     ///< Output power to the chassis (in W).
             uint16_t powerBuffer;            ///< Chassis power buffer (in J).
-            float x, y, z;                   ///< x, y, z coordinate of the chassis.
+            float x, y, z;                   ///< x, y, z coordinate of the chassis (in m).
             uint16_t powerConsumptionLimit;  ///< The current chassis power limit (in W)
         };
 
@@ -276,8 +276,11 @@ public:
     class Tx
     {
     public:
-        /// Graphic operations that can be passed in a delete individual graphic layers or all
-        /// graphics
+        /**
+         * Graphic operations that can be passed to a delete graphic operation. Using this enum you
+         * can specify if you would like to delete a graphic layer (multiple graphics can be drawn
+         * on one of a number of layers) or delete all the graphics on the screen.
+         */
         enum DeleteGraphicOperation
         {
             DELETE_GRAPHIC_NO_OP = 0,  ///< Do nothing, no-op
