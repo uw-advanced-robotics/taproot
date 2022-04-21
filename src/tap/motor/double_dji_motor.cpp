@@ -60,7 +60,7 @@ void DoubleDjiMotor::initialize()
 
 int64_t DoubleDjiMotor::getEncoderUnwrapped() const
 {
-    return motorOne.getEncoderWrapped();
+    return motorOne.getEncoderUnwapped();
 }
 
 uint16_t DoubleDjiMotor::getEncoderWrapped() const { return motorOne.getEncoderWrapped(); }
