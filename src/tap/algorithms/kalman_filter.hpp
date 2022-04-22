@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef KALMAN_FILTER_HPP_
-#define KALMAN_FILTER_HPP_
+#ifndef TAPROOT_KALMAN_FILTER_HPP_
+#define TAPROOT_KALMAN_FILTER_HPP_
 
 #include <cinttypes>
 
@@ -160,4 +160,4 @@ private:
 
 }  // namespace tap::algorithms
 
-#endif  // KALMAN_FILTER_HPP_
+#endif  // TAPROOT_KALMAN_FILTER_HPP_

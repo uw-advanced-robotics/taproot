@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MATRIX_UTILS_HPP_
-#define MATRIX_UTILS_HPP_
+#ifndef TAPROOT_MATRIX_UTILS_HPP_
+#define TAPROOT_MATRIX_UTILS_HPP_
 
 #include <cinttypes>
 
@@ -128,4 +128,4 @@ inline CMSISMat<A_ROWS, B_COLS> operator*(
 
 }  // namespace tap::algorithms
 
-#endif  // MATRIX_UTILS_HPP_
+#endif  // TAPROOT_MATRIX_UTILS_HPP_
