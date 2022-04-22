@@ -61,6 +61,11 @@ public:
                 buffer[sequenceNum] = data;
                 sequenceNum++;
             }
+            else
+            {
+                // Reset sequence num to beginning as we are lost in the sauce
+                sequenceNum = 0;
+            }
         }
         else
         {
@@ -79,6 +84,22 @@ public:
             return false;
         }
     }
+
+    /**
+     * @return the distance last reported by the sensor in centimeters. -1 if no valid reading
+     * available
+     */
+    inline int16_t getDistanceCm() const { return dist; }
+
+    /**
+     * @return strength (unsure what this is)
+     */
+    inline uint16_t getStrength() const { return strength; }
+
+    /**
+     * @return integration time (unsure what this is)
+     */
+    inline uint8_t getIntegrationTime() const { return integrationTime; }
 
 private:
     static constexpr size_t FRAME_SIZE = 9;
@@ -137,12 +158,12 @@ private:
      * Stores the current message frame as it's being built. buffer[0..sequenceNum-1] are bytes that
      * have been read for the current in-progress message.
      */
-    uint8_t buffer[9];
+    uint8_t buffer[FRAME_SIZE];
 
     /**
-     * Distance reported by the sensor in centimeters (cm)
+     * Distance reported by the sensor in centimeters (cm). -1 if no valid distance available
      */
-    uint16_t dist = 0;
+    int16_t dist = 0;
 
     /**
      * "Signal strength" according to the datasheet. No idea what this actually means :/
@@ -185,21 +206,44 @@ public:
 
     /**
      * Reads a byte from UART buffer if available and parses it.
-     *
-     * @return `true` iff a valid message was completed by this call and new data is available.
      */
-    bool update()
+    void update()
     {
         uint8_t data;
-        if (drivers->uart.read(TFMINI_UART_PORT, &data))
+
+        // Read as many bytes as possible from the UART buffer
+        while (drivers->uart.read(TFMINI_UART_PORT, &data))
         {
-            return decoder.processNextByte(data);
-        }
-        else
-        {
-            return false;
+            if (decoder.processNextByte(data))
+            {
+                sequenceNumber++;
+            }
         }
     }
+
+    /**
+     * @return the distance last reported by the sensor in centimeters. -1 if no valid reading
+     * available
+     */
+    inline int16_t getDistanceCm() const { return decoder.getDistanceCm(); }
+
+    /**
+     * @return strength (unsure what this is)
+     */
+    inline uint16_t getStrength() const { return decoder.strength(); }
+
+    /**
+     * @return integration time (unsure what this is)
+     */
+    inline uint16_t getIntegrationTime() const { return decoder.integrationTime(); }
+
+    /**
+     * @return sequence number of the most recently received valid distance message. 0 means that no
+     * messages have been received
+     *
+     * Use this to see if new data has been received since this was last queried
+     */
+    inline unsigned int getSequenceNumber() const { return sequenceNumber; }
 
 private:
     /**
@@ -208,6 +252,13 @@ private:
     TFMiniDecoder decoder;
 
     tap::Drivers* const drivers;
+
+    /**
+     * Updated every time a new full message is received from the TFMini
+     *
+     * Can be used by client to determine when a new message has been received
+     */
+    unsigned int sequenceNumber = 0;
 };
 
 }  // namespace tap::communication::sensors::distance
