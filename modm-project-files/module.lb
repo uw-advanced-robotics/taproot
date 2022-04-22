@@ -16,6 +16,7 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+import os
 
 sys.path.append(repopath("scripts/lbuild-helpers"))
 
@@ -46,6 +47,14 @@ DEFAULT_MODM_OPTIONS_BY_BOARD = {
         modm:platform:uart:6:buffer.rx 256\n\
         modm:platform:uart:6:buffer.tx 256",
 }
+
+def get_modm_repo_lb_file() -> str:
+    '''
+    Returns a path to the modm submodule's repo.lb file relative to the generated taproot directory
+    '''
+    absolute_repo_lb_path = localpath('../modm/repo.lb')
+    generated_taproot_path = os.path.abspath('taproot')
+    return os.path.relpath(absolute_repo_lb_path, generated_taproot_path)
 
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 
@@ -91,7 +100,7 @@ def build(env):
     modm_hal_options = [f"<option name=\"{option[0]}\">{option[1]}</option>\n" for option in modm_hal_options]
 
     env.substitutions = {
-        "modm_path": env[":modm_repo_lb"],
+        "modm_path": get_modm_repo_lb_file(),
         "mcu": mcu,
         "modm_hal_options": modm_hal_options,
     }
