@@ -9,6 +9,7 @@
   `RefSerialTransmitter` class. An instance of this class should be instantiated for each
   protothread that ref serial transmissions will be performed in (!161, #175).
 - Ref serial data `AddGraphicOperation` enum renamed to `GraphicOperation`.
+- `taproot:modm_repo_lb` option has been removed since it is not necessary for the user to specify this (!181, #82)
 
 ### All changes
 
