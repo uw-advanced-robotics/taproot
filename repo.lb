@@ -31,11 +31,6 @@ def init(repo):
             name="project_name",
             default="mcb-project",
             description="Project name"))
-    repo.add_option(
-        StringOption(
-            name="modm_repo_lb",
-            default="../modm/repo.lb",
-            description="Path to repo.lb file, relative to your project.xml file"))
 
     repo.add_option(
         BooleanOption(
