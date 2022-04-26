@@ -22,6 +22,7 @@
 
 #include <cinttypes>
 
+#include "modm/math/matrix.hpp"
 #include "modm/architecture/interface/assert.h"
 
 #include "matrix_utils.hpp"
@@ -72,7 +73,7 @@ public:
     void init(const float (&initialX)[STATES * 1])
     {
         xHat.copyData(initialX);
-        P.copyData(P0.data);
+        P.data = P0.data;
         initialized = true;
     }
 
@@ -94,12 +95,13 @@ public:
         P = (I - K * C) * P;
     }
 
-    using StateVectorArray = float[STATES];
-    const StateVectorArray &getStateMatrix() const { return xHat.data; }
+    const std::array<float, STATES> &getStateMatrix() const { return xHat.data; }
 
 private:
     /**
      * State transition matrix. For "transitioning" the previous `xHat` to `xHat`
+     *
+     * @note Also referred to as "F" in literature.
      */
     const CMSISMat<STATES, STATES> A;
 
@@ -112,6 +114,8 @@ private:
     /**
      * Observation matrix. How we transform the input into the form
      * of the state matrix.
+     *
+     * @note Also referred to as "H" in literature.
      */
     const CMSISMat<INPUTS, STATES> C;
 

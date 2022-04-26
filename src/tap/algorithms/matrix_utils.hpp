@@ -20,7 +20,10 @@
 #ifndef TAPROOT_MATRIX_UTILS_HPP_
 #define TAPROOT_MATRIX_UTILS_HPP_
 
+#include <array>
+#include <cassert>
 #include <cinttypes>
+#include <iostream>
 
 #include "modm/architecture/utils.hpp"
 
@@ -36,26 +39,45 @@ namespace tap::algorithms
 template <uint16_t ROWS, uint16_t COLS>
 struct CMSISMat
 {
-    float data[ROWS * COLS];
+    std::array<float, ROWS * COLS> data;
     arm_matrix_instance_f32 matrix;
 
-    CMSISMat() : data(), matrix{ROWS, COLS, data} {}
+    CMSISMat() : data(), matrix{ROWS, COLS, data.data()} {}
 
     CMSISMat(const float (&initialData)[ROWS * COLS])
     {
         copyData(initialData);
-        arm_mat_init_f32(&matrix, ROWS, COLS, data);
+        arm_mat_init_f32(&matrix, ROWS, COLS, data.data());
     }
 
     // Delete the copy constructor, create a move constructor. This will
     // Avoid us doing costly copys but will still allow move semantics.
     CMSISMat(const CMSISMat &other) = delete;
-    constexpr CMSISMat(CMSISMat &&) = default;
+    CMSISMat(CMSISMat &&other)
+    {
+        this->data = std::move(other.data);
+        matrix.numRows = ROWS;
+        matrix.numCols = COLS;
+        matrix.pData = data.data();
+    }
 
     CMSISMat &operator=(CMSISMat &) = delete;
-    constexpr CMSISMat &operator=(CMSISMat &&) = default;
+    CMSISMat &operator=(CMSISMat &&other)
+    {
+        this->data = std::move(other.data);
+        matrix.numRows = ROWS;
+        matrix.numCols = COLS;
+        matrix.pData = data.data();
+        return *this;
+    }
 
-    inline void copyData(const float (&other)[ROWS * COLS]) { memcpy(data, other, sizeof(data)); }
+    inline void copyData(const float (&other)[ROWS * COLS])
+    {
+        for (size_t i = 0; i < data.size(); i++)
+        {
+            data[i] = other[i];
+        }
+    }
 
     /**
      * Construct identity matrix in the current CMSISMat
@@ -71,7 +93,7 @@ struct CMSISMat
         {
             for (int j = 0; j < COLS; j++)
             {
-                data[i * ROWS + j] = (i == j) ? 1 : 0;
+                data[i * COLS + j] = (i == j) ? 1 : 0;
             }
         }
 
@@ -81,7 +103,7 @@ struct CMSISMat
     inline CMSISMat<COLS, ROWS> inverse()
     {
         CMSISMat<COLS, ROWS> ret;
-        arm_mat_inverse_f32(&this->matrix, &ret.matrix);
+        assert(ARM_MATH_SUCCESS == arm_mat_inverse_f32(&this->matrix, &ret.matrix));
         return ret;
     }
 };
@@ -96,7 +118,7 @@ inline CMSISMat<A_ROWS, B_COLS> operator+(
         "Invalid size of CMSISMat matricies in operator+");
 
     CMSISMat<A_ROWS, A_COLS> c;
-    arm_mat_add_f32(&a.matrix, &b.matrix, &c.matrix);
+    assert(ARM_MATH_SUCCESS == arm_mat_add_f32(&a.matrix, &b.matrix, &c.matrix));
     return c;
 }
 
@@ -110,7 +132,7 @@ inline CMSISMat<A_ROWS, B_COLS> operator-(
         "Invalid size of CMSISMat matricies in operator-");
 
     CMSISMat<A_ROWS, A_COLS> c;
-    arm_mat_sub_f32(&a.matrix, &b.matrix, &c.matrix);
+    assert(ARM_MATH_SUCCESS == arm_mat_sub_f32(&a.matrix, &b.matrix, &c.matrix));
     return c;
 }
 
@@ -122,7 +144,7 @@ inline CMSISMat<A_ROWS, B_COLS> operator*(
     static_assert(A_COLS == B_ROWS, "Invalid size of CMSISMat matricies in operator*");
 
     CMSISMat<A_ROWS, B_COLS> c;
-    arm_mat_mult_f32(&a.matrix, &b.matrix, &c.matrix);
+    assert(ARM_MATH_SUCCESS == arm_mat_mult_f32(&a.matrix, &b.matrix, &c.matrix));
     return c;
 }
 
