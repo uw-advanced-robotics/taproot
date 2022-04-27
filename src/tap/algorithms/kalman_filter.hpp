@@ -22,8 +22,8 @@
 
 #include <cinttypes>
 
-#include "modm/math/matrix.hpp"
 #include "modm/architecture/interface/assert.h"
+#include "modm/math/matrix.hpp"
 
 #include "matrix_utils.hpp"
 
