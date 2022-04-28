@@ -78,6 +78,16 @@ public:
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
     /**
+     * Gear ratio, for the DJI RoboMaster M2006 motor, in input revolutions : output revolutions
+     */
+    static constexpr float GEAR_RATIO_M2006 = 36.0f;
+
+    /**
+     * Gear ratio, for the DJI RoboMaster M3508 motor, in input revolutions : output revolutions
+     */
+    static constexpr float GEAR_RATIO_M3508 = 19.0f;
+
+    /**
      * @param drivers a pointer to the drivers struct
      * @param desMotorIdentifier the ID of this motor controller
      * @param motorCanBus the CAN bus the motor is on
