@@ -37,7 +37,7 @@ RefSerialTransmitter::RefSerialTransmitter(Drivers* drivers) : drivers(drivers) 
 void RefSerialTransmitter::configGraphicGenerics(
     Tx::GraphicData* graphicData,
     const uint8_t* name,
-    Tx::AddGraphicOperation operation,
+    Tx::GraphicOperation operation,
     uint8_t layer,
     Tx::GraphicColor color)
 {
