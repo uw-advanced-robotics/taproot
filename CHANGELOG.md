@@ -15,7 +15,7 @@
 
 - Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
   with the ref serial UART port (!161, #175). 
-- Ref serial receiver now decodes game type and warning status information (!184).
+- Ref serial receiver now decodes game type and warning status information.
 
 ## March 2022
 

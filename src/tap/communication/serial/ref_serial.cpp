@@ -190,7 +190,7 @@ bool RefSerial::decodeToWarningData(const ReceivedSerialMessage& message)
         return false;
     }
     robotData.refereeWarningData.level = message.data[0];
-    robotData.refereeWarningData.foulRobotID = static_cast<RobotId>(message.data[1]);
+    robotData.refereeWarningData.foulRobotID = message.data[1];
     robotData.refereeWarningData.lastReceivedWarningRobotTime = clock::getTimeMilliseconds();
     return true;
 }
