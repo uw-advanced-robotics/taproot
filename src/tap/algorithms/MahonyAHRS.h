@@ -13,6 +13,7 @@
 // 29/09/2011    SOH Madgwick    Initial release
 // 02/10/2011    SOH Madgwick    Optimised for reduced CPU load
 // 09/06/2020    Matthew Arnold  Update style, use safer casting
+// 04/30/2022    Matthew Arnold  Change input/outputs from degrees to radians
 //
 //=============================================================================================
 #ifndef MAHONY_AHRS_H_
@@ -75,17 +76,17 @@ public:
     float getRoll()
     {
         if (!anglesComputed) computeAngles();
-        return roll * 57.29578f;
+        return roll;
     }
     float getPitch()
     {
         if (!anglesComputed) computeAngles();
-        return pitch * 57.29578f;
+        return pitch;
     }
     float getYaw()
     {
         if (!anglesComputed) computeAngles();
-        return yaw * 57.29578f + 180.0f;
+        return yaw + 3.141592;
     }
     float getRollRadians()
     {

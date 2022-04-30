@@ -29,6 +29,7 @@
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/protothread.hpp"
+#include "modm/math/geometry/angle.hpp"
 
 namespace tap
 {
@@ -154,7 +155,7 @@ public:
 
     /**
      * Returns the gyroscope reading in the x direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     inline float getGx() final_mockable
     {
@@ -164,7 +165,7 @@ public:
 
     /**
      * Returns the gyroscope reading in the y direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     inline float getGy() final_mockable
     {
@@ -174,7 +175,7 @@ public:
 
     /**
      * Returns the gyroscope reading in the z direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     inline float getGz() final_mockable
     {
@@ -195,23 +196,23 @@ public:
     }
 
     /**
-     * Returns yaw angle. in degrees.
+     * Returns yaw angle. in rad.
      */
     inline float getYaw() final_mockable { return validateReading(mahonyAlgorithm.getYaw()); }
 
     /**
-     * Returns pitch angle in degrees.
+     * Returns pitch angle in rad.
      */
     inline float getPitch() final_mockable { return validateReading(mahonyAlgorithm.getPitch()); }
 
     /**
-     * Returns roll angle in degrees.
+     * Returns roll angle in rad.
      */
     inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
 
     /**
      * Returns the angle difference between the normal vector of the plane that the
-     * type A board lies on and of the angle directly upward.
+     * type A board lies on and of the angle directly upward, in rad.
      */
     mockable float getTiltAngle();
 
@@ -221,15 +222,15 @@ public:
     mockable void requestCalibration();
 
     /**
-     * Use for converting from gyro values we receive to more conventional degrees / second.
+     * Use for converting from gyro values we receive to more conventional rad / second.
      */
-    static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
+    static constexpr float LSB_D_PER_S_TO_D_PER_S = modm::toRadian(16.384f);
 
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
     /**
-     * Use to convert the raw acceleration into more conventional degrees / second^2
+     * Use to convert the raw acceleration into more conventional m / second^2
      */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 

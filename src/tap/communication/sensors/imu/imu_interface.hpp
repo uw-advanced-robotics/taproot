@@ -68,39 +68,39 @@ public:
 
     /**
      * Returns the gyroscope reading (rotational speed) in the x direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     virtual inline float getGx() = 0;
 
     /**
      * Returns the gyroscope reading (rotational speed) in the y direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     virtual inline float getGy() = 0;
 
     /**
      * Returns the gyroscope reading (rotational speed) in the z direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
+     * \f$\frac{\mbox{rad}}{\mbox{second}}\f$.
      */
     virtual inline float getGz() = 0;
 
     /**
-     * Returns the temperature of the imu in degrees C.
+     * Returns the temperature of the imu in rad C.
      */
     virtual inline float getTemp() = 0;
 
     /**
-     * Returns yaw angle. in degrees.
+     * Returns yaw angle. in rad.
      */
     virtual inline float getYaw() = 0;
 
     /**
-     * Returns pitch angle in degrees.
+     * Returns pitch angle in rad.
      */
     virtual inline float getPitch() = 0;
 
     /**
-     * Returns roll angle in degrees.
+     * Returns roll angle in rad.
      */
     virtual inline float getRoll() = 0;
 };

@@ -58,17 +58,17 @@ public:
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
     /**
-     * The maximum angular velocity in degrees / second that the gyro can read based on GYRO_RANGE
+     * The maximum angular velocity in rad / second that the gyro can read based on GYRO_RANGE
      * specified above.
      */
-    static constexpr float GYRO_RANGE_MAX_DS = 2000.0f;
+    static constexpr float GYRO_RANGE_MAX_DS = modm::toRadian(2000.0f);
 
     static constexpr float BMI088_TEMP_FACTOR = 0.125f;
     static constexpr float BMI088_TEMP_OFFSET = 23.0f;
 
     /**
-     * Used to convert raw gyro values to units of degrees / second. Ratio has units
-     * (degrees / second) / gyro counts.
+     * Used to convert raw gyro values to units of rad / second. Ratio has units
+     * (rad / second) / gyro counts.
      */
     static constexpr float GYRO_DS_PER_GYRO_COUNT = GYRO_RANGE_MAX_DS / 32767.0f;
 

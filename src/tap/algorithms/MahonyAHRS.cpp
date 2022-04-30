@@ -13,6 +13,7 @@
 // 29/09/2011    SOH Madgwick    Initial release
 // 02/10/2011    SOH Madgwick    Optimised for reduced CPU load
 // 09/06/2020    Matthew Arnold  Update style, use safer casting
+// 04/30/2022    Matthew Arnold  Change input/outputs from degrees to radians
 //
 // Algorithm paper:
 // http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=4608934&url=http%3A%2F%2Fieeexplore.ieee.org%2Fstamp%2Fstamp.jsp%3Ftp%3D%26arnumber%3D4608934
@@ -82,11 +83,6 @@ void Mahony::update(
         updateIMU(gx, gy, gz, ax, ay, az);
         return;
     }
-
-    // Convert gyroscope degrees/sec to radians/sec
-    gx *= 0.0174533f;
-    gy *= 0.0174533f;
-    gz *= 0.0174533f;
 
     // Compute feedback only if accelerometer measurement valid
     // (avoids NaN in accelerometer normalisation)
@@ -195,11 +191,6 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
 {
     float recipNorm;
     float qa, qb, qc;
-
-    // Convert gyroscope degrees/sec to radians/sec
-    gx *= 0.0174533f;
-    gy *= 0.0174533f;
-    gz *= 0.0174533f;
 
     // Compute feedback only if accelerometer measurement valid
     // (avoids NaN in accelerometer normalisation)
