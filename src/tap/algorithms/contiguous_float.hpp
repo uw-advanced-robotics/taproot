@@ -102,12 +102,18 @@ public:
      *      valueToLimit will be limited below.
      * @param[in] max the ContiguousFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited above.
+     * @param[out] status the status result (what operation the limitValue function performed). The
+     * status codes are described below:
+     *  - 0: No limiting performed
+     *  - 1: Limited to min value
+     *  - 2: Limited to max value
      * @return the limited value.
      */
     static float limitValue(
         const ContiguousFloat& valueToLimit,
         const ContiguousFloat& min,
-        const ContiguousFloat& max);
+        const ContiguousFloat& max,
+        int* status);
 
     /**
      * Runs the limitValue function from above, wrapping the min and max passed in to
@@ -119,12 +125,18 @@ public:
      *      valueToLimit will be limited below.
      * @param[in] max the ContiguousFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited above.
+     * @param[out] status the status result (what operation the limitValue function performed). The
+     * status codes are described below:
+     *  - 0: No limiting performed
+     *  - 1: Limited to min value
+     *  - 2: Limited to max value
      * @return the limited value.
      */
     static float limitValue(
         const ContiguousFloat& valueToLimit,
         const float& min,
-        const float& max);
+        const float& max,
+        int* status);
 
     // Getters/Setters ----------------
 
