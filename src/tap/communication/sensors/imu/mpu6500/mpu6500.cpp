@@ -194,8 +194,8 @@ float Mpu6500::getTiltAngle()
 {
     if (!tiltAngleCalculated)
     {
-        tiltAngle = acosf(
-            cosf(mahonyAlgorithm.getPitchRadians()) * cosf(mahonyAlgorithm.getRollRadians()));
+        tiltAngle =
+            acosf(cosf(mahonyAlgorithm.getPitchRadians()) * cosf(mahonyAlgorithm.getRollRadians()));
         tiltAngleCalculated = true;
     }
     return validateReading(tiltAngle);

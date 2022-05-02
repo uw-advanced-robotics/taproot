@@ -28,8 +28,8 @@
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
-#include "modm/processing/protothread.hpp"
 #include "modm/math/geometry/angle.hpp"
+#include "modm/processing/protothread.hpp"
 
 namespace tap
 {
