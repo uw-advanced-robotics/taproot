@@ -31,7 +31,7 @@ TEST(CMSISMat, default_constructor_matrix_zeroed_cmsis_mat_inited)
 
     EXPECT_FLOAT_EQ(0, m.data[0]);
     EXPECT_FLOAT_EQ(0, m.data[1]);
-    EXPECT_EQ(m.data, m.matrix.pData);
+    EXPECT_EQ(m.data.data(), m.matrix.pData);
     EXPECT_EQ(2, m.matrix.numRows);
     EXPECT_EQ(1, m.matrix.numCols);
 }
@@ -45,7 +45,7 @@ TEST(CMSISMat, onearg_constructor_matrix_equal_to_passed_in_matrix)
 
     EXPECT_FLOAT_EQ(10, m.data[0]);
     EXPECT_FLOAT_EQ(20, m.data[1]);
-    EXPECT_EQ(m.data, m.matrix.pData);
+    EXPECT_EQ(m.data.data(), m.matrix.pData);
     EXPECT_EQ(2, m.matrix.numRows);
     EXPECT_EQ(1, m.matrix.numCols);
 
