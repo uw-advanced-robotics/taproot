@@ -250,6 +250,7 @@ TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_offending)
     EXPECT_TRUE(refSerial.operatorBlinded());
 
     clock.time += RefSerialData::Rx::RefereeWarningData::OFFENDING_OPERATOR_BLIND_TIME - 1;
+    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 
@@ -281,6 +282,7 @@ TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_not_offend
     EXPECT_TRUE(refSerial.operatorBlinded());
 
     clock.time += RefSerialData::Rx::RefereeWarningData::NONOFFENDING_OPERATOR_BLIND_TIME - 1;
+    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 
