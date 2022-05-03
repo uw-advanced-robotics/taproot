@@ -244,14 +244,12 @@ TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_offending)
     refSerial.messageReceiveCallback(msg);
 
     robotData.robotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
-    robotData.remainHP = 0;
     msg = constructMsg(robotData, 0x0201);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 
     clock.time += RefSerialData::Rx::RefereeWarningData::OFFENDING_OPERATOR_BLIND_TIME - 1;
-    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 
@@ -277,14 +275,12 @@ TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_not_offend
     refSerial.messageReceiveCallback(msg);
 
     robotData.robotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
-    robotData.remainHP = 0;
     msg = constructMsg(robotData, 0x0201);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 
     clock.time += RefSerialData::Rx::RefereeWarningData::NONOFFENDING_OPERATOR_BLIND_TIME - 1;
-    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
 
     EXPECT_TRUE(refSerial.operatorBlinded());
 

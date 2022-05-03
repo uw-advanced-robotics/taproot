@@ -181,9 +181,10 @@ private:
      */
     bool decodeToSiteEventData(const ReceivedSerialMessage& message);
     /**
-     * REF_MESSAGE_TYPE_WARNING_DATA
+     * Decodes ref serial message containing warning information (if a robot on your team received a
+     * yellow or red card).
      */
-    bool decodeToWarningData(const ReceivedSerialMessage &message);
+    bool decodeToWarningData(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the firing/driving heat limits and cooling
      * rates for the robot.
