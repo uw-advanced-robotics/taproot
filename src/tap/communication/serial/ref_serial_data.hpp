@@ -82,6 +82,17 @@ public:
     class Rx
     {
     public:
+        /// The type of game the robot is competing in.
+        enum class GameType : uint8_t
+        {
+            ROBOMASTER_COMPETITIONS = 1,  ///< Generic robomaster competition (none of the below
+                                          ///< comps).
+            ROBOMASTER_RMUTC = 2,         ///< RoboMaster technical challenge.
+            ROBOMASTER_AI_CHALLENGE = 3,  ///< RobomMaster AI challenge.
+            ROBOMASTER_RMUL_3V3 = 4,      ///< RoboMaster RMUL 3v3 competition.
+            ROBOMASTER_RMUL_1V1 = 5,      ///< RoboMaster RMUL 1v1 competition.
+        };
+
         enum class GameStage : uint8_t
         {
             PREMATCH = 0,        ///< Pre-competition. stage
@@ -176,8 +187,10 @@ public:
 
         struct GameData
         {
-            GameStage gameStage;          ///< Current stage in the game.
+            GameType gameType;    ///< Current type of competition the robot is taking part in.
+            GameStage gameStage;  ///< Current stage in the game.
             uint16_t stageTimeRemaining;  ///< Remaining time in the current stage (in seconds).
+            uint64_t unixTime;            ///< Unix time of the competition server.
             GameWinner gameWinner;        ///< Results of the match.
         };
 
@@ -240,6 +253,30 @@ public:
                                                           ///< message was received
         };
 
+        /**
+         * Ref serial warning data. This informational struct is intended to be updated each time a
+         * yellow or red card has been received.
+         *
+         * When a yellow card is received, the offending Operator will be blocked from seeing
+         * anything for 5 seconds, while the operation interfaces of other operators in the
+         * offending team will be blocked for 2 seconds.
+         */
+        struct RefereeWarningData
+        {
+            uint8_t level;        /**<
+                                   * The level of the wraning.
+                                   * 1: Yellow card
+                                   * 2: Red card
+                                   * 3: Forfeiture
+                                   */
+            RobotId foulRobotID;  ///< The robot that received the referee warning
+            uint32_t lastReceivedWarningRobotTime = 0;  ///< Last time (in milliseconds) that a
+                                                        ///< warning was received.
+
+            static constexpr uint32_t OFFENDING_OPERATOR_BLIND_TIME = 5'000;
+            static constexpr uint32_t NONOFFENDING_OPERATOR_BLIND_TIME = 2'000;
+        };
+
         struct RobotData
         {
             RobotId robotId;          ///< Robot type and team.
@@ -261,11 +298,13 @@ public:
             RobotBuffStatus_t robotBuffStatus;  ///< Status of all buffs on the robot
             uint16_t aerialEnergyStatus;  ///< Countdown timer that indicates how much time the
                                           ///< aerial has left to fire
-            RFIDActivationStatus_t rfidStatus;    ///< The current status of which RFID zones
-                                                  ///< are being activated by the current robot.
-            uint32_t robotDataReceivedTimestamp;  ///< Most recent time at which data with message
-                                                  ///< id `REF_MESSAGE_TYPE_ROBOT_STATUS` has been
-                                                  ///< received.
+            RFIDActivationStatus_t rfidStatus;      ///< The current status of which RFID zones
+                                                    ///< are being activated by the current robot.
+            uint32_t robotDataReceivedTimestamp;    ///< Most recent time at which data with message
+                                                    ///< id `REF_MESSAGE_TYPE_ROBOT_STATUS` has been
+                                                    ///< received.
+            RefereeWarningData refereeWarningData;  ///< Referee warning information, updated when
+                                                    ///< a robot receives a penalty
         };
     };
 

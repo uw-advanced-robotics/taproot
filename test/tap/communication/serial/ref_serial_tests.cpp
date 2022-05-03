@@ -55,14 +55,18 @@ TEST(RefSerial, messageReceiveCallback__competition_status)
     DJISerial::ReceivedSerialMessage msg;
     GameStatus testData;
 
+    testData.gameType = 3;
     testData.gameProgress = 2;
     testData.stageRemainTime = 200;
+    testData.syncTimeStamp = 0x12345678;
     msg = constructMsg(testData, 1);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(200, refSerial.getGameData().stageTimeRemaining);
+    EXPECT_EQ(RefSerial::Rx::GameType::ROBOMASTER_AI_CHALLENGE, refSerial.getGameData().gameType);
     EXPECT_EQ(RefSerial::Rx::GameStage::INITIALIZATION, refSerial.getGameData().gameStage);
+    EXPECT_EQ(0x12345678, refSerial.getGameData().unixTime);
 
     testData.gameProgress = 4;
     msg = constructMsg(testData, 1);
@@ -169,12 +173,41 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     EXPECT_EQ(16, refSerial.getRobotData().allRobotHp.blue.base);
 }
 
+struct RefWarning
+{
+    uint8_t level;
+    uint8_t foulRobotId;
+} modm_packed;
+
+TEST(RefSerial, messageReceiveCallback__decodeToWarningData)
+{
+    tap::arch::clock::ClockStub clock;
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    DJISerial::ReceivedSerialMessage msg;
+    RefWarning testData;
+
+    clock.time += 1'000;
+
+    testData.level = 2;
+    testData.foulRobotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
+    msg = constructMsg(testData, 0x0104);
+
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_EQ(2, refSerial.getRobotData().refereeWarningData.level);
+    EXPECT_EQ(
+        RefSerialData::RobotId::BLUE_SOLDIER_1,
+        refSerial.getRobotData().refereeWarningData.foulRobotID);
+    EXPECT_EQ(clock.time, refSerial.getRobotData().refereeWarningData.lastReceivedWarningRobotTime);
+}
+
 struct GameRobotStatus
 {
     uint8_t robotId;
     uint8_t robot_level;
-    uint16_t remain_HP;
-    uint16_t max_HP;
+    uint16_t remainHP;
+    uint16_t maxHP;
     uint16_t shooterId117mmCoolingRate;
     uint16_t shooterId117mmCoolingLimit;
     uint16_t shooterId117mmSpeedLimit;
@@ -190,6 +223,76 @@ struct GameRobotStatus
     uint8_t mainsPowerShooterOutput : 1;
 } modm_packed;
 
+TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_offending)
+{
+    tap::arch::clock::ClockStub clock;
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    DJISerial::ReceivedSerialMessage msg;
+    RefWarning testData;
+    GameRobotStatus robotData;
+
+    EXPECT_FALSE(refSerial.operatorBlinded());
+
+    clock.time += 10'000;
+
+    EXPECT_FALSE(refSerial.operatorBlinded());
+
+    testData.level = 2;
+    testData.foulRobotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
+    msg = constructMsg(testData, 0x0104);
+    refSerial.messageReceiveCallback(msg);
+
+    robotData.robotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
+    robotData.remainHP = 0;
+    msg = constructMsg(robotData, 0x0201);
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_TRUE(refSerial.operatorBlinded());
+
+    clock.time += RefSerialData::Rx::RefereeWarningData::OFFENDING_OPERATOR_BLIND_TIME - 1;
+    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
+
+    EXPECT_TRUE(refSerial.operatorBlinded());
+
+    clock.time += 2;
+
+    EXPECT_FALSE(refSerial.operatorBlinded());
+}
+
+TEST(RefSerial, messageReceiveCallback__operatorBlinded_true_operator_not_offending)
+{
+    tap::arch::clock::ClockStub clock;
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    DJISerial::ReceivedSerialMessage msg;
+    RefWarning testData;
+    GameRobotStatus robotData;
+
+    clock.time += 10'000;
+
+    testData.level = 2;
+    testData.foulRobotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_2);
+    msg = constructMsg(testData, 0x0104);
+    refSerial.messageReceiveCallback(msg);
+
+    robotData.robotId = static_cast<uint8_t>(RefSerialData::RobotId::BLUE_SOLDIER_1);
+    robotData.remainHP = 0;
+    msg = constructMsg(robotData, 0x0201);
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_TRUE(refSerial.operatorBlinded());
+
+    clock.time += RefSerialData::Rx::RefereeWarningData::NONOFFENDING_OPERATOR_BLIND_TIME - 1;
+    refSerial.messageReceiveCallback(msg);  // call again to ensure ref serial is "online"
+
+    EXPECT_TRUE(refSerial.operatorBlinded());
+
+    clock.time += 2;
+
+    EXPECT_FALSE(refSerial.operatorBlinded());
+}
+
 TEST(RefSerial, messageReceiveCallback__robot_status)
 {
     Drivers drivers;
@@ -198,8 +301,8 @@ TEST(RefSerial, messageReceiveCallback__robot_status)
     GameRobotStatus testData;
 
     testData.robot_level = 3;
-    testData.remain_HP = 1001;
-    testData.max_HP = 2001;
+    testData.remainHP = 1001;
+    testData.maxHP = 2001;
     testData.shooterId117mmCoolingRate = 120;
     testData.shooterId117mmCoolingLimit = 100;
     testData.shooterId117mmSpeedLimit = 240;
@@ -317,7 +420,7 @@ TEST(RefSerial, messageReceiveCallback__robot_status_dps_measured)
     {
         clock.time = triplet[0];
 
-        testData.remain_HP = triplet[1];
+        testData.remainHP = triplet[1];
         msg = constructMsg(testData, 0x0201);
         refSerial.messageReceiveCallback(msg);
 
@@ -568,7 +671,7 @@ static void updateRobotId(RefSerial &refSerial, RefSerial::RobotId id)
 {
     DJISerial::ReceivedSerialMessage msg;
     GameRobotStatus testData;
-    testData.remain_HP = 300;
+    testData.remainHP = 300;
     testData.robotId = static_cast<uint16_t>(id);
     msg = constructMsg(testData, 0x0201);
     refSerial.messageReceiveCallback(msg);
