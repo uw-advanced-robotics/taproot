@@ -273,7 +273,9 @@ public:
             uint32_t lastReceivedWarningRobotTime = 0;  ///< Last time (in milliseconds) that a
                                                         ///< warning was received.
 
+            /// time in ms that the user will be blinded for when the operator is the offender
             static constexpr uint32_t OFFENDING_OPERATOR_BLIND_TIME = 5'000;
+            /// time in ms that the user will be blinded for when the operator is not the offender
             static constexpr uint32_t NONOFFENDING_OPERATOR_BLIND_TIME = 2'000;
         };
 
