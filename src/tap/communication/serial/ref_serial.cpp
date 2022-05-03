@@ -140,7 +140,17 @@ bool RefSerial::decodeToGameStatus(const ReceivedSerialMessage& message)
     gameData.gameType = static_cast<Rx::GameType>(0xf & message.data[0]);
     gameData.gameStage = static_cast<Rx::GameStage>(0xf & (message.data[0] >> 4));
     convertFromLittleEndian(&gameData.stageTimeRemaining, message.data + 1);
-    convertFromLittleEndian(&gameData.unixTime, message.data + 3);
+    // reinterpreting as a uint64_t doesn't work, so do this instead
+    gameData.unixTime = static_cast<uint64_t>(message.data[3]) << 56 |
+                        static_cast<uint64_t>(message.data[4]) << 48 |
+                        static_cast<uint64_t>(message.data[5]) << 40 |
+                        static_cast<uint64_t>(message.data[6]) << 32 |
+                        static_cast<uint64_t>(message.data[7]) << 24 |
+                        static_cast<uint64_t>(message.data[8]) << 16 |
+                        static_cast<uint64_t>(message.data[9]) << 8 |
+                        static_cast<uint64_t>(message.data[10]);
+
+    //  <<  *reinterpret_cast<const uint32_t*>(message.data+3);
     return true;
 }
 
