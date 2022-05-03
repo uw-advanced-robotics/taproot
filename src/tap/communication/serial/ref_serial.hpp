@@ -85,7 +85,7 @@ public:
         REF_MESSAGE_TYPE_SITE_EVENT_DATA = 0X101,
         // REF_MESSAGE_TYPE_PROJECTILE_SUPPPLIER_SITE_ACTION = 0x102,
         // REF_MESSAGE_TYPE_PROJECTILE_SUPPLY_REQUESTED = 0x103,
-        // REF_MESSAGE_TYPE_WARNING_DATA = 0x104,
+        REF_MESSAGE_TYPE_WARNING_DATA = 0x104,
         // REF_MESSAGE_TYPE_DART_LAUNCH_OPENING_COUNT = 0x105,
         REF_MESSAGE_TYPE_ROBOT_STATUS = 0x201,
         REF_MESSAGE_TYPE_POWER_AND_HEAT = 0x202,
@@ -149,6 +149,12 @@ public:
 
     void releaseTransmissionSemaphore() { transmissionSemaphore.release(); }
 
+    /**
+     * @return True if the robot operator is blinded, false otherwise. Also return false if the
+     * referee system is offline.
+     */
+    bool operatorBlinded() const;
+
 private:
     Rx::RobotData robotData;
     Rx::GameData gameData;
@@ -174,6 +180,11 @@ private:
      * Decodes ref serial message containing occupation status of various field zones.
      */
     bool decodeToSiteEventData(const ReceivedSerialMessage& message);
+    /**
+     * Decodes ref serial message containing warning information (if a robot on your team received a
+     * yellow or red card).
+     */
+    bool decodeToWarningData(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing the firing/driving heat limits and cooling
      * rates for the robot.
