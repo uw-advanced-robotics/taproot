@@ -33,7 +33,7 @@ RotateUnjamComprisedCommand::RotateUnjamComprisedCommand(
     : tap::control::ComprisedCommand(&drivers),
       subsystem(subsystem),
       rotateCommand(rotateCommand),
-      unjamCommand(unjamCommand),
+      unjamCommand(unjamRotateCommand),
       unjamSequenceCommencing(false)
 {
     assert(
