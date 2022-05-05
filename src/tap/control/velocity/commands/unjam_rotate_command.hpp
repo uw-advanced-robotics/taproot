@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -22,60 +22,60 @@
 
 #include <cstdint>
 
-#include "tap/algorithms/ramp.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
-#include "tap/drivers.hpp"
-#include "tap/motor/dji_motor.hpp"
 
 #include "../interfaces/velocity_setpoint_subsystem.hpp"
 
 namespace tap::control::velocity
 {
 /**
- * Command that takes control of a setpoint subsystem moves it back and forth.
+ * Command that takes control of a velocity setpoint subsystem moves it back and forth.
  * One back and forward motion counts as a cycle. Unjamming cycles start by trying
  * to move in negative direction before trying to move in positive direction.
  *
  * If the unjam command successfully clears its forward and backward threshold it will
- * return the setpoint of the subsystem back to its original value and call the setpoint
- * subsystem's clear jam method once the subsystem has reached it's original value or
- * once interrupted. If not successful, setpoint is set to current value so as to not
- * damage motors.
+ * will clear the velocity setpoint subsystem's jam and end. If not successful after some number of
+ * cycle counts, the command will give up and end without clearing the jam.
  *
- * If the subsystem fails to return to the original value after clearing its forward
- * and backward thresholds it will continue the unjamming sequence with what remaining
- * cycles it has.
- *
- * Like most setpoint commands this one will not schedule/will deschedule if
- * velocitySetpointSubsystem goes offline.
- *
- * @note: If the command does not seem to successfully clear your subsystem's jam status
- *      try increasing the `maxUnjamWaitTime`. The command may not have enough time to
- *      return to the original setpoint before unjamming as this distance is potentially
- *      much greater than the unjam displacement.
+ * Like most velocity commands this one will not schedule/will deschedule if
+ * VelocitySetpointSubsystem goes offline.
  */
 class UnjamRotateCommand : public tap::control::Command
 {
 public:
-    /**
-     * @param[in] unjamDisplacement How far to attempt to displace the subsystem
-     *      during an unjam. This value should be positive! Absolute value will be
-     *      taken if negative.
-     * @param[in] unjamThreshold The minimum displacement to be reached both
-     *      forwards and backwards before the subsystem is considered unjammed.
-     *      This value must be positive. Absolute value will be taken
-     *      if negative.
-     * @param[in] maxWaitTime The maximum amount of time the controller will
-     *      wait for the subsystem to reach unjamDisplacement in milliseconds before
-     *      trying to move in the opposite direction.
-     * @param[in] targetCycleCount the number of cycles to attempt to wiggle the subsystem
-     */
+    /// Config struct that the user passes into the UnjamRotateCommand's constructor.
     struct Config
     {
+        /**
+         * The target displacement from the current value in units that the velocity setpoint
+         * subsystem will move back and forth by with unjamming.
+         *
+         * @attention This value must be positive and > 0.
+         */
+
         float unjamDisplacement;
+        /**
+         * The target velocity in units/second that the velocity setpoint subsystem will move
+         * back and forth at.
+         *
+         * @attention This value must be positive and > 0.
+         */
         float unjamVelocity;
+        /**
+         *  The maximum amount of time the controller will wait for the subsystem to reach
+         * unjamDisplacement in milliseconds before trying to move in the opposite direction.
+         *
+         * @attention This value must be > 1000 * (unjamDisplacement / unjamVelocity) since this is
+         * the minimum possible time it will take for the motor to rotate unjamDisplacement units.
+         */
         uint32_t maxWaitTime;
+        /**
+         * The number of cycles to attempt to rotate the velocity setpoint subsystem back and
+         * forth.
+         *
+         * @attention This value must be positive and > 0.
+         */
         uint16_t targetCycleCount;
     };
 
@@ -99,14 +99,10 @@ public:
 private:
     enum UnjamState
     {
-        UNJAM_BACKWARD,
-        UNJAM_FORWARD,
-        JAM_CLEARED
+        UNJAM_BACKWARD,  ///< The subsystem is being commanded backwards
+        UNJAM_FORWARD,   ///< The subsystem is being commanded forwards
+        JAM_CLEARED,     ///< The jam is cleared, the subsystem is no longer being told to move.
     };
-
-    void beginUnjamForwards();
-
-    void beginUnjamBackwards();
 
     VelocitySetpointSubsystem& velocitySetpointSubsystem;
 
@@ -115,7 +111,7 @@ private:
     /**
      * Timeout for time allowed to rotate past the `unjamThreshold`.
      */
-    tap::arch::MilliTimeout unjamRotateTimeout;
+    arch::MilliTimeout unjamRotateTimeout;
 
     /**
      * counts the number of times the subsystem has been commanded backwards
@@ -129,6 +125,10 @@ private:
     bool backwardsCleared;
 
     bool forwardsCleared;
+
+    void beginUnjamForwards();
+
+    void beginUnjamBackwards();
 };
 
 }  // namespace tap::control::velocity

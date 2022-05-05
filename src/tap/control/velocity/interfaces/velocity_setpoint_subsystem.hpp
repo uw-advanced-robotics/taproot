@@ -31,71 +31,63 @@ class Drivers;
 namespace tap::control::velocity
 {
 /**
- * An abstract class (usable as an interface) describing the functionalities
- * of a subsystem which uses a positional controller to rotate something.
- *
- * Any mention of `position` in the documentation for this class does not
- * necessarily refer to a physical location in space, rather it refers to
- * a quantity describing whatever is being positionally controlled by the
- * subsystem.
+ * An abstract class (usable as an interface) describing the functionalities of a subsystem which
+ * uses a velocity controller to rotate something. By convention, the positional and velocity units
+ * are user defined but must be consistent (i.e. if position is radians, velocity should be
+ * radians/second). Positional units will be referred to as "units" in this subsystem and associated
+ * commands. All time is specified to be in seconds or milliseconds.
  */
 class VelocitySetpointSubsystem : public virtual tap::control::Subsystem
 {
 public:
     /**
-     * @return the subsystem's setpoint: the desired value of whatever is
-     * being controlled.
+     * @return the subsystem's velocity setpoint: the desired velocity of whatever is being
+     * controlled, in units/second
      */
     virtual inline float getVelocitySetpoint() const = 0;
 
+    /**
+     * Sets the velocity setpoint.
+     *
+     * @param[in] setpoint Value in units/second, the desired velocity setpoint
+     */
     virtual void setVelocitySetpoint(float setpoint) = 0;
 
     /**
-     * @return the velocity of the subsystem (i.e.: the rate of change of the
-     *      controlled variable's value).
+     * @return the measured velocity of the velocity setpoint subsystem, in units/second.
      */
     virtual inline float getVelocity() = 0;
 
     /**
-     * @return The current value of the controlled variable.
+     * @return The current position of the controlled variable, in units.
      */
     virtual float getPosition() const = 0;
 
     /**
-     * @return the jamming tolerance. This is the maximum distance between
-     *      the ideal setpoint and current value of the controlled variable
-     *      at which the subsystem will never consider itself jammed.
-     */
-    virtual float getJamSetpointTolerance() const = 0;
-
-    /**
-     * Attempts to calibrate the subsystem at the current position, such that
-     * `getSetpoint` will return 0 units at this position.
+     * Attempts to calibrate the subsystem at the current position, such that `getPosition` will
+     * return 0 units at the current position of the subsystem.
      *
-     * @return `true` if the subsystem has been successfully calibrated, `false`
-     *  otherwise.
+     * @return `true` if the subsystem has been successfully calibrated, `false` otherwise.
      */
     virtual bool calibrateHere() = 0;
 
     /**
-     * @return `true` if the subsystem unjam timer has expired, signaling that the subsystem
-     *  has jammed, `false` otherwise.
+     * @return `true` if the subsystem has detected a jam.
      */
     virtual bool isJammed() = 0;
 
     /**
-     * Call to clear the jam flag of the subsystem, indicating that the jam has been solved.
-     * @todo At some point we should move the unjam command logic into the subsystems
+     * Call to clear the jam flag of the subsystem, indicating that the jam has been resolved.
      */
     virtual void clearJam() = 0;
 
     /**
-     * @return `true` if the subsystem has been calibrated
+     * @return `true` if the subsystem has been calibrated.
      */
     virtual inline bool isCalibrated() = 0;
 
     /**
-     * @return `true` if the subsystem is online (i.e.: is connected)
+     * @return `true` if the subsystem is online (i.e.: is connected).
      */
     virtual inline bool isOnline() = 0;
 };

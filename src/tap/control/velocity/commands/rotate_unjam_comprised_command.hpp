@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -21,34 +21,40 @@
 #define TAPROOT_ROTATE_UNJAM_COMPRISED_COMMAND_HPP_
 
 #include "tap/control/comprised_command.hpp"
-#include "tap/control/subsystem.hpp"
 
 #include "../interfaces/velocity_setpoint_subsystem.hpp"
 
+#include "rotate_command.hpp"
+#include "unjam_rotate_command.hpp"
+
 namespace tap::control::velocity
 {
-// Forward declarations
 /**
- * A comprised command that combines the unjam and move commands.
+ * A comprised command that combines the unjam and rotate commands. Will rotate the agitator forward
+ * when not jammed by scheduling the rotate command. When jammed will schedule the unjam rotate
+ * command. Once the unjam command is scheduled, this command will be unscheduled when the unjam
+ * command finishes
  *
- * Assuming no jams occur, this command behaves like a MoveCommand. It will
- * schedule once and end once the target displacement is reached. If it gets
- * jammed while trying to move then the command will then schedule a UnjamCommand.
- * At this point the command will end when the UnjamCommand ends.
- *
- * See `UnjamCommand` and `MoveCommand` for more details on their respective logic.
+ * @see UnjamRotateCommand
+ * @see RotateCommand
  */
 class RotateUnjamComprisedCommand : public tap::control::ComprisedCommand
 {
 public:
     /**
-     * @param[in] drivers A pointer to the `Drivers` struct.
+     * @param[in] drivers A reference to the `Drivers` struct.
+     * @param[in] subsystem The VelocitySetpointSubsystem that will be rotated or unjammed.
+     * @param[in] rotateCommand A command that rotates the agitator forward.
+     * @param[in] unjamRotateCommand A command that unjams the agitator.
+     *
+     * @note The rotate and unjam rotate commands must have the same subsystem requirement. This
+     * subsystem requirement must be the subsystem passed in.
      */
     RotateUnjamComprisedCommand(
         tap::Drivers &drivers,
         VelocitySetpointSubsystem &subsystem,
-        tap::control::Command &rotateCommand,
-        tap::control::Command &unjamRotateCommand);
+        RotateCommand &rotateCommand,
+        UnjamRotateCommand &unjamRotateCommand);
 
     void initialize() override;
 
@@ -58,18 +64,17 @@ public:
 
     bool isFinished() const override;
 
-    const char *getName() const override { return "agitator shoot"; }
+    const char *getName() const override { return "rotate unjam cc"; }
 
 protected:
     VelocitySetpointSubsystem &subsystem;
 
-    tap::control::Command &rotateCommand;
+    RotateCommand &rotateCommand;
 
-    tap::control::Command &unjamCommand;
+    UnjamRotateCommand &unjamCommand;
 
+    /// True if the agitator is being unjammed
     bool unjamSequenceCommencing;
-
-    bool agitatorDisconnectFault;
 };
 
 }  // namespace tap::control::velocity

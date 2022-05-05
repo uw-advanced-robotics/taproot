@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -21,44 +21,35 @@
 #define TAPROOT_ROTATE_COMMAND_HPP_
 
 #include "tap/algorithms/math_user_utils.hpp"
-#include "tap/algorithms/ramp.hpp"
-#include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
-#include "tap/drivers.hpp"
 
 #include "../interfaces/velocity_setpoint_subsystem.hpp"
-#include "modm/math/filter/pid.hpp"
 
 namespace tap::control::velocity
 {
 /**
- * Displaces the connected subsystem some value in some desired time. Currently
- * pass in a displacement and time to move and it uses `tap::arch::getTimeMilliseconds()`
- * to determine the speed to move at.
+ * A command that rotates the connected subsystem at some speed for some distance.
  *
- * Ends if subsystem is offline.
+ * Ends if the subsystem is offline or jammed.
  */
 class RotateCommand : public tap::control::Command
 {
 public:
-    /**
-     * @param[in] targetDisplacement The desired change in subsystem value in subsystem units.
-     * @param[in] setpointTolerance The difference between current and desired value when the
-     *      command will be considered to be completed (used in the `isFinished` function). Uses
-     *      the same units as the subsystem's setpoint.
-     */
+    /// Config struct that the user passes into the RotateCommand's constructor.
     struct Config
     {
+        /// The desired change in units.
         float targetDisplacement;
+        /// The desired velocity in units/second
         float desiredVelocity;
+        /// The difference between the current and desired value when the command will be considered
+        /// to be complete, in units.
         float velocitySetpointTolerance;
     };
 
     /**
      * @param[in] velocitySetpointSubsystem The subsystem associated with the rotate command.
-     * @attention the ramp value is calculated by finding the rotation speed
-     *      (\f$targetDisplacement / moveTime\f$), and then multiplying this by
-     *      the period (how often the ramp is called)
+     * @param[in] config The rotate command's config struct, @see Config.
      */
     RotateCommand(VelocitySetpointSubsystem& velocitySetpointSubsystem, const Config& config);
 
@@ -71,7 +62,7 @@ public:
 
     void initialize() override;
 
-    void execute() override;
+    void execute() override {}
 
     void end(bool interrupted) override;
 
@@ -84,7 +75,15 @@ private:
 
     float finalTargetPosition = 0;
 
-    bool withinSetpointTolerance() const;
+    /// @return True if the difference between the setpoint and target is less than the setpoint
+    /// tolerance.
+    bool withinSetpointTolerance() const
+    {
+        return algorithms::compareFloatClose(
+            velocitySetpointSubsystem.getPosition(),
+            finalTargetPosition,
+            config.velocitySetpointTolerance);
+    }
 };  // class RotateCommand
 
 }  // namespace tap::control::velocity

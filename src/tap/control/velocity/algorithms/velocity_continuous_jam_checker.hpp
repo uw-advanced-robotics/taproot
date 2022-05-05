@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -22,12 +22,13 @@
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/conditional_timer.hpp"
-#include "tap/control/velocity/interfaces/velocity_setpoint_subsystem.hpp"
+
+#include "../interfaces/velocity_setpoint_subsystem.hpp"
 
 namespace tap::control::velocity
 {
 /**
- * A functor (function object) to be used for setpoint subsystem jam detection.
+ * A functor (function object) to be used for velocity subsystem jam detection.
  *
  * Uses a conditional timeout to continuously check if the subsystem's current
  * position is within an acceptable range of the desired position. If it
@@ -38,37 +39,34 @@ class VelocityContinuousJamChecker
 {
 public:
     /**
-     * @param[in] velocitySetpointSubsystem: the setpoint subsystem to do jam checking
-     *      on.
-     * @param[in] velocitySetpointTolerance: the acceptable distance between the setpoint and
-     *      current position.
-     * @param[in] temporalTolerance: the maximum amount of time the distance can be
-     *      greater than the distance tolerance before the system is considered jammed.
+     * @param[in] velocitySetpointSubsystem: the velocity subsystem to do jam checking on.
+     * @param[in] velocitySetpointTolerance: the acceptable velocity (in units / second) between
+     * the setpoint and current velocity.
+     * @param[in] temporalTolerance: the maximum amount of time the velocity difference between the
+     * setpoint and current value can be greater than velocitySetpointTolerance before the velocity
+     * setpoint subsystem is to be considered jammed.
      */
     VelocityContinuousJamChecker(
         VelocitySetpointSubsystem* velocitySetpointSubsystem,
         float velocitySetpointTolerance,
         uint32_t temporalTolerance)
         : velocitySetpointSubsystem(velocitySetpointSubsystem),
-          jamTimeout(temporalTolerance),
-          velocitySetpointTolerance(velocitySetpointTolerance)
+          velocitySetpointTolerance(velocitySetpointTolerance),
+          jamTimeout(temporalTolerance)
     {
     }
 
-    /**
-     * Resets the jam timer
-     */
+    /// Resets the jam timer
     void restart() { jamTimeout.restart(); }
 
     /**
-     * Update subsystem jam detection and check whether subsystem is jammed.
-     * If subsystem is within distance tolerance of desired value then timer is
-     * reset, even if at the time of call it would have expired, as being within
-     * tolerance is checked first.
+     * Update subsystem jam detection and check whether subsystem is jammed. If subsystem is within
+     * the velocity tolerance of desired value then timer is reset, even if at the time of call it
+     * would have expired, as being within tolerance is checked first.
      *
-     * @note Should be called once per subsystem refresh (it's like an execute)
+     * @note Should be called once per subsystem refresh (it's like an execute).
      *
-     * @return `true` if subsystem is jammed, `false` otherwise
+     * @return `true` if subsystem is jammed, `false` otherwise.
      */
     inline bool check()
     {
@@ -79,16 +77,14 @@ public:
         return jamTimeout.execute(!withinTolerance);
     }
 
-    /**
-     * @return the jamming distance tolerance of this jam checker
-     */
+    /// @return the jamming distance tolerance of this jam checker
     inline float getJamSetpointTolerance() const { return velocitySetpointTolerance; }
 
 private:
     VelocitySetpointSubsystem* velocitySetpointSubsystem;
-    tap::arch::ConditionalMilliTimer jamTimeout;
     float velocitySetpointTolerance;
-};  // VelocityContinuousJamChecker
+    tap::arch::ConditionalMilliTimer jamTimeout;
+};
 
 }  // namespace tap::control::velocity
 
