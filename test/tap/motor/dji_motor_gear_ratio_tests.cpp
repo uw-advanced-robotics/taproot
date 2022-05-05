@@ -18,10 +18,12 @@
  */
 
 #include <gtest/gtest.h>
+#include <bitset>
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/drivers.hpp"
 #include "tap/motor/dji_motor.hpp"
+#include "tap/architecture/endianness_wrappers.hpp"
 
 #include "modm/math/geometry/angle.hpp"
 
@@ -31,11 +33,17 @@ using namespace tap;
 
 static void setMotorEncoderValue(DjiMotor& motor, uint16_t encoderValue)
 {
-    uint8_t inLength = 7;
-    modm::can::Message message{motor.getMotorIdentifier(), inLength};
+    uint8_t inLength(8);
 
-    memcpy(&message.data, &encoderValue, sizeof(uint16_t));
+    uint64_t data = 0;
 
+    // manually set the proper bits to the encoder value
+    *((uint8_t *)&data + 6) = *((uint8_t *)&encoderValue);
+    *((uint8_t *)&data + 7) = *((uint8_t *)&encoderValue + 1);
+
+    modm::can::Message message{motor.getMotorIdentifier(), inLength, data};
+
+    // segfault is happening somewhere within this call
     motor.processMessage(message);
 }
 
