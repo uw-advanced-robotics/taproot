@@ -56,7 +56,7 @@ public:
     /**
      * @return the measured velocity of the velocity setpoint subsystem, in units/second.
      */
-    virtual inline float getVelocity() = 0;
+    virtual inline float getVelocity() const = 0;
 
     /**
      * @return The current position of the controlled variable, in units.
