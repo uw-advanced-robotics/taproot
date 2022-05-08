@@ -38,13 +38,15 @@ public:
 
     MOCK_METHOD(float, getSetpoint, (), (const override));
     MOCK_METHOD(void, setSetpoint, (float), (override));
-    MOCK_METHOD(float, getVelocity, (), (const override));
-    MOCK_METHOD(float, getPosition, (), (const override));
+    MOCK_METHOD(float, getCurrentValue, (), (const override));
+    MOCK_METHOD(float, getJamSetpointTolerance, (), (const override));
     MOCK_METHOD(bool, calibrateHere, (), (override));
     MOCK_METHOD(bool, isJammed, (), (override));
     MOCK_METHOD(void, clearJam, (), (override));
     MOCK_METHOD(bool, isCalibrated, (), (override));
     MOCK_METHOD(bool, isOnline, (), (override));
+    MOCK_METHOD(float, getVelocity, (), (override));
+    MOCK_METHOD(float, getCurrentValueIntegral, (), (const override));
 };
 
 }  // namespace tap::mock
