@@ -598,7 +598,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
     ShootData testData;
 
     testData.bulletType = 1;
-    testData.shooterId = 0;
+    testData.shooterId = 1;
     testData.bulletFreq = 45;
     testData.bulletSpeed = 3452.12f;
     msg = constructMsg(testData, 0x0207);
