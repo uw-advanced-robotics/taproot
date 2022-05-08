@@ -17,17 +17,17 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_UNJAM_ROTATE_COMMAND_HPP_
-#define TAPROOT_UNJAM_ROTATE_COMMAND_HPP_
+#ifndef TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_
+#define TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_
 
 #include <cstdint>
 
 #include "tap/architecture/timeout.hpp"
 #include "tap/control/command.hpp"
 
-#include "../interfaces/velocity_setpoint_subsystem.hpp"
+#include "../interfaces/integrable_setpoint_subsystem.hpp"
 
-namespace tap::control::velocity
+namespace tap::control::setpoint
 {
 /**
  * Command that takes control of a velocity setpoint subsystem moves it back and forth.
@@ -39,35 +39,37 @@ namespace tap::control::velocity
  * cycle counts, the command will give up and end without clearing the jam.
  *
  * Like most velocity commands this one will not schedule/will deschedule if
- * VelocitySetpointSubsystem goes offline.
+ * IntegrableSetpointSubsystem goes offline.
  */
-class UnjamRotateCommand : public tap::control::Command
+class UnjamIntegralCommand : public tap::control::Command
 {
 public:
-    /// Config struct that the user passes into the UnjamRotateCommand's constructor.
+    /// Config struct that the user passes into the UnjamIntegralCommand's constructor.
     struct Config
     {
         /**
-         * The target displacement from the current value in units that the velocity setpoint
-         * subsystem will move back and forth by with unjamming.
+         * The target integral setpoint from the current integral value with units `units * seconds`
+         * (units of setpoint integrated with respect to time) that the integral setpoint subsystem
+         * will move back and forth by with unjamming.
          *
          * @attention This value must be positive and > 0.
          */
-
-        float unjamDisplacement;
+        float targetUnjamIntegralChange;
         /**
-         * The target velocity in units/second that the velocity setpoint subsystem will move
+         * The target setpoint in units that the integral setpoint subsystem will move
          * back and forth at.
          *
          * @attention This value must be positive and > 0.
          */
-        float unjamVelocity;
+        float unjamSetpoint;
         /**
-         *  The maximum amount of time the controller will wait for the subsystem to reach
-         * unjamDisplacement in milliseconds before trying to move in the opposite direction.
+         * The maximum amount of time the controller will wait for the subsystem to reach
+         * targetUnjamIntegralChange in milliseconds before trying to move in the opposite
+         * direction.
          *
-         * @attention This value must be > 1000 * (unjamDisplacement / unjamVelocity) since this is
-         * the minimum possible time it will take for the motor to rotate unjamDisplacement units.
+         * @attention This value must be > 1000 * (targetUnjamIntegralChange / unjamSetpoint) since
+         * this is the minimum possible time it will take for the motor to rotate
+         * targetUnjamIntegralChange units.
          */
         uint32_t maxWaitTime;
         /**
@@ -80,9 +82,11 @@ public:
     };
 
     /**
-     * @param[in] velocitySetpointSubsystem The associated agitator subsystem to control.
+     * @param[in] integrableSetpointSubsystem The associated agitator subsystem to control.
      */
-    UnjamRotateCommand(VelocitySetpointSubsystem& velocitySetpointSubsystem, const Config& config);
+    UnjamIntegralCommand(
+        IntegrableSetpointSubsystem& integrableSetpointSubsystem,
+        const Config& config);
 
     bool isReady() override;
 
@@ -94,7 +98,7 @@ public:
 
     bool isFinished() const override;
 
-    const char* getName() const override { return "unjam rotate"; }
+    const char* getName() const override { return "unjam move integral"; }
 
 private:
     enum UnjamState
@@ -104,7 +108,7 @@ private:
         JAM_CLEARED,     ///< The jam is cleared, the subsystem is no longer being told to move.
     };
 
-    VelocitySetpointSubsystem& velocitySetpointSubsystem;
+    IntegrableSetpointSubsystem& integrableSetpointSubsystem;
 
     Config config;
 
@@ -131,6 +135,6 @@ private:
     void beginUnjamBackwards();
 };
 
-}  // namespace tap::control::velocity
+}  // namespace tap::control::setpoint
 
-#endif  // TAPROOT_UNJAM_ROTATE_COMMAND_HPP_
+#endif  // TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_

@@ -17,36 +17,42 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "rotate_command.hpp"
+#include "move_integral_command.hpp"
+
+#include <cassert>
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 
 using namespace tap::algorithms;
 
-namespace tap::control::velocity
+namespace tap::control::setpoint
 {
-RotateCommand::RotateCommand(
-    VelocitySetpointSubsystem& velocitySetpointSubsystem,
+MoveIntegralCommand::MoveIntegralCommand(
+    IntegrableSetpointSubsystem& integrableSetpointSubsystem,
     const Config& config)
     : config(config),
-      velocitySetpointSubsystem(velocitySetpointSubsystem)
+      integrableSetpointSubsystem(integrableSetpointSubsystem)
 {
-    addSubsystemRequirement(&velocitySetpointSubsystem);
+    assert(config.setpointTolerance >= 0);
+    assert(getSign(config.targetIntegralChange) == getSign(config.desiredSetpoint));
+
+    addSubsystemRequirement(&integrableSetpointSubsystem);
 }
 
-void RotateCommand::initialize()
+void MoveIntegralCommand::initialize()
 {
-    velocitySetpointSubsystem.setVelocitySetpoint(config.desiredVelocity);
-    finalTargetPosition = velocitySetpointSubsystem.getPosition() + config.targetDisplacement;
+    integrableSetpointSubsystem.setSetpoint(config.desiredSetpoint);
+    finalTargetPosition =
+        integrableSetpointSubsystem.getCurrentValueIntegral() + config.targetIntegralChange;
 }
 
-void RotateCommand::end(bool) { velocitySetpointSubsystem.setVelocitySetpoint(0); }
+void MoveIntegralCommand::end(bool) { integrableSetpointSubsystem.setSetpoint(0); }
 
-bool RotateCommand::isFinished() const
+bool MoveIntegralCommand::isFinished() const
 {
     // The subsystem is jammed or offline or it is within the setpoint tolerance
-    return velocitySetpointSubsystem.isJammed() || !velocitySetpointSubsystem.isOnline() ||
-           withinSetpointTolerance();
+    return integrableSetpointSubsystem.isJammed() || !integrableSetpointSubsystem.isOnline() ||
+           targetIntegralReached();
 }
-}  // namespace tap::control::velocity
+}  // namespace tap::control::setpoint

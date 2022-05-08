@@ -17,12 +17,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_VELOCITY_SETPOINT_SUBSYSTEM_MOCK_HPP_
-#define TAPROOT_VELOCITY_SETPOINT_SUBSYSTEM_MOCK_HPP_
+#ifndef TAPROOT_INTEGRABLE_SETPOINT_SUBSYSTEM_MOCK_HPP_
+#define TAPROOT_INTEGRABLE_SETPOINT_SUBSYSTEM_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
-#include "tap/control/velocity/interfaces/velocity_setpoint_subsystem.hpp"
+#include "tap/control/setpoint/interfaces/integrable_setpoint_subsystem.hpp"
 
 namespace tap::mock
 {
@@ -30,14 +30,14 @@ namespace tap::mock
  * A class for mocking a setpoint subsystem. Will by default act as if it
  * were unjammed and online (specified in mock_constructors.cpp)
  */
-class VelocitySetpointSubsystemMock : public control::velocity::VelocitySetpointSubsystem
+class IntegrableSetpointSubsystemMock : public control::setpoint::IntegrableSetpointSubsystem
 {
 public:
-    VelocitySetpointSubsystemMock(tap::Drivers* drivers);
-    virtual ~VelocitySetpointSubsystemMock();
+    IntegrableSetpointSubsystemMock(tap::Drivers* drivers);
+    virtual ~IntegrableSetpointSubsystemMock();
 
-    MOCK_METHOD(float, getVelocitySetpoint, (), (const override));
-    MOCK_METHOD(void, setVelocitySetpoint, (float), (override));
+    MOCK_METHOD(float, getSetpoint, (), (const override));
+    MOCK_METHOD(void, setSetpoint, (float), (override));
     MOCK_METHOD(float, getVelocity, (), (const override));
     MOCK_METHOD(float, getPosition, (), (const override));
     MOCK_METHOD(bool, calibrateHere, (), (override));
@@ -47,6 +47,6 @@ public:
     MOCK_METHOD(bool, isOnline, (), (override));
 };
 
-}  // namespace mock
+}  // namespace tap::mock
 
-#endif  // TAPROOT_VELOCITY_SETPOINT_SUBSYSTEM_MOCK_HPP_
+#endif  // TAPROOT_INTEGRABLE_SETPOINT_SUBSYSTEM_MOCK_HPP_

@@ -17,7 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "unjam_rotate_command.hpp"
+#include "unjam_integral_command.hpp"
 
 #include <cassert>
 
@@ -25,36 +25,36 @@
 
 using namespace tap::algorithms;
 
-namespace tap::control::velocity
+namespace tap::control::setpoint
 {
-UnjamRotateCommand::UnjamRotateCommand(
-    VelocitySetpointSubsystem& velocitySetpointSubsystem,
+UnjamIntegralCommand::UnjamIntegralCommand(
+    IntegrableSetpointSubsystem& integrableSetpointSubsystem,
     const Config& config)
-    : velocitySetpointSubsystem(velocitySetpointSubsystem),
+    : integrableSetpointSubsystem(integrableSetpointSubsystem),
       config(config)
 {
-    assert(config.unjamDisplacement > 0);
+    assert(config.targetUnjamIntegralChange > 0);
     assert(config.targetCycleCount > 0);
-    assert(config.unjamDisplacement > 0);
+    assert(config.maxWaitTime > 0);
 
     // max wait time must be > min time it will take to reach the unjam displacement given the unjam
     // velocity
     assert(
-        1000.0f * (this->config.unjamDisplacement / this->config.unjamVelocity) <
+        1000.0f * (this->config.targetUnjamIntegralChange / this->config.unjamSetpoint) <
         this->config.maxWaitTime);
 
-    addSubsystemRequirement(&velocitySetpointSubsystem);
+    addSubsystemRequirement(&integrableSetpointSubsystem);
 
     unjamRotateTimeout.stop();
 }
 
-bool UnjamRotateCommand::isReady() { return velocitySetpointSubsystem.isOnline(); }
+bool UnjamIntegralCommand::isReady() { return integrableSetpointSubsystem.isOnline(); }
 
-void UnjamRotateCommand::initialize()
+void UnjamIntegralCommand::initialize()
 {
     unjamRotateTimeout.restart(config.maxWaitTime);
 
-    positionBeforeUnjam = velocitySetpointSubsystem.getPosition();
+    positionBeforeUnjam = integrableSetpointSubsystem.getCurrentValueIntegral();
 
     forwardsCleared = false;
     backwardsCleared = false;
@@ -63,14 +63,14 @@ void UnjamRotateCommand::initialize()
     beginUnjamBackwards();
 }
 
-void UnjamRotateCommand::execute()
+void UnjamIntegralCommand::execute()
 {
-    float curPosition = velocitySetpointSubsystem.getPosition();
+    float curPosition = integrableSetpointSubsystem.getCurrentValueIntegral();
 
     switch (currUnjamState)
     {
         case UNJAM_BACKWARD:
-            if (curPosition <= positionBeforeUnjam - config.unjamDisplacement)
+            if (curPosition <= positionBeforeUnjam - config.targetUnjamIntegralChange)
             {
                 backwardsCleared = true;
                 beginUnjamForwards();
@@ -102,34 +102,34 @@ void UnjamRotateCommand::execute()
     }
 }
 
-void UnjamRotateCommand::end(bool)
+void UnjamIntegralCommand::end(bool)
 {
     if (currUnjamState == JAM_CLEARED)
     {
-        velocitySetpointSubsystem.clearJam();
+        integrableSetpointSubsystem.clearJam();
     }
-    velocitySetpointSubsystem.setVelocitySetpoint(0);
+    integrableSetpointSubsystem.setSetpoint(0);
 }
 
-bool UnjamRotateCommand::isFinished() const
+bool UnjamIntegralCommand::isFinished() const
 {
-    return !velocitySetpointSubsystem.isOnline() || (currUnjamState == JAM_CLEARED) ||
+    return !integrableSetpointSubsystem.isOnline() || (currUnjamState == JAM_CLEARED) ||
            (backwardsCount >= config.targetCycleCount + 1);
 }
 
-void UnjamRotateCommand::beginUnjamForwards()
+void UnjamIntegralCommand::beginUnjamForwards()
 {
     unjamRotateTimeout.restart(config.maxWaitTime);
-    velocitySetpointSubsystem.setVelocitySetpoint(config.unjamVelocity);
+    integrableSetpointSubsystem.setSetpoint(config.unjamSetpoint);
     currUnjamState = UNJAM_FORWARD;
 }
 
-void UnjamRotateCommand::beginUnjamBackwards()
+void UnjamIntegralCommand::beginUnjamBackwards()
 {
     unjamRotateTimeout.restart(config.maxWaitTime);
-    velocitySetpointSubsystem.setVelocitySetpoint(-config.unjamVelocity);
+    integrableSetpointSubsystem.setSetpoint(-config.unjamSetpoint);
     currUnjamState = UNJAM_BACKWARD;
     backwardsCount += 1;
 }
 
-}  // namespace tap::control::velocity
+}  // namespace tap::control::setpoint

@@ -17,42 +17,46 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "rotate_unjam_comprised_command.hpp"
+#include "move_unjam_integral_comprised_command.hpp"
 
 #include <cassert>
 
 using namespace tap::control;
 
-namespace tap::control::velocity
+namespace tap::control::setpoint
 {
-RotateUnjamComprisedCommand::RotateUnjamComprisedCommand(
+MoveUnjamIntegralComprisedCommand::MoveUnjamIntegralComprisedCommand(
     tap::Drivers &drivers,
-    VelocitySetpointSubsystem &subsystem,
-    RotateCommand &rotateCommand,
-    UnjamRotateCommand &unjamRotateCommand)
+    IntegrableSetpointSubsystem &subsystem,
+    MoveIntegralCommand &moveIntegralCommand,
+    UnjamIntegralCommand &unjamIntegralCommand)
     : tap::control::ComprisedCommand(&drivers),
       subsystem(subsystem),
-      rotateCommand(rotateCommand),
-      unjamCommand(unjamRotateCommand),
+      moveIntegralCommand(moveIntegralCommand),
+      unjamCommand(unjamIntegralCommand),
       unjamSequenceCommencing(false)
 {
     assert(
-        (1UL << subsystem.getGlobalIdentifier()) == rotateCommand.getRequirementsBitwise() &&
-        rotateCommand.getRequirementsBitwise() == unjamCommand.getRequirementsBitwise());
+        (1UL << subsystem.getGlobalIdentifier()) == moveIntegralCommand.getRequirementsBitwise() &&
+        moveIntegralCommand.getRequirementsBitwise() == unjamCommand.getRequirementsBitwise());
 
     comprisedCommandScheduler.registerSubsystem(&subsystem);
     addSubsystemRequirement(&subsystem);
 }
 
-void RotateUnjamComprisedCommand::initialize()
+bool MoveUnjamIntegralComprisedCommand::isReady()
 {
-    comprisedCommandScheduler.addCommand(&rotateCommand);
+    return subsystem.isJammed() ? unjamCommand.isReady() : moveIntegralCommand.isReady();
+}
+
+void MoveUnjamIntegralComprisedCommand::initialize()
+{
+    comprisedCommandScheduler.addCommand(&moveIntegralCommand);
     unjamSequenceCommencing = false;
 }
 
-void RotateUnjamComprisedCommand::execute()
+void MoveUnjamIntegralComprisedCommand::execute()
 {
-    // If setpointSubsystem isn't disconnected run our normal logic
     if (subsystem.isJammed() && !unjamSequenceCommencing)
     {
         // when the setpointSubsystem is jammed, add the unjamCommand
@@ -64,18 +68,18 @@ void RotateUnjamComprisedCommand::execute()
     comprisedCommandScheduler.run();
 }
 
-void RotateUnjamComprisedCommand::end(bool interrupted)
+void MoveUnjamIntegralComprisedCommand::end(bool interrupted)
 {
     comprisedCommandScheduler.removeCommand(&unjamCommand, interrupted);
-    comprisedCommandScheduler.removeCommand(&rotateCommand, interrupted);
+    comprisedCommandScheduler.removeCommand(&moveIntegralCommand, interrupted);
 }
 
-bool RotateUnjamComprisedCommand::isFinished() const
+bool MoveUnjamIntegralComprisedCommand::isFinished() const
 {
     return (!unjamSequenceCommencing &&
-            !comprisedCommandScheduler.isCommandScheduled(&rotateCommand)) ||
+            !comprisedCommandScheduler.isCommandScheduled(&moveIntegralCommand)) ||
            (unjamSequenceCommencing &&
             !comprisedCommandScheduler.isCommandScheduled(&unjamCommand));
 }
 
-}  // namespace tap::control::velocity
+}  // namespace tap::control::setpoint

@@ -17,15 +17,16 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "velocity_setpoint_subsystem_mock.hpp"
+#include "integrable_setpoint_subsystem_mock.hpp"
 
 namespace tap::mock
 {
-VelocitySetpointSubsystemMock::VelocitySetpointSubsystemMock(Drivers *drivers) : Subsystem(drivers)
+IntegrableSetpointSubsystemMock::IntegrableSetpointSubsystemMock(Drivers *drivers)
+    : Subsystem(drivers)
 {
     // Default to simulating an online and unjammed setpointSubsystem
     ON_CALL(*this, isOnline).WillByDefault(testing::Return(true));
     ON_CALL(*this, isJammed).WillByDefault(testing::Return(false));
 }
-VelocitySetpointSubsystemMock::~VelocitySetpointSubsystemMock() {}
+IntegrableSetpointSubsystemMock::~IntegrableSetpointSubsystemMock() {}
 }  // namespace tap::mock
