@@ -613,7 +613,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
     EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
 
     testData.bulletType = 2;
-    testData.shooterId = 1;
+    testData.shooterId = 2;
     msg = constructMsg(testData, 0x0207);
 
     refSerial.messageReceiveCallback(msg);
