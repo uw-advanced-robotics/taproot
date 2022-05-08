@@ -1,5 +1,12 @@
 # Taproot Changelog
 
+## May 2022
+
+### All changes
+
+- `RefSerialData`'s `MechanismID` enum values were changed to reflect changes in the RoboMaster ref
+  serial protocol.
+
 ## April 2022
 
 ### Breaking changes
