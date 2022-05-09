@@ -6,6 +6,10 @@
 
 - `RefSerialData`'s `MechanismID` enum values were changed to reflect changes in the RoboMaster ref
   serial protocol.
+- `IntegrableSetpointSubsystem` and associated commands added. This allows you to move the integral
+  of some setpoint around. An example of where this is useful would be velocity control of a motor,
+  where you want to directly control the velocity of the motor and indirectly control the position
+  (!188).
 
 ## April 2022
 
