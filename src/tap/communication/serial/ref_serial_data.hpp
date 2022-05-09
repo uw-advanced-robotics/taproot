@@ -180,9 +180,9 @@ public:
          */
         enum MechanismID
         {
-            TURRET_17MM_1 = 0,  ///< 17mm barrel ID 1
-            TURRET_17MM_2 = 1,  ///< 17mm barrel ID 2
-            TURRET_42MM = 2,    ///< 42mm barrel
+            TURRET_17MM_1 = 1,  ///< 17mm barrel ID 1
+            TURRET_17MM_2 = 2,  ///< 17mm barrel ID 2
+            TURRET_42MM = 3,    ///< 42mm barrel
         };
 
         struct GameData
