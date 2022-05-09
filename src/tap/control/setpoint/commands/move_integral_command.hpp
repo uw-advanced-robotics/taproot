@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_ROTATE_COMMAND_HPP_
-#define TAPROOT_ROTATE_COMMAND_HPP_
+#ifndef TAPROOT_MOVE_INTEGRAL_COMMAND_HPP_
+#define TAPROOT_MOVE_INTEGRAL_COMMAND_HPP_
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/control/command.hpp"
@@ -106,4 +106,4 @@ private:
 
 }  // namespace tap::control::setpoint
 
-#endif  // TAPROOT_ROTATE_COMMAND_HPP_
+#endif  // TAPROOT_MOVE_INTEGRAL_COMMAND_HPP_

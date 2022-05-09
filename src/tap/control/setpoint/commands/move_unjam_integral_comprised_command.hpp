@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_
-#define MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_
+#ifndef TAPROOT_MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_
+#define TAPROOT_MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_
 
 #include "tap/control/comprised_command.hpp"
 
@@ -79,4 +79,4 @@ private:
 
 }  // namespace tap::control::setpoint
 
-#endif  // MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_
+#endif  // TAPROOT_MOVE_UNJAM_INTEGRAL_COMPRISED_COMMAND_HPP_

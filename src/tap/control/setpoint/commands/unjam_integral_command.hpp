@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_
-#define TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_
+#ifndef TAPROOT_UNJAM_INTEGRAL_COMMAND_HPP_
+#define TAPROOT_UNJAM_INTEGRAL_COMMAND_HPP_
 
 #include <cstdint>
 
@@ -140,4 +140,4 @@ private:
 
 }  // namespace tap::control::setpoint
 
-#endif  // TAPROOT_UNJAM_MOVE_INTEGRAL_COMMAND_HPP_
+#endif  // TAPROOT_UNJAM_INTEGRAL_COMMAND_HPP_
