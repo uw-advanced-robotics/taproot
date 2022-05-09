@@ -38,6 +38,9 @@ namespace tap::control::setpoint
  * will clear the velocity setpoint subsystem's jam and end. If not successful after some number of
  * cycle counts, the command will give up and end without clearing the jam.
  *
+ * Unlike the unjam command, this command will displace the integral by some amount in
+ * order to facilitate unjamming.
+ *
  * Like most velocity commands this one will not schedule/will deschedule if
  * IntegrableSetpointSubsystem goes offline.
  */
