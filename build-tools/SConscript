@@ -160,6 +160,8 @@ else:  # hardware target env
     env["LINKFLAGS"].remove("-Tmodm/link/linkerscript.ld")
     env.AppendUnique(LINKFLAGS=["-T" + LINKERSCRIPT_FILE])
 
+env.AppendUnique(CCFLAGS=["-Wno-misleading-indentation"])
+
 # Add any additional flags the user chooses specify
 if "additional-ccflags" in ARGUMENTS:
     env.AppendUnique(CCFLAGS=[*ARGUMENTS["additional-ccflags"].split(",")])
