@@ -25,10 +25,7 @@ namespace tap
 {
 namespace algorithms
 {
-ContiguousFloat::ContiguousFloat(
-    const float& value,
-    const float& lowerBound,
-    const float& upperBound)
+ContiguousFloat::ContiguousFloat(const float value, const float lowerBound, const float upperBound)
 {
     this->value = value;
 
@@ -57,7 +54,7 @@ float ContiguousFloat::unwrapBelow() const { return lowerBound - (upperBound - v
 
 float ContiguousFloat::unwrapAbove() const { return upperBound + (value - lowerBound); }
 
-float ContiguousFloat::difference(const float& otherValue) const
+float ContiguousFloat::difference(const float otherValue) const
 {
     return difference(ContiguousFloat(otherValue, lowerBound, upperBound));
 }
@@ -83,14 +80,14 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) const
     return finalDiff;
 }
 
-void ContiguousFloat::shiftBounds(const float& shiftMagnitude)
+void ContiguousFloat::shiftBounds(const float shiftMagnitude)
 {
     upperBound += shiftMagnitude;
     lowerBound += shiftMagnitude;
     reboundValue();
 }
 
-void ContiguousFloat::shiftValue(const float& shiftMagnitude)
+void ContiguousFloat::shiftValue(const float shiftMagnitude)
 {
     value += shiftMagnitude;
     reboundValue();
@@ -98,8 +95,8 @@ void ContiguousFloat::shiftValue(const float& shiftMagnitude)
 
 float ContiguousFloat::limitValue(
     const ContiguousFloat& valueToLimit,
-    const float& min,
-    const float& max,
+    const float min,
+    const float max,
     int* status)
 {
     ContiguousFloat minContig(min, valueToLimit.lowerBound, valueToLimit.upperBound);
@@ -147,7 +144,7 @@ float ContiguousFloat::limitValue(
 // Value
 float ContiguousFloat::getValue() const { return value; }
 
-void ContiguousFloat::setValue(const float& newValue)
+void ContiguousFloat::setValue(const float newValue)
 {
     value = newValue;
     this->reboundValue();
@@ -156,7 +153,7 @@ void ContiguousFloat::setValue(const float& newValue)
 // Upper bound
 float ContiguousFloat::getUpperBound() const { return upperBound; }
 
-void ContiguousFloat::setUpperBound(const float& newValue)
+void ContiguousFloat::setUpperBound(const float newValue)
 {
     upperBound = newValue;
 
@@ -167,7 +164,7 @@ void ContiguousFloat::setUpperBound(const float& newValue)
 // Lower bound
 float ContiguousFloat::getLowerBound() const { return lowerBound; }
 
-void ContiguousFloat::setLowerBound(const float& newValue)
+void ContiguousFloat::setLowerBound(const float newValue)
 {
     lowerBound = newValue;
 
