@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -30,17 +30,47 @@
 
 namespace tap::motor
 {
+/**
+ * A class designed to interface with stepper motor controllers.
+ */
 class StepperMotor : public MotorInterface
 {
 public:
-    StepperMotor(Drivers* drivers, bool motorInverted, const char* name, tap::gpio::Digital::OutputPin direction, tap::gpio::Pwm::Pin pulse);
+    /**
+     * Construct a new Stepper Motor object
+     *
+     * @param drivers a pointer to the drivers struct
+     * @param motorInverted if 'false', the positive rotation direction of the shaft is
+     *      counter-clockwise when looking at the shaft from the side opposite the motor.
+     *      If `true` then the positive rotation direction will be clockwise.
+     * @param name a name to associate with the motor for use in the motor menu
+     * @param direction the direction that the motor spins in.
+     * @param pulse the pulse frequency of the motor.
+     */
+    StepperMotor(
+        Drivers* drivers,
+        bool motorInverted,
+        const char* name,
+        tap::gpio::Digital::OutputPin direction,
+        tap::gpio::Pwm::Pin pulse);
 
     void initialize() override;
 
     int64_t getEncoderUnwrapped() const override;
+
     uint16_t getEncoderWrapped() const override;
-    // controls the stepper in some way (take a step)
+
+    /**
+     * Sets the desired output for the motor.
+     *
+     * @param desiredOutput the desired motor output. Limited to the range of a 16-bit int.
+     *
+     * @note: `desiredOutput` is cast to an int16_t and limited to an int16_t's range! The
+     *      user should make sure their value is in range. The declaration takes an int32_t
+     *      in hopes to mitigate overflow.
+     */
     void setDesiredOutput(int32_t desiredOutput) override;
+
     bool isMotorOnline() const override;
     // return -1 if going backwards, 0 if not moving 1 if forwards
     int16_t getOutputDesired() const override;
