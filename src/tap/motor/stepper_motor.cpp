@@ -29,9 +29,12 @@ namespace tap
 {
 namespace motor
 {
-static constexpr uint16_t ENC_RESOLUTION = 1600;
-
-StepperMotor::StepperMotor(Drivers* drivers, bool motorInverted, const char* name, tap::gpio::Digital::OutputPin direction, tap::gpio::Pwm::Pin pulse)
+StepperMotor::StepperMotor(
+    Drivers* drivers,
+    bool motorInverted,
+    const char* name,
+    tap::gpio::Digital::OutputPin direction,
+    tap::gpio::Pwm::Pin pulse)
     : drivers(drivers),
       motorName(name),
       motorInverted(motorInverted),
@@ -51,15 +54,20 @@ void StepperMotor::setDesiredOutput(int32_t desiredOutput)
         static_cast<int16_t>(tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
 
-    if (desiredOutput >= 0)
+    if (desiredOutput > 0)
     {
         drivers->digital.set(direction, false);
+        drivers->pwm.write(0.5, pulse);
+    }
+    else if (desiredOutput < 0)
+    {
+        drivers->digital.set(direction, true);
+        drivers->pwm.write(0.5, pulse);
     }
     else
     {
-        drivers->digital.set(direction, true);
+        drivers->pwm.write(0, pulse);
     }
-    drivers->pwm.write(desiredOutput, pulse);
 }
 
 bool StepperMotor::isMotorOnline() const { return true; };
@@ -86,7 +94,7 @@ int16_t StepperMotor::getTorque() const { return 0; };
 
 int16_t StepperMotor::getShaftRPM() const { return 0; };
 
-int64_t StepperMotor::getEncoderUnwrapped() const {return 0; };
-uint16_t StepperMotor::getEncoderWrapped() const {return 0; };
+int64_t StepperMotor::getEncoderUnwrapped() const { return 0; };
+uint16_t StepperMotor::getEncoderWrapped() const { return 0; };
 }  // namespace motor
 }  // namespace tap

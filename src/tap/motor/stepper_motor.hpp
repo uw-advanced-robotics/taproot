@@ -33,8 +33,6 @@ namespace tap::motor
 class StepperMotor : public MotorInterface
 {
 public:
-    static constexpr uint16_t ENC_RESOLUTION = 1600;
-
     StepperMotor(Drivers* drivers, bool motorInverted, const char* name, tap::gpio::Digital::OutputPin direction, tap::gpio::Pwm::Pin pulse);
 
     void initialize() override;
