@@ -34,7 +34,7 @@ void ImuTerminalSerialHandler::init() { drivers->terminalSerial.addHeader(imu->g
 bool ImuTerminalSerialHandler::terminalSerialCallback(
     char* inputLine,
     modm::IOStream& outputStream,
-    bool streamingEnabled)
+    bool)
 {
     char* arg;
     subjectsBeingInspected.reset(
@@ -66,7 +66,12 @@ bool ImuTerminalSerialHandler::terminalSerialCallback(
         {
             subjectsBeingInspected.set(InspectSubject::TEMP);
         }
-        else if (strcmp(arg, "-h"))
+        else if (strcmp(arg, "-h") == 0)
+        {
+            outputStream << "Usage: " << imu->getName() << USAGE;
+            return true;
+        }
+        else
         {
             outputStream << "Usage: " << imu->getName() << USAGE;
             return false;
@@ -76,7 +81,7 @@ bool ImuTerminalSerialHandler::terminalSerialCallback(
     if (!subjectsBeingInspected)
     {
         outputStream << "Usage: " << imu->getName() << USAGE;
-        return !streamingEnabled;
+        return false;
     }
 
     printHeader(outputStream);
