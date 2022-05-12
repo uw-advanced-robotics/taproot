@@ -247,3 +247,118 @@ TEST(DjiMotorTerminalSerialHandler, terminalSerialStreamCallback__prints_motor_i
 
     EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), HasSubstr("1. cool motor"));
 }
+
+TEST(DjiMotorTerminalSerialHandler, terminalSerialStreamCallback__prints_usage_when_blank_input)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    char input[] = "";
+    EXPECT_FALSE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    EXPECT_THAT(terminalDevice.readAllItemsFromWriteBufferToString(), HasSubstr("Usage"));
+}
+
+TEST(
+    DjiMotorTerminalSerialHandler,
+    terminalSerialCallback__can_2_prints_all_non_nullptr_motors_on_can2)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    DjiMotor *motors[DjiMotorTxHandler::DJI_MOTORS_PER_CAN] = {};
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)] =
+        new DjiMotor(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS2, false, "m1");
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR3)] =
+        new DjiMotor(&drivers, MotorId::MOTOR3, tap::can::CanBus::CAN_BUS2, false, "m2");
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR6)] =
+        new DjiMotor(&drivers, MotorId::MOTOR6, tap::can::CanBus::CAN_BUS2, false, "m3");
+
+    ON_CALL(drivers.djiMotorTxHandler, getCan2Motor).WillByDefault([&](tap::motor::MotorId mid) {
+        return motors[DJI_MOTOR_TO_NORMALIZED_ID(mid)];
+    });
+
+    char input[] = "can 2";
+    EXPECT_TRUE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
+    EXPECT_THAT(output, HasSubstr("1. m1"));
+    EXPECT_THAT(output, HasSubstr("3. m2"));
+    EXPECT_THAT(output, HasSubstr("6. m3"));
+
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)];
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR3)];
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR6)];
+}
+
+TEST(
+    DjiMotorTerminalSerialHandler,
+    terminalSerialCallback__motor1_can_2_prints_info_about_specific_motor)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    DjiMotor *motors[DjiMotorTxHandler::DJI_MOTORS_PER_CAN] = {};
+    motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)] =
+        new DjiMotor(&drivers, MotorId::MOTOR1, tap::can::CanBus::CAN_BUS2, false, "m1");
+
+    ON_CALL(drivers.djiMotorTxHandler, getCan2Motor).WillByDefault([&](tap::motor::MotorId mid) {
+        return motors[DJI_MOTOR_TO_NORMALIZED_ID(mid)];
+    });
+
+    char input[] = "motor 1 can 2";
+    EXPECT_TRUE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
+    EXPECT_THAT(output, HasSubstr("1. m1"));
+
+    delete motors[DJI_MOTOR_TO_NORMALIZED_ID(MotorId::MOTOR1)];
+}
+
+TEST(DjiMotorTerminalSerialHandler, terminalSerialCallback__invalid_can_id)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    char input[] = "can 3";
+    EXPECT_FALSE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
+    EXPECT_THAT(output, HasSubstr("Invalid can bus ID"));
+}
+
+TEST(DjiMotorTerminalSerialHandler, terminalSerialCallback__no_can_id)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    char input[] = "can";
+    EXPECT_FALSE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
+    EXPECT_THAT(output, HasSubstr("must specify can bus"));
+}
+
+TEST(DjiMotorTerminalSerialHandler, terminalSerialCallback__no_motor_id)
+{
+    Drivers drivers;
+    DjiMotorTerminalSerialHandler serialHandler(&drivers);
+    tap::stub::TerminalDeviceStub terminalDevice(&drivers);
+    modm::IOStream stream(terminalDevice);
+
+    char input[] = "motor";
+    EXPECT_FALSE(serialHandler.terminalSerialCallback(input, stream, false));
+
+    std::string output = terminalDevice.readAllItemsFromWriteBufferToString();
+    EXPECT_THAT(output, HasSubstr("must specify motor id"));
+}
