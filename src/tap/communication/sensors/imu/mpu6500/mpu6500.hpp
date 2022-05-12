@@ -359,6 +359,8 @@ private:
      * Add any errors to the error handler that have came up due to calls to validateReading.
      */
     void addValidationErrors();
+
+    void computeOffsets();
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500

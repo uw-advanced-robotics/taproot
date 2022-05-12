@@ -117,35 +117,19 @@ void Mpu6500::init()
 
 void Mpu6500::periodicIMUUpdate()
 {
-    if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
+    if (imuState == ImuState::IMU_NOT_CONNECTED)
     {
-        mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
-        tiltAngleCalculated = false;
-        // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
+        RAISE_ERROR(drivers, "periodicIMUUpdate called w/ IMU not connected");
+    }
+
+    if (imuState == ImuState::IMU_CALIBRATING)
+    {
+        computeOffsets();
     }
     else
     {
-        calibrationSample++;
-
-        raw.gyroOffset.x += raw.gyro.x;
-        raw.gyroOffset.y += raw.gyro.y;
-        raw.gyroOffset.z += raw.gyro.z;
-        raw.accelOffset.x += raw.accel.x;
-        raw.accelOffset.y += raw.accel.y;
-        raw.accelOffset.z += raw.accel.z - ACCELERATION_SENSITIVITY;
-
-        if (calibrationSample >= MPU6500_OFFSET_SAMPLES)
-        {
-            calibrationSample = 0;
-            raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
-            raw.gyroOffset.y /= MPU6500_OFFSET_SAMPLES;
-            raw.gyroOffset.z /= MPU6500_OFFSET_SAMPLES;
-            raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
-            raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
-            raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
-            imuState = ImuState::IMU_CALIBRATED;
-            mahonyAlgorithm = Mahony();
-        }
+        mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+        tiltAngleCalculated = false;
     }
 
     readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
@@ -285,6 +269,31 @@ void Mpu6500::addValidationErrors()
     }
 
     errorState = 0;
+}
+
+void Mpu6500::computeOffsets()
+{
+    calibrationSample++;
+
+    raw.gyroOffset.x += raw.gyro.x;
+    raw.gyroOffset.y += raw.gyro.y;
+    raw.gyroOffset.z += raw.gyro.z;
+    raw.accelOffset.x += raw.accel.x;
+    raw.accelOffset.y += raw.accel.y;
+    raw.accelOffset.z += raw.accel.z - ACCELERATION_SENSITIVITY;
+
+    if (calibrationSample >= MPU6500_OFFSET_SAMPLES)
+    {
+        calibrationSample = 0;
+        raw.gyroOffset.x /= MPU6500_OFFSET_SAMPLES;
+        raw.gyroOffset.y /= MPU6500_OFFSET_SAMPLES;
+        raw.gyroOffset.z /= MPU6500_OFFSET_SAMPLES;
+        raw.accelOffset.x /= MPU6500_OFFSET_SAMPLES;
+        raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
+        raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
+        imuState = ImuState::IMU_CALIBRATED;
+        mahonyAlgorithm = Mahony();
+    }
 }
 
 }  // namespace tap::communication::sensors::imu::mpu6500
