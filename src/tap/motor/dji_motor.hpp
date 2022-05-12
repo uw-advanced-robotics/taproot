@@ -113,7 +113,7 @@ public:
      *
      * @param[in] message the message to be processed.
      */
-    void processMessage(const modm::can::Message& message) override { parseCanRxData(message); }
+    void processMessage(const modm::can::Message& message) override;
 
     /**
      * Set the desired output for the motor. The meaning of this value is motor
@@ -196,11 +196,6 @@ private:
      * special logic necessary for keeping track of unwrapped encoder value.
      */
     void updateEncoderValue(uint16_t newEncWrapped);
-
-    /**
-     * Parses the data from a DJI motor feedback CAN message.
-     */
-    void parseCanRxData(const modm::can::Message& message);
 
     Drivers* drivers;
 
