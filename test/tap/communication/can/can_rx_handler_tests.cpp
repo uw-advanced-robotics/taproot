@@ -34,11 +34,11 @@ class CanRxHandlerTest : public Test
 protected:
     CanRxHandlerTest() : handler(&drivers) {}
 
-    void constructListeners()
+    void constructListeners(tap::can::CanBus canBus = tap::can::CanBus::CAN_BUS1)
     {
         for (uint32_t i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
         {
-            auto listener = make_unique<CanRxListenerMock>(&drivers, i, tap::can::CanBus::CAN_BUS1);
+            auto listener = make_unique<CanRxListenerMock>(&drivers, i, canBus);
             listeners.push_back(move(listener));
         }
     }
@@ -57,6 +57,22 @@ TEST(CanRxHandler, ListenerAttachesSelf)
     EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler(testing::Ref(listener)));
 
     listener.attachSelfToRxHandler();
+}
+
+TEST_F(CanRxHandlerTest, attachReceiveHandler_attaches_listener_can2)
+{
+    listeners.push_back(unique_ptr<CanRxListenerMock>(
+        new CanRxListenerMock(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS2)));
+
+    handler.attachReceiveHandler(listeners[0].get());
+
+    EXPECT_EQ(
+        listeners[0].get(),
+        handler.getHandlerStore(
+            tap::can::CanBus::CAN_BUS2)[tap::can::CanRxHandler::lookupTableIndexForCanId(
+            listeners[0]->canIdentifier)]);
+
+    handler.removeReceiveHandler(*listeners[0]);
 }
 
 TEST_F(CanRxHandlerTest, ListenerAttachesAndDetatchesInArray)
@@ -119,4 +135,46 @@ TEST_F(CanRxHandlerTest, removeReceiveHandler__error_logged_with_oob_can_rx_list
 
     handler.removeReceiveHandler(canRxListenerHi);
     handler.removeReceiveHandler(canRxListenerLo);
+}
+
+TEST_F(CanRxHandlerTest, pollCanData_can1_calls_process_message_passing_msg_to_correct_listener)
+{
+    constructListeners();
+
+    handler.attachReceiveHandler(listeners[0].get());
+
+    modm::can::Message msg(tap::motor::MOTOR1, 8, 0xffff'ffff'ffff'ffff, false);
+
+    ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *message) {
+            *message = msg;
+            return true;
+        });
+    ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS2, _))
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *) { return false; });
+
+    EXPECT_CALL(*listeners[0], processMessage);
+
+    handler.pollCanData();
+}
+
+TEST_F(CanRxHandlerTest, pollCanData_can2_calls_process_message_passing_msg_to_correct_listener)
+{
+    constructListeners(tap::can::CanBus::CAN_BUS2);
+
+    handler.attachReceiveHandler(listeners[0].get());
+
+    modm::can::Message msg(tap::motor::MOTOR1, 8, 0xffff'ffff'ffff'ffff, false);
+
+    ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *) { return false; });
+    ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS2, _))
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *message) {
+            *message = msg;
+            return true;
+        });
+
+    EXPECT_CALL(*listeners[0], processMessage);
+
+    handler.pollCanData();
 }
