@@ -145,9 +145,9 @@ public:
      * Used by `RefSerialTransmitter`. It is necessary to acquire this lock to coordinate sending
      * ref serial data from different protothreads.
      */
-    void acquireTransmissionSemaphore() { transmissionSemaphore.acquire(); }
+    mockable void acquireTransmissionSemaphore() { transmissionSemaphore.acquire(); }
 
-    void releaseTransmissionSemaphore() { transmissionSemaphore.release(); }
+    mockable void releaseTransmissionSemaphore() { transmissionSemaphore.release(); }
 
     /**
      * @return True if the robot operator is blinded, false otherwise. Also return false if the
