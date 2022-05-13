@@ -36,12 +36,12 @@ MoveUnjamIntegralComprisedCommand::MoveUnjamIntegralComprisedCommand(
       unjamCommand(unjamIntegralCommand),
       unjamSequenceCommencing(false)
 {
-    assert(
-        (1UL << subsystem.getGlobalIdentifier()) == moveIntegralCommand.getRequirementsBitwise() &&
-        moveIntegralCommand.getRequirementsBitwise() == unjamCommand.getRequirementsBitwise());
-
     comprisedCommandScheduler.registerSubsystem(&subsystem);
     addSubsystemRequirement(&subsystem);
+
+    assert(
+        moveIntegralCommand.getRequirementsBitwise() == this->getRequirementsBitwise() &&
+        unjamCommand.getRequirementsBitwise() == this->getRequirementsBitwise());
 }
 
 bool MoveUnjamIntegralComprisedCommand::isReady()
