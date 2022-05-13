@@ -52,15 +52,6 @@ protected:
     };
 };
 
-class MoveIntegralCommandTestP : public MoveIntegralCommandTest,
-                                 public WithParamInterface<MoveIntegralCommand::Config>
-{
-protected:
-    void SetUp() override { cmd = new MoveIntegralCommand(sub, GetParam()); }
-
-    MoveIntegralCommand *cmd;
-};
-
 TEST_F(MoveIntegralCommandTest, isReady_when_jammed)
 {
     MoveIntegralCommand cmd(sub, defaultConfig);
