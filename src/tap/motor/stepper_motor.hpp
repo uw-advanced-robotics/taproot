@@ -71,8 +71,18 @@ public:
      */
     void setDesiredOutput(int32_t desiredOutput) override;
 
+    /**
+     * Inherited from the motor interface but unneeded for the stepper motor.
+     * 
+     * @return true 
+     */
     bool isMotorOnline() const override;
-    // return -1 if going backwards, 0 if not moving 1 if forwards
+    
+    /**
+     * @brief Get the desired output for the motor.
+     * 
+     * @return desiredOutput 
+     */
     int16_t getOutputDesired() const override;
     int8_t getTemperature() const override;
     int16_t getTorque() const override;
