@@ -49,12 +49,12 @@ public:
         /// The desired setpoint in units
         float desiredSetpoint;
         /**
-         * The difference between the current and desired value when the command will be considered
-         * to be complete, in the integral of units.
+         * The difference between the current and desired integral when the command will be
+         * considered to be complete, in the integral of units.
          *
          * @attention This value must be >= 0
          */
-        float setpointTolerance;
+        float integralSetpointTolerance;
     };
 
     /**
@@ -86,7 +86,7 @@ private:
 
     IntegrableSetpointSubsystem& integrableSetpointSubsystem;
 
-    float finalTargetPosition = 0;
+    float finalTargetIntegralSetpoint = 0;
 
     /// @return True if the intgral setpoint has reached the target integral
     bool targetIntegralReached() const
@@ -94,12 +94,12 @@ private:
         if (config.targetIntegralChange > 0)
         {
             return integrableSetpointSubsystem.getCurrentValueIntegral() >
-                   finalTargetPosition - config.setpointTolerance;
+                   finalTargetIntegralSetpoint - config.integralSetpointTolerance;
         }
         else
         {
             return integrableSetpointSubsystem.getCurrentValueIntegral() <
-                   finalTargetPosition + config.setpointTolerance;
+                   finalTargetIntegralSetpoint + config.integralSetpointTolerance;
         }
     }
 };  // class MoveIntegralCommand

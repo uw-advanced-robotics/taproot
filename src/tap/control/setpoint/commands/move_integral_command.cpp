@@ -34,7 +34,7 @@ MoveIntegralCommand::MoveIntegralCommand(
     : config(config),
       integrableSetpointSubsystem(integrableSetpointSubsystem)
 {
-    assert(config.setpointTolerance >= 0);
+    assert(config.integralSetpointTolerance >= 0);
     assert(getSign(config.targetIntegralChange) == getSign(config.desiredSetpoint));
 
     addSubsystemRequirement(&integrableSetpointSubsystem);
@@ -43,7 +43,7 @@ MoveIntegralCommand::MoveIntegralCommand(
 void MoveIntegralCommand::initialize()
 {
     integrableSetpointSubsystem.setSetpoint(config.desiredSetpoint);
-    finalTargetPosition =
+    finalTargetIntegralSetpoint =
         integrableSetpointSubsystem.getCurrentValueIntegral() + config.targetIntegralChange;
 }
 
