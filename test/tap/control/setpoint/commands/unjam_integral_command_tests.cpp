@@ -224,6 +224,8 @@ TEST_F(UnjamIntegralCommandTest, end_sets_setpoint_to_0)
 {
     UnjamIntegralCommand cmd(sub, defaultConfig);
 
+    cmd.initialize();
+
     cmd.end(false);
     EXPECT_NEAR(0, setpoint, 1E-5);
     cmd.end(true);
