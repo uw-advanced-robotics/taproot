@@ -60,7 +60,7 @@ public:
      *
      * @note this function can block for approximately 12 seconds.
      */
-    mockable void init();
+    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi);
 
     /**
      * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
@@ -209,6 +209,8 @@ public:
      */
     inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
 
+    mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
+
     /**
      * Returns the angle difference between the normal vector of the plane that the
      * type A board lies on and of the angle directly upward.
@@ -244,10 +246,9 @@ private:
     static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
     /**
-     * The delay between calculation of imu angles and the start of reading new raw IMU data,
-     * in microseconds.
+     * The time to read the registers in nonblocking mode, in microseconds.
      */
-    static constexpr int DELAY_BTWN_CALC_AND_READ_REG = 1550;
+    static constexpr int NONBLOCKING_TIME_TO_READ_REG = 450;
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.
@@ -303,6 +304,8 @@ private:
 
     Drivers *drivers;
 
+    int delayBtwnCalcAndReadReg = 2000 - NONBLOCKING_TIME_TO_READ_REG;
+
     ImuState imuState = ImuState::IMU_NOT_CONNECTED;
 
     tap::arch::MicroTimeout readRegistersTimeout;
@@ -325,6 +328,8 @@ private:
     int calibrationSample = 0;
 
     uint8_t errorState = 0;
+
+    uint32_t prevIMUDataReceivedTime = 0;
 
     // Functions for interacting with hardware directly.
 
