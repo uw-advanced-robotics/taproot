@@ -19,6 +19,8 @@
 
 #include "mpu6500.hpp"
 
+#include <cassert>
+
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
@@ -50,7 +52,7 @@ void Mpu6500::requestCalibration()
     }
 }
 
-void Mpu6500::init()
+void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
 #ifndef PLATFORM_HOSTED
     // Configure NSS pin
@@ -106,13 +108,20 @@ void Mpu6500::init()
     modm::delay_ms(1);
     spiWriteRegister(MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA);
     modm::delay_ms(1);
+#endif
 
     imuHeater.initialize();
 
-    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+    delayBtwnCalcAndReadReg =
+        static_cast<int>(1e6f / sampleFrequency) - NONBLOCKING_TIME_TO_READ_REG;
+
+    assert(delayBtwnCalcAndReadReg >= 0);
+
+    readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
+
+    mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
-#endif
 }
 
 void Mpu6500::periodicIMUUpdate()
@@ -144,11 +153,11 @@ void Mpu6500::periodicIMUUpdate()
             raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
             raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
             imuState = ImuState::IMU_CALIBRATED;
-            mahonyAlgorithm = Mahony();
+            mahonyAlgorithm.reset();
         }
     }
 
-    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+    readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
 
     imuHeater.runTemperatureController(getTemp());
 
@@ -183,6 +192,8 @@ bool Mpu6500::read()
         raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
         raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
         raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
+
+        prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
     }
     PT_END();
 #else

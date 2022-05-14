@@ -34,7 +34,7 @@ public:
     Mpu6500Mock(tap::Drivers *drivers);
     virtual ~Mpu6500Mock();
 
-    MOCK_METHOD(void, init, (), (override));
+    MOCK_METHOD(void, init, (float, float, float), (override));
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(bool, read, (), (override));
     MOCK_METHOD(ImuState, getImuState, (), (const override));
