@@ -22,69 +22,64 @@
 
 #ifdef PLATFORM_HOSTED
 
-#include <array>
+#include <map>
+#include <memory>
 
 #include "tap/communication/can/can_bus.hpp"
 #include "tap/motor/dji_motor_tx_handler.hpp"
 
 #include "motor_sim.hpp"
 
-namespace tap
+namespace tap::motor::motorsim
 {
-namespace motorsim
-{
-class SimHandler
+class DjiMotorSimHandler
 {
 public:
-    SimHandler();
-    ~SimHandler();
+    static DjiMotorSimHandler* getInstance()
+    {
+        static DjiMotorSimHandler* handler = new DjiMotorSimHandler;
+        return handler;
+    }
+
     /**
-     * Reset output stream for SimHandler as well as all of the MotorSim objects.
+     * Reset output stream for DjiMotorSimHandler as well as all of the MotorSim objects.
      */
-    static void resetMotorSims();
+    void resetMotorSims();
+
     /**
      * Registers a new MotorSim object for the given motor type
      * that will respond at the given position on the given CAN bus.
      *
-     * Default torque loading for this function is 0 N*m.
+     * Default torque load for this function is 0 N*m.
      */
-    static void registerSim(
-        MotorSim::MotorType type,
-        tap::can::CanBus bus,
-        tap::motor::MotorId id,
-        float loading = 0);
+    void registerSim(
+        std::shared_ptr<MotorSim> motorSim,
+        std::tuple<can::CanBus, motor::MotorId> canBusAndMotorId);
+
     /**
-     * Returns whether or not the SimHandler is ready to send another message.
-     */
-    static bool readyToSend(tap::can::CanBus bus);
-    /**
-     * Allows the SimHandler to receive a given CAN message
+     * Allows the DjiMotorSimHandler to receive a given CAN message
      * and stream input values to the motor sims.
      * Returns true if data is processed (it always should be).
      */
-    static bool getMessage(tap::can::CanBus bus, const modm::can::Message& message);
+    bool parseMotorMessage(tap::can::CanBus bus, const modm::can::Message& message);
+
     /**
      * Fills the given pointer with a new motor sim feedback message.
-     * Returns true if successful (it always should be).
+     * Returns true if successful (it always should be unless no motor sims have been registers).
      */
-    static bool sendMessage(tap::can::CanBus bus, modm::can::Message* message);
-    /**
-     * Updates all MotorSim objects (position, RPM, time values).
-     */
-    static void updateSims();
+    bool encodeMessage(tap::can::CanBus bus, modm::can::Message* message);
+
+    /// Updates all MotorSim objects (position, RPM, time values).
+    void updateSims();
 
 private:
-    /* Constants */
-    static const uint8_t CAN_BUSSES = 2;
-    static const uint8_t INDEX_LAST_PORT = tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 1;
-    /* Singleton Class Variables */
-    static std::
-        array<std::array<MotorSim*, tap::motor::DjiMotorTxHandler::DJI_MOTORS_PER_CAN>, CAN_BUSSES>
-            sims;
-    static std::array<uint8_t, CAN_BUSSES> nextCanSendIndex;
+    std::map<std::tuple<can::CanBus, MotorId>, std::shared_ptr<MotorSim>> motorIDToMotorSimMap;
+
+    std::map<can::CanBus, MotorId> nextMotorIdToEncode;
+
+    bool getNextMotorId(can::CanBus bus);
 };
-}  // namespace motorsim
-}  // namespace tap
+}  // namespace tap::motor::motorsim
 
 #endif  // PLATFORM_HOSTED
 

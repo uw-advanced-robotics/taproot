@@ -2,6 +2,10 @@
 
 ## May 2022
 
+### Breaking changes
+
+- `MotorSim` and `DjiMotorSimHandler` APIs slightly changed, though functionality remains the same.
+
 ### All changes
 
 - `RefSerialData`'s `MechanismID` enum values were changed to reflect changes in the RoboMaster ref
