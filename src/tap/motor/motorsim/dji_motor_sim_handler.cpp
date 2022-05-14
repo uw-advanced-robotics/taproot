@@ -59,15 +59,9 @@ static bool motorIDAssociatedWithCommandID(MotorId mid, uint32_t cmdId)
 
 bool DjiMotorSimHandler::parseMotorMessage(CanBus bus, const modm::can::Message& message)
 {
-    MotorId id = static_cast<MotorId>(message.identifier);
-    auto busAndMotorID = std::tuple<can::CanBus, MotorId>(bus, id);
-
-    if (motorIDToMotorSimMap.find(busAndMotorID) == motorIDToMotorSimMap.end())
-    {
-        return false;
-    }
-
     std::array<int16_t, 4> newInputs = CanSerializer::parseMessage(&message);
+
+    bool found = false;
 
     for (auto& it : motorIDToMotorSimMap)
     {
@@ -78,14 +72,17 @@ bool DjiMotorSimHandler::parseMotorMessage(CanBus bus, const modm::can::Message&
         if (canBus == bus && motorIDAssociatedWithCommandID(mid, message.identifier))
         {
             it.second->setMotorInput(newInputs[normalizedID % 4]);
+            found = true;
         }
     }
 
-    return true;
+    return found;
 }
 
 bool DjiMotorSimHandler::encodeMessage(CanBus bus, modm::can::Message* message)
 {
+    if (message == nullptr) return false;
+
     bool foundNext = getNextMotorId(bus);
 
     if (!foundNext) return false;
@@ -97,7 +94,7 @@ bool DjiMotorSimHandler::encodeMessage(CanBus bus, modm::can::Message* message)
 
     const auto motorsim = motorIDToMotorSimMap[busAndMotorID];
 
-    CanSerializer::serializeFeedback(
+    *message = CanSerializer::serializeFeedback(
         motorsim->getEnc(),
         motorsim->getRPM(),
         motorsim->getInput(),

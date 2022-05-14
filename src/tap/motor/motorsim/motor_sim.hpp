@@ -51,15 +51,6 @@ public:
         .wtGrad = 72,
     };
 
-    /**
-     * Enum type representing the different types of motors that can be simulated.
-     */
-    enum MotorType
-    {
-        M3508,
-        GM6020
-    };
-
     MotorSim(const Config &config);
 
     /**
