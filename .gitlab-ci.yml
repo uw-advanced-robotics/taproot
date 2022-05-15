@@ -123,6 +123,8 @@ before_script:
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
     - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
+    - mkdir save
+    - cp cobertura.xml save
   coverage: '/\s+Total:\|(\d+.\d+\%).+\|.+\|.+/'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
@@ -130,6 +132,8 @@ before_script:
       coverage_report:
         coverage_format: cobertura
         path: cobertura.xml
+    paths:
+      - save
     expire_in: 2 weeks
 
 "Type A: Generate Test Project":
