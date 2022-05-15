@@ -104,6 +104,7 @@ void DJISerial::updateSerial()
                     }
                 }
 
+
                 if (newMessage.header.dataLength >= SERIAL_RX_BUFF_SIZE)
                 {
                     djiSerialRxState = SERIAL_HEADER_SEARCH;
