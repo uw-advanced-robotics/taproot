@@ -35,7 +35,13 @@ using namespace tap::arch;
 
 namespace tap::communication::sensors::imu::mpu6500
 {
-Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
+Mpu6500::Mpu6500(Drivers *drivers)
+    : drivers(drivers),
+      processRawMpu6500DataFn(Mpu6500::defaultProcessRawMpu6500Data),
+      raw(),
+      imuHeater(drivers)
+{
+}
 
 void Mpu6500::requestCalibration()
 {
@@ -164,9 +170,6 @@ void Mpu6500::periodicIMUUpdate()
     addValidationErrors();
 }
 
-#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
-    (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
-
 bool Mpu6500::read()
 {
 #ifndef PLATFORM_HOSTED
@@ -183,15 +186,9 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+        (*processRawMpu6500DataFn)(rxBuff, raw.accel, raw.gyro);
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
-
-        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
-        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
-        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 
         prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
     }
@@ -296,6 +293,20 @@ void Mpu6500::addValidationErrors()
     }
 
     errorState = 0;
+}
+
+void Mpu6500::defaultProcessRawMpu6500Data(
+    const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
+    modm::Vector3f &accel,
+    modm::Vector3f &gyro)
+{
+    accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+
+    gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
+    gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
+    gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 }
 
 }  // namespace tap::communication::sensors::imu::mpu6500
