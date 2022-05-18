@@ -155,6 +155,15 @@ public:
      */
     bool operatorBlinded() const;
 
+    /**
+     * @return True if the specified heat and heatLimit values are "valid". These values are valid
+     * if they aren't 0xffff and if the heatLimit is not 0.
+     */
+    static inline bool heatAndLimitValid(uint16_t heat, uint16_t heatLimit)
+    {
+        return heat != 0xffff && heatLimit != 0xffff && heatLimit != 0;
+    }
+
 private:
     Rx::RobotData robotData;
     Rx::GameData gameData;
