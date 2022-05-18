@@ -21,43 +21,74 @@
 #define TAPROOT_CONDITIONALLY_EXECUTED_COMMAND_HPP_
 
 #include <cassert>
+#include <list>
 #include <vector>
 
 #include "command.hpp"
 
 namespace tap::control
 {
+/**
+ * An interface that is used to gate the execution of a Command. Override this interface to gate
+ * various commands based on some conditional logic. For example, createa a sub-class of this
+ * interface and have isReady return true when the ref system indicates you have enough heat to
+ * launch a projectile. Then, use a ConditionallyExecutedCommand to only run a command that launches
+ * a projectile when the CommandGovernorInterface sub-object you created is true.
+ */
+class CommandGovernorInterface
+{
+public:
+    virtual bool isReady() = 0;
+    virtual bool isFinished() = 0;
+};
 
+template <size_t NUM_CONDITIONS>
 class ConditionallyExecutedCommand : public Command
 {
 public:
-    using ConditionalFn = bool (*)();
-
     ConditionallyExecutedCommand(
         std::vector<Subsystem *> subRequirements,
         Command &command,
-        ConditionalFn fn)
+        const std::array<CommandGovernorInterface *, NUM_CONDITIONS> &commandGovernorList)
         : command(command),
-          fn(fn)
+          commandGovernorList(commandGovernorList)
     {
-        std::for_each(
-            subRequirements.begin(),
-            subRequirements.end(),
-            [&](auto sub) { addSubsystemRequirement(sub); });
+        std::for_each(subRequirements.begin(), subRequirements.end(), [&](auto sub) {
+            addSubsystemRequirement(sub);
+        });
         assert(command.getRequirementsBitwise() == this->getRequirementsBitwise());
-        assert(fn != nullptr);
     }
 
     const char *getName() const override { return command.getName(); }
-    bool isReady() override { return fn() && command.isReady(); }
+
+    bool isReady() override
+    {
+        return std::all_of(
+                   commandGovernorList.begin(),
+                   commandGovernorList.end(),
+                   [](auto governor) { return governor.isReady(); }) &&
+               command.isReady();
+    }
+
     void initialize() override { command.initialize(); }
+
     void execute() override { command.execute(); }
+
     void end(bool interrupted) override { command.end(interrupted); }
-    bool isFinished() const override { return fn() && command.isFinished(); }
+
+    bool isFinished() const override
+    {
+        return std::any_of(
+                   commandGovernorList.begin(),
+                   commandGovernorList.end(),
+                   [](auto governor) { return governor.isReady(); }) ||
+               command.isFinished();
+    }
 
 private:
     Command &command;
-    ConditionalFn fn;
+
+    std::array<CommandGovernorInterface *, NUM_CONDITIONS> commandGovernorList;
 };
 }  // namespace tap::control
 
