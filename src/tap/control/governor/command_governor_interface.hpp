@@ -20,13 +20,13 @@
 #ifndef TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
 #define TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
 
-namespace tap::control
+namespace tap::control::governor
 {
 /**
  * An interface that is used to gate the execution of a Command. Override this interface to gate
  * various commands based on some conditional logic. For example, create a sub-class of this
  * interface and have isReady return true when the ref system indicates you have enough heat to
- * launch a projectile. Then, use a ConditionallyExecutedCommand to only run a command that launches
+ * launch a projectile. Then, use a GovernorLimitedCommand to only run a command that launches
  * a projectile when the CommandGovernorInterface sub-object you created is true.
  */
 class CommandGovernorInterface
@@ -37,6 +37,6 @@ public:
     /// Returns true if the Command being governed by the governor should stop executing.
     virtual bool isFinished() = 0;
 };
-}  // namespace tap::control
+}  // namespace tap::control::governor
 
 #endif  // TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
