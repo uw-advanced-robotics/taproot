@@ -25,23 +25,17 @@
 #include <vector>
 
 #include "command.hpp"
+#include "command_governor_interface.hpp"
 
 namespace tap::control
 {
 /**
- * An interface that is used to gate the execution of a Command. Override this interface to gate
- * various commands based on some conditional logic. For example, createa a sub-class of this
- * interface and have isReady return true when the ref system indicates you have enough heat to
- * launch a projectile. Then, use a ConditionallyExecutedCommand to only run a command that launches
- * a projectile when the CommandGovernorInterface sub-object you created is true.
+ * A command that runs another command, but will only execute the command when some list of
+ * governors all allow it to. All governors also have control over ending the command. If one of the
+ * governors believes the command should be finished, the command will be finished.
+ *
+ * @tparam NUM_CONDITIONS The number of governors in the governor list.
  */
-class CommandGovernorInterface
-{
-public:
-    virtual bool isReady() = 0;
-    virtual bool isFinished() = 0;
-};
-
 template <size_t NUM_CONDITIONS>
 class ConditionallyExecutedCommand : public Command
 {
@@ -53,9 +47,10 @@ public:
         : command(command),
           commandGovernorList(commandGovernorList)
     {
-        std::for_each(subRequirements.begin(), subRequirements.end(), [&](auto sub) {
-            addSubsystemRequirement(sub);
-        });
+        std::for_each(
+            subRequirements.begin(),
+            subRequirements.end(),
+            [&](auto sub) { addSubsystemRequirement(sub); });
         assert(command.getRequirementsBitwise() == this->getRequirementsBitwise());
     }
 
@@ -66,7 +61,7 @@ public:
         return std::all_of(
                    commandGovernorList.begin(),
                    commandGovernorList.end(),
-                   [](auto governor) { return governor.isReady(); }) &&
+                   [](auto governor) { return governor->isReady(); }) &&
                command.isReady();
     }
 
@@ -81,7 +76,7 @@ public:
         return std::any_of(
                    commandGovernorList.begin(),
                    commandGovernorList.end(),
-                   [](auto governor) { return governor.isReady(); }) ||
+                   [](auto governor) { return governor->isReady(); }) ||
                command.isFinished();
     }
 
