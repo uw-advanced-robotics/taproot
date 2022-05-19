@@ -20,7 +20,15 @@
 
 namespace tap::motor
 {
-GenericStepperMotorDriver::GenericStepperMotorDriver(Drivers* drivers) : Subsystem(drivers), drivers(drivers) {}
+GenericStepperMotorDriver::GenericStepperMotorDriver(Drivers* drivers)
+    : Subsystem(drivers),
+      drivers(drivers)
+{
+}
 
+void refresh() {
+    // toggle the pin... or pwm interrupts
+    
+}
 
 }  // namespace tap::motor

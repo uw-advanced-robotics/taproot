@@ -33,14 +33,15 @@ namespace tap::motor
  */
 class GenericStepperMotorDriver : public StepperMotorInterface, public tap::control::Subsystem
 {
-public:
-/**
- * Construct a new Generic Stepper Motor Driver object.
- * 
- */
-GenericStepperMotorDriver(Drivers* drivers);
+    public:
+    /**
+     * Construct a new Generic Stepper Motor Driver object.
+     */
+    GenericStepperMotorDriver(Drivers* drivers);
 
-void refresh() override;
+    void refresh() override;
+
+        
 
 private:
     Drivers* drivers;
