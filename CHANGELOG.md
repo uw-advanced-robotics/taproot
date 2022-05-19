@@ -8,6 +8,8 @@
 
 ### All changes
 
+- `GovernorLimitedCommand` added, a wrapper command that allows one to specify various
+  conditions for the command being wrapped to run (!206).
 - `RefSerialData`'s `MechanismID` enum values were changed to reflect changes in the RoboMaster ref
   serial protocol.
 - `IntegrableSetpointSubsystem` and associated commands added. This allows you to move the integral
