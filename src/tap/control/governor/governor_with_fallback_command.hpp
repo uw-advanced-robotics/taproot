@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_ALTERNATE_COMMAND_HPP_
-#define TAPROOT_ALTERNATE_COMMAND_HPP_
+#ifndef TAPROOT_GOVERNOR_WITH_FALLBACK_COMMAND_HPP_
+#define TAPROOT_GOVERNOR_WITH_FALLBACK_COMMAND_HPP_
 
 #include <algorithm>
 #include <array>
@@ -125,4 +125,4 @@ private:
 };
 }  // namespace tap::control::governor
 
-#endif  // TAPROOT_ALTERNATE_COMMAND_HPP_
+#endif  // TAPROOT_GOVERNOR_WITH_FALLBACK_COMMAND_HPP_
