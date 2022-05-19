@@ -51,10 +51,9 @@ public:
           commandWhenGovernorsFalse(commandWhenGovernorsFalse),
           commandGovernorList(commandGovernorList)
     {
-        std::for_each(
-            subRequirements.begin(),
-            subRequirements.end(),
-            [&](auto sub) { addSubsystemRequirement(sub); });
+        std::for_each(subRequirements.begin(), subRequirements.end(), [&](auto sub) {
+            addSubsystemRequirement(sub);
+        });
 
         assert(commandWhenGovernorsTrue.getRequirementsBitwise() == this->getRequirementsBitwise());
         assert(
@@ -65,10 +64,10 @@ public:
 
     bool isReady() override
     {
-        readyWhenGovernorsTrue = std::all_of(
-            commandGovernorList.begin(),
-            commandGovernorList.end(),
-            [](auto governor) { return governor->isReady(); });
+        readyWhenGovernorsTrue =
+            std::all_of(commandGovernorList.begin(), commandGovernorList.end(), [](auto governor) {
+                return governor->isReady();
+            });
 
         return (readyWhenGovernorsTrue && commandWhenGovernorsTrue.isReady()) ||
                (!readyWhenGovernorsTrue && commandWhenGovernorsFalse.isReady());

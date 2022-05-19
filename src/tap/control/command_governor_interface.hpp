@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef COMMAND_GOVERNOR_INTERFACE_HPP_
-#define COMMAND_GOVERNOR_INTERFACE_HPP_
+#ifndef TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
+#define TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
 
 namespace tap::control
 {
@@ -39,4 +39,4 @@ public:
 };
 }  // namespace tap::control
 
-#endif  // COMMAND_GOVERNOR_INTERFACE_HPP_
+#endif  // TAPROOT_COMMAND_GOVERNOR_INTERFACE_HPP_
