@@ -20,8 +20,8 @@
 #ifndef TAPROOT_GOVERNOR_LIMITED_COMMAND_HPP_
 #define TAPROOT_GOVERNOR_LIMITED_COMMAND_HPP_
 
-#include <cassert>
 #include <array>
+#include <cassert>
 #include <vector>
 
 #include "../command.hpp"
