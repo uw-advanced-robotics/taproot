@@ -73,10 +73,10 @@ bool findTargetProjectileIntersection(
     float bulletVelocity,
     uint8_t numIterations,
     float *turretPitch,
-    float *turretYaw)
+    float *turretYaw,
+    float *projectedTravelTime)
 {
     modm::Vector3f projectedTargetPosition = targetInitialState.position;
-    float projectedTravelTime;
 
     if (projectedTargetPosition.x == 0 && projectedTargetPosition.y == 0 &&
         projectedTargetPosition.z == 0)
@@ -89,12 +89,12 @@ bool findTargetProjectileIntersection(
         if (!computeTravelTime(
                 projectedTargetPosition,
                 bulletVelocity,
-                &projectedTravelTime,
+                projectedTravelTime,
                 turretPitch))
         {
             return false;
         }
-        projectedTargetPosition = targetInitialState.projectForward(projectedTravelTime);
+        projectedTargetPosition = targetInitialState.projectForward(*projectedTravelTime);
     }
 
     *turretYaw = atan2f(projectedTargetPosition.y, projectedTargetPosition.x);
