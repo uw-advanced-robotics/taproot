@@ -5,6 +5,7 @@
 ### Breaking changes
 
 - `MotorSim` and `DjiMotorSimHandler` APIs slightly changed, though functionality remains the same.
+- Ballistics now provide projectile travel time as an output parameter
 
 ### All changes
 
@@ -16,6 +17,7 @@
   of some setpoint around. An example of where this is useful would be velocity control of a motor,
   where you want to directly control the velocity of the motor and indirectly control the position
   (!188).
+- Ballistics now provide projectile travel time as an output parameter
 
 ## April 2022
 
