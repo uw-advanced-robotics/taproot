@@ -42,7 +42,7 @@ class GovernorLimitedCommand : public Command
 {
 public:
     GovernorLimitedCommand(
-        std::vector<Subsystem *> subRequirements,
+        const std::vector<Subsystem *> &subRequirements,
         Command &command,
         const std::array<CommandGovernorInterface *, NUM_CONDITIONS> &commandGovernorList)
         : command(command),
