@@ -132,13 +132,15 @@ TEST(
 
     float turretPitch = 0;
     float turretYaw = 0;
+    float timeOfFlight = 0;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 1E6, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 1E6, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(true, intersectionFound);
     EXPECT_NEAR(0, turretPitch, 1E-5);
     EXPECT_NEAR(0, turretYaw, 1E-5);
+    EXPECT_NEAR(0, timeOfFlight, 1E-5);
 }
 
 TEST(
@@ -153,13 +155,15 @@ TEST(
 
     float turretPitch = 0;
     float turretYaw = 0;
+    float timeOfFlight = 0;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(true, intersectionFound);
     EXPECT_LT(-modm::toRadian(45), turretPitch);
     EXPECT_NEAR(0, turretYaw, 1E-5);
+    EXPECT_NEAR(10. / 30., timeOfFlight, 0.15);
 }
 
 TEST(
@@ -174,14 +178,16 @@ TEST(
 
     float turretPitch = 0;
     float turretYaw = 0;
+    float timeOfFlight = 0;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(true, intersectionFound);
     EXPECT_LT(0, turretYaw);
     EXPECT_GT(modm::toRadian(30), turretYaw);
     EXPECT_LT(-modm::toRadian(45), turretPitch);
+    EXPECT_NEAR(timeOfFlight, 10. / 30., 0.15);
 }
 
 TEST(
@@ -194,22 +200,24 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    float turretPitch30ms, turretYaw30ms;
-    float turretPitch40ms, turretYaw40ms;
-    float turretPitch50ms, turretYaw50ms;
+    float turretPitch30ms, turretYaw30ms, timeOfFlight30ms;
+    float turretPitch40ms, turretYaw40ms, timeOfFlight40ms;
+    float turretPitch50ms, turretYaw50ms, timeOfFlight50ms;
 
     bool intersectionFound30ms =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch30ms, &turretYaw30ms);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch30ms, &turretYaw30ms, &timeOfFlight30ms);
     bool intersectionFound40ms =
-        findTargetProjectileIntersection(targetState, 40, 3, &turretPitch40ms, &turretYaw40ms);
+        findTargetProjectileIntersection(targetState, 40, 3, &turretPitch40ms, &turretYaw40ms, &timeOfFlight40ms);
     bool intersectionFound50ms =
-        findTargetProjectileIntersection(targetState, 50, 3, &turretPitch50ms, &turretYaw50ms);
+        findTargetProjectileIntersection(targetState, 50, 3, &turretPitch50ms, &turretYaw50ms, &timeOfFlight50ms);
 
     EXPECT_EQ(true, intersectionFound30ms);
     EXPECT_EQ(true, intersectionFound40ms);
     EXPECT_EQ(true, intersectionFound50ms);
     EXPECT_GT(turretYaw30ms, turretYaw40ms);
     EXPECT_GT(turretYaw40ms, turretYaw50ms);
+    EXPECT_GT(timeOfFlight30ms, timeOfFlight40ms);
+    EXPECT_GT(timeOfFlight40ms, timeOfFlight50ms);
 }
 
 TEST(
@@ -222,14 +230,15 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    float turretPitch, turretYaw;
+    float turretPitch, turretYaw, timeOfFlight;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(true, intersectionFound);
     EXPECT_GT(0, turretPitch);
     EXPECT_NEAR(0, turretYaw, 1E-5);
+    EXPECT_NEAR(10. / 30., timeOfFlight, 0.15);
 }
 
 TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identical)
@@ -240,10 +249,10 @@ TEST(Ballistics, findTargetProjectileIntersection_target_turret_position_identic
         .acceleration = {0, 0, 0},
     };
 
-    float turretPitch, turretYaw;
+    float turretPitch, turretYaw, timeOfFlight;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(false, intersectionFound);
 }
@@ -256,10 +265,10 @@ TEST(Ballistics, findTargetProjectileIntersection_target_out_of_range)
         .acceleration = {0, 0, 0},
     };
 
-    float turretPitch, turretYaw;
+    float turretPitch, turretYaw, timeOfFlight;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 1, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 1, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(false, intersectionFound);
 }
@@ -274,12 +283,13 @@ TEST(
         .acceleration = {0, 0, 0},
     };
 
-    float turretPitch, turretYaw;
+    float turretPitch, turretYaw, timeOfFlight;
 
     bool intersectionFound =
-        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw);
+        findTargetProjectileIntersection(targetState, 30, 3, &turretPitch, &turretYaw, &timeOfFlight);
 
     EXPECT_EQ(true, intersectionFound);
     EXPECT_NEAR(0, turretYaw, 1E-5);
     EXPECT_GT(0, turretPitch);
+    EXPECT_GT(10. / 30., timeOfFlight);
 }
