@@ -202,7 +202,7 @@ TEST(
     EXPECT_LT(0, turretYaw);
     EXPECT_GT(modm::toRadian(30), turretYaw);
     EXPECT_LT(-modm::toRadian(45), turretPitch);
-    EXPECT_NEAR(timeOfFlight, 10. / 30., 0.15);
+    EXPECT_NEAR(10. / 30., timeOfFlight, 0.15);
 }
 
 TEST(
