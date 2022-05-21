@@ -43,6 +43,10 @@ public:
      * seconds` (units of setpoint integrated with respect to time)
      */
     virtual float getCurrentValueIntegral() const = 0;
+
+    virtual void setDesiredIntegralSetpoint(float integralValue) = 0;
+
+    virtual float getDesiredIntegralSetpoint() const = 0;
 };
 
 }  // namespace tap::control::setpoint

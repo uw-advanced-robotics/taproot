@@ -86,20 +86,20 @@ private:
 
     IntegrableSetpointSubsystem& integrableSetpointSubsystem;
 
-    float finalTargetIntegralSetpoint = 0;
-
     /// @return True if the intgral setpoint has reached the target integral
     bool targetIntegralReached() const
     {
         if (config.targetIntegralChange > 0)
         {
             return integrableSetpointSubsystem.getCurrentValueIntegral() >
-                   finalTargetIntegralSetpoint - config.integralSetpointTolerance;
+                   integrableSetpointSubsystem.getDesiredIntegralSetpoint() -
+                       config.integralSetpointTolerance;
         }
         else
         {
             return integrableSetpointSubsystem.getCurrentValueIntegral() <
-                   finalTargetIntegralSetpoint + config.integralSetpointTolerance;
+                   integrableSetpointSubsystem.getDesiredIntegralSetpoint() +
+                       config.integralSetpointTolerance;
         }
     }
 };  // class MoveIntegralCommand

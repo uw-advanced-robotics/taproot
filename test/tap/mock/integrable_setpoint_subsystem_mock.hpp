@@ -47,6 +47,8 @@ public:
     MOCK_METHOD(bool, isOnline, (), (override));
     MOCK_METHOD(float, getVelocity, (), (override));
     MOCK_METHOD(float, getCurrentValueIntegral, (), (const override));
+    MOCK_METHOD(void, setDesiredIntegralSetpoint, (float), (override));
+    MOCK_METHOD(float, getDesiredIntegralSetpoint, (), (const override));
 };
 
 }  // namespace tap::mock

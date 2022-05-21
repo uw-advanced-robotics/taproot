@@ -5,7 +5,10 @@
 ### Breaking changes
 
 - `MotorSim` and `DjiMotorSimHandler` APIs slightly changed, though functionality remains the same.
-- Ballistics now provide projectile travel time as an output parameter
+- Ballistics now provide projectile travel time as an output parameter.
+- `maxWaitTime` parameter in `UnjamIntegralCommand` changed to `extraWaitTime`. The min time
+  required to reach the integral setpoint given the desired setpoint and integral setpoint are now
+  computed, and `extraWaitTime` is added on to this value.
 
 ### All changes
 
@@ -18,6 +21,8 @@
   where you want to directly control the velocity of the motor and indirectly control the position
   (!188).
 - Ballistics now provide projectile travel time as an output parameter
+- `IntegrableSetpointSubsystem` now has a getter/setter pair for the integral setpoint. The integral
+  setpoint is used by the integral setpoint commands.
 
 ## April 2022
 

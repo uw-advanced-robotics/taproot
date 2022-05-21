@@ -43,8 +43,8 @@ MoveIntegralCommand::MoveIntegralCommand(
 void MoveIntegralCommand::initialize()
 {
     integrableSetpointSubsystem.setSetpoint(config.desiredSetpoint);
-    finalTargetIntegralSetpoint =
-        integrableSetpointSubsystem.getCurrentValueIntegral() + config.targetIntegralChange;
+    integrableSetpointSubsystem.setDesiredIntegralSetpoint(
+        integrableSetpointSubsystem.getDesiredIntegralSetpoint() + config.targetIntegralChange);
 }
 
 void MoveIntegralCommand::end(bool) { integrableSetpointSubsystem.setSetpoint(0); }

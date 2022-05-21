@@ -37,6 +37,10 @@ protected:
         ON_CALL(sub, isJammed).WillByDefault(ReturnPointee(&jammed));
         ON_CALL(sub, getCurrentValueIntegral).WillByDefault(ReturnPointee(&integral));
         ON_CALL(sub, setSetpoint).WillByDefault([&](float setpoint) { this->setpoint = setpoint; });
+        ON_CALL(sub, setDesiredIntegralSetpoint).WillByDefault([&](float integralSetpoint) {
+            this->integralSetpoint = integralSetpoint;
+        });
+        ON_CALL(sub, getDesiredIntegralSetpoint).WillByDefault(ReturnPointee(&integralSetpoint));
     }
 
     void clearJam(UnjamIntegralCommand &cmd)
@@ -72,11 +76,12 @@ protected:
     bool jammed = false;
     float integral = 0;
     float setpoint = 0;
+    float integralSetpoint = 0;
 
     UnjamIntegralCommand::Config defaultConfig = {
         .targetUnjamIntegralChange = 10,
         .unjamSetpoint = 2,
-        .maxWaitTime = 1000 * 10 / 2 + 1,
+        .extraWaitTime = 0,
         .targetCycleCount = 1,
     };
 };
@@ -139,7 +144,8 @@ TEST_F(UnjamIntegralCommandTest, execute_jam_clear_timeout)
 
     EXPECT_NEAR(-defaultConfig.unjamSetpoint, setpoint, 1E-5);
 
-    clock.time += defaultConfig.maxWaitTime + 100;
+    clock.time +=
+        1000 * defaultConfig.targetUnjamIntegralChange / defaultConfig.unjamSetpoint + 100;
 
     cmd.execute();  // integral hasn't changed, but timed out
 
@@ -147,7 +153,8 @@ TEST_F(UnjamIntegralCommandTest, execute_jam_clear_timeout)
 
     EXPECT_FALSE(cmd.isFinished());
 
-    clock.time += defaultConfig.maxWaitTime + 100;
+    clock.time +=
+        1000 * defaultConfig.targetUnjamIntegralChange / defaultConfig.unjamSetpoint + 100;
 
     cmd.execute();  // integral hasn't changed but we have reached the forward position (since we
                     // didn't move); however, we set targetCycleCount to 1, so the command finishes
@@ -177,7 +184,8 @@ TEST_F(UnjamIntegralCommandTest, execute_jam_stuck_in_back_state)
 
     EXPECT_NEAR(defaultConfig.unjamSetpoint, setpoint, 1E-5);
 
-    clock.time += defaultConfig.maxWaitTime + 100;
+    clock.time +=
+        1000 * defaultConfig.targetUnjamIntegralChange / defaultConfig.unjamSetpoint + 100;
 
     cmd.execute();  // still in back position timed out
 
@@ -204,13 +212,15 @@ TEST_F(UnjamIntegralCommandTest, execute_multiple_jam_iterations)
     {
         EXPECT_FALSE(cmd.isFinished());
 
-        clock.time += defaultConfig.maxWaitTime + 100;
+        clock.time +=
+            1000 * defaultConfig.targetUnjamIntegralChange / defaultConfig.unjamSetpoint + 100;
 
         cmd.execute();
 
         EXPECT_NEAR(defaultConfig.unjamSetpoint, setpoint, 1E-5);
 
-        clock.time += defaultConfig.maxWaitTime + 100;
+        clock.time +=
+            1000 * defaultConfig.targetUnjamIntegralChange / defaultConfig.unjamSetpoint + 100;
 
         cmd.execute();
 

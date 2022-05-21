@@ -20,6 +20,7 @@
 #ifndef TAPROOT_UNJAM_INTEGRAL_COMMAND_HPP_
 #define TAPROOT_UNJAM_INTEGRAL_COMMAND_HPP_
 
+#include <cmath>
 #include <cstdint>
 
 #include "tap/architecture/timeout.hpp"
@@ -66,15 +67,11 @@ public:
          */
         float unjamSetpoint;
         /**
-         * The maximum amount of time the controller will wait for the subsystem to reach
-         * targetUnjamIntegralChange in milliseconds before trying to move in the opposite
-         * direction.
-         *
-         * @attention This value must be > 1000 * (targetUnjamIntegralChange / unjamSetpoint) since
-         * this is the minimum possible time it will take for the motor to rotate
-         * targetUnjamIntegralChange units.
+         * A value in milliseconds. The amount of time in addition to the minimum possible time
+         * it will take for the motor to rotate targetUnjamintegralChange units
+         * (which is 1000 * (targetUnjamIntegralChange / unjamSetpoint)).
          */
-        uint32_t maxWaitTime;
+        uint32_t extraWaitTime;
         /**
          * The number of cycles to attempt to rotate the velocity setpoint subsystem back and
          * forth.
@@ -136,6 +133,20 @@ private:
     void beginUnjamForwards();
 
     void beginUnjamBackwards();
+
+    /**
+     * @return The unjam rotate time, the max amount of time the unjam will rotate in a certain
+     * direction before giving up and rotating in the other direction.
+     */
+    inline uint32_t getUnjamRotateTime() const
+    {
+        float integralUnjamChange = std::abs(
+            integrableSetpointSubsystem.getDesiredIntegralSetpoint() -
+            integrableSetpointSubsystem.getCurrentValueIntegral());
+
+        return static_cast<uint32_t>(1000.0f * (integralUnjamChange / config.unjamSetpoint)) +
+               config.extraWaitTime;
+    }
 };
 
 }  // namespace tap::control::setpoint

@@ -36,6 +36,10 @@ protected:
         ON_CALL(sub, isOnline).WillByDefault(ReturnPointee(&online));
         ON_CALL(sub, isJammed).WillByDefault(ReturnPointee(&jammed));
         ON_CALL(sub, getCurrentValueIntegral).WillByDefault(ReturnPointee(&integral));
+        ON_CALL(sub, setDesiredIntegralSetpoint).WillByDefault([&](float integralSetpoint) {
+            this->integralSetpoint = integralSetpoint;
+        });
+        ON_CALL(sub, getDesiredIntegralSetpoint).WillByDefault(ReturnPointee(&integralSetpoint));
     }
 
     tap::Drivers drivers;
@@ -44,6 +48,7 @@ protected:
     bool online = false;
     bool jammed = false;
     float integral = 0;
+    float integralSetpoint = 0;
 
     MoveIntegralCommand::Config defaultConfig = {
         .targetIntegralChange = 5,
