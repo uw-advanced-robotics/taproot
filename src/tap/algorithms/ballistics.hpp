@@ -86,7 +86,7 @@ bool computeTravelTime(
     float bulletVelocity,
     float *travelTime,
     float *turretPitch,
-    const float pitchAxisOffset);
+    const float pitchAxisOffset = 0);
 
 /**
  * @param[in] targetInitialState: The initial 3D kinematic state of a target. Frame requirements:
@@ -115,7 +115,7 @@ bool findTargetProjectileIntersection(
     float *turretPitch,
     float *turretYaw,
     float *projectedTravelTime,
-    const float pitchAxisOffset);
+    const float pitchAxisOffset = 0);
 
 }  // namespace tap::algorithms::ballistics
 
