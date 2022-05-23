@@ -39,7 +39,7 @@ namespace algorithms
 class ContiguousFloat
 {
 public:
-    ContiguousFloat(const float& value, const float& lowerBound, const float& upperBound);
+    ContiguousFloat(const float value, const float lowerBound, const float upperBound);
 
     /**
      * Shifts the value so that it still represents the same position but is
@@ -57,7 +57,7 @@ public:
      * @param[in] otherValue the other value to compare against.
      * @return the computed difference.
      */
-    float difference(const float& otherValue) const;
+    float difference(const float otherValue) const;
 
     /**
      * Computes the difference between two values (other - this), accounting for
@@ -74,14 +74,14 @@ public:
      *
      * @param[in] shiftMagnitude the amount to add to each bound.
      */
-    void shiftBounds(const float& shiftMagnitude);
+    void shiftBounds(const float shiftMagnitude);
 
     /**
      * Shifts value by the specified amount (addition).
      *
      * @param[in] shiftMagnitude The amount to add to the current value.
      */
-    void shiftValue(const float& shiftMagnitude);
+    void shiftValue(const float shiftMagnitude);
 
     /**
      * Limits the passed in contiguous float between the closest of the
@@ -134,8 +134,8 @@ public:
      */
     static float limitValue(
         const ContiguousFloat& valueToLimit,
-        const float& min,
-        const float& max,
+        const float min,
+        const float max,
         int* status);
 
     // Getters/Setters ----------------
@@ -145,7 +145,7 @@ public:
      */
     float getValue() const;
 
-    void setValue(const float& newValue);
+    void setValue(const float newValue);
 
     /**
      * Returns the value's upper bound.
@@ -155,7 +155,7 @@ public:
     /**
      * Sets the upper bound to newValue.
      */
-    void setUpperBound(const float& newValue);
+    void setUpperBound(const float newValue);
 
     /**
      * Returns the value's lower bound.
@@ -165,7 +165,7 @@ public:
     /**
      * Sets the lower bound to newValue.
      */
-    void setLowerBound(const float& newValue);
+    void setLowerBound(const float newValue);
 
 private:
     /**

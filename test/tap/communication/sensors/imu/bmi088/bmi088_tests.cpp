@@ -19,11 +19,11 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/communication/sensors/bmi088/bmi088.hpp"
-#include "tap/communication/sensors/bmi088/bmi088_hal.hpp"
+#include "tap/communication/sensors/imu/bmi088/bmi088.hpp"
+#include "tap/communication/sensors/imu/bmi088/bmi088_hal.hpp"
 #include "tap/drivers.hpp"
 
-using namespace tap::communication::sensors::bmi088;
+using namespace tap::communication::sensors::imu::bmi088;
 
 TEST(Bmi088, periodicIMUUpdate_initialize_not_called_errors)
 {

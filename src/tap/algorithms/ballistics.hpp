@@ -98,18 +98,21 @@ bool computeTravelTime(
  *      - If the target is approaching the projectile speed, this algorithm may have a difficult
  *        time converging (but it may be possible with enough iterations).
  *      - If the target is moving faster than the projectile, this algorithm will diverge.
- * @param[out] projectileIntersection: The position (in m, in the same frame as targetInitialState)
- * at which our robot should aim to hit the given target, taking into account the path a projectile
- * takes to hit the target.
- *
- * @return Whether or not a valid aiming solution was found.
+ * @param[out] turretPitch: The world-relative turret pitch (in radians above level) at which our
+ * robot should aim to hit the given target, taking into account the path a projectile takes to hit
+ * the target.
+ * @param[out] turretYaw: Analogue of turret pitch
+ * @param[out] projectedTravelTime: The expected time between projectile launch and impact with the
+ * target, in seconds.
+ * @return Whether or not a valid aiming solution was found. Out parameters only valid if true.
  */
 bool findTargetProjectileIntersection(
     MeasuredKinematicState targetInitialState,
     float bulletVelocity,
     uint8_t numIterations,
     float *turretPitch,
-    float *turretYaw);
+    float *turretYaw,
+    float *projectedTravelTime);
 
 }  // namespace tap::algorithms::ballistics
 

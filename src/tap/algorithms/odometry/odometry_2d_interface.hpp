@@ -48,6 +48,9 @@ public:
      * @return The current x and y velocity (in m/s).
      */
     virtual modm::Vector2f getCurrentVelocity2D() const = 0;
+
+    /// @return The last time that odometry was computed (in microseconds).
+    virtual uint32_t getLastComputedOdometryTime() const = 0;
 };
 
 }  // namespace tap::algorithms::odometry
