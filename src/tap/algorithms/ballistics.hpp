@@ -78,8 +78,9 @@ struct MeasuredKinematicState
  * object's position.
  * @param[out] turretPitch: The pitch angle of the turret to hit the target at the given travel
  * time.
- * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes in the X-Y plane, in
- * meters.
+ * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes (in meters)
+ * as seen from a plane parallel to the ground. A positive offset indicates that
+ * the pitch axis is located behind the yaw axis.
  * @return Whether or not a valid travel time was found.
  */
 bool computeTravelTime(
@@ -106,8 +107,9 @@ bool computeTravelTime(
  * @param[out] turretYaw: Analogue of turret pitch
  * @param[out] projectedTravelTime: The expected time between projectile launch and impact with the
  * target, in seconds.
- * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes in the X-Y plane, in
- * meters.
+ * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes (in meters)
+ * as seen from a plane parallel to the ground. A positive offset indicates that
+ * the pitch axis is located behind the yaw axis.
  * @return Whether or not a valid aiming solution was found. Out parameters only valid if true.
  */
 bool findTargetProjectileIntersection(
