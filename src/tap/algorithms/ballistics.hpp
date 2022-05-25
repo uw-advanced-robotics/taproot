@@ -78,14 +78,17 @@ struct MeasuredKinematicState
  * object's position.
  * @param[out] turretPitch: The pitch angle of the turret to hit the target at the given travel
  * time.
- *
+ * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes (in meters)
+ * as seen from a plane parallel to the ground. A positive offset indicates that
+ * the pitch axis is located behind the yaw axis.
  * @return Whether or not a valid travel time was found.
  */
 bool computeTravelTime(
     const modm::Vector3f &targetPosition,
     float bulletVelocity,
     float *travelTime,
-    float *turretPitch);
+    float *turretPitch,
+    const float pitchAxisOffset = 0);
 
 /**
  * @param[in] targetInitialState: The initial 3D kinematic state of a target. Frame requirements:
@@ -104,6 +107,9 @@ bool computeTravelTime(
  * @param[out] turretYaw: Analogue of turret pitch
  * @param[out] projectedTravelTime: The expected time between projectile launch and impact with the
  * target, in seconds.
+ * @param[in] pitchAxisOffset: The distance between the pitch and yaw axes (in meters)
+ * as seen from a plane parallel to the ground. A positive offset indicates that
+ * the pitch axis is located behind the yaw axis.
  * @return Whether or not a valid aiming solution was found. Out parameters only valid if true.
  */
 bool findTargetProjectileIntersection(
@@ -112,7 +118,8 @@ bool findTargetProjectileIntersection(
     uint8_t numIterations,
     float *turretPitch,
     float *turretYaw,
-    float *projectedTravelTime);
+    float *projectedTravelTime,
+    const float pitchAxisOffset = 0);
 
 }  // namespace tap::algorithms::ballistics
 
