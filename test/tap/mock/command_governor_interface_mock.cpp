@@ -17,22 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_ODOMETRY_2D_INTERFACE_MOCK_HPP_
-#define TAPROOT_ODOMETRY_2D_INTERFACE_MOCK_HPP_
-
-#include <gmock/gmock.h>
-
-#include "tap/algorithms/odometry/odometry_2d_interface.hpp"
+#include "command_governor_interface_mock.hpp"
 
 namespace tap::mock
 {
-class Odometry2DInterfaceMock : public algorithms::odometry::Odometry2DInterface
-{
-public:
-    MOCK_METHOD(modm::Location2D<float>, getCurrentLocation2D, (), (const override));
-    MOCK_METHOD(modm::Vector2f, getCurrentVelocity2D, (), (const override));
-    MOCK_METHOD(uint32_t, getLastComputedOdometryTime, (), (const override));
-};
+CommandGovernorInterfaceMock::CommandGovernorInterfaceMock() {}
+CommandGovernorInterfaceMock::~CommandGovernorInterfaceMock() {}
 }  // namespace tap::mock
-
-#endif  // TAPROOT_ODOMETRY_2D_INTERFACE_MOCK_HPP_
