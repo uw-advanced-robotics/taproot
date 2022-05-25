@@ -34,7 +34,6 @@ void Odometry2DTracker::update()
 {
     modm::Vector3f chassisAbsoluteDisplacement;
     modm::Vector3f chassisVelocity;
-    float chassisYaw = 0.0f;
 
     bool validDisplacementAvailable = chassisDisplacementObserver->getVelocityChassisDisplacement(
         &chassisVelocity,
