@@ -586,7 +586,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
 {
     struct ShootData
     {
-        uint8_t bulletType;
+        uint8_t lastBulletType;
         uint8_t shooterId;
         uint8_t bulletFreq;
         float bulletSpeed;
@@ -597,7 +597,7 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
     DJISerial::ReceivedSerialMessage msg;
     ShootData testData;
 
-    testData.bulletType = 1;
+    testData.lastBulletType = 1;
     testData.shooterId = 1;
     testData.bulletFreq = 45;
     testData.bulletSpeed = 3452.12f;
@@ -605,23 +605,30 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
 
     refSerial.messageReceiveCallback(msg);
 
-    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_17, refSerial.getRobotData().turret.bulletType);
+    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_17, refSerial.getRobotData().turret.lastBulletType);
     EXPECT_EQ(
         RefSerial::Rx::MechanismID::TURRET_17MM_1,
-        refSerial.getRobotData().turret.launchMechanismID);
-    EXPECT_EQ(45, refSerial.getRobotData().turret.firingFreq);
-    EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
+        refSerial.getRobotData().turret.lastLaunchMechanismID);
+    EXPECT_EQ(
+        45,
+        refSerial.getRobotData().turret.firingFreq[RefSerial::Rx::getNormalizedMechanismID(
+            RefSerial::Rx::MechanismID::TURRET_17MM_1)]);
+    EXPECT_NEAR(
+        3452.12f,
+        refSerial.getRobotData().turret.bulletSpeed[RefSerial::Rx::getNormalizedMechanismID(
+            RefSerial::Rx::MechanismID::TURRET_17MM_1)],
+        1E-3);
 
-    testData.bulletType = 2;
+    testData.lastBulletType = 2;
     testData.shooterId = 2;
     msg = constructMsg(testData, 0x0207);
 
     refSerial.messageReceiveCallback(msg);
 
-    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_42, refSerial.getRobotData().turret.bulletType);
+    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_42, refSerial.getRobotData().turret.lastBulletType);
     EXPECT_EQ(
         RefSerial::Rx::MechanismID::TURRET_17MM_2,
-        refSerial.getRobotData().turret.launchMechanismID);
+        refSerial.getRobotData().turret.lastLaunchMechanismID);
 }
 
 TEST(RefSerial, messageReceiveCallback__remaining_projectiles)

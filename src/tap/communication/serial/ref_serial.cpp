@@ -300,11 +300,19 @@ bool RefSerial::decodeToProjectileLaunch(const ReceivedSerialMessage& message)
     {
         return false;
     }
-    robotData.turret.bulletType = static_cast<Rx::BulletType>(message.data[0]);
-    robotData.turret.launchMechanismID = static_cast<Rx::MechanismID>(message.data[1]);
-    robotData.turret.firingFreq = message.data[2];
-    robotData.turret.lastReceivedLaunchingInfoTimestamp = clock::getTimeMilliseconds();
-    convertFromLittleEndian(&robotData.turret.bulletSpeed, message.data + 3);
+
+    robotData.turret.lastBulletType = static_cast<Rx::BulletType>(message.data[0]);
+    robotData.turret.lastLaunchMechanismID = static_cast<Rx::MechanismID>(message.data[1]);
+
+    uint8_t normalizedMechID = Rx::getNormalizedMechanismID(robotData.turret.lastLaunchMechanismID);
+
+    robotData.turret.firingFreq[normalizedMechID] = message.data[2];
+
+    robotData.turret.lastReceivedLaunchingInfoTimestamp[normalizedMechID] =
+        clock::getTimeMilliseconds();
+
+    convertFromLittleEndian(&robotData.turret.bulletSpeed[normalizedMechID], message.data + 3);
+
     return true;
 }
 

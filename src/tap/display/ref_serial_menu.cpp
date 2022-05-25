@@ -95,9 +95,8 @@ void RefSerialMenu::printHp(modm::IOStream& stream)
 void RefSerialMenu::print17mmSpeed(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    float bulletSpeed17 = robotData.turret.bulletType == RefSerialData::Rx::AMMO_17
-                              ? robotData.turret.bulletSpeed
-                              : 0;
+    float bulletSpeed17 = robotData.turret.bulletSpeed[RefSerialData::Rx::getNormalizedMechanismID(
+        RefSerialData::Rx::MechanismID::TURRET_17MM_1)];
     stream.printf(
         "17mmSpeed: %.2f / %i\n",
         static_cast<double>(bulletSpeed17),
@@ -114,9 +113,8 @@ void RefSerialMenu::print17mmHeat(modm::IOStream& stream)
 void RefSerialMenu::print42mmSpeed(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    float bulletSpeed42 = robotData.turret.bulletType == RefSerialData::Rx::AMMO_17
-                              ? 0
-                              : robotData.turret.bulletSpeed;
+    float bulletSpeed42 = robotData.turret.bulletSpeed[RefSerialData::Rx::getNormalizedMechanismID(
+        RefSerialData::Rx::MechanismID::TURRET_42MM)];
     stream.printf(
         "42mmSpeed: %.2f / %i\n",
         static_cast<double>(bulletSpeed42),

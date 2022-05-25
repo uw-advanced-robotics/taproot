@@ -185,6 +185,12 @@ public:
             TURRET_42MM = 3,    ///< 42mm barrel
         };
 
+        /// @return A normalized turret mech ID that starts at 0.
+        static constexpr inline uint8_t getNormalizedMechanismID(MechanismID id)
+        {
+            return static_cast<uint8_t>(id) - 1;
+        }
+
         struct GameData
         {
             GameType gameType;    ///< Current type of competition the robot is taking part in.
@@ -227,11 +233,15 @@ public:
 
         struct TurretData
         {
-            BulletType bulletType;           ///< 17mm or 42mm last projectile shot.
-            MechanismID launchMechanismID;   ///< Either 17mm mechanism 1, 3, or 42 mm mechanism.
-            uint8_t firingFreq;              ///< Firing frequency (in Hz).
-            uint16_t heat17ID1;              ///< Current 17mm turret heat, ID2.
-            uint16_t heat17ID2;              ///< ID2 turret heat.
+            BulletType lastBulletType;          ///< 17mm or 42mm last projectile shot.
+            MechanismID lastLaunchMechanismID;  ///< Either 17mm mechanism 1, 3, or 42 mm mechanism.
+                                                ///< The last mechanism ID that a projectile was
+                                                ///< reported to be launched from.
+            uint8_t firingFreq[3];  ///< Firing frequency associated with each launch mechanism
+                                    ///< (in Hz). Use `getNormalizedMechanismID` to index into this
+                                    ///< array.
+            uint16_t heat17ID1;     ///< Current 17mm turret heat, ID2.
+            uint16_t heat17ID2;     ///< ID2 turret heat.
             uint16_t heatCoolingRate17ID1;   ///< 17mm turret cooling value per second, ID1.
             uint16_t heatCoolingRate17ID2;   ///< ID2.
             uint16_t heatLimit17ID1;         ///< 17mm turret heat limit, ID1.
@@ -246,11 +256,14 @@ public:
                                              ///< only (500 max) if in RMUC, or any robot in RMUL.
             uint16_t bulletsRemaining42;  ///< Number of bullets remaining in hero if in RMUL or 0
                                           ///< if in RMUC.
-            float bulletSpeed;            ///< Last bullet speed (in m/s).
-            float yaw;                    ///< Barrel yaw position (degree).
-            uint32_t lastReceivedLaunchingInfoTimestamp;  ///< Last time in milliseconds that the
-                                                          ///< real-time launching information
-                                                          ///< message was received
+            float bulletSpeed[3];  ///< Last bullet speed (in m/s) for each of the launch mechanism
+                                   ///< IDs. Use `getNormalizedMechanismID` to index into this
+                                   ///< array.
+            float yaw;             ///< Barrel yaw position (degree).
+            uint32_t lastReceivedLaunchingInfoTimestamp[3];  ///< Last time in milliseconds that
+                                                             ///< the real-time launching
+                                                             ///< information message was received
+                                                             ///<
         };
 
         /**
