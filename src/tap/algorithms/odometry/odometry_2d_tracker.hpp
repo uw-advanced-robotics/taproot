@@ -72,7 +72,7 @@ public:
     inline modm::Vector2f getCurrentVelocity2D() const final { return velocity; }
 
     inline float getYaw() const final { return chassisYaw; }
-    
+
     inline uint32_t getLastComputedOdometryTime() const final { return lastComputedOdometryTime; }
 
 private:
