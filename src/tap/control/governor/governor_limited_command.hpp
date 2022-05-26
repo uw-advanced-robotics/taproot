@@ -65,7 +65,14 @@ public:
                command.isReady();
     }
 
-    void initialize() override { command.initialize(); }
+    void initialize() override { 
+        command.initialize();
+        std::for_each(
+            commandGovernorList.begin(),
+            commandGovernorList.end(),
+            [](auto governor) { governor->initialize(); }
+        );
+    }
 
     void execute() override { command.execute(); }
 
