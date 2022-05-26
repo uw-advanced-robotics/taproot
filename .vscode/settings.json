@@ -83,7 +83,9 @@
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "test-project/taproot/src",
-        "test-project/src/"
+        "test-project/src/",
+        "test-project/taproot/modm/ext/cmsis/dsp",
+        "test-project/taproot/modm/ext/cmsis/core"
     ],
     "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.cStandard": "c11",

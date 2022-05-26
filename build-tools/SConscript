@@ -189,7 +189,7 @@ env.SConscript(dirs=["ext"], exports=["env"])
 files = env.FindSourceFiles("src")
 
 if args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim":
-    # Cross compile CMSIS arm matrix to be able to use it on the Linux platform
+    # Cross compile CMSIS arm matrix to be able to use it on the hosted platform
     flags = {"CCFLAGS": ['$CCFLAGS', '-Wno-sign-compare', '-Wno-double-promotion'], "CFLAGS": ['$CFLAGS', '-fno-strict-aliasing'], "CPPDEFINES": ['$CPPDEFINES', '__FPU_PRESENT=1', 'ARM_MATH_ROUNDING', 'UNALIGNED_SUPPORT_DISABLE', 'ARM_MATH_LOOPUNROLL'], }
     if args["BUILD_PROFILE"] == "debug": flags["CPPDEFINES"].extend(['ARM_MATH_MATRIX_CHECK']);
     files.append(env.Object(r"modm/ext/cmsis/dsp/MatrixFunctions/arm_mat_add_f32.c", **flags))
