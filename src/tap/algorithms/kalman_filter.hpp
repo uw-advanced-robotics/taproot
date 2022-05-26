@@ -45,14 +45,14 @@ public:
      * @param[in] C Observation matrix (also called H).
      * @param[in] Q Process noise covariance.
      * @param[in] R Measurement error covariance.
-     * @param[in] P Initial prediction error covariance estimate.
+     * @param[in] P0 Initial prediction error covariance estimate.
      */
     KalmanFilter(
         const float (&A)[STATES * STATES],
         const float (&C)[INPUTS * STATES],
         const float (&Q)[STATES * STATES],
         const float (&R)[INPUTS * INPUTS],
-        const float (&P)[STATES * STATES])
+        const float (&P0)[STATES * STATES])
         : A(A),
           At(),
           C(C),
@@ -60,8 +60,8 @@ public:
           Q(Q),
           R(R),
           xHat(),
-          P(P),
-          P0(P),
+          P(P0),
+          P0(P0),
           K(),
           I()
     {
@@ -95,7 +95,7 @@ public:
         P = (I - K * C) * P;
     }
 
-    const std::array<float, STATES> &getStateMatrix() const { return xHat.data; }
+    const std::array<float, STATES> &getStateVectorAsMatrix() const { return xHat.data; }
 
     /**
      * @return Modifiable pointer to measurement covariance array so the covariance can be modified
@@ -118,7 +118,7 @@ private:
     CMSISMat<STATES, STATES> At;
 
     /**
-     * Observation matrix. How we transform the system vector into a measurement vector.
+     * Observation matrix. How we transform the state vector into a measurement vector.
      *
      * @note Also referred to as "H" in literature.
      */
@@ -142,18 +142,19 @@ private:
     CMSISMat<STATES, 1> xHat;
 
     /**
-     * Estimate error covariance.
+     * Predicted error covariance.
      *
      * The variance of the actual state given \f$Y_{i - 1}\f$.
      */
     CMSISMat<STATES, STATES> P;
 
     /**
-     * Initial error covariance
+     * Initial error covariance.
      */
     CMSISMat<STATES, STATES> P0;
 
     /**
+     * Kalman filter gain matrix.
      */
     CMSISMat<STATES, INPUTS> K;
 
