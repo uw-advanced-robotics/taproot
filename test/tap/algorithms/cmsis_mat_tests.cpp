@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/algorithms/matrix_utils.hpp"
+#include "tap/algorithms/cmsis_mat.hpp"
 
 #include "arm_math.h"
 

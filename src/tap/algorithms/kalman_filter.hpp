@@ -25,7 +25,7 @@
 #include "modm/architecture/interface/assert.h"
 #include "modm/math/matrix.hpp"
 
-#include "matrix_utils.hpp"
+#include "cmsis_mat.hpp"
 
 namespace tap::algorithms
 {
@@ -97,6 +97,12 @@ public:
 
     const std::array<float, STATES> &getStateVectorAsMatrix() const { return xHat.data; }
 
+    /**
+     * @return Modifiable pointer to measurement covariance array so the covariance can be modified
+     * at runtime if need be.
+     */
+    inline std::array<float, INPUTS * INPUTS> &getMeasurementCovariance() { return R.data; }
+
 private:
     /**
      * State transition matrix. For "transitioning" the previous `xHat` to `xHat`
@@ -112,8 +118,7 @@ private:
     CMSISMat<STATES, STATES> At;
 
     /**
-     * Observation matrix. How we transform the input into the form
-     * of the state matrix.
+     * Observation matrix. How we transform the system vector into a measurement vector.
      *
      * @note Also referred to as "H" in literature.
      */
@@ -124,11 +129,10 @@ private:
      */
     CMSISMat<STATES, INPUTS> Ct;
 
-    /**
-     * Covariance matrices
-     */
+    /// System noise covariance
     const CMSISMat<STATES, STATES> Q;
-    const CMSISMat<INPUTS, INPUTS> R;
+    /// Measurement noise covariance
+    CMSISMat<INPUTS, INPUTS> R;
 
     /**
      * Predicted state matrix at the current time.

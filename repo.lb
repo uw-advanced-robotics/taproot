@@ -21,6 +21,7 @@ import sys
 sys.path.append(repopath("lbuild-scripts"))
 
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
+from add_immutable_warning import add_immutable_warning
 
 def init(repo):
     repo.name = "taproot"
@@ -53,6 +54,11 @@ def prepare(repo, options):
     repo.add_modules_recursive("./ext", modulefile="*.lb")
 
 def build(env):
+    env.outbasepath = "taproot"
+    env.copy("README.generation.md", "README.md")
+
+    add_immutable_warning(f"taproot")
+
     if env[":rebuild_modm"]:
         print("building modm")
         try:

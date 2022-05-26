@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_MATRIX_UTILS_HPP_
-#define TAPROOT_MATRIX_UTILS_HPP_
+#ifndef TAPROOT_CMSIS_MAT_HPP_
+#define TAPROOT_CMSIS_MAT_HPP_
 
 #include <array>
 #include <cassert>
@@ -150,4 +150,4 @@ inline CMSISMat<A_ROWS, B_COLS> operator*(
 
 }  // namespace tap::algorithms
 
-#endif  // TAPROOT_MATRIX_UTILS_HPP_
+#endif  // TAPROOT_CMSIS_MAT_HPP_
