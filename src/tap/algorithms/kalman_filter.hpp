@@ -95,7 +95,7 @@ public:
         P = (I - K * C) * P;
     }
 
-    const std::array<float, STATES> &getStateMatrix() const { return xHat.data; }
+    const std::array<float, STATES> &getStateVectorAsMatrix() const { return xHat.data; }
 
 private:
     /**
