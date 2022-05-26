@@ -71,6 +71,8 @@ public:
 
     inline modm::Vector2f getCurrentVelocity2D() const final { return velocity; }
 
+    inline float getYaw() const final { return chassisYaw; }
+
     inline uint32_t getLastComputedOdometryTime() const final { return lastComputedOdometryTime; }
 
 private:
@@ -80,6 +82,8 @@ private:
     modm::Location2D<float> location;
     // Velocity in reference frame
     modm::Vector2f velocity;
+    // Chassis yaw orientation in reference frame (radians)
+    float chassisYaw;
     // Previous chassis absolute displacement in chassis frame
     modm::Vector<float, 3> prevChassisAbsoluteDisplacement;
     // last time (in microsecodns) that the odometry was computed
