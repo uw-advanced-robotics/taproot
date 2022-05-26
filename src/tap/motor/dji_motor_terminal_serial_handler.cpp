@@ -140,14 +140,9 @@ bool DjiMotorTerminalSerialHandler::printInfo(modm::IOStream& outputStream)
         {
             printAllMotorInfo(&DjiMotorTxHandler::getCan1Motor, outputStream);
         }
-        else if (canBus == 2)
-        {
-            printAllMotorInfo(&DjiMotorTxHandler::getCan2Motor, outputStream);
-        }
         else
         {
-            outputStream << USAGE;
-            return false;
+            printAllMotorInfo(&DjiMotorTxHandler::getCan2Motor, outputStream);
         }
     }
     else if (!canBusValid && motorIdValid)

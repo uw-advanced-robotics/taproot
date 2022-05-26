@@ -27,9 +27,10 @@ bool computeTravelTime(
     const modm::Vector3f &targetPosition,
     float bulletVelocity,
     float *travelTime,
-    float *turretPitch)
+    float *turretPitch,
+    const float pitchAxisOffset)
 {
-    float horizontalDist = hypot(targetPosition.x, targetPosition.y);
+    float horizontalDist = hypot(targetPosition.x, targetPosition.y) + pitchAxisOffset;
     float bulletVelocitySquared = powf(bulletVelocity, 2);
     float sqrtTerm = powf(bulletVelocitySquared, 2) -
                      ACCELERATION_GRAVITY * (ACCELERATION_GRAVITY * powf(horizontalDist, 2) +
@@ -73,10 +74,11 @@ bool findTargetProjectileIntersection(
     float bulletVelocity,
     uint8_t numIterations,
     float *turretPitch,
-    float *turretYaw)
+    float *turretYaw,
+    float *projectedTravelTime,
+    const float pitchAxisOffset)
 {
     modm::Vector3f projectedTargetPosition = targetInitialState.position;
-    float projectedTravelTime;
 
     if (projectedTargetPosition.x == 0 && projectedTargetPosition.y == 0 &&
         projectedTargetPosition.z == 0)
@@ -89,12 +91,13 @@ bool findTargetProjectileIntersection(
         if (!computeTravelTime(
                 projectedTargetPosition,
                 bulletVelocity,
-                &projectedTravelTime,
-                turretPitch))
+                projectedTravelTime,
+                turretPitch,
+                pitchAxisOffset))
         {
             return false;
         }
-        projectedTargetPosition = targetInitialState.projectForward(projectedTravelTime);
+        projectedTargetPosition = targetInitialState.projectForward(*projectedTravelTime);
     }
 
     *turretYaw = atan2f(projectedTargetPosition.y, projectedTargetPosition.x);
