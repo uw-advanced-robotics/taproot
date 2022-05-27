@@ -32,6 +32,9 @@ namespace tap::control::governor
 class CommandGovernorInterface
 {
 public:
+
+    /// Called once when a command associated with the governer is scheduled.
+    virtual void initialize() {}
     /// Returns true if the Command being governed by the governor may execute.
     virtual bool isReady() = 0;
     /// Returns true if the Command being governed by the governor should stop executing.
