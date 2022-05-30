@@ -19,11 +19,14 @@
 #ifndef TAPROOT_GENERIC_STEPPER_MOTOR_DRIVER_HPP_
 #define TAPROOT_GENERIC_STEPPER_MOTOR_DRIVER_HPP_
 
-#include "stepper_motor_interface.hpp"
 #include "tap/control/subsystem.hpp"
+#include "tap/drivers.hpp"
 
-namespace tap {
-    class Drivers;
+#include "stepper_motor_interface.hpp"
+
+namespace tap
+{
+class Drivers;
 }
 namespace tap::motor
 {
@@ -31,20 +34,28 @@ namespace tap::motor
  * A class designed to interface with generic stepper motor controllers
  * that have a direction and pulse pin. Takes steps at a constant speed.
  */
-class GenericStepperMotorDriver : public StepperMotorInterface, public tap::control::Subsystem
+class GenericStepperMotorDriver : public StepperMotorInterface
 {
-    public:
+public:
     /**
      * Construct a new Generic Stepper Motor Driver object.
      */
-    GenericStepperMotorDriver(Drivers* drivers);
+    GenericStepperMotorDriver(
+        Drivers* drivers,
+        tap::gpio::Digital::OutputPin direction,
+        tap::gpio::Digital::OutputPin pulse);
 
     void refresh() override;
 
-        
-
 private:
     Drivers* drivers;
+
+    tap::gpio::Digital::OutputPin direction;
+    tap::gpio::Digital::OutputPin pulse;
+
+    /** Current state of the pin. */
+    bool pinState; 
 };
+
 }  // namespace tap::motor
-#endif // TAPROOT_GENERIC_STEPPER_MOTOR_DRIVER_HPP_
+#endif  // TAPROOT_GENERIC_STEPPER_MOTOR_DRIVER_HPP_

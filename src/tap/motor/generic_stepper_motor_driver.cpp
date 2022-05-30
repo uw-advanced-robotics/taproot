@@ -18,17 +18,36 @@
  */
 #include "generic_stepper_motor_driver.hpp"
 
+#include "aruwsrc/drivers_singleton.hpp"
+
 namespace tap::motor
 {
-GenericStepperMotorDriver::GenericStepperMotorDriver(Drivers* drivers)
-    : Subsystem(drivers),
-      drivers(drivers)
+GenericStepperMotorDriver::GenericStepperMotorDriver(
+    Drivers* drivers,
+    tap::gpio::Digital::OutputPin direction,
+    tap::gpio::Digital::OutputPin pulse)
+    : drivers(drivers),
+      direction(direction),
+      pulse(pulse)
 {
 }
 
-void refresh() {
-    // toggle the pin... or pwm interrupts
-    
+void GenericStepperMotorDriver::refresh()
+{
+    if (desiredPosition > position)
+    {
+        drivers->digital.set(direction, true);
+        drivers->digital.set(pulse, !pinState);
+        pinState = !pinState;
+        position += 1;
+    }
+    else if (desiredPosition < position)
+    {
+        drivers->digital.set(direction, false);
+        drivers->digital.set(pulse, !pinState);
+        pinState = !pinState;
+        position -= 1;
+    } 
 }
 
 }  // namespace tap::motor

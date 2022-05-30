@@ -73,6 +73,8 @@ public:
      */
     inline void calibrateOrigin(int currPos) { position = currPos; }
 
+    virtual void refresh() = 0;
+
 protected:
     // Prevents this class from being instantiated directly.
     StepperMotorInterface() = default;

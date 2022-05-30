@@ -56,12 +56,12 @@ void StepperMotor::setDesiredOutput(int32_t desiredOutput)
 
     if (desiredOutput > 0)
     {
-        drivers->digital.set(direction, false);
+        drivers->digital.set(direction, true);
         drivers->pwm.write(0.5, pulse);
     }
     else if (desiredOutput < 0)
     {
-        drivers->digital.set(direction, true);
+        drivers->digital.set(direction, false);
         drivers->pwm.write(0.5, pulse);
     }
     else
@@ -97,4 +97,4 @@ int16_t StepperMotor::getShaftRPM() const { return 0; };
 int64_t StepperMotor::getEncoderUnwrapped() const { return 0; };
 uint16_t StepperMotor::getEncoderWrapped() const { return 0; };
 }  // namespace motor
-}  // namespace tap
+}  // namespace tap 

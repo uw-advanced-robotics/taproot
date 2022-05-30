@@ -27,6 +27,7 @@
 
 #include "dji_motor.hpp"
 #include "motor_interface.hpp"
+#include "stepper_motor_interface.hpp"
 
 namespace tap::motor
 {
