@@ -69,9 +69,9 @@ public:
     {
         command.initialize();
 
-        for (auto &governor : commandGovernorList)
+        for (auto governor : commandGovernorList)
         {
-            governor.initialize();
+            governor->initialize();
         }
     }
 
