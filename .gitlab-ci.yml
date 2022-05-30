@@ -122,10 +122,14 @@ before_script:
     - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
+    - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
+  coverage: '/\s+Total:\|(\d+.\d+\%).+\|.+\|.+/'
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
     reports:
-      cobertura: cobertura.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura.xml
     expire_in: 2 weeks
 
 "Type A: Generate Test Project":

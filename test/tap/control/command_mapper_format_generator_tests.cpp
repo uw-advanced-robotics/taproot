@@ -174,3 +174,58 @@ TEST(CommandMapperFormatGenerator, generateMappings_default_mapping_no_commands)
     EXPECT_EQ(1, mappings.size());
     EXPECT_EQ("[none]:\t[none]", mappings[0]);
 }
+
+TEST(CommandMapperFormatGenerator, generateMappings_all_keys)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    CommandMapperFormatGenerator formatGenerator(cm);
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState({
+            Remote::Key::A,
+            Remote::Key::B,
+            Remote::Key::C,
+            Remote::Key::D,
+            Remote::Key::E,
+            Remote::Key::F,
+            Remote::Key::G,
+            Remote::Key::Q,
+            Remote::Key::R,
+            Remote::Key::S,
+            Remote::Key::V,
+            Remote::Key::W,
+            Remote::Key::X,
+            Remote::Key::Z,
+            Remote::Key::SHIFT,
+            Remote::Key::CTRL,
+        }));
+    cm.addMap(&hcm);
+
+    std::vector<std::string> mappings = formatGenerator.generateMappings();
+    EXPECT_EQ(1, mappings.size());
+    EXPECT_EQ(
+        "[keys: {A, B, C, D, E, F, G, Q, R, S, V, W, X, Z, SHIFT, CTRL}]:\t[test command]",
+        mappings[0]);
+}
+
+TEST(CommandMapperFormatGenerator, generateMappings_various_switch_mappings_with_single_command)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    CommandMapperFormatGenerator formatGenerator(cm);
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID));
+    cm.addMap(&hcm);
+
+    std::vector<std::string> mappings = formatGenerator.generateMappings();
+    EXPECT_EQ(1, mappings.size());
+    EXPECT_EQ("[left switch: mid]:\t[test command]", mappings[0]);
+}
