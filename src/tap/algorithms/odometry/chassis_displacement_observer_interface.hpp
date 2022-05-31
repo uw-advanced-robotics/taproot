@@ -64,6 +64,10 @@ public:
      * Returns the chassis displacement in chassis frame since some fixed arbitrary
      * point in time near startup.
      *
+     * No intuitive physical meaning when interpreted on it's own. Instead it is expected that
+     * this value is sampled frequently and that differences between subsequent samples are used
+     * for displacement in some consistent coordinate frame.
+     *
      * @param[out] velocity if valid data is available the x, y, and z of this pointed to
      *      vector that will be populated with the appropriate velocity in implementation
      *      specific units.
