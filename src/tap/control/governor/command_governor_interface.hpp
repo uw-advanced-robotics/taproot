@@ -33,7 +33,7 @@ class CommandGovernorInterface
 {
 public:
     /// Called once when the command associated with this governor is scheduled.
-    virtual void initialize() {}
+    virtual void onGovernedCommandInitialized() {}
 
     /// Returns true if the Command being governed by the governor may execute.
     virtual bool isReady() = 0;

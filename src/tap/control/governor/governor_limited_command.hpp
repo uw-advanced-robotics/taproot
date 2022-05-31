@@ -71,7 +71,7 @@ public:
 
         for (auto governor : commandGovernorList)
         {
-            governor->initialize();
+            governor->onGovernedCommandInitialized();
         }
     }
 
