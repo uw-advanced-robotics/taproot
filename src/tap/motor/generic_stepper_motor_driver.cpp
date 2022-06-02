@@ -18,7 +18,7 @@
  */
 #include "generic_stepper_motor_driver.hpp"
 
-#include "aruwsrc/drivers_singleton.hpp"
+#include "tap/drivers.hpp"
 
 namespace tap::motor
 {
