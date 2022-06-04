@@ -49,7 +49,7 @@ public:
     /**
      * Run driver. Takes a step towards desired position if not there yet when called.
      */
-    void refresh();
+    void refresh() override;
 
 private:
     Drivers* drivers;
