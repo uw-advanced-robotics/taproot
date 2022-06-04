@@ -32,7 +32,7 @@
 namespace tap::motor
 {
 /**
- * A class designed to interface with stepper motor controllers.
+ * A class designed to interface with stepper motor controllers through pwm
  */
 class StepperMotor : public MotorInterface
 {

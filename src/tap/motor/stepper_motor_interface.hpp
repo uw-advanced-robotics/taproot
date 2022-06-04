@@ -40,18 +40,14 @@ public:
      * of steps. Sign indicates direction.
      * @param numSteps is the number of steps to take.
      */
-    inline void moveSteps(int numSteps) {
-        desiredPosition += numSteps;
-    };
+    inline void moveSteps(int numSteps) { desiredPosition += numSteps; };
 
     /**
      * Set the desired position of the stepper motor.
      * @note: the motor will attempt to move to this desired position.
      * @param desiredPosition is the desired position of the stepper motor.
      */
-    inline void setDesiredPosition(int desiredPosition) {
-        this->desiredPosition = desiredPosition;
-    }
+    inline void setDesiredPosition(int desiredPosition) { this->desiredPosition = desiredPosition; }
 
     /**
      * Returns the desired position.
@@ -73,11 +69,10 @@ public:
      */
     inline void calibrateOrigin(int currPos) { position = currPos; }
 
-    virtual void refresh() = 0;
-
 protected:
     // Prevents this class from being instantiated directly.
     StepperMotorInterface() = default;
+
     /**
      * Number of steps from the origin.
      */

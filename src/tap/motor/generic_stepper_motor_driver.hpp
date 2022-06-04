@@ -32,7 +32,8 @@ namespace tap::motor
 {
 /**
  * A class designed to interface with generic stepper motor controllers
- * that have a direction and pulse pin. Takes steps at a constant speed.
+ * that have a direction and pulse pin. Takes a step every time refresh() is called if
+ * current position does not match ideal position.
  */
 class GenericStepperMotorDriver : public StepperMotorInterface
 {
@@ -45,7 +46,10 @@ public:
         tap::gpio::Digital::OutputPin direction,
         tap::gpio::Digital::OutputPin pulse);
 
-    void refresh() override;
+    /**
+     * Run driver. Takes a step towards desired position if not there yet when called.
+     */
+    void refresh();
 
 private:
     Drivers* drivers;
@@ -53,8 +57,11 @@ private:
     tap::gpio::Digital::OutputPin direction;
     tap::gpio::Digital::OutputPin pulse;
 
-    /** Current state of the pin. */
-    bool pinState; 
+    /**
+     * Last set state of the pin. Step pin should be set to opposite of this on next step to
+     * take step
+     */
+    bool pinState;
 };
 
 }  // namespace tap::motor
