@@ -81,12 +81,12 @@ protected:
     /**
      * Number of steps from the origin.
      */
-    int position;
+    int position = 0;
 
     /**
      * Desired number of steps from origin.
      */
-    int desiredPosition;
+    int desiredPosition = 0;
 };
 }  // namespace tap::motor
 
