@@ -55,6 +55,11 @@ namespace tap::communication::sensors::imu::bmi088
 class Bmi088 final_mockable : public Bmi088Data, public ImuInterface
 {
 public:
+    using ProcessRawBmi088DataFn = void (*)(
+        const uint8_t (&)[12],
+        float (&)[3],
+        float (&)[3]); 
+
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
     /**
@@ -137,6 +142,8 @@ public:
 
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
+    void attachProcessRawMpu6500DataFn(ProcessRawBmi088DataFn fn) { processRawBmi088DataFn = fn; }
+
 private:
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
     /// Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET.
@@ -173,6 +180,8 @@ private:
 
     uint32_t prevIMUDataReceivedTime = 0;
 
+    ProcessRawBmi088DataFn processRawBmi088DataFn;
+
     void initializeAcc();
     void initializeGyro();
 
@@ -203,6 +212,12 @@ private:
 
         return static_cast<float>(shiftedTemp) * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
     }
+
+    /// Default processing function when IMU is lying flat on the robot.
+    static void defaultProcessRawBmi088Data(
+        const uint8_t (&rxBuff)[12],
+        float (&accRaw)[3],
+        float (&gyroRaw)[3]);
 };
 
 }  // namespace tap::communication::sensors::imu::bmi088

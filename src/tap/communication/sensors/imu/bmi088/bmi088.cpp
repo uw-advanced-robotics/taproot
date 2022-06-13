@@ -44,7 +44,12 @@ namespace tap::communication::sensors::imu::bmi088
 #define DELAY_US(us) modm::delay_us(us);
 #endif
 
-Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
+Bmi088::Bmi088(tap::Drivers *drivers)
+    : drivers(drivers),
+      imuHeater(drivers),
+      processRawBmi088DataFn(Bmi088::defaultProcessRawBmi088Data)
+{
+}
 
 Bmi088::ImuState Bmi088::getImuState() const { return imuState; }
 
@@ -177,20 +182,15 @@ void Bmi088::periodicIMUUpdate()
         return;
     }
 
-    uint8_t rxBuff[6] = {};
+    uint8_t rxBuff[12] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
 
     prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
 
-    data.accRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
-    data.accRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
-    data.accRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
+    Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff + 6, 6);
 
-    Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    data.gyroRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
-    data.gyroRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
-    data.gyroRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
+    (*processRawBmi088DataFn)(rxBuff, data.accRaw, data.gyroRaw);
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
     data.temperature = parseTemp(rxBuff[0], rxBuff[1]);
@@ -281,6 +281,20 @@ void Bmi088::setAndCheckGyroRegister(Gyro::Register reg, Gyro::Registers_t value
         RAISE_ERROR(drivers, "bmi088 gyro config failed");
         imuState = ImuState::IMU_NOT_CONNECTED;
     }
+}
+
+void Bmi088::defaultProcessRawBmi088Data(
+    const uint8_t (&rxBuff)[12],
+    float (&accRaw)[3],
+    float (&gyroRaw)[3])
+{
+    accRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
+    accRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
+    accRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
+
+    gyroRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff + 6);
+    gyroRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 8);
+    gyroRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 10);
 }
 
 }  // namespace tap::communication::sensors::imu::bmi088
