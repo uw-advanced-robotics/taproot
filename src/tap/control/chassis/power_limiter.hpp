@@ -22,6 +22,7 @@
 
 #include "tap/communication/gpio/analog.hpp"
 #include "tap/communication/sensors/current/current_sensor_interface.hpp"
+#include "tap/communication/sensors/power/external_power_source_interface.hpp"
 
 namespace tap
 {
@@ -78,7 +79,8 @@ public:
         tap::communication::sensors::current::CurrentSensorInterface *currentSensor,
         float startingEnergyBuffer,
         float energyBufferLimitThreshold,
-        float energyBufferCritThreshold);
+        float energyBufferCritThreshold,
+        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource = nullptr);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example). Checks
@@ -101,6 +103,7 @@ private:
     const float startingEnergyBuffer;
     const float energyBufferLimitThreshold;
     const float energyBufferCritThreshold;
+    tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource;
 
     float energyBuffer;
     float consumedPower;

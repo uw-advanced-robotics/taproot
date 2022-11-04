@@ -53,6 +53,9 @@ def prepare(module, options):
     # power limiter dependencies
     module.depends(":communication:sensors:current")
 
+    # external power dependencies
+    module.depends(":communication:sensors:power")
+
     return True
 
 def build(env):
