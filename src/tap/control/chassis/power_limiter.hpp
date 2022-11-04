@@ -80,7 +80,8 @@ public:
         float startingEnergyBuffer,
         float energyBufferLimitThreshold,
         float energyBufferCritThreshold,
-        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource = nullptr);
+        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource = 
+            nullptr);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example). Checks

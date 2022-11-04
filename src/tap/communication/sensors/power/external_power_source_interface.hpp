@@ -38,6 +38,6 @@ public:
     */
     virtual int consumeAvailablePower(int consumed) const = 0;
 };
-}  // namespace tap::communication::sensors::limit_switch
+}  // namespace tap::communication::sensors::power
 
 #endif  // TAPROOT_EXTERNAL_POWER_SOURCE_INTERFACE_HPP_

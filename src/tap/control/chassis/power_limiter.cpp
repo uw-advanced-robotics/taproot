@@ -86,7 +86,8 @@ void PowerLimiter::updatePowerAndEnergyBuffer()
     prevTime = tap::arch::clock::getTimeMilliseconds();
     float energyConsumed = (consumedPower - chassisData.powerConsumptionLimit) * dt / 1000.0f;
 
-    if (externalPowerSource != nullptr) {
+    if (externalPowerSource != nullptr)
+    {
         energyConsumed = externalPowerSource->consumeAvailablePower(energyConsumed);
     }
 
