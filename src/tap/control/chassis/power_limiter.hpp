@@ -80,7 +80,7 @@ public:
         float startingEnergyBuffer,
         float energyBufferLimitThreshold,
         float energyBufferCritThreshold,
-        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource = 
+        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource =
             nullptr);
 
     /**

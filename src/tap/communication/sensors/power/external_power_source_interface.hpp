@@ -30,12 +30,13 @@ class ExternalPowerSourceInterface
 public:
     /**
      * Returns the amount of power stored in the external source
-    */
+     */
     virtual int getAvailablePower() const = 0;
 
     /**
-     * Removes power from the external source. Returns either 0 or the amount of power not able to be removed from the external source
-    */
+     * Removes power from the external source. Returns either 0 or the amount of power not able to
+     * be removed from the external source
+     */
     virtual int consumeAvailablePower(int consumed) const = 0;
 };
 }  // namespace tap::communication::sensors::power
