@@ -16,58 +16,43 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef TAPROOT_TRANSFORMSPROVIDER_HPP_
-#define TAPROOT_TRANSFORMSPROVIDER_HPP_
+#ifndef TAPROOT_TRANSFORMER_HPP_
+#define TAPROOT_TRANSFORMER_HPP_
 
 #include <functional>
 
 #include "transform.hpp"
-#include "frames.hpp"
-
-#include "tap/algorithms/math_user_utils.hpp"
-#include "tap/algorithms/cmsis_mat.hpp"
 
 namespace tap::algorithms
 {
 
-typedef std::function<CMSISMat<3,3>()> getNewRotationFN;
 /**
- * An Interface for a TransformProvider, providing transforms upon request
+ * An Interface for a Transformer, which maintains several 
+ * transforms.
  * 
  * 
- *  A TransformProvider stores, maintains, and distributes various 
+ *  A Transformer stores, maintains, and distributes various 
  *  transforms (tap::algorithms::Transform) throughout the lifecycle 
  *  of a robot. 
 */
 
-template<>
-class TransformsProvider
+class Transformer
 {
     /**
-     * Instantiate a new TransformsProvider
-     * 
+     * Instantiate a new Transformer
     */
-    TransformsProvider();
+    Transformer();
 
-    TransformsProvider(const TransformsProvider& other) = delete;
-    TransformsProvider &operator=(const TransformsProvider& other) = delete;
+    // Disable copy constructor and assignment
+    Transformer(const TransformsProvider& other) = delete;
+    Transformer &operator=(const TransformsProvider& other) = delete;
 
     /**
-     * Updates all stored transforms according to their 
-     * update functions provided when they called register
+     * Updates all stored transforms
     */
     virtual void update();
 
-    // TODO: figure out which types each of these should use
-    // TODO: document
-    virtual void registerTransform(Transform<Frame,Frame> &initialTransform, 
-        std::function<CMSISMat<3,3>()> getNewRotationFN, 
-        std::function<CMSISMat<3,1>()> getNewPositionFN) = 0;
-
-    virtual Transform<Frame, Frame>&  getTransform(Frame source, Frame target) = 0;
-
-}; // class TransformProvider
+}; // class Transformer
 } // namespace tap::algorithms
 
-
-#endif  // TAPROOT_TRANSFORMSPROVIDER_HPP_
+#endif  // TAPROOT_TRANSFORMER_HPP_
