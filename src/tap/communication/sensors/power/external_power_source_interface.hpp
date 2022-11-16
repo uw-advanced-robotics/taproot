@@ -37,7 +37,7 @@ public:
      * Removes power from the external source. Returns either 0 or the amount of power not able to
      * be removed from the external source
      */
-    virtual int consumeAvailablePower(int consumed) const = 0;
+    virtual int consumeAvailablePower(int consumed) = 0;
 };
 }  // namespace tap::communication::sensors::power
 
