@@ -30,7 +30,6 @@ namespace tap::algorithms
  * An Interface for a Transformer, which maintains several 
  * transforms.
  * 
- * 
  *  A Transformer stores, maintains, and distributes various 
  *  transforms (tap::algorithms::Transform) throughout the lifecycle 
  *  of a robot. 
@@ -46,7 +45,7 @@ class Transformer
     // Disable copy constructor and assignment
     Transformer(const TransformsProvider& other) = delete;
     Transformer &operator=(const TransformsProvider& other) = delete;
-
+b
     /**
      * Updates all stored transforms
     */
