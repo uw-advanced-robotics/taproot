@@ -23,12 +23,14 @@
 
 #include "transform.hpp"
 #include "frames.hpp"
-#include "tap/algorithms/cmsis_mat.hpp"
-#include "tap/algorithms/math_user_utils.hpp"
 
+#include "tap/algorithms/math_user_utils.hpp"
+#include "tap/algorithms/cmsis_mat.hpp"
 
 namespace tap::algorithms
 {
+
+typedef std::function<CMSISMat<3,3>()> getNewRotationFN;
 /**
  * An Interface for a TransformProvider, providing transforms upon request
  * 
@@ -38,6 +40,7 @@ namespace tap::algorithms
  *  of a robot. 
 */
 
+template<>
 class TransformsProvider
 {
     /**
@@ -45,6 +48,9 @@ class TransformsProvider
      * 
     */
     TransformsProvider();
+
+    TransformsProvider(const TransformsProvider& other) = delete;
+    TransformsProvider &operator=(const TransformsProvider& other) = delete;
 
     /**
      * Updates all stored transforms according to their 
@@ -55,11 +61,11 @@ class TransformsProvider
     // TODO: figure out which types each of these should use
     // TODO: document
     virtual void registerTransform(Transform<Frame,Frame> &initialTransform, 
-        std::function<CMSISMat<3,3>()> getNewRotation, 
-        std::function<CMSISMat<3,1>()> getNewPosition) = 0;
-
+        std::function<CMSISMat<3,3>()> getNewRotationFN, 
+        std::function<CMSISMat<3,1>()> getNewPositionFN) = 0;
 
     virtual Transform<Frame, Frame>&  getTransform(Frame source, Frame target) = 0;
+
 }; // class TransformProvider
 } // namespace tap::algorithms
 
