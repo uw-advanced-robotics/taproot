@@ -17,8 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// TODO: Review this!
 namespace tap::algorithms
 {
-class Frame {};
+class Frame;
 }
