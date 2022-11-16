@@ -59,7 +59,7 @@ class TransformsProvider
         std::function<CMSISMat<3,1>()> getNewPosition) = 0;
 
 
-    virtual Transform<Frame, Frame>&  
+    virtual Transform<Frame, Frame>&  getTransform(Frame source, Frame target) = 0;
 }; // class TransformProvider
 } // namespace tap::algorithms
 
