@@ -27,12 +27,10 @@ namespace tap::algorithms
 {
 
 /**
- * An Interface for a Transformer, which maintains several 
- * transforms.
+ * A generic Interface for a robot-specific Transformer
  * 
- *  A Transformer stores, maintains, and distributes various 
- *  transforms (tap::algorithms::Transform) throughout the lifecycle 
- *  of a robot. 
+ * A Transformer stores, updates, and distributes various 
+ * transforms (tap::algorithms::Transform) during robot operation
 */
 
 class Transformer
@@ -47,7 +45,7 @@ class Transformer
     Transformer &operator=(const Transformer& other) = delete;
 
     /**
-     * Updates all stored transforms
+     * Updates all stored transforms, should be called each robot cycle
     */
     virtual void update();
 
