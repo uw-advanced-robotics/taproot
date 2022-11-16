@@ -43,9 +43,9 @@ class Transformer
     Transformer();
 
     // Disable copy constructor and assignment
-    Transformer(const TransformsProvider& other) = delete;
-    Transformer &operator=(const TransformsProvider& other) = delete;
-b
+    Transformer(const Transformer& other) = delete;
+    Transformer &operator=(const Transformer& other) = delete;
+
     /**
      * Updates all stored transforms
     */
