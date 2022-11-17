@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## November 2022
+
+### Breaking changes
+
+- `Remote::getWheel` removed and replaced with a new (normalized) option for `Remote::getChannel`.
+
 ## May 2022
 
 ### Breaking changes
