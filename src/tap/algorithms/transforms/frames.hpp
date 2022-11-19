@@ -17,7 +17,13 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef __FRAMES_HPP__
+#define __FRAMES_HPP__
+
 namespace tap::algorithms
 {
 class Frame;
 }
+
+
+#endif // __FRAMES_HPP__ 
