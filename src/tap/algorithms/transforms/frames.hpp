@@ -29,7 +29,7 @@ namespace tap::algorithms
  * by more specific frame subclasses, which should also be empty.
 */
 
-class Frame;
+class Frame { };
 }
 
 
