@@ -1,5 +1,13 @@
 # Taproot Changelog
 
+## Fall 2022 Update
+
+### Breaking changes
+- 
+
+### All changes
+- 
+
 ## November 2022
 
 ### Breaking changes
