@@ -31,6 +31,8 @@ class Odometry2DInterfaceMock : public algorithms::odometry::Odometry2DInterface
 public:
     MOCK_METHOD(modm::Location2D<float>, getCurrentLocation2D, (), (const override));
     MOCK_METHOD(modm::Vector2f, getCurrentVelocity2D, (), (const override));
+    MOCK_METHOD(uint32_t, getLastComputedOdometryTime, (), (const override));
+    MOCK_METHOD(float, getYaw, (), (const override));
 };
 }  // namespace tap::mock
 

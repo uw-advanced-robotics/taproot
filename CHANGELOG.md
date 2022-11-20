@@ -1,5 +1,30 @@
 # Taproot Changelog
 
+## November 2022
+
+### Breaking changes
+
+- `Remote::getWheel` removed and replaced with a new (normalized) option for `Remote::getChannel`.
+
+## May 2022
+
+### Breaking changes
+
+- `MotorSim` and `DjiMotorSimHandler` APIs slightly changed, though functionality remains the same.
+- Ballistics now provide projectile travel time as an output parameter
+
+### All changes
+
+- `GovernorLimitedCommand` added, a wrapper command that allows one to specify various
+  conditions for the command being wrapped to run (!206).
+- `RefSerialData`'s `MechanismID` enum values were changed to reflect changes in the RoboMaster ref
+  serial protocol.
+- `IntegrableSetpointSubsystem` and associated commands added. This allows you to move the integral
+  of some setpoint around. An example of where this is useful would be velocity control of a motor,
+  where you want to directly control the velocity of the motor and indirectly control the position
+  (!188).
+- Ballistics now provide projectile travel time as an output parameter
+
 ## April 2022
 
 ### Breaking changes
@@ -15,6 +40,7 @@
 
 - Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
   with the ref serial UART port (!161, #175). 
+- Ref serial receiver now decodes game type and warning status information (!184).
 
 ## March 2022
 

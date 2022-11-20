@@ -19,6 +19,8 @@
 
 #include "mpu6500.hpp"
 
+#include <cassert>
+
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
@@ -33,7 +35,13 @@ using namespace tap::arch;
 
 namespace tap::communication::sensors::imu::mpu6500
 {
-Mpu6500::Mpu6500(Drivers *drivers) : drivers(drivers), raw(), imuHeater(drivers) {}
+Mpu6500::Mpu6500(Drivers *drivers)
+    : drivers(drivers),
+      processRawMpu6500DataFn(Mpu6500::defaultProcessRawMpu6500Data),
+      raw(),
+      imuHeater(drivers)
+{
+}
 
 void Mpu6500::requestCalibration()
 {
@@ -50,7 +58,7 @@ void Mpu6500::requestCalibration()
     }
 }
 
-void Mpu6500::init()
+void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
 #ifndef PLATFORM_HOSTED
     // Configure NSS pin
@@ -106,13 +114,20 @@ void Mpu6500::init()
     modm::delay_ms(1);
     spiWriteRegister(MPU6500_USER_CTRL, MPU6500_USER_CTRL_DATA);
     modm::delay_ms(1);
+#endif
 
     imuHeater.initialize();
 
-    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+    delayBtwnCalcAndReadReg =
+        static_cast<int>(1e6f / sampleFrequency) - NONBLOCKING_TIME_TO_READ_REG;
+
+    assert(delayBtwnCalcAndReadReg >= 0);
+
+    readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
+
+    mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
-#endif
 }
 
 void Mpu6500::periodicIMUUpdate()
@@ -144,19 +159,16 @@ void Mpu6500::periodicIMUUpdate()
             raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
             raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
             imuState = ImuState::IMU_CALIBRATED;
-            mahonyAlgorithm = Mahony();
+            mahonyAlgorithm.reset();
         }
     }
 
-    readRegistersTimeout.restart(DELAY_BTWN_CALC_AND_READ_REG);
+    readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
 
     imuHeater.runTemperatureController(getTemp());
 
     addValidationErrors();
 }
-
-#define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
-    (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
 
 bool Mpu6500::read()
 {
@@ -174,15 +186,11 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        raw.accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-        raw.accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-        raw.accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+        (*processRawMpu6500DataFn)(rxBuff, raw.accel, raw.gyro);
 
         raw.temperature = rxBuff[6] << 8 | rxBuff[7];
 
-        raw.gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
-        raw.gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
-        raw.gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
+        prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
     }
     PT_END();
 #else
@@ -285,6 +293,20 @@ void Mpu6500::addValidationErrors()
     }
 
     errorState = 0;
+}
+
+void Mpu6500::defaultProcessRawMpu6500Data(
+    const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
+    modm::Vector3f &accel,
+    modm::Vector3f &gyro)
+{
+    accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+    accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+    accel.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+
+    gyro.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
+    gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
+    gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 }
 
 }  // namespace tap::communication::sensors::imu::mpu6500

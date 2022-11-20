@@ -387,6 +387,7 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
     if (msgLen > 113)
     {
         RAISE_ERROR(drivers, "message length > 113-char maximum");
+        RF_RETURN_1();
     }
 
     if (drivers->refSerial.getRobotData().robotId == RobotId::INVALID)
