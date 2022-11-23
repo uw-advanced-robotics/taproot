@@ -35,6 +35,7 @@ namespace tap::algorithms
 
 class Transformer
 {
+public:
     /**
      * Instantiate a new Transformer
     */
@@ -47,7 +48,7 @@ class Transformer
     /**
      * Updates all stored transforms, should be called each robot cycle
     */
-    virtual void update();
+    virtual void update() = 0;
 
 }; // class Transformer
 } // namespace tap::algorithms
