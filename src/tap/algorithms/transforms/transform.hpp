@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef TAPROOT_TRANSFORMS_HPP_
-#define TAPROOT_TRANSFORMS_HPP_
+#ifndef TAPROOT_TRANSFORM_HPP_
+#define TAPROOT_TRANSFORM_HPP_
 
-#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/math_user_utils.hpp"
 
-// TODO:
-namespace tap::algorithms
+namespace tap::algorithms::transforms
 {
 /**
  Represents a transformation from one coordinate frame to another.
@@ -41,70 +40,92 @@ namespace tap::algorithms
 
     Utilizes arm's CMSIS matrix operations.
 
-    @param SOURCE represents _.
-    @param TARGET represents __.
+    @param SOURCE represents the source frame of the transformation.
+    @param TARGET represents the target frame of the transformation.
  */
 template <typename SOURCE, typename TARGET>
 class Transform
 {
 public:
     /**
-     * Constructs a Transform, which represents a transformation between two frames.
-     * 
-     * NEEDS TO TAKE A ROTATION AND A TRANSLATION..???? rotation matrices and translation vector
+     * Constructs a new Transform, which represents a transformation between two frames.
      *
-     * position x,y,z, and rotation matrix or roll pitch yaw
-     * 3 parameters for angle
-     * 
-     * @param Frame1
-     * @param Frame2
+     * @param rotation Initial rotation of this transformation.
+     * @param position Initial position of this transformation.
      */
-Transform(SOURCE Frame1, TARGET Frame2){};
+    Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position){};
 
-/**
- * Returns the composed transformation of the given frames. 
- * 
- * transform a to b, transform b to c
- * output: a to c
- * 
- * @param Frame1 The SOURCE frame of the composition.
- * @param Frame2 
- * @return Transform over Frame1 and Frame2.
- */
-Transform compose(Transform source, Transform target) {};
+    /**
+     * Construct a new Transform, which represents a transformation between two frames.
+     * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll.
+     *
+     * @param x Initial x position coordinate.
+     * @param y Initial y position coordinate.
+     * @param z Initial z position coordinate.
+     * @param A Initial angle of roll.
+     * @param B Initial angle of pitch.
+     * @param C Initial angle of yaw.
+     */
+    Transform(int& x, int& y, int& z, int& A, int& B, int& C){};
 
-/**
- * Inverts given transform
- * 
- * @return Transform 
- */
-Transform inverse() {}
+    /**
+     * Returns the composed transformation of the given transformations.
+     *
+     * @param source Transformation from frame A to frame B.
+     * @param target Transformation from frame B to frame C.
+     * @return Transformation from frame A to frame C.
+     */
+    Transform compose(Transform& source, Transform& target){};
 
-/**
- * 
- * take in a position as read by the source frame (source frame's vector compoennets) 
- * it computes the vector components in the target frame - in the target frame's basis
- * 
- * takes in position relative to source frame and converts it to be in terms of target frame?
- * 
- * pass in 
- * 
- * quaternions.........make compositions faster........
- * just use rotation matrices bro...
- * 
- * 
- */
-applyToPosition() {};
+    /**
+     * Inverts the given Transform.
+     *
+     * @return Inverse of given Transform.
+     */
+    Transform getInverse(Transform& tf) {}
 
-// 
-applyToVector() {};
+    /**
+     * Transforms given position as read by the source frame
+     * and computes the equivalent vector components in the target frame's basis.
+     *
+     * @param pos Position as read by source frame
+     * @return Position in target frame's basis.
+     */
+    CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos){};
 
-// Represents rotation matrix.
-const CMSISMat<2,2> rotation;
+    /**
+     * Transforms given position as read by the source frame
+     * and computes the equivalent vector components in the target frame's basis.
+     */
+    Transform applyToVector(){};
 
-// Represents position vector.
-vector<vector<vector<int>>> vector_3d(4);
+    /**
+     * Updates the rotation of the current transformation matrix.
+     */
+    void updateRotation(){};
 
+    /**
+     * Updates the rotation of the current transformation matrix.
+     */
+    void updatePosition(){};
+
+private:
+    /**
+     * Rotation matrix.
+     */
+    CMSISMat<3, 3> rotation;
+
+   /**
+    * Position vector.
+    */
+    CMSISMat<3, 1> position;
+
+   /**
+    * Transpose of rotation. Computed and stored at beginning
+    * for use in other computations.
+    */
+    CMSISMat<3, 3> tRotation;
 };
-}  // namespace tap::algorithms
+}  // namespace tap::algorithms::transforms
+#include "transform.cpp"
 #endif
