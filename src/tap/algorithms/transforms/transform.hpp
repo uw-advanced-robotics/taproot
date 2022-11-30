@@ -55,18 +55,18 @@ public:
      */
     Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position){};
 
-    /**
-     * Construct a new Transform, which represents a transformation between two frames.
-     * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll.
-     *
-     * @param x Initial x position coordinate.
-     * @param y Initial y position coordinate.
-     * @param z Initial z position coordinate.
-     * @param A Initial angle of roll.
-     * @param B Initial angle of pitch.
-     * @param C Initial angle of yaw.
-     */
-    Transform(int& x, int& y, int& z, int& A, int& B, int& C){};
+    // /**
+    //  * Construct a new Transform, which represents a transformation between two frames.
+    //  * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll.
+    //  *
+    //  * @param x Initial x position coordinate.
+    //  * @param y Initial y position coordinate.
+    //  * @param z Initial z position coordinate.
+    //  * @param A Initial angle of roll.
+    //  * @param B Initial angle of pitch.
+    //  * @param C Initial angle of yaw.
+    //  */
+    // Transform(int& x, int& y, int& z, int& A, int& B, int& C){};
 
     /**
      * Returns the composed transformation of the given transformations.
@@ -94,20 +94,29 @@ public:
     CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos){};
 
     /**
-     * Transforms given position as read by the source frame
-     * and computes the equivalent vector components in the target frame's basis.
+     * Transforms given position as read by the source frame and computes the equivalent vector components 
+     * in the target frame's basis.
+     * The difference from applyToPosition is that this operation does not
+     * alter the magnitude of the components, and just rotates the provided vector.
+     * 
+     * @param pos Position as read by source frame.
+     * @return Position in target frame's basis.
      */
-    Transform applyToVector(){};
+   CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos){};
 
     /**
      * Updates the rotation of the current transformation matrix.
+     * 
+     * @param newRot updated rotation matrix.
      */
-    void updateRotation(){};
+    void updateRotation(CMSISMat<3, 3>& newRot){};
 
     /**
-     * Updates the rotation of the current transformation matrix.
+     * Updates the position of the current transformation matrix.
+     * 
+     * @param newPos updated position vector.
      */
-    void updatePosition(){};
+    void updatePosition(CMSISMat<3, 1>& newPos){};
 
 private:
     /**
