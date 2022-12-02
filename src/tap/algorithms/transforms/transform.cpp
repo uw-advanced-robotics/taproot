@@ -35,7 +35,7 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 // };
 
 template <typename SOURCE, typename TARGET, typename NEWTARGET>
-Transform<SOURCE, NEWTARGET> Transform<SOURCE, TARGET>::compose(Transform<TARGET, NEWTARGET>& target)
+Transform<SOURCE, NEWTARGET> compose(Transform<TARGET, NEWTARGET>& target)
 {
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.

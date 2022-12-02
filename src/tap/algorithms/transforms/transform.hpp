@@ -78,7 +78,7 @@ public:
      */
     // Transform compose(Transform& target);
     template <typename SOURCE, typename TARGET, typename NEWTARGET>
-    Transform<SOURCE, NEWTARGET> Transform<SOURCE, TARGET>::compose(Transform<TARGET, NEWTARGET>& target);
+    static Transform<SOURCE, NEWTARGET> compose(Transform<TARGET, NEWTARGET>& target);
 
     /**
      * Inverts the given Transform.
