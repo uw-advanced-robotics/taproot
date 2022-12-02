@@ -26,7 +26,7 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
       position(position),
       tRotation()
 {
-    arm_mat_trans_f32(&this->rotation, &tRotation);
+    arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
 };
 
 // template <typename SOURCE, typename TARGET>
@@ -34,13 +34,13 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 //     // ???
 // };
 
-template <typename A, typename B, typename C>
-Transform<A, C> Transform<A, C>::compose(Transform<A, B>& source, Transform<B, C>& target)
+template <typename SOURCE, typename TARGET, typename NEWTARGET>
+Transform<SOURCE, NEWTARGET> Transform<SOURCE, TARGET>::compose(Transform<TARGET, NEWTARGET>& target)
 {
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
-    CMSISMat<3, 3> newRot = source.rotation * target.rotation;
-    CMSISMat<3, 1> newPos = source.position * target.position;
+    CMSISMat<3, 3> newRot = source.rotation.matrix * target.rotation.matrix;
+    CMSISMat<3, 1> newPos = source.position.matrix * target.position.matrix;
     return Transform<A, C>(&newRot, &newPos);
 };
 
@@ -48,7 +48,7 @@ template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET> Transform<SOURCE, TARGET>::getInverse(Transform<SOURCE, TARGET>& tf)
 {
     // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invPos = (-1 * tRotation) * position;
+    CMSISMat<3, 1> invPos = (-1 * tRotation.matrix) * position;
     return Transform<SOURCE, TARGET>(&tRotation, &invPos);
 };
 
@@ -59,6 +59,13 @@ CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(CMSISMat<3, 1>& pos)
     return newRot;
 };
 
+template <typename SOURCE, typename TARGET>
+CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
+{
+    CMSISMat<3, 1> newRot = (rotation * pos) + position;
+    return newRot;
+};
+
 void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot) {
     rotation = newRot;
 }
@@ -66,5 +73,4 @@ void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot) {
 void Transform<SOURCE, TARGET>::updatePosition(CMSISMat<3, 1>& newPos){
     position = newPos;
 };
-
 }  // namespace tap::algorithms::transforms

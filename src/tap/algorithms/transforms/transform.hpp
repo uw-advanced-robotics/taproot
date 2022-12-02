@@ -53,7 +53,7 @@ public:
      * @param rotation Initial rotation of this transformation.
      * @param position Initial position of this transformation.
      */
-    Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position){};
+    Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position);
 
     // /**
     //  * Construct a new Transform, which represents a transformation between two frames.
@@ -70,19 +70,22 @@ public:
 
     /**
      * Returns the composed transformation of the given transformations.
+     * trying: composing this transformation with given transformation
      *
      * @param source Transformation from frame A to frame B.
      * @param target Transformation from frame B to frame C.
      * @return Transformation from frame A to frame C.
      */
-    Transform compose(Transform& source, Transform& target){};
+    // Transform compose(Transform& target);
+    template <typename SOURCE, typename TARGET, typename NEWTARGET>
+    Transform<SOURCE, NEWTARGET> Transform<SOURCE, TARGET>::compose(Transform<TARGET, NEWTARGET>& target);
 
     /**
      * Inverts the given Transform.
      *
      * @return Inverse of given Transform.
      */
-    Transform getInverse(Transform& tf) {}
+    Transform getInverse(Transform& tf);
 
     /**
      * Transforms given position as read by the source frame
@@ -91,7 +94,7 @@ public:
      * @param pos Position as read by source frame
      * @return Position in target frame's basis.
      */
-    CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos){};
+    CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos);
 
     /**
      * Transforms given position as read by the source frame and computes the equivalent vector components 
@@ -102,21 +105,21 @@ public:
      * @param pos Position as read by source frame.
      * @return Position in target frame's basis.
      */
-   CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos){};
+   CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos);
 
     /**
      * Updates the rotation of the current transformation matrix.
      * 
      * @param newRot updated rotation matrix.
      */
-    void updateRotation(CMSISMat<3, 3>& newRot){};
+    void updateRotation(CMSISMat<3, 3>& newRot);
 
     /**
      * Updates the position of the current transformation matrix.
      * 
      * @param newPos updated position vector.
      */
-    void updatePosition(CMSISMat<3, 1>& newPos){};
+    void updatePosition(CMSISMat<3, 1>& newPos);
 
 private:
     /**
