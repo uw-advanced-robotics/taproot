@@ -35,20 +35,23 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 // };
 
 template <typename SOURCE, typename TARGET, typename NEWTARGET>
-Transform<SOURCE, NEWTARGET> compose(Transform<TARGET, NEWTARGET>& target)
+Transform<SOURCE, NEWTARGET> compose(Transform<SOURCE, TARGET>& source, Transform<TARGET, NEWTARGET>& target)
 {
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
     CMSISMat<3, 3> newRot = source.rotation.matrix * target.rotation.matrix;
     CMSISMat<3, 1> newPos = source.position.matrix * target.position.matrix;
-    return Transform<A, C>(&newRot, &newPos);
+    return Transform<SOURCE, NEWTARGET>(&newRot, &newPos);
 };
 
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET> Transform<SOURCE, TARGET>::getInverse(Transform<SOURCE, TARGET>& tf)
 {
     // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invPos = (-1 * tRotation.matrix) * position;
+    CMSISMat<3, 1> invPos = tRotation * position;
+    for (int i = 0; i < invPos.data.size(); i++) {
+        invPos.data[i] = -invPos.data[i];
+    }
     return Transform<SOURCE, TARGET>(&tRotation, &invPos);
 };
 
@@ -66,11 +69,13 @@ CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
     return newRot;
 };
 
+template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot) {
-    rotation = newRot;
+    this->rotation = newRot;
 }
 
+template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updatePosition(CMSISMat<3, 1>& newPos){
-    position = newPos;
+    this->position = newPos;
 };
 }  // namespace tap::algorithms::transforms

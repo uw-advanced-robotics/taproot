@@ -77,8 +77,8 @@ public:
      * @return Transformation from frame A to frame C.
      */
     // Transform compose(Transform& target);
-    template <typename SOURCE, typename TARGET, typename NEWTARGET>
-    static Transform<SOURCE, NEWTARGET> compose(Transform<TARGET, NEWTARGET>& target);
+    template <typename SRC, typename TARG, typename NEWTARGET>
+    static Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target);
 
     /**
      * Inverts the given Transform.
