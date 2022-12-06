@@ -66,7 +66,7 @@ public:
     //  * @param B Initial angle of pitch.
     //  * @param C Initial angle of yaw.
     //  */
-    // Transform(int& x, int& y, int& z, int& A, int& B, int& C){};
+    // Transform(int& x, int& y, int& z, int& A, int& B, int& C);
 
     /**
      * Returns the composed transformation of the given transformations.

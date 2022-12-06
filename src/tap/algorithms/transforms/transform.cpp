@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "transform.hpp"
+#ifndef TAPROOT_TRANSFORM_CPP_
+#define TAPROOT_TRANSFORM_CPP_
 
+#include "transform.hpp"
 namespace tap::algorithms::transforms
 {
 template <typename SOURCE, typename TARGET>
@@ -29,10 +31,11 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
 };
 
-// template <typename SOURCE, typename TARGET>
-// Transform<SOURCE, TARGET>::Transform(int& x, int& y, int& z, int& A, int& B, int& C){
-//     // ???
-// };
+template <typename SOURCE, typename TARGET>
+Transform<SOURCE, TARGET>::Transform(int& x, int& y, int& z, int& A, int& B, int& C){
+     CMSISMat<3, 3> rot = CMSISMat({A, B, C});
+     //TODO
+ };
 
 template <typename SOURCE, typename TARGET, typename NEWTARGET>
 Transform<SOURCE, NEWTARGET> compose(Transform<SOURCE, TARGET>& source, Transform<TARGET, NEWTARGET>& target)
@@ -79,3 +82,4 @@ void Transform<SOURCE, TARGET>::updatePosition(CMSISMat<3, 1>& newPos){
     this->position = newPos;
 };
 }  // namespace tap::algorithms::transforms
+#endif
