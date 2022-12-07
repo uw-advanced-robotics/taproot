@@ -28,29 +28,29 @@ namespace tap::algorithms
 
 /**
  * A generic Interface for a robot-specific Transformer
- * 
- * A Transformer stores, updates, and distributes various 
+ *
+ * A Transformer stores, updates, and distributes various
  * transforms (tap::algorithms::Transform) during robot operation
-*/
+ */
 
 class Transformer
 {
 public:
     /**
      * Instantiate a new Transformer
-    */
+     */
     Transformer();
 
     // Disable copy constructor and assignment
     Transformer(const Transformer& other) = delete;
-    Transformer &operator=(const Transformer& other) = delete;
+    Transformer& operator=(const Transformer& other) = delete;
 
     /**
      * Updates all stored transforms, should be called each robot cycle
-    */
+     */
     virtual void update() = 0;
 
-}; // class Transformer
-} // namespace tap::algorithms
+};  // class Transformer
+}  // namespace tap::algorithms
 
 #endif  // TAPROOT_TRANSFORMER_HPP_

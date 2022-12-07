@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __TAPROOT_FRAMES_HPP__
-#define __TAPROOT_FRAMES_HPP__
+#ifndef TAPROOT_FRAMES_HPP_
+#define TAPROOT_FRAMES_HPP_
 
 namespace tap::algorithms
 {
@@ -27,10 +27,11 @@ namespace tap::algorithms
  * Frame is an empty class to provide type-checking for
  * generic Transforms. This class is intended to be inherited
  * by more specific frame subclasses, which should also be empty.
-*/
+ */
 
-class Frame { };
-}
+class Frame
+{
+};
+}  // namespace tap::algorithms
 
-
-#endif // __TAPROOT_FRAMES_HPP__ 
+#endif  // TAPROOT_FRAMES_HPP_
