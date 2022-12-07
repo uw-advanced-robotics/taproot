@@ -33,8 +33,15 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(int& x, int& y, int& z, int& A, int& B, int& C){
-     CMSISMat<3, 3> rot = CMSISMat({A, B, C});
-     //TODO
+    // For x forward z down coordinate system, 
+    // constructs rotation matrix where C, B, A = yaw, pitch, roll
+    int data[3][3] =
+    {
+        {std::cos(C)*std::cos(B), (std::cos(C)*std::sin(B)*std::sin(A)) - (std::sin(C)*std::cos(A)) , (std::cos(C)*std::sin(B)*std::cos(A)) + std::sin(C)*std::sin(A)},
+        {std::sin(C)*std::cos(B), std::sin(C)*std::sin(B)*std::sin(A) + std::cos(C)*std::cos(A), std::sin(C)*std::sin(B)*std::cos(A) - std::cos(C)*std::sin(A)},
+        {-std::sin(B), std::cos(B)*std::sin(A), std::cos(B)*std::cos(A)}
+    };
+     CMSISMat<3, 3> rot = CMSISMat<3, 3>(data);
  };
 
 template <typename SOURCE, typename TARGET, typename NEWTARGET>
