@@ -55,18 +55,19 @@ public:
      */
     Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position);
 
-    // /**
-    //  * Construct a new Transform, which represents a transformation between two frames.
-    //  * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll.
-    //  *
-    //  * @param x Initial x position coordinate.
-    //  * @param y Initial y position coordinate.
-    //  * @param z Initial z position coordinate.
-    //  * @param A Initial angle of roll.
-    //  * @param B Initial angle of pitch.
-    //  * @param C Initial angle of yaw.
-    //  */
-    // Transform(int& x, int& y, int& z, int& A, int& B, int& C);
+    /**
+     * Construct a new Transform, which represents a transformation between two frames.
+     * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll,
+     * for an x-forward z-down coordinate system.
+     *
+     * @param x Initial x position coordinate.
+     * @param y Initial y position coordinate.
+     * @param z Initial z position coordinate.
+     * @param A Initial angle of roll.
+     * @param B Initial angle of pitch.
+     * @param C Initial angle of yaw.
+     */
+    Transform(int& x, int& y, int& z, int& A, int& B, int& C);
 
     /**
      * Returns the composed transformation of the given transformations.
