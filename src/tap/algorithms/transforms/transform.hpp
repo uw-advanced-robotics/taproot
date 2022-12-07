@@ -79,7 +79,9 @@ public:
      */
     // Transform compose(Transform& target);
     template <typename SRC, typename TARG, typename NEWTARGET>
-    static Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target);
+    static Transform<SRC, NEWTARGET> compose(
+        Transform<SRC, TARG>& source,
+        Transform<TARG, NEWTARGET>& target);
 
     /**
      * Inverts the given Transform.
@@ -98,26 +100,26 @@ public:
     CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos);
 
     /**
-     * Transforms given position as read by the source frame and computes the equivalent vector components 
-     * in the target frame's basis.
-     * The difference from applyToPosition is that this operation does not
-     * alter the magnitude of the components, and just rotates the provided vector.
-     * 
+     * Transforms given position as read by the source frame and computes the equivalent vector
+     * components in the target frame's basis. The difference from applyToPosition is that this
+     * operation does not alter the magnitude of the components, and just rotates the provided
+     * vector.
+     *
      * @param pos Position as read by source frame.
      * @return Position in target frame's basis.
      */
-   CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos);
+    CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos);
 
     /**
      * Updates the rotation of the current transformation matrix.
-     * 
+     *
      * @param newRot updated rotation matrix.
      */
     void updateRotation(CMSISMat<3, 3>& newRot);
 
     /**
      * Updates the position of the current transformation matrix.
-     * 
+     *
      * @param newPos updated position vector.
      */
     void updatePosition(CMSISMat<3, 1>& newPos);
@@ -128,15 +130,15 @@ private:
      */
     CMSISMat<3, 3> rotation;
 
-   /**
-    * Position vector.
-    */
+    /**
+     * Position vector.
+     */
     CMSISMat<3, 1> position;
 
-   /**
-    * Transpose of rotation. Computed and stored at beginning
-    * for use in other computations.
-    */
+    /**
+     * Transpose of rotation. Computed and stored at beginning
+     * for use in other computations.
+     */
     CMSISMat<3, 3> tRotation;
 };
 }  // namespace tap::algorithms::transforms
