@@ -25,7 +25,6 @@
 
 namespace tap::algorithms
 {
-
 /**
  * A generic Interface for a robot-specific Transformer
  *

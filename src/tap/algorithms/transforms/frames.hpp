@@ -22,7 +22,6 @@
 
 namespace tap::algorithms
 {
-
 /**
  * Frame is an empty class to provide type-checking for
  * generic Transforms. This class is intended to be inherited
