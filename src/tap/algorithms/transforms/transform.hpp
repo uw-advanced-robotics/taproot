@@ -71,13 +71,11 @@ public:
 
     /**
      * Returns the composed transformation of the given transformations.
-     * trying: composing this transformation with given transformation
      *
      * @param source Transformation from frame A to frame B.
      * @param target Transformation from frame B to frame C.
      * @return Transformation from frame A to frame C.
      */
-    // Transform compose(Transform& target);
     template <typename SRC, typename TARG, typename NEWTARGET>
     static Transform<SRC, NEWTARGET> compose(
         Transform<SRC, TARG>& source,
