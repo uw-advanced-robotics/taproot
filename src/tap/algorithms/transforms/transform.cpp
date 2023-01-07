@@ -32,7 +32,7 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 };
 
 template <typename SOURCE, typename TARGET>
-Transform<SOURCE, TARGET>::Transform(int& x, int& y, int& z, int& A, int& B, int& C)
+Transform<SOURCE, TARGET>::Transform(float& x, float& y, float& z, float& A, float& B, float& C)
 {
     // For x forward z down coordinate system,
     // constructs rotation matrix where C, B, A = yaw, pitch, roll
