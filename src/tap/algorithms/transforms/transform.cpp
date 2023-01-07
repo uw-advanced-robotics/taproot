@@ -36,7 +36,7 @@ Transform<SOURCE, TARGET>::Transform(float& x, float& y, float& z, float& A, flo
 {
     // For x forward z down coordinate system,
     // constructs rotation matrix where C, B, A = yaw, pitch, roll
-    int data[3][3] = {
+    float data[3][3] = {
         {std::cos(C) * std::cos(B),
          (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
          (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A)},
