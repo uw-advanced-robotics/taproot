@@ -67,7 +67,7 @@ public:
      * @param B Initial angle of pitch.
      * @param C Initial angle of yaw.
      */
-    Transform(float& x, float& y, float& z, float& A, float& B, float& C);
+    Transform(float x, float y, float z, float A, float B, float C);
 
     /**
      * Returns the composed transformation of the given transformations.
@@ -82,11 +82,11 @@ public:
         Transform<TARG, NEWTARGET>& target);
 
     /**
-     * Inverts the given Transform.
+     * Inverts the Transform.
      *
-     * @return Inverse of given Transform.
+     * @return Inverse of this Transform.
      */
-    Transform getInverse(Transform& tf);
+    Transform<TARGET, SOURCE> getInverse();
 
     /**
      * Transforms given position as read by the source frame
