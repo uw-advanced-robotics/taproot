@@ -24,9 +24,9 @@ namespace tap::algorithms::transforms
 {
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position)
-    : rotation(rotation),
-      position(position)
 {
+    this->rotation = std::move(rotation);
+    this->position = std::move(position);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
 };
 
