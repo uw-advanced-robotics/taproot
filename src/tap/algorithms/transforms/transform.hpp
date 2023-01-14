@@ -116,6 +116,16 @@ public:
     void updateRotation(CMSISMat<3, 3>& newRot);
 
     /**
+     * Updates the rotation of the current transformation matrix.
+     * Takes rotation angles in the order of yaw->pitch->role.
+     *
+     * @param A: updated rotation angle about the x-axis.
+     * @param B: updated rotation angle about the y-axis.
+     * @param C: updated rotation angle about the z-axis.
+     */
+    void updateRotation(float A, float B, float C);
+
+    /**
      * Updates the position of the current transformation matrix.
      *
      * @param newPos updated position vector.

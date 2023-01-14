@@ -50,17 +50,15 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B
     Transform(rot, pos);
 };
 
-template <typename SOURCE, typename TARGET, typename NEWTARGET>
-Transform<SOURCE, NEWTARGET> compose(
-    Transform<SOURCE, TARGET>& source,
-    Transform<TARGET, NEWTARGET>& target)
+template <typename SRC, typename TARG, typename NEWTARGET>
+Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target)
 {
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
     CMSISMat<3, 3> newRot = source.rotation.matrix * target.rotation.matrix;
     CMSISMat<3, 1> newPos =
         source.position.matrix + source.rotation.matrix * target.position.matrix;
-    return Transform<SOURCE, NEWTARGET>(&newRot, &newPos);
+    return Transform<SRC, NEWTARGET>(&newRot, &newPos);
 };
 
 template <typename SOURCE, typename TARGET>
@@ -92,14 +90,31 @@ CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
 template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot)
 {
-    this->rotation = newRot;
+    this->rotation = std::move(newRot);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
+}
+
+template <typename SOURCE, typename TARGET>
+void Transform<SOURCE, TARGET>::updateRotation(float A, float B, float C)
+{
+    float data[9] = {
+        std::cos(C) * std::cos(B),
+        (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
+        (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A),
+        std::sin(C) * std::cos(B),
+        std::sin(C) * std::sin(B) * std::sin(A) + std::cos(C) * std::cos(A),
+        std::sin(C) * std::sin(B) * std::cos(A) - std::cos(C) * std::sin(A),
+        -std::sin(B),
+        std::cos(B) * std::sin(A),
+        std::cos(B) * std::cos(A)};
+    CMSISMat<3, 3> newRot = CMSISMat<3, 3>(data);
+    updateRotation(newRot);
 }
 
 template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updatePosition(CMSISMat<3, 1>& newPos)
 {
-    this->position = newPos;
+    this->position = std::move(newPos);
 };
 }  // namespace tap::algorithms::transforms
 #endif
