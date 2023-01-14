@@ -58,7 +58,8 @@ Transform<SOURCE, NEWTARGET> compose(
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
     CMSISMat<3, 3> newRot = source.rotation.matrix * target.rotation.matrix;
-    CMSISMat<3, 1> newPos = source.position.matrix * target.position.matrix;
+    CMSISMat<3, 1> newPos =
+        source.position.matrix + source.rotation.matrix * target.position.matrix;
     return Transform<SOURCE, NEWTARGET>(&newRot, &newPos);
 };
 
@@ -77,15 +78,15 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse()
 template <typename SOURCE, typename TARGET>
 CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(CMSISMat<3, 1>& pos)
 {
-    CMSISMat<3, 1> newRot = rotation * (pos + position);
-    return newRot;
+    CMSISMat<3, 1> newPos = rotation * (pos + position);
+    return newPos;
 };
 
 template <typename SOURCE, typename TARGET>
 CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
 {
-    CMSISMat<3, 1> newRot = (rotation * pos) + position;
-    return newRot;
+    CMSISMat<3, 1> newVec = rotation * pos;
+    return newVec;
 };
 
 template <typename SOURCE, typename TARGET>

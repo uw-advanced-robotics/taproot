@@ -35,8 +35,9 @@ namespace tap::algorithms::transforms
     "source" frame. The "translation" is the target frame's origin in source frame, and the
     "rotation" is the target frame's orientation relative to the source frame's orientation.
 
-    Conceptually, translations are applied "before" rotations: a rotation does not affect the origin
-    point of the target frame, only rotates the axes of that frame.
+    Conceptually, translations are applied "before" rotations. This means that the origin of the
+    target frame is entirely defined by the translation in the source frame, and the rotation serves
+    only to change the orientation of the target frame's axes relative to the source frame.
 
     Utilizes arm's CMSIS matrix operations.
 
@@ -57,15 +58,16 @@ public:
 
     /**
      * Construct a new Transform, which represents a transformation between two frames.
-     * Rotations are implied in order of C, B, A, or in the order of yaw, pitch, and roll,
-     * for an x-forward z-down coordinate system.
+     * Rotations are implied in order of C->B->A.
+     * As an example, for an x-forward + z-down coordinate system,
+     * this is in the order of yaw->pitch->roll.
      *
-     * @param x Initial x position coordinate.
-     * @param y Initial y position coordinate.
-     * @param z Initial z position coordinate.
-     * @param A Initial angle of roll.
-     * @param B Initial angle of pitch.
-     * @param C Initial angle of yaw.
+     * @param x: Initial x-component of the translation.
+     * @param y: Initial y-component of the translation.
+     * @param z: Initial z-component of the translation.
+     * @param A: Initial rotation angle about the x-axis.
+     * @param B: Initial rotation angle about the y-axis.
+     * @param C: Initial rotation angle about the z-axis.
      */
     Transform(float x, float y, float z, float A, float B, float C);
 
@@ -78,12 +80,10 @@ public:
      */
     template <typename SRC, typename TARG, typename NEWTARGET>
     static Transform<SRC, NEWTARGET> compose(
-        Transform<SRC, TARG>& source,
-        Transform<TARG, NEWTARGET>& target);
+        Transform<SRC, TARG>& firstTF,
+        Transform<TARG, NEWTARGET>& secondTF);
 
     /**
-     * Inverts the Transform.
-     *
      * @return Inverse of this Transform.
      */
     Transform<TARGET, SOURCE> getInverse();
@@ -98,15 +98,15 @@ public:
     CMSISMat<3, 1> applyToPosition(CMSISMat<3, 1>& pos);
 
     /**
-     * Transforms given position as read by the source frame and computes the equivalent vector
+     * Transforms a vector as read by the source frame and computes the equivalent vector
      * components in the target frame's basis. The difference from applyToPosition is that this
      * operation does not alter the magnitude of the components, and just rotates the provided
      * vector.
      *
-     * @param pos Position as read by source frame.
-     * @return Position in target frame's basis.
+     * @param vec Vector as read by source frame.
+     * @return Vector in target frame's basis.
      */
-    CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& pos);
+    CMSISMat<3, 1> applyToVector(CMSISMat<3, 1>& vec);
 
     /**
      * Updates the rotation of the current transformation matrix.
