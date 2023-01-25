@@ -55,10 +55,10 @@ Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, 
 {
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
-    CMSISMat<3, 3> newRot = source.rotation.matrix * target.rotation.matrix;
+    CMSISMat<3, 3> newRot = source.rotation * target.rotation;
     CMSISMat<3, 1> newPos =
-        source.position.matrix + source.rotation.matrix * target.position.matrix;
-    return Transform<SRC, NEWTARGET>(&newRot, &newPos);
+        source.position + source.rotation * target.position;
+    return Transform<SRC, NEWTARGET>(newRot, newPos);
 };
 
 template <typename SOURCE, typename TARGET>
@@ -66,11 +66,11 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse()
 {
     // negative transposed rotation matrix times original position = new position
     CMSISMat<3, 1> invPos = tRotation * position;
-    for (int i = 0; i < invPos.data.size(); i++)
+    for (std::size_t i = 0; i < invPos.data.size(); i++)
     {
         invPos.data[i] = -invPos.data[i];
     }
-    return Transform<TARGET, SOURCE>(&tRotation, &invPos);
+    return Transform<TARGET, SOURCE>(tRotation, invPos);
 };
 
 template <typename SOURCE, typename TARGET>

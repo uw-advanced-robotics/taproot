@@ -79,7 +79,7 @@ public:
      * @return Transformation from frame A to frame C.
      */
     template <typename SRC, typename TARG, typename NEWTARGET>
-    static Transform<SRC, NEWTARGET> compose(
+    friend Transform<SRC, NEWTARGET> compose(
         Transform<SRC, TARG>& firstTF,
         Transform<TARG, NEWTARGET>& secondTF);
 
