@@ -56,8 +56,7 @@ Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, 
     // left multiply source transformation matrix with target transformation matrix to get
     // composition.
     CMSISMat<3, 3> newRot = source.rotation * target.rotation;
-    CMSISMat<3, 1> newPos =
-        source.position + source.rotation * target.position;
+    CMSISMat<3, 1> newPos = source.position + source.rotation * target.position;
     return Transform<SRC, NEWTARGET>(newRot, newPos);
 };
 
