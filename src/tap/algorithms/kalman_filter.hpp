@@ -42,6 +42,7 @@ class KalmanFilter
 public:
     /**
      * @param[in] A State transition matrix (also called F).
+     * @param[in] B Control matrix
      * @param[in] C Observation matrix (also called H).
      * @param[in] Q Process noise covariance.
      * @param[in] R Measurement error covariance.
@@ -49,17 +50,20 @@ public:
      */
     KalmanFilter(
         const float (&A)[STATES * STATES],
+        const float (&B)[STATES * STATES],
         const float (&C)[INPUTS * STATES],
         const float (&Q)[STATES * STATES],
         const float (&R)[INPUTS * INPUTS],
         const float (&P0)[STATES * STATES])
         : A(A),
           At(),
+          B(B),
           C(C),
           Ct(),
           Q(Q),
           R(R),
           xHat(),
+          uHat(),
           P(P0),
           P0(P0),
           K(),
@@ -85,8 +89,7 @@ public:
         }
 
         // Predict state
-        // TODO add control vector if necessary in the future
-        xHat = A * xHat;
+        xHat = A * xHat + B * uHat;
         P = A * P * At + Q;
 
         // Update step
@@ -118,6 +121,11 @@ private:
     CMSISMat<STATES, STATES> At;
 
     /**
+     * Control matrix. For converting control vector to linear and rotational velocity
+    */
+    const CMSISMat<STATES, STATES> B;
+
+    /**
      * Observation matrix. How we transform the state vector into a measurement vector.
      *
      * @note Also referred to as "H" in literature.
@@ -140,6 +148,11 @@ private:
      * Expectation of the actual state given \f$Y_{i - 1}\f$.
      */
     CMSISMat<STATES, 1> xHat;
+
+    /**
+     * Control vector at the previous time.
+    */
+    CMSISMat<STATES, 1> uHat;
 
     /**
      * Predicted error covariance.
