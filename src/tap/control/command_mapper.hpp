@@ -35,11 +35,10 @@ class CommandMapping;
 /**
  * Class that controls mapping remote state to actions. All the remote
  * mappings will be handled here. One passes a RemoteMapState and a set
- * of `Command`s for which the RemoteMapState is mapped to a `CommandMapping`
- * sub-object. Once a command mapping is created, pass this command mapping to
- * the `CommandMapper`'s `addMap` function. This will register the mapping such
- * that the `CommandMapping`'s `executeCommandMapping` function will be called
- * each time new remote information is received.
+ * of `Command`s for which the RemoteMapState is mapped to to one of
+ * the `add<type>Mapping` functions. This will create an appropriate CommandMapping
+ * and add it to the list of mappings to be checked each time new remote information
+ * is received.
  *
  * For example, given the command `coolCommand`, to map a hold mapping
  * to the left switch in the up position, we define a `HoldCommandMapping`
@@ -78,6 +77,7 @@ public:
         uint16_t key,
         tap::communication::serial::Remote::SwitchState leftSwitch,
         tap::communication::serial::Remote::SwitchState rightSwitch,
+        float wheel,
         bool mouseL,
         bool mouseR);
 

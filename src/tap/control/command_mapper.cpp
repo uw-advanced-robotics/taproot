@@ -36,6 +36,7 @@ void CommandMapper::handleKeyStateChange(
     uint16_t key,
     Remote::SwitchState leftSwitch,
     Remote::SwitchState rightSwitch,
+    float wheel,
     bool mouseL,
     bool mouseR)
 {
@@ -45,6 +46,7 @@ void CommandMapper::handleKeyStateChange(
     mapstate.initLSwitch(leftSwitch);
     mapstate.initRSwitch(rightSwitch);
     mapstate.initKeys(key);
+    mapstate.initWheel(wheel);
     if (mouseL)
     {
         mapstate.initLMouseButton();

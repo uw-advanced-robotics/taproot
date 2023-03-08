@@ -99,6 +99,23 @@ public:
         tap::communication::serial::Remote::SwitchState switchState);
 
     /**
+     * Initializes a RemoteMapState with a wheel and thresholds.
+     *
+     * @param[in] threshold The threshold of which the wheel can be less than the negative of or greater than
+    */
+    RemoteMapState(float threshold);
+
+    /**
+     * Initializes a RemoteMapState with a wheel and thresholds.
+     *
+     * @param[in] lowerThreshold The threshold of which the wheel can be less than
+     * @param[in] switchState The threshold of which the wheel can be greater than
+     */
+    RemoteMapState(
+        float lowerThreshold,
+        float upperThreshold);
+
+    /**
      * Initializes a RemoteMapState with particular switch states for both remote
      * switches.
      *
@@ -154,6 +171,10 @@ public:
      * Initializes the right switch with the particular `Remote::SwitchState` provided.
      */
     void initRSwitch(tap::communication::serial::Remote::SwitchState ss);
+
+    void initWheel(float threshold);
+
+    void initWheel(float lowerThreshold, float upperThreshold);
 
     /**
      * Initializes the keys to the bit mapped set of keys provided.
@@ -252,6 +273,10 @@ private:
 
     tap::communication::serial::Remote::SwitchState rSwitch =
         tap::communication::serial::Remote::SwitchState::UNKNOWN;
+
+    bool wheel = false; 
+    float wheelLowerThreshold;
+    float wheelUpperThreshold;
 
     uint16_t keys = 0;
 

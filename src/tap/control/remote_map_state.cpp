@@ -63,6 +63,16 @@ RemoteMapState::RemoteMapState(Remote::Switch swh, Remote::SwitchState switchSta
     }
 }
 
+RemoteMapState::RemoteMapState(float threshold)
+{
+    initWheel(threshold);
+}
+
+RemoteMapState::RemoteMapState(float lowerThreshold, float upperThreshold)
+{
+    initWheel(lowerThreshold, upperThreshold);
+}
+
 RemoteMapState::RemoteMapState(Remote::SwitchState leftss, Remote::SwitchState rightss)
 {
     initLSwitch(leftss);
@@ -168,6 +178,20 @@ void RemoteMapState::initNegKeys(const std::list<Remote::Key> &negKeySet)
     initNegKeys(negKeys);
 }
 
+void RemoteMapState::initWheel(float threshold)
+{
+    initWheel(-threshold, threshold); 
+}
+
+void RemoteMapState::initWheel(float lowerThreshold, float upperThreshold) {
+    if(lowerThreshold < -1 || upperThreshold > 1 || lowerThreshold < upperThreshold) {
+        return;
+    }
+    wheel = true;
+    this->wheelLowerThreshold = lowerThreshold;
+    this->wheelUpperThreshold = upperThreshold;
+}
+
 void RemoteMapState::initLMouseButton() { lMouseButton = true; }
 
 void RemoteMapState::initRMouseButton() { rMouseButton = true; }
@@ -191,6 +215,10 @@ bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
         return false;
     }
     if (rMouseButton && other.rMouseButton != rMouseButton)
+    {
+        return false;
+    }
+    if (wheel && (other.wheelLowerThreshold > wheelLowerThreshold && other.wheelUpperThreshold < wheelUpperThreshold))
     {
         return false;
     }
