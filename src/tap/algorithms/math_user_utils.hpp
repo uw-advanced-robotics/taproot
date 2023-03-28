@@ -157,6 +157,23 @@ int getSign(T val)
     return (T(0) < val) - (val < T(0));
 }
 
+/**
+ * @brief Bilinear Interpolation of a regularly-spaced grid of values.
+ * Let x = dimension 1 and y = dimension 2 of the 2D array of values
+ * @param values 2D-array pointer of f(x,y) values
+ * @return approximation of values at (xdes,ydes)
+ */
+float interpolateLinear2D(
+    float** values,
+    float* xmin,
+    float* xmax,
+    float* dx,
+    float* ymin,
+    float* ymax,
+    float* dy,
+    float xDes,
+    float yDes);
+
 }  // namespace algorithms
 
 }  // namespace tap

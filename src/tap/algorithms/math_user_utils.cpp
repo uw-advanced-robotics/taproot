@@ -19,6 +19,7 @@
 
 #include "math_user_utils.hpp"
 
+#include <array>
 #include <cstdint>
 
 float tap::algorithms::fastInvSqrt(float x)
@@ -38,4 +39,82 @@ void tap::algorithms::rotateVector(float* x, float* y, float radians)
     float x_temp = *x;
     *x = (*x) * cosf(radians) - *y * sinf(radians);
     *y = x_temp * sinf(radians) + *y * cosf(radians);
+}
+
+float interpolateLinear2D(
+    float** values,
+    float* xmin,
+    float* xmax,
+    float* dx,
+    float* ymin,
+    float* ymax,
+    float* dy,
+    float xDes,
+    float yDes)
+{
+    // check that xDes and yDes are in-bounds. No extrapolation
+    if (*dx > 0)
+    {
+        if (xDes < *xmin || xDes > *xmax)
+        {
+            return NULL;
+        }
+    }
+    else
+    {
+        if (xDes > *xmin || xDes < *xmax)
+        {
+            return NULL;
+        }
+    }
+    if (*dy > 0)
+    {
+        if (yDes < *ymin || yDes > *ymax)
+        {
+            return NULL;
+        }
+    }
+    else
+    {
+        if (yDes > *ymin || yDes < *ymax)
+        {
+            return NULL;
+        }
+    }
+
+    int num_x = (*xmax - *xmin) / (*dx);
+    float xScalingRatio =
+        1 /
+        *dx;  // we multiple the x range by xscalingratio to turn all x values into integers(ish)
+    float xDesNormalized =
+        (xDes - *xmin) *
+        xScalingRatio;  // finds the value of x if the x-range were normalized to integers
+    int xIndex = (int)floor(xDesNormalized);  // finds x1's index
+    if (xIndex >= num_x) xIndex = num_x - 1;  // prevent OOBness
+    if (xIndex < 0) xIndex = 0;
+    float x1 = *xmin + xIndex * *dx;  // gets value from index
+    float x2 = *xmin + (xIndex + 1) * *dx;
+
+    int num_y = (*ymax - *ymin) / (*dy);
+    float yScalingRatio = 1 / *dy;
+    float yDesNormalized = (yDes - *ymin) * yScalingRatio;
+    int yIndex = (int)floor(yDesNormalized);
+    if (yIndex >= num_y) yIndex = num_y - 1;
+    if (yIndex < 0) yIndex = 0;
+    float y1 = *ymin + yIndex * *dy;
+    float y2 = *ymin + (yIndex + 1) * *dy;
+
+    float q11, q12, q21, q22;  // x1y1, x1y2, x2y1, x2y2
+    q11 = *(*(values + xIndex) + yIndex);
+    q12 = *(*(values + xIndex) + yIndex + 1);
+    q21 = *(*(values + xIndex + 1) + yIndex);
+    q22 = *(*(values + xIndex + 1) + yIndex + 1);
+
+    float x2x, y2y, yy1, xx1;
+    x2x = x2 - xDes;
+    y2y = y2 - yDes;
+    yy1 = yDes - y1;
+    xx1 = xDes - x1;
+    return 1.0 / (*dx * *dy) *
+           (q11 * x2x * y2y + q21 * xx1 * y2y + q12 * x2x * yy1 + q22 * xx1 * yy1);
 }
