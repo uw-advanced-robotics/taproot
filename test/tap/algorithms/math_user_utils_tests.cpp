@@ -105,13 +105,48 @@ TEST(MathUserUtils, getSign_simple)
     EXPECT_EQ(-1, getSign(-42.0f));
 }
 
-TEST(mathUserUtils, interpolateLinear2D) {
-    float values[2][5] = {
-        {1, 2, 3, 4, 5},
-        {2, 3, 4, 5, 6}};
+TEST(mathUserUtils, interpolateLinear2D)
+{
+    float values[2][5] = {{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}};
     float xrange[2] = {5, 10};
     float yrange[5] = {.1, .2, .3, .4, .5};
-    EXPECT_NEAR(1.5, interpolateLinear2D(values, &xrange[0], &xrange[1], &5, &yrange[0], &yrange[4], &0.1, 7.5, 0.1), 1E-3);
-    EXPECT_NEAR(2, interpolateLinear2D(values, &xrange[0], &xrange[1], &5, &yrange[0], &yrange[4], &0.1, 7.5, 0.15), 1E-3);
-    EXPECT_NEAR(NULL, interpolateLinear2D(values, &xrange[0], &xrange[1], &5, &yrange[0], &yrange[4], &0.1, 7000, 0.15), 1E-3);
+    EXPECT_NEAR(
+        1.5,
+        interpolateLinear2D(
+            values,
+            &xrange[0],
+            &xrange[1],
+            &5,
+            &yrange[0],
+            &yrange[4],
+            &0.1,
+            7.5,
+            0.1),
+        1E-3);
+    EXPECT_NEAR(
+        2,
+        interpolateLinear2D(
+            values,
+            &xrange[0],
+            &xrange[1],
+            &5,
+            &yrange[0],
+            &yrange[4],
+            &0.1,
+            7.5,
+            0.15),
+        1E-3);
+    EXPECT_NEAR(
+        NULL,
+        interpolateLinear2D(
+            values,
+            &xrange[0],
+            &xrange[1],
+            &5,
+            &yrange[0],
+            &yrange[4],
+            &0.1,
+            7000,
+            0.15),
+        1E-3);
 }

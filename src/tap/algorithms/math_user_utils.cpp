@@ -20,6 +20,7 @@
 #include "math_user_utils.hpp"
 
 #include <array>
+#include <cassert>
 #include <cstdint>
 
 float tap::algorithms::fastInvSqrt(float x)
@@ -53,33 +54,23 @@ float interpolateLinear2D(
     float yDes)
 {
     // check that xDes and yDes are in-bounds. No extrapolation
+    assert(*dx != 0);
+    assert(*dy != 0);
     if (*dx > 0)
     {
-        if (xDes < *xmin || xDes > *xmax)
-        {
-            return NULL;
-        }
+        assert(xDes < *xmin || xDes > *xmax);
     }
     else
     {
-        if (xDes > *xmin || xDes < *xmax)
-        {
-            return NULL;
-        }
+        assert(xDes > *xmin || xDes < *xmax);
     }
     if (*dy > 0)
     {
-        if (yDes < *ymin || yDes > *ymax)
-        {
-            return NULL;
-        }
+        assert(yDes < *ymin || yDes > *ymax);
     }
     else
     {
-        if (yDes > *ymin || yDes < *ymax)
-        {
-            return NULL;
-        }
+        assert(yDes > *ymin || yDes < *ymax);
     }
 
     int num_x = (*xmax - *xmin) / (*dx);
