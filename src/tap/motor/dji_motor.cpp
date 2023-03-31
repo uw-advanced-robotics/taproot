@@ -44,7 +44,9 @@ DjiMotor::DjiMotor(
     bool isInverted,
     const char* name,
     uint16_t encoderWrapped,
-    int64_t encoderRevolutions)
+    int64_t encoderRevolutions,
+    int32_t lowerEncoderLimit,
+    int32_t upperEncoderLimit)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       motorName(name),
       drivers(drivers),
@@ -56,7 +58,9 @@ DjiMotor::DjiMotor(
       torque(0),
       motorInverted(isInverted),
       encoderWrapped(encoderWrapped),
-      encoderRevolutions(encoderRevolutions)
+      encoderRevolutions(encoderRevolutions),
+      lowerEncoderLimit(lowerEncoderLimit),
+      upperEncoderLimit(upperEncoderLimit)
 {
     motorDisconnectTimeout.stop();
 }
@@ -91,9 +95,25 @@ void DjiMotor::processMessage(const modm::can::Message& message)
 
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)
 {
+    if ((getEncoderUnwrapped() <= lowerEncoderLimit && desiredOutput < 0) ||
+        (getEncoderUnwrapped() >= upperEncoderLimit && desiredOutput > 0))
+    // if the current encoder position is outside the range set by the soft limits
+    //  and the desired output would make the motor further exceed the limit
+    {
+        desiredOutput = 0;
+    }
     int16_t desOutputNotInverted =
         static_cast<int16_t>(tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
+}
+
+void DjiMotor::setSoftLimits(int32_t lowerLimit, int32_t upperLimit)
+{
+    if (lowerLimit < upperLimit)
+    {
+        this->lowerEncoderLimit = lowerLimit;
+        this->upperEncoderLimit = upperLimit;
+    }
 }
 
 bool DjiMotor::isMotorOnline() const

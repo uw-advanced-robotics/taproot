@@ -20,6 +20,8 @@
 #ifndef TAPROOT_DJI_MOTOR_HPP_
 #define TAPROOT_DJI_MOTOR_HPP_
 
+#include "limits.h"
+
 #include <string>
 
 #include "tap/architecture/timeout.hpp"
@@ -86,6 +88,10 @@ public:
      *      Will be overwritten by the first reported encoder value from the motor
      * @param encoderRevolutions the starting number of encoder revolutions to store.
      *      See comment for DjiMotor::encoderRevolutions for more details.
+     * @param lowerEncoderLimit the lower soft limit for the motor's encoderValue. The motor will
+     * stop if it exceeds this limit.
+     * @param upperEncoderLimit the upper soft limit for the motor's encoderValue. The motor will
+     * stop if it exceeds this limit.
      */
     DjiMotor(
         Drivers* drivers,
@@ -94,7 +100,9 @@ public:
         bool isInverted,
         const char* name,
         uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0);
+        int64_t encoderRevolutions = 0,
+        int32_t lowerEncoderLimit = INT_MIN,
+        int32_t upperEncoderLimit = INT_MAX);
 
     mockable ~DjiMotor();
 
@@ -116,8 +124,8 @@ public:
     void processMessage(const modm::can::Message& message) override;
 
     /**
-     * Set the desired output for the motor. The meaning of this value is motor
-     * controller specific.
+     * Set the desired output for the motor as long as this.getEncoderWrapped() is within the
+     * motor's soft limits. The meaning of this value is motor controller specific.
      *
      * @param[in] desiredOutput the desired motor output. Limited to the range of a 16-bit int.
      *
@@ -126,6 +134,14 @@ public:
      *      in hopes to mitigate overflow.
      */
     void setDesiredOutput(int32_t desiredOutput) override;
+
+    /**
+     * Set the soft limits in encoder ticks that the motor's range is limited to.
+     *
+     * @param[in] lowerLimit the lower limit in encoder ticks that the mtor cannot surpass
+     * @param[in] upperLimit the upper limit in encoder ticks that the motor cannot surpass
+     */
+    void setSoftLimits(int32_t lowerLimit, int32_t upperLimit);
 
     /**
      * @return `true` if a CAN message has been received from the motor within the last
@@ -234,6 +250,15 @@ private:
     int64_t encoderRevolutions;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
+
+    /**
+     * default value is INT_MIN, which indicates no lower limit has been set
+     */
+    int32_t lowerEncoderLimit;
+    /**
+     * default value is INT_MAX, which indicates no upper limit has been set
+     */
+    int32_t upperEncoderLimit;
 };
 
 }  // namespace tap::motor
