@@ -50,6 +50,12 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B
     *this = Transform(rot, pos);
 };
 
+template <typename SOURCE, typename TARGET>
+Transform<SOURCE, TARGET>::Transform()
+{
+    *this = Transform(0, 0, 0, 0, 0 ,0);
+};
+
 template <typename SRC, typename TARG, typename NEWTARGET>
 Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target)
 {

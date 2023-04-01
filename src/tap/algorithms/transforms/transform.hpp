@@ -72,6 +72,11 @@ public:
     Transform(float x, float y, float z, float A, float B, float C);
 
     /**
+     * Constructs a new Transform, which represents a transformation between two frames.
+     */
+    Transform();
+
+    /**
      * Returns the composed transformation of the given transformations.
      *
      * @param source Transformation from frame A to frame B.
@@ -131,7 +136,6 @@ public:
      * @param newPos updated position vector.
      */
     void updatePosition(CMSISMat<3, 1>& newPos);
-
 private:
     /**
      * Rotation matrix.
