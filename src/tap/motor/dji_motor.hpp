@@ -104,6 +104,8 @@ public:
 
     uint16_t getEncoderWrapped() const override;
 
+    void resetEncoderValue() override;
+
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
     /**

@@ -56,6 +56,7 @@ public:
     void initialize() override;
     int64_t getEncoderUnwrapped() const override;
     uint16_t getEncoderWrapped() const override;
+    void resetEncoderValue() override;
     void setDesiredOutput(int32_t desiredOutput) override;
     bool isMotorOnline() const override;
     int16_t getOutputDesired() const override;

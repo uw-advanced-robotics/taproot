@@ -181,3 +181,33 @@ TEST(DjiMotor, serializeCanSendData_serializes_desired_output_in_correct_positio
 
     EXPECT_EQ(serializedDesiredOutput, motor.getOutputDesired());
 }
+
+TEST(DjiMotor, resetEncoderValue_zeroes_encoder_fields) 
+{
+    tap::Drivers drivers;
+    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, true, "cool motor");
+
+    modm::can::Message msg(MOTOR1, 8, {}, false);
+
+    MotorData motorData;
+
+    motorData.encoder = 1000;
+    motorData.shaftRPM = -100;
+    motorData.torque = 100;
+    motorData.temperature = 43;
+
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+
+    motor.resetEncoderValue();
+    EXPECT_EQ(0,motor.getEncoderUnwrapped());
+    EXPECT_EQ(0,motor.getEncoderWrapped());
+
+    motorData.encoder = 8000;
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+    
+    motor.resetEncoderValue();
+    EXPECT_EQ(0,motor.getEncoderUnwrapped());
+    EXPECT_EQ(0,motor.getEncoderWrapped());
+}

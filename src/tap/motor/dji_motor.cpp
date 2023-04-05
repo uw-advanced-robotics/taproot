@@ -142,6 +142,11 @@ int64_t DjiMotor::getEncoderUnwrapped() const
 
 uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
 
+void DjiMotor::resetEncoderValue() {
+    encoderRevolutions = 0;
+    encoderWrapped = 0;
+}
+
 void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
 {
     int16_t enc_dif = newEncWrapped - encoderWrapped;
