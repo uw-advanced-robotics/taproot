@@ -102,12 +102,13 @@ void DjiMotor::setDesiredOutput(int32_t desiredOutput)
     {
         desiredOutput = 0;
     }
+    
     int16_t desOutputNotInverted =
         static_cast<int16_t>(tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
 }
 
-void DjiMotor::setSoftLimits(int32_t lowerLimit, int32_t upperLimit)
+void DjiMotor::setMotorBounds(int32_t lowerLimit, int32_t upperLimit)
 {
     if (lowerLimit < upperLimit)
     {

@@ -68,6 +68,12 @@ void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
     motorTwo.setDesiredOutput(desiredOutput);
 }
 
+void DoubleDjiMotor::setMotorBounds(int32_t lowerLimit, int32_t upperLimit)
+{
+    motorOne.setMotorBounds(lowerLimit, upperLimit);
+    motorTwo.setMotorBounds(lowerLimit, upperLimit);
+}
+
 bool DoubleDjiMotor::isMotorOnline() const
 {
     return motorOne.isMotorOnline() && motorTwo.isMotorOnline();

@@ -17,10 +17,13 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include <gtest/gtest.h>
 
 #include "tap/drivers.hpp"
 #include "tap/motor/dji_motor.hpp"
+
 
 using namespace tap::motor;
 
@@ -180,4 +183,66 @@ TEST(DjiMotor, serializeCanSendData_serializes_desired_output_in_correct_positio
         (static_cast<int16_t>(msg.data[4]) << 8) | static_cast<int16_t>(msg.data[5]);
 
     EXPECT_EQ(serializedDesiredOutput, motor.getOutputDesired());
+}
+
+////Motor Bounds Tests////
+TEST(DjiMotor, setDesiredOutput_when_moving_in_from_bounds)
+{
+    tap::Drivers drivers;
+    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+
+    modm::can::Message msg(MOTOR1, 8, {}, false);
+
+    MotorData motorData;
+
+    motorData.encoder = 8000;
+    motorData.shaftRPM = 0;
+    motorData.torque = 0;
+    motorData.temperature = 0;
+
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+    motor.processMessage(msg);
+    std::cout << motor.getEncoderUnwrapped() << std::endl;
+    motor.setMotorBounds(-5000,5000);
+
+    motor.setDesiredOutput(static_cast<int32_t>(SHRT_MAX));
+    EXPECT_EQ(SHRT_MAX, motor.getOutputDesired());
+
+    motorData.encoder = 5000;
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+
+    motor.setDesiredOutput(static_cast<int32_t>(SHRT_MIN));
+    EXPECT_EQ(SHRT_MIN, motor.getOutputDesired());
+}
+
+TEST(DjiMotor, setDesiredOutput_limits_output_using_bounds)
+{
+    tap::Drivers drivers;
+    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+
+    modm::can::Message msg(MOTOR1, 8, {}, false);
+
+    MotorData motorData;
+
+    motorData.encoder = 5000;
+    motorData.shaftRPM = 0;
+    motorData.torque = 0;
+    motorData.temperature = 0;
+
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+    
+    motor.setMotorBounds(-5000, 5000);
+
+    motor.setDesiredOutput(static_cast<int32_t>(SHRT_MAX));
+    EXPECT_EQ(0, motor.getOutputDesired());
+
+    motorData.encoder = -5000;
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+
+    motor.setDesiredOutput(static_cast<int32_t>(SHRT_MIN));
+    EXPECT_EQ(0, motor.getOutputDesired());
 }

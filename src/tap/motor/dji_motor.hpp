@@ -136,12 +136,12 @@ public:
     void setDesiredOutput(int32_t desiredOutput) override;
 
     /**
-     * Set the soft limits in encoder ticks that the motor's range is limited to.
+     * Set the motor bounds in encoder value that the motor's range is limited to.
      *
      * @param[in] lowerLimit the lower limit in encoder ticks that the mtor cannot surpass
      * @param[in] upperLimit the upper limit in encoder ticks that the motor cannot surpass
      */
-    void setSoftLimits(int32_t lowerLimit, int32_t upperLimit);
+    void setMotorBounds(int32_t lowerLimit, int32_t upperLimit) override;
 
     /**
      * @return `true` if a CAN message has been received from the motor within the last

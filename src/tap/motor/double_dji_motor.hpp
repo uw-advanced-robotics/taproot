@@ -57,6 +57,7 @@ public:
     int64_t getEncoderUnwrapped() const override;
     uint16_t getEncoderWrapped() const override;
     void setDesiredOutput(int32_t desiredOutput) override;
+    void setMotorBounds(int32_t lowerLimit, int32_t upperLimit) override;
     bool isMotorOnline() const override;
     int16_t getOutputDesired() const override;
     int8_t getTemperature() const override;

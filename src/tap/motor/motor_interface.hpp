@@ -31,6 +31,7 @@ public:
     virtual int64_t getEncoderUnwrapped() const = 0;
     virtual uint16_t getEncoderWrapped() const = 0;
     virtual void setDesiredOutput(int32_t desiredOutput) = 0;
+    virtual void setMotorBounds(int32_t lowerLimit, int32_t upperLimit) = 0;
     virtual bool isMotorOnline() const = 0;
     virtual int16_t getOutputDesired() const = 0;
     virtual int8_t getTemperature() const = 0;
