@@ -107,7 +107,7 @@ public:
     /**
      * Resets the current encoder value of the motor to 0 so that the current angle of rotation
      * of the motor now has an encoder value of 0.
-    */
+     */
     void resetEncoderValue() override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
