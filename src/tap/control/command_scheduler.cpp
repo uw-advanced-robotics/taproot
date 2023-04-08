@@ -185,6 +185,12 @@ void CommandScheduler::run()
 
     if (safeDisconnected())
     {
+        // Tells subsystems in the registeredSubsystemBitmap to shut off their hardware
+        for (auto it = subMapBegin(); it != subMapEnd(); it++)
+        {
+            (*it)->refreshSafeDisconnect();
+        }
+
         // End all commands running. They were interrupted by the remote disconnecting.
         for (auto it = cmdMapBegin(); it != cmdMapEnd(); it++)
         {

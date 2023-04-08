@@ -93,6 +93,14 @@ public:
      */
     virtual void refresh() {}
 
+    /**
+     * Called in the scheduler's run function before removing commands
+     * when safe disconnecting. This function should contain code that
+     * safely shuts down the subsystem (i.e. shutting off motors). All
+     * subsystems must implement this virtual function.
+    */
+    virtual void refreshSafeDisconnect();
+
     mockable inline bool isHardwareTestComplete() const { return hardwareTestsComplete; }
 
     mockable inline void setHardwareTestsIncomplete()
