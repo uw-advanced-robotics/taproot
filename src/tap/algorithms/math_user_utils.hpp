@@ -23,6 +23,7 @@
 #include <cinttypes>
 #include <cmath>
 #include <cstring>
+#include <vector>
 
 #include "modm/math/geometry/angle.hpp"
 
@@ -163,16 +164,52 @@ int getSign(T val)
  * @param values 2D-array pointer of f(x,y) values
  * @return approximation of values at (xdes,ydes)
  */
+template <typename T>
 float interpolateLinear2D(
-    float** values,
-    float* xmin,
-    float* xmax,
-    float* dx,
-    float* ymin,
-    float* ymax,
-    float* dy,
+    const std::vector<std::vector<T>>* values,
+    const float* xmin,
+    const float* xmax,
+    const float* dx,
+    const float* ymin,
+    const float* ymax,
+    const float* dy,
     float xDes,
-    float yDes);
+    float yDes)
+{
+    int num_x = (*xmax - *xmin) / (*dx);
+    float xScalingRatio = 1.0 / *dx;
+    // we multiply the x range by xscalingratio to turn all x values into integers(ish)
+    float xDesNormalized = (xDes - *xmin) * xScalingRatio;
+    // finds the value of x if the x-range were normalized to integers
+    int xIndex = (int)floor(xDesNormalized);  // finds x1's index
+    if (xIndex >= num_x) xIndex = num_x - 1;  // prevent OOBness
+    if (xIndex < 0) xIndex = 0;
+    float x1 = *xmin + xIndex * *dx;  // gets value from index
+    float x2 = *xmin + (xIndex + 1) * *dx;
+
+    int num_y = (*ymax - *ymin) / (*dy);
+    float yScalingRatio = 1.0 / *dy;
+    float yDesNormalized = (yDes - *ymin) * yScalingRatio;
+    int yIndex = (int)floor(yDesNormalized);
+    if (yIndex >= num_y) yIndex = num_y - 1;
+    if (yIndex < 0) yIndex = 0;
+    float y1 = *ymin + yIndex * *dy;
+    float y2 = *ymin + (yIndex + 1) * *dy;
+
+    float q11, q12, q21, q22;  // x1y1, x1y2, x2y1, x2y2
+    q11 = (float)values->at(xIndex).at(yIndex);
+    q12 = (float)values->at(xIndex).at(yIndex + 1);
+    q21 = (float)values->at(xIndex + 1).at(yIndex);
+    q22 = (float)values->at(xIndex + 1).at(yIndex + 1);
+
+    float x2x, y2y, yy1, xx1;
+    x2x = x2 - xDes;
+    y2y = y2 - yDes;
+    yy1 = yDes - y1;
+    xx1 = xDes - x1;
+    return 1.0 / (*dx * *dy) *
+           (q11 * x2x * y2y + q21 * xx1 * y2y + q12 * x2x * yy1 + q22 * xx1 * yy1);
+}
 
 }  // namespace algorithms
 

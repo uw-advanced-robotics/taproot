@@ -105,48 +105,50 @@ TEST(MathUserUtils, getSign_simple)
     EXPECT_EQ(-1, getSign(-42.0f));
 }
 
-TEST(mathUserUtils, interpolateLinear2D)
+TEST(MathUserUtils, bilinear_interpolate_simple)
 {
-    float values[2][5] = {{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}};
+    std::vector<std::vector<int>> values = {{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}};
     float xrange[2] = {5, 10};
     float yrange[5] = {.1, .2, .3, .4, .5};
+    float dx = 5;
+    float dy = .1;
     EXPECT_NEAR(
         1.5,
         interpolateLinear2D(
-            values,
+            &values,
             &xrange[0],
             &xrange[1],
-            &5,
+            &dx,
             &yrange[0],
             &yrange[4],
-            &0.1,
+            &dy,
             7.5,
             0.1),
         1E-3);
     EXPECT_NEAR(
         2,
         interpolateLinear2D(
-            values,
+            &values,
             &xrange[0],
             &xrange[1],
-            &5,
+            &dx,
             &yrange[0],
             &yrange[4],
-            &0.1,
+            &dy,
             7.5,
             0.15),
         1E-3);
     EXPECT_NEAR(
-        NULL,
+        2.5,
         interpolateLinear2D(
-            values,
+            &values,
             &xrange[0],
             &xrange[1],
-            &5,
+            &dx,
             &yrange[0],
             &yrange[4],
-            &0.1,
-            7000,
+            &dy,
+            10,
             0.15),
         1E-3);
 }
