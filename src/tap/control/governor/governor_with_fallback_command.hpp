@@ -52,10 +52,9 @@ public:
           fallbackCommand(fallbackCommand),
           commandGovernorList(commandGovernorList)
     {
-        std::for_each(
-            subRequirements.begin(),
-            subRequirements.end(),
-            [&](auto sub) { addSubsystemRequirement(sub); });
+        std::for_each(subRequirements.begin(), subRequirements.end(), [&](auto sub) {
+            addSubsystemRequirement(sub);
+        });
 
         assert(
             commandWhenGovernorsReady.getRequirementsBitwise() == this->getRequirementsBitwise());
@@ -66,10 +65,10 @@ public:
 
     bool isReady() override
     {
-        currentGovernorReadiness = std::all_of(
-            commandGovernorList.begin(),
-            commandGovernorList.end(),
-            [](auto governor) { return governor->isReady(); });
+        currentGovernorReadiness =
+            std::all_of(commandGovernorList.begin(), commandGovernorList.end(), [](auto governor) {
+                return governor->isReady();
+            });
 
         return (currentGovernorReadiness && commandWhenGovernorsReady.isReady()) ||
                (!currentGovernorReadiness && fallbackCommand.isReady());
