@@ -5,6 +5,7 @@
 ### Breaking changes
 
 - `tap::motorInterface` has two new methods to get position in radians. This is implemented already in `DjiMotor` and `DoubleDjiMotor`.
+` adds `interpolateLinear2D` to math_user_utils, which is a bilinear interpolator for regularly-spaced datasets.
 
 ## November 2022
 
