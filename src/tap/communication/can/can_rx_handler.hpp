@@ -135,7 +135,7 @@ public:
      */
     mockable void removeReceiveHandler(const CanRxListener& rxListener);
 
-private:
+protected:
     Drivers* drivers;
 
     /**
