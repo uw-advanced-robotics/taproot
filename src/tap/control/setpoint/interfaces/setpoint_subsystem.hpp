@@ -107,6 +107,8 @@ public:
      */
     virtual inline float getVelocity() = 0;
 
+    void refreshSafeDisconnect() override;
+
 };  // class SetpointSubsystem
 
 }  // namespace setpoint
