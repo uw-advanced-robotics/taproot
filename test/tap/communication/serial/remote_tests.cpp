@@ -29,6 +29,9 @@ using namespace tap::communication::serial;
 
 class RemoteTest : public Test
 {
+private:
+    static constexpr float ANALOG_MAX_VALUE = 660.0f;  // same as in remote.hpp
+
 protected:
     RemoteTest() : drivers(), remote(&drivers) {}
 
@@ -80,14 +83,14 @@ protected:
 
     void evaluateRemoteInfo()
     {
-        EXPECT_EQ(rh / 660.0f, remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL));
-        EXPECT_EQ(rv / 660.0f, remote.getChannel(Remote::Channel::RIGHT_VERTICAL));
-        EXPECT_EQ(lh / 660.0f, remote.getChannel(Remote::Channel::LEFT_HORIZONTAL));
-        EXPECT_EQ(lv / 660.0f, remote.getChannel(Remote::Channel::LEFT_VERTICAL));
+        EXPECT_EQ(rh / ANALOG_MAX_VALUE, remote.getChannel(Remote::Channel::RIGHT_HORIZONTAL));
+        EXPECT_EQ(rv / ANALOG_MAX_VALUE, remote.getChannel(Remote::Channel::RIGHT_VERTICAL));
+        EXPECT_EQ(lh / ANALOG_MAX_VALUE, remote.getChannel(Remote::Channel::LEFT_HORIZONTAL));
+        EXPECT_EQ(lv / ANALOG_MAX_VALUE, remote.getChannel(Remote::Channel::LEFT_VERTICAL));
+        EXPECT_EQ(wheel / ANALOG_MAX_VALUE, remote.getChannel(Remote::Channel::WHEEL));
         EXPECT_EQ(mx, remote.getMouseX());
         EXPECT_EQ(my, remote.getMouseY());
         EXPECT_EQ(mz, remote.getMouseZ());
-        EXPECT_EQ(wheel, remote.getWheel());
         EXPECT_EQ(lss, remote.getSwitch(Remote::Switch::LEFT_SWITCH));
         EXPECT_EQ(rss, remote.getSwitch(Remote::Switch::RIGHT_SWITCH));
         EXPECT_EQ(lb, remote.getMouseL());
