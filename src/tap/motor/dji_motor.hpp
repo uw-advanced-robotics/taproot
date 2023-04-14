@@ -239,6 +239,12 @@ private:
      */
     int64_t encoderRevolutions;
 
+    /**
+     * The actual encoder position received from CAN messages where this motor 
+     * is considered to have an encoder value of 0. Is 0 by default.
+    */
+    uint16_t encoderHomePosition;
+
     tap::arch::MilliTimeout motorDisconnectTimeout;
 };
 

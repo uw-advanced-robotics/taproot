@@ -49,6 +49,7 @@ public:
     MOCK_METHOD(uint16_t, getEncoderWrapped, (), (const override));
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));
     MOCK_METHOD(void, setDesiredOutput, (int32_t desiredOutput), (override));
+    MOCK_METHOD(void, resetEncoderValue, (), (override));
     MOCK_METHOD(bool, isMotorOnline, (), (const override));
     MOCK_METHOD(void, serializeCanSendData, (modm::can::Message * txMessage), (const override));
 
