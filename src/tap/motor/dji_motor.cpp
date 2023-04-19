@@ -90,7 +90,9 @@ void DjiMotor::processMessage(const modm::can::Message& message)
 
     int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition;
 
-    updateEncoderValue(encoderRelativeToHome < 0 ? (int32_t)ENC_RESOLUTION + encoderRelativeToHome : encoderRelativeToHome);
+    updateEncoderValue(
+        encoderRelativeToHome < 0 ? (int32_t)ENC_RESOLUTION + encoderRelativeToHome
+                                  : encoderRelativeToHome);
 }
 
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)

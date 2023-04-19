@@ -255,4 +255,3 @@ TEST(DjiMotor, inverted_moving_relative_to_home_after_zeroed_ok)
     EXPECT_EQ(500, motor.getEncoderUnwrapped());
     EXPECT_EQ(500, motor.getEncoderWrapped());
 }
-
