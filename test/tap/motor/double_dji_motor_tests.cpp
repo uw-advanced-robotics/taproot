@@ -236,7 +236,7 @@ TEST(DoubleDjiMotor, getShaftRPM__returns_average_RPM)
     EXPECT_EQ(2000, motor.getShaftRPM());
 }
 
-TEST(DoubleDjiMotor, resetEncoderValue_zeroes_encoder_fields)
+TEST(DoubleDjiMotor, resetEncoderValue_zeroes_both_motor_encoders)
 {
     SETUP_TEST();
 

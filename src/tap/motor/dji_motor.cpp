@@ -87,7 +87,9 @@ void DjiMotor::processMessage(const modm::can::Message& message)
 
     // invert motor if necessary
     encoderActual = motorInverted ? ENC_RESOLUTION - 1 - encoderActual : encoderActual;
+
     int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition;
+
     updateEncoderValue(encoderRelativeToHome < 0 ? (int32_t)ENC_RESOLUTION + encoderRelativeToHome : encoderRelativeToHome);
 }
 
