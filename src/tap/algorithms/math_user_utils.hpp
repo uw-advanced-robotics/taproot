@@ -185,12 +185,12 @@ float interpolateLinear2D(
     // get the desired pt, normalized such that it represents the index of it, then
     // Get nearest pt which is less
     int xIndex = floor((xDesBounded - xMin) / dx);
-    xIndex = limitVal(xIndex, 0, static_cast<int>(xSize - 1));  // Prevent OOB errors
+    xIndex = limitVal(xIndex, 0, static_cast<int>(xSize) - 2);  // Prevent OOB errors
     float x1 = xMin + xIndex * dx;                              // gets value from index
     float x2 = xMin + (xIndex + 1) * dx;
 
     int yIndex = floor((yDesBounded - yMin) / dy);
-    yIndex = limitVal(yIndex, 0, static_cast<int>(ySize - 1));
+    yIndex = limitVal(yIndex, 0, static_cast<int>(ySize) - 2);
     float y1 = yMin + yIndex * dy;
     float y2 = yMin + (yIndex + 1) * dy;
 
