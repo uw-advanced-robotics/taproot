@@ -22,7 +22,6 @@
 
 #include "tap/communication/gpio/analog.hpp"
 #include "tap/communication/sensors/current/current_sensor_interface.hpp"
-#include "tap/communication/sensors/power/external_power_source_interface.hpp"
 
 namespace tap
 {
@@ -79,9 +78,7 @@ public:
         tap::communication::sensors::current::CurrentSensorInterface *currentSensor,
         float startingEnergyBuffer,
         float energyBufferLimitThreshold,
-        float energyBufferCritThreshold,
-        tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource =
-            nullptr);
+        float energyBufferCritThreshold);
 
     /**
      * A function to be called repeatedly (in a subsystem's refresh function, for example). Checks
@@ -98,15 +95,27 @@ public:
      */
     float getPowerLimitRatio();
 
+    /**
+     * Allows for energy to be drawn from external sources before drawing from the power limit set by the referee system.
+     * 
+     * @param[in] energy Sets the energy in joules that are available to draw from.
+    */
+    void setExternalEnergyBuffer(float energy) { this->externalEnergyBuffer = energy; };
+
+    /**
+     * Returns the remaining energy from the external buffer. 
+    */
+    float getExternalEnergyBuffer() const { return this->externalEnergyBuffer; };
+
 private:
     const tap::Drivers *drivers;
     tap::communication::sensors::current::CurrentSensorInterface *currentSensor;
     const float startingEnergyBuffer;
     const float energyBufferLimitThreshold;
     const float energyBufferCritThreshold;
-    tap::communication::sensors::power::ExternalPowerSourceInterface *externalPowerSource;
 
     float energyBuffer;
+    float externalEnergyBuffer;
     float consumedPower;
     uint32_t prevTime;
     uint32_t prevRobotDataReceivedTimestamp;
