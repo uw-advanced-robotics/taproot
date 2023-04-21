@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -20,11 +20,12 @@
 #ifndef TAPROOT_MATH_USER_UTILS_HPP_
 #define TAPROOT_MATH_USER_UTILS_HPP_
 
+#include <array>
 #include <cinttypes>
 #include <cmath>
 #include <cstring>
-#include <vector>
 
+#include "modm/architecture/interface/assert.hpp"
 #include "modm/math/geometry/angle.hpp"
 
 namespace tap
@@ -164,50 +165,48 @@ int getSign(T val)
  * @param values 2D-array pointer of f(x,y) values
  * @return approximation of values at (xdes,ydes)
  */
-template <typename T>
+template <typename T, size_t xSize, size_t ySize>
 float interpolateLinear2D(
-    const std::vector<std::vector<T>>* values,
-    const float* xmin,
-    const float* xmax,
-    const float* dx,
-    const float* ymin,
-    const float* ymax,
-    const float* dy,
+    std::array<std::array<T, ySize>, xSize>& values,
+    const float xMin,
+    const float xMax,
+    const float dx,
+    const float yMin,
+    const float yMax,
+    const float dy,
     float xDes,
     float yDes)
 {
-    int num_x = (*xmax - *xmin) / (*dx);
-    float xScalingRatio = 1.0 / *dx;
-    // we multiply the x range by xscalingratio to turn all x values into integers(ish)
-    float xDesNormalized = (xDes - *xmin) * xScalingRatio;
-    // finds the value of x if the x-range were normalized to integers
-    int xIndex = (int)floor(xDesNormalized);  // finds x1's index
-    if (xIndex >= num_x) xIndex = num_x - 1;  // prevent OOBness
-    if (xIndex < 0) xIndex = 0;
-    float x1 = *xmin + xIndex * *dx;  // gets value from index
-    float x2 = *xmin + (xIndex + 1) * *dx;
+    modm_assert((xMax - xMin) / dx == xSize - 1, "Bilinear Interpolator", "x range error");
+    modm_assert((yMax - yMin) / dy == ySize - 1, "Bilinear Interpolator", "y range error");
+    float xDesBounded = limitVal(xDes, xMin, xMax);  // no extrapolation allowed
+    float yDesBounded = limitVal(yDes, yMin, yMax);  // no extrapolation allowed
 
-    int num_y = (*ymax - *ymin) / (*dy);
-    float yScalingRatio = 1.0 / *dy;
-    float yDesNormalized = (yDes - *ymin) * yScalingRatio;
-    int yIndex = (int)floor(yDesNormalized);
-    if (yIndex >= num_y) yIndex = num_y - 1;
-    if (yIndex < 0) yIndex = 0;
-    float y1 = *ymin + yIndex * *dy;
-    float y2 = *ymin + (yIndex + 1) * *dy;
+    // get the desired pt, normalized such that it represents the index of it, then
+    // Get nearest pt which is less
+    int xIndex = floor((xDesBounded - xMin) / dx);
+    xIndex = limitVal(xIndex, 0, static_cast<int>(xSize - 1));  // Prevent OOB errors
+    float x1 = xMin + xIndex * dx;                              // gets value from index
+    float x2 = xMin + (xIndex + 1) * dx;
 
-    float q11, q12, q21, q22;  // x1y1, x1y2, x2y1, x2y2
-    q11 = (float)values->at(xIndex).at(yIndex);
-    q12 = (float)values->at(xIndex).at(yIndex + 1);
-    q21 = (float)values->at(xIndex + 1).at(yIndex);
-    q22 = (float)values->at(xIndex + 1).at(yIndex + 1);
+    int yIndex = floor((yDesBounded - yMin) / dy);
+    yIndex = limitVal(yIndex, 0, static_cast<int>(ySize - 1));
+    float y1 = yMin + yIndex * dy;
+    float y2 = yMin + (yIndex + 1) * dy;
 
-    float x2x, y2y, yy1, xx1;
-    x2x = x2 - xDes;
-    y2y = y2 - yDes;
-    yy1 = yDes - y1;
-    xx1 = xDes - x1;
-    return 1.0 / (*dx * *dy) *
+    float q11, q12, q21, q22;  // values of x1y1, x1y2, x2y1, x2y2
+    q11 = static_cast<float>(values.at(xIndex).at(yIndex));
+    q12 = static_cast<float>(values.at(xIndex).at(yIndex + 1));
+    q21 = static_cast<float>(values.at(xIndex + 1).at(yIndex));
+    q22 = static_cast<float>(values.at(xIndex + 1).at(yIndex + 1));
+
+    float x2x, y2y, yy1, xx1;  // deltas from each pt to sample pt
+    x2x = x2 - xDesBounded;
+    y2y = y2 - yDesBounded;
+    yy1 = yDesBounded - y1;
+    xx1 = xDesBounded - x1;
+    // it's essentially a weighted average
+    return 1.0 / (dx * dy) *
            (q11 * x2x * y2y + q21 * xx1 * y2y + q12 * x2x * yy1 + q22 * xx1 * yy1);
 }
 

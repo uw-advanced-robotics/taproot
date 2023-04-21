@@ -107,48 +107,20 @@ TEST(MathUserUtils, getSign_simple)
 
 TEST(MathUserUtils, bilinear_interpolate_simple)
 {
-    std::vector<std::vector<int>> values = {{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}};
-    float xrange[2] = {5, 10};
-    float yrange[5] = {.1, .2, .3, .4, .5};
-    float dx = 5;
-    float dy = .1;
-    EXPECT_NEAR(
-        1.5,
-        interpolateLinear2D(
-            &values,
-            &xrange[0],
-            &xrange[1],
-            &dx,
-            &yrange[0],
-            &yrange[4],
-            &dy,
-            7.5,
-            0.1),
-        1E-3);
-    EXPECT_NEAR(
-        2,
-        interpolateLinear2D(
-            &values,
-            &xrange[0],
-            &xrange[1],
-            &dx,
-            &yrange[0],
-            &yrange[4],
-            &dy,
-            7.5,
-            0.15),
-        1E-3);
-    EXPECT_NEAR(
-        2.5,
-        interpolateLinear2D(
-            &values,
-            &xrange[0],
-            &xrange[1],
-            &dx,
-            &yrange[0],
-            &yrange[4],
-            &dy,
-            10,
-            0.15),
-        1E-3);
+    std::array<std::array<float, 5>, 2> values = {{{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}}};
+    std::array<std::array<float, 5>, 2>& valuesref = values;
+
+    EXPECT_NEAR(1.5, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 7.5, 0.1), 1E-3);
+    EXPECT_NEAR(2.0, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 7.5, 0.15), 1E-3);
+    EXPECT_NEAR(2.5, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 10, 0.15), 1E-3);
+}
+
+TEST(MathUserUtils, bilinear_interpolate_exceptions)
+{
+    std::array<std::array<float, 5>, 2> values = {{{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}}};
+    std::array<std::array<float, 5>, 2>& valuesref = values;
+    // checks for extrapolation
+    EXPECT_NEAR(2.0, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 500, -50), 1E-3);
+    EXPECT_NEAR(3.0, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 5, .3), 1E-6);
+    
 }
