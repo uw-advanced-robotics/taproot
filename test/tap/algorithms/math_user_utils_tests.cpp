@@ -122,5 +122,4 @@ TEST(MathUserUtils, bilinear_interpolate_exceptions)
     // checks for extrapolation
     EXPECT_NEAR(2.0, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 500, -50), 1E-3);
     EXPECT_NEAR(3.0, interpolateLinear2D(valuesref, 5, 10, 5, .1, .5, .1, 5, .3), 1E-6);
-    
 }
