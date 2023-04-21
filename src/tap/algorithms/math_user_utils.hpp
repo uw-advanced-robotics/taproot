@@ -167,7 +167,7 @@ int getSign(T val)
  */
 template <typename T, size_t xSize, size_t ySize>
 float interpolateLinear2D(
-    std::array<std::array<T, ySize>, xSize>& values,
+    const std::array<std::array<T, ySize>, xSize>& values,
     const float xMin,
     const float xMax,
     const float dx,
