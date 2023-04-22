@@ -19,8 +19,6 @@
 
 #include "math_user_utils.hpp"
 
-#include <array>
-#include <cassert>
 #include <cstdint>
 
 float tap::algorithms::fastInvSqrt(float x)
