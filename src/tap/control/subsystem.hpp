@@ -99,7 +99,7 @@ public:
      * safely shuts down the subsystem (i.e. shutting off motors). All
      * subsystems must implement this virtual function.
      */
-    virtual void refreshSafeDisconnect();
+    virtual void refreshSafeDisconnect() {}
 
     mockable inline bool isHardwareTestComplete() const { return hardwareTestsComplete; }
 
