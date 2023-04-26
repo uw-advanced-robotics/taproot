@@ -105,7 +105,7 @@ public:
     uint16_t getEncoderWrapped() const override;
 
     /**
-     * Resets this motor's current encoder home position to the current encoder position reported by 
+     * Resets this motor's current encoder home position to the current encoder position reported by
      * CAN messages, and resets this motor's encoder revolutions to 0.
      */
     void resetEncoderValue() override;

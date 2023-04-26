@@ -152,7 +152,7 @@ void DjiMotor::resetEncoderValue()
 {
     encoderRevolutions = 0;
     encoderHomePosition = (encoderWrapped + encoderHomePosition) % ENC_RESOLUTION;
-    encoderWrapped = 0; 
+    encoderWrapped = 0;
 }
 
 void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
