@@ -105,8 +105,8 @@ public:
     uint16_t getEncoderWrapped() const override;
 
     /**
-     * Resets the current encoder value of the motor to 0 so that the current angle of rotation
-     * of the motor now has an encoder value of 0.
+     * Resets this motor's current encoder home position to the current encoder position reported by 
+     * CAN messages, and resets this motor's encoder revolutions to 0.
      */
     void resetEncoderValue() override;
 
@@ -225,8 +225,8 @@ private:
     bool motorInverted;
 
     /**
-     * The raw encoder value reported by the motor controller. It wraps around from
-     * {0..8191}, hence "Wrapped"
+     * The raw encoder value reported by the motor controller relative to
+     * encoderHomePosition. It wraps around from {0..8191}, hence "Wrapped"
      */
     uint16_t encoderWrapped;
 
@@ -240,8 +240,8 @@ private:
     int64_t encoderRevolutions;
 
     /**
-     * The actual encoder position received from CAN messages where this motor
-     * is considered to have an encoder value of 0. Is 0 by default.
+     * The actual encoder wrapped value received from CAN messages where this motor
+     * is considered to have an encoder value of 0. encoderHomePosition is 0 by default.
      */
     uint16_t encoderHomePosition;
 

@@ -151,8 +151,8 @@ uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
 void DjiMotor::resetEncoderValue()
 {
     encoderRevolutions = 0;
-    encoderHomePosition = encoderWrapped;
-    encoderWrapped = 0;
+    encoderHomePosition = (encoderWrapped + encoderHomePosition) % ENC_RESOLUTION;
+    encoderWrapped = 0; 
 }
 
 void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
