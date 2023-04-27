@@ -87,6 +87,7 @@ void PowerLimiter::updatePowerAndEnergyBuffer()
     if (this->externalEnergyBuffer > energyConsumed)
     {
         this->externalEnergyBuffer -= energyConsumed;
+        energyConsumed = 0;
     }
     else
     {
