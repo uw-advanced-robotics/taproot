@@ -119,7 +119,7 @@ before_script:
   script:
     - cd test-project
     - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf
+    - valgrind -s --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
     - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
