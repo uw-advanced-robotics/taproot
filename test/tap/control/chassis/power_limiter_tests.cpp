@@ -54,7 +54,7 @@ TEST(PowerLimiter, limits_when_connected)
     EXPECT_CALL(drivers.refSerial, getRefSerialReceivingData).WillRepeatedly(Return(true));
     tap::communication::serial::RefSerial::Rx::RobotData robotData = {};
     robotData
-        .chassis = {24000, 2000, 48.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
+        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
     EXPECT_CALL(drivers.refSerial, getRobotData).WillRepeatedly(ReturnRef(robotData));
 
     tap::mock::AnalogMock mockAnalog;
@@ -78,7 +78,7 @@ TEST(PowerLimiter, does_not_limit_with_external_power)
     EXPECT_CALL(drivers.refSerial, getRefSerialReceivingData).WillRepeatedly(Return(true));
     tap::communication::serial::RefSerial::Rx::RobotData robotData = {};
     robotData
-        .chassis = {24000, 2000, 48.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
+        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
     EXPECT_CALL(drivers.refSerial, getRobotData).WillRepeatedly(ReturnRef(robotData));
 
     tap::mock::AnalogMock mockAnalog;
