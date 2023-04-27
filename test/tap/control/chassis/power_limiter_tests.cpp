@@ -37,7 +37,8 @@ TEST(PowerLimiter, outputs_no_limiting_when_not_connected)
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
         {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
-    PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
+    sensor.update();
+    PowerLimiter limiter(&drivers, &sensor, 1.0, 1.0, 10.0);
 
     tap::arch::clock::ClockStub clock;
     clock.time = 0;
@@ -54,7 +55,7 @@ TEST(PowerLimiter, limits_when_connected)
     EXPECT_CALL(drivers.refSerial, getRefSerialReceivingData).WillRepeatedly(Return(true));
     tap::communication::serial::RefSerial::Rx::RobotData robotData = {};
     robotData
-        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
+        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 1};  // Only care about the chassis data
     EXPECT_CALL(drivers.refSerial, getRobotData).WillRepeatedly(ReturnRef(robotData));
 
     tap::mock::AnalogMock mockAnalog;
@@ -62,12 +63,13 @@ TEST(PowerLimiter, limits_when_connected)
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
         {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
-    PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
+    sensor.update();
+    PowerLimiter limiter(&drivers, &sensor, 1.0, 1.0, 10.0);
 
     tap::arch::clock::ClockStub clock;
     clock.time = 0;
     limiter.getPowerLimitRatio();
-    clock.time = 200;
+    clock.time = 20;
 
     EXPECT_NE(1.0, limiter.getPowerLimitRatio());
 }
@@ -78,7 +80,7 @@ TEST(PowerLimiter, does_not_limit_with_external_power)
     EXPECT_CALL(drivers.refSerial, getRefSerialReceivingData).WillRepeatedly(Return(true));
     tap::communication::serial::RefSerial::Rx::RobotData robotData = {};
     robotData
-        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 40};  // Only care about the chassis data
+        .chassis = {24000, 10000, 240.0, 0, 0.0, 0.0, 0.0, 1};  // Only care about the chassis data
     EXPECT_CALL(drivers.refSerial, getRobotData).WillRepeatedly(ReturnRef(robotData));
 
     tap::mock::AnalogMock mockAnalog;
@@ -86,7 +88,8 @@ TEST(PowerLimiter, does_not_limit_with_external_power)
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
         {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
-    PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
+    sensor.update();
+    PowerLimiter limiter(&drivers, &sensor, 1.0, 1.0, 10.0);
 
     float externalEnergy = 1'000'000.0;
     limiter.setExternalEnergyBuffer(externalEnergy);  // Large external power to ensure no limiting
@@ -94,7 +97,7 @@ TEST(PowerLimiter, does_not_limit_with_external_power)
     tap::arch::clock::ClockStub clock;
     clock.time = 0;
     limiter.getPowerLimitRatio();
-    clock.time = 200;
+    clock.time = 20;
 
     EXPECT_FLOAT_EQ(1.0, limiter.getPowerLimitRatio());
     EXPECT_NE(externalEnergy, limiter.getExternalEnergyBuffer());
