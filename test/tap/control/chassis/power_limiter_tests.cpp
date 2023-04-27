@@ -35,7 +35,7 @@ TEST(PowerLimiter, outputs_no_limiting_when_not_connected)
     tap::mock::AnalogMock mockAnalog;
     EXPECT_CALL(mockAnalog, read).WillRepeatedly(Return(10000));
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
-        {&mockAnalog, tap::gpio::Analog::Pin::S, 1.0, 0.0, 1.0};
+        {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
     PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
 
@@ -60,7 +60,7 @@ TEST(PowerLimiter, limits_when_connected)
     tap::mock::AnalogMock mockAnalog;
     EXPECT_CALL(mockAnalog, read).WillRepeatedly(Return(10000));
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
-        {&mockAnalog, tap::gpio::Analog::Pin::S, 1.0, 0.0, 1.0};
+        {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
     PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
 
@@ -84,7 +84,7 @@ TEST(PowerLimiter, does_not_limit_with_external_power)
     tap::mock::AnalogMock mockAnalog;
     EXPECT_CALL(mockAnalog, read).WillRepeatedly(Return(10000));
     tap::communication::sensors::current::AnalogCurrentSensor::Config config =
-        {&mockAnalog, tap::gpio::Analog::Pin::S, 1.0, 0.0, 1.0};
+        {&mockAnalog, static_cast<tap::gpio::Analog::Pin>(0), 1.0, 0.0, 1.0};
     tap::communication::sensors::current::AnalogCurrentSensor sensor(config);
     PowerLimiter limiter(&drivers, &sensor, 60.0, 60.0, 10.0);
 
