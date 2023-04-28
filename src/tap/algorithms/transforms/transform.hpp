@@ -58,9 +58,9 @@ public:
 
     /**
      * Construct a new Transform, which represents a transformation between two frames.
-     * Rotations are implied in order of C->B->A.
+     * Rotations are implied in order of A->B->C.
      * As an example, for an x-forward + z-down coordinate system,
-     * this is in the order of yaw->pitch->roll.
+     * this is in the order of roll->pitch->yaw.
      *
      * @param x: Initial x-component of the translation.
      * @param y: Initial y-component of the translation.
@@ -122,7 +122,7 @@ public:
 
     /**
      * Updates the rotation of the current transformation matrix.
-     * Takes rotation angles in the order of yaw->pitch->role.
+     * Takes rotation angles in the order of A->B->C (roll->pitch->yaw).
      *
      * @param A: updated rotation angle about the x-axis.
      * @param B: updated rotation angle about the y-axis.
@@ -155,5 +155,4 @@ private:
     CMSISMat<3, 3> tRotation;
 };
 }  // namespace tap::algorithms::transforms
-#include "transform.cpp"
 #endif

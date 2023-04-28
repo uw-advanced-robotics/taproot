@@ -33,18 +33,18 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B, float C)
 {
-    // For x forward z down coordinate system,
-    // constructs rotation matrix where C, B, A = yaw, pitch, roll
+    // For x-forward z-down (right-handed) coordinate system,
+    // constructs rotation matrix where A, B, C = roll, pitch, yaw
     float data[9] = {
-        std::cos(C) * std::cos(B),
-        (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
-        (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A),
-        std::sin(C) * std::cos(B),
-        std::sin(C) * std::sin(B) * std::sin(A) + std::cos(C) * std::cos(A),
-        std::sin(C) * std::sin(B) * std::cos(A) - std::cos(C) * std::sin(A),
+        std::cos(A) * std::cos(B),
+        (std::cos(A) * std::sin(B) * std::sin(C)) - (std::sin(A) * std::cos(C)),
+        (std::cos(A) * std::sin(B) * std::cos(C)) + std::sin(A) * std::sin(C),
+        std::sin(A) * std::cos(B),
+        std::sin(A) * std::sin(B) * std::sin(C) + std::cos(A) * std::cos(C),
+        std::sin(A) * std::sin(B) * std::cos(C) - std::cos(A) * std::sin(C),
         -std::sin(B),
-        std::cos(B) * std::sin(A),
-        std::cos(B) * std::cos(A)};
+        std::cos(B) * std::sin(C),
+        std::cos(B) * std::cos(C)};
     CMSISMat<3, 3> rot = CMSISMat<3, 3>(data);
     CMSISMat<3, 1> pos = CMSISMat<3, 1>({x, y, z});
     *this = Transform(rot, pos);
@@ -57,12 +57,12 @@ Transform<SOURCE, TARGET>::Transform()
 };
 
 template <typename SRC, typename TARG, typename NEWTARGET>
-Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target)
+Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& transform1, Transform<TARG, NEWTARGET>& transform2)
 {
-    // left multiply source transformation matrix with target transformation matrix to get
+    // left multiply transform1 transformation matrix with transform2 transformation matrix to get
     // composition.
-    CMSISMat<3, 3> newRot = source.rotation * target.rotation;
-    CMSISMat<3, 1> newPos = source.position + source.rotation * target.position;
+    CMSISMat<3, 3> newRot = transform2.rotation * transform1.rotation;
+    CMSISMat<3, 1> newPos = transform1.position + transform1.rotation * transform2.position;
     return Transform<SRC, NEWTARGET>(newRot, newPos);
 };
 
@@ -86,9 +86,9 @@ CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(CMSISMat<3, 1>& pos)
 };
 
 template <typename SOURCE, typename TARGET>
-CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
+CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& vec)
 {
-    CMSISMat<3, 1> newVec = rotation * pos;
+    CMSISMat<3, 1> newVec = rotation * vec;
     return newVec;
 };
 
@@ -103,17 +103,16 @@ template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updateRotation(float A, float B, float C)
 {
     float data[9] = {
-        std::cos(C) * std::cos(B),
-        (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
-        (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A),
-        std::sin(C) * std::cos(B),
-        std::sin(C) * std::sin(B) * std::sin(A) + std::cos(C) * std::cos(A),
-        std::sin(C) * std::sin(B) * std::cos(A) - std::cos(C) * std::sin(A),
+        std::cos(A) * std::cos(B),
+        (std::cos(A) * std::sin(B) * std::sin(C)) - (std::sin(A) * std::cos(C)),
+        (std::cos(A) * std::sin(B) * std::cos(C)) + std::sin(A) * std::sin(C),
+        std::sin(A) * std::cos(B),
+        std::sin(A) * std::sin(B) * std::sin(C) + std::cos(A) * std::cos(C),
+        std::sin(A) * std::sin(B) * std::cos(C) - std::cos(A) * std::sin(C),
         -std::sin(B),
-        std::cos(B) * std::sin(A),
-        std::cos(B) * std::cos(A)};
-    CMSISMat<3, 3> newRot = CMSISMat<3, 3>(data);
-    updateRotation(newRot);
+        std::cos(B) * std::sin(C),
+        std::cos(B) * std::cos(C)};
+    this->rotation = CMSISMat<3, 3>(data);
 }
 
 template <typename SOURCE, typename TARGET>
