@@ -83,7 +83,7 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse()
 template <typename SOURCE, typename TARGET>
 CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(CMSISMat<3, 1>& pos)
 {
-    CMSISMat<3, 1> newPos = rotation * (pos + position);
+    CMSISMat<3, 1> newPos = (rotation * pos) + position;
     return newPos;
 };
 
