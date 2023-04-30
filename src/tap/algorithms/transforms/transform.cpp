@@ -57,7 +57,9 @@ Transform<SOURCE, TARGET>::Transform()
 };
 
 template <typename SRC, typename TARG, typename NEWTARGET>
-Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& transform1, Transform<TARG, NEWTARGET>& transform2)
+Transform<SRC, NEWTARGET> compose(
+    Transform<SRC, TARG>& transform1,
+    Transform<TARG, NEWTARGET>& transform2)
 {
     // left multiply transform1 transformation matrix with transform2 transformation matrix to get
     // composition.
