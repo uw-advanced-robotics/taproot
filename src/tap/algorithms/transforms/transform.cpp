@@ -61,10 +61,9 @@ Transform<SRC, NEWTARGET> compose(
     Transform<SRC, TARG>& transform1,
     Transform<TARG, NEWTARGET>& transform2)
 {
-    // left multiply transform1 transformation matrix with transform2 transformation matrix to get
-    // composition.
+    // Left multiply T2 by T1
     CMSISMat<3, 3> newRot = transform2.rotation * transform1.rotation;
-    CMSISMat<3, 1> newPos = transform1.position + transform1.rotation * transform2.position;
+    CMSISMat<3, 1> newPos = transform2.rotation * transform1.position + transform2.position;
     return Transform<SRC, NEWTARGET>(newRot, newPos);
 };
 
