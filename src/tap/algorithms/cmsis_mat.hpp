@@ -165,6 +165,7 @@ inline CMSISMat<ROWS, COLS> operator*(const CMSISMat<ROWS, COLS> &a, const float
     return c;
 }
 
+
 template <uint16_t ROWS, uint16_t COLS>
 inline CMSISMat<ROWS, COLS> operator*(const float &b, const CMSISMat<ROWS, COLS> &a)
 {
