@@ -1,21 +1,3 @@
-/*
- * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
- *
- * This file is part of Taproot.
- *
- * Taproot is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Taproot is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
- */
 #ifndef TAPROOT_TRANSFORM_HPP_
 #define TAPROOT_TRANSFORM_HPP_
 
@@ -47,14 +29,18 @@ namespace tap::algorithms::transforms
 template <typename SOURCE, typename TARGET>
 class Transform
 {
+    template<typename A, typename B, typename C>
+    friend Transform<A, C> compose(const Transform<A, B>&, const Transform<B, C>&);
 public:
     /**
      * Constructs a new Transform, which represents a transformation between two frames.
      *
+     * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
-     * @param position Initial translation of this transformation.
+     * 
+     * @note Parameters are non-const due to move semantics.
      */
-    Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation);
+    Transform(CMSISMat<3, 1>& translation, CMSISMat<3, 3>& rotation);
 
     /**
      * Construct a new Transform, which represents a transformation between two frames.
@@ -109,9 +95,11 @@ public:
     /**
      * Updates the rotation of the current transformation matrix.
      *
-     * @param newRot updated rotation matrix.
+     * @param newRotation updated rotation matrix.
+     * 
+     * @note newRotation is non-const due to move semantics.
      */
-    void updateRotation(const CMSISMat<3, 3>& newRot);
+    void updateRotation(CMSISMat<3, 3>& newRotation);
 
     /**
      * Updates the rotation of the current transformation matrix.
