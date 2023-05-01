@@ -28,13 +28,11 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& p
     this->rotation = std::move(rotation);
     this->position = std::move(position);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
-};
+}
 
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B, float C)
 {
-    // For x forward z down coordinate system,
-    // constructs rotation matrix where C, B, A = yaw, pitch, roll
     float data[9] = {
         std::cos(C) * std::cos(B),
         (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
@@ -48,52 +46,39 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B
     CMSISMat<3, 3> rot = CMSISMat<3, 3>(data);
     CMSISMat<3, 1> pos = CMSISMat<3, 1>({x, y, z});
     *this = Transform(rot, pos);
-};
+}
 
 template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform()
 {
     *this = Transform(0., 0., 0., 0., 0., 0.);
-};
-
-template <typename SRC, typename TARG, typename NEWTARGET>
-Transform<SRC, NEWTARGET> compose(Transform<SRC, TARG>& source, Transform<TARG, NEWTARGET>& target)
-{
-    // left multiply source transformation matrix with target transformation matrix to get
-    // composition.
-    CMSISMat<3, 3> newRot = source.rotation * target.rotation;
-    CMSISMat<3, 1> newPos = source.position + source.rotation * target.position;
-    return Transform<SRC, NEWTARGET>(newRot, newPos);
-};
+}
 
 template <typename SOURCE, typename TARGET>
-Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse()
+Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 {
     // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invPos = tRotation * position;
-    for (std::size_t i = 0; i < invPos.data.size(); i++)
-    {
-        invPos.data[i] = -invPos.data[i];
-    }
-    return Transform<TARGET, SOURCE>(tRotation, invPos);
-};
+    CMSISMat<3, 1> invTranslation = tRotation * translation;
+    invTranslation = -invTranslation;
+    return Transform<TARGET, SOURCE>(tRotation, invTranslation);
+}
 
 template <typename SOURCE, typename TARGET>
-CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(CMSISMat<3, 1>& pos)
+CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToPosition(const CMSISMat<3, 1>& pos) const
 {
-    CMSISMat<3, 1> newPos = rotation * (pos + position);
+    CMSISMat<3, 1> newPos = tRotation * (pos - translation);
     return newPos;
-};
+}
 
 template <typename SOURCE, typename TARGET>
-CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(CMSISMat<3, 1>& pos)
+CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(const CMSISMat<3, 1>& vec) const
 {
-    CMSISMat<3, 1> newVec = rotation * pos;
+    CMSISMat<3, 1> newVec = tRotation * vec;
     return newVec;
-};
+}
 
 template <typename SOURCE, typename TARGET>
-void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot)
+void Transform<SOURCE, TARGET>::updateRotation(const CMSISMat<3, 3>& newRot)
 {
     this->rotation = std::move(newRot);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
@@ -117,9 +102,24 @@ void Transform<SOURCE, TARGET>::updateRotation(float A, float B, float C)
 }
 
 template <typename SOURCE, typename TARGET>
-void Transform<SOURCE, TARGET>::updatePosition(CMSISMat<3, 1>& newPos)
+void Transform<SOURCE, TARGET>::updateTranslation(const CMSISMat<3, 1>& newTranslation)
 {
-    this->position = std::move(newPos);
-};
+    this->position = std::move(newTranslation);
+}
+
+template <typename SOURCE, typename TARGET>
+void Transform<SOURCE, TARGET>::updateTranslation(float x, float y, float z)
+{
+    CMSISMat<3, 1>& newTranslation({x, y, z});
+    this->position = std::move(newTranslation);
+}
+
+template <typename A, typename B, typename C>
+Transform<A, C> compose(const Transform<A, B>& first, const Transform<B, C>& second)
+{
+    CMSISMat<3, 3> newRot = first.rotation * second.rotation;
+    CMSISMat<3, 1> newPos = first.translation + first.rotation * second.translation;
+    return Transform<A, C>(newRot, newPos);
+}
 }  // namespace tap::algorithms::transforms
 #endif

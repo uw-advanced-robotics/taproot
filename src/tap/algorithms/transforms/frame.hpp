@@ -20,7 +20,7 @@
 #ifndef TAPROOT_FRAMES_HPP_
 #define TAPROOT_FRAMES_HPP_
 
-namespace tap::algorithms
+namespace tap::algorithms::transforms
 {
 /**
  * Frame is an empty class to provide type-checking for
@@ -31,6 +31,6 @@ namespace tap::algorithms
 class Frame
 {
 };
-}  // namespace tap::algorithms
+}  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_FRAMES_HPP_
