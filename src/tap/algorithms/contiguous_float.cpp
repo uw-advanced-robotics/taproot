@@ -18,7 +18,7 @@
  */
 
 #include "contiguous_float.hpp"
-
+#include <assert.h>
 #include <cmath>
 
 namespace tap
@@ -50,13 +50,39 @@ float ContiguousFloat::reboundValue()
     return value;
 }
 
-float ContiguousFloat::unwrapBelow() const { return lowerBound - (upperBound - value); }
+float ContiguousFloat::unwrapBelow() const { return value - (upperBound - lowerBound); }
 
-float ContiguousFloat::unwrapAbove() const { return upperBound + (value - lowerBound); }
+float ContiguousFloat::unwrapAbove() const { return value + (upperBound - lowerBound); }
 
 float ContiguousFloat::difference(const float otherValue) const
 {
     return difference(ContiguousFloat(otherValue, lowerBound, upperBound));
+}
+
+ContiguousFloat ContiguousFloat::operator- (const ContiguousFloat& other) {
+    assert (this->getLowerBound() == other.getLowerBound());
+    assert (this->getUpperBound() == other.getUpperBound());
+    
+    if (this->getValue() == other.getValue()) {
+        return ContiguousFloat(0.0, this->getLowerBound(), this->getUpperBound());
+    } else {
+        float diff = fabs(this->getValue() - other.getValue());
+        if (this->getValue() < other.getValue()) {
+            float left_range = this->getValue() - this->getLowerBound();
+            float right_range = other.getValue() - this->getUpperBound();
+            if (left_range + right_range < diff)
+                return ContiguousFloat(left_range + right_range, this->getLowerBound(), this->getUpperBound());
+            else
+                return ContiguousFloat(diff, this->getLowerBound(), this->getUpperBound());
+        } else {
+            float left_range = other.getValue() - this->getLowerBound();
+            float right_range = this->getValue() - this->getUpperBound();
+            if (left_range + right_range < diff)
+                return ContiguousFloat(left_range + right_range, this->getLowerBound(), this->getUpperBound());
+            else
+                return ContiguousFloat(diff, this->getLowerBound(), this->getUpperBound());
+        }
+    }
 }
 
 float ContiguousFloat::difference(const ContiguousFloat& otherValue) const
@@ -66,7 +92,7 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) const
     float belowDiff = otherValue.getValue() - this->unwrapBelow();
     float stdDiff = otherValue.getValue() - this->getValue();
 
-    float finalDiff = stdDiff;
+    float finalDiff;
 
     if (fabs(aboveDiff) < fabs(belowDiff) && fabs(aboveDiff) < fabs(stdDiff))
     {
@@ -75,6 +101,8 @@ float ContiguousFloat::difference(const ContiguousFloat& otherValue) const
     else if (fabs(belowDiff) < fabs(aboveDiff) && fabs(belowDiff) < fabs(stdDiff))
     {
         finalDiff = belowDiff;
+    } else {
+        finalDiff = stdDiff;
     }
 
     return finalDiff;
@@ -85,6 +113,12 @@ void ContiguousFloat::shiftBounds(const float shiftMagnitude)
     upperBound += shiftMagnitude;
     lowerBound += shiftMagnitude;
     reboundValue();
+}
+
+ContiguousFloat ContiguousFloat::operator+ (const ContiguousFloat& other) {
+    ContiguousFloat added_floats = ContiguousFloat(this->value + other.value, this->getLowerBound(), this->getUpperBound());
+    added_floats.reboundValue();
+    return added_floats;
 }
 
 void ContiguousFloat::shiftValue(const float shiftMagnitude)

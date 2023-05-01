@@ -50,6 +50,15 @@ public:
     float reboundValue();
 
     /**
+     * Computes the difference between two ContiguousFloats (other - this) with the
+     * same lower and upperbounds, accounting for wrapping.
+     *
+     * @param[in] other: the other value to compare against.
+     * @return The computed difference as a ContiguousFloat.
+     */
+    ContiguousFloat ContiguousFloat::operator- (const ContiguousFloat& other);
+
+    /**
      * Computes the difference between two values (other - this), accounting for
      * wrapping. Treats the given 'other' value as a number within the same bounds
      * as the current instance.
@@ -75,6 +84,14 @@ public:
      * @param[in] shiftMagnitude the amount to add to each bound.
      */
     void shiftBounds(const float shiftMagnitude);
+
+    /**
+     * Adds two contiguous floats. Keeps the lower and upper bounds of `this`
+     * ContiguousFloat.
+     *
+     * @param[in] other: The ContiguousFloat to be added to `this` ContiguousFloat.
+     */
+    ContiguousFloat ContiguousFloat::operator+ (const ContiguousFloat& other);
 
     /**
      * Shifts value by the specified amount (addition).
