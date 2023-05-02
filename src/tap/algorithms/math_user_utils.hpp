@@ -182,8 +182,8 @@ float interpolateLinear2D(
     float xDesBounded = limitVal(xDes, xMin, xMax);  // no extrapolation allowed
     float yDesBounded = limitVal(yDes, yMin, yMax);  // no extrapolation allowed
 
-    // get the desired pt, normalized such that it represents the index of it, then
-    // Get nearest pt which is less
+    // In each dimension, find the index of the closest point in the LUT below the desired point,
+    // then use that index to find the value of the two points which the desired point lies between
     int xIndex = floor((xDesBounded - xMin) / dx);
     xIndex = limitVal(xIndex, 0, static_cast<int>(xSize) - 2);  // Prevent OOB errors
     float x1 = xMin + xIndex * dx;                              // gets value from index
