@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAMES_HPP_
-#define TAPROOT_FRAMES_HPP_
+#ifndef TAPROOT_FRAME_HPP_
+#define TAPROOT_FRAME_HPP_
 
 namespace tap::algorithms::transforms
 {
@@ -33,4 +33,4 @@ class Frame
 };
 }  // namespace tap::algorithms::transforms
 
-#endif  // TAPROOT_FRAMES_HPP_
+#endif  // TAPROOT_FRAME_HPP_
