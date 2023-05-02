@@ -18,6 +18,7 @@
  */
 
 #include "wrapped_float.hpp"
+#include "math_user_utils.hpp"
 
 #include <assert.h>
 
@@ -54,8 +55,8 @@ float WrappedFloat::wrapValue()
 
 void WrappedFloat::operator+=(WrappedFloat other)
 {
-    assert(this->getLowerBound() == other.getLowerBound());
-    assert(this->getUpperBound() == other.getUpperBound());
+    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
+    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
     this->value = this->value + other.getValue();
     this->wrapValue();
@@ -63,8 +64,8 @@ void WrappedFloat::operator+=(WrappedFloat other)
 
 void WrappedFloat::operator-=(WrappedFloat other)
 {
-    assert(this->getLowerBound() == other.getLowerBound());
-    assert(this->getUpperBound() == other.getUpperBound());
+    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
+    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
     this->value = this->value - other.getValue();
     this->wrapValue();
@@ -72,8 +73,8 @@ void WrappedFloat::operator-=(WrappedFloat other)
 
 WrappedFloat WrappedFloat::operator+(const WrappedFloat& other) const
 {
-    assert(this->getLowerBound() == other.getLowerBound());
-    assert(this->getUpperBound() == other.getUpperBound());
+    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
+    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
     WrappedFloat temp = *this;
     temp += other;
@@ -82,8 +83,8 @@ WrappedFloat WrappedFloat::operator+(const WrappedFloat& other) const
 
 WrappedFloat WrappedFloat::operator-(const WrappedFloat& other) const
 {
-    assert(this->getLowerBound() == other.getLowerBound());
-    assert(this->getUpperBound() == other.getUpperBound());
+    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
+    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
     WrappedFloat temp = *this;
     temp -= other;
@@ -123,8 +124,8 @@ WrappedFloat WrappedFloat::minDifference(const float other) const
 
 WrappedFloat WrappedFloat::minDifference(const WrappedFloat& other) const
 {
-    assert(this->getLowerBound() == other.getLowerBound());
-    assert(this->getUpperBound() == other.getUpperBound());
+    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
+    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
     if (this->getValue() == other.getValue())
     {

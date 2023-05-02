@@ -257,6 +257,12 @@ public:
      */
     void setLowerBound(const float newValue);
 
+    /**
+     * Maximum value between floats at which
+     * they're considered to be "equal".
+    */
+    static constexpr float EPSILON = 1E-8;
+
 private:
     /**
      * The wrapped value.
