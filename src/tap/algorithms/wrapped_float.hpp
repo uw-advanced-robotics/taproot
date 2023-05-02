@@ -47,59 +47,47 @@ public:
      *
      * @return the new value for chaining functions.
      */
-    float reboundValue();
-
-    /**
-     * Shifts value up by the specified amount (addition).
-     *
-     * @param[in] shiftMagnitude The amount to add to the current value.
-     */
-    WrappedFloat shiftedUp(const float shiftMagnitude);
-
-    /**
-     * Shifts value down by the specified amount (subtraction).
-     * 
-     * @param[in] shiftMagnitude The amount to subtract from the current value.
-    */
-    WrappedFloat shiftedDown(const float shiftMagnitude);
+    float wrapValue();
 
     /** Overloaded Operators */
 
     /**
-     * Adds two contiguous floats. Keeps the lower and upper bounds of `this`
-     * ContiguousFloat.
+     * Adds a WrappedFloat to `this` WrappedFloat given they have the same lower and
+     * upper bounds.
      *
-     * @param[in] other: The ContiguousFloat to be added to `this` ContiguousFloat.
+     * @param[in] other: The WrappedFloat to be added to `this` WrappedFloat.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat WrappedFloat::operator+ (const WrappedFloat& other);
+    void WrappedFloat::operator+= (WrappedFloat shiftWrappedFloat);
 
     /**
-     * Computes the difference between two ContiguousFloats (other - this) with the
-     * same lower and upperbounds, accounting for wrapping.
+     * Subtracts a WrappedFloat from `this` WrappedFloat given they have the same lower and
+     * upper bounds.
      *
-     * @param[in] other: the other value to compare against.
-     * @return The computed difference as a ContiguousFloat.
+     * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat WrappedFloat::operator- (const WrappedFloat& other);
+    void WrappedFloat::operator-= (WrappedFloat shiftWrappedFloat);
 
+    /**
+     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
+     * returning the resultant WrappedFloat.
+     *
+     * @param[in] other: The WrappedFloat to be added with `this` WrappedFloat.
+     * @return: A new WrappedFloat with the additive value of `other` and `this`.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    WrappedFloat WrappedFloat::operator+ (const WrappedFloat& other) const;
 
-    inline void WrappedFloat::operator+= (const float arg)
-    {
-        this->shiftUp(arg);
-    }
-    inline void WrappedFloat::operator+= (const WrappedFloat& arg)
-    {
-        this->shiftUp(arg.getValue());
-    }
-
-    inline void WrappedFloat::operator-= (const float arg)
-    {
-        this->shiftDown(arg);
-    }
-    inline void WrappedFloat::operator-= (const WrappedFloat& arg)
-    {
-        this->shiftDown(arg.getValue());
-    }
+    /**
+     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
+     * returning the resultant WrappedFloat.
+     *
+     * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
+     * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    WrappedFloat WrappedFloat::operator- (const WrappedFloat& other) const;
 
     inline void WrappedFloat::operator*= (const float arg)
     {
@@ -129,27 +117,57 @@ public:
     }
 
     /**
-     * Computes the difference between two values (other - this), accounting for
-     * wrapping. Treats the given 'other' value as a number within the same bounds
-     * as the current instance.
+     * Shifts `this` WrappedFloat up in place by a given value.
      *
-     * @param[in] otherValue the other value to compare against.
-     * @return the computed difference.
+     * @param[in] shiftMagnitude: The amount to shift up by.
      */
-    float minDifference(const float otherValue) const;
+    void shiftUpInPlace(float shiftMagnitude);
 
     /**
-     * Computes the difference between two values (other - this), accounting for
-     * wrapping.
+     * Shifts `this` WrappedFloat down in place by a given value.
      *
-     * @param[in] otherValue the other value to compare against (must have the same bounds
-     *      as the current instance).
-     * @return the computed difference.
+     * @param[in] shiftMagnitude: The amount to shift down by.
      */
-    float minDifference(const WrappedFloat& otherValue) const;
+    void shiftDownInPlace(float shiftMagnitude);
 
     /**
-     * Shifts both bounds by the specified amount
+     * Shifts `this` WrappedFloat up by a given value, returning the resultant WrappedFloat.
+     *
+     * @param[in] shiftMagnitude: The amount to shift up by.
+     * @return: A new WrappedFloat with the value of `this` shifted up.
+     */
+    WrappedFloat shiftUp(float shiftMagnitude) const;
+
+    /**
+     * Shifts `this` WrappedFloat down by a given value, returning the resultant WrappedFloat.
+     *
+     * @param[in] shiftMagnitude: The amount to shift down by.
+     * @return: A new WrappedFloat with the value of `this` shifted down.
+     */
+    WrappedFloat shiftDown(float shiftMagnitude) const;
+
+    /**
+     * Computes the difference between a float and `this` WrappedFloat (other - this),
+     * accounting for wrapping. Treats the given 'other' value as a number within the same bounds
+     * as the `this` WrappedFloat.
+     *
+     * @param[in] other: The other value to compare against.
+     * @return: A new WrappedFloat holding the computed difference.
+     */
+    WrappedFloat minDifference(const float other) const;
+
+    /**
+     * Computes the difference between another WrappedFloat and `this` WrappedFloat (other - this),
+     * given they have the same lower and upper bounds.
+     *
+     * @param[in] other: The other value to compare against.
+     * @return: A new WrappedFloat holding the computed difference.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    WrappedFloat minDifference(const WrappedFloat& other) const;
+
+    /**
+     * Shifts both bounds by the specified amount.
      *
      * @param[in] shiftMagnitude the amount to add to each bound.
      */
