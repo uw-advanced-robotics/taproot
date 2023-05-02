@@ -78,7 +78,7 @@ CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(const CMSISMat<3, 1>& ve
 }
 
 template <typename SOURCE, typename TARGET>
-void Transform<SOURCE, TARGET>::updateRotation(const CMSISMat<3, 3>& newRot)
+void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot)
 {
     this->rotation = std::move(newRot);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
@@ -102,7 +102,7 @@ void Transform<SOURCE, TARGET>::updateRotation(float A, float B, float C)
 }
 
 template <typename SOURCE, typename TARGET>
-void Transform<SOURCE, TARGET>::updateTranslation(const CMSISMat<3, 1>& newTranslation)
+void Transform<SOURCE, TARGET>::updateTranslation(CMSISMat<3, 1>& newTranslation)
 {
     this->position = std::move(newTranslation);
 }

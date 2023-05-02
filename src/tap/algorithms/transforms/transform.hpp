@@ -53,6 +53,8 @@ public:
      *
      * @param rotation Initial rotation of this transformation.
      * @param position Initial translation of this transformation.
+     * 
+     * @note input matrices are non-const due to CMSISMat move semantics
      */
     Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation);
 
@@ -110,8 +112,10 @@ public:
      * Updates the rotation of the current transformation matrix.
      *
      * @param newRot updated rotation matrix.
+     * 
+     * @note newRot is non-const due to CMSISMat move semantics
      */
-    void updateRotation(const CMSISMat<3, 3>& newRot);
+    void updateRotation(CMSISMat<3, 3>& newRot);
 
     /**
      * Updates the rotation of the current transformation matrix.
@@ -127,8 +131,10 @@ public:
      * Updates the translation of the current transformation matrix.
      *
      * @param newTranslation updated translation vector.
+     * 
+     * @note input newTranslation is non-const due to CMSISMat move semantics
      */
-    void updateTranslation(const CMSISMat<3, 1>& newTranslation);
+    void updateTranslation(CMSISMat<3, 1>& newTranslation);
 
     /**
      * Updates the position of the current transformation matrix.
