@@ -20,41 +20,22 @@
 #ifndef TAPROOT_POSITION_HPP_
 #define TAPROOT_POSITION_HPP_
 
-#include "transform.hpp"
-
 namespace tap::algorithms::transforms
 {
 
 template <typename FRAME>
-class Position
+struct Position
 {
     Position(float x, float y, float z)
-    : coords({x, y, z}) {}
+    : coordinates({x, y, z}) {}
 
     Position(CMSISMat<3,1>& coordinates)
-    : coords(coordinates) {}
-
-    Position<NEW_FRAME> transform(Transform<FRAME, NEW_FRAME> tf)
     {
-        return Position<NEW_FRAME>(coords + tf.getTranslation());
+        this->coordinates = std::move(coordinates);
     }
 
-    inline void updateCoordinates(float x, float y, float z)
-    {
-        coords.data = {x, y, z};
-    }
-
-    inline CMSISMat<3, 1> getCoordinates() { return coords; };
-
-    inline float getX() { return coords.data[0]; }
-
-    inline float getY() { return coords.data[1]; }
-
-    inline float getZ() { return coords.data[2]; }
-
-private:
-    CMSISMat<3, 1> coords;
-};
+    CMSISMat<3, 1> coordinates;
+};  // struct Position
 }   // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_POSITION_HPP_

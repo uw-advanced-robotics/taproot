@@ -19,8 +19,10 @@
 #ifndef TAPROOT_TRANSFORM_HPP_
 #define TAPROOT_TRANSFORM_HPP_
 
-#include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
+#include "position.hpp"
+#include "pose.hpp"
+#include "vector.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -80,6 +82,22 @@ public:
     }
 
     /**
+     * Apply this transform to a position.
+     * 
+     * @param[in] position Position in source frame.
+     * @return Position in target frame.
+    */
+    Position<TARGET> apply(Position<SOURCE>& position);
+
+    /**
+     * Apply this transform to a pose.
+     * 
+     * @param[in] pose Pose in source frame.
+     * @return Pose in target frame.
+    */
+    Pose<TARGET> apply(Pose<SOURCE>& pose);
+
+    /**
      * Rotates a vector in the source frame to a vector in the target frame.
      * 
      * Intended to be used for things like velocities and accelerations which represent the difference
@@ -89,7 +107,7 @@ public:
      * @param vec Vector as read by source frame.
      * @return Vector in target frame's basis.
      */
-    CMSISMat<3, 1> applyToVector(const CMSISMat<3, 1>& vec) const;
+    Vector<TARGET> apply(Vector<SOURCE>& vector);
 
     /**
      * @return Inverse of this Transform.
@@ -162,21 +180,6 @@ private:
      */
     CMSISMat<3, 3> tRotation;
 };
-
-CMSISMat<3, 3> rotationMatrix(const float A, const float B, const float C)
-{
-    return CMSISMat<3,3>({
-        std::cos(C) * std::cos(B),
-        (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
-        (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A),
-        std::sin(C) * std::cos(B),
-        std::sin(C) * std::sin(B) * std::sin(A) + std::cos(C) * std::cos(A),
-        std::sin(C) * std::sin(B) * std::cos(A) - std::cos(C) * std::sin(A),
-        -std::sin(B),
-        std::cos(B) * std::sin(A),
-        std::cos(B) * std::cos(A)
-    });
-}
 
 /**
  * Returns the composed transformation of the given transformations.

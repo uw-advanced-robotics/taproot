@@ -25,6 +25,7 @@
 #include <cstring>
 
 #include "modm/math/geometry/angle.hpp"
+#include "cmsis_mat.hpp"
 
 namespace tap
 {
@@ -155,6 +156,21 @@ template <typename T>
 int getSign(T val)
 {
     return (T(0) < val) - (val < T(0));
+}
+
+CMSISMat<3, 3> rotationMatrix(const float A, const float B, const float C)
+{
+    return CMSISMat<3,3>({
+        std::cos(C) * std::cos(B),
+        (std::cos(C) * std::sin(B) * std::sin(A)) - (std::sin(C) * std::cos(A)),
+        (std::cos(C) * std::sin(B) * std::cos(A)) + std::sin(C) * std::sin(A),
+        std::sin(C) * std::cos(B),
+        std::sin(C) * std::sin(B) * std::sin(A) + std::cos(C) * std::cos(A),
+        std::sin(C) * std::sin(B) * std::cos(A) - std::cos(C) * std::sin(A),
+        -std::sin(B),
+        std::cos(B) * std::sin(A),
+        std::cos(B) * std::cos(A)
+    });
 }
 
 }  // namespace algorithms

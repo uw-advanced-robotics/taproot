@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
@@ -17,35 +18,26 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_POSE_HPP_
-#define TAPROOT_POSE_HPP_
+#ifndef TAPROOT_VECTOR_HPP_
+#define TAPROOT_VECTOR_HPP_
 
-#include "position.hpp"
+#include "tap/algorithms/cmsis_mat.hpp"
 
 namespace tap::algorithms::transforms
 {
-
-template <typename FRAME>
-struct Pose
+template<typename FRAME>
+struct Vector
 {
-    Pose(float x, float y, float z, float A, float B, float C)
-    : position(x, y, z), orientation(rotationMatrix(A, B, C)) {}
+    Vector(float x, float y, float z)
+    : entries({x, y, z})
 
-    Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
-    : position(position)
+    Vector(CMSISMat<3,1>& vector)
     {
-        this->orientation = std::move(orientation);
+        this->entries = std::move(vector);
     }
 
-    inline float getA() { return asinf(orientation.data[7]/cosf(getB())); }
-
-    inline float getB() { return asinf(-orientation.data[6]); }
-
-    inline float getC() { return asinf(orientation.data[3]/cosf(getB())); }
-
-    Position<FRAME> position.
-    CMSISMat<3, 3> orientation;
-};  // struct Pose
+    CMSISMat<3, 1> entries;
+};  // struct Vector
 }   // namespace tap::algorithms::transforms
 
-#endif  // TAP_POSE_HPP_
+#endif  // TAPROOT_VECTOR_HPP_

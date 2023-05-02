@@ -18,10 +18,11 @@
  */
 
 #include "transform.hpp"
+#include "tap/algorithms/cmsis_mat.hpp"
 namespace tap::algorithms::transforms
 {
 template <typename SOURCE, typename TARGET>
-Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& position)
+Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
 {
     this->rotation = std::move(rotation);
     this->position = std::move(position);
@@ -37,6 +38,18 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B
 }
 
 template <typename SOURCE, typename TARGET>
+Position<TARGET> apply(Position<SOURCE>& position)
+{
+    return Position<TARGET>(position.coordinates + translation);
+}
+
+template <typename SOURCE, typename TARGET>
+Pose<TARGET> apply(Pose<SOURCE>& pose)
+{
+    return Pose<TARGET>(pose.position.coordinates + translation, pose.orientation*rotation);
+}
+
+template <typename SOURCE, typename TARGET>
 Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 {
     // negative transposed rotation matrix times original position = new position
@@ -46,10 +59,9 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 }
 
 template <typename SOURCE, typename TARGET>
-CMSISMat<3, 1> Transform<SOURCE, TARGET>::applyToVector(const CMSISMat<3, 1>& vec) const
+Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
 {
-    CMSISMat<3, 1> newVec = tRotation * vec;
-    return newVec;
+    return Vector<TARGET>(rotation*vector.entries);
 }
 
 template <typename SOURCE, typename TARGET>
