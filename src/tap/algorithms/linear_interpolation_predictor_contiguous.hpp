@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#include "contiguous_float.hpp"
+#include "wrapped_float.hpp"
 
 namespace tap::algorithms
 {
@@ -65,7 +65,7 @@ public:
      */
     float getInterpolatedValue(uint32_t currTime)
     {
-        return ContiguousFloat(
+        return WrappedFloat(
                    slope * static_cast<float>(currTime - lastUpdateCallTime) +
                        previousValue.getValue(),
                    previousValue.getLowerBound(),
@@ -87,7 +87,7 @@ public:
 
 private:
     uint32_t lastUpdateCallTime;    ///< The previous timestamp from when update was called.
-    ContiguousFloat previousValue;  ///< The previous data value.
+    WrappedFloat previousValue;  ///< The previous data value.
     float slope;  ///< The current slope, calculated using the previous and most current data.
 };                // class LinearInterpolationPredictorContiguous
 

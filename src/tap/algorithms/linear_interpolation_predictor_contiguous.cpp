@@ -37,7 +37,7 @@ void LinearInterpolationPredictorContiguous::update(float newValue, uint32_t cur
         slope = 0;
         return;
     }
-    slope = (previousValue.difference(newValue)) / (currTime - lastUpdateCallTime);
+    slope = (previousValue.minDifference(newValue)) / (currTime - lastUpdateCallTime);
     previousValue.setValue(newValue);
     lastUpdateCallTime = currTime;
 }
