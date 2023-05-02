@@ -69,6 +69,37 @@ public:
     Transform<TARGET, SOURCE> getInverse() const;
 
     /**
+     * Get the roll of this transformation
+    */
+    float getRoll() const;
+    
+    /**
+     * Get the pitch of this transformation
+    */
+    float getPitch() const;
+   
+    /**
+     * Get the pitch of this transformation
+    */
+    float getYaw() const;
+
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getX() const;
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getY() const;
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getZ() const;    
+
+    /**
      * Transforms given position as read by the source frame
      * and computes the equivalent vector components in the target frame's basis.
      *
