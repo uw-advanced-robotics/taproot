@@ -64,11 +64,11 @@ uint16_t DoubleDjiMotor::getEncoderWrapped() const { return motorOne.getEncoderW
 
 float DoubleDjiMotor::getPositionUnwrapped() const
 {
-    return getEncoderUnwrapped() * M_TWOPI / motorOne.ENC_RESOLUTION;
+    return motorOne.getPositionUnwrapped();
 }
 float DoubleDjiMotor::getPositionWrapped() const
 {
-    return getEncoderUnwrapped() * M_TWOPI / motorOne.ENC_RESOLUTION;
+    return motorOne.getPositionWrapped();
 }
 
 void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
