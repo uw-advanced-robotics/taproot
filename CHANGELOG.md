@@ -7,6 +7,13 @@
 - Added `setExternalEnergyBuffer` and `getExternalEnergyBuffer` added to `PowerLimiter` which allow 
   setting an additional buffer to draw energy from to prevent power limiting.
 
+## April 2023
+
+### Breaking changes
+
+- `tap::motorInterface` has two new methods to get position in radians. This is implemented already in `DjiMotor` and `DoubleDjiMotor`.
+` adds `interpolateLinear2D` to math_user_utils, which is a bilinear interpolator for regularly-spaced datasets.
+
 ## November 2022
 
 ### Breaking changes
@@ -46,7 +53,7 @@
 ### All changes
 
 - Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
-  with the ref serial UART port (!161, #175). 
+  with the ref serial UART port (!161, #175).
 - Ref serial receiver now decodes game type and warning status information (!184).
 
 ## March 2022
@@ -99,6 +106,7 @@
 ## January 2022
 
 ### Breaking changes
+
 - `tap::controls::ControlOperatorInterface` has been removed from Taproot. We have added it to [our
   personal open-source project, aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb) for those who
   would like to keep up with our implementation of that feature, but it will need to be
@@ -129,7 +137,7 @@
 - `tap::communication::sensors::current::CurrentSensorInterface` and `AnalogCurrentSensor` added,
   which are software constructs for current sensors.
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
-  (!92). 
+  (!92).
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
