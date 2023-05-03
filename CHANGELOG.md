@@ -1,5 +1,12 @@
 # Taproot Changelog
 
+## May 2023
+
+### All Changes
+
+- Added `setExternalEnergyBuffer` and `getExternalEnergyBuffer` added to `PowerLimiter` which allow 
+  setting an additional buffer to draw energy from to prevent power limiting.
+
 ## November 2022
 
 ### Breaking changes
