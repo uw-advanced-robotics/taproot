@@ -182,6 +182,24 @@ private:
 };
 
 /**
+ * Return a rotation matrix with rotation order A->B->C (roll->pitch->yaw).
+*/
+CMSISMat<3, 3> rotationMatrix(const float A, const float B, const float C)
+{
+    return CMSISMat<3,3>({
+        cosf(C) * cosf(B),
+        (cosf(C) * sinf(B) * sinf(A)) - (sinf(C) * cosf(A)),
+        (cosf(C) * sinf(B) * cosf(A)) + sinf(C) * sinf(A),
+        sinf(C) * cosf(B),
+        sinf(C) * sinf(B) * sinf(A) + cosf(C) * cosf(A),
+        sinf(C) * sinf(B) * cosf(A) - cosf(C) * sinf(A),
+        -sinf(B),
+        cosf(B) * sinf(A),
+        cosf(B) * cosf(A)
+    });
+}
+
+/**
  * Returns the composed transformation of the given transformations.
  *
  * @param source Transformation from frame A to frame B.

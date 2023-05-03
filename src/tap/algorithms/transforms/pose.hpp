@@ -29,7 +29,20 @@ template <typename FRAME>
 struct Pose
 {
     Pose(float x, float y, float z, float A, float B, float C)
-    : position(x, y, z), orientation(rotationMatrix(A, B, C)) {}
+        : position(x, y, z),
+          orientation({
+            cosf(C) * cosf(B),
+            (cosf(C) * sinf(B) * sinf(A)) - (sinf(C) * cosf(A)),
+            (cosf(C) * sinf(B) * cosf(A)) + sinf(C) * sinf(A),
+            sinf(C) * cosf(B),
+            sinf(C) * sinf(B) * sinf(A) + cosf(C) * cosf(A),
+            sinf(C) * sinf(B) * cosf(A) - cosf(C) * sinf(A),
+            -sinf(B),
+            cosf(B) * sinf(A),
+            cosf(B) * cosf(A)
+          })
+    {
+    }
 
     Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
     : position(position)
