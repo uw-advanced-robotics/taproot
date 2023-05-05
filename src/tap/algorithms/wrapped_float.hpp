@@ -20,6 +20,8 @@
 #ifndef TAPROOT_WRAPPED_FLOAT_HPP_
 #define TAPROOT_WRAPPED_FLOAT_HPP_
 
+#include <cmath>
+
 namespace tap
 {
 namespace algorithms
@@ -58,7 +60,7 @@ public:
      * @param[in] other: The WrappedFloat to be added to `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void WrappedFloat::operator+= (WrappedFloat shiftWrappedFloat);
+    void operator+= (WrappedFloat shiftWrappedFloat);
 
     /**
      * Subtracts a WrappedFloat from `this` WrappedFloat given they have the same lower and
@@ -67,7 +69,7 @@ public:
      * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void WrappedFloat::operator-= (WrappedFloat shiftWrappedFloat);
+    void operator-= (WrappedFloat shiftWrappedFloat);
 
     /**
      * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
@@ -77,7 +79,7 @@ public:
      * @return: A new WrappedFloat with the additive value of `other` and `this`.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat WrappedFloat::operator+ (const WrappedFloat& other) const;
+    WrappedFloat operator+ (const WrappedFloat& other) const;
 
     /**
      * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
@@ -87,31 +89,31 @@ public:
      * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat WrappedFloat::operator- (const WrappedFloat& other) const;
+    WrappedFloat operator- (const WrappedFloat& other) const;
 
-    inline void WrappedFloat::operator*= (const float arg)
+    inline void operator*= (const float arg)
     {
         this->setValue(arg * this->getValue());
     }
-    inline void WrappedFloat::operator*= (const WrappedFloat& arg)
+    inline void operator*= (const WrappedFloat& arg)
     {
         this->setValue(arg.getValue() * this->getValue());
     }
 
-    inline void WrappedFloat::operator/= (const float arg)
+    inline void operator/= (const float arg)
     {
         this->setValue(this->getValue() / arg);
     }
-    inline void WrappedFloat::operator/= (const WrappedFloat& arg)
+    inline void operator/= (const WrappedFloat& arg)
     {
         this->setValue(this->getValue() / arg.getValue());
     }
 
-    inline void WrappedFloat::operator^= (const float arg)
+    inline void operator^= (const float arg)
     {
         this->setValue(powf(this->getValue(), arg));
     }
-    inline void WrappedFloat::operator^= (const WrappedFloat& arg)
+    inline void operator^= (const WrappedFloat& arg)
     {
         this->setValue(powf(this->getValue(), arg.getValue()));
     }
@@ -174,7 +176,7 @@ public:
     void shiftBounds(const float shiftMagnitude);
 
     /**
-     * Limits the passed in contiguous float between the closest of the
+     * Limits the passed WrappedFloat between the closest of the
      * min or max value if outside the min and max value's wrapped range.
      *
      * The min and max must have the same wrapped bounds as the valueToLimit.
@@ -188,9 +190,9 @@ public:
      *                 starts at 2, goes up to 9, then wraps around to 1).
      *
      * @param[in] valueToLimit the ContigousFloat whose value it is to limit
-     * @param[in] min the ContiguousFloat with the same bounds as valueToLimit that
+     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited below.
-     * @param[in] max the ContiguousFloat with the same bounds as valueToLimit that
+     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited above.
      * @param[out] status the status result (what operation the limitValue function performed). The
      * status codes are described below:
@@ -211,9 +213,9 @@ public:
      *
      * @see limitValue.
      * @param[in] valueToLimit the ContigousFloat whose value it is to limit
-     * @param[in] min the ContiguousFloat with the same bounds as valueToLimit that
+     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited below.
-     * @param[in] max the ContiguousFloat with the same bounds as valueToLimit that
+     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited above.
      * @param[out] status the status result (what operation the limitValue function performed). The
      * status codes are described below:

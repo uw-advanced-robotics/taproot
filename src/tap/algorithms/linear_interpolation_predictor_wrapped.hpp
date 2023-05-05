@@ -28,16 +28,16 @@ namespace tap::algorithms
 {
 /**
  * An object that is similar in every respect to the `LinearInterpolationPredictor`
- * object except that it uses `ContiguousFloat`'s instead.
+ * object except that it uses `WrappedFloat`'s instead.
  */
-class LinearInterpolationPredictorContiguous
+class LinearInterpolationPredictorWrapped
 {
 public:
     /**
-     * @param[in] lowerBound Lower bound for linear interpolation contiguous float.
-     * @param[in] upperBound Upper bound for linear interpolation contiguous float.
+     * @param[in] lowerBound Lower bound for linear interpolation WrappedFloat.
+     * @param[in] upperBound Upper bound for linear interpolation WrappedFloat.
      */
-    LinearInterpolationPredictorContiguous(float lowerBound, float upperBound);
+    LinearInterpolationPredictorWrapped(float lowerBound, float upperBound);
 
     /**
      * Updates the interpolation using the newValue.
@@ -89,7 +89,7 @@ private:
     uint32_t lastUpdateCallTime;    ///< The previous timestamp from when update was called.
     WrappedFloat previousValue;  ///< The previous data value.
     float slope;  ///< The current slope, calculated using the previous and most current data.
-};                // class LinearInterpolationPredictorContiguous
+};                // class LinearInterpolationPredictorWrapped
 
 }  // namespace tap::algorithms
 
