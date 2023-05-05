@@ -34,6 +34,12 @@ struct Position
         this->coordinates = std::move(coordinates);
     }
 
+    inline float x() const { return coordinates.data[0]; }
+
+    inline float y() const { return coordinates.data[1]; }
+
+    inline float z() const { return coordinates.data[2]; }
+
     CMSISMat<3, 1> coordinates;
 };  // struct Position
 }   // namespace tap::algorithms::transforms

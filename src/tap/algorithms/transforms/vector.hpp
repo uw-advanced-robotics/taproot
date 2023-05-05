@@ -36,6 +36,12 @@ struct Vector
         this->entries = std::move(vector);
     }
 
+    inline float x() const { return entries.data[0]; }
+
+    inline float y() const { return entries.data[1]; }
+
+    inline float z() const { return entries.data[2]; }
+
     CMSISMat<3, 1> entries;
 };  // struct Vector
 }   // namespace tap::algorithms::transforms
