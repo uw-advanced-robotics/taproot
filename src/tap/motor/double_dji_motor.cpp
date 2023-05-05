@@ -68,6 +68,10 @@ void DoubleDjiMotor::resetEncoderValue()
     motorTwo.resetEncoderValue();
 }
 
+float DoubleDjiMotor::getPositionUnwrapped() const { return motorOne.getPositionUnwrapped(); }
+
+float DoubleDjiMotor::getPositionWrapped() const { return motorOne.getPositionWrapped(); }
+
 void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
 {
     motorOne.setDesiredOutput(desiredOutput);

@@ -155,6 +155,16 @@ void DjiMotor::resetEncoderValue()
     encoderWrapped = 0;
 }
 
+float DjiMotor::getPositionUnwrapped() const
+{
+    return getEncoderUnwrapped() * M_TWOPI / ENC_RESOLUTION;
+}
+
+float DjiMotor::getPositionWrapped() const
+{
+    return getEncoderWrapped() * M_TWOPI / ENC_RESOLUTION;
+}
+
 void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
 {
     int16_t enc_dif = newEncWrapped - encoderWrapped;
