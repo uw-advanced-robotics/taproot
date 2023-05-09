@@ -41,15 +41,16 @@ public:
      */
     virtual inline int getNumChassisMotors() const = 0;
 
-    virtual inline int16_t getLeftFrontRpmActual() const = 0;
-    virtual inline int16_t getLeftBackRpmActual() const = 0;
-    virtual inline int16_t getRightFrontRpmActual() const = 0;
-    virtual inline int16_t getRightBackRpmActual() const = 0;
-
     /**
      * @return `true` iff all motors are online
      */
     virtual inline bool allMotorsOnline() const = 0;
+
+    /**
+     * Callable function to zero all chassis output, designed to be overriden by different types of
+     * chassis.
+     */
+    virtual inline void stopChassis() = 0;
 
     /**
      * @return The actual chassis velocity in chassis relative frame, as a vector <vx, vy, vz>,
