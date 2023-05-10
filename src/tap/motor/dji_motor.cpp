@@ -100,6 +100,12 @@ void DjiMotor::setDesiredOutput(int32_t desiredOutput)
     int16_t desOutputNotInverted =
         static_cast<int16_t>(tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
+
+    // Set follower output
+    for (int i = 0; i < numFollowers; i++)
+    {
+        *(followers[i]).setDesiredOutput(desiredOutput);
+    }
 }
 
 bool DjiMotor::isMotorOnline() const
@@ -139,6 +145,12 @@ bool DjiMotor::isMotorInverted() const { return motorInverted; }
 tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
+
+void DjiMotor::registerNewFollower(DjiMotor& follower) const
+{
+    followers[numFollowers] = follower;
+    numFollowers++;
+}
 
 int64_t DjiMotor::getEncoderUnwrapped() const
 {

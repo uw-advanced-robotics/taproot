@@ -174,6 +174,10 @@ public:
 
     mockable const char* getName() const;
 
+    void registerNewFollower(DjiMotor& follower) const;
+
+    void updateFollowers() const;
+
     template <typename T>
     static void assertEncoderType()
     {
@@ -250,6 +254,18 @@ private:
      * is considered to have an encoder value of 0. encoderHomePosition is 0 by default.
      */
     uint16_t encoderHomePosition;
+
+    /**
+     * All follower motors for this motor. Follower motors match the leader motor's output. The
+     * length of this array is arbitrary, but we can assume there will never be more than
+     * 16 follower motors.
+     */
+    tap::motor::DjiMotor* followers[16];
+
+    /**
+     * Number of followers of this motor. Must have this, since followers array is of fixed length.
+    */
+    uint16_t numFollowers;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
 };
