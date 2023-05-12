@@ -45,9 +45,9 @@ void Pwm::init()
     {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ timer }}::enable();
     {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
-    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
+    std::chrono::duration<uint32_t, std::micro> {{ timer|lower }}Period = std::chrono::duration<uint32_t, std::micro>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
+    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>({{ timer|lower }}Period);
     {{ timer }}::start();
-    {{ timer }}::enableOutput();
 
 %% endfor
 #endif
@@ -94,11 +94,12 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
     UNUSED(timer);
     UNUSED(frequency);
 #else
+    std::chrono::duration<uint32_t, std::micro> period = std::chrono::duration<uint32_t, std::micro>(1'000'000 / frequency);
     switch (timer)
     {
 %% for timer in timers
         case {{ timer|upper }}:
-            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(period);
             break;
 %% endfor
     }
