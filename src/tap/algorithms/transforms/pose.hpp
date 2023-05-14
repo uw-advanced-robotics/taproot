@@ -50,11 +50,11 @@ struct Pose
         this->orientation = std::move(orientation);
     }
 
-    inline float roll() const { return asinf(orientation.data[7]/cosf(getB())); }
+    inline float roll() const { return asinf(orientation.data[7]/cosf(pitch())); }
 
     inline float pitch() const { return asinf(-orientation.data[6]); }
 
-    inline float yaw() const { return asinf(orientation.data[3]/cosf(getB())); }
+    inline float yaw() const { return asinf(orientation.data[3]/cosf(pitch())); }
 
     Position<FRAME> position.
     CMSISMat<3, 3> orientation;

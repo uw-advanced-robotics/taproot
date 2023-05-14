@@ -59,6 +59,47 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 }
 
 template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getRoll() const
+{
+    float jz = rotation.data[2 * 3 + 1];
+    float kz = rotation.data[2 * 3 + 2];
+    return atan2(jz, kz);
+}
+
+template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getPitch() const
+{
+    float iz = rotation.data[2 * 3 + 0];
+    return asinf(-iz);
+}
+
+template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getYaw() const
+{
+    float iy = rotation.data[1 * 3 + 0];
+    float ix = rotation.data[0 * 3 + 0];
+    return atan2(iy, ix);
+}
+
+template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getX() const
+{
+    return translation.data[0];
+}
+
+template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getY() const
+{
+    return translation.data[1];
+}
+
+template <typename SOURCE, typename TARGET>
+float Transform<SOURCE, TARGET>::getZ() const
+{
+    return translation.data[2];
+}
+
+template <typename SOURCE, typename TARGET>
 Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
 {
     return Vector<TARGET>(rotation*vector.entries);

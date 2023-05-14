@@ -82,6 +82,37 @@ public:
     }
 
     /**
+     * Get the roll of this transformation
+    */
+    float getRoll() const;
+    
+    /**
+     * Get the pitch of this transformation
+    */
+    float getPitch() const;
+   
+    /**
+     * Get the pitch of this transformation
+    */
+    float getYaw() const;
+
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getX() const;
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getY() const;
+
+    /**
+     * Get the x-component of this transform's translation
+    */
+    float getZ() const;
+
+    /**
      * Apply this transform to a position.
      * 
      * @param[in] position Position in source frame.
