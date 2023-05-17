@@ -1127,6 +1127,7 @@ TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
     EXPECT_CALL(c, end);
     EXPECT_CALL(s, refresh);
+    EXPECT_CALL(s, refreshSafeDisconnect);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
     scheduler.registerSubsystem(&s);
@@ -1152,6 +1153,7 @@ TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
     EXPECT_CALL(s, refresh);
     EXPECT_CALL(c1, end);
     EXPECT_CALL(c2, end);
+    EXPECT_CALL(s, refreshSafeDisconnect);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
     scheduler.registerSubsystem(&s);
@@ -1176,6 +1178,7 @@ TEST(CommandScheduler, run_command_when_remote_reconnected)
     EXPECT_CALL(c, initialize).Times(2);
     EXPECT_CALL(c, execute).Times(2);
     EXPECT_CALL(c, end);
+    EXPECT_CALL(s, refreshSafeDisconnect);
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
     scheduler.registerSubsystem(&s);
@@ -1539,25 +1542,26 @@ public:
 
     void initialize() override
     {
-        c1->initialize();
-        c2->initialize();
+        this->comprisedCommandScheduler.addCommand(c1);
+        this->comprisedCommandScheduler.addCommand(c2);
     }
 
     void execute() override
     {
-        c1->execute();
-        c2->execute();
+        // this->comprisedCommandScheduler.addCommand(c1);
+        // this->comprisedCommandScheduler.addCommand(c2);
     }
 
     void end(bool interrupted) override
     {
-        c1->end(interrupted);
-        c2->end(interrupted);
+        this->comprisedCommandScheduler.removeCommand(c1, interrupted);
+        this->comprisedCommandScheduler.removeCommand(c2, interrupted);
     }
 
     bool isFinished() const override
     {
-        return c1->isFinished() && c2->isFinished();
+        return this->comprisedCommandScheduler.isCommandScheduled(c1) &&
+            this->comprisedCommandScheduler.isCommandScheduled(c2);
     }
 
     const char* getName() const override { return "test comprised command"; }
