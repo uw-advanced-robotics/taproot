@@ -56,6 +56,11 @@ elif args["TARGET_ENV"] == "hardware":
 # Build modm library, modm's SConscript should be ran before any of the build code defined below
 env.SConscript(dirs=[modm_path], exports=["env"])
 
+# Fixes Linker Error
+if (args["TARGET_ENV"] == "build" or args["TARGET_ENV"] == "run"):
+    env["LINKFLAGS"].remove("--specs=nosys.specs")
+env.Append(CFLAGS=["-include", "tap/display/modm_config_printf.h"])
+
 if ((args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim") and
         sys.platform == "win32" and shutil.which("lld") != None):
     # Use lld for linking when on Windows targeting the hosted environment
