@@ -22,6 +22,7 @@
 #include "tap/architecture/clock.hpp"
 #include "tap/control/command.hpp"
 #include "tap/control/command_scheduler.hpp"
+#include "tap/control/comprised_command.hpp"
 #include "tap/drivers.hpp"
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
@@ -1522,4 +1523,86 @@ TEST(CommandScheduler, addCommand_doesnt_add_if_command_not_ready)
     bool isScheduled = scheduler.isCommandScheduled(&c1);
 
     EXPECT_EQ(isScheduled, false);
+}
+
+class TestComprisedCommand : public ComprisedCommand
+{
+    NiceMock<CommandMock>* c1;
+    NiceMock<CommandMock>* c2;
+public:
+    TestComprisedCommand(Drivers* drivers, NiceMock<CommandMock>* c1, NiceMock<CommandMock>* c2)
+    : ComprisedCommand(drivers),
+      c1(c1),
+      c2(c2)
+    {
+    }
+
+    void initialize() override
+    {
+        c1->initialize();
+        c2->initialize();
+    }
+
+    void execute() override
+    {
+        c1->execute();
+        c2->execute();
+    }
+
+    void end(bool interrupted) override
+    {
+        c1->end(interrupted);
+        c2->end(interrupted);
+    }
+
+    bool isFinished() const override
+    {
+        return c1->isFinished() && c2->isFinished();
+    }
+
+    const char* getName() const override { return "test comprised command"; }
+      
+};
+
+TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    
+
+    SubsystemMock s1(&drivers);
+    SubsystemMock s2(&drivers);
+    SubsystemMock s3(&drivers);
+
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+
+    TestComprisedCommand cc1(&drivers, &c1, &c2);
+
+    set<Subsystem *> subRequirementsC1{&s1, &s2};
+    set<Subsystem *> subRequirementsC2{&s2, &s3};
+
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(3)
+        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(c1, end);
+    EXPECT_CALL(c2, getRequirementsBitwise)
+        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
+    EXPECT_CALL(c2, initialize);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(&s2);
+    scheduler.registerSubsystem(&s3);
+
+    // The first command is associated with the first two subsystems.
+    scheduler.addCommand(&cc1);
+
+
+    EXPECT_CALL(s1, refreshSafeDisconnect).Times(1);
+    EXPECT_CALL(s2, refreshSafeDisconnect).Times(1);
+    EXPECT_CALL(s3, refreshSafeDisconnect).Times(1);
+
+
+    scheduler.run();
 }
