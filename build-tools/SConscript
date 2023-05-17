@@ -57,7 +57,7 @@ elif args["TARGET_ENV"] == "hardware":
 env.SConscript(dirs=[modm_path], exports=["env"])
 
 # Fixes Linker Error
-if (args["TARGET_ENV"] == "build" or args["TARGET_ENV"] == "run"):
+if not (args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim"):
     env["LINKFLAGS"].remove("--specs=nosys.specs")
 env.Append(CFLAGS=["-include", "tap/display/modm_config_printf.h"])
 
