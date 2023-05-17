@@ -1571,7 +1571,8 @@ public:
 TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
 {
     Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
     
 
     SubsystemMock s1(&drivers);
@@ -1595,6 +1596,8 @@ TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
         .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
     EXPECT_CALL(c2, initialize);
 
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
     scheduler.registerSubsystem(&s3);
@@ -1602,6 +1605,7 @@ TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
     // The first command is associated with the first two subsystems.
     scheduler.addCommand(&cc1);
 
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
 
     EXPECT_CALL(s1, refreshSafeDisconnect).Times(1);
     EXPECT_CALL(s2, refreshSafeDisconnect).Times(1);
