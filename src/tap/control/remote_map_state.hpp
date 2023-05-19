@@ -25,6 +25,8 @@
 
 #include "tap/communication/serial/remote.hpp"
 
+using namespace tap::communication::serial;
+
 namespace tap
 {
 namespace control
@@ -81,10 +83,15 @@ public:
      * not be properly initialized.
      */
     RemoteMapState(
-        tap::communication::serial::Remote::SwitchState leftss,
-        tap::communication::serial::Remote::SwitchState rightss,
-        const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+        Remote::SwitchState leftss,
+        Remote::SwitchState rightss,
+        float wheel,
+        float rightVertical,
+        float rightHorizontal,
+        float leftVertical,
+        float leftHorizontal,
+        const std::list<Remote::Key> &keySet,
+        const std::list<Remote::Key> &negKeySet,
         bool mouseButtonLeftPressed,
         bool mouseButtonRightPressed);
 
@@ -95,25 +102,15 @@ public:
      * @param[in] switchState The switch state of the given switch.
      */
     RemoteMapState(
-        tap::communication::serial::Remote::Switch swh,
-        tap::communication::serial::Remote::SwitchState switchState);
+        Remote::Switch swh,
+        Remote::SwitchState switchState);
 
     /**
-     * Initializes a RemoteMapState with a wheel and thresholds.
+     * Initializes a RemoteMapState with a channel and threshold.
      *
      * @param[in] threshold The threshold of which the wheel can be less than the negative of or greater than
     */
-    RemoteMapState(float threshold);
-
-    /**
-     * Initializes a RemoteMapState with a wheel and thresholds.
-     *
-     * @param[in] lowerThreshold The threshold of which the wheel can be less than
-     * @param[in] switchState The threshold of which the wheel can be greater than
-     */
-    RemoteMapState(
-        float lowerThreshold,
-        float upperThreshold);
+    RemoteMapState(Remote::Channel channel, float threshold);
 
     /**
      * Initializes a RemoteMapState with particular switch states for both remote
@@ -123,8 +120,8 @@ public:
      * @param[in] rightss The switch state for the right switch.
      */
     RemoteMapState(
-        tap::communication::serial::Remote::SwitchState leftss,
-        tap::communication::serial::Remote::SwitchState rightss);
+        Remote::SwitchState leftss,
+        Remote::SwitchState rightss);
 
     /**
      * Initializes a RemoteMapState with a particular set of keys and optionally a
@@ -136,8 +133,8 @@ public:
      *      `negKeySet` will not be properly initialized.
      */
     RemoteMapState(
-        const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
+        const std::list<Remote::Key> &keySet,
+        const std::list<Remote::Key> &negKeySet = {});
 
     /**
      * Initializes a RemoteMapState with a particular mouse button and set of keys and
@@ -151,8 +148,8 @@ public:
      */
     RemoteMapState(
         RemoteMapState::MouseButton button,
-        const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
+        const std::list<Remote::Key> &keySet,
+        const std::list<Remote::Key> &negKeySet = {});
 
     /**
      * Initializes a RemoteMapState that will use the given mouse button (either left or
@@ -165,16 +162,17 @@ public:
     /**
      * Initializes the left switch with the particular `Remote::SwitchState` provided.
      */
-    void initLSwitch(tap::communication::serial::Remote::SwitchState ss);
+    void initLSwitch(Remote::SwitchState ss);
 
     /**
      * Initializes the right switch with the particular `Remote::SwitchState` provided.
      */
-    void initRSwitch(tap::communication::serial::Remote::SwitchState ss);
+    void initRSwitch(Remote::SwitchState ss);
 
-    void initWheel(float threshold);
-
-    void initWheel(float lowerThreshold, float upperThreshold);
+    /**
+     * Initializes the channel with the particular threshold provided.
+     */
+    void initChannel(Remote::Channel channel, float threshold);
 
     /**
      * Initializes the keys to the bit mapped set of keys provided.
@@ -191,12 +189,12 @@ public:
     /**
      * @see `initKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet);
+    void initKeys(const std::list<Remote::Key> &keySet);
 
     /**
      * @see `initNegKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    void initNegKeys(const std::list<tap::communication::serial::Remote::Key> &negKeySet);
+    void initNegKeys(const std::list<Remote::Key> &negKeySet);
 
     /**
      * Initializes the left mouse button to be mapped when clicked.
@@ -263,20 +261,19 @@ public:
 
     bool getRMouseButton() const { return rMouseButton; }
 
-    tap::communication::serial::Remote::SwitchState getLSwitch() const { return lSwitch; }
+    Remote::SwitchState getLSwitch() const { return lSwitch; }
 
-    tap::communication::serial::Remote::SwitchState getRSwitch() const { return rSwitch; }
+    Remote::SwitchState getRSwitch() const { return rSwitch; }
 
 private:
-    tap::communication::serial::Remote::SwitchState lSwitch =
-        tap::communication::serial::Remote::SwitchState::UNKNOWN;
+    Remote::SwitchState lSwitch =
+        Remote::SwitchState::UNKNOWN;
 
-    tap::communication::serial::Remote::SwitchState rSwitch =
-        tap::communication::serial::Remote::SwitchState::UNKNOWN;
+    Remote::SwitchState rSwitch =
+        Remote::SwitchState::UNKNOWN;
 
-    bool wheel = false; 
-    float wheelLowerThreshold;
-    float wheelUpperThreshold;
+    bool wheel = false, rightVertical = false, rightHorizontal = false, leftVertical = false, leftHorizontal = false; 
+    float wheelThreshold, rightVerticalThreshold, rightHorizontalThreshold, leftVerticalThreshold, leftHorizontalThreshold;
 
     uint16_t keys = 0;
 

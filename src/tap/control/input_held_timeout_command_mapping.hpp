@@ -54,7 +54,7 @@ public:
         const RemoteMapState &rms, float durationHeldms)
         : CommandMapping(drivers, cmds, rms),
         drivers(drivers),
-          durationHeld(durationHeld),
+          durationHeld(durationHeldms),
           timer(durationHeld)
     {
     }

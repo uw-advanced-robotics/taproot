@@ -21,24 +21,37 @@
 
 #include <numeric>
 
+#include "tap/algorithms/math_user_utils.hpp"
+
 #include "tap/errors/create_errors.hpp"
 
 using namespace tap::communication::serial;
+using namespace tap::algorithms;
 
 namespace tap
 {
 namespace control
 {
 RemoteMapState::RemoteMapState(
-    tap::communication::serial::Remote::SwitchState leftss,
-    tap::communication::serial::Remote::SwitchState rightss,
-    const std::list<tap::communication::serial::Remote::Key> &keySet,
-    const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+    Remote::SwitchState leftss,
+    Remote::SwitchState rightss,
+    float wheel,
+    float rightVertical,
+    float rightHorizontal,
+    float leftVertical,
+    float leftHorizontal,
+    const std::list<Remote::Key> &keySet,
+    const std::list<Remote::Key> &negKeySet,
     bool mouseButtonLeftPressed,
     bool mouseButtonRightPressed)
 {
     initLSwitch(leftss);
     initRSwitch(rightss);
+    initChannel(Remote::Channel::WHEEL, wheel);
+    initChannel(Remote::Channel::RIGHT_VERTICAL, rightVertical);
+    initChannel(Remote::Channel::RIGHT_HORIZONTAL, rightHorizontal);
+    initChannel(Remote::Channel::LEFT_VERTICAL, leftVertical);
+    initChannel(Remote::Channel::LEFT_HORIZONTAL, leftHorizontal);
     initKeys(keySet);
     initNegKeys(negKeySet);
     if (mouseButtonLeftPressed)
@@ -63,14 +76,9 @@ RemoteMapState::RemoteMapState(Remote::Switch swh, Remote::SwitchState switchSta
     }
 }
 
-RemoteMapState::RemoteMapState(float threshold)
+RemoteMapState::RemoteMapState(Remote::Channel channel, float threshold)
 {
-    initWheel(threshold);
-}
-
-RemoteMapState::RemoteMapState(float lowerThreshold, float upperThreshold)
-{
-    initWheel(lowerThreshold, upperThreshold);
+    initChannel(channel, threshold);
 }
 
 RemoteMapState::RemoteMapState(Remote::SwitchState leftss, Remote::SwitchState rightss)
@@ -162,34 +170,54 @@ void RemoteMapState::initNegKeys(uint16_t negKeys)
 
 void RemoteMapState::initKeys(const std::list<Remote::Key> &keySet)
 {
-    uint16_t keys = std::accumulate(keySet.begin(), keySet.end(), 0, [](int acc, Remote::Key key) {
-        return acc |= 1 << static_cast<uint16_t>(key);
-    });
+    uint16_t keys = std::accumulate(
+        keySet.begin(),
+        keySet.end(),
+        0,
+        [](int acc, Remote::Key key) { return acc |= 1 << static_cast<uint16_t>(key); });
     initKeys(keys);
 }
 
 void RemoteMapState::initNegKeys(const std::list<Remote::Key> &negKeySet)
 {
     // extract a bit form of the key set.
-    uint16_t negKeys =
-        std::accumulate(negKeySet.begin(), negKeySet.end(), 0, [](int acc, Remote::Key key) {
-            return acc |= 1 << static_cast<uint16_t>(key);
-        });
+    uint16_t negKeys = std::accumulate(
+        negKeySet.begin(),
+        negKeySet.end(),
+        0,
+        [](int acc, Remote::Key key) { return acc |= 1 << static_cast<uint16_t>(key); });
     initNegKeys(negKeys);
 }
 
-void RemoteMapState::initWheel(float threshold)
-{
-    initWheel(-threshold, threshold); 
-}
-
-void RemoteMapState::initWheel(float lowerThreshold, float upperThreshold) {
-    if(lowerThreshold < -1 || upperThreshold > 1 || lowerThreshold < upperThreshold) {
+void RemoteMapState::initChannel(Remote::Channel channel, float threshold){
+    if(fabsf(threshold) > 1){
         return;
     }
-    wheel = true;
-    this->wheelLowerThreshold = lowerThreshold;
-    this->wheelUpperThreshold = upperThreshold;
+    switch(channel){
+        case Remote::Channel::WHEEL:
+            wheel = true;
+            wheelThreshold = threshold;
+            break;
+        case Remote::Channel::RIGHT_VERTICAL:
+            rightVertical = true;
+            rightVerticalThreshold = threshold;
+            break;
+        case Remote::Channel::RIGHT_HORIZONTAL:
+            rightHorizontal = true;
+            rightHorizontalThreshold = threshold;
+            break;
+        case Remote::Channel::LEFT_VERTICAL:
+            leftVertical = true;
+            leftVerticalThreshold = threshold;
+            break;
+        case Remote::Channel::LEFT_HORIZONTAL:
+            leftHorizontal = true;
+            leftHorizontalThreshold = threshold;
+            break;
+        default:
+            break;
+    }
+
 }
 
 void RemoteMapState::initLMouseButton() { lMouseButton = true; }
@@ -218,7 +246,23 @@ bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
     {
         return false;
     }
-    if (wheel && (other.wheelLowerThreshold > wheelLowerThreshold && other.wheelUpperThreshold < wheelUpperThreshold))
+    if (wheel && getSign(other.wheelThreshold) == getSign(wheelThreshold) && fabsf(other.wheelThreshold) < fabsf(wheelThreshold))
+    {
+        return false;
+    }
+    if (rightVertical && getSign(other.rightVerticalThreshold) == getSign(rightVerticalThreshold) && fabsf(other.rightVerticalThreshold) < fabsf(rightVerticalThreshold))
+    {
+        return false;
+    }
+    if (rightHorizontal && getSign(other.rightHorizontalThreshold) == getSign(rightHorizontalThreshold) && fabsf(other.rightHorizontalThreshold) < fabsf(rightHorizontalThreshold))
+    {
+        return false;
+    }
+    if (leftVertical && getSign(other.leftVerticalThreshold) == getSign(leftVerticalThreshold) && fabsf(other.leftVerticalThreshold) < fabsf(leftVerticalThreshold))
+    {
+        return false;
+    }
+    if (leftHorizontal && getSign(other.leftHorizontalThreshold) == getSign(leftHorizontalThreshold) && fabsf(other.leftHorizontalThreshold) < fabsf(leftHorizontalThreshold))
     {
         return false;
     }
