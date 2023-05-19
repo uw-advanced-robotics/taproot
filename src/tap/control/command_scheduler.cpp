@@ -338,10 +338,10 @@ void CommandScheduler::registerSubsystem(Subsystem *subsystem)
     }
     else
     {
+        subsystem->initialize();
         // Add the subsystem to the registered subsystem bitmap
         registeredSubsystemBitmap |=
             (LSB_ONE_HOT_SUBSYSTEM_BITMAP << subsystem->getGlobalIdentifier());
-        subsystem->initialize();
     }
 }
 
