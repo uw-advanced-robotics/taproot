@@ -1,24 +1,27 @@
 
 #include "input_held_timeout_command_mapping.hpp"
 
+#include "tap/drivers.hpp"
+
 namespace tap
 {
 namespace control
 {
-void InputHeldTimeoutCommandMapping::executeCommandMapping(const RemoteMapState &currState) {
-    if (this->timer.execute(mappingSubset(currState) 
-        && !(mapState.getNegKeysUsed() 
-        && negKeysSubset(mapState, currState))))
+void InputHeldTimeoutCommandMapping::executeCommandMapping(const RemoteMapState &currState)
+{
+    if (this->timer.execute(
+            mappingSubset(currState) &&
+            !(mapState.getNegKeysUsed() && negKeysSubset(mapState, currState))))
     {
-        if (!commandScheduled) {
-            commandScheduled = true;
-            addCommands();
-        }    
-    }
-    else
-    {
-        commandScheduled = false;
+        for (std::size_t i = 0; i < mappedCommands.size(); i++)
+        {
+            Command *cmd = mappedCommands[i];
+            if (!drivers->commandScheduler.isCommandScheduled(cmd))
+            {
+                addCommands();
+            }
+        }
     }
 }
-} //namespace control
-} //namespace tap
+}  // namespace control
+}  // namespace tap
