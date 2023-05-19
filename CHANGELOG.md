@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## May 2023
+
+### Breaking changes
+
+- `tap::control::chassis::ChassisSubsystemInterface` has a new method `stopChassis()` which should be generically called to cease motion of the chassis.
+
 ## April 2023
 
 ### Breaking changes
