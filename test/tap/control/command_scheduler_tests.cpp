@@ -1210,6 +1210,7 @@ TEST(CommandScheduler, default_command_added_when_remote_reconnected)
     EXPECT_CALL(c, execute);
     EXPECT_CALL(c, isFinished);
     EXPECT_CALL(s, refresh).Times(3);
+    EXPECT_CALL(s, refreshSafeDisconnect).Times(1);
 
     scheduler.registerSubsystem(&s);
     scheduler.run();
@@ -1232,6 +1233,7 @@ TEST(CommandScheduler, command_not_added_when_remote_disconnected)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     EXPECT_CALL(s, refresh);
+    EXPECT_CALL(s, refreshSafeDisconnect);
 
     scheduler.registerSubsystem(&s);
     scheduler.run();
@@ -1252,6 +1254,7 @@ TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
     ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
     EXPECT_CALL(c, initialize).Times(0);
     EXPECT_CALL(s, refresh);
+    EXPECT_CALL(s, refreshSafeDisconnect);
 
     scheduler.registerSubsystem(&s);
     scheduler.addCommand(&c);
@@ -1533,11 +1536,19 @@ class TestComprisedCommand : public ComprisedCommand
     NiceMock<CommandMock>* c1;
     NiceMock<CommandMock>* c2;
 public:
-    TestComprisedCommand(Drivers* drivers, NiceMock<CommandMock>* c1, NiceMock<CommandMock>* c2)
+    TestComprisedCommand(Drivers* drivers,
+        NiceMock<CommandMock>* c1,
+        NiceMock<CommandMock>* c2,
+        SubsystemMock* s1,
+        SubsystemMock* s2,
+        SubsystemMock* s3)
     : ComprisedCommand(drivers),
       c1(c1),
       c2(c2)
     {
+        this->comprisedCommandScheduler.registerSubsystem(s1);
+        this->comprisedCommandScheduler.registerSubsystem(s2);
+        this->comprisedCommandScheduler.registerSubsystem(s3);
     }
 
     void initialize() override
@@ -1550,6 +1561,7 @@ public:
     {
         // this->comprisedCommandScheduler.addCommand(c1);
         // this->comprisedCommandScheduler.addCommand(c2);
+        this->comprisedCommandScheduler.run();
     }
 
     void end(bool interrupted) override
@@ -1574,7 +1586,6 @@ TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
     
-
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
@@ -1582,35 +1593,30 @@ TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
     NiceMock<CommandMock> c1;
     NiceMock<CommandMock> c2;
 
-    TestComprisedCommand cc1(&drivers, &c1, &c2);
+    TestComprisedCommand cc1(&drivers, &c1, &c2, &s1, &s2, &s3);
 
     set<Subsystem *> subRequirementsC1{&s1, &s2};
-    set<Subsystem *> subRequirementsC2{&s2, &s3};
+    set<Subsystem *> subRequirementsC2{&s3};
 
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(3)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
-    EXPECT_CALL(c2, initialize);
+    ON_CALL(c1, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirementsC1)));
+    ON_CALL(c2, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirementsC2)));
 
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
     scheduler.registerSubsystem(&s3);
 
-    // The first command is associated with the first two subsystems.
     scheduler.addCommand(&cc1);
 
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s2, refresh);
+    EXPECT_CALL(s3, refresh);
     EXPECT_CALL(s1, refreshSafeDisconnect).Times(1);
     EXPECT_CALL(s2, refreshSafeDisconnect).Times(1);
     EXPECT_CALL(s3, refreshSafeDisconnect).Times(1);
-
 
     scheduler.run();
 }
