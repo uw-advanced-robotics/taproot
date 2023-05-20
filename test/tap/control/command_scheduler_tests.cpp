@@ -1533,18 +1533,19 @@ TEST(CommandScheduler, addCommand_doesnt_add_if_command_not_ready)
 
 class TestComprisedCommand : public ComprisedCommand
 {
-    NiceMock<CommandMock>* c1;
-    NiceMock<CommandMock>* c2;
+    NiceMock<CommandMock> *c1;
+    NiceMock<CommandMock> *c2;
 public:
-    TestComprisedCommand(Drivers* drivers,
-        NiceMock<CommandMock>* c1,
-        NiceMock<CommandMock>* c2,
-        SubsystemMock* s1,
-        SubsystemMock* s2,
-        SubsystemMock* s3)
-    : ComprisedCommand(drivers),
-      c1(c1),
-      c2(c2)
+    TestComprisedCommand(
+        Drivers *drivers,
+        NiceMock<CommandMock> *c1,
+        NiceMock<CommandMock> *c2,
+        SubsystemMock *s1,
+        SubsystemMock *s2,
+        SubsystemMock *s3)
+        : ComprisedCommand(drivers),
+          c1(c1),
+          c2(c2)
     {
         this->comprisedCommandScheduler.registerSubsystem(s1);
         this->comprisedCommandScheduler.registerSubsystem(s2);
@@ -1573,10 +1574,10 @@ public:
     bool isFinished() const override
     {
         return this->comprisedCommandScheduler.isCommandScheduled(c1) &&
-            this->comprisedCommandScheduler.isCommandScheduled(c2);
+               this->comprisedCommandScheduler.isCommandScheduled(c2);
     }
 
-    const char* getName() const override { return "test comprised command"; }
+    const char *getName() const override { return "test comprised command"; }
       
 };
 
