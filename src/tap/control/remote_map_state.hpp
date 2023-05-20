@@ -265,6 +265,23 @@ public:
 
     Remote::SwitchState getRSwitch() const { return rSwitch; }
 
+    float getChannel(Remote::Channel channel) const{
+        switch (channel) {
+            case Remote::Channel::WHEEL:
+                return wheelThreshold;
+            case Remote::Channel::RIGHT_VERTICAL:
+                return rightVerticalThreshold;
+            case Remote::Channel::RIGHT_HORIZONTAL:
+                return rightHorizontalThreshold;
+            case Remote::Channel::LEFT_VERTICAL:
+                return leftVerticalThreshold;
+            case Remote::Channel::LEFT_HORIZONTAL:
+                return leftHorizontalThreshold;
+            default:
+                return 0;
+        }
+    }
+
 private:
     Remote::SwitchState lSwitch =
         Remote::SwitchState::UNKNOWN;

@@ -41,7 +41,11 @@ public:
         (uint16_t,
          tap::communication::serial::Remote::SwitchState,
          tap::communication::serial::Remote::SwitchState,
-         float
+         float,
+         float,
+         float,
+         float,
+         float,
          bool,
          bool),
         (override));

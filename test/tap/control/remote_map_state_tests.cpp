@@ -31,6 +31,11 @@ TEST(RemoteMapState, default_constructor_default_remote_state)
 
     EXPECT_EQ(0, ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
     EXPECT_EQ(false, ms.getNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());

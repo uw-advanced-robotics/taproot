@@ -142,6 +142,10 @@ void Remote::parseBuffer()
         remote.leftSwitch,
         remote.rightSwitch,
         remote.wheel,
+        remote.leftHorizontal,
+        remote.leftVertical,
+        remote.rightHorizontal,
+        remote.rightVertical,
         remote.mouse.l,
         remote.mouse.r);
 
@@ -182,7 +186,7 @@ void Remote::reset()
     // command states enter defaults when remote reconnects even if key/switch
     // state should do otherwise
     drivers->commandMapper
-        .handleKeyStateChange(0, SwitchState::UNKNOWN, SwitchState::UNKNOWN, 0, false, false);
+        .handleKeyStateChange(0, SwitchState::UNKNOWN, SwitchState::UNKNOWN, 0, 0, 0, 0, 0, false, false);
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }
