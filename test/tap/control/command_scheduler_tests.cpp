@@ -1535,6 +1535,7 @@ class TestComprisedCommand : public ComprisedCommand
 {
     NiceMock<CommandMock> *c1;
     NiceMock<CommandMock> *c2;
+
 public:
     TestComprisedCommand(
         Drivers *drivers,
@@ -1578,7 +1579,6 @@ public:
     }
 
     const char *getName() const override { return "test comprised command"; }
-      
 };
 
 TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
@@ -1586,7 +1586,7 @@ TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
     Drivers drivers;
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
-    
+
     SubsystemMock s1(&drivers);
     SubsystemMock s2(&drivers);
     SubsystemMock s3(&drivers);
