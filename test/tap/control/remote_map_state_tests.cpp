@@ -159,6 +159,91 @@ TEST(RemoteMapState, intersecting_keyset_negkeyset_in_constructor_fails)
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
 }
 
+TEST(RemoteMapState, wheel_constructor_only_wheel_initialized){
+    RemoteMapState ms(Remote::Channel::WHEEL, 0.5);
+
+    EXPECT_EQ(0, ms.getKeys());
+    EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0.5, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
+    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getRMouseButton());
+    EXPECT_EQ(false, ms.getLMouseButton());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
+}
+
+TEST(RemoteMapState, right_vertical_constructor_only_right_vertical_initalized){
+    RemoteMapState ms(Remote::Channel::RIGHT_VERTICAL, 0.4);
+
+    EXPECT_EQ(0, ms.getKeys());
+    EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0.4, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
+    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getRMouseButton());
+    EXPECT_EQ(false, ms.getLMouseButton());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
+}
+
+TEST(RemoteMapState, right_horizontal_constructor_only_right_horizontal_initalized){
+    RemoteMapState ms(Remote::Channel::RIGHT_HORIZONTAL, 0.3);
+
+    EXPECT_EQ(0, ms.getKeys());
+    EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0.3, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
+    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getRMouseButton());
+    EXPECT_EQ(false, ms.getLMouseButton());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
+}
+
+TEST(RemoteMapState, left_vertical_constructor_only_left_vertical_initalized){
+    RemoteMapState ms(Remote::Channel::LEFT_VERTICAL, 0.2);
+
+    EXPECT_EQ(0, ms.getKeys());
+    EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0.2, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
+    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getRMouseButton());
+    EXPECT_EQ(false, ms.getLMouseButton());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
+}
+
+TEST(RemoteMapState, left_horizontal_constructor_only_left_horizontal_initalized){
+    RemoteMapState ms(Remote::Channel::LEFT_HORIZONTAL, 0.1);
+
+    EXPECT_EQ(0, ms.getKeys());
+    EXPECT_EQ(0, ms.getNegKeys());
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+    EXPECT_NEAR(0, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+    EXPECT_NEAR(0.1, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
+    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getRMouseButton());
+    EXPECT_EQ(false, ms.getLMouseButton());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
+    EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getLSwitch());
+}
+
 TEST(RemoteMapState, initLSwitch_sets_left_SwitchState)
 {
     RemoteMapState ms;
@@ -206,6 +291,41 @@ TEST(RemoteMapState, initRMouseButton_sets_RMouseButton)
     ms.initRMouseButton();
 
     EXPECT_EQ(true, ms.getRMouseButton());
+}
+
+TEST(RemoteMapState, initChannel_wheel_sets_wheel){
+    RemoteMapState ms;
+    mp.initChannel(Remote::Channel::WHEEL, 0.1);
+
+    EXPECT_NEAR(0.1, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
+}
+
+TEST(RemoteMapState, initChannel_right_vertical_sets_right_vertical){
+    RemoteMapState ms;
+    mp.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.2);
+
+    EXPECT_NEAR(0.2, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
+}
+
+TEST(RemoteMapState, initChannel_right_horizontal_sets_right_horizontal){
+    RemoteMapState ms;
+    mp.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.3);
+
+    EXPECT_NEAR(0.3, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
+}
+
+TEST(RemoteMapState, initChannel_left_vertical_sets_left_vertical){
+    RemoteMapState ms;
+    mp.initChannel(Remote::Channel::LEFT_VERTICAL, 0.4);
+
+    EXPECT_NEAR(0.4, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
+}
+
+TEST(RemoteMapState, initChannel_left_horizontal_sets_left_horizontal){
+    RemoteMapState ms;
+    mp.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
+
+    EXPECT_NEAR(0.5, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
 }
 
 TEST(RemoteMapState, operator_equals_default_constructed_equal)
