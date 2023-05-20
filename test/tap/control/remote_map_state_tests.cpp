@@ -295,35 +295,35 @@ TEST(RemoteMapState, initRMouseButton_sets_RMouseButton)
 
 TEST(RemoteMapState, initChannel_wheel_sets_wheel){
     RemoteMapState ms;
-    mp.initChannel(Remote::Channel::WHEEL, 0.1);
+    ms.initChannel(Remote::Channel::WHEEL, 0.1);
 
     EXPECT_NEAR(0.1, ms.getChannel(Remote::Channel::WHEEL), 1E-5);
 }
 
 TEST(RemoteMapState, initChannel_right_vertical_sets_right_vertical){
     RemoteMapState ms;
-    mp.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.2);
+    ms.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.2);
 
     EXPECT_NEAR(0.2, ms.getChannel(Remote::Channel::RIGHT_VERTICAL), 1E-5);
 }
 
 TEST(RemoteMapState, initChannel_right_horizontal_sets_right_horizontal){
     RemoteMapState ms;
-    mp.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.3);
+    ms.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.3);
 
     EXPECT_NEAR(0.3, ms.getChannel(Remote::Channel::RIGHT_HORIZONTAL), 1E-5);
 }
 
 TEST(RemoteMapState, initChannel_left_vertical_sets_left_vertical){
     RemoteMapState ms;
-    mp.initChannel(Remote::Channel::LEFT_VERTICAL, 0.4);
+    ms.initChannel(Remote::Channel::LEFT_VERTICAL, 0.4);
 
     EXPECT_NEAR(0.4, ms.getChannel(Remote::Channel::LEFT_VERTICAL), 1E-5);
 }
 
 TEST(RemoteMapState, initChannel_left_horizontal_sets_left_horizontal){
     RemoteMapState ms;
-    mp.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
+    ms.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
 
     EXPECT_NEAR(0.5, ms.getChannel(Remote::Channel::LEFT_HORIZONTAL), 1E-5);
 }
