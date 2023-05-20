@@ -536,3 +536,103 @@ TEST(RemoteMapState, stateSubsetOf_false_right_switches_different)
     EXPECT_FALSE(ms1.stateSubsetOf(ms2));
     EXPECT_FALSE(ms2.stateSubsetOf(ms1));
 }
+
+TEST(RemoteMapState, stateSubsetOf_true_wheel_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::WHEEL, 0.5);
+    ms2.initChannel(Remote::Channel::WHEEL, 0.6);
+
+    EXPECT_TRUE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_wheel_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::WHEEL, 0.5);
+    ms2.initChannel(Remote::Channel::WHEEL, 0.4);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_TRUE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_true_right_vertical_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.5);
+    ms2.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.6);
+
+    EXPECT_TRUE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_right_vertical_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.5);
+    ms2.initChannel(Remote::Channel::RIGHT_VERTICAL, 0.4);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_TRUE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_true_right_horizontal_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.5);
+    ms2.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.6);
+
+    EXPECT_TRUE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_right_horizontal_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.5);
+    ms2.initChannel(Remote::Channel::RIGHT_HORIZONTAL, 0.4);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_TRUE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_true_left_vertical_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::LEFT_VERTICAL, 0.5);
+    ms2.initChannel(Remote::Channel::LEFT_VERTICAL, 0.6);
+
+    EXPECT_TRUE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_left_vertical_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::LEFT_VERTICAL, 0.5);
+    ms2.initChannel(Remote::Channel::LEFT_VERTICAL, 0.4);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_TRUE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_true_left_horizontal_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
+    ms2.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.6);
+
+    EXPECT_TRUE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_left_horizontal_threshold){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
+    ms2.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.4);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_TRUE(ms2.stateSubsetOf(ms1));
+}
+
+TEST(RemoteMapState, stateSubsetOf_false_opposite_signs){
+    RemoteMapState ms1, ms2;
+    ms1.initChannel(Remote::Channel::LEFT_HORIZONTAL, 0.5);
+    ms2.initChannel(Remote::Channel::LEFT_HORIZONTAL, -0.6);
+
+    EXPECT_FALSE(ms1.stateSubsetOf(ms2));
+    EXPECT_FALSE(ms2.stateSubsetOf(ms1));
+}
+

@@ -246,23 +246,23 @@ bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
     {
         return false;
     }
-    if (wheel && getSign(other.wheelThreshold) == getSign(wheelThreshold) && fabsf(other.wheelThreshold) < fabsf(wheelThreshold))
+    if (wheel && (getSign(other.wheelThreshold) != getSign(wheelThreshold) || fabsf(other.wheelThreshold) < fabsf(wheelThreshold)))
     {
         return false;
     }
-    if (rightVertical && getSign(other.rightVerticalThreshold) == getSign(rightVerticalThreshold) && fabsf(other.rightVerticalThreshold) < fabsf(rightVerticalThreshold))
+    if (rightVertical && (getSign(other.rightVerticalThreshold) != getSign(rightVerticalThreshold) || fabsf(other.rightVerticalThreshold) < fabsf(rightVerticalThreshold)))
     {
         return false;
     }
-    if (rightHorizontal && getSign(other.rightHorizontalThreshold) == getSign(rightHorizontalThreshold) && fabsf(other.rightHorizontalThreshold) < fabsf(rightHorizontalThreshold))
+    if (rightHorizontal && (getSign(other.rightHorizontalThreshold) != getSign(rightHorizontalThreshold) || fabsf(other.rightHorizontalThreshold) < fabsf(rightHorizontalThreshold)))
     {
         return false;
     }
-    if (leftVertical && getSign(other.leftVerticalThreshold) == getSign(leftVerticalThreshold) && fabsf(other.leftVerticalThreshold) < fabsf(leftVerticalThreshold))
+    if (leftVertical && (getSign(other.leftVerticalThreshold) != getSign(leftVerticalThreshold) || fabsf(other.leftVerticalThreshold) < fabsf(leftVerticalThreshold)))
     {
         return false;
     }
-    if (leftHorizontal && getSign(other.leftHorizontalThreshold) == getSign(leftHorizontalThreshold) && fabsf(other.leftHorizontalThreshold) < fabsf(leftHorizontalThreshold))
+    if (leftHorizontal && (getSign(other.leftHorizontalThreshold) != getSign(leftHorizontalThreshold) || fabsf(other.leftHorizontalThreshold) < fabsf(leftHorizontalThreshold)))
     {
         return false;
     }
@@ -273,7 +273,11 @@ bool operator==(const RemoteMapState &rms1, const RemoteMapState &rms2)
 {
     return rms1.lSwitch == rms2.lSwitch && rms1.rSwitch == rms2.rSwitch && rms1.keys == rms2.keys &&
            rms1.negKeys == rms2.negKeys && rms1.lMouseButton == rms2.lMouseButton &&
-           rms1.rMouseButton == rms2.rMouseButton;
+           rms1.rMouseButton == rms2.rMouseButton && rms1.wheel == rms2.wheel && rms1.wheelThreshold == rms2.wheelThreshold 
+           && rms1.rightVertical == rms2.rightVertical && rms1.rightVerticalThreshold == rms2.rightVerticalThreshold
+           && rms1.rightHorizontal == rms2.rightHorizontal && rms1.rightHorizontalThreshold == rms2.rightHorizontalThreshold
+           && rms1.leftVertical == rms2.leftVertical && rms1.leftVerticalThreshold == rms2.leftVerticalThreshold
+           && rms1.leftHorizontal == rms2.leftHorizontal && rms1.leftHorizontalThreshold == rms2.leftHorizontalThreshold;
 }
 
 bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2) { return !(rms1 == rms2); }
