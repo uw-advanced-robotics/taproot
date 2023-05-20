@@ -78,6 +78,10 @@ public:
         tap::communication::serial::Remote::SwitchState leftSwitch,
         tap::communication::serial::Remote::SwitchState rightSwitch,
         float wheel,
+        float leftVertical,
+        float leftHorizontal,
+        float rightVertical,
+        float rightHorizontal,
         bool mouseL,
         bool mouseR);
 

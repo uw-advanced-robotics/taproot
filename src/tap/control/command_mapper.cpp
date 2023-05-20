@@ -37,6 +37,10 @@ void CommandMapper::handleKeyStateChange(
     Remote::SwitchState leftSwitch,
     Remote::SwitchState rightSwitch,
     float wheel,
+    float leftVertical,
+    float leftHorizontal,
+    float rightVertical,
+    float rightHorizontal,
     bool mouseL,
     bool mouseR)
 {
@@ -46,7 +50,13 @@ void CommandMapper::handleKeyStateChange(
     mapstate.initLSwitch(leftSwitch);
     mapstate.initRSwitch(rightSwitch);
     mapstate.initKeys(key);
-    mapstate.initWheel(wheel);
+
+    mapstate.initChannel(Remote::Channel::WHEEL, wheel);
+    mapstate.initChannel(Remote::Channel::RIGHT_VERTICAL, rightVertical);
+    mapstate.initChannel(Remote::Channel::RIGHT_HORIZONTAL, rightHorizontal);
+    mapstate.initChannel(Remote::Channel::LEFT_VERTICAL, leftVertical);
+    mapstate.initChannel(Remote::Channel::LEFT_HORIZONTAL, leftHorizontal);
+
     if (mouseL)
     {
         mapstate.initLMouseButton();
