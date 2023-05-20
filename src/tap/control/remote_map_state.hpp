@@ -290,7 +290,7 @@ private:
         Remote::SwitchState::UNKNOWN;
 
     bool wheel = false, rightVertical = false, rightHorizontal = false, leftVertical = false, leftHorizontal = false; 
-    float wheelThreshold, rightVerticalThreshold, rightHorizontalThreshold, leftVerticalThreshold, leftHorizontalThreshold;
+    float wheelThreshold = 0, rightVerticalThreshold = 0, rightHorizontalThreshold = 0, leftVerticalThreshold = 0, leftHorizontalThreshold = 0;
 
     uint16_t keys = 0;
 
