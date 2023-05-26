@@ -23,9 +23,14 @@
 namespace tap::algorithms::transforms
 {
 
+// Forward declaration for vector.hpp
 template <typename FRAME>
-struct Position
+class Vector;
+
+template <typename FRAME>
+class Position
 {
+public:
     Position(float x, float y, float z)
     : coordinates({x, y, z}) {}
 
@@ -40,8 +45,15 @@ struct Position
 
     inline float z() const { return coordinates.data[2]; }
 
+    inline Vector<FRAME> operator-(Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates - other.coordinates); }
+
+    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates + vector.coordinates); }
+
+    const inline CMSISMat<3, 1>& coordinates() const { return coordinates; }
+
+private:
     CMSISMat<3, 1> coordinates;
-};  // struct Position
+};  // class Position
 }   // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_POSITION_HPP_

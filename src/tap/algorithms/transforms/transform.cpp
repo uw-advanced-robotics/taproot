@@ -25,7 +25,7 @@ template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
 {
     this->rotation = std::move(rotation);
-    this->position = std::move(position);
+    this->translation = std::move(position);
     arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
 }
 
@@ -61,21 +61,21 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 template <typename SOURCE, typename TARGET>
 Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
 {
-    return Vector<TARGET>(rotation*vector.entries);
+    return Vector<TARGET>(rotation * vector.coordinates);
 }
 
 template <typename SOURCE, typename TARGET>
-void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRot)
+void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRotation)
 {
-    this->rotation = std::move(newRot);
-    arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
+    this->rotation = std::move(newRotation);
+    this->tRotation = rotation.transpose();
 }
 
 template <typename SOURCE, typename TARGET>
 void Transform<SOURCE, TARGET>::updateTranslation(float x, float y, float z)
 {
     CMSISMat<3, 1>& newTranslation({x, y, z});
-    this->position = std::move(newTranslation);
+    this->translation = std::move(newTranslation);
 }
 
 template <typename A, typename B, typename C>

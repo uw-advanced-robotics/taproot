@@ -20,45 +20,32 @@
 #ifndef TAPROOT_POSE_HPP_
 #define TAPROOT_POSE_HPP_
 
+#include "orientation.hpp"
 #include "position.hpp"
 
 namespace tap::algorithms::transforms
 {
 
 template <typename FRAME>
-struct Pose
+class Pose
 {
-    Pose(float x, float y, float z, float A, float B, float C)
+public:
+    inline Pose(const float x, const float y, const float z, const float roll, const float pitch, const float yaw)
         : position(x, y, z),
-          orientation({
-            cosf(C) * cosf(B),
-            (cosf(C) * sinf(B) * sinf(A)) - (sinf(C) * cosf(A)),
-            (cosf(C) * sinf(B) * cosf(A)) + sinf(C) * sinf(A),
-            sinf(C) * cosf(B),
-            sinf(C) * sinf(B) * sinf(A) + cosf(C) * cosf(A),
-            sinf(C) * sinf(B) * cosf(A) - cosf(C) * sinf(A),
-            -sinf(B),
-            cosf(B) * sinf(A),
-            cosf(B) * cosf(A)
-          })
+          orientation(roll, pitch, yaw)
     {
     }
 
-    Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
-    : position(position)
+    inline Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
+        : position(position),
+          orientation(orientation)
     {
-        this->orientation = std::move(orientation);
     }
 
-    inline float roll() const { return asinf(orientation.data[7]/cosf(getB())); }
-
-    inline float pitch() const { return asinf(-orientation.data[6]); }
-
-    inline float yaw() const { return asinf(orientation.data[3]/cosf(getB())); }
-
-    Position<FRAME> position.
-    CMSISMat<3, 3> orientation;
+private:
+    Position<FRAME> position;
+    Orientation<FRAME> orientation;
 };  // struct Pose
-}   // namespace tap::algorithms::transforms
+}  // namespace tap::algorithms::transforms
 
 #endif  // TAP_POSE_HPP_

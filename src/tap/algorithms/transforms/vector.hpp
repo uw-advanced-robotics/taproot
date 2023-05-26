@@ -22,28 +22,35 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "position.hpp"
 
 namespace tap::algorithms::transforms
 {
 template<typename FRAME>
-struct Vector
+class Vector
 {
+public:
     Vector(float x, float y, float z)
-    : entries({x, y, z})
+    : coordinates({x, y, z})
 
-    Vector(CMSISMat<3,1>& vector)
+    Vector(CMSISMat<3,1>& coordinates)
     {
-        this->entries = std::move(vector);
+        this->coordinates = std::move(coordinates);
     }
 
-    inline float x() const { return entries.data[0]; }
+    inline float x() const { return coordinates.data[0]; }
 
-    inline float y() const { return entries.data[1]; }
+    inline float y() const { return coordinates.data[1]; }
 
-    inline float z() const { return entries.data[2]; }
+    inline float z() const { return coordinates.data[2]; }
 
-    CMSISMat<3, 1> entries;
-};  // struct Vector
+    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates + position.coordinates); }
+
+    const inline CMSISMat<3, 1>& coordinates() const { return coordinates; }
+
+private:
+    CMSISMat<3, 1> coordinates;
+};  // class Vector
 }   // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_VECTOR_HPP_
