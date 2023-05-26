@@ -26,7 +26,7 @@ Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& t
 {
     this->rotation = std::move(rotation);
     this->translation = std::move(position);
-    arm_mat_trans_f32(&this->rotation.matrix, &this->tRotation.matrix);
+    this->tRotation = this->rotation.transpose();
 }
 
 template <typename SOURCE, typename TARGET>
@@ -46,7 +46,7 @@ Position<TARGET> apply(Position<SOURCE>& position)
 template <typename SOURCE, typename TARGET>
 Pose<TARGET> apply(Pose<SOURCE>& pose)
 {
-    return Pose<TARGET>(pose.position.coordinates + translation, pose.orientation*rotation);
+    return Pose<TARGET>(pose.position.coordinates + translation, tRotation * pose.orientation.coordinates);
 }
 
 template <typename SOURCE, typename TARGET>
@@ -61,7 +61,7 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 template <typename SOURCE, typename TARGET>
 Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
 {
-    return Vector<TARGET>(rotation * vector.coordinates);
+    return Vector<TARGET>(tRotation * vector.coordinates);
 }
 
 template <typename SOURCE, typename TARGET>

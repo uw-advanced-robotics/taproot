@@ -27,7 +27,7 @@
 
 using namespace tap::algorithms::transforms;
 
-TEST(Transform, identity_transform_retains_position_state)
+TEST(Transform, identity_transform_retains_position)
 {
     Frame A, B;
     Position<A> start(1, 2, 3);
@@ -36,16 +36,16 @@ TEST(Transform, identity_transform_retains_position_state)
     EXPECT_EQ(start.coordinates, finish.coordinates);
 }
 
-TEST(Transform, identity_transform_retains_vector_state)
+TEST(Transform, identity_transform_retains_vector)
 {
     Frame A, B;
     Vector<A> start(1, 2, 3);
     Transform<A, B> identityTF();
     Vector<B> finish = identityTF.apply(start);
-    EXPECT_EQ(start.entries, finish.entries);
+    EXPECT_EQ(start.coordinates, finish.coordinates);
 }
 
-TEST(Transform, identity_transform_retains_position_state)
+TEST(Transform, identity_transform_retains_pose)
 {
     Frame A, B;
     Pose<A> start(1, 2, 3, M_PI_4, M_PI_2, M_PI);
