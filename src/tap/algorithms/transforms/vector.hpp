@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
@@ -17,20 +18,32 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
+#ifndef TAPROOT_VECTOR_HPP_
+#define TAPROOT_VECTOR_HPP_
+
+#include "tap/algorithms/cmsis_mat.hpp"
 
 namespace tap::algorithms::transforms
 {
-/**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be inherited
- * by more specific frame subclasses, which should also be empty.
- */
-
-class Frame
+template<typename FRAME>
+struct Vector
 {
-};
-}  // namespace tap::algorithms::transforms
+    Vector(float x, float y, float z)
+    : entries({x, y, z})
 
-#endif  // TAPROOT_FRAME_HPP_
+    Vector(CMSISMat<3,1>& vector)
+    {
+        this->entries = std::move(vector);
+    }
+
+    inline float x() const { return entries.data[0]; }
+
+    inline float y() const { return entries.data[1]; }
+
+    inline float z() const { return entries.data[2]; }
+
+    CMSISMat<3, 1> entries;
+};  // struct Vector
+}   // namespace tap::algorithms::transforms
+
+#endif  // TAPROOT_VECTOR_HPP_

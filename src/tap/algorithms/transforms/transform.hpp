@@ -19,8 +19,10 @@
 #ifndef TAPROOT_TRANSFORM_HPP_
 #define TAPROOT_TRANSFORM_HPP_
 
-#include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
+#include "position.hpp"
+#include "pose.hpp"
+#include "vector.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -49,17 +51,16 @@ class Transform
 {
 public:
     /**
-     * Constructs a new Transform, which represents a transformation between two frames.
-     *
      * @param rotation Initial rotation of this transformation.
      * @param position Initial translation of this transformation.
+     * 
+     * @note input matrices are non-const due to CMSISMat move semantics
      */
     Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation);
 
     /**
-     * Construct a new Transform, which represents a transformation between two frames.
-     * 
-     * Constructs rotations using ZYX Euler angles, so rotations are applied in order of A, B, then C.
+     * Constructs rotations using XYZ Euler angles,
+     * so rotations are applied in order of A, B, then C.
      * As an example, for an x-forward, z-up coordinate system,
      * this is in the order of roll, pitch, then yaw.
      *
@@ -73,29 +74,31 @@ public:
     Transform(float x, float y, float z, float A, float B, float C);
 
     /**
-     * Constructs a new Transform, which represents a transformation between two frames.
+     * Constructs an identity transform.
      */
-    Transform();
+    Transform()
+    {
+        *this = Transform(0., 0., 0., 0., 0., 0.);
+    }
 
     /**
-     * @return Inverse of this Transform.
-     */
-    Transform<TARGET, SOURCE> getInverse() const;
+     * Apply this transform to a position.
+     * 
+     * @param[in] position Position in source frame.
+     * @return Position in target frame.
+    */
+    Position<TARGET> apply(Position<SOURCE>& position);
 
     /**
-     * Transforms given position as read by the source frame
-     * and computes the equivalent vector components in the target frame's basis.
-     *
-     * @param pos Position as read by source frame
-     * @return Position in target frame's basis.
-     */
-    CMSISMat<3, 1> applyToPosition(const CMSISMat<3, 1>& pos) const;
+     * Apply this transform to a pose.
+     * 
+     * @param[in] pose Pose in source frame.
+     * @return Pose in target frame.
+    */
+    Pose<TARGET> apply(Pose<SOURCE>& pose);
 
     /**
-     * Transforms a vector as read by the source frame and computes the equivalent vector
-     * components in the target frame's basis. The difference from applyToPosition is that this
-     * operation does not alter the magnitude of the components, and just rotates the provided
-     * vector.
+     * Rotates a vector in the source frame to a vector in the target frame.
      * 
      * Intended to be used for things like velocities and accelerations which represent the difference
      * between two positions in space, since both positions get translated the same way, causing
@@ -104,14 +107,25 @@ public:
      * @param vec Vector as read by source frame.
      * @return Vector in target frame's basis.
      */
-    CMSISMat<3, 1> applyToVector(const CMSISMat<3, 1>& vec) const;
+    Vector<TARGET> apply(Vector<SOURCE>& vector);
+
+    /**
+     * @return Inverse of this Transform.
+     */
+    Transform<TARGET, SOURCE> getInverse() const;
+
+    inline CMSISMat<3, 1> getTranslation() { return translation; };
+
+    inline CMSISMat<3, 3> getRotation() { return rotation; }
 
     /**
      * Updates the rotation of the current transformation matrix.
      *
      * @param newRot updated rotation matrix.
+     * 
+     * @note newRot is non-const due to CMSISMat move semantics
      */
-    void updateRotation(const CMSISMat<3, 3>& newRot);
+    void updateRotation(CMSISMat<3, 3>& newRot);
 
     /**
      * Updates the rotation of the current transformation matrix.
@@ -121,14 +135,22 @@ public:
      * @param B updated rotation angle about the y-axis.
      * @param C updated rotation angle about the z-axis.
      */
-    void updateRotation(float A, float B, float C);
+    void updateRotation(float A, float B, float C)
+    {
+        updateRotation(rotationMatrix(A, B, C));
+    }
 
     /**
      * Updates the translation of the current transformation matrix.
      *
      * @param newTranslation updated translation vector.
+     * 
+     * @note input newTranslation is non-const due to CMSISMat move semantics
      */
-    void updateTranslation(const CMSISMat<3, 1>& newTranslation);
+    inline void updateTranslation(const CMSISMat<3, 1>& newTranslation)
+    {
+        this->position = std::move(newTranslation);
+    }
 
     /**
      * Updates the position of the current transformation matrix.
@@ -160,6 +182,24 @@ private:
 };
 
 /**
+ * Return a rotation matrix with rotation order A->B->C (roll->pitch->yaw).
+*/
+CMSISMat<3, 3> rotationMatrix(const float A, const float B, const float C)
+{
+    return CMSISMat<3,3>({
+        cosf(C) * cosf(B),
+        (cosf(C) * sinf(B) * sinf(A)) - (sinf(C) * cosf(A)),
+        (cosf(C) * sinf(B) * cosf(A)) + sinf(C) * sinf(A),
+        sinf(C) * cosf(B),
+        sinf(C) * sinf(B) * sinf(A) + cosf(C) * cosf(A),
+        sinf(C) * sinf(B) * cosf(A) - cosf(C) * sinf(A),
+        -sinf(B),
+        cosf(B) * sinf(A),
+        cosf(B) * cosf(A)
+    });
+}
+
+/**
  * Returns the composed transformation of the given transformations.
  *
  * @param source Transformation from frame A to frame B.
@@ -170,5 +210,5 @@ template <typename A, typename B, typename C>
 Transform<A, C> compose(const Transform<A, B>& first, const Transform<B, C>& second);
 
 }  // namespace tap::algorithms::transforms
-#include "transform.cpp"
-#endif
+
+#endif  // TAPROOT_TRANSFORM_HPP_

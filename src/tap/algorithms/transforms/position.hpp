@@ -17,20 +17,31 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
+#ifndef TAPROOT_POSITION_HPP_
+#define TAPROOT_POSITION_HPP_
 
 namespace tap::algorithms::transforms
 {
-/**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be inherited
- * by more specific frame subclasses, which should also be empty.
- */
 
-class Frame
+template <typename FRAME>
+struct Position
 {
-};
-}  // namespace tap::algorithms::transforms
+    Position(float x, float y, float z)
+    : coordinates({x, y, z}) {}
 
-#endif  // TAPROOT_FRAME_HPP_
+    Position(CMSISMat<3,1>& coordinates)
+    {
+        this->coordinates = std::move(coordinates);
+    }
+
+    inline float x() const { return coordinates.data[0]; }
+
+    inline float y() const { return coordinates.data[1]; }
+
+    inline float z() const { return coordinates.data[2]; }
+
+    CMSISMat<3, 1> coordinates;
+};  // struct Position
+}   // namespace tap::algorithms::transforms
+
+#endif  // TAPROOT_POSITION_HPP_
