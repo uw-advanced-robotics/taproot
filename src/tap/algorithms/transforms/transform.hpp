@@ -21,6 +21,7 @@
 
 #include "tap/algorithms/math_user_utils.hpp"
 #include "position.hpp"
+#include "orientation.hpp"
 #include "pose.hpp"
 #include "vector.hpp"
 
@@ -71,7 +72,7 @@ public:
      * @param B: Initial rotation angle about the y-axis.
      * @param C: Initial rotation angle about the z-axis.
      */
-    Transform(float x, float y, float z, float A, float B, float C);
+    Transform(float x, float y, float z, float roll, float pitch, float yaw);
 
     /**
      * Constructs an identity transform.
@@ -131,13 +132,13 @@ public:
      * Updates the rotation of the current transformation matrix.
      * Takes rotation angles in the order of roll->pitch->yaw.
      *
-     * @param A updated rotation angle about the x-axis.
-     * @param B updated rotation angle about the y-axis.
-     * @param C updated rotation angle about the z-axis.
+     * @param roll updated rotation angle about the x-axis.
+     * @param pitch updated rotation angle about the y-axis.
+     * @param yaw updated rotation angle about the z-axis.
      */
-    void updateRotation(float A, float B, float C)
+    void updateRotation(float roll, float pitch, float yaw)
     {
-        updateRotation(rotationMatrix(A, B, C));
+        updateRotation(Orientation(roll, pitch, yaw).coordinates());
     }
 
     /**

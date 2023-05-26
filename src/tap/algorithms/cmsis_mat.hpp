@@ -106,6 +106,13 @@ struct CMSISMat
         assert(ARM_MATH_SUCCESS == arm_mat_inverse_f32(&this->matrix, &ret.matrix));
         return ret;
     }
+
+    inline CMSISMat<COLS, ROWS> transpose()
+    {
+        CMSISMat<COLS, ROWS> ret;
+        assert(ARM_MATH_SUCCESS == arm_mat_transpose_f32(&this->matrix, &ret.matrix));
+        return ret;
+    }
 };
 
 template <uint16_t A_ROWS, uint16_t A_COLS, uint16_t B_ROWS, uint16_t B_COLS>

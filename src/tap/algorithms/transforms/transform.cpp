@@ -25,28 +25,34 @@ template <typename SOURCE, typename TARGET>
 Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
 {
     this->rotation = std::move(rotation);
-    this->translation = std::move(position);
+    this->translation = std::move(translation);
     this->tRotation = this->rotation.transpose();
 }
 
 template <typename SOURCE, typename TARGET>
-Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float A, float B, float C)
+Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, float pitch, float yaw)
 {
-    CMSISMat<3, 3> rot = rotationMatrix(A, B, C);
-    CMSISMat<3, 1> pos = CMSISMat<3, 1>({x, y, z});
-    *this = Transform(rot, pos);
+    CMSISMat<3, 3> rotation = Orientation(roll, pitch, yaw).coordinates();
+    CMSISMat<3, 1> translation = CMSISMat<3, 1>({x, y, z});
+    *this = Transform(rotation, translation);
 }
 
 template <typename SOURCE, typename TARGET>
-Position<TARGET> apply(Position<SOURCE>& position)
+Position<TARGET> Transform<SOURCE, TARGET>::apply(Position<SOURCE>& position)
 {
     return Position<TARGET>(position.coordinates + translation);
 }
 
 template <typename SOURCE, typename TARGET>
-Pose<TARGET> apply(Pose<SOURCE>& pose)
+Pose<TARGET> Transform<SOURCE, TARGET>::apply(Pose<SOURCE>& pose)
 {
     return Pose<TARGET>(pose.position.coordinates + translation, tRotation * pose.orientation.coordinates);
+}
+
+template <typename SOURCE, typename TARGET>
+Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
+{
+    return Vector<TARGET>(tRotation * vector.coordinates);
 }
 
 template <typename SOURCE, typename TARGET>
@@ -56,12 +62,6 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
     CMSISMat<3, 1> invTranslation = tRotation * translation;
     invTranslation = -invTranslation;
     return Transform<TARGET, SOURCE>(tRotation, invTranslation);
-}
-
-template <typename SOURCE, typename TARGET>
-Vector<TARGET> Transform<SOURCE, TARGET>::apply(Vector<SOURCE>& vector)
-{
-    return Vector<TARGET>(tRotation * vector.coordinates);
 }
 
 template <typename SOURCE, typename TARGET>

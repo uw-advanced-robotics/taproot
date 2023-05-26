@@ -31,7 +31,7 @@ class Orientation
 public:
     inline Orientation(const float roll, const float pitch, const float yaw)
     {
-        coordinates = std.move(CMSISMat<3,3>({
+        coordinates = std::move(CMSISMat<3,3>({
             cosf(yaw) * cosf(pitch),
             (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
             (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),

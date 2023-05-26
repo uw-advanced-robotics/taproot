@@ -31,25 +31,27 @@ class Vector
 {
 public:
     Vector(float x, float y, float z)
-    : coordinates({x, y, z})
+        : coordinates_({x, y, z})
+    {
+    }
 
     Vector(CMSISMat<3,1>& coordinates)
     {
-        this->coordinates = std::move(coordinates);
+        this->coordinates_ = std::move(coordinates);
     }
 
-    inline float x() const { return coordinates.data[0]; }
+    inline float x() const { return coordinates_.data[0]; }
 
-    inline float y() const { return coordinates.data[1]; }
+    inline float y() const { return coordinates_.data[1]; }
 
-    inline float z() const { return coordinates.data[2]; }
+    inline float z() const { return coordinates_.data[2]; }
 
     inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates + position.coordinates); }
 
-    const inline CMSISMat<3, 1>& coordinates() const { return coordinates; }
+    const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
 private:
-    CMSISMat<3, 1> coordinates;
+    CMSISMat<3, 1> coordinates_;
 };  // class Vector
 }   // namespace tap::algorithms::transforms
 

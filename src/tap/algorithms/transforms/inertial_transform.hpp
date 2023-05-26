@@ -18,7 +18,7 @@ public:
     InertialTransform(const Transform<SOURCE, TARGET> transform, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel);
     InertialTransform(const Transform<SOURCE, TARGET> transform, CMSISMat<3, 1>& transVel, CMSISMat<3, 1>& angVel);
     inline InertialTransform(const float x, const float y, const float z, const float roll, const float pitch, const float yaw, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel)
-        : Transform(x, y, z, roll, pitch, yaw)
+        : Transform<SOURCE, TARGET>(x, y, z, roll, pitch, yaw)
         , transVel({xVel, yVel, zVel})
         , angVel({roll, pitch, yaw})
     {}

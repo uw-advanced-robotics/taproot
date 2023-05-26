@@ -20,6 +20,8 @@
 #ifndef TAPROOT_POSITION_HPP_
 #define TAPROOT_POSITION_HPP_
 
+#include "tap/algorithms/cmsis_mat.hpp"
+
 namespace tap::algorithms::transforms
 {
 
@@ -32,27 +34,27 @@ class Position
 {
 public:
     Position(float x, float y, float z)
-    : coordinates({x, y, z}) {}
+    : coordinates_({x, y, z}) {}
 
     Position(CMSISMat<3,1>& coordinates)
     {
-        this->coordinates = std::move(coordinates);
+        this->coordinates_ = std::move(coordinates);
     }
 
-    inline float x() const { return coordinates.data[0]; }
+    inline float x() const { return coordinates_.data[0]; }
 
-    inline float y() const { return coordinates.data[1]; }
+    inline float y() const { return coordinates_.data[1]; }
 
-    inline float z() const { return coordinates.data[2]; }
+    inline float z() const { return coordinates_.data[2]; }
 
-    inline Vector<FRAME> operator-(Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates - other.coordinates); }
+    inline Vector<FRAME> operator-(const Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ - other.coordinates()); }
 
-    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates + vector.coordinates); }
+    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates_ + vector.coordinates()); }
 
-    const inline CMSISMat<3, 1>& coordinates() const { return coordinates; }
+    const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
 private:
-    CMSISMat<3, 1> coordinates;
+    CMSISMat<3, 1> coordinates_;
 };  // class Position
 }   // namespace tap::algorithms::transforms
 

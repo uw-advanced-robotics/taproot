@@ -16,7 +16,7 @@ Velocity<TARGET> InertialTransform<SOURCE, TARGET>::apply(Position<SOURCE> posit
 template <typename SOURCE, typename TARGET>
 InertialTransform<TARGET, SOURCE> InertialTransform<SOURCE, TARGET>::getInverse() const
 {
-    return InertialTransform<TARGET, SOURCE>(Transform::getInverse(), -transVel, -angVel);
+    return InertialTransform<TARGET, SOURCE>(Transform<SOURCE, TARGET>::getInverse(), -transVel, -angVel);
 }
 
 template <typename A, typename B, typename C>
@@ -24,7 +24,7 @@ InertialTransform<A, C> compose(const InertialTransform<A, B> first, const Inert
 {
     CMSISMat<3, 1> transVel = first.transVel + first.rotation * second.transVel + cross(first.angVel, second.translation);
     CMSISMat<3, 1> angVel = first.transVel + second.transVel;
-    return InertialTransform(compose())
+    return InertialTransform(compose());
 }
 
 }
