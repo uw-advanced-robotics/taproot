@@ -4,7 +4,7 @@
 namespace tap::algorithms
 // TODO: move to math_user_utils
 {
-inline CMSISMat<3, 1> cross(const CMSISMat<3, 1> a, const CMSISMat<3, 1> b)
+inline CMSISMat<3, 1> cross(const CMSISMat<3, 1>& a, const CMSISMat<3, 1>& b)
 {
     return CMSISMat<3, 1>({
         a.data[1] * b.data[2] - a.data[2] * b.data[1],

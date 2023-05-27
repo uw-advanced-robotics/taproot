@@ -1,12 +1,12 @@
+#ifndef INERTIAL_TRANSFORM_HPP_
+#define INERTIAL_TRANSFORM_HPP_
+
 #include "transform.hpp"
 #include "velocity.hpp"
 #include "position.hpp"
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "frame.hpp"
-
-
-#ifndef INERTIAL_TRANSFORM_HPP_
-#define INERTIAL_TRANSFORM_HPP_
+#include "tap/algorithms/cross_product.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -21,11 +21,11 @@ public:
     inline InertialTransform(const float x, const float y, const float z, const float roll, const float pitch, const float yaw, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel)
         : Transform<SOURCE, TARGET>(x, y, z, roll, pitch, yaw)
         , transVel({xVel, yVel, zVel})
-        , angVel({roll, pitch, yaw})
+        , angVel({rollVel, pitchVel, yawVel})
     {}
     using Transform<SOURCE, TARGET>::apply;
     using Transform<SOURCE, TARGET>::getTranslation;
-    Velocity<TARGET> apply(Position<SOURCE> position, Velocity<SOURCE> velocity) const;
+    Velocity<TARGET> apply(const Position<SOURCE>& position, const Velocity<SOURCE>& velocity) const;
     InertialTransform<TARGET, SOURCE> getInverse() const;
 
     template <Frame NEW>
@@ -46,6 +46,32 @@ private:
      */
     CMSISMat<3, 1> angVel;
 };
+
+/* BEGIN DEFINITIONS */
+
+// TODO: garbled mess
+template <Frame SOURCE, Frame TARGET>
+Velocity<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& position, const Velocity<SOURCE>& velocity) const
+{
+    // TODO: INFINITELY CURSED
+    // First add the extra velocities induced by angular/translational velocity then rotate like a vector
+    return Velocity<SOURCE>(Transform<SOURCE, TARGET>::apply(Velocity<SOURCE>(velocity.coordinates() - transVel - cross(angVel, position.coordinates()))));
+}
+
+template <Frame SOURCE, Frame TARGET>
+InertialTransform<TARGET, SOURCE> InertialTransform<SOURCE, TARGET>::getInverse() const
+{
+    return InertialTransform<TARGET, SOURCE>(Transform<SOURCE, TARGET>::getInverse(), -transVel, -angVel);
+}
+
+template <Frame SOURCE, Frame TARGET>
+template <Frame NEW>
+InertialTransform<SOURCE, NEW> InertialTransform<SOURCE, TARGET>::compose(const InertialTransform<TARGET, NEW>& second) const
+{
+    CMSISMat<3, 1> transVel = this->transVel + this->rotation * second.transVel + cross(this->angVel, second.translation);
+    CMSISMat<3, 1> angVel = this->transVel + second.transVel;
+    return InertialTransform(Transform<SOURCE, TARGET>::compose(second), transVel, angVel);
+}
 
 }
 

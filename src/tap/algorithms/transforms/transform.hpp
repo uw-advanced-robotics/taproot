@@ -75,6 +75,7 @@ public:
      */
     Transform(float x, float y, float z, float roll, float pitch, float yaw);
 
+    // TODO: template specialization for transform between identical frames??
     /**
      * Constructs an identity transform.
      */
@@ -196,10 +197,6 @@ private:
     CMSISMat<3, 3> tRotation;
 };
 
-}  // namespace tap::algorithms::transforms
-
-namespace tap::algorithms::transforms
-{
 template <Frame SOURCE, Frame TARGET>
 inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
     : rotation(std::move(rotation)),
@@ -219,7 +216,7 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, floa
 template <Frame SOURCE, Frame TARGET>
 Position<TARGET> Transform<SOURCE, TARGET>::apply(const Position<SOURCE>& position) const
 {
-    return Position<TARGET>(tRotation * position.coordinates() - translation);
+    return Position<TARGET>(tRotation * (position.coordinates() - translation));
 }
 
 template <Frame SOURCE, Frame TARGET>
@@ -237,7 +234,7 @@ Orientation<TARGET> Transform<SOURCE, TARGET>::apply(const Orientation<SOURCE>& 
 template <Frame SOURCE, Frame TARGET>
 Pose<TARGET> Transform<SOURCE, TARGET>::apply(const Pose<SOURCE>& pose) const
 {
-    return Pose<TARGET>(tRotation * pose.position().coordinates() - translation, tRotation * pose.orientation().coordinates());
+    return Pose<TARGET>(tRotation * (pose.position().coordinates() - translation), tRotation * pose.orientation().coordinates());
 }
 
 template <Frame SOURCE, Frame TARGET>

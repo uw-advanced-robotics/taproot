@@ -35,7 +35,7 @@ public:
     {
     }
 
-    Vector(CMSISMat<3,1> coordinates)
+    Vector(CMSISMat<3, 1> coordinates)
         : coordinates_(std::move(coordinates))
     {
     }
@@ -48,7 +48,9 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates + position.coordinates); }
+    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates_ + position.coordinates()); }
+
+    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates()); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 

@@ -21,24 +21,11 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/euler_angles.hpp"
 #include "frame.hpp"
 
 namespace tap::algorithms::transforms
 {
-
-CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw)
-{
-    return CMSISMat<3, 3>({
-        cosf(yaw) * cosf(pitch),
-        (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
-        (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),
-        sinf(yaw) * cosf(pitch),
-        sinf(yaw) * sinf(pitch) * sinf(roll) + cosf(yaw) * cosf(roll),
-        sinf(yaw) * sinf(pitch) * cosf(roll) - cosf(yaw) * sinf(roll),
-        -sinf(pitch),
-        cosf(pitch) * sinf(roll),
-        cosf(pitch) * cosf(roll)});
-}
 
 template <Frame FRAME>
 class Orientation
