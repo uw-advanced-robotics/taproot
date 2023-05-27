@@ -61,6 +61,7 @@ struct CMSISMat
         matrix.pData = data.data();
     }
 
+    // Move semantics for copy assignment.
     CMSISMat &operator=(CMSISMat &) = delete;
     CMSISMat &operator=(CMSISMat &&other)
     {
@@ -80,7 +81,7 @@ struct CMSISMat
     }
 
     /**
-     * Construct identity matrix in the current CMSISMat
+     * Construct identity matrix in the current CMSISMat.
      */
     bool constructIdentityMatrix()
     {
@@ -110,7 +111,7 @@ struct CMSISMat
     inline CMSISMat<COLS, ROWS> transpose()
     {
         CMSISMat<COLS, ROWS> ret;
-        assert(ARM_MATH_SUCCESS == arm_mat_transpose_f32(&this->matrix, &ret.matrix));
+        assert(ARM_MATH_SUCCESS == arm_mat_trans_f32(&this->matrix, &ret.matrix));
         return ret;
     }
 };

@@ -6,7 +6,7 @@
 namespace tap::algorithms::transforms
 {
 
-template <typename FRAME>
+template <Frame FRAME>
 class Velocity : public Vector<FRAME>  // TODO: don't do this
 {
 

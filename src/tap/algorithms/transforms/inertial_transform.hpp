@@ -2,6 +2,7 @@
 #include "velocity.hpp"
 #include "position.hpp"
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "frame.hpp"
 
 
 #ifndef INERTIAL_TRANSFORM_HPP_
@@ -11,8 +12,8 @@ namespace tap::algorithms::transforms
 {
 
 // TODO: somewhat inaccurate name since rotational frames are not inertial
-template <typename SOURCE, typename TARGET>
-class InertialTransform : public Transform<SOURCE, TARGET>
+template <Frame SOURCE, Frame TARGET>
+class InertialTransform : protected Transform<SOURCE, TARGET>
 {
 public:
     InertialTransform(const Transform<SOURCE, TARGET> transform, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel);
@@ -22,8 +23,14 @@ public:
         , transVel({xVel, yVel, zVel})
         , angVel({roll, pitch, yaw})
     {}
+    using Transform<SOURCE, TARGET>::apply;
+    using Transform<SOURCE, TARGET>::getTranslation;
     Velocity<TARGET> apply(Position<SOURCE> position, Velocity<SOURCE> velocity) const;
     InertialTransform<TARGET, SOURCE> getInverse() const;
+
+    template <Frame NEW>
+    InertialTransform<SOURCE, NEW> compose(const InertialTransform<TARGET, NEW>& second) const;
+
 private:
     /**
      * Translation differential vector.
@@ -39,9 +46,6 @@ private:
      */
     CMSISMat<3, 1> angVel;
 };
-
-template <typename A, typename B, typename C>
-InertialTransform<A, C> compose(const InertialTransform<A, B> first, const InertialTransform<B, C> second);
 
 }
 

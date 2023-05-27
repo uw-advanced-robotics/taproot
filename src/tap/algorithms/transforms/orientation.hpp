@@ -21,27 +21,32 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "frame.hpp"
 
 namespace tap::algorithms::transforms
 {
 
-template <typename FRAME>
+CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw)
+{
+    return CMSISMat<3, 3>({
+        cosf(yaw) * cosf(pitch),
+        (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
+        (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),
+        sinf(yaw) * cosf(pitch),
+        sinf(yaw) * sinf(pitch) * sinf(roll) + cosf(yaw) * cosf(roll),
+        sinf(yaw) * sinf(pitch) * cosf(roll) - cosf(yaw) * sinf(roll),
+        -sinf(pitch),
+        cosf(pitch) * sinf(roll),
+        cosf(pitch) * cosf(roll)});
+}
+
+template <Frame FRAME>
 class Orientation
 {
 public:
     inline Orientation(const float roll, const float pitch, const float yaw)
+        : coordinates_(fromEulerAngles(roll, pitch, yaw))
     {
-        coordinates = std::move(CMSISMat<3,3>({
-            cosf(yaw) * cosf(pitch),
-            (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
-            (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),
-            sinf(yaw) * cosf(pitch),
-            sinf(yaw) * sinf(pitch) * sinf(roll) + cosf(yaw) * cosf(roll),
-            sinf(yaw) * sinf(pitch) * cosf(roll) - cosf(yaw) * sinf(roll),
-            -sinf(pitch),
-            cosf(pitch) * sinf(roll),
-            cosf(pitch) * cosf(roll)
-        }));
     };
 
     // TODO: should we consider the possibility of gimbal lock?
@@ -53,15 +58,17 @@ public:
      */
     inline float roll() const
     {
-        return atan2(coordinates.data[7], coordinates.data[8]);
+        return atan2(coordinates_.data[7], coordinates_.data[8]);
     }
 
-    inline float pitch() const { return asinf(-coordinates.data[6]); }
+    inline float pitch() const { return asinf(-coordinates_.data[6]); }
 
-    inline float yaw() const { return atan2(coordinates.data[3], coordinates.data[0]); }
+    inline float yaw() const { return atan2(coordinates_.data[3], coordinates_.data[0]); }
+
+    inline const CMSISMat<3, 3>& coordinates() const { return coordinates_; }
 
 private:
-    CMSISMat<3, 3> coordinates;
+    CMSISMat<3, 3> coordinates_;
 };
 }
 

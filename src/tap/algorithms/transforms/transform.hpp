@@ -24,6 +24,7 @@
 #include "orientation.hpp"
 #include "pose.hpp"
 #include "vector.hpp"
+#include "frame.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -47,7 +48,7 @@ namespace tap::algorithms::transforms
     @param SOURCE represents the source frame of the transformation.
     @param TARGET represents the target frame of the transformation.
  */
-template <typename SOURCE, typename TARGET>
+template <Frame SOURCE, Frame TARGET>
 class Transform
 {
 public:
@@ -77,6 +78,7 @@ public:
     /**
      * Constructs an identity transform.
      */
+    // TODO: explicit identity construction less confuzzling
     inline Transform()
     {
         *this = Transform(0., 0., 0., 0., 0., 0.);
@@ -88,7 +90,7 @@ public:
      * @param[in] position Position in source frame.
      * @return Position in target frame.
     */
-    Position<TARGET> apply(Position<SOURCE>& position);
+    Position<TARGET> apply(const Position<SOURCE>& position) const;
 
     /**
      * Apply this transform to a pose.
@@ -96,7 +98,7 @@ public:
      * @param[in] pose Pose in source frame.
      * @return Pose in target frame.
     */
-    Pose<TARGET> apply(Pose<SOURCE>& pose);
+    Pose<TARGET> apply(const Pose<SOURCE>& pose) const;
 
     /**
      * Rotates a vector in the source frame to a vector in the target frame.
@@ -108,7 +110,7 @@ public:
      * @param vec Vector as read by source frame.
      * @return Vector in target frame's basis.
      */
-    Vector<TARGET> apply(Vector<SOURCE>& vector);
+    Vector<TARGET> apply(const Vector<SOURCE>& vector) const;
 
     /**
      * @return Inverse of this Transform.
@@ -148,7 +150,7 @@ public:
      * 
      * @note input newTranslation is non-const due to CMSISMat move semantics
      */
-    inline void updateTranslation(const CMSISMat<3, 1>& newTranslation)
+    inline void updateTranslation(CMSISMat<3, 1>& newTranslation)
     {
         this->position = std::move(newTranslation);
     }
@@ -162,16 +164,26 @@ public:
      */
     void updateTranslation(float x, float y, float z);
 
-private:
     /**
-     * Rotation matrix.
+     * Returns the composed transformation of the given transformations.
+     *
+     * @param source Transformation from frame A to frame B.
+     * @param target Transformation from frame B to frame C.
+     * @return Transformation from frame A to frame C.
      */
-    CMSISMat<3, 3> rotation;
+    template <Frame NEW>
+    Transform<SOURCE, NEW> compose(const Transform<TARGET, NEW>& second) const;
 
+private:
     /**
      * Translation vector.
      */
     CMSISMat<3, 1> translation;
+
+    /**
+     * Rotation matrix.
+     */
+    CMSISMat<3, 3> rotation;
 
     /**
      * Transpose of rotation. Computed and stored at beginning
@@ -182,16 +194,75 @@ private:
     CMSISMat<3, 3> tRotation;
 };
 
-/**
- * Returns the composed transformation of the given transformations.
- *
- * @param source Transformation from frame A to frame B.
- * @param target Transformation from frame B to frame C.
- * @return Transformation from frame A to frame C.
- */
-template <typename A, typename B, typename C>
-Transform<A, C> compose(const Transform<A, B>& first, const Transform<B, C>& second);
+}  // namespace tap::algorithms::transforms
 
+namespace tap::algorithms::transforms
+{
+template <Frame SOURCE, Frame TARGET>
+inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
+    : rotation(std::move(rotation)),
+      translation(std::move(translation)),
+      tRotation(rotation.transpose())
+{
+}
+
+template <Frame SOURCE, Frame TARGET>
+Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, float pitch, float yaw)
+    : rotation(fromEulerAngles(roll, pitch, yaw)),
+      translation({x, y, z}),
+      tRotation(rotation.transpose())
+{
+}
+
+template <Frame SOURCE, Frame TARGET>
+Position<TARGET> Transform<SOURCE, TARGET>::apply(const Position<SOURCE>& position) const
+{
+    return Position<TARGET>(position.coordinates() + translation);
+}
+
+template <Frame SOURCE, Frame TARGET>
+Pose<TARGET> Transform<SOURCE, TARGET>::apply(const Pose<SOURCE>& pose) const
+{
+    return Pose<TARGET>(pose.position().coordinates() + translation, tRotation * pose.orientation.coordinates());
+}
+
+template <Frame SOURCE, Frame TARGET>
+Vector<TARGET> Transform<SOURCE, TARGET>::apply(const Vector<SOURCE>& vector) const
+{
+    return Vector<TARGET>(tRotation * vector.coordinates());
+}
+
+template <Frame SOURCE, Frame TARGET>
+Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
+{
+    // negative transposed rotation matrix times original position = new position
+    CMSISMat<3, 1> invTranslation = tRotation * translation;
+    invTranslation = -invTranslation;
+    return Transform<TARGET, SOURCE>(tRotation, invTranslation);
+}
+
+template <Frame SOURCE, Frame TARGET>
+void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRotation)
+{
+    this->rotation = std::move(newRotation);
+    this->tRotation = rotation.transpose();
+}
+
+template <Frame SOURCE, Frame TARGET>
+void Transform<SOURCE, TARGET>::updateTranslation(float x, float y, float z)
+{
+    CMSISMat<3, 1>& newTranslation({x, y, z});
+    this->translation = std::move(newTranslation);
+}
+
+template <Frame SOURCE, Frame TARGET>
+template <Frame NEW>
+Transform<SOURCE, NEW> Transform<SOURCE, TARGET>::compose(const Transform<TARGET, NEW>& second) const
+{
+    CMSISMat<3, 3> newRot = this->rotation * second.rotation;
+    CMSISMat<3, 1> newPos = this->translation + this->rotation * second.translation;
+    return Transform<SOURCE, NEW>(newRot, newPos);
+}
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_TRANSFORM_HPP_

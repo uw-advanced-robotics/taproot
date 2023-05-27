@@ -22,29 +22,33 @@
 
 #include "orientation.hpp"
 #include "position.hpp"
+#include "frame.hpp"
 
 namespace tap::algorithms::transforms
 {
 
-template <typename FRAME>
+template <Frame FRAME>
 class Pose
 {
 public:
     inline Pose(const float x, const float y, const float z, const float roll, const float pitch, const float yaw)
-        : position(x, y, z),
-          orientation(roll, pitch, yaw)
+        : position_(x, y, z),
+          orientation_(roll, pitch, yaw)
     {
     }
 
     inline Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
-        : position(position),
-          orientation(orientation)
+        : position_(position),
+          orientation_(orientation)
     {
     }
 
+    const inline Position<FRAME>& position() const { return position_; }
+    const inline Orientation<FRAME>& orientation() const { return orientation_; }
+
 private:
-    Position<FRAME> position;
-    Orientation<FRAME> orientation;
+    Position<FRAME> position_;
+    Orientation<FRAME> orientation_;
 };  // struct Pose
 }  // namespace tap::algorithms::transforms
 

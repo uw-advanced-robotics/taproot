@@ -21,15 +21,16 @@
 #define TAPROOT_POSITION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "frame.hpp"
 
 namespace tap::algorithms::transforms
 {
 
 // Forward declaration for vector.hpp
-template <typename FRAME>
+template <Frame FRAME>
 class Vector;
 
-template <typename FRAME>
+template <Frame FRAME>
 class Position
 {
 public:
@@ -37,8 +38,13 @@ public:
     : coordinates_({x, y, z}) {}
 
     Position(CMSISMat<3,1>& coordinates)
+    : coordinates_(std::move(coordinates))
     {
-        this->coordinates_ = std::move(coordinates);
+    }
+
+    Position(CMSISMat<3,1>&& coordinates)
+    : coordinates_(std::move(coordinates))
+    {
     }
 
     inline float x() const { return coordinates_.data[0]; }

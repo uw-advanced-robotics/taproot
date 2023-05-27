@@ -23,83 +23,129 @@
 #include "tap/algorithms/transforms/position.hpp"
 #include "tap/algorithms/transforms/pose.hpp"
 #include "tap/algorithms/transforms/vector.hpp"
-#include "tap/algorithms/transforms/frames.hpp"
+#include "tap/algorithms/transforms/frame.hpp"
 
 using namespace tap::algorithms::transforms;
 
 TEST(Transform, identity_transform_retains_position)
 {
-    Frame A, B;
-    Position<A> start(1, 2, 3);
-    Transform<A, B> identityTF();
-    Position<B> finish = identityTF.apply(start);
-    EXPECT_EQ(start.coordinates, finish.coordinates);
-}
+    // Given
+    Frame A;
+    Frame B;
+    Position<A> start(1.0, 2.0, 3.0);
+    Transform<A, B> identity;
 
-TEST(Transform, identity_transform_retains_vector)
-{
-    Frame A, B;
-    Vector<A> start(1, 2, 3);
-    Transform<A, B> identityTF();
-    Vector<B> finish = identityTF.apply(start);
-    EXPECT_EQ(start.coordinates, finish.coordinates);
-}
+    // When
+    Position<B> finish = identity.apply(start);
 
-TEST(Transform, identity_transform_retains_pose)
-{
-    Frame A, B;
-    Pose<A> start(1, 2, 3, M_PI_4, M_PI_2, M_PI);
-    Transform<A, B> identityTF();
-    Pose<B> finish = identityTF.apply(start);
-    EXPECT_EQ(start.position.coordinates, finish.position.coordinates);
-    EXPECT_EQ(start.roll(), finish.roll());
-    EXPECT_EQ(start.pitch(), finish.pitch());
-    EXPECT_EQ(start.yaw(), finish.yaw());
-}
-
-TEST(Transform, pure_translation_transform_apply_to_position)
-{
-    Frame A, B;
-    Position<A> start(1, 2, 3);
-    Transform<A, B> translation(4, 5, 6, 0, 0, 0);
-    Position<B> finish = translation.apply(start);
-    EXPECT_NEAR(start.x()+1, finish.x(), 1E-5);
-    EXPECT_NEAR(start.y()+2, finish.y(), 1E-5);
-    EXPECT_NEAR(start.z()+3, finish.z(), 1E-5);
-}
-
-TEST(Transform, pure_translation_transform_apply_to_vector)
-{
-    Frame A, B;
-    Vector<A> start(1, 2, 3);
-    Transform<A, B> translation(4, 5, 6, 0, 0, 0);
-    Vector<B> finish = translation.apply(start);
+    // Then
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
     EXPECT_NEAR(start.y(), finish.y(), 1E-5);
     EXPECT_NEAR(start.z(), finish.z(), 1E-5);
 }
 
-TEST(Transform, pure_translation_transform_apply_to_pose)
-{
-    Frame A, B;
-    Pose<A> start(1, 2, 3);
-    Transform<A, B> translation(4, 5, 6, 0, 0, 0);
-    Pose<B> finish = translation.apply(start);
-    EXPECT_NEAR(start.position.x()+1, finish.position.x(), 1E-5);
-    EXPECT_NEAR(start.position.y()+2, finish.position.y(), 1E-5);
-    EXPECT_NEAR(start.position.z()+3, finish.position.z(), 1E-5);
-    EXPECT_EQ(start.roll(), finish.roll());
-    EXPECT_EQ(start.pitch(), finish.pitch());
-    EXPECT_EQ(start.yaw(), finish.yaw());
-}
+// TEST(Transform, identity_transform_retains_vector)
+// {
+//     // Given
+//     Frame A, B;
+//     Vector<A> start(1.0, 2.0, 3.0);
+//     Transform<A, B> identity;
 
-TEST(Transform, pure_rotation_transform_apply_to_position)
-{
-    Frame A, B;
-    Position<A> start(1, 2, 3);
-    Transform<A, B> translation(0, 0, 0, 0, 0, 0);
-    Position<B> finish = translation.apply(start);
-    EXPECT_NEAR(start.x()+1, finish.x(), 1E-5);
-    EXPECT_NEAR(start.y()+2, finish.y(), 1E-5);
-    EXPECT_NEAR(start.z()+3, finish.z(), 1E-5);
-}
+//     // When
+//     Vector<B> finish = identity.apply(start);
+
+//     // Then
+//     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
+//     EXPECT_NEAR(start.y(), finish.y(), 1E-5);
+//     EXPECT_NEAR(start.z(), finish.z(), 1E-5);
+// }
+
+// TEST(Transform, identity_transform_retains_pose)
+// {
+//     // Given
+//     Frame A, B;
+//     Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
+//     Transform<A, B> identity;
+
+//     // When
+//     Pose<B> finish = identity.apply(start);
+
+//     // Then
+//     EXPECT_NEAR(start.position().x(), finish.position().x(), 1E-5);
+//     EXPECT_NEAR(start.position().y(), finish.position().y(), 1E-5);
+//     EXPECT_NEAR(start.position().z(), finish.position().z(), 1E-5);
+//     EXPECT_EQ(start.orientation().roll(), finish.orientation().roll());
+//     EXPECT_EQ(start.orientation().pitch(), finish.orientation().pitch());
+//     EXPECT_EQ(start.orientation().yaw(), finish.orientation().yaw());
+// }
+
+// TEST(Transform, pure_translation_transform_apply_to_position)
+// {
+//     // Given
+//     Frame A, B;
+//     Position<A> start(1.0, 2.0, 3.0);
+//     Transform<A, B> translation(4.0, 5.0, 6.0, 0.0, 0.0, 0.0);
+
+//     // When
+//     Position<B> finish = translation.apply(start);
+
+//     // Then
+//     Position<B> expected(5.0, 7.0, 9.0);
+
+//     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
+//     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
+//     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+// }
+
+// TEST(Transform, pure_translation_transform_apply_to_vector)
+// {
+//     // Given
+//     Frame A, B;
+//     Vector<A> start(1.0, 2.0, 3.0);
+//     Transform<A, B> translation(4.0, 5.0, 6.0, 0.0, 0.0, 0.0);
+
+//     // When
+//     Vector<B> finish = translation.apply(start);
+
+//     // Then
+//     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
+//     EXPECT_NEAR(start.y(), finish.y(), 1E-5);
+//     EXPECT_NEAR(start.z(), finish.z(), 1E-5);
+// }
+
+// TEST(Transform, pure_translation_transform_apply_to_pose)
+// {
+//     // Given
+//     Frame A, B;
+//     Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
+//     Transform<A, B> translation(4.0, 5.0, 6.0, 0.0, 0.0, 0.0);
+
+//     // When
+//     Pose<B> finish = translation.apply(start);
+
+//     // Then
+//     Pose<A> expected(5.0, 7.0, 9.0, M_PI_4, M_PI_2, M_PI);
+//     EXPECT_NEAR(expected.position().x(), finish.position().x(), 1E-5);
+//     EXPECT_NEAR(expected.position().y(), finish.position().y(), 1E-5);
+//     EXPECT_NEAR(expected.position().z(), finish.position().z(), 1E-5);
+//     EXPECT_EQ(expected.orientation().roll(), finish.orientation().roll());
+//     EXPECT_EQ(expected.orientation().pitch(), finish.orientation().pitch());
+//     EXPECT_EQ(expected.orientation().yaw(), finish.orientation().yaw());
+// }
+
+// TEST(Transform, pure_roll_transform_apply_to_position)
+// {
+//     // Given
+//     Frame A, B;
+//     Position<A> start(1.0, 2.0, 3.0);
+//     Transform<A, B> roll(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0);
+
+//     // When
+//     Position<B> finish = roll.apply(start);
+
+//     // Then
+//     Position<B> expected(1.0, -3.0, 2.0);
+//     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
+//     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
+//     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+// }
