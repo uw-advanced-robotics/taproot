@@ -37,15 +37,12 @@ public:
     Position(float x, float y, float z)
     : coordinates_({x, y, z}) {}
 
-    Position(CMSISMat<3,1>& coordinates)
+    Position(CMSISMat<3,1> coordinates)
     : coordinates_(std::move(coordinates))
     {
     }
 
-    Position(CMSISMat<3,1>&& coordinates)
-    : coordinates_(std::move(coordinates))
-    {
-    }
+    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
 
     inline float x() const { return coordinates_.data[0]; }
 

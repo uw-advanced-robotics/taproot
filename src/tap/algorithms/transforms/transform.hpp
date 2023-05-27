@@ -93,14 +93,6 @@ public:
     Position<TARGET> apply(const Position<SOURCE>& position) const;
 
     /**
-     * Apply this transform to a pose.
-     * 
-     * @param[in] pose Pose in source frame.
-     * @return Pose in target frame.
-    */
-    Pose<TARGET> apply(const Pose<SOURCE>& pose) const;
-
-    /**
      * Rotates a vector in the source frame to a vector in the target frame.
      * 
      * Intended to be used for things like velocities and accelerations which represent the difference
@@ -111,6 +103,16 @@ public:
      * @return Vector in target frame's basis.
      */
     Vector<TARGET> apply(const Vector<SOURCE>& vector) const;
+
+    Orientation<TARGET> apply(const Orientation<SOURCE>& orientation) const;
+
+    /**
+     * Apply this transform to a pose.
+     * 
+     * @param[in] pose Pose in source frame.
+     * @return Pose in target frame.
+    */
+    Pose<TARGET> apply(const Pose<SOURCE>& pose) const;
 
     /**
      * @return Inverse of this Transform.
@@ -217,19 +219,25 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, floa
 template <Frame SOURCE, Frame TARGET>
 Position<TARGET> Transform<SOURCE, TARGET>::apply(const Position<SOURCE>& position) const
 {
-    return Position<TARGET>(position.coordinates() + translation);
-}
-
-template <Frame SOURCE, Frame TARGET>
-Pose<TARGET> Transform<SOURCE, TARGET>::apply(const Pose<SOURCE>& pose) const
-{
-    return Pose<TARGET>(pose.position().coordinates() + translation, tRotation * pose.orientation.coordinates());
+    return Position<TARGET>(tRotation * position.coordinates() - translation);
 }
 
 template <Frame SOURCE, Frame TARGET>
 Vector<TARGET> Transform<SOURCE, TARGET>::apply(const Vector<SOURCE>& vector) const
 {
     return Vector<TARGET>(tRotation * vector.coordinates());
+}
+
+template <Frame SOURCE, Frame TARGET>
+Orientation<TARGET> Transform<SOURCE, TARGET>::apply(const Orientation<SOURCE>& orientation) const
+{
+    return Orientation<TARGET>(tRotation * orientation.coordinates());
+}
+
+template <Frame SOURCE, Frame TARGET>
+Pose<TARGET> Transform<SOURCE, TARGET>::apply(const Pose<SOURCE>& pose) const
+{
+    return Pose<TARGET>(tRotation * pose.position().coordinates() - translation, tRotation * pose.orientation().coordinates());
 }
 
 template <Frame SOURCE, Frame TARGET>

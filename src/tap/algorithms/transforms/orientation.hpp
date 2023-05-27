@@ -49,6 +49,13 @@ public:
     {
     };
 
+    inline Orientation(CMSISMat<3, 3> matrix)
+        : coordinates_(std::move(matrix))
+    {
+    }
+
+    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
+
     // TODO: should we consider the possibility of gimbal lock?
     // TODO: return angle objects
     /**

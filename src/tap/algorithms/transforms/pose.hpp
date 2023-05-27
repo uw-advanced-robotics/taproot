@@ -38,8 +38,8 @@ public:
     }
 
     inline Pose(CMSISMat<3, 1> position, CMSISMat<3, 3> orientation)
-        : position_(position),
-          orientation_(orientation)
+        : position_(std::move(position)),
+          orientation_(std::move(orientation))
     {
     }
 

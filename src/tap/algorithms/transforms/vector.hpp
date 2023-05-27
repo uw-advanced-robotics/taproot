@@ -35,10 +35,12 @@ public:
     {
     }
 
-    Vector(CMSISMat<3,1>& coordinates)
+    Vector(CMSISMat<3,1> coordinates)
+        : coordinates_(std::move(coordinates))
     {
-        this->coordinates_ = std::move(coordinates);
     }
+
+    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
 
     inline float x() const { return coordinates_.data[0]; }
 
