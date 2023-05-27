@@ -25,7 +25,7 @@ public:
     {}
     using Transform<SOURCE, TARGET>::apply;
     using Transform<SOURCE, TARGET>::getTranslation;
-    Velocity<TARGET> apply(const Position<SOURCE>& position, const Velocity<SOURCE>& velocity) const;
+    Vector<TARGET> apply(const Position<SOURCE>& position, const Vector<SOURCE>& velocity) const;
     InertialTransform<TARGET, SOURCE> getInverse() const;
 
     template <Frame NEW>
@@ -51,11 +51,11 @@ private:
 
 // TODO: garbled mess
 template <Frame SOURCE, Frame TARGET>
-Velocity<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& position, const Velocity<SOURCE>& velocity) const
+Vector<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& position, const Vector<SOURCE>& velocity) const
 {
     // TODO: INFINITELY CURSED
     // First add the extra velocities induced by angular/translational velocity then rotate like a vector
-    return Velocity<SOURCE>(Transform<SOURCE, TARGET>::apply(Velocity<SOURCE>(velocity.coordinates() - transVel - cross(angVel, position.coordinates()))));
+    return Transform<SOURCE, TARGET>::apply(Vector<SOURCE>(velocity.coordinates() - transVel - cross(angVel, position.coordinates())));
 }
 
 template <Frame SOURCE, Frame TARGET>

@@ -58,7 +58,7 @@ public:
      * 
      * @note input matrices are non-const due to CMSISMat move semantics
      */
-    Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation);
+    Transform(CMSISMat<3, 1>& translation, CMSISMat<3, 3>& rotation);
 
     /**
      * Constructs rotations using XYZ Euler angles,
@@ -79,11 +79,7 @@ public:
     /**
      * Constructs an identity transform.
      */
-    // TODO: explicit identity construction less confuzzling
-    inline Transform()
-    {
-        *this = Transform(0., 0., 0., 0., 0., 0.);
-    }
+    static inline Transform<SOURCE, TARGET> identity() { return Transform(0., 0., 0., 0., 0., 0.); }
 
     /**
      * Apply this transform to a position.
@@ -100,7 +96,7 @@ public:
      * between two positions in space, since both positions get translated the same way, causing
      * the translation to cancel out.
      *
-     * @param vec Vector as read by source frame.
+     * @param vector Vector as read by source frame.
      * @return Vector in target frame's basis.
      */
     Vector<TARGET> apply(const Vector<SOURCE>& vector) const;
@@ -198,17 +194,17 @@ private:
 };
 
 template <Frame SOURCE, Frame TARGET>
-inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 3>& rotation, CMSISMat<3, 1>& translation)
-    : rotation(std::move(rotation)),
-      translation(std::move(translation)),
+inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 1>& translation, CMSISMat<3, 3>& rotation)
+    : translation(std::move(translation)),
+      rotation(std::move(rotation)),
       tRotation(rotation.transpose())
 {
 }
 
 template <Frame SOURCE, Frame TARGET>
 Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, float pitch, float yaw)
-    : rotation(fromEulerAngles(roll, pitch, yaw)),
-      translation({x, y, z}),
+    : translation({x, y, z}),
+      rotation(fromEulerAngles(roll, pitch, yaw)),
       tRotation(rotation.transpose())
 {
 }

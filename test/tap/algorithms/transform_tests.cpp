@@ -32,7 +32,7 @@ TEST(Transform, identity_transform_retains_position)
     // Given
     Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> identity;
+    Transform<A, B> identity(Transform<A, B>::identity());
 
     // When
     Position<B> finish = identity.apply(start);
@@ -48,7 +48,7 @@ TEST(Transform, identity_transform_retains_vector)
     // Given
     Frame A, B;
     Vector<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> identity;
+    Transform<A, B> identity(Transform<A, B>::identity());
 
     // When
     Vector<B> finish = identity.apply(start);
@@ -64,7 +64,7 @@ TEST(Transform, identity_transform_retains_pose)
     // Given
     Frame A, B;
     Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
-    Transform<A, B> identity;
+    Transform<A, B> identity(Transform<A, B>::identity());
 
     // When
     Pose<B> finish = identity.apply(start);

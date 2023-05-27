@@ -52,6 +52,10 @@ public:
 
     inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates()); }
 
+    inline Vector<FRAME> operator*(const float scale) const { return Vector<FRAME>(this->coordinates_ * scale); }
+
+    inline Vector<FRAME> operator/(const float scale) const { return Vector<FRAME>(this->coordinates_ / scale); }
+
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
 private:

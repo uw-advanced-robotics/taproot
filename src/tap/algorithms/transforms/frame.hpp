@@ -24,13 +24,14 @@ namespace tap::algorithms::transforms
 {
 /**
  * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be inherited
- * by more specific frame subclasses, which should also be empty.
+ * generic Transforms. This class is intended to be instantiated
+ * to create objects representing specific frames.
  */
 
 class Frame
 {
 };
+
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_FRAME_HPP_
