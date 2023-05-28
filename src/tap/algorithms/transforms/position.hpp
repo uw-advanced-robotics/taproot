@@ -27,10 +27,10 @@ namespace tap::algorithms::transforms
 {
 
 // Forward declaration for vector.hpp
-template <Frame FRAME>
+template <const Frame& FRAME>
 class Vector;
 
-template <Frame FRAME>
+template <const Frame& FRAME>
 class Position
 {
 public:

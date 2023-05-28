@@ -30,7 +30,7 @@ namespace tap::algorithms::transforms
 {
 
 // TODO: somewhat inaccurate name since rotational frames are not inertial
-template <Frame SOURCE, Frame TARGET>
+template <const Frame& SOURCE, const Frame& TARGET>
 class InertialTransform : protected Transform<SOURCE, TARGET>
 {
 public:
@@ -46,7 +46,7 @@ public:
     Vector<TARGET> apply(const Position<SOURCE>& position, const Vector<SOURCE>& velocity) const;
     InertialTransform<TARGET, SOURCE> getInverse() const;
 
-    template <Frame NEW>
+    template <const Frame& NEW>
     InertialTransform<SOURCE, NEW> compose(const InertialTransform<TARGET, NEW>& second) const;
 
 private:
@@ -68,7 +68,7 @@ private:
 /* BEGIN DEFINITIONS */
 
 // TODO: garbled mess
-template <Frame SOURCE, Frame TARGET>
+template <const Frame& SOURCE, const Frame& TARGET>
 Vector<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& position, const Vector<SOURCE>& velocity) const
 {
     // TODO: INFINITELY CURSED
@@ -76,14 +76,14 @@ Vector<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& 
     return Transform<SOURCE, TARGET>::apply(Vector<SOURCE>(velocity.coordinates() - transVel - cross(angVel, position.coordinates())));
 }
 
-template <Frame SOURCE, Frame TARGET>
+template <const Frame& SOURCE, const Frame& TARGET>
 InertialTransform<TARGET, SOURCE> InertialTransform<SOURCE, TARGET>::getInverse() const
 {
     return InertialTransform<TARGET, SOURCE>(Transform<SOURCE, TARGET>::getInverse(), -transVel, -angVel);
 }
 
-template <Frame SOURCE, Frame TARGET>
-template <Frame NEW>
+template <const Frame& SOURCE, const Frame& TARGET>
+template <const Frame& NEW>
 InertialTransform<SOURCE, NEW> InertialTransform<SOURCE, TARGET>::compose(const InertialTransform<TARGET, NEW>& second) const
 {
     CMSISMat<3, 1> transVel = this->transVel + this->rotation * second.transVel + cross(this->angVel, second.translation);

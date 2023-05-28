@@ -26,7 +26,7 @@
 
 namespace tap::algorithms::transforms
 {
-template<Frame FRAME>
+template<const Frame& FRAME>
 class Vector
 {
 public:

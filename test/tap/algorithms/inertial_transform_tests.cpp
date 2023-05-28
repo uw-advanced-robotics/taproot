@@ -8,11 +8,11 @@
 
 
 using namespace tap::algorithms::transforms;
+const Frame A, B;
 
 TEST(InertialTransform, uh)
 {
     // Given
-    Frame A, B;
     Position<A> pos(100.0, 0.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
     InertialTransform<A, B> identity(
@@ -33,7 +33,6 @@ TEST(InertialTransform, uh)
 TEST(InertialTransform, um)
 {
     // Given
-    Frame A, B;
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
     InertialTransform<A, B> identity(
@@ -55,7 +54,6 @@ TEST(InertialTransform, um)
 TEST(InertialTransform, er)
 {
     // Given
-    Frame A, B;
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
     InertialTransform<A, B> identity(
@@ -77,7 +75,6 @@ TEST(InertialTransform, er)
 TEST(InertialTransform, ah)
 {
     // Given
-    Frame A, B;
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 1.0);
     InertialTransform<A, B> identity(

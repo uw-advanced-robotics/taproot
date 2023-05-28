@@ -27,10 +27,11 @@
 
 using namespace tap::algorithms::transforms;
 
+Frame A, B;
+
 TEST(Transform, identity_transform_retains_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> identity(Transform<A, B>::identity());
 
@@ -46,7 +47,6 @@ TEST(Transform, identity_transform_retains_position)
 TEST(Transform, identity_transform_retains_vector)
 {
     // Given
-    Frame A, B;
     Vector<A> start(1.0, 2.0, 3.0);
     Transform<A, B> identity(Transform<A, B>::identity());
 
@@ -62,7 +62,6 @@ TEST(Transform, identity_transform_retains_vector)
 TEST(Transform, identity_transform_retains_pose)
 {
     // Given
-    Frame A, B;
     Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
     Transform<A, B> identity(Transform<A, B>::identity());
 
@@ -81,7 +80,6 @@ TEST(Transform, identity_transform_retains_pose)
 TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
@@ -99,7 +97,6 @@ TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
 TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negative_translation)
 {
     // Given
-    Frame A, B;
     Position<A> start(0.0, 0.0, 0.0);
     Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
@@ -117,7 +114,6 @@ TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negat
 TEST(Transform, pure_translation_transform_apply_to_vector)
 {
     // Given
-    Frame A, B;
     Vector<A> start(1.0, 2.0, 3.0);
     Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
@@ -133,7 +129,6 @@ TEST(Transform, pure_translation_transform_apply_to_vector)
 TEST(Transform, pure_translation_transform_apply_to_pose)
 {
     // Given
-    Frame A, B;
     Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
     Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
@@ -153,7 +148,6 @@ TEST(Transform, pure_translation_transform_apply_to_pose)
 TEST(Transform, pure_roll_transform_apply_to_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> roll(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0);
 
@@ -170,7 +164,6 @@ TEST(Transform, pure_roll_transform_apply_to_position)
 TEST(Transform, pure_pitch_transform_apply_to_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> pitch(0.0, 0.0, 0.0, 0, M_PI_2, 0.0);
 
@@ -187,7 +180,6 @@ TEST(Transform, pure_pitch_transform_apply_to_position)
 TEST(Transform, pure_yaw_transform_apply_to_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> yaw(0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2);
 
@@ -204,7 +196,6 @@ TEST(Transform, pure_yaw_transform_apply_to_position)
 TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(0.0, 0.0, 0.0);
     Transform<A, B> rotation(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
@@ -221,7 +212,6 @@ TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
 
@@ -238,7 +228,6 @@ TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 TEST(Transform, transform_apply_to_source_origin_position)
 {
     // Given
-    Frame A, B;
     Position<A> start(1.0, 2.0, 3.0);
     Transform<A, B> rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
 
@@ -251,6 +240,14 @@ TEST(Transform, transform_apply_to_source_origin_position)
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
 }
+
+// Raises compiletime error
+// TEST(Transform, aghghg)
+// {
+//     Transform<A, B> transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+//     Position<B> position(0.0, 0.0, 0.0);
+//     transform.apply(position);
+// }
 
 // TEST(Transform, transform_compose_with_inverse_yields_identity)
 // {
