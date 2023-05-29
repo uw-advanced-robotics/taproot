@@ -48,7 +48,7 @@ TEST(DjiMotor, parseCanRxData_invalid_motor_id)
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
 
-    modm::can::Message msg(MOTOR2, 8, {}, false);
+    modm::can::Message msg(MOTOR2, 8);
 
     motor.processMessage(msg);
 
@@ -61,7 +61,7 @@ TEST(DjiMotor, parseCanRxData_valid_motor_id_motor_online)
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
 
-    modm::can::Message msg(MOTOR1, 8, {}, false);
+    modm::can::Message msg(MOTOR1, 8);
 
     motor.processMessage(msg);
 
@@ -97,7 +97,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly)
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
 
-    modm::can::Message msg(MOTOR1, 8, {}, false);
+    modm::can::Message msg(MOTOR1, 8);
 
     MotorData motorData;
 
@@ -123,7 +123,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, true, "cool motor");
 
-    modm::can::Message msg(MOTOR1, 8, {}, false);
+    modm::can::Message msg(MOTOR1, 8);
 
     MotorData motorData;
 

@@ -197,27 +197,19 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_valid_encoding)
 {
     modm::can::Message can1MessageLow(
         DjiMotorTxHandler::CAN_DJI_LOW_IDENTIFIER,
-        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
-        0,
-        false);
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH);
     convertToLittleEndian<int16_t>(1, can1MessageLow.data);
     modm::can::Message can1MessageHigh(
         DjiMotorTxHandler::CAN_DJI_HIGH_IDENTIFIER,
-        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
-        0,
-        false);
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH);
     convertToLittleEndian<int16_t>(2, can1MessageHigh.data);
     modm::can::Message can2MessageLow(
         DjiMotorTxHandler::CAN_DJI_LOW_IDENTIFIER,
-        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
-        0,
-        false);
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH);
     convertToLittleEndian<int16_t>(3, can2MessageLow.data);
     modm::can::Message can2MessageHigh(
         DjiMotorTxHandler::CAN_DJI_HIGH_IDENTIFIER,
-        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
-        0,
-        false);
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH);
     convertToLittleEndian<int16_t>(4, can2MessageHigh.data);
 
     ON_CALL(*motors[0], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
