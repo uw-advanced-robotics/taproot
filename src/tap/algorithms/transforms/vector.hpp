@@ -48,9 +48,9 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates_ + position.coordinates()); }
+    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates_ + position.coordinates_); }
 
-    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates()); }
+    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates_); }
 
     inline Vector<FRAME> operator*(const float scale) const { return Vector<FRAME>(this->coordinates_ * scale); }
 

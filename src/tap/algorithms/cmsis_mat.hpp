@@ -50,9 +50,16 @@ struct CMSISMat
         arm_mat_init_f32(&matrix, ROWS, COLS, data.data());
     }
 
-    // Delete the copy constructor, create a move constructor. This will
-    // Avoid us doing costly copys but will still allow move semantics.
-    CMSISMat(const CMSISMat &other) = delete;
+    /**
+     * Deep copy. Costly; it's generally preferred to use move constructor/assignment.
+     */
+    CMSISMat(const CMSISMat &other)
+        : matrix{ROWS, COLS, data.data()}
+    {
+        memcpy(&this->data, &other->data, sizeof(this->data));
+    }
+
+    // Move semantics.
     CMSISMat(CMSISMat &&other)
     {
         this->data = std::move(other.data);
@@ -61,8 +68,15 @@ struct CMSISMat
         matrix.pData = data.data();
     }
 
-    // Move semantics for copy assignment.
-    CMSISMat &operator=(CMSISMat &) = delete;
+    /**
+     * Deep copy. Costly; it's generally preferred to use move constructor/assignment.
+     */
+    CMSISMat &operator=(const CMSISMat &other)
+    {
+        memcpy(&this->data, &other->data, sizeof(this->data));
+    }
+
+    // Move semantics.
     CMSISMat &operator=(CMSISMat &&other)
     {
         this->data = std::move(other.data);
@@ -115,6 +129,8 @@ struct CMSISMat
         return ret;
     }
 };
+
+/* Begin definitions */
 
 template <uint16_t A_ROWS, uint16_t A_COLS, uint16_t B_ROWS, uint16_t B_COLS>
 inline CMSISMat<A_ROWS, A_COLS> operator+(

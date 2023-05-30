@@ -23,4 +23,4 @@
 /**
  * Represents a stationary frame from the world perspective.
  */
-tap::algorithms::transforms::Frame worldFrame;
+const tap::algorithms::transforms::Frame worldFrame;

@@ -50,9 +50,9 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Vector<FRAME> operator-(const Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ - other.coordinates()); }
+    inline Vector<FRAME> operator-(const Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ - other.coordinates_); }
 
-    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates_ + vector.coordinates()); }
+    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates_ + vector.coordinates_); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 

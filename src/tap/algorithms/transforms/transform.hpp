@@ -193,6 +193,8 @@ private:
     CMSISMat<3, 3> tRotation;
 };
 
+/* Begin definitions */
+
 template <const Frame& SOURCE, const Frame& TARGET>
 inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 1>& translation, CMSISMat<3, 3>& rotation)
     : translation(std::move(translation)),
