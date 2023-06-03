@@ -34,15 +34,17 @@ template <const Frame& FRAME>
 class Position
 {
 public:
-    Position(float x, float y, float z)
-    : coordinates_({x, y, z}) {}
+    /* Constructors */
+    Position(float x, float y, float z) : coordinates_({x, y, z}) {}
 
-    Position(CMSISMat<3,1> coordinates)
-    : coordinates_(std::move(coordinates))
-    {
-    }
+    // TODO: I actually have no idea if these things are defined properly by default, so...
+    Position(const Position&& other) : coordinates_(std::move(other.coordinates_)) {}
 
-    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
+    Position(const CMSISMat<3,1>& coordinates) : coordinates_(coordinates) {}
+
+    Position(CMSISMat<3,1>&& coordinates) : coordinates_(std::move(coordinates)) {}
+
+    /* Getters */
 
     inline float x() const { return coordinates_.data[0]; }
 
@@ -50,11 +52,17 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Vector<FRAME> operator-(const Position<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ - other.coordinates_); }
+    /* Operators */
 
-    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const { return Position<FRAME>(this->coordinates_ + vector.coordinates_); }
+    inline Vector<FRAME> operator-(const Position<FRAME>& other) const
+    {
+        return Vector<FRAME>(this->coordinates_ - other.coordinates_);
+    }
 
-    const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
+    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const
+    {
+        return Position<FRAME>(this->coordinates_ + vector.coordinates_);
+    }
 
 private:
     CMSISMat<3, 1> coordinates_;

@@ -64,10 +64,8 @@ public:
     */
     inline float yaw() const { return atan2(coordinates_.data[3], coordinates_.data[0]); }
 
-    inline const CMSISMat<3, 3>& coordinates() const { return coordinates_; }
-
 private:
-    CMSISMat<3, 3> coordinates_;
+    CMSISMat<3, 1> axisAngle_;
 };
 }
 

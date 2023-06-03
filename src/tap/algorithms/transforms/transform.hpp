@@ -22,7 +22,6 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "position.hpp"
 #include "orientation.hpp"
-#include "pose.hpp"
 #include "vector.hpp"
 #include "frame.hpp"
 
@@ -101,33 +100,58 @@ public:
      */
     Vector<TARGET> apply(const Vector<SOURCE>& vector) const;
 
-    Orientation<TARGET> apply(const Orientation<SOURCE>& orientation) const;
-
     /**
-     * Apply this transform to a pose.
      * 
-     * @param[in] pose Pose in source frame.
-     * @return Pose in target frame.
-    */
-    Pose<TARGET> apply(const Pose<SOURCE>& pose) const;
-
-    /**
-     * @return Inverse of this Transform.
      */
-    Transform<TARGET, SOURCE> getInverse() const;
+    Orientation<TARGET> apply(const Orientation<SOURCE>& orientation) const;
 
     inline CMSISMat<3, 1> getTranslation() { return translation; };
 
     inline CMSISMat<3, 3> getRotation() { return rotation; }
 
     /**
+     * Updates the translation of the current transformation matrix.
+     *
+     * @param newTranslation updated position of target in source frame.
+     */
+    inline void updateTranslation(const Position<SOURCE>& newTranslation)
+    {
+        this->translation = newTranslation.coordinates_;
+    }
+
+    inline void updateTranslation(Position<SOURCE>&& newTranslation)
+    {
+        this->translation = std::move(newTranslation.coordinates_);
+    }
+
+    /**
+     * Updates the translation of the current transformation matrix.
+     *
+     * @param x new translation x-component.
+     * @param y new translation y-component.
+     * @param z new translation z-component.
+     */
+    inline void updateTranslation(float x, float y, float z)
+    {
+        this->translation = CMSISMat<3, 1>({x, y, z});
+    }
+
+    /**
      * Updates the rotation of the current transformation matrix.
      *
-     * @param newRot updated rotation matrix.
-     * 
-     * @note newRot is non-const due to CMSISMat move semantics
+     * @param newRotation updated orienation of target frame in source frame.
      */
-    void updateRotation(CMSISMat<3, 3>& newRot);
+    inline void updateRotation(const Orientation<SOURCE>& newRotation)
+    {
+        this->rotation = newRotation.matrix_;
+        this->tRotation = this->rotation.transpose();
+    }
+
+    inline void updateRotation(Orientation<SOURCE>&& newRotation)
+    {
+        this->rotation = std::move(newRotation.matrix_);
+        this->tRotation = this->rotation.transpose();
+    }
 
     /**
      * Updates the rotation of the current transformation matrix.
@@ -139,29 +163,14 @@ public:
      */
     void updateRotation(float roll, float pitch, float yaw)
     {
-        updateRotation(Orientation(roll, pitch, yaw).coordinates());
+        this->rotation = Orientation<SOURCE>(roll, pitch, yaw).matrix_;
+        this->tRotation = this->rotation.transpose();
     }
 
     /**
-     * Updates the translation of the current transformation matrix.
-     *
-     * @param newTranslation updated translation vector.
-     * 
-     * @note input newTranslation is non-const due to CMSISMat move semantics
+     * @return Inverse of this Transform.
      */
-    inline void updateTranslation(CMSISMat<3, 1>& newTranslation)
-    {
-        this->position = std::move(newTranslation);
-    }
-
-    /**
-     * Updates the position of the current transformation matrix.
-     *
-     * @param x new translation x-component.
-     * @param y new translation y-component.
-     * @param z new translation z-component.
-     */
-    void updateTranslation(float x, float y, float z);
+    Transform<TARGET, SOURCE> getInverse() const;
 
     /**
      * Returns the composed transformation of the given transformations.
@@ -185,7 +194,7 @@ private:
     CMSISMat<3, 3> rotation;
 
     /**
-     * Transpose of rotation. Computed and stored at beginning
+     * Transpose of rotation matrix. Computed and stored at beginning
      * for use in other computations.
      * 
      * The transpose of a rotation is its inverse.
@@ -214,25 +223,19 @@ Transform<SOURCE, TARGET>::Transform(float x, float y, float z, float roll, floa
 template <const Frame& SOURCE, const Frame& TARGET>
 Position<TARGET> Transform<SOURCE, TARGET>::apply(const Position<SOURCE>& position) const
 {
-    return Position<TARGET>(tRotation * (position.coordinates() - translation));
+    return Position<TARGET>(tRotation * (position.coordinates_ - translation));
 }
 
 template <const Frame& SOURCE, const Frame& TARGET>
 Vector<TARGET> Transform<SOURCE, TARGET>::apply(const Vector<SOURCE>& vector) const
 {
-    return Vector<TARGET>(tRotation * vector.coordinates());
+    return Vector<TARGET>(tRotation * vector.coordinates_);
 }
 
 template <const Frame& SOURCE, const Frame& TARGET>
 Orientation<TARGET> Transform<SOURCE, TARGET>::apply(const Orientation<SOURCE>& orientation) const
 {
-    return Orientation<TARGET>(tRotation * orientation.coordinates());
-}
-
-template <const Frame& SOURCE, const Frame& TARGET>
-Pose<TARGET> Transform<SOURCE, TARGET>::apply(const Pose<SOURCE>& pose) const
-{
-    return Pose<TARGET>(tRotation * (pose.position().coordinates() - translation), tRotation * pose.orientation().coordinates());
+    return Orientation<TARGET>(tRotation * orientation.coordinates_);
 }
 
 template <const Frame& SOURCE, const Frame& TARGET>
@@ -242,20 +245,6 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
     CMSISMat<3, 1> invTranslation = tRotation * translation;
     invTranslation = -invTranslation;
     return Transform<TARGET, SOURCE>(tRotation, invTranslation);
-}
-
-template <const Frame& SOURCE, const Frame& TARGET>
-void Transform<SOURCE, TARGET>::updateRotation(CMSISMat<3, 3>& newRotation)
-{
-    this->rotation = std::move(newRotation);
-    this->tRotation = rotation.transpose();
-}
-
-template <const Frame& SOURCE, const Frame& TARGET>
-void Transform<SOURCE, TARGET>::updateTranslation(float x, float y, float z)
-{
-    CMSISMat<3, 1>& newTranslation({x, y, z});
-    this->translation = std::move(newTranslation);
 }
 
 template <const Frame& SOURCE, const Frame& TARGET>

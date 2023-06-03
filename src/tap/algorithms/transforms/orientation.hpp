@@ -32,12 +32,24 @@ class Orientation
 {
 public:
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : coordinates_(fromEulerAngles(roll, pitch, yaw))
+        : matrix_(fromEulerAngles(roll, pitch, yaw))
     {
-    };
+    }
 
-    inline Orientation(CMSISMat<3, 3> matrix)
-        : coordinates_(std::move(matrix))
+    // Move semantics
+    inline Orientation(Orientation&& other)
+        : matrix_(std::move(other.matrix_))
+    {
+    }
+
+    /* Costly; use rvalue reference whenever possible */
+    inline Orientation(const CMSISMat<3, 3>& matrix)
+        : matrix_(matrix)
+    {
+    }
+
+    inline Orientation(CMSISMat<3, 3>&& matrix)
+        : matrix_(std::move(matrix))
     {
     }
 
@@ -52,17 +64,19 @@ public:
      */
     inline float roll() const
     {
-        return atan2(coordinates_.data[7], coordinates_.data[8]);
+        return atan2(matrix_.data[7], matrix_.data[8]);
     }
 
-    inline float pitch() const { return asinf(-coordinates_.data[6]); }
+    inline float pitch() const {
+        return asinf(-matrix_.data[6]);
+    }
 
-    inline float yaw() const { return atan2(coordinates_.data[3], coordinates_.data[0]); }
-
-    inline const CMSISMat<3, 3>& coordinates() const { return coordinates_; }
+    inline float yaw() const {
+        return atan2(matrix_.data[3], matrix_.data[0]);
+    }
 
 private:
-    CMSISMat<3, 3> coordinates_;
+    CMSISMat<3, 3> matrix_;
 };
 }
 

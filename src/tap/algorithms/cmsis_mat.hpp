@@ -51,7 +51,7 @@ struct CMSISMat
     }
 
     /**
-     * Deep copy. Costly; it's generally preferred to use move constructor/assignment.
+     * Deep copy. Costly; use std::move to invoke move constructor whenever possible.
      */
     CMSISMat(const CMSISMat &other)
         : matrix{ROWS, COLS, data.data()}
@@ -69,7 +69,7 @@ struct CMSISMat
     }
 
     /**
-     * Deep copy. Costly; it's generally preferred to use move constructor/assignment.
+     * Deep copy. Costly; use std::move to invoke move assignment whenever possible.
      */
     CMSISMat &operator=(const CMSISMat &other)
     {

@@ -34,15 +34,59 @@ template <const Frame& SOURCE, const Frame& TARGET>
 class InertialTransform : protected Transform<SOURCE, TARGET>
 {
 public:
-    InertialTransform(const Transform<SOURCE, TARGET> transform, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel);
-    InertialTransform(const Transform<SOURCE, TARGET> transform, CMSISMat<3, 1>& transVel, CMSISMat<3, 1>& angVel);
-    inline InertialTransform(const float x, const float y, const float z, const float roll, const float pitch, const float yaw, const float xVel, const float yVel, const float zVel, const float rollVel, const float pitchVel, const float yawVel)
-        : Transform<SOURCE, TARGET>(x, y, z, roll, pitch, yaw)
-        , transVel({xVel, yVel, zVel})
-        , angVel({rollVel, pitchVel, yawVel})
+    InertialTransform(
+        const Transform<SOURCE, TARGET> transform,
+        float xVel, 
+        float yVel,
+        float zVel, 
+        float rollVel, 
+        float pitchVel, 
+        float yawVel)
+        : Transform<SOURCE, TARGET>(transform),
+          transVel({xVel, yVel, zVel}),
+          angVel({xVel, yVel, zVel})
     {}
+
+    InertialTransform(
+        const Transform<SOURCE, TARGET> transform,
+        const CMSISMat<3, 1>& transVel,
+        const CMSISMat<3, 1>& angVel)
+        : Transform(transform),
+          transVel(transVel),
+          angVel(angVel)
+    {}
+
+    InertialTransform(
+        const Transform<SOURCE, TARGET> transform,
+        CMSISMat<3, 1>&& transVel,
+        CMSISMat<3, 1>&& angVel)
+        : Transform(transform),
+          transVel(std::move(transVel)),
+          angVel(std::move(angVel))
+    {}
+
+    inline InertialTransform(float x, float y, float z, float roll, float pitch, float yaw, float xVel, float yVel, float zVel, float rollVel, float pitchVel, float yawVel)
+        : Transform<SOURCE, TARGET>(x, y, z, roll, pitch, yaw),
+          transVel({xVel, yVel, zVel}),
+          angVel({rollVel, pitchVel, yawVel})
+    {}
+
     using Transform<SOURCE, TARGET>::apply;
     using Transform<SOURCE, TARGET>::getTranslation;
+    using Transform<SOURCE, TARGET>::getRotation;
+    using Transform<SOURCE, TARGET>::updateTranslation;
+    using Transform<SOURCE, TARGET>::updateRotation;
+
+    inline void updateTransVel(Vector<SOURCE> transVel)
+    {
+        this->transVel = transVel.coordinates_;
+    }
+
+    inline void updateTransVel(float x, float y, float z)
+    {
+        this->transVel = CMSISMat<3, 1>({x, y, z});
+    }
+
     Vector<TARGET> apply(const Position<SOURCE>& position, const Vector<SOURCE>& velocity) const;
     InertialTransform<TARGET, SOURCE> getInverse() const;
 
