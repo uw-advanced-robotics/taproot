@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -21,13 +21,12 @@
 
 #include "tap/algorithms/transforms/transform.hpp"
 #include "tap/algorithms/transforms/position.hpp"
-#include "tap/algorithms/transforms/pose.hpp"
 #include "tap/algorithms/transforms/vector.hpp"
 #include "tap/algorithms/transforms/frame.hpp"
 
 using namespace tap::algorithms::transforms;
 
-Frame A, B;
+const Frame A, B;
 
 TEST(Transform, identity_transform_retains_position)
 {
@@ -57,24 +56,6 @@ TEST(Transform, identity_transform_retains_vector)
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
     EXPECT_NEAR(start.y(), finish.y(), 1E-5);
     EXPECT_NEAR(start.z(), finish.z(), 1E-5);
-}
-
-TEST(Transform, identity_transform_retains_pose)
-{
-    // Given
-    Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
-    Transform<A, B> identity(Transform<A, B>::identity());
-
-    // When
-    Pose<B> finish = identity.apply(start);
-
-    // Then
-    EXPECT_NEAR(start.position().x(), finish.position().x(), 1E-5);
-    EXPECT_NEAR(start.position().y(), finish.position().y(), 1E-5);
-    EXPECT_NEAR(start.position().z(), finish.position().z(), 1E-5);
-    EXPECT_EQ(start.orientation().roll(), finish.orientation().roll());
-    EXPECT_EQ(start.orientation().pitch(), finish.orientation().pitch());
-    EXPECT_EQ(start.orientation().yaw(), finish.orientation().yaw());
 }
 
 TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
@@ -124,25 +105,6 @@ TEST(Transform, pure_translation_transform_apply_to_vector)
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
     EXPECT_NEAR(start.y(), finish.y(), 1E-5);
     EXPECT_NEAR(start.z(), finish.z(), 1E-5);
-}
-
-TEST(Transform, pure_translation_transform_apply_to_pose)
-{
-    // Given
-    Pose<A> start(1.0, 2.0, 3.0, M_PI_4, M_PI_2, M_PI);
-    Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
-
-    // When
-    Pose<B> finish = translation.apply(start);
-
-    // Then
-    Pose<A> expected(0.0, 0.0, 0.0, M_PI_4, M_PI_2, M_PI);
-    EXPECT_NEAR(expected.position().x(), finish.position().x(), 1E-5);
-    EXPECT_NEAR(expected.position().y(), finish.position().y(), 1E-5);
-    EXPECT_NEAR(expected.position().z(), finish.position().z(), 1E-5);
-    EXPECT_EQ(expected.orientation().roll(), finish.orientation().roll());
-    EXPECT_EQ(expected.orientation().pitch(), finish.orientation().pitch());
-    EXPECT_EQ(expected.orientation().yaw(), finish.orientation().yaw());
 }
 
 TEST(Transform, pure_roll_transform_apply_to_position)

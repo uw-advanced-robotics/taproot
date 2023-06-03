@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
