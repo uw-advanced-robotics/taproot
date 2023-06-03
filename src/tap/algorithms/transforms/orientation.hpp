@@ -77,7 +77,7 @@ public:
 
 private:
     CMSISMat<3, 3> matrix_;
-};
-}
+};  // class Orientation
+}   // namespace tap::algorithms::transforms
 
-#endif
+#endif  // TAPROOT_ORIENTATION_HPP_

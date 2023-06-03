@@ -29,4 +29,4 @@ CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float 
 
 }
 
-#endif
+#endif  // TAPROOT_EULER_ANGLES_HPP_

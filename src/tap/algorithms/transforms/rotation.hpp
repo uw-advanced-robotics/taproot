@@ -66,7 +66,7 @@ public:
 
 private:
     CMSISMat<3, 1> axisAngle_;
-};
-}
+};  // class Rotation
+}   // namespace tap::algorithms::transforms
 
-#endif
+#endif  // TAPROOT_ROTATION_HPP_

@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef INERTIAL_TRANSFORM_HPP_
-#define INERTIAL_TRANSFORM_HPP_
+#ifndef TAPROOT_INERTIAL_TRANSFORM_HPP_
+#define TAPROOT_INERTIAL_TRANSFORM_HPP_
 
 #include "transform.hpp"
 #include "position.hpp"
@@ -107,7 +107,7 @@ private:
      * The angular velocity of the target frame coordinates in the source frame.
      */
     CMSISMat<3, 1> angVel;
-};
+};  // class InertialTransform
 
 /* BEGIN DEFINITIONS */
 
@@ -135,6 +135,6 @@ InertialTransform<SOURCE, NEW> InertialTransform<SOURCE, TARGET>::compose(const 
     return InertialTransform(Transform<SOURCE, TARGET>::compose(second), transVel, angVel);
 }
 
-}
+}  // namespace tap::algorithms::transforms
 
-#endif
+#endif  // TAPROOT_INERTIAL_TRANSFORM_HPP_

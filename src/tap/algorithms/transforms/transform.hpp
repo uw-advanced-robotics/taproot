@@ -200,7 +200,7 @@ private:
      * The transpose of a rotation is its inverse.
      */
     CMSISMat<3, 3> tRotation;
-};
+};  // class Transform
 
 /* Begin definitions */
 

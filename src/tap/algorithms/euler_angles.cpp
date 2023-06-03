@@ -19,7 +19,6 @@
 
 #include "euler_angles.hpp"
 
-
 namespace tap::algorithms
 {
 
