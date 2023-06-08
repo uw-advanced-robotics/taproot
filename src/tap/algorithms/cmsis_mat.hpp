@@ -50,9 +50,16 @@ struct CMSISMat
         arm_mat_init_f32(&matrix, ROWS, COLS, data.data());
     }
 
-    // Delete the copy constructor, create a move constructor. This will
-    // Avoid us doing costly copys but will still allow move semantics.
-    CMSISMat(const CMSISMat &other) = delete;
+    /**
+     * Deep copy. Costly; use std::move to invoke move constructor whenever possible.
+     */
+    CMSISMat(const CMSISMat &other)
+        : matrix{ROWS, COLS, data.data()}
+    {
+        memcpy(&this->data, &other->data, sizeof(this->data));
+    }
+
+    // Move semantics.
     CMSISMat(CMSISMat &&other)
     {
         this->data = std::move(other.data);
@@ -61,7 +68,15 @@ struct CMSISMat
         matrix.pData = data.data();
     }
 
-    CMSISMat &operator=(CMSISMat &) = delete;
+    /**
+     * Deep copy. Costly; use std::move to invoke move assignment whenever possible.
+     */
+    CMSISMat &operator=(const CMSISMat &other)
+    {
+        memcpy(&this->data, &other->data, sizeof(this->data));
+    }
+
+    // Move semantics.
     CMSISMat &operator=(CMSISMat &&other)
     {
         this->data = std::move(other.data);
@@ -80,7 +95,7 @@ struct CMSISMat
     }
 
     /**
-     * Construct identity matrix in the current CMSISMat
+     * Construct identity matrix in the current CMSISMat.
      */
     bool constructIdentityMatrix()
     {
@@ -106,10 +121,19 @@ struct CMSISMat
         assert(ARM_MATH_SUCCESS == arm_mat_inverse_f32(&this->matrix, &ret.matrix));
         return ret;
     }
+
+    inline CMSISMat<COLS, ROWS> transpose()
+    {
+        CMSISMat<COLS, ROWS> ret;
+        assert(ARM_MATH_SUCCESS == arm_mat_trans_f32(&this->matrix, &ret.matrix));
+        return ret;
+    }
 };
 
+/* Begin definitions */
+
 template <uint16_t A_ROWS, uint16_t A_COLS, uint16_t B_ROWS, uint16_t B_COLS>
-inline CMSISMat<A_ROWS, B_COLS> operator+(
+inline CMSISMat<A_ROWS, A_COLS> operator+(
     const CMSISMat<A_ROWS, A_COLS> &a,
     const CMSISMat<B_ROWS, B_COLS> &b)
 {
@@ -123,7 +147,7 @@ inline CMSISMat<A_ROWS, B_COLS> operator+(
 }
 
 template <uint16_t A_ROWS, uint16_t A_COLS, uint16_t B_ROWS, uint16_t B_COLS>
-inline CMSISMat<A_ROWS, B_COLS> operator-(
+inline CMSISMat<A_ROWS, A_COLS> operator-(
     const CMSISMat<A_ROWS, A_COLS> &a,
     const CMSISMat<B_ROWS, B_COLS> &b)
 {
@@ -136,6 +160,15 @@ inline CMSISMat<A_ROWS, B_COLS> operator-(
     return c;
 }
 
+template <uint16_t ROWS, uint16_t COLS>
+inline CMSISMat<ROWS, COLS> operator-(const CMSISMat<ROWS, COLS> &a)
+{
+    float scale(-1);
+    CMSISMat<ROWS, COLS> c;
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &scale, &c.matrix));
+    return c;
+}
+
 template <uint16_t A_ROWS, uint16_t A_COLS, uint16_t B_ROWS, uint16_t B_COLS>
 inline CMSISMat<A_ROWS, B_COLS> operator*(
     const CMSISMat<A_ROWS, A_COLS> &a,
@@ -145,6 +178,31 @@ inline CMSISMat<A_ROWS, B_COLS> operator*(
 
     CMSISMat<A_ROWS, B_COLS> c;
     assert(ARM_MATH_SUCCESS == arm_mat_mult_f32(&a.matrix, &b.matrix, &c.matrix));
+    return c;
+}
+
+template <uint16_t ROWS, uint16_t COLS>
+inline CMSISMat<ROWS, COLS> operator*(const CMSISMat<ROWS, COLS> &a, const float b)
+{
+    CMSISMat<ROWS, COLS> c;
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
+    return c;
+}
+
+template <uint16_t ROWS, uint16_t COLS>
+inline CMSISMat<ROWS, COLS> operator*(const float b, const CMSISMat<ROWS, COLS> &a)
+{
+    CMSISMat<ROWS, COLS> c;
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
+    return c;
+}
+
+template <uint16_t ROWS, uint16_t COLS>
+inline CMSISMat<ROWS, COLS> operator/(const CMSISMat<ROWS, COLS> &a, const float b)
+{
+    b = 1 / b;
+    CMSISMat<ROWS, COLS> c;
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
     return c;
 }
 

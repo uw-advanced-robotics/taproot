@@ -17,21 +17,18 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
-
-namespace tap::algorithms::transforms
+#ifndef TAPROOT_CROSS_PRODUCT_HPP_
+#define TAPROOT_CROSS_PRODUCT_HPP_
+#include "cmsis_mat.hpp"
+namespace tap::algorithms
+// TODO: move to math_user_utils
 {
-/**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be instantiated
- * to create objects representing specific frames.
- */
-
-class Frame
+inline CMSISMat<3, 1> cross(const CMSISMat<3, 1>& a, const CMSISMat<3, 1>& b)
 {
-};
-
-}  // namespace tap::algorithms::transforms
-
-#endif  // TAPROOT_FRAME_HPP_
+    return CMSISMat<3, 1>({
+        a.data[1] * b.data[2] - a.data[2] * b.data[1],
+        a.data[2] * b.data[0] - a.data[0] * b.data[2],
+        a.data[0] * b.data[1] - a.data[1] * b.data[0]});
+}
+}
+#endif  // TAPROOT_CROSS_PRODUCT_HPP_

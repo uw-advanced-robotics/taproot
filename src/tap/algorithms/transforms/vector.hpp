@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
@@ -22,28 +21,45 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "position.hpp"
 
 namespace tap::algorithms::transforms
 {
-template<typename FRAME>
-struct Vector
+template<const Frame& FRAME>
+class Vector
 {
+public:
     Vector(float x, float y, float z)
-    : entries({x, y, z})
-
-    Vector(CMSISMat<3,1>& vector)
+        : coordinates_({x, y, z})
     {
-        this->entries = std::move(vector);
     }
 
-    inline float x() const { return entries.data[0]; }
+    Vector(CMSISMat<3, 1> coordinates)
+        : coordinates_(std::move(coordinates))
+    {
+    }
 
-    inline float y() const { return entries.data[1]; }
+    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
 
-    inline float z() const { return entries.data[2]; }
+    inline float x() const { return coordinates_.data[0]; }
 
-    CMSISMat<3, 1> entries;
-};  // struct Vector
+    inline float y() const { return coordinates_.data[1]; }
+
+    inline float z() const { return coordinates_.data[2]; }
+
+    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates_ + position.coordinates_); }
+
+    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates_); }
+
+    inline Vector<FRAME> operator*(const float scale) const { return Vector<FRAME>(this->coordinates_ * scale); }
+
+    inline Vector<FRAME> operator/(const float scale) const { return Vector<FRAME>(this->coordinates_ / scale); }
+
+    const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
+
+private:
+    CMSISMat<3, 1> coordinates_;
+};  // class Vector
 }   // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_VECTOR_HPP_

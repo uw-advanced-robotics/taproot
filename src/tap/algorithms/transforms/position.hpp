@@ -20,28 +20,53 @@
 #ifndef TAPROOT_POSITION_HPP_
 #define TAPROOT_POSITION_HPP_
 
+#include "tap/algorithms/cmsis_mat.hpp"
+#include "frame.hpp"
+
 namespace tap::algorithms::transforms
 {
 
-template <typename FRAME>
-struct Position
-{
-    Position(float x, float y, float z)
-    : coordinates({x, y, z}) {}
+// Forward declaration for vector.hpp
+template <const Frame& FRAME>
+class Vector;
 
-    Position(CMSISMat<3,1>& coordinates)
+template <const Frame& FRAME>
+class Position
+{
+public:
+    /* Constructors */
+    Position(float x, float y, float z) : coordinates_({x, y, z}) {}
+
+    // TODO: I actually have no idea if these things are defined properly by default, so...
+    Position(const Position&& other) : coordinates_(std::move(other.coordinates_)) {}
+
+    Position(const CMSISMat<3,1>& coordinates) : coordinates_(coordinates) {}
+
+    Position(CMSISMat<3,1>&& coordinates) : coordinates_(std::move(coordinates)) {}
+
+    /* Getters */
+
+    inline float x() const { return coordinates_.data[0]; }
+
+    inline float y() const { return coordinates_.data[1]; }
+
+    inline float z() const { return coordinates_.data[2]; }
+
+    /* Operators */
+
+    inline Vector<FRAME> operator-(const Position<FRAME>& other) const
     {
-        this->coordinates = std::move(coordinates);
+        return Vector<FRAME>(this->coordinates_ - other.coordinates_);
     }
 
-    inline float x() const { return coordinates.data[0]; }
+    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const
+    {
+        return Position<FRAME>(this->coordinates_ + vector.coordinates_);
+    }
 
-    inline float y() const { return coordinates.data[1]; }
-
-    inline float z() const { return coordinates.data[2]; }
-
-    CMSISMat<3, 1> coordinates;
-};  // struct Position
+private:
+    CMSISMat<3, 1> coordinates_;
+};  // class Position
 }   // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_POSITION_HPP_

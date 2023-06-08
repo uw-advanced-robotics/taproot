@@ -17,21 +17,23 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
+#include "euler_angles.hpp"
 
-namespace tap::algorithms::transforms
+namespace tap::algorithms
 {
-/**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be instantiated
- * to create objects representing specific frames.
- */
 
-class Frame
+CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw)
 {
-};
+    return CMSISMat<3, 3>({
+        cosf(yaw) * cosf(pitch),
+        (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
+        (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),
+        sinf(yaw) * cosf(pitch),
+        sinf(yaw) * sinf(pitch) * sinf(roll) + cosf(yaw) * cosf(roll),
+        sinf(yaw) * sinf(pitch) * cosf(roll) - cosf(yaw) * sinf(roll),
+        -sinf(pitch),
+        cosf(pitch) * sinf(roll),
+        cosf(pitch) * cosf(roll)});
+}
 
-}  // namespace tap::algorithms::transforms
-
-#endif  // TAPROOT_FRAME_HPP_
+}

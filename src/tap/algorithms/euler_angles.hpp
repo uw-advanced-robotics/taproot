@@ -17,21 +17,16 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
+#ifndef TAPROOT_EULER_ANGLES_HPP_
+#define TAPROOT_EULER_ANGLES_HPP_
 
-namespace tap::algorithms::transforms
+#include "cmsis_mat.hpp"
+
+namespace tap::algorithms
 {
-/**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be instantiated
- * to create objects representing specific frames.
- */
 
-class Frame
-{
-};
+CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw);
 
-}  // namespace tap::algorithms::transforms
+}
 
-#endif  // TAPROOT_FRAME_HPP_
+#endif  // TAPROOT_EULER_ANGLES_HPP_

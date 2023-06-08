@@ -17,21 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FRAME_HPP_
-#define TAPROOT_FRAME_HPP_
+#include "frame.hpp"
 
-namespace tap::algorithms::transforms
-{
+
 /**
- * Frame is an empty class to provide type-checking for
- * generic Transforms. This class is intended to be instantiated
- * to create objects representing specific frames.
+ * Represents a stationary frame from the world perspective.
  */
-
-class Frame
-{
-};
-
-}  // namespace tap::algorithms::transforms
-
-#endif  // TAPROOT_FRAME_HPP_
+const tap::algorithms::transforms::Frame worldFrame;
