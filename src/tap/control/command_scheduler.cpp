@@ -210,13 +210,11 @@ void CommandScheduler::run()
         // Refresh subsystems in the registeredSubsystemBitmap
         for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            // If in safe disconnect,
-            // tell subsystems in the registeredSubsystemBitmap to shut off their hardware
+            // Call appropriate refresh function for each of the subsystems
             if (safeDisconnected())
             {
                 (*it)->refreshSafeDisconnect();
             }
-            // Otherwise, refresh the subsystem as usual
             else
             {
                 (*it)->refresh();
