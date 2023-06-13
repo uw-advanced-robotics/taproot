@@ -216,7 +216,14 @@ void CommandScheduler::run()
         // Refresh subsystems in the registeredSubsystemBitmap
         for (auto it = subMapBegin(); it != subMapEnd(); it++)
         {
-            (*it)->refresh();
+            if (safeDisconnected())
+            {
+                (*it)->refreshSafeDisconnect();
+            }
+            else
+            {
+                (*it)->refresh();
+            }
 
             Command *defaultCmd;
             // If the remote is connected given the scheduler is in safe disconnect mode and
