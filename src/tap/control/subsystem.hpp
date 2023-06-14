@@ -91,7 +91,7 @@ public:
      * Must be virtual otherwise scheduler will refer to this function
      * rather than looking in child for this function.
      */
-    virtual void refresh();
+    virtual void refresh() {}
 
     /**
      * Called in the scheduler's run function before removing commands
@@ -99,7 +99,7 @@ public:
      * safely shuts down the subsystem (i.e. shutting off motors). All
      * subsystems must implement this virtual function.
      */
-    virtual void refreshSafeDisconnect();
+    virtual void refreshSafeDisconnect() {}
 
     mockable inline bool isHardwareTestComplete() const { return hardwareTestsComplete; }
 
