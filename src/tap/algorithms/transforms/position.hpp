@@ -21,6 +21,7 @@
 #define TAPROOT_POSITION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+
 #include "frame.hpp"
 
 namespace tap::algorithms::transforms
@@ -42,8 +43,11 @@ template <const Frame& FRAME>
 class Position
 {
     friend class Vector<FRAME>;
-    template <const Frame& SOURCE, const Frame& TARGET> friend class Transform;
-    template <const Frame& SOURCE, const Frame& TARGET> friend class InertialTransform;
+    template <const Frame& SOURCE, const Frame& TARGET>
+    friend class Transform;
+    template <const Frame& SOURCE, const Frame& TARGET>
+    friend class InertialTransform;
+
 public:
     /* Constructors */
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
@@ -51,9 +55,9 @@ public:
     // TODO: I actually have no idea if these things are defined properly by default, so...
     Position(const Position&& other) : coordinates_(std::move(other.coordinates_)) {}
 
-    Position(const CMSISMat<3,1>& coordinates) : coordinates_(coordinates) {}
+    Position(const CMSISMat<3, 1>& coordinates) : coordinates_(coordinates) {}
 
-    Position(CMSISMat<3,1>&& coordinates) : coordinates_(std::move(coordinates)) {}
+    Position(CMSISMat<3, 1>&& coordinates) : coordinates_(std::move(coordinates)) {}
 
     /* Getters */
 
@@ -78,6 +82,6 @@ public:
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Position
-}   // namespace tap::algorithms::transforms
+}  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_POSITION_HPP_

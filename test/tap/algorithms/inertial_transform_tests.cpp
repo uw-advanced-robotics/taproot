@@ -19,11 +19,10 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/algorithms/transforms/frame.hpp"
 #include "tap/algorithms/transforms/inertial_transform.hpp"
 #include "tap/algorithms/transforms/position.hpp"
 #include "tap/algorithms/transforms/vector.hpp"
-#include "tap/algorithms/transforms/frame.hpp"
-
 
 using namespace tap::algorithms::transforms;
 const Frame A, B;
@@ -32,11 +31,7 @@ TEST(InertialTransform, identity_transform_retains_position)
 {
     // Given
     Position<A> pos(100.0, 0.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Position<B> newPos = identity.apply(pos);
@@ -51,11 +46,7 @@ TEST(InertialTransform, identity_transform_retains_vector)
 {
     // Given
     Vector<A> vec(100.0, 0.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Vector<B> newVec = identity.apply(vec);
@@ -71,11 +62,7 @@ TEST(InertialTransform, identity_transform_retains_velocity)
     // Given
     Position<A> pos(100.0, 0.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Vector<B> newVel = identity.apply(pos, vel);
@@ -90,11 +77,7 @@ TEST(InertialTransform, pure_ang_vel_transform_retains_position)
 {
     // Given
     Position<A> pos(0.0, 1.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Position<B> newPos = identity.apply(pos);
@@ -111,11 +94,7 @@ TEST(InertialTransform, pure_ang_vel_transform_apply_to_velocity)
     // Given
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Vector<B> newVel = identity.apply(pos, vel);
@@ -132,11 +111,7 @@ TEST(InertialTransform, rotation_and_ang_vel_apply_to_velocity)
     // Given
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 0.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        M_PI_2, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Vector<B> newVel = identity.apply(pos, vel);
@@ -153,11 +128,7 @@ TEST(InertialTransform, full_apply_to_velocity)
     // Given
     Position<A> pos(0.0, 1.0, 0.0);
     Vector<A> vel(0.0, 0.0, 1.0);
-    InertialTransform<A, B> identity(
-        0.0, 0.0, 0.0,
-        M_PI_2, 0.0, 0.0,
-        1.0, 0.0, 0.0,
-        1.0, 0.0, 0.0);
+    InertialTransform<A, B> identity(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 
     // When
     Vector<B> newVel = identity.apply(pos, vel);

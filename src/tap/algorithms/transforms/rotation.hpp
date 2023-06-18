@@ -22,6 +22,7 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/euler_angles.hpp"
+
 #include "frame.hpp"
 
 namespace tap::algorithms::transforms
@@ -32,14 +33,9 @@ class Rotation
 {
 public:
     inline Rotation(const float roll, const float pitch, const float yaw)
-        : coordinates_(fromEulerAngles(roll, pitch, yaw))
-    {
-    };
+        : coordinates_(fromEulerAngles(roll, pitch, yaw)){};
 
-    inline Rotation(CMSISMat<3, 3> matrix)
-        : coordinates_(std::move(matrix))
-    {
-    }
+    inline Rotation(CMSISMat<3, 3> matrix) : coordinates_(std::move(matrix)) {}
 
     // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
 
@@ -47,26 +43,27 @@ public:
     // TODO: return angle objects
     /**
      * Returns roll as values between [-pi, +pi].
-     * 
-     * @warning if pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked
+     *
+     * @warning if pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are
+     * gimbal-locked
      */
     inline float roll() const { return atan2(coordinates_.data[7], coordinates_.data[8]); }
 
     /**
      * Returns pitch as values between [-pi, +pi].
-    */
+     */
     inline float pitch() const { return asinf(-coordinates_.data[6]); }
 
     /**
      * Returns yaw as values between [-pi/2, +pi/2].
-     * 
+     *
      * @warning if pitch is completely vertical then roll and yaw are gimbal-locked.
-    */
+     */
     inline float yaw() const { return atan2(coordinates_.data[3], coordinates_.data[0]); }
 
 private:
     CMSISMat<3, 1> axisAngle_;
 };  // class Rotation
-}   // namespace tap::algorithms::transforms
+}  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_ROTATION_HPP_

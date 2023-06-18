@@ -19,10 +19,10 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/algorithms/transforms/transform.hpp"
-#include "tap/algorithms/transforms/position.hpp"
-#include "tap/algorithms/transforms/vector.hpp"
 #include "tap/algorithms/transforms/frame.hpp"
+#include "tap/algorithms/transforms/position.hpp"
+#include "tap/algorithms/transforms/transform.hpp"
+#include "tap/algorithms/transforms/vector.hpp"
 
 using namespace tap::algorithms::transforms;
 

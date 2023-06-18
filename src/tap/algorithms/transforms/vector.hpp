@@ -21,6 +21,7 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+
 #include "position.hpp"
 
 namespace tap::algorithms::transforms
@@ -34,21 +35,18 @@ class Transform;
 template <const Frame& SOURCE, const Frame& TARGET>
 class InertialTransform;
 
-template<const Frame& FRAME>
+template <const Frame& FRAME>
 class Vector
 {
-    template <const Frame& SOURCE, const Frame& TARGET> friend class Transform;
-    template <const Frame& SOURCE, const Frame& TARGET> friend class InertialTransform;
-public:
-    Vector(float x, float y, float z)
-        : coordinates_({x, y, z})
-    {
-    }
+    template <const Frame& SOURCE, const Frame& TARGET>
+    friend class Transform;
+    template <const Frame& SOURCE, const Frame& TARGET>
+    friend class InertialTransform;
 
-    Vector(CMSISMat<3, 1> coordinates)
-        : coordinates_(std::move(coordinates))
-    {
-    }
+public:
+    Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
+
+    Vector(CMSISMat<3, 1> coordinates) : coordinates_(std::move(coordinates)) {}
 
     // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
 
@@ -58,19 +56,31 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Position<FRAME> operator+(const Position<FRAME>& position) const { return Position<FRAME>(this->coordinates_ + position.coordinates_); }
+    inline Position<FRAME> operator+(const Position<FRAME>& position) const
+    {
+        return Position<FRAME>(this->coordinates_ + position.coordinates_);
+    }
 
-    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const { return Vector<FRAME>(this->coordinates_ + other.coordinates_); }
+    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const
+    {
+        return Vector<FRAME>(this->coordinates_ + other.coordinates_);
+    }
 
-    inline Vector<FRAME> operator*(const float scale) const { return Vector<FRAME>(this->coordinates_ * scale); }
+    inline Vector<FRAME> operator*(const float scale) const
+    {
+        return Vector<FRAME>(this->coordinates_ * scale);
+    }
 
-    inline Vector<FRAME> operator/(const float scale) const { return Vector<FRAME>(this->coordinates_ / scale); }
+    inline Vector<FRAME> operator/(const float scale) const
+    {
+        return Vector<FRAME>(this->coordinates_ / scale);
+    }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Vector
-}   // namespace tap::algorithms::transforms
+}  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_VECTOR_HPP_

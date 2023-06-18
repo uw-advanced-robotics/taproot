@@ -20,10 +20,11 @@
 #define TAPROOT_TRANSFORM_HPP_
 
 #include "tap/algorithms/math_user_utils.hpp"
-#include "position.hpp"
-#include "orientation.hpp"
-#include "vector.hpp"
+
 #include "frame.hpp"
+#include "orientation.hpp"
+#include "position.hpp"
+#include "vector.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -54,7 +55,7 @@ public:
     /**
      * @param rotation Initial rotation of this transformation.
      * @param position Initial translation of this transformation.
-     * 
+     *
      * @note input matrices are non-const due to CMSISMat move semantics
      */
     Transform(CMSISMat<3, 1>& translation, CMSISMat<3, 3>& rotation);
@@ -82,49 +83,48 @@ public:
 
     /**
      * Get the roll of this transformation
-    */
+     */
     float getRoll() const;
-    
-    /**
-     * Get the pitch of this transformation
-    */
-    float getPitch() const;
-   
-    /**
-     * Get the pitch of this transformation
-    */
-    float getYaw() const;
 
+    /**
+     * Get the pitch of this transformation
+     */
+    float getPitch() const;
+
+    /**
+     * Get the pitch of this transformation
+     */
+    float getYaw() const;
 
     /**
      * Get the x-component of this transform's translation
-    */
+     */
     float getX() const;
 
     /**
      * Get the x-component of this transform's translation
-    */
+     */
     float getY() const;
 
     /**
      * Get the x-component of this transform's translation
-    */
+     */
     float getZ() const;
 
     /**
      * Apply this transform to a position.
-     * 
+     *
      * @param[in] position Position in source frame.
      * @return Position in target frame.
-    */
+     */
     Position<TARGET> apply(const Position<SOURCE>& position) const;
 
     /**
      * Rotates a vector in the source frame to a vector in the target frame.
-     * 
-     * Intended to be used for things like velocities and accelerations which represent the difference
-     * between two positions in space, since both positions get translated the same way, causing
-     * the translation to cancel out.
+     *
+     * Intended to be used for things like velocities and accelerations which represent the
+     * difference between two positions in space, since both positions get translated the same way,
+     * causing the translation to cancel out.
      *
      * @param vector Vector as read by source frame.
      * @return Vector in target frame's basis.
@@ -132,7 +132,7 @@ public:
     Vector<TARGET> apply(const Vector<SOURCE>& vector) const;
 
     /**
-     * 
+     *
      */
     Orientation<TARGET> apply(const Orientation<SOURCE>& orientation) const;
 
@@ -227,7 +227,7 @@ private:
     /**
      * Transpose of rotation matrix. Computed and stored at beginning
      * for use in other computations.
-     * 
+     *
      * The transpose of a rotation is its inverse.
      */
     CMSISMat<3, 3> tRotation;
@@ -280,7 +280,8 @@ Transform<TARGET, SOURCE> Transform<SOURCE, TARGET>::getInverse() const
 
 template <const Frame& SOURCE, const Frame& TARGET>
 template <const Frame& NEW>
-Transform<SOURCE, NEW> Transform<SOURCE, TARGET>::compose(const Transform<TARGET, NEW>& second) const
+Transform<SOURCE, NEW> Transform<SOURCE, TARGET>::compose(
+    const Transform<TARGET, NEW>& second) const
 {
     CMSISMat<3, 3> newRot = this->rotation * second.rotation;
     CMSISMat<3, 1> newPos = this->translation + this->rotation * second.translation;
