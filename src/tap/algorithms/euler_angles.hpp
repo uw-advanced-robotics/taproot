@@ -24,7 +24,6 @@
 
 namespace tap::algorithms
 {
-
 CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw);
 
 }

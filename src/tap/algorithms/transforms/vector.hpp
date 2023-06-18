@@ -26,7 +26,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 // Forward declaration for transform.hpp
 template <const Frame& SOURCE, const Frame& TARGET>
 class Transform;

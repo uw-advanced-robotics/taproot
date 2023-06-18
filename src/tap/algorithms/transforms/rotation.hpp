@@ -27,7 +27,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 template <const Frame& FRAME>
 class Rotation
 {

@@ -29,7 +29,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 // TODO: somewhat inaccurate name since rotational frames are not inertial
 template <const Frame& SOURCE, const Frame& TARGET>
 class InertialTransform : protected Transform<SOURCE, TARGET>
