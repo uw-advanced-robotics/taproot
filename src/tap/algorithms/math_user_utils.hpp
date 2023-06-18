@@ -27,6 +27,7 @@
 
 #include "modm/architecture/interface/assert.hpp"
 #include "modm/math/geometry/angle.hpp"
+
 #include "cmsis_mat.hpp"
 
 namespace tap
