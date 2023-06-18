@@ -51,7 +51,7 @@ public:
         const Transform<SOURCE, TARGET> transform,
         const CMSISMat<3, 1>& transVel,
         const CMSISMat<3, 1>& angVel)
-        : Transform(transform),
+        : Transform<SOURCE, TARGET>(transform),
           transVel(transVel),
           angVel(angVel)
     {}
@@ -60,7 +60,7 @@ public:
         const Transform<SOURCE, TARGET> transform,
         CMSISMat<3, 1>&& transVel,
         CMSISMat<3, 1>&& angVel)
-        : Transform(transform),
+        : Transform<SOURCE, TARGET>(transform),
           transVel(std::move(transVel)),
           angVel(std::move(angVel))
     {}
@@ -117,7 +117,7 @@ Vector<TARGET> InertialTransform<SOURCE, TARGET>::apply(const Position<SOURCE>& 
 {
     // TODO: INFINITELY CURSED
     // First add the extra velocities induced by angular/translational velocity then rotate like a vector
-    return Transform<SOURCE, TARGET>::apply(Vector<SOURCE>(velocity.coordinates() - transVel - cross(angVel, position.coordinates())));
+    return Transform<SOURCE, TARGET>::apply(Vector<SOURCE>(velocity.coordinates_ - transVel - cross(angVel, position.coordinates_)));
 }
 
 template <const Frame& SOURCE, const Frame& TARGET>

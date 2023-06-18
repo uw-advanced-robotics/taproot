@@ -25,9 +25,20 @@
 
 namespace tap::algorithms::transforms
 {
+
+// Forward declaration for transform.hpp
+template <const Frame& SOURCE, const Frame& TARGET>
+class Transform;
+
+// Forward declaration for inertial_transform.hpp
+template <const Frame& SOURCE, const Frame& TARGET>
+class InertialTransform;
+
 template<const Frame& FRAME>
 class Vector
 {
+    template <const Frame& SOURCE, const Frame& TARGET> friend class Transform;
+    template <const Frame& SOURCE, const Frame& TARGET> friend class InertialTransform;
 public:
     Vector(float x, float y, float z)
         : coordinates_({x, y, z})

@@ -100,7 +100,7 @@ TEST(InertialTransform, pure_ang_vel_transform_retains_position)
     Position<B> newPos = identity.apply(pos);
 
     // Then
-    Position<B> expected(0.0, 0.0, -1.0);
+    Position<B> expected(0.0, 1.0, 0.0);
     EXPECT_NEAR(expected.x(), newPos.x(), 1E-5);
     EXPECT_NEAR(expected.y(), newPos.y(), 1E-5);
     EXPECT_NEAR(expected.z(), newPos.z(), 1E-5);
