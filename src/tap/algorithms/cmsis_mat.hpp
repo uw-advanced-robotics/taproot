@@ -53,8 +53,7 @@ struct CMSISMat
     /**
      * Deep copy. Costly; use std::move to invoke move constructor whenever possible.
      */
-    CMSISMat(const CMSISMat &other)
-        : matrix{ROWS, COLS, data.data()}
+    CMSISMat(const CMSISMat &other) : matrix{ROWS, COLS, data.data()}
     {
         memcpy(&this->data, &other->data, sizeof(this->data));
     }
