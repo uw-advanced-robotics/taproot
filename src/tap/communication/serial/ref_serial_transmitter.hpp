@@ -229,6 +229,8 @@ public:
      *      with header information in this function.
      * @param[in] configMsgHeader Whether or not to update the `graphicMsg`'s header information.
      * @param[in] sendMsg Whether or not to send the message.
+     * 
+     * @todo template instantiation?
      */
     ///@{
     mockable modm::ResumableResult<void> sendGraphic(
@@ -263,6 +265,22 @@ private:
     tap::Drivers* drivers;
     tap::arch::MilliTimeout delayTimer;
     Tx::DeleteGraphicLayerMessage deleteGraphicLayerMessage;
+
+    /**
+     * Helper generic method for sending graphics
+    */
+    template<typename GRAPHIC>
+    modm::ResumableResult<void> sendGraphic_(
+        GRAPHIC* graphicMsg,
+        uint8_t messageId,
+        bool configMsgHeader,
+        bool sendMsg,
+        RefSerial::RobotId robotId,
+        tap::Drivers* drivers,
+        uint8_t extraDataLength);
+    
+    template<typename GRAPHIC>
+    modm::ResumableResult<void> delaySend_(GRAPHIC* graphic);
 };
 }  // namespace tap::communication::serial
 
