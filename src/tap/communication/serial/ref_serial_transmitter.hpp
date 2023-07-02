@@ -48,7 +48,7 @@ namespace tap::communication::serial
  * An instance of the ref serial transmitter should be instantiated for each protothread. If unique
  * instances are not used, behavior is undefined.
  */
-class RefSerialTransmitter : public RefSerialData, public modm::Resumable<7>
+class RefSerialTransmitter : public RefSerialData, public modm::Resumable<8>
 {
 public:
     RefSerialTransmitter(Drivers* drivers);
@@ -272,15 +272,12 @@ private:
     template<typename GRAPHIC>
     modm::ResumableResult<void> sendGraphic_(
         GRAPHIC* graphicMsg,
-        uint8_t messageId,
+        uint16_t messageId,
         bool configMsgHeader,
         bool sendMsg,
-        RefSerial::RobotId robotId,
+        RobotId robotId,
         tap::Drivers* drivers,
         uint8_t extraDataLength);
-    
-    template<typename GRAPHIC>
-    modm::ResumableResult<void> delaySend_(GRAPHIC* graphic);
 };
 }  // namespace tap::communication::serial
 

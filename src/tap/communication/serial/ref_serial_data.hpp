@@ -482,7 +482,7 @@ public:
          * Pass a pointer to some graphic message. For example, if you have a `Graphic1Message`
          * called `msg`, you can call `getWaitTimeAfterGraphicSendMs(&msg)`.
          *
-         * @tparam T The type of the graphic message that jas just been sent.
+         * @tparam T The type of the graphic message that was just been sent.
          */
         template <typename T>
         static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T *)
@@ -495,8 +495,7 @@ public:
                     std::is_same<T, Graphic2Message>::value ||
                     std::is_same<T, Graphic5Message>::value ||
                     std::is_same<T, Graphic7Message>::value ||
-                    std::is_same<T, GraphicCharacterMessage>::value ||
-                    std::is_same<T, RobotToRobotMessage>::value,
+                    std::is_same<T, GraphicCharacterMessage>::value,
                 "Invalid type, getWaitTimeAfterGraphicSendMs only takes in ref serial message "
                 "types.");
 

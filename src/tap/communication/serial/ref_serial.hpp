@@ -142,10 +142,13 @@ public:
         RobotToRobotMessageHandler* handler);
 
     /**
-     * Used by `RefSerialTransmitter`. It is necessary to acquire this lock to coordinate sending
-     * ref serial data from different protothreads.
+     * Used by `RefSerialTransmitter`. Attempts to acquire transmission semaphore.
+     * 
+     * @note should be called only using RF_WAIT_UNTIL to block until acquiring semaphore.
+     * 
+     * @todo protected?
      */
-    mockable void acquireTransmissionSemaphore() { transmissionSemaphore.acquire(); }
+    mockable bool acquireTransmissionSemaphore() { return transmissionSemaphore.acquire(); }
 
     mockable void releaseTransmissionSemaphore() { transmissionSemaphore.release(); }
 

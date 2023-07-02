@@ -28,12 +28,6 @@
 
 namespace tap::communication::serial
 {
-template<typename GRAPHIC>
-modm::ResumableResult<void> RefSerialTransmitter::delaySend_(GRAPHIC* graphic)
-{
-    RF_WAIT_UNTIL(delayTimer.isExpired() || delayTimer.isStopped());
-    delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(graphic));
-}
 
 RefSerialTransmitter::RefSerialTransmitter(Drivers* drivers) : drivers(drivers) {}
 
@@ -204,7 +198,6 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
     uint8_t graphicLayer)
 {
     RF_BEGIN(0);
-
     if (drivers->refSerial.getRobotData().robotId == RefSerialTransmitter::RobotId::INVALID)
     {
         RF_RETURN_1();
@@ -231,16 +224,16 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
         reinterpret_cast<uint8_t*>(&deleteGraphicLayerMessage),
         sizeof(Tx::DeleteGraphicLayerMessage) - sizeof(deleteGraphicLayerMessage.crc16));
 
-    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
         reinterpret_cast<uint8_t*>(&deleteGraphicLayerMessage),
         sizeof(Tx::DeleteGraphicLayerMessage));
 
-    DELAY_REF_GRAPHIC(&deleteGraphicLayerMessage);
-
     drivers->refSerial.releaseTransmissionSemaphore();
+
+    delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(&deleteGraphicLayerMessage));
 
     RF_END();
 }
@@ -254,10 +247,10 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
 template<typename GRAPHIC>
 modm::ResumableResult<void> RefSerialTransmitter::sendGraphic_(
     GRAPHIC* graphicMsg,
-    uint8_t messageId,
+    uint16_t messageId,
     bool configMsgHeader,
     bool sendMsg,
-    RefSerial::RobotId robotId,
+    RefSerialTransmitter::RobotId robotId,
     tap::Drivers* drivers,
     uint8_t extraDataLength)
 {
@@ -270,7 +263,7 @@ modm::ResumableResult<void> RefSerialTransmitter::sendGraphic_(
     {
         RefSerialTransmitter::configFrameHeader(
             &graphicMsg->frameHeader,
-            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) 
+            sizeof(graphicMsg->graphicData) + sizeof(graphicMsg->interactiveHeader) +
                 extraDataLength);
         graphicMsg->cmdId = RefSerial::REF_MESSAGE_TYPE_CUSTOM_DATA;
         RefSerialTransmitter::configInteractiveHeader(
@@ -284,12 +277,12 @@ modm::ResumableResult<void> RefSerialTransmitter::sendGraphic_(
     }
     if (sendMsg)
     {
-        RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
+        RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
         drivers->uart.write(
             bound_ports::REF_SERIAL_UART_PORT,
             reinterpret_cast<uint8_t*>(graphicMsg),
             sizeof(*graphicMsg));
-        DELAY_REF_GRAPHIC(graphicMsg);
+        delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(graphicMsg));
         drivers->refSerial.releaseTransmissionSemaphore();
     }
     RF_END();
@@ -390,7 +383,7 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
 
     if (msgId < 0x0200 || msgId >= 0x02ff)
     {
-        RAISE_ERROR(drivers, "invalid msgId not betweene [0x200, 0x2ff)");
+        RAISE_ERROR(drivers, "invalid msgId not between [0x200, 0x2ff)");
         RF_RETURN_1();
     }
 
@@ -426,14 +419,14 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
             reinterpret_cast<uint8_t*>(robotToRobotMsg),
             FULL_MSG_SIZE_LESS_MSGLEN + msgLen);
 
-    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
-        reinterpret_cast<uint8_t*>(robotToRobotMsg),
+        reinterpret_cast<uint8_t*>(&robotToRobotMsg),
         FULL_MSG_SIZE_LESS_MSGLEN + msgLen + sizeof(uint16_t));
 
-    DELAY_REF_GRAPHIC(robotToRobotMsg);
+    delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(robotToRobotMsg));
 
     drivers->refSerial.releaseTransmissionSemaphore();
 
