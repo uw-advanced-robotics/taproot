@@ -226,7 +226,7 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
         reinterpret_cast<uint8_t*>(&deleteGraphicLayerMessage),
         sizeof(Tx::DeleteGraphicLayerMessage) - sizeof(deleteGraphicLayerMessage.crc16));
 
-    drivers->refSerial.acquireTransmissionSemaphore();
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
@@ -276,7 +276,7 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
     }                                                                                 \
     if (sendMsg)                                                                      \
     {                                                                                 \
-        drivers->refSerial.acquireTransmissionSemaphore();                            \
+        RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());                            \
         drivers->uart.write(                                                          \
             bound_ports::REF_SERIAL_UART_PORT,                                        \
             reinterpret_cast<uint8_t*>(graphicMsg),                                   \
@@ -416,7 +416,7 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
             reinterpret_cast<uint8_t*>(robotToRobotMsg),
             FULL_MSG_SIZE_LESS_MSGLEN + msgLen);
 
-    drivers->refSerial.acquireTransmissionSemaphore();
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
