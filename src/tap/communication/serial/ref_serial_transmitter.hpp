@@ -255,9 +255,9 @@ public:
 
     mockable modm::ResumableResult<void> sendRobotToRobotMsg(
         Tx::RobotToRobotMessage* robotToRobotMsg,
-        uint16_t msgId,
+        uint16_t contentId,
         RobotId receiverId,
-        uint16_t msgLen);
+        uint16_t dataLen);
 
 private:
     tap::Drivers* drivers;
