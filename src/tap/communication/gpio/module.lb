@@ -16,6 +16,9 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+import copy
+from typing import Set, Dict, Tuple
+from collections import defaultdict
 sys.path.append(repopath("lbuild-scripts"))
 import board_info_parser
 
@@ -38,27 +41,44 @@ class Analog(Module):
         user_pins = extractPinDefines(env[":board:analog_in_pins"])
 
         # Collect adcs
-        adcs = []
-        pin_to_adc = {}
-        pin_to_in = {}
+        adcs = set()
+        pin_to_adc: Dict[str, Set[str]] = defaultdict(set)
+        pin_to_in: Dict[str, str] = {}
         for pin in self.metadata.find("gpio-pins"):
             pin_name = pin.get("alias")
             if pin_name in user_pins:
-                adc = pin.find("adc")
-                adc_name = adc.get("name")
-                pin_to_adc[pin_name] = adc_name
-                pin_to_in[pin_name] = adc.get("in")
-                if adc_name not in adcs:
-                    adcs.append(adc_name)
+                pin_adcs = list(filter(lambda x: x.tag == "adc", pin.getchildren()))
+                if pin_adcs == []:
+                    raise RuntimeError(f"Invalid analog pin specified (pin {pin})")
+
+                for adc in pin_adcs:
+                    adc_id = adc.get("id")
+                    adc_in = adc.get("in")
+                    pin_to_adc[pin_name].add(adc_id)
+                    pin_to_in[pin_name] = adc_in
+                    adcs.add(adc_id)
+
+        # Find how often each adc used
+        adc_counts = dict()
+        for adc in adcs:
+            adc_counts[adc] = len(list(filter(lambda x: adc in x, pin_to_adc.values())))
+        # Sort adcs such that those used more often are allocated to pins first, if adcs have same number of
+        # pins, use smaller adc number
+        adcs = sorted(adc_counts, key=lambda x: (adc_counts[x], -int(x)), reverse=True)
 
         # Add list of pins associated with each ADC
         adc_to_pin_map = {}
+        user_pins_to_handle = copy.deepcopy(user_pins)
         for adc in adcs:
-            pins_associated_with_adc = []
-            for pin in user_pins:
-                if pin_to_adc[pin] == adc:
-                    pins_associated_with_adc.append(pin)
-            adc_to_pin_map[adc] = pins_associated_with_adc
+            pins_associated_with_adc = set()
+            for pin in user_pins_to_handle:
+                if adc in pin_to_adc[pin]:
+                    pins_associated_with_adc.add(pin)
+            user_pins_to_handle = list(filter(lambda x: x not in pins_associated_with_adc, user_pins_to_handle))
+            adc_to_pin_map[adc] = list(pins_associated_with_adc)
+
+        adc_to_pin_map = dict(filter(lambda x: x[1] != [], adc_to_pin_map.items()))
+        adcs = list(filter(lambda x: x in adc_to_pin_map.keys(), adcs))
 
         env.substitutions = {
             "pins": user_pins,
@@ -94,6 +114,7 @@ class Digital(Module):
         env.template("digital.hpp.in", "digital.hpp")
 
 class Leds(Module):
+    # TODO update this module, remove hard coded LEDs.
     def init(self, module):
         module.name = ":communication:gpio:leds"
 
@@ -121,35 +142,57 @@ class Pwm(Module):
         # Collect pins
         user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
 
-        # Collect timers
-        timers = []
-        chs = []
-        pin_to_ch = {}
-        pin_to_timer = {}
+        # Tuple first element is id, second is channel.
+        pin_to_timer_and_ch: Dict[str, Set[Tuple[str, str]]] = defaultdict(set)
+        chs = set()
         for pin in self.metadata.find("gpio-pins"):
             pin_name = pin.get("alias")
             if pin_name in user_pins:
 
-                timer = pin.find("timer")
-                assert timer != None, "Tried to configure PWM pin that doesn't have associated timer"
+                # Find all timers associated with pin
+                pin_timers = list(filter(lambda x: x.tag == "timer", pin.getchildren()))
+                if pin_timers == []:
+                    raise RuntimeError(f"Tried to configure PWM pin that doesn't have associated timer (pin {pin_name})")
+                
+                for timer in pin_timers:
+                    ch = timer.get("channel")
+                    pin_to_timer_and_ch[pin_name].add((timer.get("id"), ch))
+                    chs.add(ch)
 
-                channel = timer.get("channel")
+        pin_to_timer = dict([(x[0], set(map(lambda y: y[0], x[1]))) for x in pin_to_timer_and_ch.items()])
+        timers = set().union(*pin_to_timer.values())
 
-                pin_to_ch[pin_name] = channel
+        # Find how often each timer used
+        timer_counts = dict()
+        for timer in timers:
+            timer_counts[timer] = len(list(filter(lambda x: timer in x, pin_to_timer.values())))
+        # Sort timers such that those used more often are allocated to pins first, if timers have same number,
+        # use smaller timer number
+        timers = sorted(timer_counts, key=lambda x: (timer_counts[x], -int(x)), reverse=True)
 
-                timer_name = timer.get("name")
-                pin_to_timer[pin_name] = timer_name
-                if channel not in chs:
-                    chs.append(channel)
-                if timer_name not in timers:
-                    timers.append(timer_name)
+        pin_to_single_ch_and_timer: Dict[str, Tuple[str, str]] = dict()
+        user_pins_to_handle = copy.deepcopy(user_pins)
+        for timer in timers:
+            # Find all pins associated with the given timer
+            pins_associated_with_timer = set()
+            for pin in user_pins_to_handle:
+                if timer in pin_to_timer[pin]:
+                    pins_associated_with_timer.add(pin)
+
+            # Remove pins from the list of those pins that need to be associated with a channel and timer
+            user_pins_to_handle = list(filter(lambda x: x not in pins_associated_with_timer, user_pins_to_handle))
+
+            for pin in pins_associated_with_timer:
+                ch = next(filter(lambda x: x[0] == timer, pin_to_timer_and_ch[pin]))[1]
+                pin_to_single_ch_and_timer[pin] = (timer, ch)
+
+        timers = list(set().union(*list(map(lambda x: x[0], pin_to_single_ch_and_timer.values()))))
 
         env.substitutions = {
             "pins": user_pins,
             "timers": timers,
-            "pin_to_ch": pin_to_ch,
-            "pin_to_timer": pin_to_timer,
             "chs": chs,
+            "pin_to_single_ch_and_timer": pin_to_single_ch_and_timer,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("pwm.cpp.in", "pwm.cpp")

@@ -115,6 +115,8 @@ public:
 
     mockable void addHeader(const char *header, TerminalSerialCallbackInterface *callback);
 
+    auto &hijack() { return stream; }
+
 private:
     // Use either an IO device that interacts with UART or with stdin/stdout.
 #ifdef PLATFORM_HOSTED

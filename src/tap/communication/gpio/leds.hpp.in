@@ -73,6 +73,9 @@ public:
         Blue
     };
 
+%% elif options[":dev_board"] == "nucleo-f446RE"
+    enum LedPin {};
+
 %% endif
 
     /**

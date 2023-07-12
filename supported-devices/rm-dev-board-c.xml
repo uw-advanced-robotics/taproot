@@ -5,27 +5,32 @@
         <gpio alias="Can2Rx" name="GpioB5"></gpio>
         <gpio alias="Can2Tx" name="GpioB6"></gpio>
     </can-pins>
+    <uart-ports>
+        <uart sync="true" name="1" tx="GpioA9" rx="GpioB7"></uart>
+        <uart sync="true" name="3" rx="GpioC11"></uart>
+        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
+    </uart-ports>
     <gpio-pins>
         <gpio alias="C1" name="GpioE9">
-            <timer name="Timer1" channel="Ch1"></timer>
+            <timer id="1" channel="Ch1"></timer>
         </gpio>
         <gpio alias="C2" name="GpioE11">
-            <timer name="Timer1" channel="Ch2"></timer>
+            <timer id="1" channel="Ch2"></timer>
         </gpio>
         <gpio alias="C3" name="GpioE13">
-            <timer name="Timer1" channel="Ch3"></timer>
+            <timer id="1" channel="Ch3"></timer>
         </gpio>
         <gpio alias="C4" name="GpioE14">
-            <timer name="Timer1" channel="Ch4"></timer>
+            <timer id="1" channel="Ch4"></timer>
         </gpio>
         <gpio alias="C5" name="GpioC6">
-            <timer name="Timer8" channel="Ch1"></timer>
+            <timer id="8" channel="Ch1"></timer>
         </gpio>
         <gpio alias="C6" name="GpioI6">
-            <timer name="Timer8" channel="Ch2"></timer>
+            <timer id="8" channel="Ch2"></timer>
         </gpio>
         <gpio alias="C7" name="GpioI7">
-            <timer name="Timer8" channel="Ch3"></timer>
+            <timer id="8" channel="Ch3"></timer>
         </gpio>
         <gpio alias="PF1" name="GpioF1"></gpio>
         <gpio alias="PF0" name="GpioF0"></gpio>
@@ -36,20 +41,15 @@
             <!-- Can be used for RTC_REFIN -->
         </gpio>
         <gpio alias="Buzzer" name="GpioD14">
-            <timer name="Timer4" channel="Ch3"></timer>
+            <timer id="4" channel="Ch3"></timer>
         </gpio>
         <gpio alias="VolDetect" name="GpioF10">
-            <adc name="Adc3" in="In8"></adc>
+            <adc id="3" in="8"></adc>
         </gpio>
         <gpio alias="Laser" name="GpioC8"></gpio>
         <gpio alias="ImuHeater" name="GpioF6">
-            <timer name="Timer10" channel="Ch1"></timer>
+            <timer id="10" channel="Ch1"></timer>
         </gpio>
         <gpio alias="Button" name="GpioA0"></gpio>
     </gpio-pins>
-    <uart-ports>
-        <uart sync="true" name="1" tx="GpioA9" rx="GpioB7"></uart>
-        <uart sync="true" name="3" rx="GpioC11"></uart>
-        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
-    </uart-ports>
 </board>

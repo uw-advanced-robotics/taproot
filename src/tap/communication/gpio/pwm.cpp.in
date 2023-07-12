@@ -37,12 +37,14 @@ void Pwm::init()
 %% for timer in timers
     %% set pins_associated_with_timer = []
     %% for pin in pins
-        %% if pin_to_timer[pin] == timer
+        %% if pin_to_single_ch_and_timer[pin].0 == timer
             %% set pins_associated_with_timer = pins_associated_with_timer.append(pin)
         %% endif
     %% endfor
 
-    {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    %% set timer = "Timer" ~ timer
+
+    {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_single_ch_and_timer[pin].1 }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ timer }}::enable();
     {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
     {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
@@ -66,6 +68,7 @@ void Pwm::writeAllZeros()
 
 void Pwm::write(float duty, Pin pin)
 {
+%% if pins | length > 0
 #ifdef PLATFORM_HOSTED
     UNUSED(duty);
     UNUSED(pin);
@@ -73,68 +76,88 @@ void Pwm::write(float duty, Pin pin)
     duty = limitVal<float>(duty, 0.0f, 1.0f);
     switch (pin)
     {
-%% for pin in pins
-    %% set timer = pin_to_timer[pin]
+    %% for pin in pins
+        %% set timer = "Timer" ~ pin_to_single_ch_and_timer[pin].0
         case Pin::{{ pin }}:
             {{ timer }}::configureOutputChannel(
-                {{ pin_to_ch[pin] }},
+                {{ pin_to_single_ch_and_timer[pin].1 }},
                 {{ timer }}::OutputCompareMode::Pwm,
                 duty * {{ timer|lower }}CalculatedOverflow);
             break;
-%% endfor
+    %% endfor
         default:
             break;
     };
 #endif
+%% else
+    UNUSED(float);
+    UNUSED(pin);
+%% endif
 }
 
 void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
 {
+%% if timers | length > 0
 #ifdef PLATFORM_HOSTED
     UNUSED(timer);
     UNUSED(frequency);
 #else
     switch (timer)
     {
-%% for timer in timers
+    %% for timer in timers
+        %% set timer = "Timer" ~ timer
         case {{ timer|upper }}:
             {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
-%% endfor
+    %% endfor
     }
 #endif
+%% else
+    UNUSED(timer);
+    UNUSED(frequency);
+%% endif
 }
 
 void Pwm::pause(Timer timer)
 {
+%% if timers | length > 0
 #ifdef PLATFORM_HOSTED
     UNUSED(timer);
 #else
     switch (timer)
     {
-%% for timer in timers
+    %% for timer in timers
+        %% set timer = "Timer" ~ timer
         case {{ timer|upper }}:
             {{ timer }}::pause();
             break;
-%% endfor
+    %% endfor
     }
 #endif
+%% else
+    UNUSED(timer);
+%% endif
 }
 
 void Pwm::start(Timer timer)
 {
+%% if timers | length > 0
 #ifdef PLATFORM_HOSTED
     UNUSED(timer);
 #else
     switch (timer)
     {
-%% for timer in timers
+    %% for timer in timers
+        %% set timer = "Timer" ~ timer
         case {{ timer|upper }}:
             {{ timer }}::start();
             break;
-%% endfor
+    %% endfor
     }
 #endif
+%% else
+    UNUSED(timer);
+%% endif
 }
 }  // namespace gpio
 

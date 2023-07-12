@@ -19,9 +19,11 @@ import subprocess
 
 import sys
 sys.path.append(repopath("lbuild-scripts"))
+sys.path.append(repopath("modm-project-files"))
 
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 from add_immutable_warning import add_immutable_warning
+from mcu_variants import MCU_VARIANTS_BY_BOARD
 
 def init(repo):
     repo.name = "taproot"
@@ -43,7 +45,7 @@ def init(repo):
         EnumerationOption(
             name="dev_board",
             description="Which development board to be used",
-            enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
+            enumeration=list(MCU_VARIANTS_BY_BOARD.keys())))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")

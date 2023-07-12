@@ -22,6 +22,7 @@ import board_info_parser
 REMOTE_UART_PORTS_BY_BOARD = {
     "rm-dev-board-a": "Uart1",
     "rm-dev-board-c": "Uart3",
+    "nucleo-f446RE": "Uart1",
 }
 
 class Remote(Module):
@@ -31,15 +32,17 @@ class Remote(Module):
 
     def prepare(self, module, options):
         module.depends(":communication:gpio")
+        module.add_option(
+            StringOption(
+                name="uart_port",
+                default="",
+                description="Which uart port the referee system is connected to."))
         return True
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
         board_name = env[":dev_board"]
-        try:
-            uart_port = REMOTE_UART_PORTS_BY_BOARD[board_name]
-        except KeyError:
-            raise RuntimeError(f"Dev board {board_name} is not valid")
+        uart_port = env["uart_port"] if env["uart_port"] != "" else REMOTE_UART_PORTS_BY_BOARD[board_name]
         env.substitutions = {"uart_port": uart_port}
         env.template("remote_serial_constants.hpp.in", "remote_serial_constants.hpp")
         env.copy("remote.cpp")

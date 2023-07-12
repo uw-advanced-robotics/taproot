@@ -34,13 +34,13 @@ void Analog::init()
 %% if pins|length > 0
     AnalogInPins::setAnalogInput();
 %% endif
-{% for adc in adcs %}
+{% for adc_id in adcs %}
     // Initial ADC/Timer setup
-    {{ adc }}::connect<{% for pin in adc_to_pin_map[adc] %}AnalogInPin{{ pin }}::{{ pin_to_in[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
-    {{ adc }}::initialize<SystemClock, 22500000_Bd>();
+    Adc{{ adc_id }}::connect<{% for pin in adc_to_pin_map[adc_id] %}AnalogInPin{{ pin }}::In{{ pin_to_in[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    Adc{{ adc_id }}::initialize<SystemClock, 22500000_Bd>();
 
-    %% for pin in adc_to_pin_map[adc]
-    {{ pin_to_adc[pin] }}::setPinChannel<AnalogInPin{{ pin }}>();
+    %% for pin in adc_to_pin_map[adc_id]
+    Adc{{ adc_id }}::setPinChannel<AnalogInPin{{ pin }}>();
     %% endfor
 {% endfor %}
 #endif
@@ -48,20 +48,27 @@ void Analog::init()
 
 uint16_t Analog::read(Pin pin) const
 {
+%% if pins|length > 0
 #ifdef PLATFORM_HOSTED
     UNUSED(pin);
     return 0;
 #else
     switch (pin)
     {
-%% for pin in pins
+    %% for adc_id in adcs
+        %% for pin in adc_to_pin_map[adc_id]
         case Pin::{{ pin }}:
-            return {{ pin_to_adc[pin] }}::readChannel(Adc1::getPinChannel<AnalogInPin{{ pin }}>());
-%% endfor
+            return Adc{{ adc_id }}::readChannel(Adc{{ adc_id }}::getPinChannel<AnalogInPin{{ pin }}>());
+        %% endfor
+    %% endfor
         default:
             return 0;
     }
 #endif
+%% else
+    UNUSED(pin);
+    return 0;
+%% endif
 }
 }  // namespace gpio
 

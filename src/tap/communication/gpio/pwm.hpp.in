@@ -38,8 +38,9 @@ namespace gpio
 class Pwm
 {
 public:
-{% for timer in timers %}
-    static constexpr uint32_t DEFAULT_{{ timer|upper }}_FREQUENCY = 2000;
+%% for timer in timers
+    %% set timer = "TIMER" ~ timer
+    static constexpr uint32_t DEFAULT_{{ timer }}_FREQUENCY = 2000;
 {% endfor %}
     Pwm() = default;
     DISALLOW_COPY_AND_ASSIGN(Pwm)
@@ -55,7 +56,8 @@ public:
     enum Timer
     {
 %% for timer in timers
-        {{ timer|upper }},
+    %% set timer_name = "TIMER" ~ timer
+        {{ timer_name }},
 %% endfor
     };
 
@@ -96,12 +98,13 @@ private:
     };
 
 %% for timer in timers
+    %% set timer_name = "timer" ~ timer
     /**
      * Overflow as calculated by the modm {{ timer }} object in its getPeriod function.
      * This is what the Auto Reload Register is set to and the pwm duty is scaled to
      * a value between 0 and this value.
      */
-    uint16_t {{ timer|lower }}CalculatedOverflow;
+    uint16_t {{ timer_name }}CalculatedOverflow;
 %% endfor
 };  // class Pwm
 

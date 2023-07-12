@@ -1,0 +1,202 @@
+<board>
+    <can-pins>
+        <!-- TODO these shouldn't be hard coded here (user should specify pins) (also shouldn't hard code pins, should let user specify if they want) -->
+        <gpio alias="Can1Rx" name="GpioA11"></gpio>
+        <gpio alias="Can1Tx" name="GpioA12"></gpio>
+        <gpio alias="Can2Rx" name="GpioB12"></gpio>
+        <gpio alias="Can2Tx" name="GpioB13"></gpio>
+    </can-pins>
+    <uart-ports>
+        <uart sync="true" name="1" rx="GpioA10" tx="GpioA9" />
+        <uart sync="true" name="2" rx="GpioA3" tx="GpioA2" />
+        <uart sync="true" name="6" rx="GpioC7" tx="GpioC6" />
+    </uart-ports>
+    <gpio-pins>
+        <!-- Left-most column of externally-accessible pins -->
+        <gpio alias="PC_10" name="GpioC10">
+            <spi id="3" pin="SCK" />
+        </gpio>
+        <gpio alias="PC_12" name="GpioC12">
+            <spi id="3" pin="MOSI" />
+        </gpio>
+        <gpio alias="PA_13" name="GpioA13" />
+        <gpio alias="PA_14" name="GpioA14" />
+        <gpio alias="PA_15" name="GpioA15">
+            <timer id="2" channel="Ch2" />
+        </gpio>
+        <gpio alias="PB_7" name="GpioB7">
+            <timer id="4" channel="Ch2" />
+            <i2c id="1" pin="SDA" />
+        </gpio>
+        <gpio alias="Button" name="GpioC13" />
+        <gpio alias="PC_14" name="GpioC14" />
+        <gpio alias="PC_15" name="GpioC15" />
+        <gpio alias="PH_0" name="GpioH0" />
+        <gpio alias="PH_1" name="GpioH1" />
+        <gpio alias="PC_2" name="GpioC2">
+            <adc id="1" in="12" />
+            <adc id="2" in="12" />
+            <adc id="3" in="12" />
+            <spi id="2" pin="MISO" />
+        </gpio>
+        <gpio alias="PC_3" name="GpioC3">
+            <adc id="1" in="13" />
+            <adc id="2" in="13" />
+            <adc id="3" in="13" />
+            <spi id="2" pin="MOSI" />
+        </gpio>
+
+        <!-- Column of pins directly right of the left-most column of pins -->
+        <gpio alias="PC_11" name="GpioC11">
+            <spi id="3" pin="MISO" />
+        </gpio>
+        <gpio alias="PD_2" name="GpioD2">
+            <uart name="Uart5" pin="RX" />
+        </gpio>
+        <gpio alias="PA_0" name="GpioA0">
+            <timer id="2" channel="Ch1" />
+            <adc id="1" in="0" />
+            <adc id="2" in="0" />
+            <adc id="3" in="0" />
+        </gpio>
+        <gpio alias="PA_1" name="GpioA1">
+            <timer id="2" channel="Ch2" />
+            <timer id="5" channel="Ch2" />
+            <adc id="1" in="1" />
+            <adc id="2" in="1" />
+            <adc id="3" in="1" />
+        </gpio>
+        <gpio alias="PA_4" name="GpioA4">
+            <spi id="1" pin="NSS" />
+            <spi id="3" pin="NSS" />
+            <uart id="2" pin="CK" />
+            <adc id="1" in="4" />
+            <adc id="2" in="4" />
+            <dac out="Out2" />
+        </gpio>
+        <gpio alias="PB_0" name="GpioB0">
+            <timer id="1" channel="Ch2" />
+            <timer id="3" channel="Ch2" />
+            <timer id="8" channel="Ch2" />
+            <spi id="3" pin="MOSI" />
+            <adc id="1" in="8" />
+            <adc id="2" in="8" />
+        </gpio>
+        <gpio alias="PC_1" name="GpioC1">
+            <spi id="3" pin="MOSI" />
+            <spi id="2" pin="MOSI" />
+            <adc id="1" in="11" />
+            <adc id="2" in="11" />
+            <adc id="3" in="11" />
+        </gpio>
+        <gpio alias="PC_0" name="GpioC0">
+            <adc id="1" in="10" />
+            <adc id="2" in="10" />
+            <adc id="3" in="10" />
+        </gpio>
+
+        <!-- Column of pins on right side, but not furthest right -->
+        <gpio alias="PC_9" name="GpioC9">
+            <timer id="3" channel="Ch4" />
+            <timer id="8" channel="Ch4" />
+            <i2c id="3" pin="SDA" />
+        </gpio>
+        <gpio alias="PB_8" name="GpioB8">
+            <timer id="2" channel="Ch1" />
+            <timer id="4" channel="Ch3" />
+            <timer id="10" channel="Ch1" />
+            <i2c id="1" pin="SCL" />
+            <can id="1" pin="RX" />
+        </gpio>
+        <gpio alias="PB_9" name="GpioB9">
+            <timer id="2" channel="Ch2" />
+            <timer id="4" channel="Ch4" />
+            <timer id="11" channel="Ch1" />
+            <i2c id="1" pin="SDA" />
+            <spi id="2" pin="NSS" />
+        </gpio>
+        <gpio alias="PA_5" name="GpioA5">
+            <timer id="2" channel="Ch1" />
+            <spi id="1" pin="SCK" />
+            <adc id="1" in="5" />
+            <adc id="2" in="5" />
+        </gpio>
+        <gpio alias="PA_6" name="GpioA6">
+            <timer id="3" channel="Ch1" />
+            <timer id="13" channel="Ch1" />
+            <spi id="1" pin="MISO" />
+            <adc id="1" in="6" />
+            <adc id="2" in="6" />
+        </gpio>
+        <gpio alias="PA_7" name="GpioA7">
+            <timer id="3" channel="Ch2" />
+            <spi id="1" pin="MOSI" />
+            <adc id="1" in="7" />
+            <adc id="2" in="7" />
+        </gpio>
+        <gpio alias="PB_6" name="GpioB6">
+            <timer id="4" channel="Ch1" />
+            <i2c id="1" pin="SCL" />
+            <uart id="1" pin="TX" />
+            <can id="2" pin="TX" />
+        </gpio>
+        <gpio alias="PC_7" name="GpioC7">
+            <timer id="3" channel="Ch2" />
+            <spi id="2" pin="SCK" />
+            <uart id="6" pin="RX" />
+        </gpio>
+        <gpio alias="PA_9" name="GpioA9">
+            <timer id="1" channel="Ch2" />
+            <spi id="2" pin="SCK" />
+            <uart id="1" pin="TX" />
+        </gpio>
+        <gpio alias="PA_8" name="GpioA8">
+            <timer id="1" channel="Ch1" />
+            <spi id="2" pin="SCK" />
+            <uart id="1" pin="TX" />
+        </gpio>
+        <gpio alias="PB_10" name="GpioB10">
+            <timer id="2" channel="Ch3" />
+            <i2c id="2" pin="SCL" />
+            <spi id="2" pin="SCK" />
+            <uart id="3" pin="TX" />
+        </gpio>
+        <gpio alias="PB_4" name="GpioB4">
+            <!-- TODO here -->
+        </gpio>
+        <gpio alias="PB_5" name="GpioB5"></gpio>
+        <gpio alias="PB_3" name="GpioB3"></gpio>
+        <gpio alias="PA_10" name="GpioA10"></gpio>
+        <gpio alias="PA_2" name="GpioA2"></gpio>
+        <gpio alias="PA_3" name="GpioA3"></gpio>
+
+        <!-- Furthest right column of pins -->
+        <gpio alias="PC_8" name="GpioC8">
+            <timer id="3" channel="Ch3" />
+            <timer id="8" channel="Ch3" />
+            <uart id="6" pin="CK" />
+        </gpio>
+        <gpio alias="PC_6" name="GpioC6">
+            <timer id="3" channel="Ch1" />
+            <timer id="8" channel="Ch1" />
+            <uart id="6" pin="TX" />
+        </gpio>
+        <gpio alias="PC_5" name="GpioC5"></gpio>
+        <gpio alias="PA_12" name="GpioA12">
+            <can id="1" pin="TX" />
+        </gpio>
+        <gpio alias="PA_11" name="GpioA11">
+            <can id="1" pin="RX" />
+        </gpio>
+        <gpio alias="PB_12" name="GpioB12">
+            <can id="2" pin="RX" />
+        </gpio>
+        <gpio alias="PB_2" name="GpioB2"></gpio>
+        <gpio alias="PB_15" name="GpioB15"></gpio>
+        <gpio alias="PB_14" name="GpioB14"></gpio>
+        <gpio alias="PB_13" name="GpioB13">
+            <can id="2" pin="TX" />
+        </gpio>
+        <gpio alias="PC_4" name="GpioC4"></gpio>
+    </gpio-pins>
+</board>

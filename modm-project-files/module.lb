@@ -17,13 +17,9 @@
 
 import sys
 import os
+from mcu_variants import MCU_VARIANTS_BY_BOARD
 
 sys.path.append(repopath("scripts/lbuild-helpers"))
-
-MCU_VARIANTS_BY_BOARD = {
-    "rm-dev-board-a": "stm32f427iih6",
-    "rm-dev-board-c": "stm32f407igh6",
-}
 
 DEFAULT_MODM_OPTIONS_BY_BOARD = {
     "rm-dev-board-a": "\
@@ -46,6 +42,78 @@ DEFAULT_MODM_OPTIONS_BY_BOARD = {
         modm:platform:uart:3:buffer.rx 256\n\
         modm:platform:uart:6:buffer.rx 256\n\
         modm:platform:uart:6:buffer.tx 256",
+    "nucleo-f446RE": ""
+}
+
+SHARED_MODM_OPTIONS = [
+    "architecture:clock",
+    "architecture:delay",
+    "architecture:spi.device",
+    "build:scons",
+    "container",
+    "cmsis:core",
+    "cmsis:device",
+    "cmsis:dsp",
+    "cmsis:dsp:matrix",
+    "debug",
+    "driver:bno055",
+    "math:filter",
+    "math:geometry",
+    "math:utils",
+    "math:interpolation",
+    "math:saturated",
+    "processing",
+    "processing:timer",
+    "processing:protothread",
+    "platform:adc:1",
+    "platform:can:1",
+    "platform:can:2",
+    "platform:clock",
+    "platform:core",
+    "platform:flash",
+    "platform:gpio",
+    "platform:heap",
+    "platform:timer:8",
+]
+
+UNIQUE_MODM_MODULES = {
+    "rm-dev-board-a": [
+        "platform:i2c:2",
+        "platform:random",
+        "platform:spi:1",
+        "platform:spi:5",
+        "platform:timer:3",
+        "platform:timer:12",
+        "platform:uart:1",
+        "platform:uart:2",
+        "platform:uart:3",
+        "platform:uart:6",
+        "platform:uart:7",
+        "platform:uart:8",
+        "ui:display",
+        "ui:menu",
+    ],
+    "rm-dev-board-c": [
+        "platform:random",
+        "platform:spi:1",
+        "platform:timer:1",
+        "platform:timer:4",
+        "platform:timer:10",
+        "platform:adc:3",
+        "platform:uart:1",
+        "platform:uart:3",
+        "platform:uart:6",
+    ],
+    "nucleo-f446RE": [
+        "platform:adc:2",
+        "platform:adc:3",
+        "platform:i2c:1",
+        "platform:spi:2",
+        "platform:timer:3",
+        "platform:uart:1",
+        "platform:uart:2",
+        "platform:uart:6",
+    ],
 }
 
 def get_modm_repo_lb_file() -> str:
@@ -103,6 +171,8 @@ def build(env):
         "modm_path": get_modm_repo_lb_file(),
         "mcu": mcu,
         "modm_hal_options": modm_hal_options,
+        "shared_modm_modules": SHARED_MODM_OPTIONS,
+        "unique_modm_modules": UNIQUE_MODM_MODULES[board_name]
     }
 
     env.outbasepath = "taproot"

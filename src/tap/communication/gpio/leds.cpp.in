@@ -99,6 +99,9 @@ void Leds::set(Leds::LedPin pin, bool isSet)
         case Leds::LedPin::Blue:
             LedBlue::set(isSet);
     } 
+%% elif options[":dev_board"] == "nucleo-f446RE"
+    UNUSED(pin);
+    UNUSED(isSet);
 %% endif
 #endif
 }

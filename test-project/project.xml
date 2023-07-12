@@ -8,7 +8,17 @@
     <option name="taproot:docs:source_paths">src</option>
     <option name="taproot:rebuild_modm">True</option>
 
-    <!-- For RoboMaster Development Board Type A -->
+    <!-- For Nucleo -->
+    <option name="taproot:dev_board">nucleo-f446RE</option>
+    <option name="taproot:communication:serial:terminal_serial:uart_port">Uart2</option>
+    <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
+    <option name="taproot:board:digital_in_pins">PA_13,PA_14</option>
+    <option name="taproot:board:digital_out_pins">PC_14,PC_15</option>
+    <option name="taproot:board:analog_in_pins">PA_0,PA_1,PA_4,PB_0,PC_1,PC_0</option>
+    <option name="taproot:board:pwm_pins">PC_9,PC_8,PC_6</option>
+    <!-- End For Nucleo -->
+
+    <!-- For RoboMaster Development Board Type A --> <!--
     <option name="taproot:dev_board">rm-dev-board-a</option>
     <option name="taproot:communication:serial:terminal_serial:uart_port">Uart3</option>
     <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
@@ -16,7 +26,7 @@
     <option name="taproot:board:digital_out_pins">E,F,G,H,Laser</option>
     <option name="taproot:board:analog_in_pins">S,T,U,V,OledJoystick</option>
     <option name="taproot:board:pwm_pins">W,X,Y,Z,Buzzer,ImuHeater</option>
-    <!-- End For RoboMaster Development Board Type A -->
+    --> <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--
     <option name="taproot:dev_board">rm-dev-board-c</option>
@@ -33,19 +43,20 @@
     <module>taproot:core</module>
     <module>taproot:docs</module>
     <module>taproot:testing:tests</module>
-    <module>taproot:communication:sensors:buzzer</module>
     <module>taproot:communication:sensors:distance</module>
     <module>taproot:communication:gpio:leds</module>
     <module>taproot:communication:gpio:digital</module>
     <module>taproot:communication:tcp-server</module>
-    <module>taproot:ext:littlefs</module>
 
-    <!-- For RoboMaster Development Board Type A -->
+    <!-- For RoboMaster Development Board Type A --> <!--
     <module>taproot:communication:sensors:imu:mpu6500</module>
     <module>taproot:display</module>
-    <!-- End For RoboMaster Development Board Type A -->
+    <module>taproot:ext:littlefs</module>
+    <module>taproot:communication:sensors:buzzer</module>
+    --> <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--
+    <module>taproot:communication:sensors:buzzer</module>
     <module>taproot:communication:sensors:imu:bmi088</module>
     --> <!-- End For RoboMaster Development Board Type C -->
   </modules>
