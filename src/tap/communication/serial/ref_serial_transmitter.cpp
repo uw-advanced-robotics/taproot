@@ -378,9 +378,14 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
 {
     RF_BEGIN(6);
 
+    if (msgLen == 1)
+    {
+        RAISE_ERROR(drivers, "message length cannot be 1 byte")
+    }
+
     if (msgId < 0x0200 || msgId >= 0x02ff)
     {
-        RAISE_ERROR(drivers, "invalid msgId not betweene [0x200, 0x2ff)");
+        RAISE_ERROR(drivers, "invalid msgId not between [0x200, 0x2ff)");
         RF_RETURN_1();
     }
 
