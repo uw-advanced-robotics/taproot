@@ -365,8 +365,7 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .Times(2)
         .WillRepeatedly([](const tap::errors::SystemError &error) {
-            EXPECT_TRUE(
-                errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
+            EXPECT_TRUE(errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
         });
 
     EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
