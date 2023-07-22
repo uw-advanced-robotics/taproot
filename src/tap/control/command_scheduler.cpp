@@ -161,6 +161,21 @@ CommandScheduler::~CommandScheduler()
     }
 }
 
+void CommandScheduler::initializeSubsystems()
+{
+    if (isMasterScheduler)
+    {
+        for (auto it = subMapBegin(); it != subMapEnd(); it++)
+        {
+            (*it)->initialize();
+        }
+    }
+    else
+    {
+        RAISE_ERROR(drivers, "attempted to initialize subsystems using non-master scheduler");
+    }
+}
+
 void CommandScheduler::run()
 {
 #ifndef PLATFORM_HOSTED
@@ -338,7 +353,6 @@ void CommandScheduler::registerSubsystem(Subsystem *subsystem)
     }
     else
     {
-        subsystem->initialize();
         // Add the subsystem to the registered subsystem bitmap
         registeredSubsystemBitmap |=
             (LSB_ONE_HOT_SUBSYSTEM_BITMAP << subsystem->getGlobalIdentifier());

@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## July 2023
+
+### Architecture
+
+ - All subsystems registered to the master command scheduler can be initialized using the command scheduler's `initializeSubsystems` method.
+
 ## April 2023
 
 ### Breaking changes
