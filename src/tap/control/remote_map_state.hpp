@@ -72,7 +72,7 @@ public:
      * @param[in] rightss The switch state for the right switch. If `UNKNOWN`, the switch state will
      * not be initialized.
      * @param[in] keySet The set of keys to use for initialization.
-     * @param[in] negKeySet The set of keys to be used as negations in the RemoteMapState.
+     * @param[in] negKeySet The set of set of keys to be used as negations in the RemoteMapState.
      * @param[in] mouseButtonLeftPressed Initialize the RemoteMapState to match a remote map state
      * when the left mouse button is pressed.
      * @param[in] mouseButtonRightPressed Initialize the RemoteMapState to match a remote map state
@@ -84,14 +84,14 @@ public:
         tap::communication::serial::Remote::SwitchState leftss,
         tap::communication::serial::Remote::SwitchState rightss,
         const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+        const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySet,
         bool mouseButtonLeftPressed,
         bool mouseButtonRightPressed);
 
     /**
      * Initializes a RemoteMapState with a single switch to the given switch state.
      *
-     * @param[in] swh The switch to use in the map state.
+     * @param[in] switch The switch to use in the map state.
      * @param[in] switchState The switch state of the given switch.
      */
     RemoteMapState(
@@ -135,7 +135,7 @@ public:
     RemoteMapState(
         RemoteMapState::MouseButton button,
         const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
+        const std::lsit<std::list<tap::communication::serial::Remote::Key>> &negKeySet = {});
 
     /**
      * Initializes a RemoteMapState that will use the given mouse button (either left or
@@ -148,24 +148,24 @@ public:
     /**
      * Initializes the left switch with the particular `Remote::SwitchState` provided.
      */
-    void initLSwitch(tap::communication::serial::Remote::SwitchState ss);
+    inline void initLSwitch(tap::communication::serial::Remote::SwitchState ss) { lSwitch = ss; };
 
     /**
      * Initializes the right switch with the particular `Remote::SwitchState` provided.
      */
-    void initRSwitch(tap::communication::serial::Remote::SwitchState ss);
+    inline void initRSwitch(tap::communication::serial::Remote::SwitchState ss) { rSwitch = ss; };
 
     /**
      * Initializes the keys to the bit mapped set of keys provided.
-     * @note `keys` must be mutally exclusive with any set of `negKeys` already provided.
+     * @note `keys` must be mutally exclusive with any set of `negKeysSet` already provided.
      */
     void initKeys(uint16_t keys);
 
     /**
      * Initializes the neg keys to the bit mapped set of neg keys provided.
-     * @note `negKeys` must be mutally exclusive with any set of `keys` already provided.
+     * @note `negKeysSet` must be mutally exclusive with any set of `keys` already provided.
      */
-    void initNegKeys(uint16_t negKeys);
+    void initNegKeys(std::list<uint16_t> negKeysSet);
 
     /**
      * @see `initKeys`. Interprets the list and passes that on as a bit mapped set of keys.
@@ -175,7 +175,7 @@ public:
     /**
      * @see `initNegKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    void initNegKeys(const std::list<tap::communication::serial::Remote::Key> &negKeySet);
+    void initNegKeys(const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySetSet);
 
     /**
      * Initializes the left mouse button to be mapped when clicked.
@@ -224,14 +224,14 @@ public:
     bool friend operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2);
 
     /**
-     * @return The negKeys currently being used.
+     * @return The negKeysSet currently being used.
      */
-    uint16_t getNegKeys() const { return negKeys; }
+    std::list<uint16_t> getNegKeys() const { return negKeysSet; }
 
     /**
      * @return `true` if the neg key set has been initialized, `false` otherwise.
      */
-    bool getNegKeysUsed() const { return negKeys != 0; }
+    bool getNegKeysUsed() const { return negKeysSet.size() != 0; }
 
     /**
      * @return the current keys initialized in the `RemoteMapState`.
@@ -255,7 +255,7 @@ private:
 
     uint16_t keys = 0;
 
-    uint16_t negKeys = 0;  // if certain keys are pressed, the remote map will not do mapping
+    std::list<uint16_t> negKeysSet{};  // if certain keys are pressed, the remote map will not do mapping
 
     bool lMouseButton = false;
 

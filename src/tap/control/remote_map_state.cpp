@@ -33,14 +33,14 @@ RemoteMapState::RemoteMapState(
     tap::communication::serial::Remote::SwitchState leftss,
     tap::communication::serial::Remote::SwitchState rightss,
     const std::list<tap::communication::serial::Remote::Key> &keySet,
-    const std::list<tap::communication::serial::Remote::Key> &negKeySet,
+    const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySetSet,
     bool mouseButtonLeftPressed,
     bool mouseButtonRightPressed)
 {
     initLSwitch(leftss);
     initRSwitch(rightss);
     initKeys(keySet);
-    initNegKeys(negKeySet);
+    initNegKeys(negKeySetSet);
     if (mouseButtonLeftPressed)
     {
         initLMouseButton();
@@ -71,7 +71,7 @@ RemoteMapState::RemoteMapState(Remote::SwitchState leftss, Remote::SwitchState r
 
 RemoteMapState::RemoteMapState(
     const std::list<Remote::Key> &keySet,
-    const std::list<Remote::Key> &negKeySet)
+    const std::list<std::list<Remote::Key>> &negKeySet)
 {
     initKeys(keySet);
     initNegKeys(negKeySet);
@@ -80,7 +80,7 @@ RemoteMapState::RemoteMapState(
 RemoteMapState::RemoteMapState(
     RemoteMapState::MouseButton button,
     const std::list<Remote::Key> &keySet,
-    const std::list<Remote::Key> &negKeySet)
+    const std::list<std::list<Remote::Key>> &negKeySet)
 {
     if (button == MouseButton::LEFT)
     {
@@ -106,48 +106,22 @@ RemoteMapState::RemoteMapState(MouseButton button)
     }
 }
 
-void RemoteMapState::initLSwitch(Remote::SwitchState ss)
-{
-    if (ss == Remote::SwitchState::UNKNOWN)
-    {
-        return;
-    }
-    lSwitch = ss;
-}
-
-void RemoteMapState::initRSwitch(Remote::SwitchState ss)
-{
-    if (ss == Remote::SwitchState::UNKNOWN)
-    {
-        return;
-    }
-    rSwitch = ss;
-}
-
 void RemoteMapState::initKeys(uint16_t keys)
 {
-    if (keys == 0)
+    for (auto const& negKeys : this->negKeysSet)
     {
-        return;
-    }
-    if ((this->negKeys & keys) != 0)
-    {
-        return;
+        assert((negKeys & keys) != 0)
     }
     this->keys = keys;
 }
 
-void RemoteMapState::initNegKeys(uint16_t negKeys)
+void RemoteMapState::initNegKeys(std::list<uint16_t> negKeysSet)
 {
-    if (negKeys == 0)
+    for (auto const& negKeys : negKeysSet)
     {
-        return;
+        assert((this->keys & negKeys) == 0);
     }
-    if ((this->keys & negKeys) != 0)
-    {
-        return;
-    }
-    this->negKeys = negKeys;
+    this->negKeysSet = negKeysSet;
 }
 
 void RemoteMapState::initKeys(const std::list<Remote::Key> &keySet)
@@ -158,13 +132,18 @@ void RemoteMapState::initKeys(const std::list<Remote::Key> &keySet)
     initKeys(keys);
 }
 
-void RemoteMapState::initNegKeys(const std::list<Remote::Key> &negKeySet)
+void RemoteMapState::initNegKeys(const std::list<std::list<Remote::Key>> &negKeySetSet)
 {
-    // extract a bit form of the key set.
-    uint16_t negKeys =
-        std::accumulate(negKeySet.begin(), negKeySet.end(), 0, [](int acc, Remote::Key key) {
-            return acc |= 1 << static_cast<uint16_t>(key);
-        });
+    std::list<uint16_t> negKeys;
+    // extract a bit form of the key set
+    for (auto negKeySet : negKeySetSet)
+    {
+        negKeys.push_back(
+            std::accumulate(negKeySet.begin(), negKeySet.end(), 0, [](int acc, Remote::Key key) {
+                return acc |= 1 << static_cast<uint16_t>(key);
+            })
+        );
+    }
     initNegKeys(negKeys);
 }
 
@@ -200,7 +179,7 @@ bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
 bool operator==(const RemoteMapState &rms1, const RemoteMapState &rms2)
 {
     return rms1.lSwitch == rms2.lSwitch && rms1.rSwitch == rms2.rSwitch && rms1.keys == rms2.keys &&
-           rms1.negKeys == rms2.negKeys && rms1.lMouseButton == rms2.lMouseButton &&
+           rms1.negKeysSet == rms2.negKeysSet && rms1.lMouseButton == rms2.lMouseButton &&
            rms1.rMouseButton == rms2.rMouseButton;
 }
 
