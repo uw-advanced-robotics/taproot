@@ -22,6 +22,10 @@
 
 #include <cmath>
 
+#ifndef M_PI
+#define M_PI  3.14159265358979323846
+#endif
+
 namespace tap
 {
 namespace algorithms
@@ -43,14 +47,6 @@ class WrappedFloat
 public:
     WrappedFloat(const float value, const float lowerBound, const float upperBound);
 
-    /**
-     * Shifts the value so that it still represents the same position but is
-     * within the current bounds.
-     *
-     * @return the new value for chaining functions.
-     */
-    float wrapValue();
-
     /** Overloaded Operators */
 
     /**
@@ -60,7 +56,7 @@ public:
      * @param[in] other: The WrappedFloat to be added to `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void operator+= (WrappedFloat shiftWrappedFloat);
+    void operator+= (const WrappedFloat& other);
 
     /**
      * Subtracts a WrappedFloat from `this` WrappedFloat given they have the same lower and
@@ -69,7 +65,7 @@ public:
      * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void operator-= (WrappedFloat shiftWrappedFloat);
+    void operator-= (const WrappedFloat& other);
 
     /**
      * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
@@ -91,31 +87,22 @@ public:
      */
     WrappedFloat operator- (const WrappedFloat& other) const;
 
-    inline void operator*= (const float arg)
+    /**
+     * Scales WrappedFloat value relative to 0.
+     */
+    inline void operator*= (const float scale)
     {
-        this->setValue(arg * this->getValue());
-    }
-    inline void operator*= (const WrappedFloat& arg)
-    {
-        this->setValue(arg.getValue() * this->getValue());
-    }
-
-    inline void operator/= (const float arg)
-    {
-        this->setValue(this->getValue() / arg);
-    }
-    inline void operator/= (const WrappedFloat& arg)
-    {
-        this->setValue(this->getValue() / arg.getValue());
+        this->value_ = scale * this->value_;
+        wrapValue();
     }
 
-    inline void operator^= (const float arg)
+    /**
+     * Inversely scales WrappedFloat value relative to 0.
+    */
+    inline void operator/= (const float scale)
     {
-        this->setValue(powf(this->getValue(), arg));
-    }
-    inline void operator^= (const WrappedFloat& arg)
-    {
-        this->setValue(powf(this->getValue(), arg.getValue()));
+        this->value_ = this->value_ / scale;
+        wrapValue();
     }
 
     /**
@@ -149,16 +136,6 @@ public:
     WrappedFloat shiftDown(float shiftMagnitude) const;
 
     /**
-     * Computes the difference between a float and `this` WrappedFloat (other - this),
-     * accounting for wrapping. Treats the given 'other' value as a number within the same bounds
-     * as the `this` WrappedFloat.
-     *
-     * @param[in] other: The other value to compare against.
-     * @return: A new WrappedFloat holding the computed difference.
-     */
-    WrappedFloat minDifference(const float other) const;
-
-    /**
      * Computes the difference between another WrappedFloat and `this` WrappedFloat (other - this),
      * given they have the same lower and upper bounds.
      *
@@ -175,93 +152,34 @@ public:
      */
     void shiftBounds(const float shiftMagnitude);
 
-    /**
-     * Limits the passed WrappedFloat between the closest of the
-     * min or max value if outside the min and max value's wrapped range.
-     *
-     * The min and max must have the same wrapped bounds as the valueToLimit.
-     *
-     *
-     * For example given a value wrapped from -10 to 10, with the following
-     * conditions:
-     * - valueToLimit: 5, min: 1, max: 4, returns 4.
-     * - valueToLimit: 9, min: 1, max: 3, returns 1 (since valueToLimit is closest to 1).
-     * - valueToLimit: 9, min: 2, max: 1, returns 9 (since the range between min and max
-     *                 starts at 2, goes up to 9, then wraps around to 1).
-     *
-     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
-     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
-     *      valueToLimit will be limited below.
-     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
-     *      valueToLimit will be limited above.
-     * @param[out] status the status result (what operation the limitValue function performed). The
-     * status codes are described below:
-     *  - 0: No limiting performed
-     *  - 1: Limited to min value
-     *  - 2: Limited to max value
-     * @return the limited value.
-     */
-    static float limitValue(
-        const WrappedFloat& valueToLimit,
-        const WrappedFloat& min,
-        const WrappedFloat& max,
-        int* status);
-
-    /**
-     * Runs the limitValue function from above, wrapping the min and max passed in to
-     * the same bounds as those of valueToLimit's.
-     *
-     * @see limitValue.
-     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
-     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
-     *      valueToLimit will be limited below.
-     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
-     *      valueToLimit will be limited above.
-     * @param[out] status the status result (what operation the limitValue function performed). The
-     * status codes are described below:
-     *  - 0: No limiting performed
-     *  - 1: Limited to min value
-     *  - 2: Limited to max value
-     * @return the limited value.
-     */
-    static float limitValue(
-        const WrappedFloat& valueToLimit,
-        const float min,
-        const float max,
-        int* status);
-
     // Getters/Setters ----------------
 
     /**
      * Returns the wrapped value.
      */
-    float getValue() const;
+    inline float getValue() const { return value_; };
 
-    void setValue(const float newValue);
+    /**
+     * Sets the wrapped value.
+     */
+    inline void setValue(const float newValue)
+    {
+        this->value_ = newValue; wrapValue();
+    };
 
     /**
      * Returns the value's upper bound.
      */
-    float getUpperBound() const;
-
-    /**
-     * Sets the upper bound to newValue.
-     */
-    void setUpperBound(const float newValue);
+    inline float getUpperBound() const { return upperBound_; };
 
     /**
      * Returns the value's lower bound.
      */
-    float getLowerBound() const;
+    inline float getLowerBound() const { return lowerBound_; };
 
     /**
-     * Sets the lower bound to newValue.
-     */
-    void setLowerBound(const float newValue);
-
-    /**
-     * Maximum value between floats at which
-     * they're considered to be "equal".
+     * Maximum value between floats representing bounds at which
+     * they're considered to be "equal" for assertions.
     */
     static constexpr float EPSILON = 1E-8;
 
@@ -269,41 +187,33 @@ private:
     /**
      * The wrapped value.
      */
-    float value;
+    float value_;
 
     /**
      * The lower bound to wrap around.
      */
-    float lowerBound;
+    float lowerBound_;
     /**
      * The upper bound to wrap around.
      */
-    float upperBound;
+    float upperBound_;
 
     /**
-     * Flips the lower and upper bounds if the lower bound is larger than the
-     * upper bound.
+     * Helper function for wrapping value within bounds.
      */
-    void validateBounds();
-
-    /**
-     * Calculates a number representing the current value that is higher than
-     * (or equal to) the upper bound. Used to make normal numerical comparisons
-     * without needing to handle wrap cases.
-     *
-     * @return the computed value
-     */
-    float unwrapAbove() const;
-
-    /**
-     * Calculates a number representing the current value that is lower than (or
-     * equal to) the lower bound. Used to make normal numerical comparisons
-     * without needing to handle wrap cases.
-     *
-     * @return the computed value
-     */
-    float unwrapBelow() const;
+    void wrapValue();
 };  // class WrappedFloat
+
+/**
+ * Represents an angle in radians.
+ */
+class Angle : public WrappedFloat
+{
+public:
+    inline Angle(const float value) : WrappedFloat(value, -M_PI, M_PI)
+    {
+    };
+};
 
 }  // namespace algorithms
 

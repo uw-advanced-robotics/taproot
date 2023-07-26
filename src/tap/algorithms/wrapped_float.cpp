@@ -29,45 +29,31 @@ namespace tap
 namespace algorithms
 {
 WrappedFloat::WrappedFloat(const float value, const float lowerBound, const float upperBound)
+    : value_(value),
+      lowerBound_(lowerBound),
+      upperBound_(upperBound)
 {
-    this->value = value;
+    assert(upperBound_ > lowerBound_);
 
-    this->lowerBound = lowerBound;
-    this->upperBound = upperBound;
-
-    this->validateBounds();
     this->wrapValue();
 }
 
-float WrappedFloat::wrapValue()
-{
-    if (value < lowerBound)
-    {
-        value = upperBound + fmodf(value - lowerBound, upperBound - lowerBound);
-    }
-    else if (value > upperBound)
-    {
-        value = lowerBound + fmodf(value - upperBound, upperBound - lowerBound);
-    }
 
-    return value;
-}
-
-void WrappedFloat::operator+=(WrappedFloat other)
+void WrappedFloat::operator+=(const WrappedFloat& other)
 {
     assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
     assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
-    this->value = this->value + other.getValue();
+    this->value_ = this->value_ + other.value_;
     this->wrapValue();
 }
 
-void WrappedFloat::operator-=(WrappedFloat other)
+void WrappedFloat::operator-=(const WrappedFloat& other)
 {
     assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
     assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
-    this->value = this->value - other.getValue();
+    this->value_ = this->value_ - other.value_;
     this->wrapValue();
 }
 
@@ -93,33 +79,26 @@ WrappedFloat WrappedFloat::operator-(const WrappedFloat& other) const
 
 void WrappedFloat::shiftUpInPlace(float shiftMagnitude)
 {
-    this->value += shiftMagnitude;
+    this->value_ += shiftMagnitude;
     this->wrapValue();
 }
 
 void WrappedFloat::shiftDownInPlace(float shiftMagnitude)
 {
-    this->value -= shiftMagnitude;
+    this->value_ -= shiftMagnitude;
     this->wrapValue();
 }
 
 WrappedFloat WrappedFloat::shiftUp(float shiftMagnitude) const
 {
-    WrappedFloat temp = WrappedFloat(this->value + shiftMagnitude, this->lowerBound, this->upperBound);
-    temp.wrapValue();
+    WrappedFloat temp = WrappedFloat(this->value_ + shiftMagnitude, this->lowerBound_, this->upperBound_);
     return temp;
 }
 
 WrappedFloat WrappedFloat::shiftDown(float shiftMagnitude) const
 {
-    WrappedFloat temp = WrappedFloat(this->value - shiftMagnitude, this->lowerBound, this->upperBound);
-    temp.wrapValue();
+    WrappedFloat temp = WrappedFloat(this->value_ - shiftMagnitude, this->lowerBound_, this->upperBound_);
     return temp;
-}
-
-WrappedFloat WrappedFloat::minDifference(const float other) const
-{
-    return minDifference(WrappedFloat(other, lowerBound, upperBound));
 }
 
 WrappedFloat WrappedFloat::minDifference(const WrappedFloat& other) const
@@ -133,8 +112,8 @@ WrappedFloat WrappedFloat::minDifference(const WrappedFloat& other) const
     }
     else
     {
-        float diff = fabs(this->getValue() - other.getValue());
-        if (this->getValue() < other.getValue())
+        float diff = fabs(this->value_ - other.value_);
+        if (this->value_ < other.value_)
         {
             float left_range = this->getValue() - this->getLowerBound();
             float right_range = other.getValue() - this->getUpperBound();
@@ -163,97 +142,22 @@ WrappedFloat WrappedFloat::minDifference(const WrappedFloat& other) const
 
 void WrappedFloat::shiftBounds(const float shiftMagnitude)
 {
-    upperBound += shiftMagnitude;
-    lowerBound += shiftMagnitude;
+    upperBound_ += shiftMagnitude;
+    lowerBound_ += shiftMagnitude;
     wrapValue();
 }
 
-float WrappedFloat::limitValue(
-    const WrappedFloat& valueToLimit,
-    const float min,
-    const float max,
-    int* status)
-{
-    WrappedFloat minContig(min, valueToLimit.lowerBound, valueToLimit.upperBound);
-    WrappedFloat maxContig(max, valueToLimit.lowerBound, valueToLimit.upperBound);
-    return limitValue(valueToLimit, minContig, maxContig, status);
-}
+/* Private methods */
 
-float WrappedFloat::limitValue(
-    const WrappedFloat& valueToLimit,
-    const WrappedFloat& min,
-    const WrappedFloat& max,
-    int* status)
+void WrappedFloat::wrapValue()
 {
-    if (min.getValue() == max.getValue())
+    if (value_ < lowerBound_)
     {
-        return valueToLimit.getValue();
+        value_ = upperBound_ + fmodf(value_ - lowerBound_, upperBound_ - lowerBound_);
     }
-    if ((min.getValue() < max.getValue() &&
-         (valueToLimit.getValue() > max.getValue() || valueToLimit.getValue() < min.getValue())) ||
-        (min.getValue() > max.getValue() && valueToLimit.getValue() > max.getValue() &&
-         valueToLimit.getValue() < min.getValue()))
+    else if (value_ > upperBound_)
     {
-        WrappedFloat targetMinDifference = valueToLimit.minDifference(min);
-        WrappedFloat targetMaxDifference = valueToLimit.minDifference(max);
-
-        if (targetMinDifference.getValue() < targetMaxDifference.getValue())
-        {
-            *status = 1;
-            return min.getValue();
-        }
-        else
-        {
-            *status = 2;
-            return max.getValue();
-        }
-    }
-    else
-    {
-        *status = 0;
-        return valueToLimit.getValue();
-    }
-}
-
-// Getters/Setters ----------------
-// Value
-float WrappedFloat::getValue() const { return value; }
-
-void WrappedFloat::setValue(const float newValue)
-{
-    value = newValue;
-    this->wrapValue();
-}
-
-// Upper bound
-float WrappedFloat::getUpperBound() const { return upperBound; }
-
-void WrappedFloat::setUpperBound(const float newValue)
-{
-    upperBound = newValue;
-
-    this->validateBounds();
-    this->wrapValue();
-}
-
-// Lower bound
-float WrappedFloat::getLowerBound() const { return lowerBound; }
-
-void WrappedFloat::setLowerBound(const float newValue)
-{
-    lowerBound = newValue;
-
-    this->validateBounds();
-    this->wrapValue();
-}
-
-void WrappedFloat::validateBounds()
-{
-    if (lowerBound > upperBound)
-    {
-        float tmp = this->lowerBound;
-        this->lowerBound = this->upperBound;
-        this->upperBound = tmp;
+        value_ = lowerBound_ + fmodf(value_ - upperBound_, upperBound_ - lowerBound_);
     }
 }
 

@@ -92,7 +92,7 @@ TEST(WrappedFloat, Shifting_up)
     EXPECT_EQ(-130, testInstance.getValue());
 }
 
-TEST(WrappedFloat, Shifting_down)
+TEST(WrappedFloat, shifting_down)
 {
     WrappedFloat testInstance(150, -180, 180);
 
@@ -109,7 +109,7 @@ TEST(WrappedFloat, Shifting_down)
     EXPECT_EQ(-130, testInstance.getValue());
 }
 
-TEST(WrappedFloat, Bad_bounds)
+TEST(WrappedFloat, bad_bounds)
 {
     WrappedFloat testInstance(150, 180, -180);
     EXPECT_EQ(-180, testInstance.getLowerBound());
