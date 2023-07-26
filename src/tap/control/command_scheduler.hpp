@@ -123,9 +123,9 @@ public:
 
     /**
      * Calls the `initialize()` function for all Subsystems.
-     * 
+     *
      * @warning only call if this is the master scheduler.
-    */
+     */
     mockable void initializeSubsystems();
 
     /**
