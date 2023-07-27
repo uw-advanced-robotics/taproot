@@ -166,6 +166,27 @@ TEST(CommandScheduler, registerSubsystem_big_batch_subsystem_assertion_succeeds)
     }
 }
 
+TEST(CommandScheduler, initializeSubsystems_multiple_subsystems_initialized)
+{
+    // Given
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    SubsystemMock sub1(&drivers);
+    SubsystemMock sub2(&drivers);
+    SubsystemMock sub3(&drivers);
+
+    // Expect
+    EXPECT_CALL(sub1, initialize);
+    EXPECT_CALL(sub2, initialize);
+    EXPECT_CALL(sub3, initialize);
+
+    // When
+    scheduler.registerSubsystem(&sub1);
+    scheduler.registerSubsystem(&sub2);
+    scheduler.registerSubsystem(&sub3);
+    scheduler.initializeSubsystems();
+}
+
 TEST(CommandScheduler, isSubsystemRegistered_returns_true_if_registered)
 {
     Drivers drivers;
