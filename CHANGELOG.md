@@ -4,7 +4,8 @@
 
 ### Architecture
 
- - All subsystems registered to the master command scheduler can be initialized using the command scheduler's `initializeSubsystems` method.
+- All subsystems registered to the master command scheduler can be initialized using the command scheduler's `initializeSubsystems` method.
+- Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
 
 ## June 2023
 
