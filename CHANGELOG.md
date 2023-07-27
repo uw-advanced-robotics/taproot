@@ -1,13 +1,12 @@
 # Taproot Changelog
 
-<<<<<<< HEAD
 ## July 2023
 
 ### Architecture
 
  - All subsystems registered to the master command scheduler can be initialized using the command scheduler's `initializeSubsystems` method.
-=======
-## Summer 2023 (Post-RMNA)
+
+## June 2023
 
 ### Breaking Changes
 - SafeDisconnect mode is now handled with `refreshSafeDisconnect`, which is run instead of `refresh` when in SafeDisconnect.
@@ -22,7 +21,6 @@
 - `CMSISMat` now has negate and scale operators
 - `Can` classes are now protected instead of private
 - `taproot-scripts` submodule has been updated so that different taproot branches can be tracked instead of just `release` or `develop`  
->>>>>>> develop
 
 ## April 2023
 
