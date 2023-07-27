@@ -1,6 +1,10 @@
 # Taproot Changelog
 
-## Summer 2023 (Post-RMNA)
+## July 2023
+
+- Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
+
+## June 2023
 
 ### Breaking Changes
 - SafeDisconnect mode is now handled with `refreshSafeDisconnect`, which is run instead of `refresh` when in SafeDisconnect.
