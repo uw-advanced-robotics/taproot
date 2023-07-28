@@ -30,10 +30,6 @@ namespace tap::algorithms::transforms
 template <const Frame& SOURCE, const Frame& TARGET>
 class Transform;
 
-// Forward declaration for inertial_transform.hpp
-template <const Frame& SOURCE, const Frame& TARGET>
-class InertialTransform;
-
 // Forward declaration for vector.hpp
 template <const Frame& FRAME>
 class Vector;

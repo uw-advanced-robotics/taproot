@@ -55,7 +55,7 @@ struct CMSISMat
      */
     CMSISMat(const CMSISMat &other) : matrix{ROWS, COLS, data.data()}
     {
-        memcpy(&this->data, &other->data, sizeof(this->data));
+        memcpy(&this->data, &other.data, sizeof(this->data));
     }
 
     // Move semantics.
@@ -114,14 +114,14 @@ struct CMSISMat
         return true;
     }
 
-    inline CMSISMat<COLS, ROWS> inverse()
+    inline CMSISMat<COLS, ROWS> inverse() const
     {
         CMSISMat<COLS, ROWS> ret;
         assert(ARM_MATH_SUCCESS == arm_mat_inverse_f32(&this->matrix, &ret.matrix));
         return ret;
     }
 
-    inline CMSISMat<COLS, ROWS> transpose()
+    inline CMSISMat<COLS, ROWS> transpose() const
     {
         CMSISMat<COLS, ROWS> ret;
         assert(ARM_MATH_SUCCESS == arm_mat_trans_f32(&this->matrix, &ret.matrix));
@@ -164,7 +164,7 @@ inline CMSISMat<ROWS, COLS> operator-(const CMSISMat<ROWS, COLS> &a)
 {
     float scale(-1);
     CMSISMat<ROWS, COLS> c;
-    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &scale, &c.matrix));
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, scale, &c.matrix));
     return c;
 }
 
