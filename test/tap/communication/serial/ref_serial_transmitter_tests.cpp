@@ -183,6 +183,23 @@ TEST_F(RefSerialTransmitterTest, deleteGraphicLayer__doesnt_send_if_robot_id_inv
     refSerialTransmitter.deleteGraphicLayer(op, 1);
 }
 
+TEST_F(RefSerialTransmitterTest, deleteGraphicLayer__blocks_on_transmission_semaphore)
+{
+    robotData.robotId = RefSerial::RobotId::RED_SOLDIER_3;
+
+
+    ON_CALL(drivers.refSerial, acquireTransmissionSemaphore)
+        .Times(2)
+        .WillOnce(Returns(false))
+        .WillRepeatedly(Returns(true));
+
+    EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_));
+
+    refSerialTransmitter.deleteGraphicLayer(
+        RefSerialData::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER,
+        2);
+}
+
 TEST_F(RefSerialTransmitterTest, deleteGraphicLayer__sends_correct_msg)
 {
     robotData.robotId = RefSerial::RobotId::RED_SOLDIER_3;
@@ -222,7 +239,7 @@ TEST_F(RefSerialTransmitterTest, deleteGraphicLayer__sends_correct_msg)
             return length;
         });
 
-    EXPECT_CALL(drivers.refSerial, acquireTransmissionSemaphore);
+    EXPECT_CALL(drivers.refSerial, acquireTransmissionSemaphore).WillRepeatedly(Returns(true));
 
     refSerialTransmitter.deleteGraphicLayer(
         RefSerialData::Tx::DeleteGraphicOperation::DELETE_GRAPHIC_LAYER,
@@ -235,7 +252,7 @@ TEST_F(RefSerialTransmitterTest, deleteGraphicLayer__releases_lock)
     robotData.robotId = RefSerial::RobotId::RED_SOLDIER_3;
 
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, testing::_));
-    EXPECT_CALL(drivers.refSerial, acquireTransmissionSemaphore);
+    EXPECT_CALL(drivers.refSerial, acquireTransmissionSemaphore).WillRepeatedly(Returns(true));
     EXPECT_CALL(drivers.refSerial, releaseTransmissionSemaphore);
 
     refSerialTransmitter.deleteGraphicLayer(
@@ -423,6 +440,7 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__locks_and_releases_tra
     bool lockAcquired = false;
     EXPECT_CALL(drivers.refSerial, acquireTransmissionSemaphore).WillOnce([&]() {
         lockAcquired = true;
+        return true;
     });
     EXPECT_CALL(drivers.refSerial, releaseTransmissionSemaphore).WillOnce([&]() {
         lockAcquired = false;
