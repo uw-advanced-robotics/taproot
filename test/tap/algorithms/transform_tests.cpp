@@ -209,7 +209,7 @@ TEST(Transform, transform_compose_with_inverse_yields_identity)
     Transform<A, B> transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Transform<A, A> composed = transform.compose(transform.getInverse());
+    Transform<A, A> composed = transform.compose<A>(transform.getInverse());
 
     // Then
     Transform<A, A> identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);

@@ -3,6 +3,15 @@
 ## July 2023
 
 - Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
+- `CMSISMat` supports costly copy constructor/assignment
+
+### Transforms Library: A super typesafe way to transform positions/orientations across coordinate systems
+
+- `Frame` class for which instantiations represent a coordinate system.
+- `Position` class and `Vector` class which represents a difference in `Position`s, both of which are templates over `const Frame&` instances.
+  - Only `Position`s and `Vector`s of the same `Frame` instance can be added together.
+- `Orientation` class and `Pose` class, also templates over `const Frame&` instances.
+- `Transform` class which is a template over a source and target `Frame` and can transform the above dataclasses from source to target.
 
 ## June 2023
 
