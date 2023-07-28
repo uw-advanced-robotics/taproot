@@ -263,7 +263,6 @@ public:
 
 private:
     tap::Drivers* drivers;
-    tap::arch::MilliTimeout delayTimer;
     Tx::DeleteGraphicLayerMessage deleteGraphicLayerMessage;
 
     /**

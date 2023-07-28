@@ -224,16 +224,14 @@ modm::ResumableResult<void> RefSerialTransmitter::deleteGraphicLayer(
         reinterpret_cast<uint8_t*>(&deleteGraphicLayerMessage),
         sizeof(Tx::DeleteGraphicLayerMessage) - sizeof(deleteGraphicLayerMessage.crc16));
 
-    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
         reinterpret_cast<uint8_t*>(&deleteGraphicLayerMessage),
         sizeof(Tx::DeleteGraphicLayerMessage));
 
-    drivers->refSerial.releaseTransmissionSemaphore();
-
-    delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(&deleteGraphicLayerMessage));
+    drivers->refSerial.releaseTransmissionSemaphore(sizeof(Tx::DeleteGraphicOperation));
 
     RF_END();
 }
@@ -277,13 +275,14 @@ modm::ResumableResult<void> RefSerialTransmitter::sendGraphic_(
     }
     if (sendMsg)
     {
-        RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
+        RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
+
         drivers->uart.write(
             bound_ports::REF_SERIAL_UART_PORT,
             reinterpret_cast<uint8_t*>(graphicMsg),
             sizeof(*graphicMsg));
-        delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(graphicMsg));
-        drivers->refSerial.releaseTransmissionSemaphore();
+
+        drivers->refSerial.releaseTransmissionSemaphore(sizeof(GRAPHIC));
     }
     RF_END();
 }
@@ -419,16 +418,15 @@ modm::ResumableResult<void> RefSerialTransmitter::sendRobotToRobotMsg(
             reinterpret_cast<uint8_t*>(robotToRobotMsg),
             FULL_MSG_SIZE_LESS_MSGLEN + msgLen);
 
-    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore() && (delayTimer.isExpired() || delayTimer.isStopped()));
+    RF_WAIT_UNTIL(drivers->refSerial.acquireTransmissionSemaphore());
 
     drivers->uart.write(
         bound_ports::REF_SERIAL_UART_PORT,
-        reinterpret_cast<uint8_t*>(&robotToRobotMsg),
+        reinterpret_cast<uint8_t*>(robotToRobotMsg),
         FULL_MSG_SIZE_LESS_MSGLEN + msgLen + sizeof(uint16_t));
 
-    delayTimer.restart(Tx::getWaitTimeAfterGraphicSendMs(robotToRobotMsg));
-
-    drivers->refSerial.releaseTransmissionSemaphore();
+    drivers->refSerial.releaseTransmissionSemaphore(
+        FULL_MSG_SIZE_LESS_MSGLEN + msgLen + sizeof(uint16_t));
 
     RF_END();
 }
