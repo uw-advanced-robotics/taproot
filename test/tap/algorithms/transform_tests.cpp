@@ -203,29 +203,21 @@ TEST(Transform, transform_apply_to_source_origin_position)
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
 }
 
-// Raises compiletime error
-// TEST(Transform, aghghg)
-// {
-//     Transform<A, B> transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-//     Position<B> position(0.0, 0.0, 0.0);
-//     transform.apply(position);
-// }
+TEST(Transform, transform_compose_with_inverse_yields_identity)
+{
+    // Given
+    Frame A, B;
+    Transform<A, B> transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
-// TEST(Transform, transform_compose_with_inverse_yields_identity)
-// {
-//     // Given
-//     Frame A, B;
-//     Transform<A, B> transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
+    // When
+    Transform<A, A> composed = transform.compose(transform.getInverse());
 
-//     // When
-//     Transform<A, A> composed = transform.compose(transform.getInverse());
-
-//     // Then
-//     Transform<A, A> identity;
-//     EXPECT_NEAR(identity.getTranslation().x(), composed.getTranslation().x(), 1E-5);
-//     EXPECT_NEAR(identity.getTranslation().y(), composed.getTranslation().y(), 1E-5);
-//     EXPECT_NEAR(identity.getTranslation().z(), composed.getTranslation().z(), 1E-5);
-//     EXPECT_NEAR(identity.getRotation().roll(), composed.getRotation().roll(), 1E-5);
-//     EXPECT_NEAR(identity.getRotation().pitch(), composed.getRotation().pitch(), 1E-5);
-//     EXPECT_NEAR(identity.getRotation().yaw(), composed.getRotation().yaw(), 1E-5);
-// }
+    // Then
+    Transform<A, A> identity;
+    EXPECT_NEAR(identity.getTranslation().x(), composed.getTranslation().x(), 1E-5);
+    EXPECT_NEAR(identity.getTranslation().y(), composed.getTranslation().y(), 1E-5);
+    EXPECT_NEAR(identity.getTranslation().z(), composed.getTranslation().z(), 1E-5);
+    EXPECT_NEAR(identity.getRotation().roll(), composed.getRotation().roll(), 1E-5);
+    EXPECT_NEAR(identity.getRotation().pitch(), composed.getRotation().pitch(), 1E-5);
+    EXPECT_NEAR(identity.getRotation().yaw(), composed.getRotation().yaw(), 1E-5);
+}

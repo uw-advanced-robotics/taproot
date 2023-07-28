@@ -44,8 +44,6 @@ class Position
     friend class Vector<FRAME>;
     template <const Frame& SOURCE, const Frame& TARGET>
     friend class Transform;
-    template <const Frame& SOURCE, const Frame& TARGET>
-    friend class InertialTransform;
 
 public:
     /* Constructors */
