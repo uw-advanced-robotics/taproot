@@ -31,7 +31,7 @@ void HoldRepeatCommandMapping::executeCommandMapping(const RemoteMapState &currS
     // keys are not pressed, schedule or reschedule command
     // see `RemoteMapState` class comment if confused about neg keys
     if (mappingSubset(currState) &&
-        !(mapState.getNegKeysUsed() && negKeysSubset(mapState, currState)))
+        !(mapState.getIsNegKeysUsed() && negKeysSubset(mapState, currState)))
     {
         for (std::size_t i = 0; i < mappedCommands.size(); i++)
         {

@@ -30,9 +30,9 @@ namespace tap
 namespace control
 {
 /**
- * A class to be used in conjunction with a CommandMapping to be placed in
- * the CommandMapper. A particular RemoteMapState is used to capture a sequence
- * of user inputs that must be triggered for a Command to be scheduled.
+ * A class to be used in conjunction with a CommandMapping to be placed in the CommandMapper. A
+ * particular RemoteMapState is used to represent a specific user inputs that must be triggered
+ * for a Command to be scheduled.
  *
  * To use this class, when possible use one of the constructors provided below
  * to create a mapping. We have the ability to map any combination of remote
@@ -72,7 +72,9 @@ public:
      * @param[in] rightss The switch state for the right switch. If `UNKNOWN`, the switch state will
      * not be initialized.
      * @param[in] keySet The set of keys to use for initialization.
-     * @param[in] negKeySet The set of set of keys to be used as negations in the RemoteMapState.
+     * @param[in] negKeySetSet The set of set of keys to be used as negations in the
+     * RemoteMapState. If any of these negKeySets are matched, then the RemoteMapState is not
+     * satisfied.
      * @param[in] mouseButtonLeftPressed Initialize the RemoteMapState to match a remote map state
      * when the left mouse button is pressed.
      * @param[in] mouseButtonRightPressed Initialize the RemoteMapState to match a remote map state
@@ -84,7 +86,7 @@ public:
         tap::communication::serial::Remote::SwitchState leftss,
         tap::communication::serial::Remote::SwitchState rightss,
         const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySet,
+        const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySetSet,
         bool mouseButtonLeftPressed,
         bool mouseButtonRightPressed);
 
@@ -120,7 +122,7 @@ public:
      */
     RemoteMapState(
         const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
+        const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySetSet = {});
 
     /**
      * Initializes a RemoteMapState with a particular mouse button and set of keys and
@@ -135,7 +137,7 @@ public:
     RemoteMapState(
         RemoteMapState::MouseButton button,
         const std::list<tap::communication::serial::Remote::Key> &keySet,
-        const std::lsit<std::list<tap::communication::serial::Remote::Key>> &negKeySet = {});
+        const std::list<std::list<tap::communication::serial::Remote::Key>> &negKeySetSet = {});
 
     /**
      * Initializes a RemoteMapState that will use the given mouse button (either left or
@@ -162,15 +164,15 @@ public:
     void initKeys(uint16_t keys);
 
     /**
-     * Initializes the neg keys to the bit mapped set of neg keys provided.
+     * @see `initKeys`. Interprets the list and passes that on as a bit map of keys.
+     */
+    void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet);
+
+    /**
+     * Initializes the neg keys to the bit map of neg keys provided.
      * @note `negKeysSet` must be mutally exclusive with any set of `keys` already provided.
      */
     void initNegKeys(std::list<uint16_t> negKeysSet);
-
-    /**
-     * @see `initKeys`. Interprets the list and passes that on as a bit mapped set of keys.
-     */
-    void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet);
 
     /**
      * @see `initNegKeys`. Interprets the list and passes that on as a bit mapped set of keys.
@@ -226,12 +228,12 @@ public:
     /**
      * @return The negKeysSet currently being used.
      */
-    std::list<uint16_t> getNegKeys() const { return negKeysSet; }
+    std::list<uint16_t> getNegKeysSet() const { return negKeysSet; }
 
     /**
      * @return `true` if the neg key set has been initialized, `false` otherwise.
      */
-    bool getNegKeysUsed() const { return negKeysSet.size() != 0; }
+    bool getIsNegKeysUsed() const { return negKeysSet.size() != 0; }
 
     /**
      * @return the current keys initialized in the `RemoteMapState`.
@@ -260,6 +262,8 @@ private:
     bool lMouseButton = false;
 
     bool rMouseButton = false;
+
+    uint16_t keySetToBitmap(std::list<tap::communication::serial::Remote::Key> keySet);
 };  // class RemoteState
 }  // namespace control
 }  // namespace tap

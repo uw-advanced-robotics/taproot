@@ -31,7 +31,7 @@ TEST(RemoteMapState, default_constructor_default_remote_state)
 
     EXPECT_EQ(0, ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -44,7 +44,7 @@ TEST(RemoteMapState, single_switchstate_constructor_only_switchstate_initialized
 
     EXPECT_EQ(0, ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -57,7 +57,7 @@ TEST(RemoteMapState, two_switchstate_constructor_only_switchstates_initialized)
 
     EXPECT_EQ(0, ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UP, ms.getRSwitch());
@@ -72,7 +72,7 @@ TEST(RemoteMapState, keyset_constructor_only_keyset_initialized)
         (1 << static_cast<int>(Remote::Key::A)) | (1 << static_cast<int>(Remote::Key::B)),
         ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -89,7 +89,7 @@ TEST(RemoteMapState, keyset_negkeyset_constructor_only_keyset_negkeyset_initiali
     EXPECT_EQ(
         (1 << static_cast<int>(Remote::Key::C)) | (1 << static_cast<int>(Remote::Key::D)),
         ms.getNegKeys());
-    EXPECT_EQ(true, ms.getNegKeysUsed());
+    EXPECT_EQ(true, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -102,7 +102,7 @@ TEST(RemoteMapState, equal_keyset_negkeyset_in_constructor_fails)
 
     EXPECT_EQ(1, ms.getKeys());
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -117,7 +117,7 @@ TEST(RemoteMapState, intersecting_keyset_negkeyset_in_constructor_fails)
         ms.getKeys());
 
     EXPECT_EQ(0, ms.getNegKeys());
-    EXPECT_EQ(false, ms.getNegKeysUsed());
+    EXPECT_EQ(false, ms.getIsNegKeysUsed());
     EXPECT_EQ(false, ms.getRMouseButton());
     EXPECT_EQ(false, ms.getLMouseButton());
     EXPECT_EQ(Remote::SwitchState::UNKNOWN, ms.getRSwitch());
@@ -154,7 +154,7 @@ TEST(RemoteMapState, initNegkeys_sets_negkeyset)
     ms.initNegKeys(42);
 
     EXPECT_EQ(42, ms.getNegKeys());
-    EXPECT_EQ(true, ms.getNegKeysUsed());
+    EXPECT_EQ(true, ms.getIsNegKeysUsed());
 }
 
 TEST(RemoteMapState, initLMouseButton_sets_lMouseButton)

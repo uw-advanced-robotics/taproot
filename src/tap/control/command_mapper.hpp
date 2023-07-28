@@ -73,6 +73,9 @@ public:
      * Iterates through all the current mappings to see which buttons are pressed
      * in order to determine which commands should be added to or removed from the scheduler.
      * Call when new remote information has been received.
+     * 
+     * @todo at least I found the name very confusing since keyStateChange seems to imply that it's
+     * only called if the keys being pressed change.
      */
     mockable void handleKeyStateChange(
         uint16_t key,

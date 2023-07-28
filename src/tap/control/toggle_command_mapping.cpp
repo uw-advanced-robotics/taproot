@@ -36,7 +36,7 @@ void ToggleCommandMapping::executeCommandMapping(const RemoteMapState &currState
         pressed = false;
     }
 
-    if (mapState.getNegKeysUsed() && negKeysSubset(mapState, currState))
+    if (mapState.getIsNegKeysUsed() && negKeysSubset(mapState, currState))
     {
         if (toggled)
         {

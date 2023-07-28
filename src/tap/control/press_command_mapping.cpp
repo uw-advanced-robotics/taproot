@@ -26,7 +26,7 @@ namespace control
 void PressCommandMapping::executeCommandMapping(const RemoteMapState &currState)
 {
     if (mappingSubset(currState) &&
-        !(mapState.getNegKeysUsed() && negKeysSubset(mapState, currState)))
+        !(mapState.getIsNegKeysUsed() && negKeysSubset(mapState, currState)))
     {
         if (!pressed)
         {
