@@ -1,5 +1,25 @@
 # Taproot Changelog
 
+## July 2023
+
+- Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
+
+## June 2023
+
+### Breaking Changes
+- SafeDisconnect mode is now handled with `refreshSafeDisconnect`, which is run instead of `refresh` when in SafeDisconnect.
+  - SafeDisconnect will still deschedule all commands when it is entered
+  - Fix: All subsystems must now override `refresh` and `refreshSafeDisconnect`
+- `ChassisSubsystemInterface` no longer has a `get\[Left/Right\]\[Front/Back\]RPM()` method
+  - Fix: Remove `override` from these method headers  
+
+### New Features
+- `MotorInterface`s can now have their motor encoder values zero'd
+- `BilinearInterpolator`: Can interpolate between values within a map of `<(x,y), VALUE>`
+- `CMSISMat` now has negate and scale operators
+- `Can` classes are now protected instead of private
+- `taproot-scripts` submodule has been updated so that different taproot branches can be tracked instead of just `release` or `develop`  
+
 ## April 2023
 
 ### Breaking changes
