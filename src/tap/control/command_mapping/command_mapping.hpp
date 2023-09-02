@@ -22,11 +22,10 @@
 
 #include <vector>
 
-#include "remote_map_state.hpp"
+#include "tap/control/remote_map_state.hpp"
+#include "tap/control/command_mapping/boolean_remote_mapping.hpp"
 
-namespace tap
-{
-namespace control
+namespace tap::control::command_mapping
 {
 class Command;
 /**
@@ -52,7 +51,7 @@ public:
      * @param[in] rms The map state that will be compared to the actual remote state
      *      to determine whether or not to add `cmds`.
      */
-    CommandMapping(Drivers *drivers, const std::vector<Command *> cmds, const RemoteMapState &rms);
+    CommandMapping(Drivers *drivers, const std::vector<Command *> cmds, const BooleanRemoteMapping);
 
     DISALLOW_COPY_AND_ASSIGN(CommandMapping)
 
@@ -127,7 +126,6 @@ protected:
      */
     bool noCommandsScheduled() const;
 };  // class CommandMapping
-}  // namespace control
-}  // namespace tap
+}  // namespace tap::control::command_mapping
 
 #endif  // TAPROOT_COMMAND_MAPPING_HPP_
