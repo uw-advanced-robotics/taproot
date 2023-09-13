@@ -14,8 +14,6 @@ class JoystickAnalogRemoteMapping : public AnalogRemoteMapping
 {
 public:
     inline JoystickAnalogRemoteMapping(const tap::communication::serial::Remote& remote, const tap::communication::serial::Remote::Channel channel) : remote(remote), channel(channel) {}
-    inline float getMax() const { return 1.0f; }
-    inline float getMin() const { return -1.0f; }
     inline float getValue() const
     {
         return remote.getChannel(channel);

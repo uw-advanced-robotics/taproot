@@ -24,6 +24,7 @@
 #include <list>
 
 #include "tap/communication/serial/remote.hpp"
+#include "tap/control/command_mapping/boolean_remote_mapping.hpp"
 
 namespace tap
 {
@@ -48,7 +49,7 @@ namespace control
  *      the state of the RemoteMapState is, the RemoteMapState is no longer
  *      satisfied.
  */
-class RemoteMapState
+class RemoteMapState : public command_mapping::BooleanInput
 {
 public:
     /**

@@ -54,8 +54,7 @@ public:
     virtual ~Subsystem();
 
     /**
-     * Called once when you add the Subsystem to the commandScheduler stored in the
-     * Drivers class.
+     * Called once on all registered Subsystems in the CommandScheduler.
      */
     virtual void initialize() {}
 

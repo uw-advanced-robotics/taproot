@@ -125,6 +125,7 @@ public:
      * Calls the `initialize()` function for all Subsystems.
      *
      * @warning only call if this is the master scheduler.
+     * @warning only call once.
      */
     mockable void initializeSubsystems();
 
@@ -386,6 +387,8 @@ private:
     bool isMasterScheduler = false;
 
     bool runningHardwareTests = false;
+
+    bool subsystemsInitialized = false;
 };  // class CommandScheduler
 
 }  // namespace control

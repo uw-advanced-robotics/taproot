@@ -163,16 +163,17 @@ CommandScheduler::~CommandScheduler()
 
 void CommandScheduler::initializeSubsystems()
 {
-    if (isMasterScheduler)
-    {
-        for (auto it = subMapBegin(); it != subMapEnd(); it++)
-        {
-            (*it)->initialize();
-        }
-    }
-    else
+    if (!isMasterScheduler)
     {
         RAISE_ERROR(drivers, "attempted to initialize subsystems using non-master scheduler");
+    }
+    if (subsystemsInitialized)
+    {
+        RAISE_ERROR(drivers, "attempted to initialize subsystems more than once");
+    }
+    for (auto it = subMapBegin(); it != subMapEnd(); it++)
+    {
+        (*it)->initialize();
     }
 }
 

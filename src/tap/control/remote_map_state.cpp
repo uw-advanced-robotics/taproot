@@ -110,7 +110,7 @@ void RemoteMapState::initKeys(uint16_t keys)
 {
     for (auto const& negKeys : this->negKeysSet)
     {
-        assert((negKeys & keys) != 0)
+        RAISE_ERROR((negKeys & keys) != 0);
     }
     this->keys = keys;
 }
@@ -119,7 +119,7 @@ void RemoteMapState::initNegKeys(std::list<uint16_t> negKeysSet)
 {
     for (auto const& negKeys : negKeysSet)
     {
-        assert((this->keys & negKeys) == 0);
+        R((this->keys & negKeys) == 0);
     }
     this->negKeysSet = negKeysSet;
 }
