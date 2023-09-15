@@ -390,6 +390,24 @@ TEST_F(RefSerialTransmitterTest, sendGraphic__characterMessage)
     refSerialTransmitter.sendGraphic(&msg);
 }
 
+TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails_to_send)
+{
+    robotData.robotId = RefSerial::RobotId::INVALID;
+
+    RefSerialData::Tx::RobotToRobotMessage msg{};
+
+    EXPECT_CALL(drivers.errorController, addToErrorList)
+        .Times(2)
+        .WillRepeatedly([](const tap::errors::SystemError &error) {
+            EXPECT_TRUE(errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
+        });
+
+    EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
+
+    refSerialTransmitter.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 1);
+    refSerialTransmitter.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 1);
+}
+
 TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__invalid_id_fails_to_send)
 {
     // Given

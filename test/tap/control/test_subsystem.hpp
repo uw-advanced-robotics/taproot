@@ -31,6 +31,7 @@ class TestSubsystem : public tap::control::Subsystem
 public:
     TestSubsystem(tap::Drivers *drivers) : tap::control::Subsystem(drivers) {}
     void refresh() override {}
+    void refreshSafeDisconnect() override {}
 };
 }  // namespace control
 }  // namespace tap

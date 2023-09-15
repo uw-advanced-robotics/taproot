@@ -85,6 +85,8 @@ public:
         /// The type of game the robot is competing in.
         enum class GameType : uint8_t
         {
+            UNKNOWN = 0,                  ///< Unknown competition type (most likely disconnected
+                                          ///< from server).
             ROBOMASTER_COMPETITIONS = 1,  ///< Generic robomaster competition (none of the below
                                           ///< comps).
             ROBOMASTER_RMUTC = 2,         ///< RoboMaster technical challenge.

@@ -22,6 +22,7 @@
 #include "tap/architecture/clock.hpp"
 #include "tap/control/command.hpp"
 #include "tap/control/command_scheduler.hpp"
+#include "tap/control/comprised_command.hpp"
 #include "tap/drivers.hpp"
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
@@ -163,6 +164,27 @@ TEST(CommandScheduler, registerSubsystem_big_batch_subsystem_assertion_succeeds)
         delete subsystemArrToRegister[i];
         delete subsystemArrNotToRegister[i];
     }
+}
+
+TEST(CommandScheduler, initializeSubsystems_multiple_subsystems_initialized)
+{
+    // Given
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    SubsystemMock sub1(&drivers);
+    SubsystemMock sub2(&drivers);
+    SubsystemMock sub3(&drivers);
+
+    // Expect
+    EXPECT_CALL(sub1, initialize);
+    EXPECT_CALL(sub2, initialize);
+    EXPECT_CALL(sub3, initialize);
+
+    // When
+    scheduler.registerSubsystem(&sub1);
+    scheduler.registerSubsystem(&sub2);
+    scheduler.registerSubsystem(&sub3);
+    scheduler.initializeSubsystems();
 }
 
 TEST(CommandScheduler, isSubsystemRegistered_returns_true_if_registered)
@@ -1119,17 +1141,20 @@ TEST(CommandScheduler, run_command_ends_when_remote_disconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
-    NiceMock<CommandMock> c;
     SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
+    NiceMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(c, end);
-    EXPECT_CALL(s, refresh);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
-    scheduler.registerSubsystem(&s);
+    EXPECT_CALL(c, end);
+    EXPECT_CALL(s, refreshSafeDisconnect);
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
     scheduler.addCommand(&c);
+
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 }
@@ -1140,22 +1165,25 @@ TEST(CommandScheduler, run_multiple_commands_end_after_remote_disconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
+    SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
     NiceMock<CommandMock> c1;
     NiceMock<CommandMock> c2;
-    SubsystemMock s(&drivers);
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c1, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
     ON_CALL(c2, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(s, refresh);
+
     EXPECT_CALL(c1, end);
     EXPECT_CALL(c2, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
+    EXPECT_CALL(s, refreshSafeDisconnect);
 
-    scheduler.registerSubsystem(&s);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
     scheduler.addCommand(&c1);
     scheduler.addCommand(&c2);
+
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 }
@@ -1166,19 +1194,23 @@ TEST(CommandScheduler, run_command_when_remote_reconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
-    NiceMock<CommandMock> c;
     SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
+    NiceMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    EXPECT_CALL(s, refresh).Times(3);
+
     EXPECT_CALL(c, initialize).Times(2);
+    EXPECT_CALL(s, refreshSafeDisconnect).Times(1);
+    EXPECT_CALL(s, refresh).Times(2);
     EXPECT_CALL(c, execute).Times(2);
     EXPECT_CALL(c, end);
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
 
-    scheduler.registerSubsystem(&s);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
     scheduler.addCommand(&c);
+
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 
@@ -1194,20 +1226,24 @@ TEST(CommandScheduler, default_command_added_when_remote_reconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
-    StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
+    StrictMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
+
     EXPECT_CALL(c, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     EXPECT_CALL(s, getDefaultCommand).WillOnce(Return(&c));
     EXPECT_CALL(c, isReady).WillOnce(Return(true));
+
+    EXPECT_CALL(s, refreshSafeDisconnect).Times(1);
     EXPECT_CALL(c, initialize);
+    EXPECT_CALL(s, refresh).Times(2);
     EXPECT_CALL(c, execute);
     EXPECT_CALL(c, isFinished);
-    EXPECT_CALL(s, refresh).Times(3);
 
-    scheduler.registerSubsystem(&s);
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 
     ON_CALL(drivers.remote, isConnected).WillByDefault(Return(true));
@@ -1221,15 +1257,17 @@ TEST(CommandScheduler, command_not_added_when_remote_disconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
-    StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
+    StrictMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    EXPECT_CALL(s, refresh);
 
-    scheduler.registerSubsystem(&s);
+    EXPECT_CALL(s, refreshSafeDisconnect);
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.run();
 }
 
@@ -1239,17 +1277,20 @@ TEST(CommandScheduler, default_command_not_added_when_remote_disconnected)
     RemoteSafeDisconnectFunction func(&drivers);
     CommandScheduler scheduler(&drivers, true, &func);
 
-    StrictMock<CommandMock> c;
     SubsystemMock s(&drivers);
+    scheduler.registerSubsystem(&s);
+
+    StrictMock<CommandMock> c;
     set<Subsystem *> subRequirements{&s};
     ON_CALL(c, getRequirementsBitwise)
         .WillByDefault(Return(calcRequirementsBitwise(subRequirements)));
-    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
-    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
-    EXPECT_CALL(c, initialize).Times(0);
-    EXPECT_CALL(s, refresh);
 
-    scheduler.registerSubsystem(&s);
+    ON_CALL(s, getDefaultCommand).WillByDefault(Return(&c));
+
+    EXPECT_CALL(c, initialize).Times(0);
+    EXPECT_CALL(s, refreshSafeDisconnect);
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
     scheduler.addCommand(&c);
     scheduler.run();
 }
@@ -1522,4 +1563,88 @@ TEST(CommandScheduler, addCommand_doesnt_add_if_command_not_ready)
     bool isScheduled = scheduler.isCommandScheduled(&c1);
 
     EXPECT_EQ(isScheduled, false);
+}
+
+class TestComprisedCommand : public ComprisedCommand
+{
+    NiceMock<CommandMock> *c1;
+    NiceMock<CommandMock> *c2;
+
+public:
+    TestComprisedCommand(
+        Drivers *drivers,
+        NiceMock<CommandMock> *c1,
+        NiceMock<CommandMock> *c2,
+        SubsystemMock *s1,
+        SubsystemMock *s2,
+        SubsystemMock *s3)
+        : ComprisedCommand(drivers),
+          c1(c1),
+          c2(c2)
+    {
+        this->comprisedCommandScheduler.registerSubsystem(s1);
+        this->comprisedCommandScheduler.registerSubsystem(s2);
+        this->comprisedCommandScheduler.registerSubsystem(s3);
+    }
+
+    void initialize() override
+    {
+        this->comprisedCommandScheduler.addCommand(c1);
+        this->comprisedCommandScheduler.addCommand(c2);
+    }
+
+    void execute() override
+    {
+        // this->comprisedCommandScheduler.addCommand(c1);
+        // this->comprisedCommandScheduler.addCommand(c2);
+        this->comprisedCommandScheduler.run();
+    }
+
+    void end(bool interrupted) override
+    {
+        this->comprisedCommandScheduler.removeCommand(c1, interrupted);
+        this->comprisedCommandScheduler.removeCommand(c2, interrupted);
+    }
+
+    bool isFinished() const override
+    {
+        return this->comprisedCommandScheduler.isCommandScheduled(c1) &&
+               this->comprisedCommandScheduler.isCommandScheduled(c2);
+    }
+
+    const char *getName() const override { return "test comprised command"; }
+};
+
+TEST(CommandScheduler, refreshSafeDisconnect_only_called_once)
+{
+    Drivers drivers;
+    RemoteSafeDisconnectFunction func(&drivers);
+    CommandScheduler scheduler(&drivers, true, &func);
+
+    SubsystemMock s1(&drivers);
+    SubsystemMock s2(&drivers);
+    SubsystemMock s3(&drivers);
+    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(&s2);
+    scheduler.registerSubsystem(&s3);
+
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+    set<Subsystem *> subRequirementsC1{&s1, &s2};
+    set<Subsystem *> subRequirementsC2{&s3};
+    ON_CALL(c1, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirementsC1)));
+    ON_CALL(c2, getRequirementsBitwise)
+        .WillByDefault(Return(calcRequirementsBitwise(subRequirementsC2)));
+
+    TestComprisedCommand cc1(&drivers, &c1, &c2, &s1, &s2, &s3);
+
+    ON_CALL(drivers.remote, isConnected).WillByDefault(Return(false));
+    scheduler.addCommand(&cc1);
+
+    EXPECT_CALL(s1, refreshSafeDisconnect).Times(1);
+    EXPECT_CALL(s2, refreshSafeDisconnect).Times(1);
+    EXPECT_CALL(s3, refreshSafeDisconnect).Times(1);
+
+    scheduler.run();
 }
