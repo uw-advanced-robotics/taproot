@@ -58,8 +58,9 @@ public:
      * @return The current value of the turret's physical yaw.
      */
     virtual const tap::algorithms::WrappedFloat &getCurrentYawValue() const = 0;
+
     /**
-     * @see getCurrentYawValue
+     * @return The current physical pitch of the turret.
      */
     virtual const tap::algorithms::WrappedFloat &getCurrentPitchValue() const = 0;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -22,10 +22,6 @@
 
 #include <cmath>
 
-#ifndef M_PI
-#define M_PI  3.14159265358979323846
-#endif
-
 namespace tap
 {
 namespace algorithms
@@ -38,14 +34,11 @@ namespace algorithms
  *   - 10 + 1 == 1
  *   - 0 - 1 == 9
  *   - 0 == 10
- *
- * Credit to: https://github.com/Team488/SeriouslyCommonLib/blob/af2ce83a830299a8ab3773bec9b8ccc6ab
- *            5a3367/src/main/java/xbot/common/math/ContiguousDouble.java
  */
 class WrappedFloat
 {
 public:
-    WrappedFloat(const float value, const float lowerBound, const float upperBound);
+    WrappedFloat(float value, float lowerBound, float upperBound);
 
     /** Overloaded Operators */
 
@@ -56,7 +49,7 @@ public:
      * @param[in] other: The WrappedFloat to be added to `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void operator+= (const WrappedFloat& other);
+    void operator+=(const WrappedFloat& other);
 
     /**
      * Subtracts a WrappedFloat from `this` WrappedFloat given they have the same lower and
@@ -65,7 +58,7 @@ public:
      * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    void operator-= (const WrappedFloat& other);
+    void operator-=(const WrappedFloat& other);
 
     /**
      * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
@@ -75,7 +68,7 @@ public:
      * @return: A new WrappedFloat with the additive value of `other` and `this`.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat operator+ (const WrappedFloat& other) const;
+    WrappedFloat operator+(const WrappedFloat& other) const;
 
     /**
      * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
@@ -85,97 +78,81 @@ public:
      * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat operator- (const WrappedFloat& other) const;
+    WrappedFloat operator-(const WrappedFloat& other) const;
 
     /**
-     * Scales WrappedFloat value relative to 0.
-     */
-    inline void operator*= (const float scale)
-    {
-        this->value_ = scale * this->value_;
-        wrapValue();
-    }
-
-    /**
-     * Inversely scales WrappedFloat value relative to 0.
-    */
-    inline void operator/= (const float scale)
-    {
-        this->value_ = this->value_ / scale;
-        wrapValue();
-    }
-
-    /**
-     * Shifts `this` WrappedFloat up in place by a given value.
+     * Adds a WrappedFloat to `this` WrappedFloat given they have the same lower and
+     * upper bounds.
      *
-     * @param[in] shiftMagnitude: The amount to shift up by.
-     */
-    void shiftUpInPlace(float shiftMagnitude);
-
-    /**
-     * Shifts `this` WrappedFloat down in place by a given value.
-     *
-     * @param[in] shiftMagnitude: The amount to shift down by.
-     */
-    void shiftDownInPlace(float shiftMagnitude);
-
-    /**
-     * Shifts `this` WrappedFloat up by a given value, returning the resultant WrappedFloat.
-     *
-     * @param[in] shiftMagnitude: The amount to shift up by.
-     * @return: A new WrappedFloat with the value of `this` shifted up.
-     */
-    WrappedFloat shiftUp(float shiftMagnitude) const;
-
-    /**
-     * Shifts `this` WrappedFloat down by a given value, returning the resultant WrappedFloat.
-     *
-     * @param[in] shiftMagnitude: The amount to shift down by.
-     * @return: A new WrappedFloat with the value of `this` shifted down.
-     */
-    WrappedFloat shiftDown(float shiftMagnitude) const;
-
-    /**
-     * Computes the difference between another WrappedFloat and `this` WrappedFloat (other - this),
-     * given they have the same lower and upper bounds.
-     *
-     * @param[in] other: The other value to compare against.
-     * @return: A new WrappedFloat holding the computed difference.
+     * @param[in] other: The WrappedFloat to be added to `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    WrappedFloat minDifference(const WrappedFloat& other) const;
+    void operator+=(float other);
+
+    /**
+     * Subtracts a WrappedFloat from `this` WrappedFloat given they have the same lower and
+     * upper bounds.
+     *
+     * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    void operator-=(float other);
+
+    /**
+     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
+     * returning the resultant WrappedFloat.
+     *
+     * @param[in] other: The WrappedFloat to be added with `this` WrappedFloat.
+     * @return: A new WrappedFloat with the additive value of `other` and `this`.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    WrappedFloat operator+(float other) const;
+
+    /**
+     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
+     * returning the resultant WrappedFloat.
+     *
+     * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
+     * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    WrappedFloat operator-(float other) const;
+    
+    float minDifference(const WrappedFloat& other) const;
+
+    WrappedFloat minInterpolate(const WrappedFloat& other, float alpha) const;
 
     /**
      * Shifts both bounds by the specified amount.
      *
      * @param[in] shiftMagnitude the amount to add to each bound.
      */
-    void shiftBounds(const float shiftMagnitude);
+    void shiftBounds(float shiftMagnitude);
 
     // Getters/Setters ----------------
 
     /**
      * Returns the wrapped value.
      */
-    inline float getValue() const { return value_; };
+    inline float getValue() const { return wrapped + (upperBound - lowerBound) * revolutions; };
 
     /**
      * Sets the wrapped value.
      */
-    inline void setValue(const float newValue)
+    inline void setValue(float newValue)
     {
-        this->value_ = newValue; wrapValue();
+        this->wrapped = newValue; wrapValue();
     };
 
     /**
      * Returns the value's upper bound.
      */
-    inline float getUpperBound() const { return upperBound_; };
+    inline float getUpperBound() const { return upperBound; };
 
     /**
      * Returns the value's lower bound.
      */
-    inline float getLowerBound() const { return lowerBound_; };
+    inline float getLowerBound() const { return lowerBound; };
 
     /**
      * Maximum value between floats representing bounds at which
@@ -185,18 +162,24 @@ public:
 
 private:
     /**
-     * The wrapped value.
+     * The wrapped value. Guaranteed to be between lower and upper bound.
      */
-    float value_;
+    float wrapped;
+
+    /**
+     * Number of total revolutions.
+     */
+    int revolutions;
 
     /**
      * The lower bound to wrap around.
      */
-    float lowerBound_;
+    float lowerBound;
+
     /**
      * The upper bound to wrap around.
      */
-    float upperBound_;
+    float upperBound;
 
     /**
      * Helper function for wrapping value within bounds.

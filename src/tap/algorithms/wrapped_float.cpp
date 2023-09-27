@@ -29,23 +29,33 @@ namespace tap
 namespace algorithms
 {
 WrappedFloat::WrappedFloat(const float value, const float lowerBound, const float upperBound)
-    : value_(value),
-      lowerBound_(lowerBound),
-      upperBound_(upperBound)
+    : wrapped(value),
+      lowerBound(lowerBound),
+      upperBound(upperBound)
 {
-    assert(upperBound_ > lowerBound_);
+    assert(upperBound > lowerBound);
 
-    this->wrapValue();
+    if (value < lowerBound)
+    {
+        this->wrapped = upperBound + fmodf(value - upperBound, upperBound - lowerBound);
+    }
+    else if (value > upperBound)
+    {
+        this->wrapped = lowerBound + fmodf(value - lowerBound, upperBound - lowerBound);
+    }
+    this->revolutions = static_cast<int>((value - lowerBound) / (upperBound - lowerBound));
 }
 
 
 void WrappedFloat::operator+=(const WrappedFloat& other)
 {
-    assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
-    assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
+    assert(compareFloatClose(this->upperBound, other.upperBound, EPSILON));
+    assert(compareFloatClose(this->upperBound, other.upperBound, EPSILON));
 
-    this->value_ = this->value_ + other.value_;
-    this->wrapValue();
+    this->wrapped += other.wrapped;
+    if (this->wrapped > this->upperBound)
+        this->wrapped -= (this->upperBound - this->lowerBound);
+    this->revolutions += other.revolutions;
 }
 
 void WrappedFloat::operator-=(const WrappedFloat& other)
@@ -53,8 +63,10 @@ void WrappedFloat::operator-=(const WrappedFloat& other)
     assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
     assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
-    this->value_ = this->value_ - other.value_;
-    this->wrapValue();
+    this->wrapped -= other.wrapped;
+    if (this->wrapped < this->lowerBound)
+        this->wrapped += (this->upperBound - this->lowerBound);
+    this->revolutions -= other.revolutions;
 }
 
 WrappedFloat WrappedFloat::operator+(const WrappedFloat& other) const
@@ -77,88 +89,74 @@ WrappedFloat WrappedFloat::operator-(const WrappedFloat& other) const
     return temp;
 }
 
-void WrappedFloat::shiftUpInPlace(float shiftMagnitude)
+void WrappedFloat::operator+=(float value)
 {
-    this->value_ += shiftMagnitude;
-    this->wrapValue();
+    *this += WrappedFloat(value, this->lowerBound, this->upperBound);
 }
 
-void WrappedFloat::shiftDownInPlace(float shiftMagnitude)
+void WrappedFloat::operator-=(float value)
 {
-    this->value_ -= shiftMagnitude;
-    this->wrapValue();
+    *this -= WrappedFloat(value, this->lowerBound, this->upperBound);
 }
 
-WrappedFloat WrappedFloat::shiftUp(float shiftMagnitude) const
+WrappedFloat WrappedFloat::operator+(float value) const
 {
-    WrappedFloat temp = WrappedFloat(this->value_ + shiftMagnitude, this->lowerBound_, this->upperBound_);
-    return temp;
+    return *this + WrappedFloat(value, this->lowerBound, this->upperBound);
 }
 
-WrappedFloat WrappedFloat::shiftDown(float shiftMagnitude) const
+WrappedFloat WrappedFloat::operator-(float value) const
 {
-    WrappedFloat temp = WrappedFloat(this->value_ - shiftMagnitude, this->lowerBound_, this->upperBound_);
-    return temp;
+    return *this - WrappedFloat(value, this->lowerBound, this->upperBound);
 }
 
-WrappedFloat WrappedFloat::minDifference(const WrappedFloat& other) const
+float WrappedFloat::minDifference(const WrappedFloat& other) const
 {
     assert(compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON));
     assert(compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON));
 
-    if (this->getValue() == other.getValue())
+    float halfInterval = (this->upperBound - other.lowerBound) / 2;
+
+    if (this->wrapped >= other.wrapped)
     {
-        return WrappedFloat(0.0, this->getLowerBound(), this->getUpperBound());
+        if (this->wrapped < other.wrapped + halfInterval)
+            return this->wrapped - other.wrapped;
+        else
+            return this->lowerBound - other.wrapped + this->wrapped - this->upperBound;
     }
     else
     {
-        float diff = fabs(this->value_ - other.value_);
-        if (this->value_ < other.value_)
-        {
-            float left_range = this->getValue() - this->getLowerBound();
-            float right_range = other.getValue() - this->getUpperBound();
-            if (left_range + right_range < diff)
-                return WrappedFloat(
-                    left_range + right_range,
-                    this->getLowerBound(),
-                    this->getUpperBound());
-            else
-                return WrappedFloat(diff, this->getLowerBound(), this->getUpperBound());
-        }
+        if (other.wrapped < this->wrapped + halfInterval)
+            return other.wrapped - this->wrapped;
         else
-        {
-            float left_range = other.getValue() - this->getLowerBound();
-            float right_range = this->getValue() - this->getUpperBound();
-            if (left_range + right_range < diff)
-                return WrappedFloat(
-                    left_range + right_range,
-                    this->getLowerBound(),
-                    this->getUpperBound());
-            else
-                return WrappedFloat(diff, this->getLowerBound(), this->getUpperBound());
-        }
+            return this->lowerBound - this->wrapped + other.wrapped - this->upperBound;
+    }
+}
+
+WrappedFloat WrappedFloat::minInterpolate(const WrappedFloat& other, const float alpha)
+{
+    assert(compareFloatClose(this->lowerBound, other.lowerBound, EPSILON)); 
+    assert(compareFloatClose(this->upperBound, other.upperBound, EPSILON)); 
+    float halfInterval = (this->upperBound - other.lowerBound) / 2;
+    float rawInterpolation = this->wrapped * alpha + other.wrapped * (1 - alpha);
+
+    if (abs(this->wrapped - other.wrapped) <= halfInterval)
+    {
+        return WrappedFloat(rawInterpolation, this->lowerBound, this->upperBound);
+    }
+    else
+    {
+        if (rawInterpolation > this->lowerBound + halfInterval)
+            return WrappedFloat(rawInterpolation - halfInterval, this->lowerBound, this->upperBound);
+        else
+            return WrappedFloat(rawInterpolation + halfInterval, this->lowerBound, this->upperBound);
     }
 }
 
 void WrappedFloat::shiftBounds(const float shiftMagnitude)
 {
-    upperBound_ += shiftMagnitude;
-    lowerBound_ += shiftMagnitude;
+    upperBound += shiftMagnitude;
+    lowerBound += shiftMagnitude;
     wrapValue();
-}
-
-/* Private methods */
-
-void WrappedFloat::wrapValue()
-{
-    if (value_ < lowerBound_)
-    {
-        value_ = upperBound_ + fmodf(value_ - lowerBound_, upperBound_ - lowerBound_);
-    }
-    else if (value_ > upperBound_)
-    {
-        value_ = lowerBound_ + fmodf(value_ - upperBound_, upperBound_ - lowerBound_);
-    }
 }
 
 }  // namespace algorithms
