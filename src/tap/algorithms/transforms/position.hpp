@@ -22,25 +22,14 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
-#include "frame.hpp"
-
 namespace tap::algorithms::transforms
 {
-// Forward declaration for transform.hpp
-template <const Frame& SOURCE, const Frame& TARGET>
-class Transform;
 
 // Forward declaration for vector.hpp
-template <const Frame& FRAME>
 class Vector;
 
-template <const Frame& FRAME>
 class Position
 {
-    friend class Vector<FRAME>;
-    template <const Frame& SOURCE, const Frame& TARGET>
-    friend class Transform;
-
 public:
     /* Constructors */
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
@@ -62,14 +51,19 @@ public:
 
     /* Operators */
 
-    inline Vector<FRAME> operator-(const Position<FRAME>& other) const
+    inline Vector operator-(const Position& other) const
     {
-        return Vector<FRAME>(this->coordinates_ - other.coordinates_);
+        return Vector(this->coordinates_ - other.coordinates_);
     }
 
-    inline Position<FRAME> operator+(const Vector<FRAME>& vector) const
+    inline Position operator+(const Vector& vector) const
     {
-        return Position<FRAME>(this->coordinates_ + vector.coordinates_);
+        return Position(this->coordinates_ + vector.coordinates_);
+    }
+
+    inline CMSISMat<3, 1> coordinates() const
+    {
+        return this->coordinates_;
     }
 
 private:

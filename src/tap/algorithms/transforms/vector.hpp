@@ -22,26 +22,14 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
-#include "position.hpp"
-
 namespace tap::algorithms::transforms
 {
-// Forward declaration for transform.hpp
-template <const Frame& SOURCE, const Frame& TARGET>
-class Transform;
 
-// Forward declaration for inertial_transform.hpp
-template <const Frame& SOURCE, const Frame& TARGET>
-class InertialTransform;
+// Forward declaration for position.hpp
+class Position;
 
-template <const Frame& FRAME>
 class Vector
 {
-    template <const Frame& SOURCE, const Frame& TARGET>
-    friend class Transform;
-    template <const Frame& SOURCE, const Frame& TARGET>
-    friend class InertialTransform;
-
 public:
     Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
 
@@ -55,24 +43,24 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Position<FRAME> operator+(const Position<FRAME>& position) const
+    inline Position operator+(const Position& position) const
     {
-        return Position<FRAME>(this->coordinates_ + position.coordinates_);
+        return Position(this->coordinates_ + position.coordinates_);
     }
 
-    inline Vector<FRAME> operator+(const Vector<FRAME>& other) const
+    inline Vector operator+(const Vector& other) const
     {
-        return Vector<FRAME>(this->coordinates_ + other.coordinates_);
+        return Vector(this->coordinates_ + other.coordinates_);
     }
 
-    inline Vector<FRAME> operator*(const float scale) const
+    inline Vector operator*(const float scale) const
     {
-        return Vector<FRAME>(this->coordinates_ * scale);
+        return Vector(this->coordinates_ * scale);
     }
 
-    inline Vector<FRAME> operator/(const float scale) const
+    inline Vector operator/(const float scale) const
     {
-        return Vector<FRAME>(this->coordinates_ / scale);
+        return Vector(this->coordinates_ / scale);
     }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }

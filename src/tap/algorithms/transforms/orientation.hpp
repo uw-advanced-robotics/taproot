@@ -23,11 +23,8 @@
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/euler_angles.hpp"
 
-#include "frame.hpp"
-
 namespace tap::algorithms::transforms
 {
-template <const Frame& FRAME>
 class Orientation
 {
 public:
