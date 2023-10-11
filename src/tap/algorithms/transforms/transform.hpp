@@ -50,6 +50,7 @@ namespace tap::algorithms::transforms
 class Transform
 {
     friend class Transform;
+
 public:
     /**
      * @param rotation Initial rotation of this transformation.
@@ -295,8 +296,7 @@ Transform Transform::getInverse() const
     return Transform(invTranslation, tRotation);
 }
 
-Transform Transform::compose(
-    const Transform& second) const
+Transform Transform::compose(const Transform& second) const
 {
     CMSISMat<3, 3> newRot = this->rotation * second.rotation;
     CMSISMat<3, 1> newPos = this->translation + this->rotation * second.translation;

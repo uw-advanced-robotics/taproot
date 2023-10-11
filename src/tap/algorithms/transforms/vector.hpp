@@ -53,15 +53,9 @@ public:
         return Vector(this->coordinates_ + other.coordinates_);
     }
 
-    inline Vector operator*(const float scale) const
-    {
-        return Vector(this->coordinates_ * scale);
-    }
+    inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
-    inline Vector operator/(const float scale) const
-    {
-        return Vector(this->coordinates_ / scale);
-    }
+    inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
