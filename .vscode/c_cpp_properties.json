@@ -5,6 +5,7 @@
             "includePath": [
                 "${default}",
                 "test-project/taproot/test",
+                "src",
                 "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
@@ -16,6 +17,7 @@
             "name": "Sim",
             "includePath": [
                 "${default}",
+                "src",
                 "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
             "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
@@ -27,9 +29,10 @@
             "name": "MCB",
             "includePath": [
                 "${default}",
+                "src",
                 "test-project/taproot/modm/src",
                 "test-project/taproot/modm/ext/cmsis/core",
-                "test-project/taproot/modm/ext/cmsis/device"
+                "test-project/taproot/modm/ext/cmsis/device",
             ],
             "intelliSenseMode": "gcc-arm",
             "browse": { "limitSymbolsToIncludedHeaders": true },
