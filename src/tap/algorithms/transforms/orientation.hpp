@@ -33,8 +33,11 @@ public:
     {
     }
 
-    // Move semantics
+    /* rvalue reference */
     inline Orientation(Orientation&& other) : matrix_(std::move(other.matrix_)) {}
+
+    /* Costly; use rvalue reference whenever possible */
+    inline Orientation(Orientation& other) : matrix_(CMSISMat(other.matrix_)) {}
 
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) {}

@@ -31,12 +31,10 @@ public:
     inline Rotation(const float roll, const float pitch, const float yaw)
         : coordinates_(fromEulerAngles(roll, pitch, yaw)){};
 
-    inline Rotation(CMSISMat<3, 3> matrix) : coordinates_(std::move(matrix)) {}
+    inline Rotation(CMSISMat<3, 3>&& matrix) : coordinates_(std::move(matrix)) {}
 
-    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
+    inline Rotation(CMSISMat<3, 3>& matrix) : coordinates_(CMSISMat(matrix)) {}
 
-    // TODO: should we consider the possibility of gimbal lock?
-    // TODO: return angle objects
     /**
      * Returns roll as values between [-pi, +pi].
      *

@@ -34,8 +34,10 @@ public:
     /* Constructors */
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
 
-    // TODO: I actually have no idea if these things are defined properly by default, so...
+    /* Use rvalue reference */
     Position(const Position&& other) : coordinates_(std::move(other.coordinates_)) {}
+
+    Position(const Position& other) : coordinates_(CMSISMat(other.coordinates_)) {}
 
     Position(const CMSISMat<3, 1>& coordinates) : coordinates_(coordinates) {}
 
@@ -61,10 +63,7 @@ public:
         return Position(this->coordinates_ + vector.coordinates_);
     }
 
-    inline CMSISMat<3, 1> coordinates() const
-    {
-        return this->coordinates_;
-    }
+    inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
 private:
     CMSISMat<3, 1> coordinates_;
