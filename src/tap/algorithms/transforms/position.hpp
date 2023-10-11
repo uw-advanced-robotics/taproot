@@ -24,7 +24,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 // Forward declaration for vector.hpp
 class Vector;
 

@@ -24,7 +24,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 // Forward declaration for position.hpp
 class Position;
 
