@@ -27,6 +27,7 @@
 
 namespace tap::algorithms::transforms
 {
+
 /**
  Represents a transformation from one coordinate frame to another.
 
@@ -49,15 +50,13 @@ namespace tap::algorithms::transforms
  */
 class Transform
 {
-    friend class Transform;
-
 public:
     /**
      * @param rotation Initial rotation of this transformation.
      * @param position Initial translation of this transformation.
      */
-    Transform(const Position& translation, const Orientation<SOURCE>& rotation);
-    Transform(Position&& translation, Orientation<SOURCE>&& rotation);
+    Transform(const Position& translation, const Orientation& rotation);
+    Transform(Position&& translation, Orientation&& rotation);
 
     /**
      * @param rotation Initial rotation of this transformation.
@@ -235,73 +234,6 @@ private:
      */
     CMSISMat<3, 3> tRotation;
 };  // class Transform
-
-/* Begin definitions */
-inline Transform::Transform(const Position& translation, const Orientation& rotation)
-    : translation(translation.coordinates_),
-      rotation(rotation.matrix_),
-      tRotation(rotation.matrix_.transpose())
-{
-}
-
-inline Transform::Transform(Position&& translation, Orientation&& rotation)
-    : translation(std::move(translation.coordinates_)),
-      rotation(std::move(rotation.matrix_)),
-      tRotation(rotation.matrix_.transpose())
-{
-}
-
-inline Transform::Transform(const CMSISMat<3, 1>& translation, const CMSISMat<3, 3>& rotation)
-    : translation(translation),
-      rotation(rotation),
-      tRotation(rotation.transpose())
-{
-}
-
-template <const Frame& SOURCE, const Frame& TARGET>
-inline Transform<SOURCE, TARGET>::Transform(CMSISMat<3, 1>&& translation, CMSISMat<3, 3>&& rotation)
-    : translation(std::move(translation)),
-      rotation(std::move(rotation)),
-      tRotation(rotation.transpose())
-{
-}
-
-Transform::Transform(float x, float y, float z, float roll, float pitch, float yaw)
-    : translation({x, y, z}),
-      rotation(fromEulerAngles(roll, pitch, yaw)),
-      tRotation(rotation.transpose())
-{
-}
-
-Position Transform::apply(const Position<SOURCE>& position) const
-{
-    return Position(tRotation * (position.coordinates_ - translation));
-}
-
-Vector Transform::apply(const Vector& vector) const
-{
-    return Vector(tRotation * vector.coordinates_);
-}
-
-Orientation Transform::apply(const Orientation& orientation) const
-{
-    return Orientation(tRotation * orientation.coordinates_);
-}
-
-Transform Transform::getInverse() const
-{
-    // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invTranslation = tRotation * translation;
-    invTranslation = -invTranslation;
-    return Transform(invTranslation, tRotation);
-}
-
-Transform Transform::compose(const Transform& second) const
-{
-    CMSISMat<3, 3> newRot = this->rotation * second.rotation;
-    CMSISMat<3, 1> newPos = this->translation + this->rotation * second.translation;
-    return Transform(newPos, newRot);
-}
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_TRANSFORM_HPP_

@@ -24,8 +24,6 @@
 
 namespace tap::algorithms::transforms
 {
-// Forward declaration for position.hpp
-class Position;
 
 class Vector
 {
@@ -34,18 +32,11 @@ public:
 
     Vector(CMSISMat<3, 1> coordinates) : coordinates_(std::move(coordinates)) {}
 
-    // TODO: sort out copy constructor and copy assignment because default directly copies cmsismat
-
     inline float x() const { return coordinates_.data[0]; }
 
     inline float y() const { return coordinates_.data[1]; }
 
     inline float z() const { return coordinates_.data[2]; }
-
-    inline Position operator+(const Position& position) const
-    {
-        return Position(this->coordinates_ + position.coordinates_);
-    }
 
     inline Vector operator+(const Vector& other) const
     {
@@ -57,6 +48,8 @@ public:
     inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
+
+    friend class Transform;
 
 private:
     CMSISMat<3, 1> coordinates_;

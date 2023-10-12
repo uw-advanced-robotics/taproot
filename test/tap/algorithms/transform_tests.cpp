@@ -206,10 +206,10 @@ TEST(Transform, transform_compose_with_inverse_yields_identity)
     Transform transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Transform<A, A> composed = transform.compose(transform.getInverse());
+    Transform composed = transform.compose(transform.getInverse());
 
     // Then
-    Transform<A, A> identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    Transform identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     EXPECT_NEAR(identity.getTranslation().x(), composed.getTranslation().x(), 1E-5);
     EXPECT_NEAR(identity.getTranslation().y(), composed.getTranslation().y(), 1E-5);
     EXPECT_NEAR(identity.getTranslation().z(), composed.getTranslation().z(), 1E-5);

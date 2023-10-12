@@ -56,6 +56,8 @@ public:
 
     inline float yaw() const { return atan2(matrix_.data[3], matrix_.data[0]); }
 
+    friend class Transform;
+
 private:
     CMSISMat<3, 3> matrix_;
 };  // class Orientation

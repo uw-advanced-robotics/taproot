@@ -72,7 +72,8 @@ struct CMSISMat
      */
     CMSISMat &operator=(const CMSISMat &other)
     {
-        memcpy(&this->data, &other->data, sizeof(this->data));
+        memcpy(&this->data, &other.data, sizeof(this->data));
+        return *this;
     }
 
     // Move semantics.
@@ -181,27 +182,27 @@ inline CMSISMat<A_ROWS, B_COLS> operator*(
 }
 
 template <uint16_t ROWS, uint16_t COLS>
-inline CMSISMat<ROWS, COLS> operator*(const CMSISMat<ROWS, COLS> &a, const float b)
+inline CMSISMat<ROWS, COLS> operator*(const CMSISMat<ROWS, COLS> &a, float b)
 {
     CMSISMat<ROWS, COLS> c;
-    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, b, &c.matrix));
     return c;
 }
 
 template <uint16_t ROWS, uint16_t COLS>
-inline CMSISMat<ROWS, COLS> operator*(const float b, const CMSISMat<ROWS, COLS> &a)
+inline CMSISMat<ROWS, COLS> operator*(float b, const CMSISMat<ROWS, COLS> &a)
 {
     CMSISMat<ROWS, COLS> c;
-    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, b, &c.matrix));
     return c;
 }
 
 template <uint16_t ROWS, uint16_t COLS>
-inline CMSISMat<ROWS, COLS> operator/(const CMSISMat<ROWS, COLS> &a, const float b)
+inline CMSISMat<ROWS, COLS> operator/(const CMSISMat<ROWS, COLS> &a, float b)
 {
     b = 1 / b;
     CMSISMat<ROWS, COLS> c;
-    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, &b, &c.matrix));
+    assert(ARM_MATH_SUCCESS == arm_mat_scale_f32(&a.matrix, b, &c.matrix));
     return c;
 }
 
