@@ -27,7 +27,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 /**
  Represents a transformation from one coordinate frame to another.
 

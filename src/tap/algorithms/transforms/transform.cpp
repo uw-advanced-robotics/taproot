@@ -19,15 +19,8 @@
 
 #include "transform.hpp"
 
-#include "tap/algorithms/math_user_utils.hpp"
-
-#include "orientation.hpp"
-#include "position.hpp"
-#include "vector.hpp"
-
 namespace tap::algorithms::transforms
 {
-
 Transform::Transform(const Position& translation, const Orientation& rotation)
     : translation(translation.coordinates_),
       rotation(rotation.matrix_),
