@@ -49,6 +49,7 @@ public:
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
     friend class Transform;
+    friend class Position;
 
 private:
     CMSISMat<3, 1> coordinates_;
