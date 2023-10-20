@@ -1,5 +1,8 @@
 # Taproot Changelog
 
+## October 2023
+- Added `timeRemaining` method to `Timeout` class.
+
 ## July 2023
 
 ### Architecture
