@@ -46,13 +46,11 @@ def _get_sim_modm_instance_path():
     return f"sim-modm/{_get_hosted_target_name_for_current_platform()}/modm"
 
 
-# Set up target environment-specific modm paths and compiler
+# Set up target environment-specific paths
 if args["TARGET_ENV"] == "tests" or args["TARGET_ENV"] == "sim":
     modm_path = _get_sim_modm_instance_path()
 elif args["TARGET_ENV"] == "hardware":
     modm_path = HARDWARE_MODM_PATH
-else:
-    raise ValueError(f"Unknown target environment {args['TARGET_ENV']}")
 
 
 # Build modm library, modm's SConscript should be ran before any of the build code defined below
