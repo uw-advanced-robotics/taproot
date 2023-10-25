@@ -21,7 +21,8 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
-#include "tap/algorithms/euler_angles.hpp"
+#include "tap/algorithms/math_user_utils.hpp"
+// #include "tap/algorithms/euler_angles.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -29,7 +30,7 @@ class Orientation
 {
 public:
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : matrix_(fromEulerAngles(roll, pitch, yaw))
+        : matrix_(tap::algorithms::fromEulerAngles(roll, pitch, yaw))
     {
     }
 
@@ -55,6 +56,8 @@ public:
     inline float pitch() const { return asinf(-matrix_.data[6]); }
 
     inline float yaw() const { return atan2(matrix_.data[3], matrix_.data[0]); }
+
+    const inline CMSISMat<3, 3>& matrix() const { return matrix_; }
 
     friend class Transform;
 

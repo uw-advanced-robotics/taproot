@@ -117,12 +117,12 @@ public:
      */
     inline void updateTranslation(const Position& newTranslation)
     {
-        this->translation = newTranslation.coordinates_;
+        this->translation = newTranslation.coordinates();
     }
 
     inline void updateTranslation(Position&& newTranslation)
     {
-        this->translation = std::move(newTranslation.coordinates_);
+        this->translation = std::move(newTranslation.coordinates());
     }
 
     /**
@@ -144,13 +144,13 @@ public:
      */
     inline void updateRotation(const Orientation& newRotation)
     {
-        this->rotation = newRotation.matrix_;
+        this->rotation = newRotation.matrix();
         this->tRotation = this->rotation.transpose();
     }
 
     inline void updateRotation(Orientation&& newRotation)
     {
-        this->rotation = std::move(newRotation.matrix_);
+        this->rotation = std::move(newRotation.matrix());
         this->tRotation = this->rotation.transpose();
     }
 
@@ -164,7 +164,7 @@ public:
      */
     void updateRotation(float roll, float pitch, float yaw)
     {
-        this->rotation = Orientation(roll, pitch, yaw).matrix_;
+        this->rotation = Orientation(roll, pitch, yaw).matrix();
         this->tRotation = this->rotation.transpose();
     }
 

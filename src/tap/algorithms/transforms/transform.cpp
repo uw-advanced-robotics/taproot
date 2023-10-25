@@ -22,16 +22,16 @@
 namespace tap::algorithms::transforms
 {
 Transform::Transform(const Position& translation, const Orientation& rotation)
-    : translation(translation.coordinates_),
-      rotation(rotation.matrix_),
-      tRotation(rotation.matrix_.transpose())
+    : translation(translation.coordinates()),
+      rotation(rotation.matrix()),
+      tRotation(rotation.matrix().transpose())
 {
 }
 
 Transform::Transform(Position&& translation, Orientation&& rotation)
-    : translation(std::move(translation.coordinates_)),
-      rotation(std::move(rotation.matrix_)),
-      tRotation(rotation.matrix_.transpose())
+    : translation(std::move(translation.coordinates())),
+      rotation(std::move(rotation.matrix())),
+      tRotation(rotation.matrix().transpose())
 {
 }
 
@@ -58,17 +58,17 @@ Transform::Transform(float x, float y, float z, float roll, float pitch, float y
 
 Position Transform::apply(const Position& position) const
 {
-    return Position(tRotation * (position.coordinates_ - translation));
+    return Position(tRotation * (position.coordinates() - translation));
 }
 
 Vector Transform::apply(const Vector& vector) const
 {
-    return Vector(tRotation * vector.coordinates_);
+    return Vector(tRotation * vector.coordinates());
 }
 
 Orientation Transform::apply(const Orientation& orientation) const
 {
-    return Orientation(tRotation * orientation.matrix_);
+    return Orientation(tRotation * orientation.matrix());
 }
 
 Transform Transform::getInverse() const

@@ -21,15 +21,26 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/transforms/position.hpp"
 
 namespace tap::algorithms::transforms
 {
+
+// forward declare position to avoid circular dependency
+class Position;
+
 class Vector
 {
 public:
     Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
 
-    Vector(CMSISMat<3, 1> coordinates) : coordinates_(std::move(coordinates)) {}
+    Vector(const Vector&& other) : coordinates_(std::move(other.coordinates_)) {}
+
+    Vector(const Vector& other) : coordinates_(CMSISMat(other.coordinates_)) {}
+
+    Vector(CMSISMat<3, 1>& coordinates) : coordinates_(CMSISMat(coordinates)) {}
+
+    Vector(CMSISMat<3, 1>&& coordinates) : coordinates_(std::move(coordinates)) {}
 
     inline float x() const { return coordinates_.data[0]; }
 
@@ -37,19 +48,15 @@ public:
 
     inline float z() const { return coordinates_.data[2]; }
 
-    inline Vector operator+(const Vector& other) const
-    {
-        return Vector(this->coordinates_ + other.coordinates_);
-    }
+    inline Vector operator+(const Vector& other) const;
+
+    inline Vector operator+(const Position& other) const;
 
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
     inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
-
-    friend class Transform;
-    friend class Position;
 
 private:
     CMSISMat<3, 1> coordinates_;

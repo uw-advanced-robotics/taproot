@@ -21,10 +21,12 @@
 #define TAPROOT_POSITION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
-#include "tap/algorithms/transforms/vector.hpp"
 
 namespace tap::algorithms::transforms
 {
+
+class Vector;
+
 class Position
 {
 public:
@@ -42,22 +44,16 @@ public:
 
     /* Getters */
 
-    float x() const { return coordinates_.data[0]; }
+    inline float x() const { return coordinates_.data[0]; }
 
-    float y() const { return coordinates_.data[1]; }
+    inline float y() const { return coordinates_.data[1]; }
 
-    float z() const { return coordinates_.data[2]; }
+    inline float z() const { return coordinates_.data[2]; }
 
     /* Operators */
-    Vector operator-(const Vector& other) const
-    {
-        return Vector(this->coordinates_ - other.coordinates_);
-    }
+    inline Vector operator-(const Vector& other) const;
 
-    Position operator+(const Position& vector) const
-    {
-        return Position(this->coordinates_ + vector.coordinates_);
-    }
+    inline Position operator+(const Position& vector) const;
 
     inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
