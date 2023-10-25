@@ -12,6 +12,7 @@
     operate on
 - `Orientation` class 
 - `Transform` class which represents a transformation from one coordinate frame to another.
+- Added `cross` and `fromEulerAngles` to `math_user_utils`
 
 ## June 2023
 
