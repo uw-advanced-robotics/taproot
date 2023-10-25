@@ -25,7 +25,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 // forward declare position to avoid circular dependency
 class Position;
 

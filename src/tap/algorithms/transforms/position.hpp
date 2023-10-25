@@ -24,7 +24,6 @@
 
 namespace tap::algorithms::transforms
 {
-
 class Vector;
 
 class Position
