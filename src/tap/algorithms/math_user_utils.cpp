@@ -40,7 +40,7 @@ void tap::algorithms::rotateVector(float* x, float* y, float radians)
     *y = x_temp * sinf(radians) + *y * cosf(radians);
 }
 
-tap::algorithms::CMSISMat<3, 1> cross(
+tap::algorithms::CMSISMat<3, 1> tap::algorithms::cross(
     const tap::algorithms::CMSISMat<3, 1>& a,
     const tap::algorithms::CMSISMat<3, 1>& b)
 {
@@ -50,7 +50,7 @@ tap::algorithms::CMSISMat<3, 1> cross(
          a.data[0] * b.data[1] - a.data[1] * b.data[0]});
 }
 
-tap::algorithms::CMSISMat<3, 3> fromEulerAngles(
+tap::algorithms::CMSISMat<3, 3> tap::algorithms::fromEulerAngles(
     const float roll,
     const float pitch,
     const float yaw)
