@@ -28,6 +28,8 @@
 #include "modm/architecture/interface/assert.hpp"
 #include "modm/math/geometry/angle.hpp"
 
+#include "cmsis_mat.hpp"
+
 namespace tap
 {
 namespace algorithms
@@ -127,6 +129,16 @@ To reinterpretCopy(From from)
  * @retval    1/Sqrt(x)
  */
 float fastInvSqrt(float x);
+
+/**
+ * Compute the cross product of two 3x1 matrices
+ */
+CMSISMat<3, 1> cross(const CMSISMat<3, 1>& a, const CMSISMat<3, 1>& b);
+
+/**
+ * Generates a 3x3 rotation matrix from euler angles (in radians)
+ */
+CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw);
 
 /**
  * Performs a rotation matrix on the given x and y components of a vector.

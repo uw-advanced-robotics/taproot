@@ -9,6 +9,16 @@
 
 - All subsystems registered to the master command scheduler can be initialized using the command scheduler's `initializeSubsystems` method.
 - Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
+- `CMSISMat` supports costly copy constructor/assignment
+
+### Transforms Library
+
+- `Position` class and `Vector` class which represents a difference in `Position`s
+    - These differing types allow transforms to be more clear about the mathematical objects they 
+    operate on
+- `Orientation` class 
+- `Transform` class which represents a transformation from one coordinate frame to another.
+- Added `cross` and `fromEulerAngles` to `math_user_utils`
 
 ## June 2023
 
