@@ -36,7 +36,6 @@ public:
     CommandSchedulerMock(Drivers *drivers);
     virtual ~CommandSchedulerMock();
 
-    MOCK_METHOD(void, initializeSubsystems, (), (override));
     MOCK_METHOD(void, run, (), (override));
     MOCK_METHOD(void, addCommand, (control::Command *), (override));
     MOCK_METHOD(void, removeCommand, (control::Command *, bool), (override));
