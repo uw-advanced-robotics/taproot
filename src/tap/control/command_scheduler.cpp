@@ -161,21 +161,6 @@ CommandScheduler::~CommandScheduler()
     }
 }
 
-void CommandScheduler::initializeSubsystems()
-{
-    if (isMasterScheduler)
-    {
-        for (auto it = subMapBegin(); it != subMapEnd(); it++)
-        {
-            (*it)->initialize();
-        }
-    }
-    else
-    {
-        RAISE_ERROR(drivers, "attempted to initialize subsystems using non-master scheduler");
-    }
-}
-
 void CommandScheduler::run()
 {
 #ifndef PLATFORM_HOSTED
