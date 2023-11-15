@@ -46,6 +46,10 @@ public:
         IMU_CALIBRATED,
     };
 
+    virtual inline const ImuState getImuState();
+
+    virtual inline void requestCalibration();
+
     virtual inline const char *getName() const = 0;
 
     /**

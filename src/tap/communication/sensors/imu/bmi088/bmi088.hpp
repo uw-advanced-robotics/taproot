@@ -109,7 +109,7 @@ public:
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
-    mockable ImuState getImuState() const;
+    ImuState getImuState() const;
 
     /**
      * When this function is called, the bmi088 enters a calibration state during which time,
@@ -117,7 +117,7 @@ public:
      * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
      * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
-    mockable void requestRecalibration();
+    void requestRecalibration();
 
     inline const char *getName() const final_mockable { return "bmi088"; }
 

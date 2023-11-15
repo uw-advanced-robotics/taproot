@@ -132,7 +132,7 @@ public:
      * temperature, and angle) data, call this function to ensure the data you are about to receive
      * is not undefined.
      */
-    mockable inline ImuState getImuState() const { return imuState; }
+    inline ImuState getImuState() const { return imuState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
@@ -264,7 +264,7 @@ public:
     /**
      * Uninitializes the mpu6500 and enters calibration mode.
      */
-    mockable void requestCalibration();
+    void requestCalibration();
 
     void attachProcessRawMpu6500DataFn(ProcessRawMpu6500DataFn fn) { processRawMpu6500DataFn = fn; }
 
