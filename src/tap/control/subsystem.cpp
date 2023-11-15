@@ -34,6 +34,11 @@ Subsystem::Subsystem(Drivers* drivers)
 
 Subsystem::~Subsystem() { CommandScheduler::destructSubsystem(this); }
 
+void Subsystem::registerAndInitialize(Drivers* drivers) {
+    initialize();
+    drivers->commandScheduler.registerSubsystem(this);
+}
+
 void Subsystem::setDefaultCommand(Command* command)
 {
     if (command != nullptr)
