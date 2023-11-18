@@ -18,7 +18,7 @@
  */
 
 #include "subsystem.hpp"
-
+#include "tap/drivers.hpp"
 #include "command_scheduler.hpp"
 
 namespace tap
@@ -34,7 +34,7 @@ Subsystem::Subsystem(Drivers* drivers)
 
 Subsystem::~Subsystem() { CommandScheduler::destructSubsystem(this); }
 
-void Subsystem::registerAndInitialize(Drivers* drivers) {
+void Subsystem::registerAndInitialize(){
     initialize();
     drivers->commandScheduler.registerSubsystem(this);
 }

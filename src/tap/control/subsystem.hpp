@@ -21,8 +21,8 @@
 #define TAPROOT_SUBSYSTEM_HPP_
 
 #include <cstdint>
-
 #include "tap/util_macros.hpp"
+
 
 namespace tap
 {
@@ -49,7 +49,7 @@ class Command;
 class Subsystem
 {
 public:
-    Subsystem(Drivers* drivers);
+    Subsystem(tap::Drivers* drivers);
 
     virtual ~Subsystem();
 
@@ -63,7 +63,7 @@ public:
      * Calls initialize and registers the subsystem with the command scheduler passed
      *  in through the driver.
      */
-    void registerAndInitialize(Drivers *drivers) {}
+    void registerAndInitialize();
 
     /**
      * Sets the default Command of the Subsystem. The default Command will be
@@ -120,7 +120,7 @@ public:
     mockable inline int getGlobalIdentifier() const { return globalIdentifier; }
 
 protected:
-    Drivers* drivers;
+    tap::Drivers* drivers;
 
     bool hardwareTestsComplete = false;
 
