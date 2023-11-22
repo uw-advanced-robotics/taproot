@@ -120,7 +120,7 @@ public:
     mockable inline int getGlobalIdentifier() const { return globalIdentifier; }
 
 protected:
-    tap::Drivers* drivers;
+    Drivers* drivers;
 
     bool hardwareTestsComplete = false;
 
