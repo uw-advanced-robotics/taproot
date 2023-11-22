@@ -1,5 +1,10 @@
 # Taproot Changelog
 
+## November 2023
+
+- Added `registerAndInitialize` function to `tap::control::Subsystem` to simplify the repetitive
+  process of registering & initializing subsystems.
+
 ## November 2022
 
 ### Breaking changes
