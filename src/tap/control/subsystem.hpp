@@ -49,7 +49,7 @@ class Command;
 class Subsystem
 {
 public:
-    Subsystem(tap::Drivers* drivers);
+    Subsystem(Drivers* drivers);
 
     virtual ~Subsystem();
 
