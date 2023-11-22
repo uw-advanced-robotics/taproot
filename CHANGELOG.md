@@ -1,5 +1,10 @@
 # Taproot Changelog
 
+## November 2023
+
+- Added `registerAndInitialize` function to `tap::control::Subsystem` to simplify the repetitive
+  process of registering & initializing subsystems.
+
 ## October 2023
 - Added `timeRemaining` method to `Timeout` class.
 
