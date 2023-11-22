@@ -38,6 +38,8 @@ using namespace tap::motor;
         "m1",                       \
         "m2");
 
+static constexpr uint16_t ENC_RESOLUTION = 8192;
+
 TEST(DoubleDjiMotor, initialize__both_motors_initialized)
 {
     SETUP_TEST();
@@ -234,4 +236,77 @@ TEST(DoubleDjiMotor, getShaftRPM__returns_average_RPM)
     motorOneRPM = 2000;
     motorTwoRPM = 2000;
     EXPECT_EQ(2000, motor.getShaftRPM());
+}
+
+TEST(DoubleDjiMotor, resetEncoderValue_zeroes_both_motor_encoders)
+{
+    SETUP_TEST();
+
+    int16_t motorOneEncoder = 1000, motorTwoEncoder = 1000;
+
+    EXPECT_CALL(motor.motorOne, resetEncoderValue).WillOnce([&]() { motorOneEncoder = 0; });
+    EXPECT_CALL(motor.motorTwo, resetEncoderValue).WillOnce([&]() { motorTwoEncoder = 0; });
+
+    ON_CALL(motor.motorOne, getEncoderWrapped).WillByDefault(ReturnPointee(&motorOneEncoder));
+    ON_CALL(motor.motorTwo, getEncoderWrapped).WillByDefault(ReturnPointee(&motorTwoEncoder));
+
+    motor.resetEncoderValue();
+
+    EXPECT_EQ(0, motor.getEncoderWrapped());
+}
+
+// for double_moving_relative_to_home_after_zeroed_ok test
+int16_t getRelativeToHome(int16_t received, int16_t home)
+{
+    // logic from dji_motor.cpp
+    int16_t difference = (received - home);
+    return difference < 0 ? ENC_RESOLUTION + difference : difference;
+}
+
+TEST(DjiMotor, double_moving_relative_to_home_after_zeroed_ok)
+{
+    SETUP_TEST();
+
+    int16_t motorOneEncoderReceive = 1000, motorOneEncoderRelToHome = motorOneEncoderReceive,
+            motorOneHome = 0;
+    int16_t motorTwoEncoderReceive = 1000, motorTwoEncoderRelToHome = motorTwoEncoderReceive,
+            motorTwoHome = 0;
+
+    ON_CALL(motor.motorOne, getEncoderWrapped)
+        .WillByDefault(ReturnPointee(&motorOneEncoderRelToHome));
+    ON_CALL(motor.motorTwo, getEncoderWrapped)
+        .WillByDefault(ReturnPointee(&motorTwoEncoderRelToHome));
+    EXPECT_CALL(motor.motorOne, resetEncoderValue).WillOnce([&]() {
+        // logic from dji_motor.cpp
+        motorOneHome = (motorOneEncoderRelToHome + motorOneHome) % ENC_RESOLUTION;
+        motorOneEncoderRelToHome = 0;
+    });
+    EXPECT_CALL(motor.motorTwo, resetEncoderValue).WillOnce([&]() {
+        // logic from dji_motor.cpp
+        motorTwoHome = (motorTwoEncoderRelToHome + motorTwoHome) % ENC_RESOLUTION;
+        motorTwoEncoderRelToHome = 0;
+    });
+
+    EXPECT_EQ(1000, motor.getEncoderWrapped());
+
+    motor.resetEncoderValue();
+    EXPECT_EQ(0, motor.getEncoderWrapped());
+
+    motorOneEncoderReceive = 5000;
+    motorTwoEncoderReceive = 5000;
+    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
+    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
+    EXPECT_EQ(4000, motor.getEncoderWrapped());
+
+    motorOneEncoderReceive = 2500;
+    motorTwoEncoderReceive = 2500;
+    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
+    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
+    EXPECT_EQ(1500, motor.getEncoderWrapped());
+
+    motorOneEncoderReceive = 500;
+    motorTwoEncoderReceive = 500;
+    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
+    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
+    EXPECT_EQ(ENC_RESOLUTION - 500, motor.getEncoderWrapped());
 }

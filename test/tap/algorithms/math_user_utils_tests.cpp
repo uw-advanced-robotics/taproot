@@ -104,3 +104,19 @@ TEST(MathUserUtils, getSign_simple)
     EXPECT_EQ(1, getSign(42.0f));
     EXPECT_EQ(-1, getSign(-42.0f));
 }
+
+TEST(MathUserUtils, bilinear_interpolate_simple)
+{
+    const std::array<std::array<float, 5>, 2> values = {{{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}}};
+    EXPECT_NEAR(1.5, interpolateLinear2D(values, 5, 10, 5, .1, .5, .1, 7.5, 0.1), 1E-3);
+    EXPECT_NEAR(2.0, interpolateLinear2D(values, 5, 10, 5, .1, .5, .1, 7.5, 0.15), 1E-3);
+    EXPECT_NEAR(2.5, interpolateLinear2D(values, 5, 10, 5, .1, .5, .1, 10, 0.15), 1E-3);
+}
+
+TEST(MathUserUtils, bilinear_interpolate_exceptions)
+{
+    const std::array<std::array<float, 5>, 2> values = {{{1, 2, 3, 4, 5}, {2, 3, 4, 5, 6}}};
+    // checks for extrapolation
+    EXPECT_NEAR(2.0, interpolateLinear2D(values, 5, 10, 5, .1, .5, .1, 500, -50), 1E-3);
+    EXPECT_NEAR(3.0, interpolateLinear2D(values, 5, 10, 5, .1, .5, .1, 5, .3), 1E-6);
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,23 +17,20 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_TEST_SUBSYSTEM_HPP_
-#define TAPROOT_TEST_SUBSYSTEM_HPP_
+#include "vector.hpp"
 
-#include "tap/control/subsystem.hpp"
+#include "position.hpp"
 
-namespace tap
+namespace tap::algorithms::transforms
 {
-namespace control
+inline Vector Vector::operator+(const Position& other) const
 {
-class TestSubsystem : public tap::control::Subsystem
-{
-public:
-    TestSubsystem(tap::Drivers *drivers) : tap::control::Subsystem(drivers) {}
-    void refresh() override {}
-    void refreshSafeDisconnect() override {}
-};
-}  // namespace control
-}  // namespace tap
+    return Vector(this->coordinates_ + other.coordinates());
+}
 
-#endif  // TAPROOT_TEST_SUBSYSTEM_HPP_
+inline Vector Vector::operator+(const Vector& other) const
+{
+    return Vector(this->coordinates_ + other.coordinates_);
+}
+
+}  // namespace tap::algorithms::transforms
