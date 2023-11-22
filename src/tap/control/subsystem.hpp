@@ -21,8 +21,8 @@
 #define TAPROOT_SUBSYSTEM_HPP_
 
 #include <cstdint>
-#include "tap/util_macros.hpp"
 
+#include "tap/util_macros.hpp"
 
 namespace tap
 {
