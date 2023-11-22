@@ -60,6 +60,12 @@ public:
     virtual void initialize() {}
 
     /**
+     * Calls initialize and registers the subsystem with the command scheduler passed
+     *  in through the driver.
+     */
+    void registerAndInitialize();
+
+    /**
      * Sets the default Command of the Subsystem. The default Command will be
      * automatically scheduled when no other Commands are scheduled that require
      * the Subsystem. Default Commands should generally not end on their own, i.e.
