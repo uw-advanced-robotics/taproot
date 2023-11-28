@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+# Copyright (c) 2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
 #
@@ -16,17 +16,12 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":communication:sensors:imu:mpu6500"
-    module.description = "Robomaster Development Board Type A specific communication" \
-        "with the on board mpu6500"
+    module.name = ":communication:sensors:imu:ist8310"
+    module.description = "Communication with the onboard IST8310 magnetometer"
 
 def prepare(module, options):
-    module.depends(":communication:sensors:imu_heater")
-    module.depends(":communication:serial:terminal_serial")
-    module.depends(":communication:sensors:imu")
-    module.depends(":communication:sensors:imu:ist8310")
-    return options[":dev_board"] == "rm-dev-board-a"
+    return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/sensors/imu/mpu6500"
+    env.outbasepath = "taproot/src/tap/communication/sensors/imu/ist8310"
     env.copy(".")

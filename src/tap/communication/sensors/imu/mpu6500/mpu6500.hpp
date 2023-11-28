@@ -26,6 +26,8 @@
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
+#include "tap/communication/sensors/imu/ist8310/ist8310_config.hpp"
+#include "tap/communication/sensors/imu/ist8310/ist8310_reg.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/math/geometry.hpp"
@@ -42,7 +44,8 @@ class Drivers;
 namespace tap::communication::sensors::imu::mpu6500
 {
 /**
- * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
+ * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500
+ * and attached IST8310, connected as an slave device over I2C.
  *
  * To use this class, call Remote::init() to properly initialize and calibrate
  * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temperature
@@ -88,6 +91,11 @@ public:
          */
         modm::Vector3f gyroOffset;
     };
+
+    /**
+     * The number of bytes read to read magnetometer data.
+     */
+    static constexpr uint8_t MAG_BUFF_RX_SIZE = 6;
 
     using ProcessRawMpu6500DataFn = void (*)(
         const uint8_t (&)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
