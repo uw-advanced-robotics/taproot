@@ -21,7 +21,7 @@
 #define TAPROOT_MPU6500_CONFIG_HPP_
 
 // See register datasheet for more information about configuring the mpu6500:
-// https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
+// https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
 
 #define BIT_SHIFT(data, shiftAmnt) ((data) << (shiftAmnt))
 #define BIT_MASK(data, mask) ((data) & (mask))

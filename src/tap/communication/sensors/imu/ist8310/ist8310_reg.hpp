@@ -24,7 +24,7 @@ namespace tap::communication::sensors::imu::ist8310
 {
 
 
-#define IST8310_WHO_AM_I (0x00)
+#define IST8310_WHO_AM_I 0x00
 
 #define IST8310_STATUS_REGISTER1 0x02
 

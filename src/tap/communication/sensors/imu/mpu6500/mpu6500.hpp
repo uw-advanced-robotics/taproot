@@ -26,8 +26,6 @@
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
-#include "tap/communication/sensors/imu/ist8310/ist8310_config.hpp"
-#include "tap/communication/sensors/imu/ist8310/ist8310_reg.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/math/geometry.hpp"
@@ -47,8 +45,8 @@ namespace tap::communication::sensors::imu::mpu6500
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500
  * and attached IST8310, connected as an slave device over I2C.
  *
- * To use this class, call Remote::init() to properly initialize and calibrate
- * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temperature
+ * To use this class, call Mpu6500::init() to properly initialize and calibrate
+ * the MPU6500. Next, call Mpu6500::read() to read acceleration, gyro, and temperature
  * values from the imu. Use the getter methods to access imu information.
  *
  * @note if you are shaking the imu while it is initializing, the offsets will likely
@@ -59,8 +57,9 @@ class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterfa
 public:
     /**
      * The number of bytes read to read acceleration, gyro, and temperature.
+     * Read 6 bytes for magnetometer data.
      */
-    static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
+    static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 20; // From accel data (0x3B) to external sensor data (0x4E)
 
     /**
      * Storage for the raw data we receive from the mpu6500, as well as offsets
@@ -76,12 +75,14 @@ public:
          * Raw gyroscope data.
          */
         modm::Vector3f gyro;
-
         /**
          * Raw temperature.
          */
         uint16_t temperature = 0;
-
+        /**
+         * Raw magnetometer data.
+         */
+        modm::Vector3i magnetometer;
         /**
          * Acceleration offset calculated in init.
          */
@@ -384,6 +385,15 @@ private:
         const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
         modm::Vector3f &gyro);
+
+    void ist8310Init();
+
+    void writeIST8310Register(uint8_t reg, uint8_t data);
+
+    uint8_t readIST8310Registers(uint8_t regAddr);
+
+    void mpuI2CAutoReadSetup();
+    
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500

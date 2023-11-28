@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_IST8310_REG_HPP_
-#define TAPROOT_IST8310_REG_HPP_
+#ifndef TAPROOT_IST8310_CONFIG_HPP_
+#define TAPROOT_IST8310_CONFIG_HPP_
 
 namespace tap::communication::sensors::imu::ist8310
 {
@@ -30,10 +30,10 @@ namespace tap::communication::sensors::imu::ist8310
 // https://dokumen.tips/documents/ist8303-3d-magnetometer-sensor-datasheet-datasheetpdf-stat20x09-bit-description.html?page=16
 
 // Address on the board
-#define IIC_ADDRESS (0x0E)
+#define IST8310_IIC_ADDRESS 0x0E
 
 // Expected return of WHO_AM_I
-#define IST8310_DEVICE_ID_A 0x10
+#define IST8310_DEVICE_ID 0x10
 
 // Status Register 1
 #define IST8310_DRDY (1 << 0)
@@ -45,6 +45,7 @@ namespace tap::communication::sensors::imu::ist8310
 // Control Register 1
 #define IST8310_STAND_BY_MODE 0x00
 #define IST8310_SINGLE_MEASUREMENT_MODE 0x01
+#define IST8310_CONTINUOUS_MEASUREMENT_MODE_200HZ 0x0B // UIUC uses this in their code
 
 // Control Register 2
 #define IST8310_SOFT_RESET (1 << 0)
@@ -74,16 +75,17 @@ namespace tap::communication::sensors::imu::ist8310
 #define IST8310_PULSE_DURATION_NORMAL (0b11 << 6)
 
 // Configuration Data
-#define IST8310_CONTROL_REGISTER1_DATA (IST8310_SINGLE_MEASUREMENT_MODE)
-#define IST8310_CONTROL_REGISTER2_DATA (IST8310_DRDY_PIN_POLARITY_HIGH | IST8310_DATA_READY_ENABLE_CONTROL)
+#define IST8310_CONTROL_REGISTER1_DATA (IST8310_CONTINUOUS_MEASUREMENT_MODE_200HZ)
+#define IST8310_CONTROL_REGISTER2_DATA (IST8310_DRDY_PIN_POLARITY_LOW | IST8310_DATA_READY_ENABLE_CONTROL)
 #define IST8310_AVERAGE_CONTROL_REGISTER_DATA (IST8310_Y__AXIS_AVERAGE_16_SAMPLES | IST8310_XZ_AXIS_AVERAGE_16_SAMPLES)
 #define IST8310_PULSE_DURATION_CONTROL_REGISTER_DATA (IST8310_PULSE_DURATION_NORMAL)
 
 // Data transmit info
-#define IST8310_DATA_LENGTH (6)
+#define IST8310_DATA_LENGTH 6
 #define IST8310_DATA_START_ADDRESS (IST8310_X_LOW_BYTE)
 
+#define IST8310_SLOW_REFRESH_RATE_MS 6
 
 }  // namespace tap::communication::sensors::imu::ist8310
 
-#endif
+#endif // TAPROOT_IST8310_CONFIG_HPP_
