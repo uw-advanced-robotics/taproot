@@ -182,7 +182,7 @@ TEST(DjiMotor, serializeCanSendData_serializes_desired_output_in_correct_positio
     EXPECT_EQ(serializedDesiredOutput, motor.getOutputDesired());
 }
 
-TEST(DjiMotor, resetEncoderValue_zeroes_encoder_fields)
+TEST(DjiMotor, offsetRevolutions_offsets_encoder_unwrapped_by_enc_resolution)
 {
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");

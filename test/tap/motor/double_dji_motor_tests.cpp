@@ -247,16 +247,16 @@ TEST(DoubleDjiMotor, offsetRevolutions_offsets_both_motors)
     int16_t motorOneEncoder = 0, motorTwoEncoder = 0;
 
     EXPECT_CALL(motor.motorOne, offsetRevolutions)
-        .WillOnce([&]() { motorOneEncoder += encoderResolution; });
+        .WillOnce([&](int64_t revOffset) { motorOneEncoder += encoderResolution * revOffset; });
     EXPECT_CALL(motor.motorTwo, offsetRevolutions)
-        .WillOnce([&]() { motorTwoEncoder += encoderResolution; });
+        .WillOnce([&](int64_t revOffset) { motorTwoEncoder += encoderResolution * revOffset; });
 
     ON_CALL(motor.motorOne, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorOneEncoder));
     ON_CALL(motor.motorTwo, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorTwoEncoder));
 
     motor.offsetRevolutions(revolutionOffset);
 
-    EXPECT_EQ(encoderResolution, motor.getEncoderWrapped());
+    EXPECT_EQ(encoderResolution, motor.getEncoderUnwrapped());
 }
 
 TEST(DoubleDjiMotor, resetEncoderValue_zeroes_both_motor_encoders)
