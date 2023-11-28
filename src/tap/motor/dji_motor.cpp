@@ -112,7 +112,6 @@ int64_t DjiMotor::getEncoderUnwrapped() const
 
 uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
 
-
 float DjiMotor::getPositionUnwrapped() const
 {
     return getEncoderUnwrapped() * M_TWOPI / ENC_RESOLUTION;
@@ -123,7 +122,8 @@ float DjiMotor::getPositionWrapped() const
     return getEncoderWrapped() * M_TWOPI / ENC_RESOLUTION;
 }
 
-void DjiMotor::offsetRevolutions(int64_t revolutionsOffset) {
+void DjiMotor::offsetRevolutions(int64_t revolutionsOffset)
+{
     encoderRevolutions += revolutionsOffset;
 }
 

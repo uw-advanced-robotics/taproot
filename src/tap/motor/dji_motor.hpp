@@ -133,7 +133,7 @@ public:
 
     /**
      * Gets the motor's current position in encoder ticks from its home position.
-    */
+     */
     int64_t getEncoderUnwrapped() const override;
 
     /**
