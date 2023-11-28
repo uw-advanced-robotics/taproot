@@ -106,10 +106,12 @@ TEST(DoubleDjiMotor, setDesiredOutput__sets_both_motors_output)
 
     int32_t expectedDesOut = 0;
 
-    EXPECT_CALL(motor.motorOne, setDesiredOutput)
-        .WillRepeatedly([&](int32_t desOut) { EXPECT_EQ(expectedDesOut, desOut); });
-    EXPECT_CALL(motor.motorTwo, setDesiredOutput)
-        .WillRepeatedly([&](int32_t desOut) { EXPECT_EQ(expectedDesOut, desOut); });
+    EXPECT_CALL(motor.motorOne, setDesiredOutput).WillRepeatedly([&](int32_t desOut) {
+        EXPECT_EQ(expectedDesOut, desOut);
+    });
+    EXPECT_CALL(motor.motorTwo, setDesiredOutput).WillRepeatedly([&](int32_t desOut) {
+        EXPECT_EQ(expectedDesOut, desOut);
+    });
 
     std::vector<int32_t> possibleDesOut{-30000, -15000, -1000, 0, 1500, 12434};
     for (int32_t desOut : possibleDesOut)
@@ -246,10 +248,12 @@ TEST(DoubleDjiMotor, offsetRevolutions_offsets_both_motors)
 
     int16_t motorOneEncoder = 0, motorTwoEncoder = 0;
 
-    EXPECT_CALL(motor.motorOne, offsetRevolutions)
-        .WillOnce([&](int64_t revOffset) { motorOneEncoder += encoderResolution * revOffset; });
-    EXPECT_CALL(motor.motorTwo, offsetRevolutions)
-        .WillOnce([&](int64_t revOffset) { motorTwoEncoder += encoderResolution * revOffset; });
+    EXPECT_CALL(motor.motorOne, offsetRevolutions).WillOnce([&](int64_t revOffset) {
+        motorOneEncoder += encoderResolution * revOffset;
+    });
+    EXPECT_CALL(motor.motorTwo, offsetRevolutions).WillOnce([&](int64_t revOffset) {
+        motorTwoEncoder += encoderResolution * revOffset;
+    });
 
     ON_CALL(motor.motorOne, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorOneEncoder));
     ON_CALL(motor.motorTwo, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorTwoEncoder));
@@ -297,22 +301,16 @@ TEST(DjiMotor, double_moving_relative_to_home_after_zeroed_ok)
         .WillByDefault(ReturnPointee(&motorOneEncoderRelToHome));
     ON_CALL(motor.motorTwo, getEncoderWrapped)
         .WillByDefault(ReturnPointee(&motorTwoEncoderRelToHome));
-    EXPECT_CALL(motor.motorOne, resetEncoderValue)
-        .WillOnce(
-            [&]()
-            {
-                // logic from dji_motor.cpp
-                motorOneHome = (motorOneEncoderRelToHome + motorOneHome) % ENC_RESOLUTION;
-                motorOneEncoderRelToHome = 0;
-            });
-    EXPECT_CALL(motor.motorTwo, resetEncoderValue)
-        .WillOnce(
-            [&]()
-            {
-                // logic from dji_motor.cpp
-                motorTwoHome = (motorTwoEncoderRelToHome + motorTwoHome) % ENC_RESOLUTION;
-                motorTwoEncoderRelToHome = 0;
-            });
+    EXPECT_CALL(motor.motorOne, resetEncoderValue).WillOnce([&]() {
+        // logic from dji_motor.cpp
+        motorOneHome = (motorOneEncoderRelToHome + motorOneHome) % ENC_RESOLUTION;
+        motorOneEncoderRelToHome = 0;
+    });
+    EXPECT_CALL(motor.motorTwo, resetEncoderValue).WillOnce([&]() {
+        // logic from dji_motor.cpp
+        motorTwoHome = (motorTwoEncoderRelToHome + motorTwoHome) % ENC_RESOLUTION;
+        motorTwoEncoderRelToHome = 0;
+    });
 
     EXPECT_EQ(1000, motor.getEncoderWrapped());
 
