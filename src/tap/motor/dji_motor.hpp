@@ -131,8 +131,14 @@ public:
      */
     int16_t getOutputDesired() const override;
 
+    /**
+     * Gets the motor's current position in encoder ticks from its home position.
+    */
     int64_t getEncoderUnwrapped() const override;
 
+    /**
+     * Gets the motor's current position in encoder ticks from its home position wrapped.
+     */
     uint16_t getEncoderWrapped() const override;
 
     /**
