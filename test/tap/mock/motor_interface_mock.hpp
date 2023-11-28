@@ -38,6 +38,7 @@ public:
     MOCK_METHOD(int64_t, getEncoderUnwrapped, (), (const override));
     MOCK_METHOD(uint16_t, getEncoderWrapped, (), (const override));
     MOCK_METHOD(void, resetEncoderValue, (), (override));
+    MOCK_METHOD(void, offsetRevolutions, (int64_t revolutionsOffset), (override));
     MOCK_METHOD(float, getPositionUnwrapped, (), (const override));
     MOCK_METHOD(float, getPositionWrapped, (), (const override));
     MOCK_METHOD(void, setDesiredOutput, (int32_t), (override));

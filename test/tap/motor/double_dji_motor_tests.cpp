@@ -238,6 +238,27 @@ TEST(DoubleDjiMotor, getShaftRPM__returns_average_RPM)
     EXPECT_EQ(2000, motor.getShaftRPM());
 }
 
+TEST(DoubleDjiMotor, offsetRevolutions_offsets_both_motors)
+{
+    SETUP_TEST();
+
+    int64_t revolutionOffset = 1;
+
+    int64_t encoderResolution = 8;
+
+    int16_t motorOneEncoder = 0, motorTwoEncoder = 0;
+
+    EXPECT_CALL(motor.motorOne, offsetRevolutions).WillOnce([&]() { motorOneEncoder += encoderResolution; });
+    EXPECT_CALL(motor.motorTwo, offsetRevolutions).WillOnce([&]() { motorTwoEncoder += encoderResolution; });
+
+    ON_CALL(motor.motorOne, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorOneEncoder));
+    ON_CALL(motor.motorTwo, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorTwoEncoder));
+
+    motor.offsetRevolutions(revolutionOffset);
+
+    EXPECT_EQ(encoderResolution, motor.getEncoderWrapped());
+}
+
 TEST(DoubleDjiMotor, resetEncoderValue_zeroes_both_motor_encoders)
 {
     SETUP_TEST();

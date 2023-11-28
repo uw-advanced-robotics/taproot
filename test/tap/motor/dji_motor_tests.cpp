@@ -199,6 +199,31 @@ TEST(DjiMotor, resetEncoderValue_zeroes_encoder_fields)
     motorData.encode(msg.data);
     motor.processMessage(msg);
 
+    int64_t revolutionsOffset = 1;
+    int64_t expectedUnwrappedEncoder = DjiMotor::ENC_RESOLUTION + motorData.encoder;
+
+    motor.offsetRevolutions(revolutionsOffset);
+    EXPECT_EQ(expectedUnwrappedEncoder, motor.getEncoderUnwrapped());
+    EXPECT_EQ(motorData.encoder, motor.getEncoderWrapped());
+}
+
+TEST(DjiMotor, resetEncoderValue_zeroes_encoder_fields)
+{
+    tap::Drivers drivers;
+    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+
+    modm::can::Message msg(MOTOR1, 8, {}, false);
+
+    MotorData motorData;
+
+    motorData.encoder = 1000;
+    motorData.shaftRPM = -100;
+    motorData.torque = 100;
+    motorData.temperature = 43;
+
+    motorData.encode(msg.data);
+    motor.processMessage(msg);
+
     motor.resetEncoderValue();
     EXPECT_EQ(0, motor.getEncoderUnwrapped());
     EXPECT_EQ(0, motor.getEncoderWrapped());

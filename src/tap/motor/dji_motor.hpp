@@ -100,22 +100,6 @@ public:
 
     mockable ~DjiMotor();
 
-    void initialize() override;
-
-    float getPositionUnwrapped() const override;
-
-    float getPositionWrapped() const override;
-
-    int64_t getEncoderUnwrapped() const override;
-
-    uint16_t getEncoderWrapped() const override;
-
-    /**
-     * Resets this motor's current encoder home position to the current encoder position reported by
-     * CAN messages, and resets this motor's encoder revolutions to 0.
-     */
-    void resetEncoderValue() override;
-
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
     /**
@@ -126,6 +110,8 @@ public:
      * @param[in] message the message to be processed.
      */
     void processMessage(const modm::can::Message& message) override;
+
+    void initialize() override;
 
     /**
      * Set the desired output for the motor. The meaning of this value is motor
@@ -140,23 +126,35 @@ public:
     void setDesiredOutput(int32_t desiredOutput) override;
 
     /**
-     * @return `true` if a CAN message has been received from the motor within the last
-     *      `MOTOR_DISCONNECT_TIME` ms, `false` otherwise.
-     */
-    bool isMotorOnline() const override;
-
-    /**
-     * Serializes send data and deposits it in a message to be sent.
-     */
-    mockable void serializeCanSendData(modm::can::Message* txMessage) const;
-
-    /**
      * @return the raw `desiredOutput` value which will be sent to the motor controller
      *      (specified via `setDesiredOutput()`)
      */
     int16_t getOutputDesired() const override;
 
-    mockable uint32_t getMotorIdentifier() const;
+    int64_t getEncoderUnwrapped() const override;
+
+    uint16_t getEncoderWrapped() const override;
+
+    /**
+     * Offsets internal revolution counter.
+     */
+    void offsetRevolutions(int64_t revolutionsOffset) override;
+
+    /**
+     * Resets this motor's current encoder home position to the current encoder position reported by
+     * CAN messages, and resets this motor's encoder revolutions to 0.
+     */
+    void resetEncoderValue() override;
+
+    float getPositionUnwrapped() const override;
+
+    float getPositionWrapped() const override;
+
+    /**
+     * @return `true` if a CAN message has been received from the motor within the last
+     *      `MOTOR_DISCONNECT_TIME` ms, `false` otherwise.
+     */
+    bool isMotorOnline() const override;
 
     /**
      * @return the temperature of the motor as reported by the motor in degrees Celsius
@@ -168,11 +166,18 @@ public:
     /// For interpreting the sign of return value see class comment
     int16_t getShaftRPM() const override;
 
+    mockable uint32_t getMotorIdentifier() const;
+
     mockable bool isMotorInverted() const;
 
     mockable tap::can::CanBus getCanBus() const;
 
     mockable const char* getName() const;
+
+    /**
+     * Serializes send data and deposits it in a message to be sent.
+     */
+    mockable void serializeCanSendData(modm::can::Message* txMessage) const;
 
     template <typename T>
     static void assertEncoderType()

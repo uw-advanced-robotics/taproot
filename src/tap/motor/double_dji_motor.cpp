@@ -58,9 +58,31 @@ void DoubleDjiMotor::initialize()
     motorTwo.initialize();
 }
 
+void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
+{
+    motorOne.setDesiredOutput(desiredOutput);
+    motorTwo.setDesiredOutput(desiredOutput);
+}
+
+int16_t DoubleDjiMotor::getOutputDesired() const
+{
+    int16_t m1Out =
+        motorOne.isMotorInverted() ? -motorOne.getOutputDesired() : motorOne.getOutputDesired();
+    int16_t m2Out =
+        motorTwo.isMotorInverted() ? -motorTwo.getOutputDesired() : motorTwo.getOutputDesired();
+
+    return (static_cast<int32_t>(m1Out) + static_cast<int32_t>(m2Out)) / 2;
+}
+
 int64_t DoubleDjiMotor::getEncoderUnwrapped() const { return motorOne.getEncoderUnwrapped(); }
 
 uint16_t DoubleDjiMotor::getEncoderWrapped() const { return motorOne.getEncoderWrapped(); }
+
+void DoubleDjiMotor::offsetRevolutions(int64_t revolutionsOffset)
+{
+    motorOne.offsetRevolutions(revolutionsOffset);
+    motorTwo.offsetRevolutions(revolutionsOffset);
+}
 
 void DoubleDjiMotor::resetEncoderValue()
 {
@@ -72,25 +94,9 @@ float DoubleDjiMotor::getPositionUnwrapped() const { return motorOne.getPosition
 
 float DoubleDjiMotor::getPositionWrapped() const { return motorOne.getPositionWrapped(); }
 
-void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
-{
-    motorOne.setDesiredOutput(desiredOutput);
-    motorTwo.setDesiredOutput(desiredOutput);
-}
-
 bool DoubleDjiMotor::isMotorOnline() const
 {
     return motorOne.isMotorOnline() && motorTwo.isMotorOnline();
-}
-
-int16_t DoubleDjiMotor::getOutputDesired() const
-{
-    int16_t m1Out =
-        motorOne.isMotorInverted() ? -motorOne.getOutputDesired() : motorOne.getOutputDesired();
-    int16_t m2Out =
-        motorTwo.isMotorInverted() ? -motorTwo.getOutputDesired() : motorTwo.getOutputDesired();
-
-    return (static_cast<int32_t>(m1Out) + static_cast<int32_t>(m2Out)) / 2;
 }
 
 int8_t DoubleDjiMotor::getTemperature() const

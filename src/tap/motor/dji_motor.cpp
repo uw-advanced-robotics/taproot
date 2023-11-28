@@ -62,12 +62,6 @@ DjiMotor::DjiMotor(
     motorDisconnectTimeout.stop();
 }
 
-void DjiMotor::initialize()
-{
-    drivers->djiMotorTxHandler.addMotorToManager(this);
-    attachSelfToRxHandler();
-}
-
 void DjiMotor::processMessage(const modm::can::Message& message)
 {
     if (message.getIdentifier() != DjiMotor::getMotorIdentifier())
@@ -95,11 +89,49 @@ void DjiMotor::processMessage(const modm::can::Message& message)
                                   : encoderRelativeToHome);
 }
 
+void DjiMotor::initialize()
+{
+    drivers->djiMotorTxHandler.addMotorToManager(this);
+    attachSelfToRxHandler();
+}
+
 void DjiMotor::setDesiredOutput(int32_t desiredOutput)
 {
     int16_t desOutputNotInverted =
         static_cast<int16_t>(tap::algorithms::limitVal<int32_t>(desiredOutput, SHRT_MIN, SHRT_MAX));
     this->desiredOutput = motorInverted ? -desOutputNotInverted : desOutputNotInverted;
+}
+
+int16_t DjiMotor::getOutputDesired() const { return desiredOutput; }
+
+int64_t DjiMotor::getEncoderUnwrapped() const
+{
+    return static_cast<int64_t>(encoderWrapped) +
+           static_cast<int64_t>(ENC_RESOLUTION) * encoderRevolutions;
+}
+
+uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
+
+
+float DjiMotor::getPositionUnwrapped() const
+{
+    return getEncoderUnwrapped() * M_TWOPI / ENC_RESOLUTION;
+}
+
+float DjiMotor::getPositionWrapped() const
+{
+    return getEncoderWrapped() * M_TWOPI / ENC_RESOLUTION;
+}
+
+void DjiMotor::offsetRevolutions(int64_t revolutionsOffset) {
+    encoderRevolutions += revolutionsOffset;
+}
+
+void DjiMotor::resetEncoderValue()
+{
+    encoderRevolutions = 0;
+    encoderHomePosition = (encoderWrapped + encoderHomePosition) % ENC_RESOLUTION;
+    encoderWrapped = 0;
 }
 
 bool DjiMotor::isMotorOnline() const
@@ -112,6 +144,14 @@ bool DjiMotor::isMotorOnline() const
     return !motorDisconnectTimeout.isExpired() && !motorDisconnectTimeout.isStopped();
 }
 
+uint32_t DjiMotor::getMotorIdentifier() const { return motorIdentifier; }
+
+int8_t DjiMotor::getTemperature() const { return temperature; }
+
+int16_t DjiMotor::getTorque() const { return torque; }
+
+int16_t DjiMotor::getShaftRPM() const { return shaftRPM; }
+
 void DjiMotor::serializeCanSendData(modm::can::Message* txMessage) const
 {
     int id = DJI_MOTOR_TO_NORMALIZED_ID(this->getMotorIdentifier());  // number between 0 and 7
@@ -123,47 +163,11 @@ void DjiMotor::serializeCanSendData(modm::can::Message* txMessage) const
     txMessage->data[2 * id + 1] = this->getOutputDesired() & 0xFF;
 }
 
-// getter functions
-int16_t DjiMotor::getOutputDesired() const { return desiredOutput; }
-
-uint32_t DjiMotor::getMotorIdentifier() const { return motorIdentifier; }
-
-int8_t DjiMotor::getTemperature() const { return temperature; }
-
-int16_t DjiMotor::getTorque() const { return torque; }
-
-int16_t DjiMotor::getShaftRPM() const { return shaftRPM; }
-
 bool DjiMotor::isMotorInverted() const { return motorInverted; }
 
 tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
-
-int64_t DjiMotor::getEncoderUnwrapped() const
-{
-    return static_cast<int64_t>(encoderWrapped) +
-           static_cast<int64_t>(ENC_RESOLUTION) * encoderRevolutions;
-}
-
-uint16_t DjiMotor::getEncoderWrapped() const { return encoderWrapped; }
-
-void DjiMotor::resetEncoderValue()
-{
-    encoderRevolutions = 0;
-    encoderHomePosition = (encoderWrapped + encoderHomePosition) % ENC_RESOLUTION;
-    encoderWrapped = 0;
-}
-
-float DjiMotor::getPositionUnwrapped() const
-{
-    return getEncoderUnwrapped() * M_TWOPI / ENC_RESOLUTION;
-}
-
-float DjiMotor::getPositionWrapped() const
-{
-    return getEncoderWrapped() * M_TWOPI / ENC_RESOLUTION;
-}
 
 void DjiMotor::updateEncoderValue(uint16_t newEncWrapped)
 {
