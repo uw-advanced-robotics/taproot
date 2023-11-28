@@ -197,6 +197,9 @@ Likely commands are as follows (all from within a `pipenv shell` or prefixed wit
   reported available heap space is an upper bound, and this tool has no way of knowing about the
   real size of dynamic allocations.
 
+Additionally, we have a python script `taproot-scripts/clang_format_all.py` which will format any directories
+provided, so for example one can run `python taproot-scripts/clang_format_all.py src/ test/`.
+
 ## Working with modm
 
 ### What is modm?
