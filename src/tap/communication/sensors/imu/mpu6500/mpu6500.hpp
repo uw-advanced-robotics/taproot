@@ -59,7 +59,8 @@ public:
      * The number of bytes read to read acceleration, gyro, and temperature.
      * Read 6 bytes for magnetometer data.
      */
-    static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 20; // From accel data (0x3B) to external sensor data (0x4E)
+    static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE =
+        20;  // From accel data (0x3B) to external sensor data (0x4E)
 
     /**
      * Storage for the raw data we receive from the mpu6500, as well as offsets
@@ -101,7 +102,8 @@ public:
     using ProcessRawMpu6500DataFn = void (*)(
         const uint8_t (&)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
-        modm::Vector3f &gyro);
+        modm::Vector3f &gyro,
+        modm::Vector3i &mag);
 
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
@@ -384,7 +386,8 @@ private:
     static void defaultProcessRawMpu6500Data(
         const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
-        modm::Vector3f &gyro);
+        modm::Vector3f &gyro,
+        modm::Vector3i &mag);
 
     void ist8310Init();
 
@@ -393,7 +396,6 @@ private:
     uint8_t readIST8310Registers(uint8_t regAddr);
 
     void mpuI2CAutoReadSetup();
-    
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
