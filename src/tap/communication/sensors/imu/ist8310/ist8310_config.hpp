@@ -61,13 +61,13 @@ namespace tap::communication::sensors::imu::ist8310
 #define IST8310_Y__AXIS_AVERAGE_2_SAMPLES (0b001 << 3)
 #define IST8310_Y__AXIS_AVERAGE_4_SAMPLES (0b010 << 3) // Default
 #define IST8310_Y__AXIS_AVERAGE_8_SAMPLES (0b011 << 3)
-#define IST8310_Y__AXIS_AVERAGE_16_SAMPLES (0100 << 3)
+#define IST8310_Y__AXIS_AVERAGE_16_SAMPLES (0b100 << 3)
 
 #define IST8310_XZ_AXIS_NO_AVERAGE_SAMPLE 0b000
 #define IST8310_XZ_AXIS_AVERAGE_2_SAMPLES 0b001
 #define IST8310_XZ_AXIS_AVERAGE_4_SAMPLES 0b010 // Default
 #define IST8310_XZ_AXIS_AVERAGE_8_SAMPLES 0b011
-#define IST8310_XZ_AXIS_AVERAGE_16_SAMPLES 0100
+#define IST8310_XZ_AXIS_AVERAGE_16_SAMPLES 0b100
 // any other value results in no averaging
 
 // Pulse Duration Control Register

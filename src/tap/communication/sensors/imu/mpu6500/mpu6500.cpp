@@ -120,6 +120,7 @@ void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
 
     // Configure IST8310
     ist8310Init();
+    modm::delay_ms(10);
 #endif
 
     imuHeater.initialize();
@@ -296,24 +297,24 @@ void Mpu6500::writeIST8310Register(uint8_t regAddr, uint8_t data)
 #endif
 }
 
-uint8_t Mpu6500::readIST8310Registers(uint8_t regAddr)
-{
-#ifdef PLATFORM_HOSTED
-    UNUSED(regAddr);
-    UNUSED(pData);
-    UNUSED(len);
-#else
-    spiWriteRegister(MPU6500_I2C_SLV4_REG, regAddr);
-    modm::delay_ms(10);
-    spiWriteRegister(MPU6500_I2C_SLV4_CTRL, MPU6500_READ_BIT);
-    modm::delay_ms(10);
-    uint8_t data = spiReadRegister(MPU6500_I2C_SLV4_DI);
-    // Turn off slave 4 after read
-    spiWriteRegister(MPU6500_I2C_SLV4_CTRL, 0x00);
-    modm::delay_ms(10);
-    return data;
-#endif
-}
+// uint8_t Mpu6500::readIST8310Registers(uint8_t regAddr)
+// {
+// #ifdef PLATFORM_HOSTED
+//     UNUSED(regAddr);
+//     UNUSED(pData);
+//     UNUSED(len);
+// #else
+//     spiWriteRegister(MPU6500_I2C_SLV4_REG, regAddr);
+//     modm::delay_ms(10);
+//     spiWriteRegister(MPU6500_I2C_SLV4_CTRL, MPU6500_READ_BIT);
+//     modm::delay_ms(10);
+//     uint8_t data = spiReadRegister(MPU6500_I2C_SLV4_DI);
+//     // Turn off slave 4 after read
+//     spiWriteRegister(MPU6500_I2C_SLV4_CTRL, 0x00);
+//     modm::delay_ms(10);
+//     return data;
+// #endif
+// }
 
 // The UIUC way
 /**
@@ -336,6 +337,29 @@ void Mpu6500::ist8310Init(){
     spiWriteRegister(MPU6500_I2C_MST_CTRL, 0x0D); // 400 kHz I2C clock speed
     modm::delay_ms(10);
 
+// ----------------CONFIG-----------------------
+      /* turn on slave 1 for ist write and slave 4 to ist read */
+    spiWriteRegister(MPU6500_I2C_SLV1_ADDR, IST8310_IIC_ADDRESS);  
+    modm::delay_ms(10);
+    spiWriteRegister(MPU6500_I2C_SLV4_ADDR, MPU6500_READ_BIT | IST8310_IIC_ADDRESS);
+    modm::delay_ms(10);
+
+    writeIST8310Register(IST8310_CONTROL_REGISTER2, IST8310_CONTROL_REGISTER2_DATA);
+    modm::delay_ms(10);
+
+    writeIST8310Register(IST8310_AVERAGE_CONTROL_REGISTER, IST8310_AVERAGE_CONTROL_REGISTER_DATA);
+    modm::delay_ms(10);
+
+    // Turn off slave 1 and 4
+    spiWriteRegister(MPU6500_I2C_SLV1_CTRL, 0x00);
+    modm::delay_ms(10);
+    spiWriteRegister(MPU6500_I2C_SLV4_CTRL, 0x00);
+    modm::delay_ms(10);
+
+
+    
+
+// ----------------AUTO READ-----------------------
     // Slave 0 for auto receive
     spiWriteRegister(MPU6500_I2C_SLV0_ADDR, IST8310_IIC_ADDRESS | MPU6500_READ_BIT); // read from device 0x0e
     modm::delay_ms(10);
