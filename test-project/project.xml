@@ -42,6 +42,7 @@
 
     <!-- For RoboMaster Development Board Type A -->
     <module>taproot:communication:sensors:imu:mpu6500</module>
+    <module>taproot:communication:sensors:imu:ist8310</module>
     <module>taproot:display</module>
     <!-- End For RoboMaster Development Board Type A -->
 

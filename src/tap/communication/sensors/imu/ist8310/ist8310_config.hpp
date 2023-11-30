@@ -86,6 +86,8 @@ namespace tap::communication::sensors::imu::ist8310
 
 #define IST8310_SLOW_REFRESH_RATE_MS 6
 
+#define IST8310_SENSITIVITY 0.3f // uT/LSB
+
 }  // namespace tap::communication::sensors::imu::ist8310
 
 #endif // TAPROOT_IST8310_CONFIG_HPP_

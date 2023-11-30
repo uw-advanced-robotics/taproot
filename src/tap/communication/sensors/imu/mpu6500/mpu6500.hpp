@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -25,6 +25,7 @@
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
+#include "tap/communication/sensors/imu/magnetometer_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
@@ -52,7 +53,9 @@ namespace tap::communication::sensors::imu::mpu6500
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterface
+class Mpu6500 final_mockable : public ::modm::pt::Protothread,
+                               public ImuInterface,
+                               public MagnetometerInterface
 {
 public:
     /**
@@ -83,7 +86,15 @@ public:
         /**
          * Raw magnetometer data.
          */
-        modm::Vector3i magnetometer;
+        modm::Vector3f magnetometer;
+        /**
+         * Magnetometer axis offset.
+         */
+        modm::Vector3f offset;
+        /**
+         * Magnetometer axis scalar.
+         */
+        modm::Vector3f scale;
         /**
          * Acceleration offset calculated in init.
          */
@@ -103,7 +114,7 @@ public:
         const uint8_t (&)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
         modm::Vector3f &gyro,
-        modm::Vector3i &mag);
+        modm::Vector3f &mag);
 
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
@@ -134,7 +145,7 @@ public:
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, calibrating
-     * or calibrated. When not connected, IMU data is undefiend. When not calibrated, IMU data is
+     * or calibrated. When not connected, IMU data is undefined. When not calibrated, IMU data is
      * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
      * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
      * not drift.
@@ -144,6 +155,11 @@ public:
      * is not undefined.
      */
     mockable inline ImuState getImuState() const { return imuState; }
+
+    /**
+     * Returns the magnetometer state.
+     */
+    mockable inline MagnetometerState getMagnetometerState() const { return magState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
@@ -264,6 +280,14 @@ public:
      */
     inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
 
+    /**
+     * Returns the magnetometer head in the xy plane.
+     */
+    inline float getHeading() final_mockable
+    {
+        return validateReading(modm::toDegree(atan2f(raw.magnetometer.y, raw.magnetometer.x)));
+    }
+
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
     /**
@@ -348,6 +372,8 @@ private:
 
     uint32_t prevIMUDataReceivedTime = 0;
 
+    MagnetometerState magState = MagnetometerState::MAGNETOMETER_NOT_CONNECTED;
+
     // Functions for interacting with hardware directly.
 
     /**
@@ -387,15 +413,11 @@ private:
         const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
         modm::Vector3f &gyro,
-        modm::Vector3i &mag);
+        modm::Vector3f &mag);
 
     void ist8310Init();
 
     void writeIST8310Register(uint8_t reg, uint8_t data);
-
-    uint8_t readIST8310Registers(uint8_t regAddr);
-
-    void mpuI2CAutoReadSetup();
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500

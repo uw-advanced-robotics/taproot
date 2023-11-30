@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -367,7 +367,7 @@ void Mpu6500::defaultProcessRawMpu6500Data(
     const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
     modm::Vector3f &accel,
     modm::Vector3f &gyro,
-    modm::Vector3i &mag)
+    modm::Vector3f &mag)
 {
     accel.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
     accel.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
@@ -377,9 +377,9 @@ void Mpu6500::defaultProcessRawMpu6500Data(
     gyro.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
     gyro.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 
-    mag.x = rxBuff[14] << 8 | rxBuff[15];
-    mag.y = rxBuff[16] << 8 | rxBuff[17];
-    mag.z = rxBuff[18] << 8 | rxBuff[19];
+    mag.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 14) * IST8310_SENSITIVITY;
+    mag.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 16) * IST8310_SENSITIVITY;
+    mag.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 18) * IST8310_SENSITIVITY;
 }
 
 }  // namespace tap::communication::sensors::imu::mpu6500
