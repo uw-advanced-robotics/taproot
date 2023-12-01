@@ -88,6 +88,13 @@ namespace tap::communication::sensors::imu::ist8310
 
 #define IST8310_SENSITIVITY 0.3f // uT/LSB
 
+#define IST8310_XY_AXIS_MAX 1600 * IST8310_SENSITIVITY
+#define IST8310_XY_AXIS_MIN -IST8310_XY_AXIS_MAX
+
+#define IST8310_Z_AXIS_MAX 2500 * IST8310_SENSITIVITY
+#define IST8310_Z_AXIS_MIN -IST8310_Z_AXIS_MAX
+
+
 }  // namespace tap::communication::sensors::imu::ist8310
 
 #endif // TAPROOT_IST8310_CONFIG_HPP_

@@ -85,13 +85,9 @@ public:
          */
         modm::Vector3f magnetometer;
         /**
-         * Magnetometer axis offset.
+         * Magnetometer axis offset and scalar.
          */
-        modm::Vector3f offset;
-        /**
-         * Magnetometer axis scalar.
-         */
-        modm::Vector3f scale;
+        modm::Vector3f magnetometerOffset;
         /**
          * Acceleration offset calculated in init.
          */
@@ -348,6 +344,7 @@ private:
     RawData raw;
 
     Mahony mahonyAlgorithm;
+    Mahony balony;
 
     imu_heater::ImuHeater imuHeater;
 
@@ -363,6 +360,14 @@ private:
     uint8_t errorState = 0;
 
     uint32_t prevIMUDataReceivedTime = 0;
+
+    modm::Vector3f calibrationMaxReading;
+    modm::Vector3f calibrationMinReading;
+
+    /**
+     * The number of samples we take while calibrating in order to determine the mpu offsets.
+     */
+    static constexpr float MPU6500_MAGNETOMETER_CALIBRATION_SAMPLES = 3000;
 
     // Functions for interacting with hardware directly.
 
@@ -408,6 +413,28 @@ private:
     void ist8310Init();
 
     void writeIST8310Register(uint8_t reg, uint8_t data);
+
+    inline void normalizeMagnetometerReading(modm::Vector3f &mag)
+    {
+        mag.x = (mag.x - raw.magnetometerOffset.x);
+        mag.y = (mag.y - raw.magnetometerOffset.y);
+        mag.z = (mag.z - raw.magnetometerOffset.z);
+
+        if (raw.magnetometerOffset.x != 0)
+        {
+            mag.x /= raw.magnetometerOffset.x;
+        }
+
+        if (raw.magnetometerOffset.y != 0)
+        {
+            mag.y /= raw.magnetometerOffset.y;
+        }
+
+        if (raw.magnetometerOffset.z != 0)
+        {
+            mag.z /= raw.magnetometerOffset.z;
+        }
+    }
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
