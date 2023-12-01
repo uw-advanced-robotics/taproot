@@ -25,7 +25,6 @@
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
-#include "tap/communication/sensors/imu/magnetometer_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
@@ -53,9 +52,7 @@ namespace tap::communication::sensors::imu::mpu6500
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-class Mpu6500 final_mockable : public ::modm::pt::Protothread,
-                               public ImuInterface,
-                               public MagnetometerInterface
+class Mpu6500 final_mockable : public ::modm::pt::Protothread, public ImuInterface
 {
 public:
     /**
@@ -155,11 +152,6 @@ public:
      * is not undefined.
      */
     mockable inline ImuState getImuState() const { return imuState; }
-
-    /**
-     * Returns the magnetometer state.
-     */
-    mockable inline MagnetometerState getMagnetometerState() const { return magState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
@@ -283,7 +275,7 @@ public:
     /**
      * Returns the magnetometer head in the xy plane.
      */
-    inline float getHeading() final_mockable
+    inline float getMagneticHeading() mockable
     {
         return validateReading(modm::toDegree(atan2f(raw.magnetometer.y, raw.magnetometer.x)));
     }
@@ -371,8 +363,6 @@ private:
     uint8_t errorState = 0;
 
     uint32_t prevIMUDataReceivedTime = 0;
-
-    MagnetometerState magState = MagnetometerState::MAGNETOMETER_NOT_CONNECTED;
 
     // Functions for interacting with hardware directly.
 

@@ -42,6 +42,9 @@ public:
         /** Indicates the IMU is in the process of computing calibration offsets. Data read when the
            IMU is in this state is undefined. */
         IMU_CALIBRATING,
+        /** Indicates the IMU is in the process of calibrating the magnetometer. Data read when IMU
+         * is in this state is undefined */
+        IMU_CALIBRATING_MAGNETOMETER,
         /// Indicates the IMU is connected and calibration offsets have been computed.
         IMU_CALIBRATED,
     };
