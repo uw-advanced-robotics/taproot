@@ -256,7 +256,8 @@ public:
     /**
      * Returns yaw angle. in degrees.
      */
-    inline float getYaw() final_mockable { return validateReading(mahonyAlgorithm.getYaw()); }
+    inline float getYaw() final_mockable { 
+        return validateReading(mahonyAlgorithm.getYaw()); }
 
     /**
      * Returns pitch angle in degrees.
@@ -363,6 +364,8 @@ private:
     modm::Vector3f calibrationMaxReading;
     modm::Vector3f calibrationMinReading;
 
+    modm::Vector3f normalizedMagnetometer;
+
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
@@ -413,25 +416,31 @@ private:
 
     void writeIST8310Register(uint8_t reg, uint8_t data);
 
-    inline void normalizeMagnetometerReading(modm::Vector3f &mag)
+    inline void normalizeMagnetometerReading()
     {
-        mag.x = (mag.x - raw.magnetometerOffset.x);
-        mag.y = (mag.y - raw.magnetometerOffset.y);
-        mag.z = (mag.z - raw.magnetometerOffset.z);
+        normalizedMagnetometer.x = (raw.magnetometer.x - raw.magnetometerOffset.x);
+        normalizedMagnetometer.y = (raw.magnetometer.y - raw.magnetometerOffset.y);
+        normalizedMagnetometer.z = (raw.magnetometer.z - raw.magnetometerOffset.z);
 
         if (raw.magnetometerOffset.x != 0)
         {
-            mag.x /= raw.magnetometerOffset.x;
+            normalizedMagnetometer.x /= raw.magnetometerOffset.x;
+        } else {
+            normalizedMagnetometer.x /= calibrationMaxReading.x - raw.magnetometerOffset.x;
         }
 
         if (raw.magnetometerOffset.y != 0)
         {
-            mag.y /= raw.magnetometerOffset.y;
+            normalizedMagnetometer.y /= raw.magnetometerOffset.y;
+        } else {
+            normalizedMagnetometer.y /= calibrationMaxReading.y - raw.magnetometerOffset.y;
         }
 
         if (raw.magnetometerOffset.z != 0)
         {
-            mag.z /= raw.magnetometerOffset.z;
+            normalizedMagnetometer.z /= raw.magnetometerOffset.z;
+        } else {
+            normalizedMagnetometer.z /= calibrationMaxReading.z - raw.magnetometerOffset.z;
         }
     }
 };

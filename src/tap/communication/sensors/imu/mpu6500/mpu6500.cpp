@@ -151,7 +151,7 @@ void Mpu6500::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        normalizeMagnetometerReading(raw.magnetometer);
+        normalizeMagnetometerReading();
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
@@ -196,12 +196,9 @@ void Mpu6500::periodicIMUUpdate()
         {
             calibrationSample = 0;
 
-            raw.magnetometerOffset.x =
-                (std::abs(calibrationMaxReading.x) + std::abs(calibrationMinReading.x)) / 2.0f;
-            if (std::abs(calibrationMinReading.x) > std::abs(calibrationMaxReading.x))
-            {
-                raw.magnetometerOffset.x *= -1;
-            }
+            raw.magnetometerOffset.x = (calibrationMaxReading.x + calibrationMinReading.x) / 2.0f;
+            raw.magnetometerOffset.y = (calibrationMaxReading.y + calibrationMinReading.y) / 2.0f;
+            raw.magnetometerOffset.z = (calibrationMaxReading.z + calibrationMinReading.z) / 2.0f;
 
             imuState = ImuState::IMU_CALIBRATED;
             mahonyAlgorithm.reset();
