@@ -344,7 +344,6 @@ private:
     RawData raw;
 
     Mahony mahonyAlgorithm;
-    Mahony balony;
 
     imu_heater::ImuHeater imuHeater;
 

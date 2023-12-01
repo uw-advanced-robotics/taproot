@@ -143,7 +143,6 @@ void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
     readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
 
     mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
-    balony.begin(sampleFrequency, mahonyKp, mahonyKi);
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
 }
@@ -154,16 +153,6 @@ void Mpu6500::periodicIMUUpdate()
     {
         normalizeMagnetometerReading(raw.magnetometer);
         mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
-        balony.update(
-            getGx(),
-            getGy(),
-            getGz(),
-            getAx(),
-            getAy(),
-            getAz(),
-            raw.magnetometer.x,
-            raw.magnetometer.y,
-            raw.magnetometer.z);
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
     }
