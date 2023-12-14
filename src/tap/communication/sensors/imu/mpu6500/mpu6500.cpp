@@ -421,7 +421,8 @@ void Mpu6500::defaultProcessRawMpu6500Data(
 
     mag.x = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 14) * IST8310_SENSITIVITY;
     mag.y = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 16) * IST8310_SENSITIVITY;
-    mag.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 18) * IST8310_SENSITIVITY;
+    // Z-axis needs to be flipped for right hand rule to work
+    mag.z = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 18) * IST8310_SENSITIVITY * -1;
 }
 
 }  // namespace tap::communication::sensors::imu::mpu6500

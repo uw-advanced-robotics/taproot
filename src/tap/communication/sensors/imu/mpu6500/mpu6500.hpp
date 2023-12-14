@@ -308,7 +308,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
+    static constexpr float MPU6500_OFFSET_SAMPLES = 8000;
 
     /**
      * The time to read the registers in nonblocking mode, in microseconds.
@@ -369,7 +369,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_MAGNETOMETER_CALIBRATION_SAMPLES = 3000;
+    static constexpr float MPU6500_MAGNETOMETER_CALIBRATION_SAMPLES = 8000;
 
     // Functions for interacting with hardware directly.
 
