@@ -308,7 +308,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_OFFSET_SAMPLES = 8000;
+    static constexpr float MPU6500_OFFSET_SAMPLES = 2000;
 
     /**
      * The time to read the registers in nonblocking mode, in microseconds.
@@ -369,7 +369,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_MAGNETOMETER_CALIBRATION_SAMPLES = 8000;
+    static constexpr float MPU6500_MAGNETOMETER_CALIBRATION_SAMPLES = 2500;
 
     // Functions for interacting with hardware directly.
 
@@ -418,9 +418,8 @@ private:
 
     inline void normalizeMagnetometerReading()
     {
-        normalizedMagnetometer.x = (raw.magnetometer.x - raw.magnetometerOffset.x);
-        normalizedMagnetometer.y = (raw.magnetometer.y - raw.magnetometerOffset.y);
-        normalizedMagnetometer.z = (raw.magnetometer.z - raw.magnetometerOffset.z);
+
+        normalizedMagnetometer = raw.magnetometer - raw.magnetometerOffset;
 
         if (raw.magnetometerOffset.x != 0)
         {
