@@ -149,10 +149,19 @@ void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
 
 void Mpu6500::periodicIMUUpdate()
 {
+    if (requestCalibrationFlagDebug)
+    {
+        requestCalibration();
+        requestCalibrationFlagDebug = false;
+    }
+
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
         normalizeMagnetometerReading();
-        mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+        mahonyAlgorithm.update(getGx(), getGy(), getGz(), getAx(), getAy(), getAz(),
+                normalizedMagnetometer.y,
+                normalizedMagnetometer.x,
+                normalizedMagnetometer.z );
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
     }
@@ -177,7 +186,6 @@ void Mpu6500::periodicIMUUpdate()
             raw.accelOffset.y /= MPU6500_OFFSET_SAMPLES;
             raw.accelOffset.z /= MPU6500_OFFSET_SAMPLES;
             imuState = ImuState::IMU_CALIBRATING_MAGNETOMETER;
-            mahonyAlgorithm.reset();
         }
     }
     else if (imuState == ImuState::IMU_CALIBRATING_MAGNETOMETER)
