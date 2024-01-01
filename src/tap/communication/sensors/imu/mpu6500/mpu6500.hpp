@@ -166,7 +166,7 @@ public:
             errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CALIBRATED);
             return reading;
         }
-        else if (imuState == ImuState::IMU_CALIBRATING)
+        else if (imuState == ImuState::IMU_CALIBRATING || imuState == ImuState::IMU_CALIBRATING_MAGNETOMETER)
         {
             errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_CALIBRATING);
             return 0.0f;
