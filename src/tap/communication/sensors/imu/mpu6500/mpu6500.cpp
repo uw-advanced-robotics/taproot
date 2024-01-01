@@ -24,8 +24,7 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/board/board.hpp"
-#include "tap/communication/sensors/imu/ist8310/ist8310_config.hpp"
-#include "tap/communication/sensors/imu/ist8310/ist8310_reg.hpp"
+
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
@@ -157,11 +156,7 @@ void Mpu6500::periodicIMUUpdate()
 
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        normalizeMagnetometerReading();
-        mahonyAlgorithm.update(getGx(), getGy(), getGz(), getAx(), getAy(), getAz(),
-                normalizedMagnetometer.y,
-                normalizedMagnetometer.x,
-                normalizedMagnetometer.z );
+        mahonyAlgorithm.update(getGx(), getGy(), getGz(), getAx(), getAy(), getAz(), getMx(), getMy(), getMz());
         tiltAngleCalculated = false;
         // Start reading registers in DELAY_BTWN_CALC_AND_READ_REG us
     }
