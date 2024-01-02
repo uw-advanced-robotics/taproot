@@ -306,14 +306,6 @@ public:
      */
     inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
 
-    /**
-     * Returns the magnetometer head in the xy plane.
-     */
-    inline float getMagneticHeading() mockable
-    {
-        return validateReading(modm::toDegree(atan2f(raw.magnetometer.y, raw.magnetometer.x)));
-    }
-
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
     /**
