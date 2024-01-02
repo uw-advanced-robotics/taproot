@@ -25,8 +25,10 @@ namespace tap::communication::sensors::imu::ist8310
 // Look at datahseet for more information about configuring the ist8310:
 // https://intofpv.com/attachment.php?aid=8104
 
-// TODO: According to https://github.com/Meta-Team/Meta-Embedded/blob/e19889a3b968af4eefb696caacda6aa13c32efd8/dev/interface/ahrs/ist8310_reg.h#L30 
-// there is a 200hz mode for CTRL1 that is set by setting it to 0x0B, which is what the IST8308 can do.
+// TODO: According to
+// https://github.com/Meta-Team/Meta-Embedded/blob/e19889a3b968af4eefb696caacda6aa13c32efd8/dev/interface/ahrs/ist8310_reg.h#L30
+// there is a 200hz mode for CTRL1 that is set by setting it to 0x0B, which is what the IST8308 can
+// do.
 // https://dokumen.tips/documents/ist8303-3d-magnetometer-sensor-datasheet-datasheetpdf-stat20x09-bit-description.html?page=16
 
 // Address on the board
@@ -45,7 +47,7 @@ namespace tap::communication::sensors::imu::ist8310
 // Control Register 1
 #define IST8310_STAND_BY_MODE 0x00
 #define IST8310_SINGLE_MEASUREMENT_MODE 0x01
-#define IST8310_CONTINUOUS_MEASUREMENT_MODE_200HZ 0x0B // UIUC uses this in their code
+#define IST8310_CONTINUOUS_MEASUREMENT_MODE_200HZ 0x0B  // UIUC uses this in their code
 
 // Control Register 2
 #define IST8310_SOFT_RESET (1 << 0)
@@ -59,13 +61,13 @@ namespace tap::communication::sensors::imu::ist8310
 // Average Control Register
 #define IST8310_Y__AXIS_NO_AVERAGE_SAMPLE (0b000 << 3)
 #define IST8310_Y__AXIS_AVERAGE_2_SAMPLES (0b001 << 3)
-#define IST8310_Y__AXIS_AVERAGE_4_SAMPLES (0b010 << 3) // Default
+#define IST8310_Y__AXIS_AVERAGE_4_SAMPLES (0b010 << 3)  // Default
 #define IST8310_Y__AXIS_AVERAGE_8_SAMPLES (0b011 << 3)
 #define IST8310_Y__AXIS_AVERAGE_16_SAMPLES (0b100 << 3)
 
 #define IST8310_XZ_AXIS_NO_AVERAGE_SAMPLE 0b000
 #define IST8310_XZ_AXIS_AVERAGE_2_SAMPLES 0b001
-#define IST8310_XZ_AXIS_AVERAGE_4_SAMPLES 0b010 // Default
+#define IST8310_XZ_AXIS_AVERAGE_4_SAMPLES 0b010  // Default
 #define IST8310_XZ_AXIS_AVERAGE_8_SAMPLES 0b011
 #define IST8310_XZ_AXIS_AVERAGE_16_SAMPLES 0b100
 // any other value results in no averaging
@@ -76,8 +78,10 @@ namespace tap::communication::sensors::imu::ist8310
 
 // Configuration Data
 #define IST8310_CONTROL_REGISTER1_DATA (IST8310_CONTINUOUS_MEASUREMENT_MODE_200HZ)
-#define IST8310_CONTROL_REGISTER2_DATA (IST8310_DRDY_PIN_POLARITY_LOW | IST8310_DATA_READY_ENABLE_CONTROL)
-#define IST8310_AVERAGE_CONTROL_REGISTER_DATA (IST8310_Y__AXIS_AVERAGE_4_SAMPLES | IST8310_XZ_AXIS_AVERAGE_4_SAMPLES)
+#define IST8310_CONTROL_REGISTER2_DATA \
+    (IST8310_DRDY_PIN_POLARITY_LOW | IST8310_DATA_READY_ENABLE_CONTROL)
+#define IST8310_AVERAGE_CONTROL_REGISTER_DATA \
+    (IST8310_Y__AXIS_AVERAGE_4_SAMPLES | IST8310_XZ_AXIS_AVERAGE_4_SAMPLES)
 #define IST8310_PULSE_DURATION_CONTROL_REGISTER_DATA (IST8310_PULSE_DURATION_NORMAL)
 
 // Data transmit info
@@ -86,7 +90,7 @@ namespace tap::communication::sensors::imu::ist8310
 
 #define IST8310_SLOW_REFRESH_RATE_MS 6
 
-#define IST8310_SENSITIVITY 0.3f // uT/LSB
+#define IST8310_SENSITIVITY 0.3f  // uT/LSB
 
 #define IST8310_XY_AXIS_MAX 1600 * IST8310_SENSITIVITY
 #define IST8310_XY_AXIS_MIN -IST8310_XY_AXIS_MAX
@@ -94,7 +98,6 @@ namespace tap::communication::sensors::imu::ist8310
 #define IST8310_Z_AXIS_MAX 2500 * IST8310_SENSITIVITY
 #define IST8310_Z_AXIS_MIN -IST8310_Z_AXIS_MAX
 
-
 }  // namespace tap::communication::sensors::imu::ist8310
 
-#endif // TAPROOT_IST8310_CONFIG_HPP_
+#endif  // TAPROOT_IST8310_CONFIG_HPP_

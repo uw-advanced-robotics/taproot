@@ -246,8 +246,8 @@ public:
     }
 
     /**
-     * Returns the magnetometer reading in the x direction, in mT. 
-     * Note: This is not the x-reading off the sensor, but the y-reading off the sensor as to align 
+     * Returns the magnetometer reading in the x direction, in mT.
+     * Note: This is not the x-reading off the sensor, but the y-reading off the sensor as to align
      * with the gyroscope and accelerometer axes.
      */
     inline float getMx() mockable
