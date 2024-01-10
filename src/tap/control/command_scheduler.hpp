@@ -122,13 +122,6 @@ public:
     mockable ~CommandScheduler();
 
     /**
-     * Calls the `initialize()` function for all Subsystems.
-     *
-     * @warning only call if this is the master scheduler.
-     */
-    mockable void initializeSubsystems();
-
-    /**
      * Calls the `refresh()` function for all Subsystems and the associated
      * `execute()` function for all Commands. A Subsystem is guarenteed to
      * be refreshed no more than one time each time the mainScheduler's run

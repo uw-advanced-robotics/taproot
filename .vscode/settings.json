@@ -78,7 +78,7 @@
         "*.xml.in": "jinja-xml",
         "*.py.in": "jinja-py",
         "*.lb": "python",
-        "*.in": "cpp"
+        "*.in": "cpp",
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
@@ -91,7 +91,11 @@
     "C_Cpp.default.cStandard": "c11",
     "[markdown]": {
         "editor.wordWrap": "off",
-        "editor.quickSuggestions": false,
+        "editor.quickSuggestions": {
+            "comments": "off",
+            "strings": "off",
+            "other": "off"
+        },
         "editor.rulers": [
             100
         ]

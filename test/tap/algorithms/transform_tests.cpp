@@ -19,23 +19,20 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/algorithms/transforms/frame.hpp"
 #include "tap/algorithms/transforms/position.hpp"
 #include "tap/algorithms/transforms/transform.hpp"
 #include "tap/algorithms/transforms/vector.hpp"
 
 using namespace tap::algorithms::transforms;
 
-const Frame A, B;
-
 TEST(Transform, identity_transform_retains_position)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> identity(Transform<A, B>::identity());
+    Position start(1.0, 2.0, 3.0);
+    Transform identity(Transform::identity());
 
     // When
-    Position<B> finish = identity.apply(start);
+    Position finish = identity.apply(start);
 
     // Then
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
@@ -46,11 +43,11 @@ TEST(Transform, identity_transform_retains_position)
 TEST(Transform, identity_transform_retains_vector)
 {
     // Given
-    Vector<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> identity(Transform<A, B>::identity());
+    Vector start(1.0, 2.0, 3.0);
+    Transform identity(Transform::identity());
 
     // When
-    Vector<B> finish = identity.apply(start);
+    Vector finish = identity.apply(start);
 
     // Then
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
@@ -61,14 +58,14 @@ TEST(Transform, identity_transform_retains_vector)
 TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
+    Position start(1.0, 2.0, 3.0);
+    Transform translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
     // When
-    Position<B> finish = translation.apply(start);
+    Position finish = translation.apply(start);
 
     // Then
-    Position<B> expected(0.0, 0.0, 0.0);
+    Position expected(0.0, 0.0, 0.0);
 
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
@@ -78,14 +75,14 @@ TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
 TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negative_translation)
 {
     // Given
-    Position<A> start(0.0, 0.0, 0.0);
-    Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
+    Position start(0.0, 0.0, 0.0);
+    Transform translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
     // When
-    Position<B> finish = translation.apply(start);
+    Position finish = translation.apply(start);
 
     // Then
-    Position<B> expected(-1.0, -2.0, -3.0);
+    Position expected(-1.0, -2.0, -3.0);
 
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
@@ -95,11 +92,11 @@ TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negat
 TEST(Transform, pure_translation_transform_apply_to_vector)
 {
     // Given
-    Vector<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
+    Vector start(1.0, 2.0, 3.0);
+    Transform translation(1.0, 2.0, 3.0, 0.0, 0.0, 0.0);
 
     // When
-    Vector<B> finish = translation.apply(start);
+    Vector finish = translation.apply(start);
 
     // Then
     EXPECT_NEAR(start.x(), finish.x(), 1E-5);
@@ -110,14 +107,14 @@ TEST(Transform, pure_translation_transform_apply_to_vector)
 TEST(Transform, pure_roll_transform_apply_to_position)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> roll(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0);
+    Position start(1.0, 2.0, 3.0);
+    Transform roll(0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0);
 
     // When
-    Position<B> finish = roll.apply(start);
+    Position finish = roll.apply(start);
 
     // Then
-    Position<B> expected(1.0, 3.0, -2.0);
+    Position expected(1.0, 3.0, -2.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -126,14 +123,14 @@ TEST(Transform, pure_roll_transform_apply_to_position)
 TEST(Transform, pure_pitch_transform_apply_to_position)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> pitch(0.0, 0.0, 0.0, 0, M_PI_2, 0.0);
+    Position start(1.0, 2.0, 3.0);
+    Transform pitch(0.0, 0.0, 0.0, 0, M_PI_2, 0.0);
 
     // When
-    Position<B> finish = pitch.apply(start);
+    Position finish = pitch.apply(start);
 
     // Then
-    Position<B> expected(-3.0, 2.0, 1.0);
+    Position expected(-3.0, 2.0, 1.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -142,14 +139,14 @@ TEST(Transform, pure_pitch_transform_apply_to_position)
 TEST(Transform, pure_yaw_transform_apply_to_position)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> yaw(0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2);
+    Position start(1.0, 2.0, 3.0);
+    Transform yaw(0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2);
 
     // When
-    Position<B> finish = yaw.apply(start);
+    Position finish = yaw.apply(start);
 
     // Then
-    Position<B> expected(2.0, -1.0, 3.0);
+    Position expected(2.0, -1.0, 3.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -158,14 +155,14 @@ TEST(Transform, pure_yaw_transform_apply_to_position)
 TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 {
     // Given
-    Position<A> start(0.0, 0.0, 0.0);
-    Transform<A, B> rotation(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
+    Position start(0.0, 0.0, 0.0);
+    Transform rotation(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Position<B> finish = rotation.apply(start);
+    Position finish = rotation.apply(start);
 
     // Then
-    Position<B> expected(0.0, 0.0, 0.0);
+    Position expected(0.0, 0.0, 0.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -174,14 +171,14 @@ TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
+    Position start(1.0, 2.0, 3.0);
+    Transform rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Position<B> finish = rotation.apply(start);
+    Position finish = rotation.apply(start);
 
     // Then
-    Position<B> expected(0.0, 0.0, 0.0);
+    Position expected(0.0, 0.0, 0.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -190,14 +187,14 @@ TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 TEST(Transform, transform_apply_to_source_origin_position)
 {
     // Given
-    Position<A> start(1.0, 2.0, 3.0);
-    Transform<A, B> rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
+    Position start(1.0, 2.0, 3.0);
+    Transform rotation(1.0, 2.0, 3.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Position<B> finish = rotation.apply(start);
+    Position finish = rotation.apply(start);
 
     // Then
-    Position<B> expected(0.0, 0.0, 0.0);
+    Position expected(0.0, 0.0, 0.0);
     EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
     EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
     EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
@@ -206,13 +203,13 @@ TEST(Transform, transform_apply_to_source_origin_position)
 TEST(Transform, transform_compose_with_inverse_yields_identity)
 {
     // Given
-    Transform<A, B> transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
+    Transform transform(0.0, 0.0, 0.0, M_SQRT2, -1.0, M_2_PI);
 
     // When
-    Transform<A, A> composed = transform.compose<A>(transform.getInverse());
+    Transform composed = transform.compose(transform.getInverse());
 
     // Then
-    Transform<A, A> identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    Transform identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     EXPECT_NEAR(identity.getTranslation().x(), composed.getTranslation().x(), 1E-5);
     EXPECT_NEAR(identity.getTranslation().y(), composed.getTranslation().y(), 1E-5);
     EXPECT_NEAR(identity.getTranslation().z(), composed.getTranslation().z(), 1E-5);
