@@ -229,7 +229,7 @@ public:
      *      with header information in this function.
      * @param[in] configMsgHeader Whether or not to update the `graphicMsg`'s header information.
      * @param[in] sendMsg Whether or not to send the message.
-     * 
+     *
      * @todo template instantiation?
      */
     ///@{
@@ -267,8 +267,8 @@ private:
 
     /**
      * Helper generic method for sending graphics
-    */
-    template<typename GRAPHIC>
+     */
+    template <typename GRAPHIC>
     modm::ResumableResult<void> sendGraphic_(
         GRAPHIC* graphicMsg,
         uint16_t messageId,

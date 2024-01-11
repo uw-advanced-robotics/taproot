@@ -485,7 +485,7 @@ public:
          * called `msg`, you can call `getWaitTimeAfterGraphicSendMs(&msg)`.
          *
          * @tparam T The type of the graphic message that was just been sent.
-         * 
+         *
          * @todo @deprecated
          */
         template <typename T>

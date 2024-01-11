@@ -143,7 +143,7 @@ public:
 
     /**
      * Used by `RefSerialTransmitter`. Attempts to acquire transmission semaphore.
-     * 
+     *
      * @note should be called only using RF_WAIT_UNTIL to block until acquiring semaphore.
      */
     mockable bool acquireTransmissionSemaphore()
