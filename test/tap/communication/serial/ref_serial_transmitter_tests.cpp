@@ -398,9 +398,11 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails
 
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .Times(2)
-        .WillRepeatedly([](const tap::errors::SystemError &error) {
-            EXPECT_TRUE(errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
-        });
+        .WillRepeatedly(
+            [](const tap::errors::SystemError &error) {
+                EXPECT_TRUE(
+                    errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
+            });
 
     EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
 
@@ -534,42 +536,42 @@ TEST_F(
 
     // Expect
     EXPECT_CALL(drivers.uart, write(testing::_, testing::_, entireMsgLen))
-        .WillOnce([&](tap::communication::serial::Uart::UartPort,
-                      const uint8_t *data,
-                      std::size_t length) {
-            // Decode and validate header
-            const RefSerial::FrameHeader *header =
-                reinterpret_cast<const RefSerial::FrameHeader *>(data);
-            EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
-            EXPECT_EQ(0xa5, header->headByte);
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC8(data, sizeof(RefSerial::FrameHeader) - 1),
-                header->CRC8);
+        .WillOnce(
+            [&](tap::communication::serial::Uart::UartPort, const uint8_t *data, std::size_t length)
+            {
+                // Decode and validate header
+                const RefSerial::FrameHeader *header =
+                    reinterpret_cast<const RefSerial::FrameHeader *>(data);
+                EXPECT_EQ(sizeof(msg.interactiveHeader) + msgLen, header->dataLength);
+                EXPECT_EQ(0xa5, header->headByte);
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC8(data, sizeof(RefSerial::FrameHeader) - 1),
+                    header->CRC8);
 
-            // Decode and validate interactive header
-            const RefSerialData::Tx::InteractiveHeader *interactiveHeader =
-                reinterpret_cast<const RefSerialData::Tx::InteractiveHeader *>(
-                    data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
-            EXPECT_EQ(0x0200, interactiveHeader->dataCmdId);
-            EXPECT_EQ(
-                RefSerial::RobotId::RED_HERO,
-                static_cast<RefSerial::RobotId>(interactiveHeader->receiverId));
-            EXPECT_EQ(
-                RefSerial::RobotId::RED_DRONE,
-                static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
+                // Decode and validate interactive header
+                const RefSerialData::Tx::InteractiveHeader *interactiveHeader =
+                    reinterpret_cast<const RefSerialData::Tx::InteractiveHeader *>(
+                        data + sizeof(msg.frameHeader) + sizeof(msg.cmdId));
+                EXPECT_EQ(0x0200, interactiveHeader->dataCmdId);
+                EXPECT_EQ(
+                    RefSerial::RobotId::RED_HERO,
+                    static_cast<RefSerial::RobotId>(interactiveHeader->receiverId));
+                EXPECT_EQ(
+                    RefSerial::RobotId::RED_DRONE,
+                    static_cast<RefSerial::RobotId>(interactiveHeader->senderId));
 
-            // Decode and validate message
-            static constexpr int START_DATA_OFFSET =
-                sizeof(msg.frameHeader) + sizeof(msg.cmdId) + sizeof(msg.interactiveHeader);
-            EXPECT_EQ('h', data[START_DATA_OFFSET]);
-            EXPECT_EQ('i', data[START_DATA_OFFSET + 1]);
+                // Decode and validate message
+                static constexpr int START_DATA_OFFSET =
+                    sizeof(msg.frameHeader) + sizeof(msg.cmdId) + sizeof(msg.interactiveHeader);
+                EXPECT_EQ('h', data[START_DATA_OFFSET]);
+                EXPECT_EQ('i', data[START_DATA_OFFSET + 1]);
 
-            // Validate crc16
-            EXPECT_EQ(
-                tap::algorithms::calculateCRC16(data, entireMsgLen - sizeof(uint16_t)),
-                *reinterpret_cast<const uint16_t *>(data + entireMsgLen - sizeof(uint16_t)));
-            return length;
-        });
+                // Validate crc16
+                EXPECT_EQ(
+                    tap::algorithms::calculateCRC16(data, entireMsgLen - sizeof(uint16_t)),
+                    *reinterpret_cast<const uint16_t *>(data + entireMsgLen - sizeof(uint16_t)));
+                return length;
+            });
 
     // When
     refSerialTransmitter.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 2);

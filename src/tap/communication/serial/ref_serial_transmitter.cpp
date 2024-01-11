@@ -28,7 +28,6 @@
 
 namespace tap::communication::serial
 {
-
 RefSerialTransmitter::RefSerialTransmitter(Drivers* drivers) : drivers(drivers) {}
 
 void RefSerialTransmitter::configGraphicGenerics(
