@@ -48,7 +48,7 @@ namespace tap::communication::serial
  * An instance of the ref serial transmitter should be instantiated for each protothread. If unique
  * instances are not used, behavior is undefined.
  */
-class RefSerialTransmitter : public RefSerialData, public modm::Resumable<7>
+class RefSerialTransmitter : public RefSerialData, public modm::Resumable<8>
 {
 public:
     RefSerialTransmitter(Drivers* drivers);
@@ -229,6 +229,8 @@ public:
      *      with header information in this function.
      * @param[in] configMsgHeader Whether or not to update the `graphicMsg`'s header information.
      * @param[in] sendMsg Whether or not to send the message.
+     *
+     * @todo template instantiation?
      */
     ///@{
     mockable modm::ResumableResult<void> sendGraphic(
@@ -261,8 +263,20 @@ public:
 
 private:
     tap::Drivers* drivers;
-    tap::arch::MilliTimeout delayTimer;
     Tx::DeleteGraphicLayerMessage deleteGraphicLayerMessage;
+
+    /**
+     * Helper generic method for sending graphics
+     */
+    template <typename GRAPHIC>
+    modm::ResumableResult<void> sendGraphic_(
+        GRAPHIC* graphicMsg,
+        uint16_t messageId,
+        bool configMsgHeader,
+        bool sendMsg,
+        RobotId robotId,
+        tap::Drivers* drivers,
+        uint8_t extraDataLength);
 };
 }  // namespace tap::communication::serial
 

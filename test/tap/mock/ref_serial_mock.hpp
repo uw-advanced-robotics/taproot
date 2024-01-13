@@ -49,8 +49,8 @@ public:
         (uint16_t, RobotToRobotMessageHandler*),
         (override));
     MOCK_METHOD(RobotId, getRobotIdBasedOnCurrentRobotTeam, (RobotId), (override));
-    MOCK_METHOD(void, acquireTransmissionSemaphore, (), (override));
-    MOCK_METHOD(void, releaseTransmissionSemaphore, (), (override));
+    MOCK_METHOD(bool, acquireTransmissionSemaphore, (), (override));
+    MOCK_METHOD(void, releaseTransmissionSemaphore, (uint32_t), (override));
 };  // class RefSerialMock
 }  // namespace mock
 }  // namespace tap
