@@ -142,7 +142,7 @@ TEST(Bmi088, requestRecalibration__calibration_adds_offset_to_acc_gyro_data)
         int16_t z = 8;
     } modm_packed gyroData;
 
-    for (int i = 0; i < 3000; i++)
+    for (int i = 0; i < bmi088.BMI088_OFFSET_SAMPLES + 2000; i++)
     {
         Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
         Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
