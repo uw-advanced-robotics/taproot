@@ -158,6 +158,11 @@ using ImuInt1Gyro = GpioC5;
 using ImuHeater = GpioF6;
 using ImuSpiMaster = SpiMaster1;
 
+using Ist8310I2CMasterSda = GpioF0;
+using Ist8310I2CMasterScl = GpioF1;
+using Ist8310I2CMaster = I2cMaster3;
+
+
 #endif
 
 inline void initialize()
