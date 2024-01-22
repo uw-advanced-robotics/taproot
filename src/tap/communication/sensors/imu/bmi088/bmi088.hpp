@@ -82,7 +82,7 @@ public:
     /**
      * The number of samples we take in order to determine the mpu offsets.
      */
-    static constexpr float BMI088_OFFSET_SAMPLES = 1000;
+    static constexpr float BMI088_OFFSET_SAMPLES = 4000;
 
     Bmi088(tap::Drivers *drivers);
 

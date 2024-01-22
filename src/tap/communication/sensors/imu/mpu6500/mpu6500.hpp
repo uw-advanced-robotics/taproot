@@ -235,7 +235,7 @@ public:
      */
     inline float getTemp() final_mockable
     {
-        return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
+        return 21.0f + static_cast<float>(raw.temperature) / 333.87f;
     }
 
     /**
@@ -284,7 +284,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    static constexpr float MPU6500_OFFSET_SAMPLES = 1000;
+    static constexpr float MPU6500_OFFSET_SAMPLES = 4000;
 
     /**
      * The time to read the registers in nonblocking mode, in microseconds.
