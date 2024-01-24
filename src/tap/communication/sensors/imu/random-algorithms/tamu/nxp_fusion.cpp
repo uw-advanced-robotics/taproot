@@ -56,8 +56,8 @@
 #define FCA_9DOF_GBY_KALMAN 0.5F                // linear acceleration decay factor
 #define FCD_9DOF_GBY_KALMAN 0.5F                // magnetic disturbance decay factor
 // maximum geomagnetic inclination angle tracked by Kalman filter
-#define SINDELTAMAX 0.9063078F      // sin of max +ve geomagnetic inclination angle: here 65.0 deg
-#define COSDELTAMAX 0.4226183F      // cos of max +ve geomagnetic inclination angle: here 65.0 deg
+#define SINDELTAMAX 0.92718385456F      // sin of max +ve geomagnetic inclination angle: here 65.0 deg // seattle is 68 deg inclination
+#define COSDELTAMAX 0.37460659341F      // cos of max +ve geomagnetic inclination angle: here 65.0 deg
 #define DEFAULTB 50.0F              // default geomagnetic field (uT)
 #define X 0                         // vector components
 #define Y 1
