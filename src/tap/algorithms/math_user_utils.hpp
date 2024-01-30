@@ -140,6 +140,8 @@ CMSISMat<3, 1> cross(const CMSISMat<3, 1>& a, const CMSISMat<3, 1>& b);
  */
 CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw);
 
+CMSISMat<3, 1> toEulerAngles(CMSISMat<3, 3> rotation);
+
 /**
  * Performs a rotation matrix on the given x and y components of a vector.
  *

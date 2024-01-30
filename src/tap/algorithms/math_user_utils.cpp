@@ -66,3 +66,11 @@ tap::algorithms::CMSISMat<3, 3> tap::algorithms::fromEulerAngles(
          cosf(pitch) * sinf(roll),
          cosf(pitch) * cosf(roll)});
 }
+
+tap::algorithms::CMSISMat<3, 1> tap::algorithms::toEulerAngles(const CMSISMat<3, 3>& R)
+{
+    float roll = atan2(R.data[2 * 3 + 1], R.data[2 * 3 + 2]);
+    float pitch = atan2(-R.data[2 * 3 + 0], sqrt(R.data[2 * 3 + 1] ^ 2 + R.data[2 * 3 + 2] ^ 2));
+    float yaw = atan2(R.data[1 * 3 + 0], R.data[0 * 3 + 0]);
+    return CMSISMat<3, 1>({roll, pitch, yaw});
+}
