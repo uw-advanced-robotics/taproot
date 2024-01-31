@@ -187,17 +187,17 @@ public:
     /**
      * Get the roll of this transformation
      */
-    inline float getRoll() const { return tap::algorithms::toEulerAngles(this->rotation).data[0]; }
+    inline float getRoll() const;
 
     /**
      * Get the pitch of this transformation
      */
-    inline float getPitch() const { return tap::algorithms::toEulerAngles(this->rotation).data[1]; }
+    inline float getPitch() const;
 
     /**
      * Get the yaw of this transformation
      */
-    inline float getYaw() const { return tap::algorithms::toEulerAngles(this->rotation).data[1]; }
+    inline float getYaw() const;
 
     /**
      * Get the x-component of this transform's translation
