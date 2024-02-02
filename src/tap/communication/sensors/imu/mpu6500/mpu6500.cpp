@@ -129,6 +129,12 @@ void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
     imuState = ImuState::IMU_NOT_CALIBRATED;
 }
 
+void Mpu6500::initializeCustomSensorFusion(float mahonyKp, float mahonyKi)
+{
+    mahonyAlgorithm.begin(SENSOR_FUSION_RATE_HZ, mahonyKp, mahonyKi);
+    enableCustomSensorFusionHz = true;
+}
+
 void Mpu6500::periodicIMUUpdate()
 {
     if (resetIMU)
@@ -175,12 +181,6 @@ void Mpu6500::periodicIMUUpdate()
     imuHeater.runTemperatureController(getTemp());
 
     addValidationErrors();
-}
-
-void Mpu6500::initializeCustomSensorFusion(float mahonyKp, float mahonyKi)
-{
-    mahonyAlgorithm.begin(SENSOR_FUSION_RATE_HZ, mahonyKp, mahonyKi);
-    enableCustomSensorFusionHz = true;
 }
 
 void Mpu6500::runSensorFusion()

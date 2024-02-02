@@ -26,6 +26,7 @@
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
+#include "modm/math/filter/moving_average.hpp"
 #include "modm/processing/protothread.hpp"
 
 #include "bmi088_data.hpp"
@@ -82,7 +83,7 @@ public:
     /**
      * The number of samples we take in order to determine the mpu offsets.
      */
-    static constexpr float BMI088_OFFSET_SAMPLES = 1000;
+    static constexpr float BMI088_OFFSET_SAMPLES = 10000;
 
     Bmi088(tap::Drivers *drivers);
 
@@ -92,12 +93,23 @@ public:
     mockable void initialize(float sampleFrequency, float mahonyKp, float mahonyKi);
 
     /**
+     * Setups up sensor fusion algorithm at custom sample rate.
+     */
+    mockable void initializeCustomSensorFusion(float mahonyKp, float mahonyKi);
+
+    /**
      * Call this function at 500 Hz. Reads IMU data and performs the mahony AHRS algorithm to
      * compute pitch/roll/yaw.
      *
      * @note This function blocks for 129 microseconds to read registers from the BMI088.
      */
     mockable void periodicIMUUpdate();
+
+    /**
+     * Runs the sensor fusion algorithm.
+     * Call at fusion sample rate set
+     */
+    mockable void runSensorFusion();
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
@@ -137,6 +149,9 @@ public:
 
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
+    static constexpr int SENSOR_FUSION_RATE_HZ = 20000;
+    static constexpr int IMU_DLPF_HZ = 100;
+
 private:
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
     /// Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET.
@@ -172,6 +187,11 @@ private:
     int calibrationSample = 0;
 
     uint32_t prevIMUDataReceivedTime = 0;
+
+    bool enableCustomSensorFusionHz = false;
+
+    modm::filter::MovingAverage<float, SENSOR_FUSION_RATE_HZ / IMU_DLPF_HZ> gyroXFilter,
+        gyroYFilter, gyroZFilter, accelXFilter, accelYFilter, accelZFilter;
 
     void initializeAcc();
     void initializeGyro();

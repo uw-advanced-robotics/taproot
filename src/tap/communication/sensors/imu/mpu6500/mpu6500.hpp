@@ -45,8 +45,8 @@ namespace tap::communication::sensors::imu::mpu6500
 /**
  * A class specifically designed for interfacing with the RoboMaster type A board Mpu6500.
  *
- * To use this class, call Remote::init() to properly initialize and calibrate
- * the MPU6500. Next, call Remote::read() to read acceleration, gyro, and temperature
+ * To use this class, call Mpu6500::init() to properly initialize and calibrate
+ * the MPU6500. Next, call Mpu6500::read() to read acceleration, gyro, and temperature
  * values from the imu. Use the getter methods to access imu information.
  *
  * @note if you are shaking the imu while it is initializing, the offsets will likely

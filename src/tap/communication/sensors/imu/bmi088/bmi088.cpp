@@ -93,6 +93,12 @@ void Bmi088::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
     mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
 }
 
+void Bmi088::initializeCustomSensorFusion(float mahonyKp, float mahonyKi)
+{
+    mahonyAlgorithm.begin(SENSOR_FUSION_RATE_HZ, mahonyKp, mahonyKi);
+    enableCustomSensorFusionHz = true;
+}
+
 void Bmi088::initializeAcc()
 {
     // Write to the accelerometer a few times to get it to wake up (without this the bmi088 will not
@@ -215,16 +221,31 @@ void Bmi088::periodicIMUUpdate()
         data.accG[ImuData::Z] =
             ACC_G_PER_ACC_COUNT * (data.accRaw[ImuData::Z] - data.accOffsetRaw[ImuData::Z]);
 
-        mahonyAlgorithm.updateIMU(
-            data.gyroDegPerSec[ImuData::X],
-            data.gyroDegPerSec[ImuData::Y],
-            data.gyroDegPerSec[ImuData::Z],
-            data.accG[ImuData::X],
-            data.accG[ImuData::Y],
-            data.accG[ImuData::Z]);
+        if (!enableCustomSensorFusionHz)
+        {
+            mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
+        }
     }
 
     imuHeater.runTemperatureController(data.temperature);
+}
+
+void Bmi088::runSensorFusion()
+{
+    gyroXFilter.update(getGx());
+    gyroYFilter.update(getGy());
+    gyroZFilter.update(getGz());
+    accelXFilter.update(getAx());
+    accelYFilter.update(getAy());
+    accelZFilter.update(getAz());
+
+    mahonyAlgorithm.updateIMU(
+        gyroXFilter.getValue(),
+        gyroYFilter.getValue(),
+        gyroZFilter.getValue(),
+        accelXFilter.getValue(),
+        accelYFilter.getValue(),
+        accelZFilter.getValue());
 }
 
 void Bmi088::computeOffsets()
