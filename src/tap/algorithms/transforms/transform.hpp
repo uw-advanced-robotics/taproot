@@ -187,17 +187,17 @@ public:
     /**
      * Get the roll of this transformation
      */
-    inline float getRoll() const;
+    float getRoll() const;
 
     /**
      * Get the pitch of this transformation
      */
-    inline float getPitch() const;
+    float getPitch() const;
 
     /**
      * Get the yaw of this transformation
      */
-    inline float getYaw() const;
+    float getYaw() const;
 
     /**
      * Get the x-component of this transform's translation
