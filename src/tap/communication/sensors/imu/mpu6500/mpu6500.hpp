@@ -28,6 +28,7 @@
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
+#include "modm/math/filter/moving_average.hpp"
 #include "modm/math/geometry.hpp"
 #include "modm/processing/protothread.hpp"
 
@@ -104,7 +105,8 @@ public:
      *
      * @note this function can block for approximately 12 seconds.
      */
-    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi);
+    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi, bool enableSensorFusion);
+
 
     /**
      * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
@@ -170,7 +172,7 @@ public:
     inline float getAx() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
+            static_cast<float>(accelXFilter.getValue() - raw.accelOffset.x) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -181,7 +183,7 @@ public:
     inline float getAy() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
+            static_cast<float>(accelYFilter.getValue() - raw.accelOffset.y) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -192,7 +194,7 @@ public:
     inline float getAz() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
+            static_cast<float>(accelZFilter.getValue() - raw.accelOffset.z) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -203,7 +205,7 @@ public:
     inline float getGx() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(gyroXFilter.getValue() - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -213,7 +215,7 @@ public:
     inline float getGy() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(gyroYFilter.getValue() - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -223,7 +225,7 @@ public:
     inline float getGz() final_mockable
     {
         return validateReading(
-            static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(gyroZFilter.getValue() - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -235,7 +237,7 @@ public:
      */
     inline float getTemp() final_mockable
     {
-        return validateReading(21.0f + static_cast<float>(raw.temperature) / 333.87f);
+        return 21.0f + static_cast<float>(raw.temperature) / 333.87f;
     }
 
     /**
@@ -337,6 +339,14 @@ private:
 
     uint32_t prevIMUDataReceivedTime = 0;
 
+    bool enableSensorFusion = false;
+
+    static constexpr int SENSOR_FUSION_RATE_HZ = 10000;
+    static constexpr int IMU_DLPF_HZ = 100;
+
+    modm::filter::MovingAverage<float, SENSOR_FUSION_RATE_HZ / IMU_DLPF_HZ> gyroXFilter,
+        gyroYFilter, gyroZFilter, accelXFilter, accelYFilter, accelZFilter;
+
     // Functions for interacting with hardware directly.
 
     /**
@@ -376,6 +386,8 @@ private:
         const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
         modm::Vector3f &gyro);
+
+    bool resetIMU = false;
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
