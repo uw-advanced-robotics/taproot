@@ -58,7 +58,7 @@ void Mpu6500::requestCalibration()
     }
 }
 
-void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi, bool enableSensorFusion)
+void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
 #ifndef PLATFORM_HOSTED
     // Configure NSS pin
@@ -124,43 +124,21 @@ void Mpu6500::init(float sampleFrequency, float mahonyKp, float mahonyKi, bool e
     assert(delayBtwnCalcAndReadReg >= 0);
 
     readRegistersTimeout.restart(delayBtwnCalcAndReadReg);
-
-    this->enableSensorFusion = enableSensorFusion;
-    if (!enableSensorFusion)
-    {
-        mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
-    }
-    else
-    {
-        mahonyAlgorithm.begin(SENSOR_FUSION_RATE_HZ, mahonyKp, mahonyKi);
-    }
+    mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
 
     imuState = ImuState::IMU_NOT_CALIBRATED;
 }
 
 void Mpu6500::periodicIMUUpdate()
 {
-    if(resetIMU){
+    if (resetIMU)
+    {
         requestCalibration();
     }
 
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
-        if (enableSensorFusion)
-        {
-            // 20 cuz 10,000 but 500hz
-            for (int i = 0; i < 20; i++)
-            {
-                gyroXFilter.update(raw.gyro.x);
-                gyroYFilter.update(raw.gyro.y);
-                gyroZFilter.update(raw.gyro.z);
-                accelXFilter.update(raw.accel.x);
-                accelYFilter.update(raw.accel.y);
-                accelZFilter.update(raw.accel.z);
-                mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
-            }
-        }
-        else
+        if (!enableCustomSensorFusionHz)
         {
             mahonyAlgorithm.updateIMU(getGx(), getGy(), getGz(), getAx(), getAy(), getAz());
         }
@@ -197,6 +175,30 @@ void Mpu6500::periodicIMUUpdate()
     imuHeater.runTemperatureController(getTemp());
 
     addValidationErrors();
+}
+
+void Mpu6500::initializeCustomSensorFusion(float mahonyKp, float mahonyKi)
+{
+    mahonyAlgorithm.begin(SENSOR_FUSION_RATE_HZ, mahonyKp, mahonyKi);
+    enableCustomSensorFusionHz = true;
+}
+
+void Mpu6500::runSensorFusion()
+{
+    gyroXFilter.update(getGx());
+    gyroYFilter.update(getGy());
+    gyroZFilter.update(getGz());
+    accelXFilter.update(getAx());
+    accelYFilter.update(getAy());
+    accelZFilter.update(getAz());
+
+    mahonyAlgorithm.updateIMU(
+        gyroXFilter.getValue(),
+        gyroYFilter.getValue(),
+        gyroZFilter.getValue(),
+        accelXFilter.getValue(),
+        accelYFilter.getValue(),
+        accelZFilter.getValue());
 }
 
 bool Mpu6500::read()

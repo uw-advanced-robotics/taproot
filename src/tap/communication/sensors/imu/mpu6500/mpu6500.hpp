@@ -105,8 +105,12 @@ public:
      *
      * @note this function can block for approximately 12 seconds.
      */
-    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi, bool enableSensorFusion);
+    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi);
 
+    /**
+     * Setups up sensor fusion algorithm at custom sample rate.
+     */
+    mockable void initializeCustomSensorFusion(float mahonyKp, float mahonyKi);
 
     /**
      * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
@@ -114,6 +118,12 @@ public:
      * Call at 500 hz for best performance.
      */
     mockable void periodicIMUUpdate();
+
+    /**
+     * Runs the sensor fusion algorithm. 
+     * Call at fusion sample rate set
+    */
+    mockable void runSensorFusion();
 
     /**
      * Read data from the imu. This is a protothread that reads the SPI bus using
@@ -172,7 +182,7 @@ public:
     inline float getAx() final_mockable
     {
         return validateReading(
-            static_cast<float>(accelXFilter.getValue() - raw.accelOffset.x) * ACCELERATION_GRAVITY /
+            static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -183,7 +193,7 @@ public:
     inline float getAy() final_mockable
     {
         return validateReading(
-            static_cast<float>(accelYFilter.getValue() - raw.accelOffset.y) * ACCELERATION_GRAVITY /
+            static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -194,7 +204,7 @@ public:
     inline float getAz() final_mockable
     {
         return validateReading(
-            static_cast<float>(accelZFilter.getValue() - raw.accelOffset.z) * ACCELERATION_GRAVITY /
+            static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
             ACCELERATION_SENSITIVITY);
     }
 
@@ -205,7 +215,7 @@ public:
     inline float getGx() final_mockable
     {
         return validateReading(
-            static_cast<float>(gyroXFilter.getValue() - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -215,7 +225,7 @@ public:
     inline float getGy() final_mockable
     {
         return validateReading(
-            static_cast<float>(gyroYFilter.getValue() - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -225,7 +235,7 @@ public:
     inline float getGz() final_mockable
     {
         return validateReading(
-            static_cast<float>(gyroZFilter.getValue() - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
+            static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
     }
 
     /**
@@ -339,7 +349,7 @@ private:
 
     uint32_t prevIMUDataReceivedTime = 0;
 
-    bool enableSensorFusion = false;
+    bool enableCustomSensorFusionHz = false;
 
     static constexpr int SENSOR_FUSION_RATE_HZ = 10000;
     static constexpr int IMU_DLPF_HZ = 100;

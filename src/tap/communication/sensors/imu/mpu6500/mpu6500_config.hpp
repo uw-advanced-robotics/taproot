@@ -40,7 +40,7 @@
 // [2:0]
 // Low pass filter settings for gyro and temperature. Gyro bandwidth of 92 Hz. Delay of 3.9 ms
 // Temperature sensor bandwidth of 98 Hz. Delay of 2.8 ms
-#define MPU6500_CONFIG_DLPF_CONFIG 0b010
+#define MPU6500_CONFIG_DLPF_CONFIG 0b000
 
 #define MPU6500_CONFIG_DATA                                      \
     (BIT_MASK(BIT_SHIFT(MPU6500_CONFIG_FIFO_MODE, 7), 0x40) |    \
