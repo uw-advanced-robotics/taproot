@@ -120,9 +120,9 @@ public:
     mockable void periodicIMUUpdate();
 
     /**
-     * Runs the sensor fusion algorithm. 
+     * Runs the sensor fusion algorithm.
      * Call at fusion sample rate set
-    */
+     */
     mockable void runSensorFusion();
 
     /**
@@ -285,6 +285,9 @@ public:
      */
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
 
+    static constexpr int SENSOR_FUSION_RATE_HZ = 10000;
+    static constexpr int IMU_DLPF_HZ = 100;
+
 private:
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
@@ -350,9 +353,6 @@ private:
     uint32_t prevIMUDataReceivedTime = 0;
 
     bool enableCustomSensorFusionHz = false;
-
-    static constexpr int SENSOR_FUSION_RATE_HZ = 10000;
-    static constexpr int IMU_DLPF_HZ = 100;
 
     modm::filter::MovingAverage<float, SENSOR_FUSION_RATE_HZ / IMU_DLPF_HZ> gyroXFilter,
         gyroYFilter, gyroZFilter, accelXFilter, accelYFilter, accelZFilter;
