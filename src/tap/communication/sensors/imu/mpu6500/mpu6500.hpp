@@ -396,8 +396,6 @@ private:
         const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
         modm::Vector3f &accel,
         modm::Vector3f &gyro);
-
-    bool resetIMU = false;
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
