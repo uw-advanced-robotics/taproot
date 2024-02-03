@@ -232,20 +232,23 @@ void Bmi088::periodicIMUUpdate()
 
 void Bmi088::runSensorFusion()
 {
-    gyroXFilter.update(getGx());
-    gyroYFilter.update(getGy());
-    gyroZFilter.update(getGz());
-    accelXFilter.update(getAx());
-    accelYFilter.update(getAy());
-    accelZFilter.update(getAz());
+    if (enableCustomSensorFusionHz)
+    {
+        gyroXFilter.update(getGx());
+        gyroYFilter.update(getGy());
+        gyroZFilter.update(getGz());
+        accelXFilter.update(getAx());
+        accelYFilter.update(getAy());
+        accelZFilter.update(getAz());
 
-    mahonyAlgorithm.updateIMU(
-        gyroXFilter.getValue(),
-        gyroYFilter.getValue(),
-        gyroZFilter.getValue(),
-        accelXFilter.getValue(),
-        accelYFilter.getValue(),
-        accelZFilter.getValue());
+        mahonyAlgorithm.updateIMU(
+            gyroXFilter.getValue(),
+            gyroYFilter.getValue(),
+            gyroZFilter.getValue(),
+            accelXFilter.getValue(),
+            accelYFilter.getValue(),
+            accelZFilter.getValue());
+    }
 }
 
 void Bmi088::computeOffsets()
