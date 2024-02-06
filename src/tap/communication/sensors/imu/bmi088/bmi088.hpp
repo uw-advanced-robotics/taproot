@@ -150,7 +150,7 @@ public:
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
     static constexpr int SENSOR_FUSION_RATE_HZ = 20000;
-    static constexpr int IMU_DLPF_HZ = 100;
+    static constexpr int IMU_DLPF_HZ = 200;
 
 private:
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
