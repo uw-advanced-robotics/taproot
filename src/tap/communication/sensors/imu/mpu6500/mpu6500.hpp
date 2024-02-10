@@ -286,7 +286,7 @@ private:
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
      */
-    float MPU6500_OFFSET_SAMPLES = 4000;
+    float MPU6500_OFFSET_SAMPLES = 1000;
 
     /**
      * The time to read the registers in nonblocking mode, in microseconds.
