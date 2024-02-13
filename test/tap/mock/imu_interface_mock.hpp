@@ -43,6 +43,8 @@ public:
     MOCK_METHOD(float, getYaw, (), (override));
     MOCK_METHOD(float, getPitch, (), (override));
     MOCK_METHOD(float, getRoll, (), (override));
+    MOCK_METHOD(void, requestCalibration, (), (override));
+    MOCK_METHOD(ImuState, getImuState, (), (const override));
 };
 }  // namespace tap::mock
 

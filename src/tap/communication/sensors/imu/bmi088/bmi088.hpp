@@ -117,7 +117,7 @@ public:
      * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
      * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
-    void requestRecalibration();
+    void requestCalibration() override;
 
     inline const char *getName() const final_mockable { return "bmi088"; }
 

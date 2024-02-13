@@ -48,7 +48,7 @@ Bmi088::Bmi088(tap::Drivers *drivers) : drivers(drivers), imuHeater(drivers) {}
 
 Bmi088::ImuState Bmi088::getImuState() const { return imuState; }
 
-void Bmi088::requestRecalibration()
+void Bmi088::requestCalibration()
 {
     if (imuState == ImuState::IMU_NOT_CALIBRATED || imuState == ImuState::IMU_CALIBRATED)
     {
