@@ -109,24 +109,24 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     EXPECT_NEAR(gyroData.z * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
 }
 
-TEST(Bmi088, requestRecalibration__does_nothing_when_imu_disconnected)
+TEST(Bmi088, requestCalibration__does_nothing_when_imu_disconnected)
 {
     tap::Drivers drivers;
     Bmi088 bmi088(&drivers);
 
-    bmi088.requestRecalibration();
+    bmi088.requestCalibration();
 
     EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CONNECTED, bmi088.getImuState());
 }
 
-TEST(Bmi088, requestRecalibration__calibration_adds_offset_to_acc_gyro_data)
+TEST(Bmi088, requestCalibration__calibration_adds_offset_to_acc_gyro_data)
 {
     tap::Drivers drivers;
     Bmi088 bmi088(&drivers);
 
     initializeBmi088(bmi088);
 
-    bmi088.requestRecalibration();
+    bmi088.requestCalibration();
 
     struct
     {
