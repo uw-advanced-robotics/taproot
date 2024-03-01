@@ -37,14 +37,14 @@ void LinearInterpolationPredictorWrapped::update(float newValue, uint32_t currTi
         slope = 0;
         return;
     }
-    slope = (previousValue.minDifference(newValue).getValue()) / (currTime - lastUpdateCallTime);
-    previousValue.setValue(newValue);
+    slope = (previousValue.minDifference(newValue)) / (currTime - lastUpdateCallTime);
+    previousValue.setWrappedValue(newValue);
     lastUpdateCallTime = currTime;
 }
 
 void LinearInterpolationPredictorWrapped::reset(float initialValue, uint32_t initialTime)
 {
-    previousValue.setValue(initialValue);
+    previousValue.setWrappedValue(initialValue);
     lastUpdateCallTime = initialTime;
     slope = 0.0f;
 }

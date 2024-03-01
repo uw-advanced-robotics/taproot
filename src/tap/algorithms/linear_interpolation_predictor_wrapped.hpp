@@ -67,10 +67,10 @@ public:
     {
         return WrappedFloat(
                    slope * static_cast<float>(currTime - lastUpdateCallTime) +
-                       previousValue.getValue(),
+                       previousValue.getWrappedValue(),
                    previousValue.getLowerBound(),
                    previousValue.getUpperBound())
-            .getValue();
+            .getWrappedValue();
     }
 
     /**
@@ -86,8 +86,8 @@ public:
     void reset(float initialValue, uint32_t initialTime);
 
 private:
-    uint32_t lastUpdateCallTime;    ///< The previous timestamp from when update was called.
-    WrappedFloat previousValue;  ///< The previous data value.
+    uint32_t lastUpdateCallTime;  ///< The previous timestamp from when update was called.
+    WrappedFloat previousValue;   ///< The previous data value.
     float slope;  ///< The current slope, calculated using the previous and most current data.
 };                // class LinearInterpolationPredictorWrapped
 

@@ -20,7 +20,13 @@
 #ifndef TAPROOT_WRAPPED_FLOAT_HPP_
 #define TAPROOT_WRAPPED_FLOAT_HPP_
 
+#include <assert.h>
+
 #include <cmath>
+
+#include <modm/math/utils.hpp>
+
+#include "math_user_utils.hpp"
 
 namespace tap
 {
@@ -40,7 +46,7 @@ class WrappedFloat
 public:
     WrappedFloat(float value, float lowerBound, float upperBound);
 
-    /** Overloaded Operators */
+    // Overloaded Operators ----------------
 
     /**
      * Adds a WrappedFloat to `this` WrappedFloat given they have the same lower and
@@ -61,8 +67,8 @@ public:
     void operator-=(const WrappedFloat& other);
 
     /**
-     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
-     * returning the resultant WrappedFloat.
+     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper
+     * bounds, returning the resultant WrappedFloat.
      *
      * @param[in] other: The WrappedFloat to be added with `this` WrappedFloat.
      * @return: A new WrappedFloat with the additive value of `other` and `this`.
@@ -71,8 +77,8 @@ public:
     WrappedFloat operator+(const WrappedFloat& other) const;
 
     /**
-     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
-     * returning the resultant WrappedFloat.
+     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and
+     * upper bounds, returning the resultant WrappedFloat.
      *
      * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
      * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
@@ -99,8 +105,8 @@ public:
     void operator-=(float other);
 
     /**
-     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper bounds, 
-     * returning the resultant WrappedFloat.
+     * Adds a given WrappedFloat to `this` WrappedFloat given they have the same lower and upper
+     * bounds, returning the resultant WrappedFloat.
      *
      * @param[in] other: The WrappedFloat to be added with `this` WrappedFloat.
      * @return: A new WrappedFloat with the additive value of `other` and `this`.
@@ -109,16 +115,18 @@ public:
     WrappedFloat operator+(float other) const;
 
     /**
-     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and upper bounds,
-     * returning the resultant WrappedFloat.
+     * Subtracts a given WrappedFloat from `this` WrappedFloat given they have the same lower and
+     * upper bounds, returning the resultant WrappedFloat.
      *
      * @param[in] other: The WrappedFloat to be subtracted from `this` WrappedFloat.
      * @return: A new WrappedFloat with the subtractive value of `other` from `this`.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
     WrappedFloat operator-(float other) const;
-    
+
     float minDifference(const WrappedFloat& other) const;
+
+    float minDifference(const float& other) const;
 
     WrappedFloat minInterpolate(const WrappedFloat& other, float alpha) const;
 
@@ -132,17 +140,46 @@ public:
     // Getters/Setters ----------------
 
     /**
+     * Returns the unwrapped value.
+     */
+    inline float getUnwrappedValue() const
+    {
+        return wrapped + (upperBound - lowerBound) * revolutions;
+    };
+
+    /**
      * Returns the wrapped value.
      */
-    inline float getValue() const { return wrapped + (upperBound - lowerBound) * revolutions; };
+    inline float getWrappedValue() const { return wrapped; };
 
     /**
      * Sets the wrapped value.
      */
-    inline void setValue(float newValue)
+    inline void setWrappedValue(float newWrappedValue)
     {
-        this->wrapped = newValue; wrapValue();
+        this->wrapped = newWrappedValue;
+        wrapValue();
     };
+
+    /**
+     * Sets the unwrapped value.
+     */
+    inline void setUnwrappedValue(float newUnwrappedValue)
+    {
+        this->wrapped = newUnwrappedValue;
+        this->revolutions = 0;
+        wrapValue();
+    };
+
+    /**
+     * Sets wrapped value
+     */
+    inline void setFromWrapped(WrappedFloat newWrappedValue) { float oldWrapped = this->wrapped; };
+
+    /**
+     *
+     */
+    inline int getRevolutions() const { return revolutions; };
 
     /**
      * Returns the value's upper bound.
@@ -157,19 +194,19 @@ public:
     /**
      * Maximum value between floats representing bounds at which
      * they're considered to be "equal" for assertions.
-    */
+     */
     static constexpr float EPSILON = 1E-8;
 
 private:
     /**
      * The wrapped value. Guaranteed to be between lower and upper bound.
      */
-    float wrapped;
+    float wrapped{0};
 
     /**
      * Number of total revolutions.
      */
-    int revolutions;
+    int revolutions{0};
 
     /**
      * The lower bound to wrap around.
@@ -193,9 +230,7 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, -M_PI, M_PI)
-    {
-    };
+    inline Angle(const float value) : WrappedFloat(value, -M_PI, M_PI){};
 };
 
 }  // namespace algorithms
