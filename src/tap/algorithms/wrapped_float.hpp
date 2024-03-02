@@ -172,11 +172,6 @@ public:
     };
 
     /**
-     * Sets wrapped value
-     */
-    inline void setFromWrapped(WrappedFloat newWrappedValue) { float oldWrapped = this->wrapped; };
-
-    /**
      *
      */
     inline int getRevolutions() const { return revolutions; };
