@@ -29,7 +29,7 @@
                 "${default}",
                 "test-project/taproot/modm/src",
                 "test-project/taproot/modm/ext/cmsis/core",
-                "test-project/taproot/modm/ext/cmsis/device"
+                "test-project/taproot/modm/ext/cmsis/device",
             ],
             "intelliSenseMode": "gcc-arm",
             "browse": { "limitSymbolsToIncludedHeaders": true },
