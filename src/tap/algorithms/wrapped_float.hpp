@@ -34,7 +34,7 @@ namespace algorithms
 {
 /**
  * Wraps a float to allow easy comparison and manipulation of sensor readings
- * that wrap (e.g. -180 to 180).
+ * that wrap (e.g. -180 to 180). Lower bound is "inclusive" and upper bound is "exclusive"
  *
  * For bounds 0 - 10, logically:
  *   - 10 + 1 == 1
