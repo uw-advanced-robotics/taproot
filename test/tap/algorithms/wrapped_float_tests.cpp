@@ -146,36 +146,36 @@ TEST(WrappedFloat, shiftBounds_negative)
 //     EXPECT_EQ(60, testInstance.getWrappedValue());
 // }
 
-// TEST(WrappedFloat, limitVal_min_lt_max)
-// {
-//     WrappedFloat testInstance(0, -100, 100);
+TEST(WrappedFloat, limitVal_min_lt_max)
+{
+    WrappedFloat testInstance(0, -100, 100);
 
-//     int status;
-//     EXPECT_EQ(0, WrappedFloat::limitValue(testInstance, -10, 10, &status));
-//     EXPECT_EQ(0, status);
+    int status;
+    EXPECT_EQ(0, WrappedFloat::limitValue(testInstance, -10, 10, &status));
+    EXPECT_EQ(0, status);
 
-//     testInstance.setWrappedValue(-20);
-//     EXPECT_EQ(-10, WrappedFloat::limitValue(testInstance, -10, 10, &status));
-//     EXPECT_EQ(1, status);
+    testInstance.setWrappedValue(-20);
+    EXPECT_EQ(-10, WrappedFloat::limitValue(testInstance, -10, 10, &status));
+    EXPECT_EQ(1, status);
 
-//     testInstance.setWrappedValue(20);
-//     EXPECT_EQ(10, WrappedFloat::limitValue(testInstance, -10, 10, &status));
-//     EXPECT_EQ(2, status);
-// }
+    testInstance.setWrappedValue(20);
+    EXPECT_EQ(10, WrappedFloat::limitValue(testInstance, -10, 10, &status));
+    EXPECT_EQ(2, status);
+}
 
-// TEST(WrappedFloat, limitVal_min_gt_max)
-// {
-//     WrappedFloat testInstance(0, -100, 100);
+TEST(WrappedFloat, limitVal_min_gt_max)
+{
+    WrappedFloat testInstance(0, -100, 100);
 
-//     int status;
+    int status;
 
-//     EXPECT_EQ(5, WrappedFloat::limitValue(testInstance, 5, -10, &status));
-//     EXPECT_EQ(1, status);
+    EXPECT_EQ(5, WrappedFloat::limitValue(testInstance, 5, -10, &status));
+    EXPECT_EQ(1, status);
 
-//     EXPECT_EQ(-5, WrappedFloat::limitValue(testInstance, 10, -5, &status));
-//     EXPECT_EQ(2, status);
+    EXPECT_EQ(-5, WrappedFloat::limitValue(testInstance, 10, -5, &status));
+    EXPECT_EQ(2, status);
 
-//     testInstance.setWrappedValue(20);
-//     EXPECT_EQ(20, WrappedFloat::limitValue(testInstance, 10, -10, &status));
-//     EXPECT_EQ(0, status);
-// }
+    testInstance.setWrappedValue(20);
+    EXPECT_EQ(20, WrappedFloat::limitValue(testInstance, 10, -10, &status));
+    EXPECT_EQ(0, status);
+}

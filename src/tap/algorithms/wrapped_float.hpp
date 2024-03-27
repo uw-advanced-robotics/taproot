@@ -137,6 +137,61 @@ public:
      */
     void shiftBounds(float shiftMagnitude);
 
+    /**
+     * Limits the passed WrappedFloat between the closest of the
+     * min or max value if outside the min and max value's wrapped range.
+     *
+     * The min and max must have the same wrapped bounds as the valueToLimit.
+     *
+     *
+     * For example given a value wrapped from -10 to 10, with the following
+     * conditions:
+     * - valueToLimit: 5, min: 1, max: 4, returns 4.
+     * - valueToLimit: 9, min: 1, max: 3, returns 1 (since valueToLimit is closest to 1).
+     * - valueToLimit: 9, min: 2, max: 1, returns 9 (since the range between min and max
+     *                 starts at 2, goes up to 9, then wraps around to 1).
+     *
+     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
+     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
+     *      valueToLimit will be limited below.
+     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
+     *      valueToLimit will be limited above.
+     * @param[out] status the status result (what operation the limitValue function performed). The
+     * status codes are described below:
+     *  - 0: No limiting performed
+     *  - 1: Limited to min value
+     *  - 2: Limited to max value
+     * @return the limited value.
+     */
+    static float limitValue(
+        const WrappedFloat& valueToLimit,
+        const WrappedFloat& min,
+        const WrappedFloat& max,
+        int* status);
+
+    /**
+     * Runs the limitValue function from above, wrapping the min and max passed in to
+     * the same bounds as those of valueToLimit's.
+     *
+     * @see limitValue.
+     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
+     * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
+     *      valueToLimit will be limited below.
+     * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
+     *      valueToLimit will be limited above.
+     * @param[out] status the status result (what operation the limitValue function performed). The
+     * status codes are described below:
+     *  - 0: No limiting performed
+     *  - 1: Limited to min value
+     *  - 2: Limited to max value
+     * @return the limited value.
+     */
+    static float limitValue(
+        const WrappedFloat& valueToLimit,
+        const float min,
+        const float max,
+        int* status);
+
     // Getters/Setters ----------------
 
     /**
@@ -217,6 +272,18 @@ private:
      * Helper function for wrapping value within bounds.
      */
     void wrapValue();
+
+    inline static void assertBoundsEqual(const WrappedFloat& a, const WrappedFloat& b)
+    {
+        assert(compareFloatClose(a.getLowerBound(), b.getLowerBound(), EPSILON));
+        assert(compareFloatClose(a.getUpperBound(), b.getUpperBound(), EPSILON));
+    }
+
+    inline void assertBoundsEqual(const WrappedFloat& other) const
+    {
+        assertBoundsEqual(*this, other);
+    }
+
 };  // class WrappedFloat
 
 /**
