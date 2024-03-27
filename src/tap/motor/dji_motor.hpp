@@ -75,6 +75,9 @@ class DjiMotor : public can::CanRxListener, public MotorInterface
 public:
     // 0 - 8191 for dji motors
     static constexpr uint16_t ENC_RESOLUTION = 8192;
+    // Maximum values for following motors
+    static constexpr uint16_t C620 = 16384;
+    static constexpr uint16_t GM6020 = 25000;
 
     /**
      * @param drivers a pointer to the drivers struct
