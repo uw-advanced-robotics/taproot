@@ -1,5 +1,9 @@
 # Taproot Changelog
 
+## March 2024
+
+- Make subsystem getName() const.
+
 ## November 2023
 
 - Added `registerAndInitialize` function to `tap::control::Subsystem` to simplify the repetitive
