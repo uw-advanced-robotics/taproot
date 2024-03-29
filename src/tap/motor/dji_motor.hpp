@@ -76,6 +76,10 @@ public:
     // 0 - 8191 for dji motors
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
+    // Maximum values for following motors
+    static constexpr uint16_t MAX_OUTPUT_C620 = 16384;
+    static constexpr uint16_t MAX_OUTPUT_GM6020 = 25000;
+
     /**
      * @param drivers a pointer to the drivers struct
      * @param desMotorIdentifier the ID of this motor controller
