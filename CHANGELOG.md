@@ -4,6 +4,10 @@
 
 - Make subsystem getName() const.
 
+## January 2024
+
+- Actually wait for semaphore to be released in ref serial transmitter before trying to write again.
+
 ## November 2023
 
 - Added `registerAndInitialize` function to `tap::control::Subsystem` to simplify the repetitive
