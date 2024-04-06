@@ -1,5 +1,68 @@
 # Taproot Changelog
 
+## April 2024
+
+- Added in I2C support for development board type A
+
+## March 2024
+
+- Added in constants for motor max output for the GM6020 and C620 motor controller
+- Minor change to command mapping to allow for easier extended command mappings
+
+## Febuary 2024
+
+- Updates to transform to compute roll, pitch, and yaw
+- Updated IMU with fixes to calibration and added support for variable calibration periods
+
+## January 2024
+
+- Actually wait for semaphore to be released in ref serial transmitter before trying to write again.
+
+## November 2023
+
+- Added `registerAndInitialize` function to `tap::control::Subsystem` to simplify the repetitive
+  process of registering & initializing subsystems.
+
+## October 2023
+- Added `timeRemaining` method to `Timeout` class.
+
+## July 2023
+
+- Check to make sure message length of interrobot communications is not 1 byte; it seems that this is an undocumented requirement for a successful transmission.
+- `CMSISMat` supports costly copy constructor/assignment
+
+### Transforms Library
+
+- `Position` class and `Vector` class which represents a difference in `Position`s
+    - These differing types allow transforms to be more clear about the mathematical objects they 
+    operate on
+- `Orientation` class 
+- `Transform` class which represents a transformation from one coordinate frame to another.
+- Added `cross` and `fromEulerAngles` to `math_user_utils`
+
+## June 2023
+
+### Breaking Changes
+- SafeDisconnect mode is now handled with `refreshSafeDisconnect`, which is run instead of `refresh` when in SafeDisconnect.
+  - SafeDisconnect will still deschedule all commands when it is entered
+  - Fix: All subsystems must now override `refresh` and `refreshSafeDisconnect`
+- `ChassisSubsystemInterface` no longer has a `get\[Left/Right\]\[Front/Back\]RPM()` method
+  - Fix: Remove `override` from these method headers  
+
+### New Features
+- `MotorInterface`s can now have their motor encoder values zero'd
+- `BilinearInterpolator`: Can interpolate between values within a map of `<(x,y), VALUE>`
+- `CMSISMat` now has negate and scale operators
+- `Can` classes are now protected instead of private
+- `taproot-scripts` submodule has been updated so that different taproot branches can be tracked instead of just `release` or `develop`  
+
+## April 2023
+
+### Breaking changes
+
+- `tap::motorInterface` has two new methods to get position in radians. This is implemented already in `DjiMotor` and `DoubleDjiMotor`.
+` adds `interpolateLinear2D` to math_user_utils, which is a bilinear interpolator for regularly-spaced datasets.
+
 ## November 2022
 
 ### Breaking changes
@@ -39,7 +102,7 @@
 ### All changes
 
 - Ref serial transmitter class allows for multiple protothreads to safely and concurrently interact
-  with the ref serial UART port (!161, #175). 
+  with the ref serial UART port (!161, #175).
 - Ref serial receiver now decodes game type and warning status information (!184).
 
 ## March 2022
@@ -92,6 +155,7 @@
 ## January 2022
 
 ### Breaking changes
+
 - `tap::controls::ControlOperatorInterface` has been removed from Taproot. We have added it to [our
   personal open-source project, aruw-mcb](https://gitlab.com/aruw/controls/aruw-mcb) for those who
   would like to keep up with our implementation of that feature, but it will need to be
@@ -122,7 +186,7 @@
 - `tap::communication::sensors::current::CurrentSensorInterface` and `AnalogCurrentSensor` added,
   which are software constructs for current sensors.
 - Power limiting logic improved and simplified, interfaces with a generic `CurrentSensorInterface`
-  (!92). 
+  (!92).
 - Taproot tests now build on Windows without warnings (!103).
 - `tap::controls::ControlOperatorInterface` deprecated (!105).
 - `tap::controls::turret::TurretSetpointCommand` deprecated.
