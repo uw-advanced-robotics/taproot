@@ -77,8 +77,8 @@ public:
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
     // Maximum values for following motors
-    static constexpr uint16_t MAX_OUTPUT_C620 = 16384; // Controller for the M3508
-    static constexpr uint16_t MAX_OUTPUT_C610 = 10000; // Controller for the M2006
+    static constexpr uint16_t MAX_OUTPUT_C620 = 16384;  // Controller for the M3508
+    static constexpr uint16_t MAX_OUTPUT_C610 = 10000;  // Controller for the M2006
     static constexpr uint16_t MAX_OUTPUT_GM6020 = 25000;
 
     // Internal gear ratio of the following motors
