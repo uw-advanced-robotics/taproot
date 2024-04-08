@@ -77,12 +77,21 @@ public:
     static constexpr uint16_t ENC_RESOLUTION = 8192;
 
     // Maximum values for following motors
-    static constexpr uint16_t MAX_OUTPUT_C620 = 16384;  // Controller for the M3508
     static constexpr uint16_t MAX_OUTPUT_C610 = 10000;  // Controller for the M2006
+    static constexpr uint16_t MAX_OUTPUT_C620 = 16384;  // Controller for the M3508
+    static constexpr uint16_t MAX_OUTPUT_820R =
+        32767;  // Controller for the M3510 (I think I'm being lied to by the spec sheet, the max
+                // current for a M3510 is 20A. I think its really 16384)
+
     static constexpr uint16_t MAX_OUTPUT_GM6020 = 25000;
+    static constexpr uint16_t MAX_OUTPUT_GM3510 = 29000;
 
     // Internal gear ratio of the following motors
     static constexpr float GEAR_RATIO_M3508 = 3591.0f / 187.0f;
+    static constexpr float GEAR_RATIO_M3510_L1 = 3.7f / 1.0f;
+    static constexpr float GEAR_RATIO_M3510_L2 = 5.2f / 1.0f;
+    static constexpr float GEAR_RATIO_M3510_L3 = 19.0f / 1.0f;
+    static constexpr float GEAR_RATIO_M3510_L4 = 27.0f / 1.0f;
     static constexpr float GEAR_RATIO_M2006 = 36.0f / 1.0f;
 
     /**
