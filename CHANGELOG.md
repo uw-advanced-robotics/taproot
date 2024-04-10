@@ -1,5 +1,19 @@
 # Taproot Changelog
 
+## April 2024
+
+- Added in I2C support for development board type A
+
+## March 2024
+
+- Added in constants for motor max output for the GM6020 and C620 motor controller
+- Minor change to command mapping to allow for easier extended command mappings
+
+## Febuary 2024
+
+- Updates to transform to compute roll, pitch, and yaw
+- Updated IMU with fixes to calibration and added support for variable calibration periods
+
 ## January 2024
 
 - Actually wait for semaphore to be released in ref serial transmitter before trying to write again.
