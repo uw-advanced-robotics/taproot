@@ -47,7 +47,7 @@ public:
     /**
      * @param[in] value: value to initialize with (doesn't have to be wrapped)
      * @param[in] lowerBound: lower wrapping bound, must be less than `upperBound`
-     * * @param[in] lowerBound: upper wrapping bound, must be higher than `lowerBound`
+     * @param[in] lowerBound: upper wrapping bound, must be higher than `lowerBound`
      */
     WrappedFloat(float value, float lowerBound, float upperBound);
 
@@ -129,10 +129,32 @@ public:
      */
     WrappedFloat operator-(float other) const;
 
+    /**
+     * Finds the minimum difference against another wrapped vlaue. Can be thought of as the minimum
+     * distance between two points on a circle's perimeter.
+     *
+     * @param[in] other: The WrappedFloat to compute the minDifference with.
+     * @return: A float with the signed minimum distance.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
     float minDifference(const WrappedFloat& other) const;
 
+    /**
+     * Finds the minimum difference against another  vlaue. Can be thought of as the minimum
+     * distance between two points on a circle's perimeter.
+     *
+     * @param[in] other: The float to compute the minDifference with. It's wrapped before computing
+     * @return: A float with the signed minimum distance.
+     */
     float minDifference(const float& other) const;
 
+    /**
+     * Interpolates along the smallest difference with another WrappedFloat.
+     *
+     * @param[in] other: The WrappedFloat to interpolate between.
+     * @param[in] alpha: A float between 0-1 (0 returns this WrappedFloat's value, 1 returns the
+     *      other's)
+     */
     WrappedFloat minInterpolate(const WrappedFloat& other, float alpha) const;
 
     /**
