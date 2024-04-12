@@ -143,10 +143,11 @@ public:
      * Finds the minimum difference against another  vlaue. Can be thought of as the minimum
      * distance between two points on a circle's perimeter.
      *
-     * @param[in] other: The float to compute the minDifference with. It's wrapped before computing
+     * @param[in] unwrappedValue: The float to compute the minDifference with. It's wrapped before
+     *      computing
      * @return: A float with the signed minimum distance.
      */
-    float minDifference(const float& other) const;
+    float minDifference(const float& unwrappedValue) const;
 
     /**
      * Interpolates along the smallest difference with another WrappedFloat.

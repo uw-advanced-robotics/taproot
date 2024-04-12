@@ -101,9 +101,9 @@ float WrappedFloat::minDifference(const WrappedFloat& other) const
                                                               : difference_around;
 }
 
-float WrappedFloat::minDifference(const float& other) const
+float WrappedFloat::minDifference(const float& unwrappedValue) const
 {
-    return minDifference(WrappedFloat(other, this->lowerBound, this->upperBound));
+    return minDifference(WrappedFloat(unwrappedValue, this->lowerBound, this->upperBound));
 }
 
 WrappedFloat WrappedFloat::minInterpolate(const WrappedFloat& other, const float alpha) const
