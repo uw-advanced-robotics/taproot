@@ -44,6 +44,11 @@ namespace algorithms
 class WrappedFloat
 {
 public:
+    /**
+     * @param[in] value: value to initialize with (doesn't have to be wrapped)
+     * @param[in] lowerBound: lower wrapping bound, must be less than `upperBound`
+     * * @param[in] lowerBound: upper wrapping bound, must be higher than `lowerBound`
+     */
     WrappedFloat(float value, float lowerBound, float upperBound);
 
     // Overloaded Operators ----------------
@@ -251,7 +256,7 @@ private:
     /**
      * The wrapped value. Guaranteed to be between lower and upper bound.
      */
-    float wrapped{0};
+    float wrapped;
 
     /**
      * Number of total revolutions.
