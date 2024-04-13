@@ -4,6 +4,10 @@
 
 - Added in I2C support for development board type A
 - Make subsystem getName() const.
+- Replaced `ContiguousFloat` with `WrappedFloat`
+  - "`[x]=`" operators are now overloaded for arithmetic between WrappedFloats with identical bounds (Replaces `WrappedFloat.shiftUp/Down`)
+  - `WrappedFloat.difference` is now `WrappedFloat.minDifference` and returns a float
+  - `WrappedFloat.get/setValue` is now `WrappedFloat.get/setWrappedValue`, with the addition of `WrappedFloat.get/setUnwrappedValue`
 
 ## March 2024
 
