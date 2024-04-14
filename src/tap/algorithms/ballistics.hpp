@@ -28,15 +28,23 @@ namespace tap::algorithms::ballistics
 {
 /**
  * Stores the 3D position, velocity, and acceleration of an object as `modm::Vector3f`s.
+ * Assumes it is rotating around a point with radius, theta, and omega
  * - Position Units: m
  * - Velocity Units: m/s
  * - Acceleration Units: m/s^2
+ * - Angle Units: rad
+ * - Angular Velocity units: rad/s
  */
 struct MeasuredKinematicState
 {
     modm::Vector3f position;      // m
     modm::Vector3f velocity;      // m/s
     modm::Vector3f acceleration;  // m/s^2
+
+    // rotation about center
+    float radius{1};  // m
+    float theta{0};   // rad
+    float omega{0};   // rad/s
 
     /**
      * @param[in] dt: The amount of time to project forward.
@@ -48,20 +56,24 @@ struct MeasuredKinematicState
      */
     inline static float quadraticKinematicProjection(float dt, float s, float v, float a)
     {
-        return s + v * dt + 0.5f * a * powf(dt, 2.0f);
+        return s + v * dt + 0.5f * a * dt * dt;
     }
 
     /**
      * @param[in] dt: The amount of time to project the state forward.
      *
      * @return The future 3D position of this object using a quadratic (constant acceleration)
-     * model.
+     * model for the center and linear (constant angular velocity) model for angle about the center
      */
     inline modm::Vector3f projectForward(float dt)
     {
+        float rx = radius * cos(theta);
+        float ry = radius * sin(theta);
+        float rxf = radius * cos(theta + omega * dt);
+        float ryf = radius * sin(theta + omega * dt);
         return modm::Vector3f(
-            quadraticKinematicProjection(dt, position.x, velocity.x, acceleration.x),
-            quadraticKinematicProjection(dt, position.y, velocity.y, acceleration.y),
+            quadraticKinematicProjection(dt, position.x - rx, velocity.x, acceleration.x) + rxf,
+            quadraticKinematicProjection(dt, position.y - ry, velocity.y, acceleration.y) + ryf,
             quadraticKinematicProjection(dt, position.z, velocity.z, acceleration.z));
     }
 };
