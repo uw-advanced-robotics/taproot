@@ -42,9 +42,9 @@ struct MeasuredKinematicState
     modm::Vector3f acceleration;  // m/s^2
 
     // rotation about center
-    float radius{1};  // m
-    float theta{0};   // rad
-    float omega{0};   // rad/s
+    float radius = 0;  // m
+    float theta = 0;   // rad
+    float omega = 0;   // rad/s
 
     /**
      * @param[in] dt: The amount of time to project forward.
