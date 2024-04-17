@@ -33,6 +33,7 @@ struct SmoothPidConfig
     float kp = 0.0f;
     float ki = 0.0f;
     float kd = 0.0f;
+    float kf = 0.0f;
     float maxICumulative = 0.0f;
     float maxOutput = 0.0f;
     float tQDerivativeKalman = 1.0f;   /**< The system noise covariance for the kalman filter that
@@ -71,6 +72,12 @@ public:
 
     void reset();
 
+    /**
+     * Setpoint input to scale feedforward output by. 
+     * Not necessary for positional control, but useful for velocity control.
+    */
+    void setSetpoint(float setpoint);
+
     inline void setP(float p) { config.kp = p; }
     inline void setI(float i) { config.ki = i; }
     inline void setD(float d) { config.kd = d; }
@@ -88,6 +95,8 @@ private:
     float currErrorD = 0.0f;
     float output = 0.0f;
     float prevError = 0.0f;
+    float setpoint = 0.0f;
+    bool setpointSet = false;
 
     tap::algorithms::ExtendedKalman proportionalKalman;
     tap::algorithms::ExtendedKalman derivativeKalman;

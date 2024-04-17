@@ -58,7 +58,7 @@ float SmoothPid::runController(float error, float errorDerivative, float dt)
     }
     // total
     output =
-        limitVal<float>(currErrorP + currErrorI + currErrorD, -config.maxOutput, config.maxOutput);
+        limitVal<float>(currErrorP + currErrorI + currErrorD + (setpointSet? config.kf * setpoint : config.kf), -config.maxOutput, config.maxOutput);
     return output;
 }
 
@@ -82,8 +82,15 @@ void SmoothPid::reset()
     this->currErrorI = 0.0f;
     this->currErrorD = 0.0f;
     this->prevError = 0.0f;
+    this->setpoint = 0.0f;
     this->derivativeKalman.reset();
     this->proportionalKalman.reset();
+}
+
+void SmoothPid::setSetpoint(float setpoint)
+{
+    this->setpoint = setpoint;
+    this->setpointSet = true;
 }
 
 }  // namespace algorithms
