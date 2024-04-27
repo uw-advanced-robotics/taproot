@@ -3,6 +3,7 @@
 ## April 2024
 
 - Added in I2C support for development board type A
+- Updated Ref Serial to support version 1.6.1. This has major breaking changes, but these are nessecary for working robots. See [this document](./extended-changelogs/ref-serial-1.6.1-changes.md) for more information.
 
 ## March 2024
 
