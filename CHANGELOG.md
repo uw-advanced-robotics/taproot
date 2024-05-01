@@ -2,8 +2,11 @@
 
 ## April 2024
 
+### Breaking Changes
 - Updated Ref Serial to support version 1.6.1. This has major breaking changes, but these are nessecary for working robots. See [this document](./extended-changelogs/ref-serial-1.6.1-changes.md) for more information.
+- IMU interface now uses separate degrees and radians getters.
 
+### New Features
 - Added in I2C support for development board type A
 - Make subsystem getName() const.
 - Replaced `ContiguousFloat` with `WrappedFloat`
