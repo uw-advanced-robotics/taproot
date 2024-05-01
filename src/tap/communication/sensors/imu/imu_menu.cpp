@@ -29,7 +29,9 @@ ImuMenu::ImuMenu(
       imuAccelGyroAngleFnPtrs{
           {&ImuInterface::getAx, &ImuInterface::getAy, &ImuInterface::getAz},
           {&ImuInterface::getGx, &ImuInterface::getGy, &ImuInterface::getGz},
-          {&ImuInterface::getPitchDegrees, &ImuInterface::getRollDegrees, &ImuInterface::getYawDegrees},
+          {&ImuInterface::getPitchDegrees,
+           &ImuInterface::getRollDegrees,
+           &ImuInterface::getYawDegrees},
       }
 {
 }
