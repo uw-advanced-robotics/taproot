@@ -56,9 +56,17 @@ float SmoothPid::runController(float error, float errorDerivative, float dt)
         // done to avoid high frequency control oscilations in some systems
         currErrorD = 0.0f;
     }
+    // f
+    // 
+    if(setpointSet){
+        currErrorF = config.kf * setpoint;
+    } else {
+        currErrorF = config.kf;
+    }
+
     // total
     output =
-        limitVal<float>(currErrorP + currErrorI + currErrorD + (setpointSet? config.kf * setpoint : config.kf), -config.maxOutput, config.maxOutput);
+        limitVal<float>(currErrorP + currErrorI + currErrorD, -config.maxOutput, config.maxOutput);
     return output;
 }
 
@@ -81,6 +89,7 @@ void SmoothPid::reset()
     this->currErrorP = 0.0f;
     this->currErrorI = 0.0f;
     this->currErrorD = 0.0f;
+    this->currErrorF = 0.0f;
     this->prevError = 0.0f;
     this->setpoint = 0.0f;
     this->derivativeKalman.reset();

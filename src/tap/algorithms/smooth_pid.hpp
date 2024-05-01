@@ -73,14 +73,15 @@ public:
     void reset();
 
     /**
-     * Setpoint input to scale feedforward output by. 
+     * Setpoint input to scale feedforward output by.
      * Not necessary for positional control, but useful for velocity control.
-    */
+     */
     void setSetpoint(float setpoint);
 
     inline void setP(float p) { config.kp = p; }
     inline void setI(float i) { config.ki = i; }
     inline void setD(float d) { config.kd = d; }
+    inline void setF(float f) { config.kf = f; }
     inline void setMaxICumulative(float maxICumulative) { config.maxICumulative = maxICumulative; }
     inline void setMaxOutput(float maxOutput) { config.maxOutput = maxOutput; }
     inline void setErrDeadzone(float errDeadzone) { config.errDeadzone = errDeadzone; }
@@ -93,6 +94,7 @@ private:
     float currErrorP = 0.0f;
     float currErrorI = 0.0f;
     float currErrorD = 0.0f;
+    float currErrorF = 0.0f;
     float output = 0.0f;
     float prevError = 0.0f;
     float setpoint = 0.0f;
