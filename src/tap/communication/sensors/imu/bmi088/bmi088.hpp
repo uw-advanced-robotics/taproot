@@ -121,9 +121,14 @@ public:
 
     inline const char *getName() const final_mockable { return "bmi088"; }
 
-    mockable inline float getYaw() final_mockable { return mahonyAlgorithm.getYaw(); }
-    mockable inline float getPitch() final_mockable { return mahonyAlgorithm.getPitch(); }
-    mockable inline float getRoll() final_mockable { return mahonyAlgorithm.getRoll(); }
+    mockable inline float getYawDegrees() { return mahonyAlgorithm.getYaw(); }
+    mockable inline float getYawRadians() { return modm::toRadian(mahonyAlgorithm.getYaw()); }
+
+    mockable inline float getPitchDegrees() { return mahonyAlgorithm.getPitch(); }
+    mockable inline float getPitchRadians() { return modm::toRadian(mahonyAlgorithm.getPitch()); }
+
+    mockable inline float getRollDegrees() { return mahonyAlgorithm.getRoll(); }
+    mockable inline float getRollRadians() { return modm::toRadian(mahonyAlgorithm.getRoll()); }
 
     mockable inline float getGx() final_mockable { return data.gyroDegPerSec[ImuData::X]; }
     mockable inline float getGy() final_mockable { return data.gyroDegPerSec[ImuData::Y]; }
