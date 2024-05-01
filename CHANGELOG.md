@@ -2,6 +2,8 @@
 
 ## April 2024
 
+- Updated Ref Serial to support version 1.6.1. This has major breaking changes, but these are nessecary for working robots. See [this document](./extended-changelogs/ref-serial-1.6.1-changes.md) for more information.
+
 - Added in I2C support for development board type A
 - Make subsystem getName() const.
 - Replaced `ContiguousFloat` with `WrappedFloat`
