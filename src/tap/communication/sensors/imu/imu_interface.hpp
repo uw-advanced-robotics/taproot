@@ -90,19 +90,34 @@ public:
     virtual inline float getTemp() = 0;
 
     /**
-     * Returns yaw angle. in degrees.
+     * Returns yaw angle in degrees.
      */
-    virtual inline float getYaw() = 0;
+    virtual inline float getYawDegrees() = 0;
+
+    /**
+     * Returns yaw angle in radians.
+     */
+    virtual inline float getYawRadians() = 0;
 
     /**
      * Returns pitch angle in degrees.
      */
-    virtual inline float getPitch() = 0;
+    virtual inline float getPitchDegrees() = 0;
+
+    /**
+     * Returns pitch angle in radians.
+     */
+    virtual inline float getPitchRadians() = 0;
 
     /**
      * Returns roll angle in degrees.
      */
-    virtual inline float getRoll() = 0;
+    virtual inline float getRollDegrees() = 0;
+
+    /**
+     * Returns roll angle in radians.
+     */
+    virtual inline float getRollRadians() = 0;
 };
 }  // namespace tap::communication::sensors::imu
 
