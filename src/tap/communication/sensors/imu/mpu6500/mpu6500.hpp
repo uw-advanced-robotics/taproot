@@ -239,19 +239,52 @@ public:
     }
 
     /**
-     * Returns yaw angle. in degrees.
+     * Returns yaw angle in degrees.
      */
-    inline float getYaw() final_mockable { return validateReading(mahonyAlgorithm.getYaw()); }
+    inline float getYawDegrees() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getYaw());
+    }
+
+    /**
+     * Returns yaw angle in radians.
+     */
+    inline float getYawRadians() final_mockable
+    {
+        return validateReading(modm::toRadian(mahonyAlgorithm.getYaw()));
+    }
 
     /**
      * Returns pitch angle in degrees.
      */
-    inline float getPitch() final_mockable { return validateReading(mahonyAlgorithm.getPitch()); }
+    inline float getPitchDegrees() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getPitch());
+    }
+
+    /**
+     * Returns pitch angle in radians.
+     */
+    inline float getPitchRadians() final_mockable
+    {
+        return validateReading(modm::toRadian(mahonyAlgorithm.getPitch()));
+    }
 
     /**
      * Returns roll angle in degrees.
      */
-    inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
+    inline float getRollDegrees() final_mockable
+    {
+        return validateReading(mahonyAlgorithm.getRoll());
+    }
+
+    /**
+     * Returns roll angle in radians.
+     */
+    inline float getRollRadians() final_mockable
+    {
+        return validateReading(modm::toRadian(mahonyAlgorithm.getRoll()));
+    }
 
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
