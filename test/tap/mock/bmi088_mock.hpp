@@ -36,9 +36,12 @@ public:
     MOCK_METHOD(void, periodicIMUUpdate, (), (override));
     MOCK_METHOD(ImuState, getImuState, (), (const override));
     MOCK_METHOD(void, requestRecalibration, (), (override));
-    MOCK_METHOD(float, getYaw, (), (override));
-    MOCK_METHOD(float, getPitch, (), (override));
-    MOCK_METHOD(float, getRoll, (), (override));
+    MOCK_METHOD(float, getYawDegrees, (), (override));
+    MOCK_METHOD(float, getPitchDegrees, (), (override));
+    MOCK_METHOD(float, getRollDegrees, (), (override));
+    MOCK_METHOD(float, getYawRadians, (), (override));
+    MOCK_METHOD(float, getPitchRadians, (), (override));
+    MOCK_METHOD(float, getRollRadians, (), (override));
     MOCK_METHOD(float, getGx, (), (override));
     MOCK_METHOD(float, getGy, (), (override));
     MOCK_METHOD(float, getGz, (), (override));

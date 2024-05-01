@@ -90,9 +90,9 @@ TEST_F(ImuTerminalSerialHandlerTest, terminalSerialCallback__incorrect_args_retu
 
 TEST_F(ImuTerminalSerialHandlerTest, terminalSerialCallback__angle_input_return_angle_values)
 {
-    ON_CALL(imu, getPitch).WillByDefault(Return(12.34));
-    ON_CALL(imu, getRoll).WillByDefault(Return(90.54));
-    ON_CALL(imu, getYaw).WillByDefault(Return(180.43));
+    ON_CALL(imu, getPitchDegrees).WillByDefault(Return(12.34));
+    ON_CALL(imu, getRollDegrees).WillByDefault(Return(90.54));
+    ON_CALL(imu, getYawDegrees).WillByDefault(Return(180.43));
 
     char input[] = "angle";
     EXPECT_TRUE(serialHandler.terminalSerialCallback(input, stream, false));
@@ -158,9 +158,9 @@ TEST_F(
     ImuTerminalSerialHandlerTest,
     terminalSerialCallback__temp_gyro_angle_accel_return_all_values)
 {
-    ON_CALL(imu, getPitch).WillByDefault(Return(123.54));
-    ON_CALL(imu, getRoll).WillByDefault(Return(-42.05));
-    ON_CALL(imu, getYaw).WillByDefault(Return(1.89));
+    ON_CALL(imu, getPitchDegrees).WillByDefault(Return(123.54));
+    ON_CALL(imu, getRollDegrees).WillByDefault(Return(-42.05));
+    ON_CALL(imu, getYawDegrees).WillByDefault(Return(1.89));
     ON_CALL(imu, getGx).WillByDefault(Return(12.34));
     ON_CALL(imu, getGy).WillByDefault(Return(-12.53));
     ON_CALL(imu, getGz).WillByDefault(Return(-54.01));

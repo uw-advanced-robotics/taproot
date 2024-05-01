@@ -117,7 +117,11 @@ void ImuTerminalSerialHandler::terminalSerialStreamCallback(modm::IOStream& outp
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::ANGLES))
     {
         checkNeedsTab(needsTab, outputStream);
-        printFloatVector(outputStream, imu->getPitch(), imu->getRoll(), imu->getYaw());
+        printFloatVector(
+            outputStream,
+            imu->getPitchDegrees(),
+            imu->getRollDegrees(),
+            imu->getYawDegrees());
     }
     if (SUBJECT_BEING_INSPECTED(subjectsBeingInspected, InspectSubject::GYRO))
     {
