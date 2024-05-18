@@ -33,4 +33,22 @@ inline Position Position::operator+(const Position& vector) const
     return Position(this->coordinates_ + vector.coordinates_);
 }
 
+inline Position Position::operator*(const float& scalar) const
+{
+    return Position(this->coordinates_ * scalar);
+}
+
+Position& Position::operator=(const Position& other)
+{
+    this->coordinates_ = other.coordinates_;
+    return *this;
+}
+
+bool Position::operator==(const Position& other) const
+{
+    return this->coordinates_.data[0] == other.coordinates_.data[0] &&
+           this->coordinates_.data[1] == other.coordinates_.data[1] &&
+           this->coordinates_.data[2] == other.coordinates_.data[2];
+}
+
 }  // namespace tap::algorithms::transforms

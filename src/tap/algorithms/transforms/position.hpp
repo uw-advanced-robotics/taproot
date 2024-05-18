@@ -56,6 +56,10 @@ public:
 
     inline Position operator*(const float& scalar) const;
 
+    Position& operator=(const Position& other);
+
+    bool operator==(const Position& other) const;
+
     inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
     static inline Position interpolate(const Position a, const Position b, const float t)
