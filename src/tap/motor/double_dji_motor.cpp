@@ -58,9 +58,13 @@ void DoubleDjiMotor::initialize()
     motorTwo.initialize();
 }
 
-int64_t DoubleDjiMotor::getEncoderUnwrapped() const { return motorOne.getEncoderUnwrapped(); }
+int64_t DoubleDjiMotor::getEncoderUnwrapped() const { 
+    return callIfOnline(&DjiMotor::getEncoderUnwrapped);
+}
 
-uint16_t DoubleDjiMotor::getEncoderWrapped() const { return motorOne.getEncoderWrapped(); }
+uint16_t DoubleDjiMotor::getEncoderWrapped() const {
+    return callIfOnline(&DjiMotor::getEncoderWrapped);
+}
 
 void DoubleDjiMotor::resetEncoderValue()
 {
@@ -68,9 +72,13 @@ void DoubleDjiMotor::resetEncoderValue()
     motorTwo.resetEncoderValue();
 }
 
-float DoubleDjiMotor::getPositionUnwrapped() const { return motorOne.getPositionUnwrapped(); }
+float DoubleDjiMotor::getPositionUnwrapped() const { 
+    return callIfOnline(&DjiMotor::getPositionUnwrapped);
+}
 
-float DoubleDjiMotor::getPositionWrapped() const { return motorOne.getPositionWrapped(); }
+float DoubleDjiMotor::getPositionWrapped() const {
+    return callIfOnline(&DjiMotor::getPositionWrapped);
+}
 
 void DoubleDjiMotor::setDesiredOutput(int32_t desiredOutput)
 {
@@ -99,15 +107,19 @@ int8_t DoubleDjiMotor::getTemperature() const
 }
 int16_t DoubleDjiMotor::getTorque() const
 {
-    return (static_cast<int32_t>(motorOne.getTorque()) +
-            static_cast<int32_t>(motorTwo.getTorque())) /
-           2;
+    int32_t m1Torque = motorOne.getTorque();
+    int32_t m2Torque = motorTwo.getTorque();
+    int num_online = motorOne.isMotorOnline() + motorTwo.isMotorOnline();
+    
+    return num_online == 0 ? 0 : (m1Torque + m2Torque) / num_online;
 }
 
 int16_t DoubleDjiMotor::getShaftRPM() const
 {
-    return (static_cast<int32_t>(motorOne.getShaftRPM()) +
-            static_cast<int32_t>(motorTwo.getShaftRPM())) /
-           2;
+    int m1RPM = motorOne.getShaftRPM();
+    int m2RPM = motorTwo.getShaftRPM();
+    int num_online = motorOne.isMotorOnline() + motorTwo.isMotorOnline();
+    
+    return num_online == 0 ? 0 : (m1RPM + m2RPM) / num_online;
 }
 }  // namespace tap::motor
