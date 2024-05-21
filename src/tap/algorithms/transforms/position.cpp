@@ -28,6 +28,11 @@ inline Vector Position::operator-(const Vector& other) const
     return Vector(this->coordinates_ - other.coordinates());
 }
 
+inline Vector Position::operator-(const Position& other) const
+{
+    return Vector(this->coordinates_ - other.coordinates());
+}
+
 inline Position Position::operator+(const Position& vector) const
 {
     return Position(this->coordinates_ + vector.coordinates_);

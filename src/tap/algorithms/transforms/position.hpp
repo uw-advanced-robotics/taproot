@@ -52,6 +52,8 @@ public:
     /* Operators */
     inline Vector operator-(const Vector& other) const;
 
+    inline Vector operator-(const Position& other) const;
+
     inline Position operator+(const Position& vector) const;
 
     inline Position operator*(const float& scalar) const;
@@ -66,6 +68,8 @@ public:
     {
         return a * (1 - t) + b * t;
     }
+
+    static inline Position distance(const Position a, const Position b) { Vector d = b - a; }
 
 private:
     CMSISMat<3, 1> coordinates_;
