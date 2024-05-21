@@ -152,7 +152,7 @@ TEST(DoubleDjiMotor, isMotorOnline__returns_true_if_both_motors_online_otherwise
     EXPECT_FALSE(motor.isMotorOnline());
 
     ON_CALL(motor.motorOne, isMotorOnline).WillByDefault(Return(true));
-ON_CALL(motor.motorTwo, isMotorOnline).WillByDefault(Return(false));
+    ON_CALL(motor.motorTwo, isMotorOnline).WillByDefault(Return(false));
     EXPECT_FALSE(motor.isMotorOnline());
 
     ON_CALL(motor.motorOne, isMotorOnline).WillByDefault(Return(false));
