@@ -53,9 +53,16 @@ public:
 
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
+    inline float operator*(const Vector& other) const
+    {
+        return this->x() * other.x() + this->y() * other.y() + this->z() * other.z();
+    }
+
     inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
+
+    const inline float magnitude() const { return sqrt(*this * *this); }
 
 private:
     CMSISMat<3, 1> coordinates_;

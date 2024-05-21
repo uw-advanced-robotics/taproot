@@ -56,7 +56,7 @@ public:
 
     inline Position operator+(const Position& vector) const;
 
-    inline Position operator*(const float& scalar) const;
+    inline Position operator*(const float scalar) const;
 
     Position& operator=(const Position& other);
 
@@ -64,12 +64,15 @@ public:
 
     inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
-    static inline Position interpolate(const Position a, const Position b, const float t)
+    static inline Position interpolate(const Position& a, const Position& b, const float t)
     {
         return a * (1 - t) + b * t;
     }
 
-    static inline Position distance(const Position a, const Position b) { Vector d = b - a; }
+    static inline float distance(const Position& a, const Position& b)
+    {
+        return (b - a).magnitude();
+    }
 
 private:
     CMSISMat<3, 1> coordinates_;
