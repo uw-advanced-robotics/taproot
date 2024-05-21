@@ -67,7 +67,7 @@ public:
     int16_t getShaftRPM() const override;
 
 protected:
-    template<typename T>
+    template <typename T>
     T callIfOnline(T (DjiMotor::*func)() const) const
     {
         if (motorOne.isMotorOnline())
