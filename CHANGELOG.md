@@ -2,7 +2,7 @@
 
 ## May 2024
 
-- Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change, fuck you.
+- Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
   - The previous functionality is still present in `SecondOrderKinematicState`, so migrating over 
       would involve replacing all usages of `MeasuredKinematicState` with this.
   - This allows teams to define custom motion models for their kinematic states by extending
