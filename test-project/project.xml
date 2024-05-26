@@ -18,15 +18,15 @@
     <option name="taproot:board:pwm_pins">W,X,Y,Z,Buzzer,ImuHeater</option>
     <!-- End For RoboMaster Development Board Type A -->
 
-    <!-- For RoboMaster Development Board Type C -->
-    <!-- <option name="taproot:dev_board">rm-dev-board-c</option>
+    <!-- For RoboMaster Development Board Type C --> <!--
+    <option name="taproot:dev_board">rm-dev-board-c</option>
     <option name="taproot:communication:serial:terminal_serial:uart_port">Uart1</option>
     <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
     <option name="taproot:board:digital_in_pins">Button</option>
     <option name="taproot:board:digital_out_pins">Laser</option>
     <option name="taproot:board:analog_in_pins"></option>
-    <option name="taproot:board:pwm_pins">C1,C2,C3,C4,C5,C6,C7,Buzzer,ImuHeater</option> -->
-    <!-- End For RoboMaster Development Board Type C -->
+    <option name="taproot:board:pwm_pins">C1,C2,C3,C4,C5,C6,C7,Buzzer,ImuHeater</option>
+    --> <!-- End For RoboMaster Development Board Type C -->
 
   </options>
   <modules>
@@ -45,8 +45,8 @@
     <module>taproot:display</module>
     <!-- End For RoboMaster Development Board Type A -->
 
-    <!-- For RoboMaster Development Board Type C -->
-    <!-- <module>taproot:communication:sensors:imu:bmi088</module> -->
-     <!-- End For RoboMaster Development Board Type C -->
+    <!-- For RoboMaster Development Board Type C --> <!--
+    <module>taproot:communication:sensors:imu:bmi088</module>
+    --> <!-- End For RoboMaster Development Board Type C -->
   </modules>
 </library>
