@@ -53,6 +53,16 @@ struct AbstractKinematicState
 
 struct SecondOrderKinematicState : public AbstractKinematicState
 {
+    inline SecondOrderKinematicState(
+        modm::Vector3f position,
+        modm::Vector3f velocity,
+        modm::Vector3f acceleration)
+        : position(position),
+          velocity(velocity),
+          acceleration(acceleration)
+    {
+    }
+
     modm::Vector3f position;      // m
     modm::Vector3f velocity;      // m/s
     modm::Vector3f acceleration;  // m/s^2
