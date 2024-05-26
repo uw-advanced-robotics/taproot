@@ -1,5 +1,14 @@
 # Taproot Changelog
 
+## May 2024
+
+- Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
+  - The previous functionality is still present in `SecondOrderKinematicState`, so replacing all 
+      usages of `MeasuredKinematicState` with this should be all that's needed to migrate over.
+  - This allows teams to define custom motion models for their kinematic states by implementing 
+      `projectForward(float dt)`
+  - Accessing the initial position has been replaced with `.projectForward(0)`
+
 ## April 2024
 
 - Updated Ref Serial to support version 1.6.1. This has major breaking changes, but these are nessecary for working robots. See [this document](./extended-changelogs/ref-serial-1.6.1-changes.md) for more information.
