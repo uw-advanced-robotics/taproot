@@ -158,6 +158,27 @@ using ImuInt1Gyro = GpioC5;
 using ImuHeater = GpioF6;
 using ImuSpiMaster = SpiMaster1;
 
+// gpio pins used for SPI communication on customizable I/O port
+
+using Spi2Cs = GpioB12;
+using Spi2Sck = GpioB13;
+using Spi2Miso = GpioB14;
+using Spi2Mosi = GpioB15;
+using Spi2Master = SpiMaster2;
+
+// gpio pins used for I2C communication on customizable I/O port
+using I2c2Sda = GpioF0;
+using I2c2Scl = GpioF1;
+using I2c2Master = I2cMaster2;
+
+// gpio pins used for I2C communication for onboard IST8310 magnetometer
+using I2c3Sda = GpioC9;
+using I2c3Scl = GpioA8;
+using IST8310I2cMaster = I2cMaster3;
+
+using IST8310_DRDY = GpioG3;
+using IST8310_RSTN = GpioG6;
+
 #endif
 
 inline void initialize()
