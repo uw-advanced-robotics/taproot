@@ -29,4 +29,52 @@
 #include "ist8310_config.hpp"
 #include "ist8310_reg.hpp"
 
+namespace
+{
+static uint8_t txBuffer[1] = {};
+static uint8_t rxBuffer[IST8310_DATA_LENGTH] = {};
+}
+
+namespace tap::communication::sensors::imu::ist8310
+{
+/**
+ * A class made for interfacing with the Robomaster type C board IST8310 magnetometer.
+ *
+ * To use this class, call initialize() once. Updating of the magnetometer is handled automatically
+ * through the interrupt pin. Use the getter methods to access the data.
+ */
+class IST8310 : public modm::I2cDevice<Board::IST8310I2cMaster>, ::modm::pt::Protothread
+{
+public:
+    IST8310();
+
+    // Initializes device on the I2C bus
+    void initialize();
+    // Reads data from the device
+    void update();
+
+    inline float getMx() const { return x; }
+
+    inline float getMy() const { return y; }
+
+    inline float getMz() const { return z; }
+
+private:
+    float x, y, z;
+
+    inline modm::ResumableResult<bool> readRegister(uint8_t reg, int len){
+        RF_BEGIN();
+
+        if(len > IST8310_DATA_LENGTH){
+            len = IST8310_DATA_LENGTH;
+        }
+
+        txBuffer[0] = reg;
+        while(!transaction.configureWriteRead(txBuffer, 1, rxBuffer, len));
+
+        RF_END_RETURN_CALL(this->runTransaction());
+    }
+};
+
+}  // namespace tap::communication::sensors::imu::ist8310
 #endif
