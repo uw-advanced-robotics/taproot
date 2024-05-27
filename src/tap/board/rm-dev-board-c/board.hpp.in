@@ -196,6 +196,22 @@ inline void initialize()
 #endif
 }
 
+
+void initI2C1(uint64_t baudrate, I2c1Master::Pullups pullup){
+    I2c1Master::connect<I2c1Sda::Sda, I2c1Scl::Scl>(pullup);
+    I2c1Master::initialize<SystemClock, baudrate>();
+}
+
+void initI2C2(uint64_t baudrate, I2c2Master::Pullups pullup){
+    I2c2Master::connect<I2c2Sda::Sda, I2c2Scl::Scl>(pullup);
+    I2c2Master::initialize<SystemClock, baudrate>();
+}
+
+void initI2C3(uint64_t baudrate, I2c3Master::Pullups pullup){
+    I2c3Master::connect<I2c3Sda::Sda, I2c3Scl::Scl>(pullup);
+    I2c3Master::initialize<SystemClock, baudrate>();
+}
+
 }  // namespace Board
 
 #endif  // TAPROOT_BOARD_HPP_
