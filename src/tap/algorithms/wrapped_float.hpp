@@ -61,7 +61,7 @@ public:
      * @param[in] other: The WrappedFloat to be compared `this` WrappedFloat.
      * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
-    bool operator==(const WrappedFloat& other);
+    bool operator==(const WrappedFloat& other) const;
 
     /**
      * Adds a WrappedFloat to `this` WrappedFloat given they have the same lower and

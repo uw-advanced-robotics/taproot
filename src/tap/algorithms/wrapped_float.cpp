@@ -33,7 +33,7 @@ WrappedFloat::WrappedFloat(const float value, const float lowerBound, const floa
     wrapValue();
 }
 
-bool WrappedFloat::operator==(const WrappedFloat& other)
+bool WrappedFloat::operator==(const WrappedFloat& other) const
 {
     assertBoundsEqual(other);
 
