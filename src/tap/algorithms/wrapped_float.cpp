@@ -33,6 +33,13 @@ WrappedFloat::WrappedFloat(const float value, const float lowerBound, const floa
     wrapValue();
 }
 
+bool WrappedFloat::operator==(const WrappedFloat& other)
+{
+    assertBoundsEqual(other);
+
+    return this->wrapped == other.wrapped;
+}
+
 void WrappedFloat::operator+=(const WrappedFloat& other)
 {
     assertBoundsEqual(other);

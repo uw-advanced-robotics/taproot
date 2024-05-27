@@ -54,6 +54,16 @@ public:
     // Overloaded Operators ----------------
 
     /**
+     * Two WrappedFloats are considered equal if their wrapped values are equal. This does not
+     * account for floating point imprecision, so for robust equality checks, `minDifference` should
+     * be used.
+     *
+     * @param[in] other: The WrappedFloat to be compared `this` WrappedFloat.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
+     */
+    bool operator==(const WrappedFloat& other);
+
+    /**
      * Adds a WrappedFloat to `this` WrappedFloat given they have the same lower and
      * upper bounds.
      *
@@ -320,7 +330,12 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, -M_PI, M_PI){};
+    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI){};
+
+    static inline WrappedFloat fromDegrees(const float degrees)
+    {
+        return Angle(modm::toRadian(degrees));
+    }
 };
 
 }  // namespace algorithms
