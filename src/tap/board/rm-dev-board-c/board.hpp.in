@@ -182,8 +182,8 @@ using IST8310_RSTN = GpioG6;
 
 // gpio pins used for I2C communication via the Digital Camera FPC port
 
-using I2c1Sda = GpioB8;
-using I2c1Scl = GpioB9;
+using I2c1Sda = GpioB9;
+using I2c1Scl = GpioB8;
 using I2c1Master = I2cMaster1;
 
 #endif
