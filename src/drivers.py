@@ -173,6 +173,14 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "constructor": "this",
         "module-dependencies": [":communication:sensors:imu:bmi088"],
     }
+    {
+        "object-name": "communication::sensors::imu::ist8310::IST8310",
+        "mock-object-name": nice_mock("mock::ist8310Mock"),
+        "src-file": "tap/communication/sensors/imu/ist8310/ist8310.hpp",
+        "mock-header": "tap/mock/ist8310_mock.hpp",
+        "constructor": "this",
+        "module-dependencies": [":communication:sensors:imu:ist8310"],
+    }
 ]
 
 def should_driver_be_generated(env, driver):

@@ -31,9 +31,9 @@
 
 namespace
 {
-static uint8_t txBuffer[1] = {};
+static uint8_t txBuffer[2] = {};
 static uint8_t rxBuffer[IST8310_DATA_LENGTH] = {};
-}
+}  // namespace
 
 namespace tap::communication::sensors::imu::ist8310
 {
@@ -62,17 +62,44 @@ public:
 private:
     float x, y, z;
 
-    inline modm::ResumableResult<bool> readRegister(uint8_t reg, int len){
+    inline modm::ResumableResult<bool> readRegister(uint8_t reg, int len)
+    {
         RF_BEGIN();
 
-        if(len > IST8310_DATA_LENGTH){
+        if (len > IST8310_DATA_LENGTH)
+        {
             len = IST8310_DATA_LENGTH;
         }
 
         txBuffer[0] = reg;
-        while(!transaction.configureWriteRead(txBuffer, 1, rxBuffer, len));
+        while (!transaction.configureWriteRead(txBuffer, 1, rxBuffer, len));
 
         RF_END_RETURN_CALL(this->runTransaction());
+    }
+
+    inline modm::ResumableResult<bool> writeResgister(uint8_t reg, uint8_t data)
+    {
+        RF_BEGIN();
+
+        txBuffer[0] = reg;
+        txBuffer[1] = data;
+        while (!transaction.configureWrite(txBuffer, 2));
+
+        RF_END_RETURN_CALL(this->runTransaction());
+    }
+
+    inline bool read()
+    {
+#ifndef PLATFORM_HOSTED
+        PT_BEGIN();
+        while (true)
+        {
+            PT_CALL(readRegister(IST8310_DATA_START_ADDRESS, IST8310_DATA_LENGTH));
+        }
+        PT_END();
+#else
+        return false;
+#endif
     }
 };
 
