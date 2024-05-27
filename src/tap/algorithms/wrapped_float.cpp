@@ -45,7 +45,11 @@ void WrappedFloat::operator+=(const WrappedFloat& other)
     assertBoundsEqual(other);
 
     this->wrapped += other.wrapped;
-    if (this->wrapped > this->upperBound) this->wrapped -= (this->upperBound - this->lowerBound);
+    if (this->wrapped > this->upperBound)
+    {
+        this->wrapped -= (this->upperBound - this->lowerBound);
+        this->revolutions++;
+    }
     this->revolutions += other.revolutions;
 }
 
@@ -54,7 +58,11 @@ void WrappedFloat::operator-=(const WrappedFloat& other)
     assertBoundsEqual(other);
 
     this->wrapped -= other.wrapped;
-    if (this->wrapped < this->lowerBound) this->wrapped += (this->upperBound - this->lowerBound);
+    if (this->wrapped < this->lowerBound)
+    {
+        this->wrapped += (this->upperBound - this->lowerBound);
+        this->revolutions--;
+    }
     this->revolutions -= other.revolutions;
 }
 
@@ -157,7 +165,7 @@ void WrappedFloat::wrapValue()
     {
         this->wrapped = lowerBound + fmodf(oldValue - lowerBound, upperBound - lowerBound);
     }
-    this->revolutions += static_cast<int>((oldValue - lowerBound) / (upperBound - lowerBound));
+    this->revolutions += floor((oldValue - lowerBound) / (upperBound - lowerBound));
 }
 
 float WrappedFloat::limitValue(
