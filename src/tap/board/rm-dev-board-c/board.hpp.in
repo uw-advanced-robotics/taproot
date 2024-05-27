@@ -208,8 +208,8 @@ void initI2C2(uint64_t baudrate, I2c2Master::Pullups pullup){
 }
 
 void initI2C3(uint64_t baudrate, I2c3Master::Pullups pullup){
-    I2c3Master::connect<I2c3Sda::Sda, I2c3Scl::Scl>(pullup);
-    I2c3Master::initialize<SystemClock, baudrate>();
+    IST8310I2cMaster::connect<I2c3Sda::Sda, I2c3Scl::Scl>(pullup);
+    IST8310I2cMaster::initialize<SystemClock, baudrate>();
 }
 
 }  // namespace Board
