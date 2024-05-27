@@ -16,6 +16,8 @@
     <module>modm:architecture:clock</module>
     <module>modm:architecture:delay</module>
     <module>modm:architecture:spi.device</module>
+    <module>modm:architecture:i2c.device</module>
+    <module>modm:architecture:i2c.multiplexer</module>
     <module>modm:build:scons</module>
     <module>modm:container</module>
     <module>modm:cmsis:core</module>
