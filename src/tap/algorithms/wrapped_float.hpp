@@ -160,6 +160,32 @@ public:
     float minDifference(const float& unwrappedValue) const;
 
     /**
+     * other-this  but in the direction that goes through the range most
+     */
+    float differenceThroughRange(
+        const WrappedFloat& other,
+        const WrappedFloat& lowerBound,
+        const WrappedFloat& upperBound) const;
+
+    inline bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const
+    {
+        return withinRange(*this, lowerBound, upperBound);
+    }
+
+    inline static bool withinRange(
+        const WrappedFloat& value,
+        const WrappedFloat& lowerBound,
+        const WrappedFloat& upperBound)
+    {
+        return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
+                (value.getWrappedValue() > lowerBound.getWrappedValue() &&
+                 value.getWrappedValue() < upperBound.getWrappedValue())) ||
+               (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
+                (value.getWrappedValue() > lowerBound.getWrappedValue() ||
+                 value.getWrappedValue() < upperBound.getWrappedValue()));
+    }
+
+    /**
      * Interpolates along the smallest difference with another WrappedFloat.
      *
      * @param[in] other: The WrappedFloat to interpolate between.
@@ -263,6 +289,13 @@ public:
         this->revolutions = 0;
         wrapValue();
     };
+
+    inline WrappedFloat getNormalized() const
+    {
+        WrappedFloat out(*this);
+        out.revolutions = 0;
+        return out;
+    }
 
     /**
      *
