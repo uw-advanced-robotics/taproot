@@ -1,5 +1,10 @@
 # Taproot Changelog
 
+## June 2024
+
+- Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
+- Improved calculation for Ref Serial Transmitter timer lengths.
+
 ## May 2024
 
 - Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
