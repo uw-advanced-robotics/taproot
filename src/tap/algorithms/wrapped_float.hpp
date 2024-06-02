@@ -159,13 +159,21 @@ public:
      */
     float minDifference(const float& unwrappedValue) const;
 
-    /**
-     * other-this  but in the direction that goes through the range most
-     */
-    float differenceThroughRange(
-        const WrappedFloat& other,
-        const WrappedFloat& lowerBound,
-        const WrappedFloat& upperBound) const;
+    inline float positiveDifference(const WrappedFloat& other) const
+    {
+        assertBoundsEqual(other);
+
+        if (this->wrapped < other.wrapped) return other.wrapped - this->wrapped;
+        return (this->upperBound - this->wrapped) + (other.wrapped - this->lowerBound);
+    }
+
+    inline float negativeDifference(const WrappedFloat& other) const
+    {
+        assertBoundsEqual(other);
+
+        if (this->wrapped > other.wrapped) return other.wrapped - this->wrapped;
+        return (this->lowerBound - this->wrapped) + (other.wrapped - this->upperBound);
+    }
 
     inline bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const
     {
@@ -183,6 +191,63 @@ public:
                (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
                 (value.getWrappedValue() > lowerBound.getWrappedValue() ||
                  value.getWrappedValue() < upperBound.getWrappedValue()));
+    }
+
+    inline static bool withinRangeInclusive(
+        const WrappedFloat& value,
+        const WrappedFloat& lowerBound,
+        const WrappedFloat& upperBound)
+    {
+        return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
+                (value.getWrappedValue() >= lowerBound.getWrappedValue() &&
+                 value.getWrappedValue() <= upperBound.getWrappedValue())) ||
+               (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
+                (value.getWrappedValue() >= lowerBound.getWrappedValue() ||
+                 value.getWrappedValue() <= upperBound.getWrappedValue()));
+    }
+
+    inline static float intersectionRange(
+        const WrappedFloat& lowerA,
+        const WrappedFloat& upperA,
+        const WrappedFloat& lowerB,
+        const WrappedFloat& upperB)
+    {
+        assertBoundsEqual(lowerA, upperA);
+        assertBoundsEqual(upperA, lowerB);
+        assertBoundsEqual(lowerB, upperB);
+
+        bool lowerAinB = withinRange(lowerA, lowerB, upperB);
+        bool upperAinB = withinRange(upperA, lowerB, upperB);
+        bool lowerBinA = withinRange(lowerB, lowerA, upperA);
+        bool upperBinA = withinRange(upperB, lowerA, upperA);
+
+        bool lowerAinBInc = withinRangeInclusive(lowerA, lowerB, upperB);
+        bool upperAinBInc = withinRangeInclusive(upperA, lowerB, upperB);
+        bool lowerBinAInc = withinRangeInclusive(lowerB, lowerA, upperA);
+        bool upperBinAInc = withinRangeInclusive(upperB, lowerA, upperA);
+
+        if (lowerA == lowerB && upperA == upperB) return lowerA.positiveDifference(upperA);
+
+        if (!lowerAinB && !upperAinB && !lowerBinA && !upperBinA)  // no overlap
+            return 0;
+
+        if (!lowerAinB && !upperBinA && upperAinB && lowerBinA)  // overlap, B above A
+            return lowerB.positiveDifference(upperA);
+
+        if (!upperAinB && !lowerBinA && lowerAinB && upperBinA)  // overlap, A above B
+            return lowerA.positiveDifference(upperB);
+
+        if (upperAinB && lowerBinA && lowerAinB && upperBinA)  // two overlaps
+            return lowerA.positiveDifference(upperB) + lowerB.positiveDifference(upperA);
+
+        if (lowerAinBInc && upperAinBInc)  // A entirely in B
+            return lowerA.positiveDifference(upperA);
+
+        if (lowerBinAInc && upperBinAInc)  // B entirely in A
+            return lowerB.positiveDifference(upperB);
+
+        // should never get here
+        return 0;
     }
 
     /**
@@ -255,6 +320,11 @@ public:
         const float min,
         const float max,
         int* status);
+
+    inline WrappedFloat withSameBounds(const float value) const
+    {
+        return WrappedFloat(value, this->lowerBound, this->upperBound);
+    }
 
     // Getters/Setters ----------------
 

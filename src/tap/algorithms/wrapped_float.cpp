@@ -117,22 +117,6 @@ float WrappedFloat::minDifference(const WrappedFloat& other) const
                                                               : difference_around;
 }
 
-float WrappedFloat::differenceThroughRange(
-    const WrappedFloat& other,
-    const WrappedFloat& lowerBound,
-    const WrappedFloat& upperBound) const
-{
-    /*
-    both within bounds: subtract min and do unwrapped
-
-
-
-
-
-
-    */
-}
-
 float WrappedFloat::minDifference(const float& unwrappedValue) const
 {
     return minDifference(WrappedFloat(unwrappedValue, this->lowerBound, this->upperBound));
@@ -143,27 +127,6 @@ WrappedFloat WrappedFloat::minInterpolate(const WrappedFloat& other, const float
     assertBoundsEqual(other);
 
     return *this + (minDifference(other) * alpha);
-
-    // float halfInterval = (this->upperBound - other.lowerBound) / 2;
-    // float rawInterpolation = this->wrapped * alpha + other.wrapped * (1 - alpha);
-
-    // if (abs(this->wrapped - other.wrapped) <= halfInterval)
-    // {
-    //     return WrappedFloat(rawInterpolation, this->lowerBound, this->upperBound);
-    // }
-    // else
-    // {
-    //     if (rawInterpolation > this->lowerBound + halfInterval)
-    //         return WrappedFloat(
-    //             rawInterpolation - halfInterval,
-    //             this->lowerBound,
-    //             this->upperBound);
-    //     else
-    //         return WrappedFloat(
-    //             rawInterpolation + halfInterval,
-    //             this->lowerBound,
-    //             this->upperBound);
-    // }
 }
 
 void WrappedFloat::shiftBounds(const float shiftMagnitude)
