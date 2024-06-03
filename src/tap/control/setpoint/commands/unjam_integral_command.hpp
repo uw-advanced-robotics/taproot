@@ -26,6 +26,7 @@
 #include "tap/control/command.hpp"
 
 #include "../interfaces/integrable_setpoint_subsystem.hpp"
+
 #include "unjam_command_interface.hpp"
 
 namespace tap::control::setpoint
