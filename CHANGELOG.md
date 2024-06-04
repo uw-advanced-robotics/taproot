@@ -5,6 +5,7 @@
 - Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
 - Improved calculation for Ref Serial Transmitter timer lengths.
 - Fixed bug where `VerticalScrollLogicHandler::getLargestIndexDisplayed()` returns index out of bounds when size is less than max entries
+- Substituted uses of `UnjamIntegralCommand` with new marker interface `UnjamCommandInterface` to allow custom agitator unjam behavior. Any desired unjam behavior can be put into an implementer of `UnjamCommandInterface` and fed into the `MoveUnjamIntegralComprisedCommand`.
 
 ## May 2024
 
