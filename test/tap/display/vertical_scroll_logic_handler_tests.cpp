@@ -45,7 +45,7 @@ TEST(VerticalScrollLogicHandler, constructor_negative_size_raises_error)
     Drivers drivers;
     VerticalScrollLogicHandler scroller(&drivers, SIZE, ENTRIES);
 
-    expectScrollerConstraintsEq(scroller, SIZE, ENTRIES - 1, 0, 0);
+    expectScrollerConstraintsEq(scroller, SIZE, SIZE - 1, 0, 0);
     EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
 
     scroller.onShortButtonPress(modm::MenuButtons::DOWN);
@@ -99,7 +99,7 @@ TEST(
     Drivers drivers;
     VerticalScrollLogicHandler scroller(&drivers, SIZE, ENTRIES);
 
-    expectScrollerConstraintsEq(scroller, SIZE, ENTRIES - 1, 0, 0);
+    expectScrollerConstraintsEq(scroller, SIZE, SIZE - 1, 0, 0);
 
     scroller.onShortButtonPress(modm::MenuButtons::DOWN);
     scroller.onShortButtonPress(modm::MenuButtons::UP);
@@ -215,7 +215,7 @@ TEST(VerticalScrollLogicHandler, setSize_updates_size_cursor_display_indices_if_
     expectScrollerConstraintsEq(scroller, SIZE, ENTRIES - 1, 0, SIZE - 1);
 
     scroller.setSize(NEW_SIZE);
-    expectScrollerConstraintsEq(scroller, NEW_SIZE, SIZE - 1, 0, NEW_SIZE - 1);
+    expectScrollerConstraintsEq(scroller, NEW_SIZE, NEW_SIZE - 1, 0, NEW_SIZE - 1);
 }
 
 TEST(
