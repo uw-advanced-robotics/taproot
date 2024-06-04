@@ -4,9 +4,11 @@
 
 - Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
 - Improved calculation for Ref Serial Transmitter timer lengths.
+- Fixed bug where `VerticalScrollLogicHandler::getLargestIndexDisplayed()` returns index out of bounds when size is less than max entries
 
 ## May 2024
 
+### Breaking Changes
 - Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
   - The previous functionality is still present in `SecondOrderKinematicState`, so migrating over 
       would involve replacing all usages of `MeasuredKinematicState` with this.
