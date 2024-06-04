@@ -21,7 +21,6 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
-#include "tap/algorithms/transforms/position.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -68,7 +67,7 @@ public:
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
-    const inline float magnitude() const { return sqrt(*this * *this); }
+    inline float magnitude() const { return sqrt(*this * *this); }
 
 private:
     CMSISMat<3, 1> coordinates_;

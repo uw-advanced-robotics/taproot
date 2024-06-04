@@ -56,4 +56,6 @@ bool Position::operator==(const Position& other) const
            this->coordinates_.data[2] == other.coordinates_.data[2];
 }
 
+float Position::distance(const Position& a, const Position& b) { return (b - a).magnitude(); }
+
 }  // namespace tap::algorithms::transforms
