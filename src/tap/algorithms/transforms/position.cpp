@@ -23,9 +23,9 @@
 
 namespace tap::algorithms::transforms
 {
-Vector Position::operator-(const Vector& other) const
+Position Position::operator-(const Vector& other) const
 {
-    return Vector(this->coordinates_ - other.coordinates());
+    return Position(this->coordinates_ - other.coordinates());
 }
 
 Vector Position::operator-(const Position& other) const
