@@ -1,5 +1,22 @@
 # Taproot Changelog
 
+## June 2024
+
+- Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
+- Improved calculation for Ref Serial Transmitter timer lengths.
+- Fixed bug where `VerticalScrollLogicHandler::getLargestIndexDisplayed()` returns index out of bounds when size is less than max entries
+- Substituted uses of `UnjamIntegralCommand` with new marker interface `UnjamCommandInterface` to allow custom agitator unjam behavior. Any desired unjam behavior can be put into an implementer of `UnjamCommandInterface` and fed into the `MoveUnjamIntegralComprisedCommand`.
+
+## May 2024
+
+### Breaking Changes
+- Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
+  - The previous functionality is still present in `SecondOrderKinematicState`, so migrating over 
+      would involve replacing all usages of `MeasuredKinematicState` with this.
+  - This allows teams to define custom motion models for their kinematic states by extending
+      `AbstractKinematicState` and implementing `projectForward(float dt)`
+  - Accessing the initial position has been replaced with `.projectForward(0)`
+
 ## April 2024
 
 - Updated Ref Serial to support version 1.6.1. This has major breaking changes, but these are nessecary for working robots. See [this document](./extended-changelogs/ref-serial-1.6.1-changes.md) for more information.
