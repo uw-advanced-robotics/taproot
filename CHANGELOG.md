@@ -8,6 +8,7 @@
 - Substituted uses of `UnjamIntegralCommand` with new marker interface `UnjamCommandInterface` to allow custom agitator unjam behavior. Any desired unjam behavior can be put into an implementer of `UnjamCommandInterface` and fed into the `MoveUnjamIntegralComprisedCommand`.
 - Added copy assign operators to `transforms::Position` and `transforms::Vector`, as well as dot product, magnitude, and interpolation helpers.
 - Expand `DjiSerial` Rx buffer to 1024 bytes.
+- Remove check in `addMap()` preventing mappings with equal remote map states to allow for different command mapping implementations with different behaviors using the same remote state.
 
 ## May 2024
 
