@@ -60,10 +60,7 @@ void CommandMapper::handleKeyStateChange(
     }
 }
 
-void CommandMapper::addMap(CommandMapping *mapping)
-{
-    commandsToRun.push_back(mapping);
-}
+void CommandMapper::addMap(CommandMapping *mapping) { commandsToRun.push_back(mapping); }
 
 const CommandMapping *CommandMapper::getAtIndex(std::size_t index) const
 {
