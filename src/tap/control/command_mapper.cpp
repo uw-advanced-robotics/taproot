@@ -62,14 +62,6 @@ void CommandMapper::handleKeyStateChange(
 
 void CommandMapper::addMap(CommandMapping *mapping)
 {
-    for (const CommandMapping *const cmap : commandsToRun)
-    {
-        if (mapStateEqual(*cmap, *mapping))
-        {
-            RAISE_ERROR(drivers, "failed to insert io mapping");
-            return;
-        }
-    }
     commandsToRun.push_back(mapping);
 }
 
