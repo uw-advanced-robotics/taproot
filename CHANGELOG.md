@@ -1,7 +1,18 @@
 # Taproot Changelog
 
+## June 2024
+
+- Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
+- Improved calculation for Ref Serial Transmitter timer lengths.
+- Fixed bug where `VerticalScrollLogicHandler::getLargestIndexDisplayed()` returns index out of bounds when size is less than max entries
+- Substituted uses of `UnjamIntegralCommand` with new marker interface `UnjamCommandInterface` to allow custom agitator unjam behavior. Any desired unjam behavior can be put into an implementer of `UnjamCommandInterface` and fed into the `MoveUnjamIntegralComprisedCommand`.
+- Added copy assign operators to `transforms::Position` and `transforms::Vector`, as well as dot product, magnitude, and interpolation helpers.
+- Expand `DjiSerial` Rx buffer to 1024 bytes.
+- Remove check in `addMap()` preventing mappings with equal remote map states to allow for different command mapping implementations with different behaviors using the same remote state.
+
 ## May 2024
 
+### Breaking Changes
 - Ballistics now uses `AbstractKinematicState` instead of `MeasuredKinematicState`. This is a breaking change.
   - The previous functionality is still present in `SecondOrderKinematicState`, so migrating over 
       would involve replacing all usages of `MeasuredKinematicState` with this.
