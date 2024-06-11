@@ -170,11 +170,11 @@ TEST(WrappedFloat, limitVal_min_gt_max)
     EXPECT_EQ(0, status);
 }
 
-TEST(WrappedFloat, unionRange)
+TEST(WrappedFloat, intersectionRange)
 {
     EXPECT_EQ(
         0.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(0, 0, 100),
             WrappedFloat(49, 0, 100),
             WrappedFloat(50, 0, 100),
@@ -182,7 +182,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(0, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(40, 0, 100),
@@ -190,7 +190,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(40, 0, 100),
             WrappedFloat(90, 0, 100),
             WrappedFloat(0, 0, 100),
@@ -198,7 +198,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(0, 0, 100),
             WrappedFloat(90, 0, 100),
             WrappedFloat(30, 0, 100),
@@ -206,7 +206,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(0, 0, 100),
@@ -214,7 +214,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(50, 0, 100),
@@ -222,7 +222,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         0.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(60, 0, 100),
@@ -230,7 +230,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(30, 0, 100),
             WrappedFloat(80, 0, 100),
             WrappedFloat(60, 0, 100),
@@ -238,7 +238,7 @@ TEST(WrappedFloat, unionRange)
 
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::unionRange(
+        WrappedFloat::intersectionRange(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(30, 0, 100),
