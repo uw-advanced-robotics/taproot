@@ -112,7 +112,7 @@ public:
      */
     DjiMotor(
         Drivers* drivers,
-        MotorId desMotorIdentifier,
+        uint32_t canID,
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
@@ -138,15 +138,6 @@ public:
     void resetEncoderValue() override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
-
-    /**
-     * Overrides virtual method in the can class, called every time a message with the
-     * CAN message id this class is attached to is received by the can receive handler.
-     * Parses the data in the message and updates this class's fields accordingly.
-     *
-     * @param[in] message the message to be processed.
-     */
-    void processMessage(const modm::can::Message& message) override;
 
     /**
      * Set the desired output for the motor. The meaning of this value is motor
@@ -273,6 +264,29 @@ private:
     uint16_t encoderHomePosition;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
+};
+
+class M3510Motor : public DjiMotor
+{
+public:
+
+    M3510Motor(Drivers* drivers,
+        uint32_t canID,
+        tap::can::CanBus motorCanBus,
+        bool isInverted,
+        const char* name,
+        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
+        int64_t encoderRevolutions = 0);
+
+    /**
+     * Overrides virtual method in the can class, called every time a message with the
+     * CAN message id this class is attached to is received by the can receive handler.
+     * Parses the data in the message and updates this class's fields accordingly.
+     *
+     * @param[in] message the message to be processed.
+     */
+    void processMessage(const modm::can::Message& message) override;
+
 };
 
 }  // namespace tap::motor
