@@ -642,7 +642,7 @@ TEST(RefSerial, messageReceieveCallback_vtm_input)
         uint16_t keyboardState;
         uint16_t reserved;
     } modm_packed;
-    
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
     DJISerial::ReceivedSerialMessage msg;
