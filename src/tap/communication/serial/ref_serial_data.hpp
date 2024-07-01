@@ -443,13 +443,13 @@ public:
 
         struct RemoteControlData
         {
-            int16_t mouseX;            /// Negative value indicates leftwards movement
-            int16_t mouseY;            /// Negative value indicates downwards movement
-            int16_t mouseZ;  /// Velocity of the scroll wheel
-            bool leftMouseButton;      /// True if the left mouse button is pressed
-            bool rightMouseButton;     /// True if the right mouse button is pressed
-            uint16_t keyboardState;    /// Bitmask of the keyboard state
-            uint16_t reserved;         /// Magic bits that DJI reserves
+            int16_t mouseX;          /// Negative value indicates leftwards movement
+            int16_t mouseY;          /// Negative value indicates downwards movement
+            int16_t mouseZ;          /// Velocity of the scroll wheel
+            bool leftMouseButton;    /// True if the left mouse button is pressed
+            bool rightMouseButton;   /// True if the right mouse button is pressed
+            uint16_t keyboardState;  /// Bitmask of the keyboard state
+            uint16_t reserved;       /// Magic bits that DJI reserves
         };
 
         struct GameData

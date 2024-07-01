@@ -502,7 +502,8 @@ bool RefSerial::decodeToRadarInfo(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToVTMInputData(const ReceivedSerialMessage& message)
 {
-    if(message.header.dataLength != 12){
+    if (message.header.dataLength != 12)
+    {
         return false;
     }
     // Decode to local data
