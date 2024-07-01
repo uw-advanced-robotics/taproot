@@ -32,6 +32,7 @@
 
 #include "dji_serial.hpp"
 #include "ref_serial_data.hpp"
+#include "remote.hpp"
 
 namespace tap
 {
@@ -109,7 +110,7 @@ public:
         REF_MESSAGE_TYPE_CUSTOM_DATA = 0x301,
         // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER = 0x302,
         // REF_MESSAGE_TYPE_SMALL_MAP = 0x303,
-        // REF_MESSAGE_TYPE_VTM_INPUT_DATA = 0x304
+        REF_MESSAGE_TYPE_VTM_INPUT_DATA = 0x304
     };
 
     /**
@@ -195,6 +196,7 @@ private:
     std::unordered_map<uint16_t, RobotToRobotMessageHandler*> msgIdToRobotToRobotHandlerMap;
     modm::pt::Semaphore transmissionSemaphore;
     tap::arch::MilliTimeout transmissionDelayTimer;
+    Drivers* drivers;
 
     /**
      * Decodes ref serial message containing the game stage and time remaining
@@ -289,6 +291,10 @@ private:
      * Decodes ref serial message containing information about the radar station's actions.
      */
     bool decodeToRadarInfo(const ReceivedSerialMessage& message);
+    /**
+     * Decodes ref serial message containing information about the keyboard and mouse state.
+     */
+    bool decodeToVTMInputData(const ReceivedSerialMessage& message);
 
     bool handleRobotToRobotCommunication(const ReceivedSerialMessage& message);
 

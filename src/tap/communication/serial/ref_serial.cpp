@@ -35,7 +35,8 @@ RefSerial::RefSerial(Drivers* drivers)
       robotData(),
       gameData(),
       receivedDpsTracker(),
-      transmissionSemaphore(1)
+      transmissionSemaphore(1),
+      drivers(drivers)
 {
     refSerialOfflineTimeout.stop();
 }
@@ -157,6 +158,11 @@ void RefSerial::messageReceiveCallback(const ReceivedSerialMessage& completeMess
         case REF_MESSAGE_TYPE_RADAR_INFO:
         {
             decodeToRadarInfo(completeMessage);
+            break;
+        }
+        case REF_MESSAGE_TYPE_VTM_INPUT_DATA:
+        {
+            decodeToVTMInputData(completeMessage);
             break;
         }
 
@@ -491,6 +497,30 @@ bool RefSerial::decodeToRadarInfo(const ReceivedSerialMessage& message)
     gameData.radar.availableDoubleVulnerablilityEffects = message.data[0] & 0x03;
     gameData.radar.activeDoubleVulnerabilityEffect = (message.data[0] >> 2) & 0x01;
 
+    return true;
+}
+
+bool RefSerial::decodeToVTMInputData(const ReceivedSerialMessage& message)
+{
+    if(message.header.dataLength != 12){
+        return false;
+    }
+    // Decode to local data
+    convertFromLittleEndian(&robotData.remoteInput.mouseX, message.data);
+    convertFromLittleEndian(&robotData.remoteInput.mouseY, message.data + 2);
+    convertFromLittleEndian(&robotData.remoteInput.mouseZ, message.data + 4);
+    robotData.remoteInput.leftMouseButton = message.data[6];
+    robotData.remoteInput.rightMouseButton = message.data[7];
+    convertFromLittleEndian(&robotData.remoteInput.keyboardState, message.data + 8);
+    convertFromLittleEndian(&robotData.remoteInput.reserved, message.data + 10);
+
+    // Copy to remote data
+    drivers->remote.remote.mouse.x = robotData.remoteInput.mouseX;
+    drivers->remote.remote.mouse.y = robotData.remoteInput.mouseY;
+    drivers->remote.remote.mouse.z = robotData.remoteInput.mouseZ;
+    drivers->remote.remote.mouse.l = robotData.remoteInput.leftMouseButton;
+    drivers->remote.remote.mouse.r = robotData.remoteInput.rightMouseButton;
+    drivers->remote.remote.key = robotData.remoteInput.keyboardState;
     return true;
 }
 

@@ -441,6 +441,17 @@ public:
             bool activeDoubleVulnerabilityEffect;          ///< True when the effect is active.
         };
 
+        struct RemoteControlData
+        {
+            int16_t mouseX;            /// Negative value indicates leftwards movement
+            int16_t mouseY;            /// Negative value indicates downwards movement
+            int16_t mouseZ;  /// Velocity of the scroll wheel
+            bool leftMouseButton;      /// True if the left mouse button is pressed
+            bool rightMouseButton;     /// True if the right mouse button is pressed
+            uint16_t keyboardState;    /// Bitmask of the keyboard state
+            uint16_t reserved;         /// Magic bits that DJI reserves
+        };
+
         struct GameData
         {
             GameType gameType;    ///< Current type of competition the robot is taking part in.
@@ -486,6 +497,7 @@ public:
                                                     ///< received.
             RefereeWarningData refereeWarningData;  ///< Referee warning information, updated when
                                                     ///< a robot receives a penalty
+            RemoteControlData remoteInput;          ///< Data about the keyboard-mouse input
         };
     };
 
