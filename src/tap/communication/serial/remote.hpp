@@ -46,6 +46,7 @@ namespace tap::communication::serial
 class Remote
 {
     friend class RefSerial;
+
 public:
     Remote(Drivers *drivers) : drivers(drivers) {}
     DISALLOW_COPY_AND_ASSIGN(Remote)

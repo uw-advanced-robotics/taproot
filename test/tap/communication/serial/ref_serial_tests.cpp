@@ -630,6 +630,45 @@ TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
     EXPECT_EQ(12892, refSerial.getRobotData().remainingCoins);
 }
 
+TEST(RefSerial, messageReceieveCallback_vtm_input)
+{
+    struct RemoteControlData
+    {
+        int16_t mouseX;
+        int16_t mouseY;
+        int16_t mouseZ;
+        bool leftMouseButton;
+        bool rightMouseButton;
+        uint16_t keyboardState;
+        uint16_t reserved;
+    } modm_packed;
+    
+    Drivers drivers;
+    RefSerial refSerial(&drivers);
+    DJISerial::ReceivedSerialMessage msg;
+    RemoteControlData testData;
+
+    testData.mouseX = 12;
+    testData.mouseY = -34;
+    testData.mouseZ = 56;
+    testData.leftMouseButton = true;
+    testData.rightMouseButton = false;
+    testData.keyboardState = 0b1010101010101010;
+    testData.reserved = 789;
+
+    msg = constructMsg(testData, 0x304);
+
+    refSerial.messageReceiveCallback(msg);
+
+    EXPECT_EQ(12, refSerial.getRobotData().remoteInput.mouseX);
+    EXPECT_EQ(-34, refSerial.getRobotData().remoteInput.mouseY);
+    EXPECT_EQ(56, refSerial.getRobotData().remoteInput.mouseZ);
+    EXPECT_TRUE(refSerial.getRobotData().remoteInput.leftMouseButton);
+    EXPECT_FALSE(refSerial.getRobotData().remoteInput.rightMouseButton);
+    EXPECT_EQ(0b1010101010101010, refSerial.getRobotData().remoteInput.keyboardState);
+    EXPECT_EQ(789, refSerial.getRobotData().remoteInput.reserved);
+}
+
 TEST(RefSerial, messageReceiveCallback__RFID_status)
 {
     Drivers drivers;
@@ -737,11 +776,14 @@ TEST(RefSerial, messageReceiveCallback__robot_to_robot_data_simple_message)
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 
-    EXPECT_CALL(handler, functorOp).WillOnce([&](const DJISerial::ReceivedSerialMessage &message) {
-        EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
-        EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
-        EXPECT_EQ(sizeof(SpecialData), message.header.dataLength);
-    });
+    EXPECT_CALL(handler, functorOp)
+        .WillOnce(
+            [&](const DJISerial::ReceivedSerialMessage &message)
+            {
+                EXPECT_EQ('h', message.data[sizeof(RefSerial::Tx::InteractiveHeader)]);
+                EXPECT_EQ('i', message.data[sizeof(RefSerial::Tx::InteractiveHeader) + 1]);
+                EXPECT_EQ(sizeof(SpecialData), message.header.dataLength);
+            });
 
     refSerial.messageReceiveCallback(msg);
 }
