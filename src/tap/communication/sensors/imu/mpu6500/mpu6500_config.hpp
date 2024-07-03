@@ -38,9 +38,9 @@
 #define MPU6500_CONFIG_EXT_SYNC_SET 0b000
 
 // [2:0]
-// Low pass filter settings for gyro and temperature. Gyro bandwidth of 92 Hz. Delay of 3.9 ms
-// Temperature sensor bandwidth of 98 Hz. Delay of 2.8 ms
-#define MPU6500_CONFIG_DLPF_CONFIG 0b010
+// Low pass filter settings for gyro and temperature. Gyro bandwidth of 250 Hz. Delay of 0.97 ms
+// Temperature sensor bandwidth of 4000 Hz. Delay of 0.04 ms
+#define MPU6500_CONFIG_DLPF_CONFIG 0b000
 
 #define MPU6500_CONFIG_DATA                                      \
     (BIT_MASK(BIT_SHIFT(MPU6500_CONFIG_FIFO_MODE, 7), 0x40) |    \
@@ -50,8 +50,8 @@
 /////////////// MPU6500_GYRO_CONFIG ///////////////
 
 // [4:3]
-// Gyro full scale select, +/- 2000 dps
-#define MPU6500_GYRO_CONFIG_GYRO_FS_SEL 0b11
+// Gyro full scale select, +/- 1000 dps
+#define MPU6500_GYRO_CONFIG_GYRO_FS_SEL 0b10
 
 // [1:0]
 // Used to bypass DLPF, set to 11, 01, or 10 to bypass
@@ -64,8 +64,8 @@
 /////////////// MPU6500_ACCEL_CONFIG ///////////////
 
 // [4:3]
-// Accel full scale select, +/- 8 g
-#define MPU6500_ACCEL_CONFIG_ACCEL_FS_SEL 0b10
+// Accel full scale select, +/- 4 g
+#define MPU6500_ACCEL_CONFIG_ACCEL_FS_SEL 0b01
 
 #define MPU6500_ACCEL_CONFIG_DATA (BIT_MASK(BIT_SHIFT(MPU6500_ACCEL_CONFIG_ACCEL_FS_SEL, 3), 0x18))
 
