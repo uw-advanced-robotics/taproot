@@ -502,7 +502,7 @@ bool RefSerial::decodeToRadarInfo(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToCustomControllerData(const ReceivedSerialMessage& message)
 {
-    if(message.header.dataLength > 30)
+    if (message.header.dataLength > 30)
     {
         return false;
     }

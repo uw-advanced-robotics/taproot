@@ -647,7 +647,8 @@ TEST(RefSerial, messageReceiveCallback__RFID_status)
     EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
 }
 
-TEST(RefSerial, messageReceiveCallback_custom_controller_data){
+TEST(RefSerial, messageReceiveCallback_custom_controller_data)
+{
     Drivers drivers;
     RefSerial RefSerial(&drivers);
     DJISerial::ReceivedSerialMessage msg;
