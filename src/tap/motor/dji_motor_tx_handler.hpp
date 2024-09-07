@@ -73,6 +73,8 @@ public:
     static constexpr uint32_t CAN_DJI_LOW_IDENTIFIER = 0X200;
     /** CAN message identifier for "high" segment (high 4 CAN motor IDs) of control message. */
     static constexpr uint32_t CAN_DJI_HIGH_IDENTIFIER = 0X1FF;
+    /** CAN Mmessage indentifier for low 6020 motors in curren control mode */
+    static constexpr uint32_t CAN_DJI_6020_CURRENT_MSG_ID = 0x1FE;
 
     DjiMotorTxHandler(Drivers* drivers) : drivers(drivers) {}
     mockable ~DjiMotorTxHandler() = default;
