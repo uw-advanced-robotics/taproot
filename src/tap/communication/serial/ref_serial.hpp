@@ -107,7 +107,7 @@ public:
         REF_MESSAGE_TYPE_RADAR_INFO = 0x20E,
 
         REF_MESSAGE_TYPE_CUSTOM_DATA = 0x301,
-        // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER = 0x302,
+        REF_MESSAGE_TYPE_CUSTOM_CONTROLLER = 0x302,
         // REF_MESSAGE_TYPE_SMALL_MAP = 0x303,
         // REF_MESSAGE_TYPE_VTM_INPUT_DATA = 0x304
     };
@@ -289,6 +289,10 @@ private:
      * Decodes ref serial message containing information about the radar station's actions.
      */
     bool decodeToRadarInfo(const ReceivedSerialMessage& message);
+    /**
+     * Decodes ref serial message containing custom controller data.
+     */
+    bool decodeToCustomControllerData(const ReceivedSerialMessage& message);
 
     bool handleRobotToRobotCommunication(const ReceivedSerialMessage& message);
 

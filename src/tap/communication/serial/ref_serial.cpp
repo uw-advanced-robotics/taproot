@@ -159,12 +159,18 @@ void RefSerial::messageReceiveCallback(const ReceivedSerialMessage& completeMess
             decodeToRadarInfo(completeMessage);
             break;
         }
+        case REF_MESSAGE_TYPE_CUSTOM_CONTROLLER:
+        {
+            decodeToCustomControllerData(completeMessage);
+            break;
+        }
 
         case REF_MESSAGE_TYPE_CUSTOM_DATA:
         {
             handleRobotToRobotCommunication(completeMessage);
             break;
         }
+
         // TODO: Other Custom Data stuff
         default:
             break;
@@ -493,6 +499,19 @@ bool RefSerial::decodeToRadarInfo(const ReceivedSerialMessage& message)
 
     return true;
 }
+
+bool RefSerial::decodeToCustomControllerData(const ReceivedSerialMessage& message)
+{
+    if(message.header.dataLength > 30)
+    {
+        return false;
+    }
+
+    memcpy(robotData.customControllerData.data, message.data, message.header.dataLength);
+
+    return true;
+}
+
 
 bool RefSerial::handleRobotToRobotCommunication(const ReceivedSerialMessage& message)
 {

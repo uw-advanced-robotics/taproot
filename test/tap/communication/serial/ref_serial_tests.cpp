@@ -647,6 +647,26 @@ TEST(RefSerial, messageReceiveCallback__RFID_status)
     EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
 }
 
+TEST(RefSerial, messageReceiveCallback_custom_controller_data){
+    Drivers drivers;
+    RefSerial RefSerial(&drivers);
+    DJISerial::ReceivedSerialMessage msg;
+    RefSerial::Rx::CustomControllerData testData;
+
+    for (int i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE; i++)
+    {
+        testData.data[i] = i;
+    }
+
+    msg = constructMsg(testData, 0x0302);
+    RefSerial.messageReceiveCallback(msg);
+
+    for (int i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE; i++)
+    {
+        EXPECT_EQ(i, RefSerial.getRobotData().customControllerData.data[i]);
+    }
+}
+
 static void updateRobotId(RefSerial &refSerial, RefSerial::RobotId id)
 {
     DJISerial::ReceivedSerialMessage msg;
