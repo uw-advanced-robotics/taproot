@@ -44,11 +44,6 @@ void WrappedFloat::operator+=(const WrappedFloat& other)
     assertBoundsEqual(other);
 
     this->wrapped += other.wrapped;
-    // if (this->wrapped > this->upperBound)
-    // {
-    //     this->wrapped -= (this->upperBound - this->lowerBound);
-    //     this->revolutions++;
-    // }
     wrapValue();
     this->revolutions += other.revolutions;
 }
@@ -58,11 +53,6 @@ void WrappedFloat::operator-=(const WrappedFloat& other)
     assertBoundsEqual(other);
 
     this->wrapped -= other.wrapped;
-    // if (this->wrapped < this->lowerBound)
-    // {
-    //     this->wrapped += (this->upperBound - this->lowerBound);
-    //     this->revolutions--;
-    // }
     wrapValue();
     this->revolutions -= other.revolutions;
 }
