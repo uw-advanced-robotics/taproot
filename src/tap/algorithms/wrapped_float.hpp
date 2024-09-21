@@ -159,22 +159,6 @@ public:
      */
     float minDifference(const float& unwrappedValue) const;
 
-    inline float positiveDifference(const WrappedFloat& other) const
-    {
-        assertBoundsEqual(other);
-
-        if (this->wrapped < other.wrapped) return other.wrapped - this->wrapped;
-        return (this->upperBound - this->wrapped) + (other.wrapped - this->lowerBound);
-    }
-
-    inline float negativeDifference(const WrappedFloat& other) const
-    {
-        assertBoundsEqual(other);
-
-        if (this->wrapped > other.wrapped) return other.wrapped - this->wrapped;
-        return (this->lowerBound - this->wrapped) + (other.wrapped - this->upperBound);
-    }
-
     inline bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const
     {
         return withinRange(*this, lowerBound, upperBound);
@@ -226,25 +210,25 @@ public:
         bool lowerBinAInc = withinRangeInclusive(lowerB, lowerA, upperA);
         bool upperBinAInc = withinRangeInclusive(upperB, lowerA, upperA);
 
-        if (lowerA == lowerB && upperA == upperB) return lowerA.positiveDifference(upperA);
+        if (lowerA == lowerB && upperA == upperB) return (upperA - lowerA).getWrappedValue();
 
         if (!lowerAinB && !upperAinB && !lowerBinA && !upperBinA)  // no overlap
             return 0;
 
         if (!lowerAinB && !upperBinA && upperAinB && lowerBinA)  // overlap, B above A
-            return lowerB.positiveDifference(upperA);
+            return (upperA - lowerB).getWrappedValue();
 
         if (!upperAinB && !lowerBinA && lowerAinB && upperBinA)  // overlap, A above B
-            return lowerA.positiveDifference(upperB);
+            return (upperB - lowerA).getWrappedValue();
 
         if (upperAinB && lowerBinA && lowerAinB && upperBinA)  // two overlaps
-            return lowerA.positiveDifference(upperB) + lowerB.positiveDifference(upperA);
+            return (upperB - lowerA).getWrappedValue() + (upperA - lowerB).getWrappedValue();
 
         if (lowerAinBInc && upperAinBInc)  // A entirely in B
-            return lowerA.positiveDifference(upperA);
+            return (upperA - lowerA).getWrappedValue();
 
         if (lowerBinAInc && upperBinAInc)  // B entirely in A
-            return lowerB.positiveDifference(upperB);
+            return (upperB - lowerB).getWrappedValue();
 
         // should never get here
         return 0;
@@ -433,7 +417,7 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI){};
+    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI) {};
 
     static inline WrappedFloat fromDegrees(const float degrees)
     {
