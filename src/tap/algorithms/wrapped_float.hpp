@@ -417,7 +417,7 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI) {};
+    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI){};
 
     static inline WrappedFloat fromDegrees(const float degrees)
     {
