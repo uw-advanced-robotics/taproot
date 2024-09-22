@@ -1,5 +1,9 @@
 # Taproot Changelog
 
+## July 2024
+
+- Added `taproot:modm-project.xml:modm_hal_modules` option to include additional user-defined modm modules.
+
 ## June 2024
 
 - Reduced max Ref Serial Transmission from `1280` bytes to `1000` bytes per second.
