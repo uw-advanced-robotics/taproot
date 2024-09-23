@@ -98,6 +98,7 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
     Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
 
+    bmi088.read();
     bmi088.periodicIMUUpdate();
 
     static constexpr float ALPHA = 1E-3;
@@ -146,6 +147,7 @@ TEST(Bmi088, requestRecalibration__calibration_adds_offset_to_acc_gyro_data)
     {
         Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
         Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
+        bmi088.read();
         bmi088.periodicIMUUpdate();
     }
 
@@ -158,6 +160,7 @@ TEST(Bmi088, requestRecalibration__calibration_adds_offset_to_acc_gyro_data)
 
     Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
     Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
+    bmi088.read();
     bmi088.periodicIMUUpdate();
 
     static constexpr float ALPHA = 1E-3;
