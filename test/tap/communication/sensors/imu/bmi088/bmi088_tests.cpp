@@ -69,6 +69,7 @@ TEST(Bmi088, periodicIMUUpdate_initialize_called_no_errors)
 
     initializeBmi088(bmi088);
 
+    bmi088.read();
     bmi088.periodicIMUUpdate();
 
     EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CALIBRATED, bmi088.getImuState());
