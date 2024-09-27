@@ -146,8 +146,8 @@ float WrappedFloat::limitValue(
     const float max,
     int* status)
 {
-    WrappedFloat minWrapped(min, valueToLimit.lowerBound, valueToLimit.upperBound);
-    WrappedFloat maxWrapped(max, valueToLimit.lowerBound, valueToLimit.upperBound);
+    WrappedFloat minWrapped = valueToLimit.withSameBounds(min);
+    WrappedFloat maxWrapped = valueToLimit.withSameBounds(max);
     return limitValue(valueToLimit, minWrapped, maxWrapped, status);
 }
 
@@ -164,7 +164,7 @@ float WrappedFloat::limitValue(
     {
         return valueToLimit.getWrappedValue();
     }
-    if (!withinRange(valueToLimit, min, max))
+    if (!valueToLimit.withinRange(min, max))
     {
         // valueToLimit is not "within" min and max
         float targetMinDifference = valueToLimit.minDifference(min);
@@ -186,6 +186,72 @@ float WrappedFloat::limitValue(
         *status = 0;
         return valueToLimit.getWrappedValue();
     }
+}
+
+bool WrappedFloat::withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const
+{
+    return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
+            (this->getWrappedValue() > lowerBound.getWrappedValue() &&
+             this->getWrappedValue() < upperBound.getWrappedValue())) ||
+           (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
+            (this->getWrappedValue() > lowerBound.getWrappedValue() ||
+             this->getWrappedValue() < upperBound.getWrappedValue()));
+}
+
+bool WrappedFloat::withinRangeInclusive(
+    const WrappedFloat& lowerBound,
+    const WrappedFloat& upperBound) const
+{
+    return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
+            (this->getWrappedValue() >= lowerBound.getWrappedValue() &&
+             this->getWrappedValue() <= upperBound.getWrappedValue())) ||
+           (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
+            (this->getWrappedValue() >= lowerBound.getWrappedValue() ||
+             this->getWrappedValue() <= upperBound.getWrappedValue()));
+}
+
+float WrappedFloat::intersectionRange(
+    const WrappedFloat& lowerA,
+    const WrappedFloat& upperA,
+    const WrappedFloat& lowerB,
+    const WrappedFloat& upperB)
+{
+    assertBoundsEqual(lowerA, upperA);
+    assertBoundsEqual(upperA, lowerB);
+    assertBoundsEqual(lowerB, upperB);
+
+    bool lowerAinB = lowerA.withinRange(lowerB, upperB);
+    bool upperAinB = upperA.withinRange(lowerB, upperB);
+    bool lowerBinA = lowerB.withinRange(lowerA, upperA);
+    bool upperBinA = upperB.withinRange(lowerA, upperA);
+
+    bool lowerAinBInc = lowerA.withinRangeInclusive(lowerB, upperB);
+    bool upperAinBInc = upperA.withinRangeInclusive(lowerB, upperB);
+    bool lowerBinAInc = lowerB.withinRangeInclusive(lowerA, upperA);
+    bool upperBinAInc = upperB.withinRangeInclusive(lowerA, upperA);
+
+    if (lowerA == lowerB && upperA == upperB) return (upperA - lowerA).getWrappedValue();
+
+    if (!lowerAinB && !upperAinB && !lowerBinA && !upperBinA)  // no overlap
+        return 0;
+
+    if (!lowerAinB && !upperBinA && upperAinB && lowerBinA)  // overlap, B above A
+        return (upperA - lowerB).getWrappedValue();
+
+    if (!upperAinB && !lowerBinA && lowerAinB && upperBinA)  // overlap, A above B
+        return (upperB - lowerA).getWrappedValue();
+
+    if (upperAinB && lowerBinA && lowerAinB && upperBinA)  // two overlaps
+        return (upperB - lowerA).getWrappedValue() + (upperA - lowerB).getWrappedValue();
+
+    if (lowerAinBInc && upperAinBInc)  // A entirely in B
+        return (upperA - lowerA).getWrappedValue();
+
+    if (lowerBinAInc && upperBinAInc)  // B entirely in A
+        return (upperB - lowerB).getWrappedValue();
+
+    // should never get here
+    return 0;
 }
 
 }  // namespace algorithms

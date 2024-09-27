@@ -51,6 +51,11 @@ public:
      */
     WrappedFloat(float value, float lowerBound, float upperBound);
 
+    inline WrappedFloat withSameBounds(const float value) const
+    {
+        return WrappedFloat(value, this->lowerBound, this->upperBound);
+    }
+
     // Overloaded Operators ----------------
 
     /**
@@ -140,7 +145,7 @@ public:
     WrappedFloat operator-(float other) const;
 
     /**
-     * Finds the minimum difference against another wrapped vlaue. Can be thought of as the minimum
+     * Finds the minimum difference against another wrapped value. Can be thought of as the minimum
      * distance between two points on a circle's perimeter.
      *
      * @param[in] other: The WrappedFloat to compute the minDifference with.
@@ -150,89 +155,15 @@ public:
     float minDifference(const WrappedFloat& other) const;
 
     /**
-     * Finds the minimum difference against another  vlaue. Can be thought of as the minimum
+     * Finds the minimum difference against another value. Can be thought of as the minimum
      * distance between two points on a circle's perimeter.
      *
      * @param[in] unwrappedValue: The float to compute the minDifference with. It's wrapped before
      *      computing
      * @return: A float with the signed minimum distance.
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
     float minDifference(const float& unwrappedValue) const;
-
-    inline bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const
-    {
-        return withinRange(*this, lowerBound, upperBound);
-    }
-
-    inline static bool withinRange(
-        const WrappedFloat& value,
-        const WrappedFloat& lowerBound,
-        const WrappedFloat& upperBound)
-    {
-        return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
-                (value.getWrappedValue() > lowerBound.getWrappedValue() &&
-                 value.getWrappedValue() < upperBound.getWrappedValue())) ||
-               (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
-                (value.getWrappedValue() > lowerBound.getWrappedValue() ||
-                 value.getWrappedValue() < upperBound.getWrappedValue()));
-    }
-
-    inline static bool withinRangeInclusive(
-        const WrappedFloat& value,
-        const WrappedFloat& lowerBound,
-        const WrappedFloat& upperBound)
-    {
-        return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
-                (value.getWrappedValue() >= lowerBound.getWrappedValue() &&
-                 value.getWrappedValue() <= upperBound.getWrappedValue())) ||
-               (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
-                (value.getWrappedValue() >= lowerBound.getWrappedValue() ||
-                 value.getWrappedValue() <= upperBound.getWrappedValue()));
-    }
-
-    inline static float intersectionRange(
-        const WrappedFloat& lowerA,
-        const WrappedFloat& upperA,
-        const WrappedFloat& lowerB,
-        const WrappedFloat& upperB)
-    {
-        assertBoundsEqual(lowerA, upperA);
-        assertBoundsEqual(upperA, lowerB);
-        assertBoundsEqual(lowerB, upperB);
-
-        bool lowerAinB = withinRange(lowerA, lowerB, upperB);
-        bool upperAinB = withinRange(upperA, lowerB, upperB);
-        bool lowerBinA = withinRange(lowerB, lowerA, upperA);
-        bool upperBinA = withinRange(upperB, lowerA, upperA);
-
-        bool lowerAinBInc = withinRangeInclusive(lowerA, lowerB, upperB);
-        bool upperAinBInc = withinRangeInclusive(upperA, lowerB, upperB);
-        bool lowerBinAInc = withinRangeInclusive(lowerB, lowerA, upperA);
-        bool upperBinAInc = withinRangeInclusive(upperB, lowerA, upperA);
-
-        if (lowerA == lowerB && upperA == upperB) return (upperA - lowerA).getWrappedValue();
-
-        if (!lowerAinB && !upperAinB && !lowerBinA && !upperBinA)  // no overlap
-            return 0;
-
-        if (!lowerAinB && !upperBinA && upperAinB && lowerBinA)  // overlap, B above A
-            return (upperA - lowerB).getWrappedValue();
-
-        if (!upperAinB && !lowerBinA && lowerAinB && upperBinA)  // overlap, A above B
-            return (upperB - lowerA).getWrappedValue();
-
-        if (upperAinB && lowerBinA && lowerAinB && upperBinA)  // two overlaps
-            return (upperB - lowerA).getWrappedValue() + (upperA - lowerB).getWrappedValue();
-
-        if (lowerAinBInc && upperAinBInc)  // A entirely in B
-            return (upperA - lowerA).getWrappedValue();
-
-        if (lowerBinAInc && upperBinAInc)  // B entirely in A
-            return (upperB - lowerB).getWrappedValue();
-
-        // should never get here
-        return 0;
-    }
 
     /**
      * Interpolates along the smallest difference with another WrappedFloat.
@@ -240,6 +171,7 @@ public:
      * @param[in] other: The WrappedFloat to interpolate between.
      * @param[in] alpha: A float between 0-1 (0 returns this WrappedFloat's value, 1 returns the
      *      other's)
+     * @throws: An assertion error if the two WrappedFloats have different lower and upper bounds.
      */
     WrappedFloat minInterpolate(const WrappedFloat& other, float alpha) const;
 
@@ -264,7 +196,7 @@ public:
      * - valueToLimit: 9, min: 2, max: 1, returns 9 (since the range between min and max
      *                 starts at 2, goes up to 9, then wraps around to 1).
      *
-     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
+     * @param[in] valueToLimit the WrappedFloat whose value it is to limit
      * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited below.
      * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
@@ -275,6 +207,7 @@ public:
      *  - 1: Limited to min value
      *  - 2: Limited to max value
      * @return the limited value.
+     * @throws: An assertion error if the WrappedFloats have different lower and upper bounds.
      */
     static float limitValue(
         const WrappedFloat& valueToLimit,
@@ -287,7 +220,7 @@ public:
      * the same bounds as those of valueToLimit's.
      *
      * @see limitValue.
-     * @param[in] valueToLimit the ContigousFloat whose value it is to limit
+     * @param[in] valueToLimit the WrappedFloat whose value it is to limit
      * @param[in] min the WrappedFloat with the same bounds as valueToLimit that
      *      valueToLimit will be limited below.
      * @param[in] max the WrappedFloat with the same bounds as valueToLimit that
@@ -298,6 +231,7 @@ public:
      *  - 1: Limited to min value
      *  - 2: Limited to max value
      * @return the limited value.
+     * @throws: An assertion error if the WrappedFloats have different lower and upper bounds.
      */
     static float limitValue(
         const WrappedFloat& valueToLimit,
@@ -305,10 +239,53 @@ public:
         const float max,
         int* status);
 
-    inline WrappedFloat withSameBounds(const float value) const
-    {
-        return WrappedFloat(value, this->lowerBound, this->upperBound);
-    }
+    /**
+     * Checks whether `this` is within the wrapped range defined from `lowerBound` to `upperBound`.
+     * For example given a value wrapped from 0 to 10, with the following conditions:
+     * - this: 9, min: 3, max: 7, returns false.
+     * - this: 5, min: 3, max: 7, returns true.
+     * - this: 9, min: 7, max: 3, returns true.
+     * - this: 5, min: 7, max: 3, returns false.
+     *
+     * @param[in] lowerBound
+     * @param[in] upperBound
+     * @return whether `this` is within the specified range
+     * @throws: An assertion error if the WrappedFloats themselves have different bounds.
+     */
+    bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const;
+
+    /**
+     * Checks whether `this` is within the wrapped range defined from `lowerBound` to `upperBound`.
+     * For example given a value wrapped from 0 to 10, with the following conditions:
+     * - this: 9, min: 3, max: 7, returns false.
+     * - this: 5, min: 3, max: 7, returns true.
+     * - this: 9, min: 7, max: 3, returns true.
+     * - this: 5, min: 7, max: 3, returns false.
+     *
+     * @param[in] lowerBound
+     * @param[in] upperBound
+     * @return whether `this` is within the specified range
+     * @throws: An assertion error if the WrappedFloats themselves have different bounds.
+     */
+    bool withinRangeInclusive(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const;
+
+    /**
+     * Calculates how much of the two given wrapped ranges overlap. If mentally visualizing on a
+     * circle, this method takes two arbitrary arcs on the perimeter and returns the length of the
+     * overlapping portion(s).
+     *
+     * @param[in] lowerA the first range's lower bound
+     * @param[in] upperA the first range's upper bound
+     * @param[in] lowerB the second range's lower bound
+     * @param[in] upperB the second range's upper bound
+     * @return the total length of the overlapping region(s) as a float
+     * @throws: An assertion error if the WrappedFloats themselves have different bounds.
+     */
+    static float intersectionRange(
+        const WrappedFloat& lowerA,
+        const WrappedFloat& upperA,
+        const WrappedFloat& lowerB,
+        const WrappedFloat& upperB);
 
     // Getters/Setters ----------------
 
@@ -417,7 +394,7 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI){};
+    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI) {};
 
     static inline WrappedFloat fromDegrees(const float degrees)
     {
