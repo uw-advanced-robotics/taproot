@@ -1,5 +1,11 @@
 # Taproot Changelog
 
+## September 2024
+
+### Breaking Changes
+- Bmi088 now has seperate `periodicIMUUpdate` and `read` methods. `periodicIMUUpdate` should 
+be called at a fixed rate of mahony, and `read` should be called at a rate such that `periodicIMUUpdate` <= `read` <= sampling rate.
+
 ## July 2024
 
 - Added `taproot:modm-project.xml:modm_hal_modules` option to include additional user-defined modm modules.
