@@ -209,8 +209,13 @@ public:
      */
     mockable bool isSubsystemRegistered(const Subsystem* subsystem) const;
 
-    mockable void startHardwareTests();
-    mockable void stopHardwareTests();
+    mockable void runAllHardwareTests();
+    mockable void runHardwareTest(const Subsystem* subsystem);
+    mockable void stopAllHardwareTests();
+    mockable void stopHardwareTest(const Subsystem* subsystem);
+
+    mockable int runningHardwareTests();
+    mockable bool runningTest(const Subsystem* subsystem);
 
     /**
      * @return The number of subsystems registered with the scheduler.
@@ -377,8 +382,6 @@ private:
     command_scheduler_bitmap_t addedCommandBitmap = 0;
 
     bool isMasterScheduler = false;
-
-    bool runningHardwareTests = false;
 };  // class CommandScheduler
 
 }  // namespace control
