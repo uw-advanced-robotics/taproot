@@ -116,7 +116,7 @@ void HardwareTestMenu::draw()
     display << ((vertScrollHandler.getCursorIndex() == 0) ? ">" : " ");
     if (drivers->commandScheduler.runningHardwareTests())
     {
-        display << "Running " << drivers->commandScheduler.runningHardwareTests() << " running"
+        display << "Running " << drivers->commandScheduler.runningHardwareTests() << " tests"
                 << modm::endl;
         display << "[stop all] " << modm::endl;
     }

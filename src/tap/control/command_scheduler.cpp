@@ -382,11 +382,16 @@ void CommandScheduler::stopHardwareTest(const Subsystem *subsystem)
 
 int CommandScheduler::runningHardwareTests()
 {
-    return std::accumulate(
-        this->subMapBegin(),
-        this->subMapEnd(),
-        0,
-        [&](int value, const Subsystem *sub) { return value + this->runningTest(sub); });
+    int total = 0;
+    for (auto it = subMapBegin(); it != subMapEnd(); it++)
+    {
+        if (this->runningTest(*it))
+        {
+            total += 1;
+        }
+    }
+
+    return total;
 }
 
 bool CommandScheduler::runningTest(const Subsystem *subsystem)
