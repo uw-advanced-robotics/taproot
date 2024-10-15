@@ -108,8 +108,11 @@ public:
     virtual void refreshSafeDisconnect() {}
 
     /**
-     * Sets the test Command of the Subsystem. The test command can be run 
-     * by calling `runHardwareTests` on the `CommandScheduler`.
+     * Sets the test command of the `Subsystem`. The test command can be run
+     * by calling `CommandScheduler::runHardwareTests`.
+     *
+     * Test commands must keep track of their state so that `Command::isFinished`
+     * continues to return true after the command has ended.
      *
      * @param testCommand the test Command to associate with this subsystem
      */

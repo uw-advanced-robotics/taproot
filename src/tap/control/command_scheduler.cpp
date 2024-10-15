@@ -364,9 +364,9 @@ void CommandScheduler::runAllHardwareTests()
     }
 }
 
-void CommandScheduler::runHardwareTest(const Subsystem* subsystem)
+void CommandScheduler::runHardwareTest(const Subsystem *subsystem)
 {
-    Command* testCommand = subsystem->getTestCommand();
+    Command *testCommand = subsystem->getTestCommand();
     if (testCommand != nullptr)
     {
         this->addCommand(testCommand);
@@ -375,7 +375,7 @@ void CommandScheduler::runHardwareTest(const Subsystem* subsystem)
 
 void CommandScheduler::stopAllHardwareTests()
 {
-    Command* testCommand;
+    Command *testCommand;
     // Start hardware tests
     for (auto it = subMapBegin(); it != subMapEnd(); it++)
     {
@@ -387,9 +387,9 @@ void CommandScheduler::stopAllHardwareTests()
     }
 }
 
-void CommandScheduler::stopHardwareTest(const Subsystem* subsystem)
+void CommandScheduler::stopHardwareTest(const Subsystem *subsystem)
 {
-    Command* testCommand = subsystem->getTestCommand();
+    Command *testCommand = subsystem->getTestCommand();
     if (testCommand != nullptr)
     {
         this->removeCommand(testCommand, true);
@@ -402,11 +402,11 @@ int CommandScheduler::runningHardwareTests()
         this->subMapBegin(),
         this->subMapEnd(),
         0,
-        [&] (int value, const Subsystem* sub) { return value + this->runningTest(sub); }
+        [&] (int value, const Subsystem *sub) { return value + this->runningTest(sub); }
     );
 }
 
-bool CommandScheduler::runningTest(const Subsystem* subsystem)
+bool CommandScheduler::runningTest(const Subsystem *subsystem)
 {
     return this->isCommandScheduled(subsystem->getTestCommand());
 }

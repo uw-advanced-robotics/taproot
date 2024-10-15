@@ -21,6 +21,7 @@
 
 #include <algorithm>
 
+#include "tap/control/command.hpp"
 #include "tap/control/command_scheduler.hpp"
 #include "tap/control/subsystem.hpp"
 #include "tap/drivers.hpp"
@@ -38,9 +39,7 @@ HardwareTestMenu::HardwareTestMenu(
 {
 }
 
-void HardwareTestMenu::update()
-{
-}
+void HardwareTestMenu::update() {}
 
 void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
 {
@@ -94,7 +93,8 @@ bool HardwareTestMenu::hasChanged()
     // TODO: replace with the test count?
     int runningTests = drivers->commandScheduler.runningHardwareTests();
 
-    bool changed = vertScrollHandler.acknowledgeCursorChanged() || (runningTests != this->runningTests);
+    bool changed =
+        vertScrollHandler.acknowledgeCursorChanged() || (runningTests != this->runningTests);
     this->runningTests = runningTests;
     return changed;
 }
@@ -116,7 +116,7 @@ void HardwareTestMenu::draw()
     display << ((vertScrollHandler.getCursorIndex() == 0) ? ">" : " ");
     if (drivers->commandScheduler.runningHardwareTests())
     {
-        display << "[stop all]" << modm::endl;
+        display << "[stop all] " << drivers->commandScheduler.runningHardwareTests() << " on" << modm::endl;
     }
     else
     {
@@ -128,15 +128,20 @@ void HardwareTestMenu::draw()
         drivers->commandScheduler.subMapBegin(),
         drivers->commandScheduler.subMapEnd(),
         [&](control::Subsystem* sub) {
-            if (subsystemIndex <= vertScrollHandler.getLargestIndexDisplayed() &&
-                subsystemIndex >= vertScrollHandler.getSmallestIndexDisplayed())
+            if (sub->getTestCommand() != nullptr)
             {
-                display << ((subsystemIndex == vertScrollHandler.getCursorIndex()) ? ">" : " ")
-                        << (drivers->commandScheduler.runningTest(sub) ? "[stop] " : "[run]  ") << sub->getName()
-                        << modm::endl;
+                if (subsystemIndex <= vertScrollHandler.getLargestIndexDisplayed() &&
+                    subsystemIndex >= vertScrollHandler.getSmallestIndexDisplayed())
+                {
+                    display << ((subsystemIndex == vertScrollHandler.getCursorIndex()) ? ">" : " ")
+                            << ((sub->getTestCommand()->isFinished()) ? "+" : "x")
+                            << (drivers->commandScheduler.runningTest(sub) ? "[stop] " : "[run]  ")
+                            << sub->getName()
+                            << modm::endl;
+                }
+                subsystemIndex++;
             }
-            subsystemIndex++;
         });
-}
+    }
 }  // namespace display
 }  // namespace tap

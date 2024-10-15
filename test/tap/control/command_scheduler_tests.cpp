@@ -619,21 +619,17 @@ TEST(CommandScheduler, runHardwareTest_runs_test_command)
     set<Subsystem *> c1Requirements = {&s1};
     NiceMock<CommandMock> c1;
     EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2) // Called when adding and removing the command
+        .Times(2)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
     EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(s1, getTestCommand)
-        .WillOnce(Return(&c1));
+    EXPECT_CALL(s1, getTestCommand).WillOnce(Return(&c1));
     EXPECT_CALL(s1, refresh);
     EXPECT_CALL(s1, getDefaultCommand).WillOnce(Return(nullptr));
 
     // Called once in the run loop.
-    EXPECT_CALL(c1, execute)
-        .Times(1);
-    EXPECT_CALL(c1, isFinished)
-        .WillOnce(Return(true));
-    EXPECT_CALL(c1, end(false))
-        .Times(1);
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
+    EXPECT_CALL(c1, end(false)).Times(1);
 
     scheduler.registerSubsystem(&s1);
     scheduler.runHardwareTest(&s1);
@@ -649,21 +645,17 @@ TEST(CommandScheduler, runAllHardwareTests_runs_all_valid_test_commands)
     set<Subsystem *> c1Requirements = {&s1};
     NiceMock<CommandMock> c1;
     EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2) // Called when adding and removing the command
+        .Times(2)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
     EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(s1, getTestCommand)
-        .WillOnce(Return(&c1));
+    EXPECT_CALL(s1, getTestCommand).WillOnce(Return(&c1));
     EXPECT_CALL(s1, refresh);
     EXPECT_CALL(s1, getDefaultCommand).WillOnce(Return(nullptr));
 
     // Called once in the run loop.
-    EXPECT_CALL(c1, execute)
-        .Times(1);
-    EXPECT_CALL(c1, isFinished)
-        .WillOnce(Return(true));
-    EXPECT_CALL(c1, end(false))
-        .Times(1);
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
+    EXPECT_CALL(c1, end(false)).Times(1);
 
     SubsystemMock s2(&drivers);
     EXPECT_CALL(s2, getTestCommand).WillOnce(Return(nullptr));
@@ -687,40 +679,33 @@ TEST(CommandScheduler, runHardwareTest_cancels_scheduled_command_and_then_runs_t
     set<Subsystem *> requirements = {&s1};
     NiceMock<CommandMock> c1;
     EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(4) // Called when adding and removing the command
+        .Times(4)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(requirements)));
     EXPECT_CALL(c1, initialize).Times(2);
     EXPECT_CALL(s1, getDefaultCommand).Times(2).WillRepeatedly(Return(&c1));
 
     NiceMock<CommandMock> c2;
     EXPECT_CALL(c2, getRequirementsBitwise)
-        .Times(2) // Called when adding and removing the command
+        .Times(2)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(requirements)));
     EXPECT_CALL(c2, initialize);
-    EXPECT_CALL(s1, getTestCommand)
-        .WillOnce(Return(&c2));
+    EXPECT_CALL(s1, getTestCommand).WillOnce(Return(&c2));
 
     // Called once in the second run().
-    EXPECT_CALL(c1, execute)
-        .Times(1);
-    EXPECT_CALL(c1, isFinished)
-        .WillOnce(Return(false));
-    EXPECT_CALL(c1, end(true))
-        .Times(1);
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(false));
+    EXPECT_CALL(c1, end(true)).Times(1);
 
     // Called once in the third run().
-    EXPECT_CALL(c2, execute)
-        .Times(1);
-    EXPECT_CALL(c2, isFinished)
-        .WillOnce(Return(true));
-    EXPECT_CALL(c2, end(false))
-        .Times(1);
+    EXPECT_CALL(c2, execute).Times(1);
+    EXPECT_CALL(c2, isFinished).WillOnce(Return(true));
+    EXPECT_CALL(c2, end(false)).Times(1);
 
     scheduler.registerSubsystem(&s1);
-    scheduler.run(); // Adds the default command
-    scheduler.run(); // Runs the default command
+    scheduler.run();                // Adds the default command
+    scheduler.run();                // Runs the default command
     scheduler.runHardwareTest(&s1); // Add the test command and cancel the default command
-    scheduler.run(); // Run the test command, finish it, and schedule the default command
+    scheduler.run();  // Run the test command, finish it, and schedule the default command
 }
 
 TEST(CommandScheduler, run_with_single_registered_subsystem_calls_refresh)

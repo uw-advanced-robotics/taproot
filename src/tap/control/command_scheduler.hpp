@@ -209,12 +209,39 @@ public:
      */
     mockable bool isSubsystemRegistered(const Subsystem* subsystem) const;
 
+    /**
+     * Runs all hardware tests from subsystems that have a test command. 
+     */
     mockable void runAllHardwareTests();
+
+    /**
+     * Runs the hardware test command, if available, for the specific subsystem.
+     * 
+     * @param[in] subsystem the subsystem to run
+     */
     mockable void runHardwareTest(const Subsystem* subsystem);
+
+    /**
+     * Stop all hardware tests from subsystems that have a running test command. 
+     */
     mockable void stopAllHardwareTests();
+
+    /**
+     * Stops the hardware test command, if running, for the specific subsystem.
+     * 
+     * @param[in] subsystem the subsystem to stop
+     */
     mockable void stopHardwareTest(const Subsystem* subsystem);
 
+    /**
+     * @return the count of subsystems currently running a test.
+     */
     mockable int runningHardwareTests();
+
+    /**
+     * @param[in] subsystem the subsystem to check
+     * @return `true` if the test command is running, `false` otherwise.
+     */
     mockable bool runningTest(const Subsystem* subsystem);
 
     /**
