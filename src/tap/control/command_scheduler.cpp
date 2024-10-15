@@ -366,7 +366,7 @@ void CommandScheduler::stopAllHardwareTests()
         // schedule the test command if it exists
         if ((testCommand = (*it)->getTestCommand()) != nullptr)
         {
-            this->addCommand(testCommand);
+            this->removeCommand(testCommand, true);
         }
     }
 }
