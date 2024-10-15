@@ -29,6 +29,7 @@ WrappedFloat::WrappedFloat(const float value, const float lowerBound, const floa
       upperBound(upperBound)
 {
     assert(upperBound > lowerBound);
+
     wrapValue();
 }
 
