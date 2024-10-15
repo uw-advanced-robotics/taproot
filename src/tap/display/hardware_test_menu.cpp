@@ -90,7 +90,6 @@ void HardwareTestMenu::shortButtonPress(modm::MenuButtons::Button button)
 
 bool HardwareTestMenu::hasChanged()
 {
-    // TODO: replace with the test count?
     int runningTests = drivers->commandScheduler.runningHardwareTests();
 
     bool changed =

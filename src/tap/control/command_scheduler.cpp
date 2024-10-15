@@ -169,22 +169,6 @@ void CommandScheduler::run()
     uint32_t runStart = arch::clock::getTimeMicroseconds();
 #endif
 
-    // if (runningHardwareTests)
-    // {
-    //     // Call runHardwareTests on all subsystems in the registeredSubsystemBitmap
-    //     // if a hardware test is not already complete
-    //     for (auto it = subMapBegin(); it != subMapEnd(); it++)
-    //     {
-    //         Subsystem *sub = *it;
-    //         if (!sub->isHardwareTestComplete())
-    //         {
-    //             sub->runHardwareTests();
-    //         }
-    //         sub->refresh();
-    //     }
-    //     return;
-    // }
-
     if (safeDisconnected())
     {
         // End all commands running. They were interrupted by the remote disconnecting.

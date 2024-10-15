@@ -41,10 +41,6 @@ public:
     MOCK_METHOD(void, refreshSafeDisconnect, (), ());
     MOCK_METHOD(void, setTestCommand, (control::Command * testCommand), (override));
     MOCK_METHOD(control::Command *, getTestCommand, (), (const override));
-    // MOCK_METHOD(bool, isHardwareTestComplete, (), (const override));
-    // MOCK_METHOD(void, setHardwareTestsComplete, (), (override));
-    // MOCK_METHOD(void, setHardwareTestsIncomplete, (), (override));
-    // MOCK_METHOD(void, runHardwareTests, (), (override));
     MOCK_METHOD(const char *, getName, (), (const override));
 };  // class SubsystemMock
 }  // namespace mock
