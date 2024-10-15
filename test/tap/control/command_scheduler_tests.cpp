@@ -702,9 +702,9 @@ TEST(CommandScheduler, runHardwareTest_cancels_scheduled_command_and_then_runs_t
     EXPECT_CALL(c2, end(false)).Times(1);
 
     scheduler.registerSubsystem(&s1);
-    scheduler.run();                // Adds the default command
-    scheduler.run();                // Runs the default command
-    scheduler.runHardwareTest(&s1); // Add the test command and cancel the default command
+    scheduler.run();                 // Adds the default command
+    scheduler.run();                 // Runs the default command
+    scheduler.runHardwareTest(&s1);  // Add the test command and cancel the default command
     scheduler.run();  // Run the test command, finish it, and schedule the default command
 }
 

@@ -402,8 +402,7 @@ int CommandScheduler::runningHardwareTests()
         this->subMapBegin(),
         this->subMapEnd(),
         0,
-        [&] (int value, const Subsystem *sub) { return value + this->runningTest(sub); }
-    );
+        [&] (int value, const Subsystem *sub) { return value + this->runningTest(sub); });
 }
 
 bool CommandScheduler::runningTest(const Subsystem *subsystem)

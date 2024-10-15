@@ -113,35 +113,37 @@ void HardwareTestMenu::draw()
     display.setCursor(0, 2);
     display << HardwareTestMenu::getMenuName() << modm::endl;
 
+    static constexpr int INFO_LINES = 2;
     display << ((vertScrollHandler.getCursorIndex() == 0) ? ">" : " ");
     if (drivers->commandScheduler.runningHardwareTests())
     {
-        display << "[stop all] " << drivers->commandScheduler.runningHardwareTests() << " on" << modm::endl;
+        display << "Running " << drivers->commandScheduler.runningHardwareTests() << " running" << modm::endl;
+        display << "[stop all] " << modm::endl;
     }
     else
     {
+        display << "No tests running" << modm::endl;
         display << "[run all]" << modm::endl;
     }
 
-    int subsystemIndex = 1;
+    int subsystemIndex = 0;
     std::for_each(
         drivers->commandScheduler.subMapBegin(),
         drivers->commandScheduler.subMapEnd(),
         [&](control::Subsystem* sub) {
             if (sub->getTestCommand() != nullptr)
             {
-                if (subsystemIndex <= vertScrollHandler.getLargestIndexDisplayed() &&
-                    subsystemIndex >= vertScrollHandler.getSmallestIndexDisplayed())
+                if (subsystemIndex <= (vertScrollHandler.getLargestIndexDisplayed() - INFO_LINES) &&
+                    subsystemIndex >= (vertScrollHandler.getSmallestIndexDisplayed() - INFO_LINES))
                 {
                     display << ((subsystemIndex == vertScrollHandler.getCursorIndex()) ? ">" : " ")
                             << ((sub->getTestCommand()->isFinished()) ? "+" : "x")
                             << (drivers->commandScheduler.runningTest(sub) ? "[stop] " : "[run]  ")
-                            << sub->getName()
-                            << modm::endl;
+                            << sub->getName() << modm::endl;
                 }
                 subsystemIndex++;
             }
         });
-    }
+}
 }  // namespace display
 }  // namespace tap
