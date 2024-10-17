@@ -622,9 +622,9 @@ TEST(CommandScheduler, runHardwareTest_runs_test_command)
         .Times(2)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
     EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(s1, getTestCommand).WillOnce(Return(&c1));
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
     EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s1, getDefaultCommand).WillOnce(Return(nullptr));
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
 
     // Called once in the run loop.
     EXPECT_CALL(c1, execute).Times(1);
@@ -633,6 +633,34 @@ TEST(CommandScheduler, runHardwareTest_runs_test_command)
 
     scheduler.registerSubsystem(&s1);
     scheduler.runHardwareTest(&s1);
+    EXPECT_TRUE(scheduler.runningTest(&s1));
+    EXPECT_EQ(scheduler.runningHardwareTests(), 1);
+    scheduler.run();
+}
+
+TEST(CommandScheduler, runHardwareTest_then_stop_initializes_then_ends_test_command)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Not called in the run loop.
+    EXPECT_CALL(c1, execute).Times(0);
+    EXPECT_CALL(c1, end(true)).Times(1);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.runHardwareTest(&s1);
+    scheduler.stopHardwareTest(&s1);
     scheduler.run();
 }
 
@@ -648,9 +676,9 @@ TEST(CommandScheduler, runAllHardwareTests_runs_all_valid_test_commands)
         .Times(2)  // Called when adding and removing the command
         .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
     EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(s1, getTestCommand).WillOnce(Return(&c1));
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
     EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s1, getDefaultCommand).WillOnce(Return(nullptr));
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
 
     // Called once in the run loop.
     EXPECT_CALL(c1, execute).Times(1);
@@ -658,13 +686,45 @@ TEST(CommandScheduler, runAllHardwareTests_runs_all_valid_test_commands)
     EXPECT_CALL(c1, end(false)).Times(1);
 
     SubsystemMock s2(&drivers);
-    EXPECT_CALL(s2, getTestCommand).WillOnce(Return(nullptr));
+    EXPECT_CALL(s2, getTestCommand).WillRepeatedly(Return(nullptr));
     EXPECT_CALL(s2, refresh);
-    EXPECT_CALL(s2, getDefaultCommand).WillOnce(Return(nullptr));
+    EXPECT_CALL(s2, getDefaultCommand).WillRepeatedly(Return(nullptr));
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
     scheduler.runAllHardwareTests();
+    scheduler.run();
+}
+
+TEST(CommandScheduler, stopAllHardwareTests_stops_all_valid_test_commands)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Not called in the run loop.
+    EXPECT_CALL(c1, execute).Times(0);
+    EXPECT_CALL(c1, end(true)).Times(1);
+
+    SubsystemMock s2(&drivers);
+    EXPECT_CALL(s2, getTestCommand).WillRepeatedly(Return(nullptr));
+    EXPECT_CALL(s2, refresh);
+    EXPECT_CALL(s2, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(&s2);
+    scheduler.runAllHardwareTests();
+    scheduler.stopAllHardwareTests();
     scheduler.run();
 }
 
