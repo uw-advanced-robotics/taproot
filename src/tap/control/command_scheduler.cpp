@@ -19,7 +19,6 @@
 
 #include "command_scheduler.hpp"
 
-
 #include "tap/architecture/clock.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
