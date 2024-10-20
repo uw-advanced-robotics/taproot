@@ -22,6 +22,7 @@
 
 #include <array>
 
+#include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 #include "tap/util_macros.hpp"
 
@@ -31,8 +32,6 @@
 
 namespace tap
 {
-class Drivers;
-
 namespace control
 {
 class Subsystem;
