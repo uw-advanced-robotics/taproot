@@ -79,13 +79,6 @@
         "*.py.in": "jinja-py",
         "*.lb": "python",
         "*.in": "cpp",
-        "bit": "cpp",
-        "compare": "cpp",
-        "concepts": "cpp",
-        "numbers": "cpp",
-        "ranges": "cpp",
-        "span": "cpp",
-        "stop_token": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [

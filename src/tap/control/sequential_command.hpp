@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -22,22 +22,15 @@
 
 #include <array>
 
-#include "tap/drivers.hpp"
-#include "tap/errors/create_errors.hpp"
-#include "tap/util_macros.hpp"
-
 #include "modm/architecture/interface/assert.hpp"
 
 #include "command.hpp"
-#include "command_scheduler.hpp"
 #include "command_scheduler_types.hpp"
 
 namespace tap
 {
 namespace control
 {
-class Subsystem;
-
 /**
  * A generic extendable class for implementing a command. Each
  * command is attached to a subsystem. To create a new command,

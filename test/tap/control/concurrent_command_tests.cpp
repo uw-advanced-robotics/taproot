@@ -21,7 +21,6 @@
 
 #include "tap/control/concurrent_command.hpp"
 #include "tap/drivers.hpp"
-#include "tap/errors/system_error.hpp"
 #include "tap/mock/command_mock.hpp"
 
 #include "test_command.hpp"
