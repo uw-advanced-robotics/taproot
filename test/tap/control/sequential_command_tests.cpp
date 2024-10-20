@@ -55,7 +55,7 @@ TEST(SequentialCommand, one_command_is_run)
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
     std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands, &drivers);
+    SequentialCommand<1> command(commands);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -87,7 +87,7 @@ TEST(SequentialCommand, two_commands_are_run)
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
     std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands, &drivers);
+    SequentialCommand<2> command(commands);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -127,7 +127,7 @@ TEST(SequentialCommand, two_commands_are_run_until_finished)
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
     std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands, &drivers);
+    SequentialCommand<2> command(commands);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -164,7 +164,7 @@ TEST(SequentialCommand, cancelling_command_ends_internal_commands)
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
     std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands, &drivers);
+    SequentialCommand<1> command(commands);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -180,18 +180,11 @@ TEST(SequentialCommand, cancelling_command_ends_internal_commands)
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(SequentialCommand, null_command_raises_error)
+TEST(SequentialCommand, null_command_asserts)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    TestSubsystem s1(&drivers);
-    scheduler.registerSubsystem(&s1);
-    NiceMock<CommandMock> c1;
-    set<Subsystem *> requirements = {&s1};
-    EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-
-    std::array<Command *, 2> commands = {&c1, nullptr};
-    EXPECT_CALL(drivers.errorController, addToErrorList(_)).Times(1);
-    SequentialCommand<2> command(commands, &drivers);
+    std::array<Command *, 1> commands = {nullptr};
+    ASSERT_DEATH({ SequentialCommand<1> command(commands); }, ".*");
 }

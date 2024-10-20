@@ -26,6 +26,8 @@
 #include "tap/errors/create_errors.hpp"
 #include "tap/util_macros.hpp"
 
+#include "modm/architecture/interface/assert.hpp"
+
 #include "command.hpp"
 #include "command_scheduler.hpp"
 #include "command_scheduler_types.hpp"
@@ -46,18 +48,17 @@ template <size_t COMMANDS>
 class SequentialCommand : public Command
 {
 public:
-    SequentialCommand(std::array<Command*, COMMANDS> commands, Drivers* drivers)
+    SequentialCommand(std::array<Command*, COMMANDS> commands)
         : Command(),
           commands(commands),
           currentCommand(0)
     {
         for (Command* command : commands)
         {
-            if (command == nullptr)
-            {
-                RAISE_ERROR(drivers, "Null pointer command passed into sequential command.");
-                continue;
-            }
+            modm_assert(
+                command != nullptr,
+                "SequentialCommand::SequentialCommand",
+                "Null pointer command passed into sequential command.");
             this->commandRequirementsBitwise |= (command->getRequirementsBitwise());
         }
     }
@@ -87,13 +88,16 @@ public:
             }
         }
 
-        this->commands[this->currentCommand]->execute();
-
-        if (this->commands[this->currentCommand]->isFinished())
+        if (this->commandInitialized)
         {
-            this->commands[this->currentCommand]->end(false);
-            this->commandInitialized = false;
-            this->currentCommand++;
+            this->commands[this->currentCommand]->execute();
+
+            if (this->commands[this->currentCommand]->isFinished())
+            {
+                this->commands[this->currentCommand]->end(false);
+                this->commandInitialized = false;
+                this->currentCommand++;
+            }
         }
     }
 

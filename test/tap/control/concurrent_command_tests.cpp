@@ -24,6 +24,7 @@
 #include "tap/errors/system_error.hpp"
 #include "tap/mock/command_mock.hpp"
 
+#include "test_command.hpp"
 #include "test_subsystem.hpp"
 
 using namespace tap::control;
@@ -42,7 +43,7 @@ static subsystem_scheduler_bitmap_t calcRequirementsBitwise(const set<Subsystem 
     return sum;
 }
 
-TEST(ConcurrentCommand, one_command_is_run)
+TEST(ConcurrentCommands, one_command_is_run)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -55,21 +56,21 @@ TEST(ConcurrentCommand, one_command_is_run)
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
     std::array<Command *, 1> commands = {&c1};
-    ConcurrentCommand<1> command(commands, "test command", &drivers);
+    ConcurrentCommand<1> command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
     scheduler.addCommand(&command);
 
     EXPECT_CALL(c1, execute).Times(1);
-    EXPECT_CALL(c1, isFinished).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
     EXPECT_CALL(c1, end(false)).Times(1);
     scheduler.run();
 
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(ConcurrentCommand, two_commands_are_run)
+TEST(ConcurrentCommands, two_commands_are_run)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -87,7 +88,7 @@ TEST(ConcurrentCommand, two_commands_are_run)
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
     std::array<Command *, 2> commands = {&c1, &c2};
-    ConcurrentCommand<2> command(commands, "test command", &drivers);
+    ConcurrentCommand<2> command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -96,17 +97,17 @@ TEST(ConcurrentCommand, two_commands_are_run)
     scheduler.addCommand(&command);
 
     EXPECT_CALL(c1, execute).Times(1);
-    EXPECT_CALL(c1, isFinished).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
     EXPECT_CALL(c1, end(false)).Times(1);
     EXPECT_CALL(c2, execute).Times(1);
-    EXPECT_CALL(c2, isFinished).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(c2, isFinished).WillOnce(Return(true));
     EXPECT_CALL(c2, end(false)).Times(1);
     scheduler.run();
 
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(ConcurrentCommand, two_commands_are_run_until_finished)
+TEST(ConcurrentCommands, two_commands_are_run_until_finished)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -124,7 +125,7 @@ TEST(ConcurrentCommand, two_commands_are_run_until_finished)
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
     std::array<Command *, 2> commands = {&c1, &c2};
-    ConcurrentCommand<2> command(commands, "test command", &drivers);
+    ConcurrentCommand<2> command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -133,14 +134,10 @@ TEST(ConcurrentCommand, two_commands_are_run_until_finished)
     scheduler.addCommand(&command);
 
     EXPECT_CALL(c1, execute).Times(1);
-    EXPECT_CALL(c1, isFinished).Times(3).WillRepeatedly(Return(true));
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(true));
     EXPECT_CALL(c1, end(false)).Times(1);
     EXPECT_CALL(c2, execute).Times(2);
-    EXPECT_CALL(c2, isFinished)
-        .WillOnce(Return(false))
-        .WillOnce(Return(false))
-        .WillOnce(Return(true))
-        .WillOnce(Return(true));
+    EXPECT_CALL(c2, isFinished).WillOnce(Return(false)).WillOnce(Return(true));
     EXPECT_CALL(c2, end(false)).Times(1);
 
     scheduler.run();
@@ -150,7 +147,47 @@ TEST(ConcurrentCommand, two_commands_are_run_until_finished)
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(ConcurrentCommand, cancelling_command_ends_internal_commands)
+TEST(ConcurrentCommands, racing_two_commands_finishes_with_one)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    TestSubsystem s1(&drivers);
+    scheduler.registerSubsystem(&s1);
+    NiceMock<CommandMock> c1;
+    set<Subsystem *> requirements = {&s1};
+    EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
+
+    TestSubsystem s2(&drivers);
+    scheduler.registerSubsystem(&s2);
+    NiceMock<CommandMock> c2;
+    requirements = {&s2};
+    EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
+
+    std::array<Command *, 2> commands = {&c1, &c2};
+    ConcurrentRaceCommand<2> command(commands, "test command");
+
+    EXPECT_CALL(c1, isReady).WillOnce(Return(true));
+    EXPECT_CALL(c1, initialize).Times(1);
+    EXPECT_CALL(c2, isReady).WillOnce(Return(true));
+    EXPECT_CALL(c2, initialize).Times(1);
+    scheduler.addCommand(&command);
+
+    EXPECT_CALL(c1, execute).Times(2);
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(false)).WillOnce(Return(true));
+    EXPECT_CALL(c1, end(false)).Times(1);
+    EXPECT_CALL(c2, execute).Times(2);
+    EXPECT_CALL(c2, isFinished).Times(2).WillRepeatedly(Return(false));
+    EXPECT_CALL(c2, end(true)).Times(1);
+
+    scheduler.run();
+    EXPECT_TRUE(scheduler.isCommandScheduled(&command));
+
+    scheduler.run();
+    EXPECT_FALSE(scheduler.isCommandScheduled(&command));
+}
+
+TEST(ConcurrentCommands, not_added_when_not_ready)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -163,14 +200,34 @@ TEST(ConcurrentCommand, cancelling_command_ends_internal_commands)
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
     std::array<Command *, 1> commands = {&c1};
-    ConcurrentCommand<1> command(commands, "test command", &drivers);
+    ConcurrentCommand<1> command(commands, "test command");
+
+    EXPECT_CALL(c1, isReady).WillOnce(Return(false));
+    scheduler.addCommand(&command);
+    EXPECT_FALSE(scheduler.isCommandScheduled(&command));
+}
+
+TEST(ConcurrentCommands, cancelling_command_ends_internal_commands)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    TestSubsystem s1(&drivers);
+    scheduler.registerSubsystem(&s1);
+
+    NiceMock<CommandMock> c1;
+
+    set<Subsystem *> requirements = {&s1};
+    EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
+    std::array<Command *, 1> commands = {&c1};
+    ConcurrentCommand<1> command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
     scheduler.addCommand(&command);
 
     EXPECT_CALL(c1, execute).Times(1);
-    EXPECT_CALL(c1, isFinished).Times(2).WillRepeatedly(Return(false));
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(false));
     scheduler.run();
     EXPECT_TRUE(scheduler.isCommandScheduled(&command));
 
@@ -179,18 +236,22 @@ TEST(ConcurrentCommand, cancelling_command_ends_internal_commands)
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(ConcurrentCommand, null_command_raises_error)
+TEST(ConcurrentCommands, null_command_asserts)
+{
+    std::array<Command *, 1> commands = {nullptr};
+    ASSERT_DEATH({ ConcurrentCommand<1> command(commands, "test command"); }, ".*");
+}
+
+TEST(ConcurrentCommands, overlapping_requirements_asserts)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
     TestSubsystem s1(&drivers);
     scheduler.registerSubsystem(&s1);
-    NiceMock<CommandMock> c1;
-    set<Subsystem *> requirements = {&s1};
-    EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
+    TestCommand c1(&s1);
+    TestCommand c2(&s1);
 
-    std::array<Command *, 2> commands = {&c1, nullptr};
-    EXPECT_CALL(drivers.errorController, addToErrorList(_)).Times(1);
-    ConcurrentCommand<2> command(commands, "test command", &drivers);
+    std::array<Command *, 2> commands = {&c1, &c2};
+    ASSERT_DEATH({ ConcurrentCommand<2> command(commands, "test command"); }, ".*");
 }
