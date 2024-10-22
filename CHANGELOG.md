@@ -2,6 +2,11 @@
 
 ## October 2024
 
+- Added `SequentialCommand`
+    - Allows running multiple commands in order.
+- Added `Concurrent[Race]Command`
+    - Allows running multiple commands at the same time.
+    - The race variant ends when any command has finished, while the normal variant waits for all to finish.
 - Refactored the hardware testing feature.
     - Hardware tests are now done through commands set with `Subsystem::setTestCommand`
     - Hardware tests now only run when the robot is out of safe disconnect mode.
@@ -21,9 +26,15 @@
 
 ## September 2024
 
+- Added some more utility functions to `WrappedFloat`
+  - `withinRange`, `rangeOverlap` can be used to deal with wrapped ranges
+  - `withSameBounds` and `Angle::fromDegrees` can be used to construct `WrappedFloat`s
+  - Fixed a bug with how `revolutions` was calculated
+
 ### Breaking Changes
 - Bmi088 now has seperate `periodicIMUUpdate` and `read` methods. `periodicIMUUpdate` should 
 be called at a fixed rate of mahony, and `read` should be called at a rate such that `periodicIMUUpdate` <= `read` <= sampling rate.
+- The `Angle` class within `WrappedFloat` now has bounds of 0 to 2pi as opposed to -pi to pi. This affects values gotten from `getWrappedValue()`.
 
 ## July 2024
 
