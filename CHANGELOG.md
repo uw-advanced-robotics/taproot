@@ -2,9 +2,15 @@
 
 ## September 2024
 
+- Added some more utility functions to `WrappedFloat`
+  - `withinRange`, `rangeOverlap` can be used to deal with wrapped ranges
+  - `withSameBounds` and `Angle::fromDegrees` can be used to construct `WrappedFloat`s
+  - Fixed a bug with how `revolutions` was calculated
+
 ### Breaking Changes
 - Bmi088 now has seperate `periodicIMUUpdate` and `read` methods. `periodicIMUUpdate` should 
 be called at a fixed rate of mahony, and `read` should be called at a rate such that `periodicIMUUpdate` <= `read` <= sampling rate.
+- The `Angle` class within `WrappedFloat` now has bounds of 0 to 2pi as opposed to -pi to pi. This affects values gotten from `getWrappedValue()`.
 
 ## July 2024
 
