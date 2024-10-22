@@ -1,5 +1,14 @@
 # Taproot Changelog
 
+## October 2024
+
+- Added `SequentialCommand`
+    - Allows running multiple commands in order.
+- Added `Concurrent[Race]Command`
+    - Allows running multiple commands at the same time.
+    - The race variant ends when any command has finished, while the normal variant waits for all to finish.
+
+
 ## September 2024
 
 ### Breaking Changes
