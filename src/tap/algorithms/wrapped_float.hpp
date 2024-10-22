@@ -24,6 +24,7 @@
 
 #include <cmath>
 
+#include <modm/architecture/interface/assert.hpp>
 #include <modm/math/utils.hpp>
 
 #include "math_user_utils.hpp"
@@ -378,8 +379,14 @@ private:
 
     inline static void assertBoundsEqual(const WrappedFloat& a, const WrappedFloat& b)
     {
-        assert(compareFloatClose(a.getLowerBound(), b.getLowerBound(), EPSILON));
-        assert(compareFloatClose(a.getUpperBound(), b.getUpperBound(), EPSILON));
+        modm_assert(
+            compareFloatClose(a.getLowerBound(), b.getLowerBound(), EPSILON),
+            "WrappedFloat::assertBoundsEqual",
+            "Lower bounds do not match");
+        modm_assert(
+            compareFloatClose(a.getUpperBound(), b.getUpperBound(), EPSILON),
+            "WrappedFloat::assertBoundsEqual",
+            "Upper bounds do not match");
     }
 
     inline void assertBoundsEqual(const WrappedFloat& other) const
@@ -395,7 +402,7 @@ private:
 class Angle : public WrappedFloat
 {
 public:
-    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI){};
+    inline Angle(const float value) : WrappedFloat(value, 0, M_TWOPI) {};
 
     static inline WrappedFloat fromDegrees(const float degrees)
     {
