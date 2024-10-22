@@ -221,38 +221,21 @@ float WrappedFloat::intersectionRange(
     assertBoundsEqual(upperA, lowerB);
     assertBoundsEqual(lowerB, upperB);
 
-    bool lowerAinB = lowerA.withinRange(lowerB, upperB);
-    bool upperAinB = upperA.withinRange(lowerB, upperB);
-    bool lowerBinA = lowerB.withinRange(lowerA, upperA);
-    bool upperBinA = upperB.withinRange(lowerA, upperA);
+    float origin = lowerA.getLowerBound();
+    float offset = lowerA.getWrappedValue() - origin;
 
-    bool lowerAinBInc = lowerA.withinRangeInclusive(lowerB, upperB);
-    bool upperAinBInc = upperA.withinRangeInclusive(lowerB, upperB);
-    bool lowerBinAInc = lowerB.withinRangeInclusive(lowerA, upperA);
-    bool upperBinAInc = upperB.withinRangeInclusive(lowerA, upperA);
+    float upperAShifted = (upperA - offset).getWrappedValue();
+    float lowerBShifted = (lowerB - offset).getWrappedValue();
+    float upperBShifted = (upperB - offset).getWrappedValue();
 
-    if (lowerA == lowerB && upperA == upperB) return (upperA - lowerA).getWrappedValue();
+    if (upperBShifted < lowerBShifted)
+    {
+        float leftRange = std::min(upperBShifted, upperAShifted);
+        float rightRange = std::max(origin, upperAShifted - lowerBShifted);
+        return leftRange + rightRange;
+    }
 
-    if (!lowerAinB && !upperAinB && !lowerBinA && !upperBinA)  // no overlap
-        return 0;
-
-    if (!lowerAinB && !upperBinA && upperAinB && lowerBinA)  // overlap, B above A
-        return (upperA - lowerB).getWrappedValue();
-
-    if (!upperAinB && !lowerBinA && lowerAinB && upperBinA)  // overlap, A above B
-        return (upperB - lowerA).getWrappedValue();
-
-    if (upperAinB && lowerBinA && lowerAinB && upperBinA)  // two overlaps
-        return (upperB - lowerA).getWrappedValue() + (upperA - lowerB).getWrappedValue();
-
-    if (lowerAinBInc && upperAinBInc)  // A entirely in B
-        return (upperA - lowerA).getWrappedValue();
-
-    if (lowerBinAInc && upperBinAInc)  // B entirely in A
-        return (upperB - lowerB).getWrappedValue();
-
-    // should never get here
-    return 0;
+    return std::max(0.0f, std::min(upperAShifted, upperBShifted) - std::max(origin, lowerBShifted));
 }
 
 }  // namespace algorithms
