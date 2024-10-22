@@ -3,7 +3,7 @@
 ## September 2024
 
 - Added some more utility functions to `WrappedFloat`
-  - `withinRange`, `intersectionRange` can be used to deal with wrapped ranges
+  - `withinRange`, `rangeOverlap` can be used to deal with wrapped ranges
   - `withSameBounds` and `Angle::fromDegrees` can be used to construct `WrappedFloat`s
   - Fixed a bug with how `revolutions` was calculated
 

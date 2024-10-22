@@ -268,7 +268,7 @@ public:
      * @return the total length of the overlapping region(s) as a float
      * @throws: An assertion error if the WrappedFloats themselves have different bounds.
      */
-    static float intersectionRange(
+    static float rangeOverlap(
         const WrappedFloat& lowerA,
         const WrappedFloat& upperA,
         const WrappedFloat& lowerB,

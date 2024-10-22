@@ -35,7 +35,9 @@ WrappedFloat::WrappedFloat(const float value, const float lowerBound, const floa
 
 bool WrappedFloat::operator==(const WrappedFloat& other) const
 {
-    assertBoundsEqual(other);
+    if (!compareFloatClose(this->getLowerBound(), other.getLowerBound(), EPSILON) ||
+        compareFloatClose(this->getUpperBound(), other.getUpperBound(), EPSILON))
+        return false;
 
     return this->wrapped == other.wrapped;
 }
@@ -193,7 +195,7 @@ bool WrappedFloat::withinRange(const WrappedFloat& lowerBound, const WrappedFloa
              this->getWrappedValue() < upperBound.getWrappedValue()));
 }
 
-float WrappedFloat::intersectionRange(
+float WrappedFloat::rangeOverlap(
     const WrappedFloat& lowerA,
     const WrappedFloat& upperA,
     const WrappedFloat& lowerB,

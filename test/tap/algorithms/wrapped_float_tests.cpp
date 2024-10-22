@@ -170,12 +170,12 @@ TEST(WrappedFloat, limitVal_min_gt_max)
     EXPECT_EQ(0, status);
 }
 
-TEST(WrappedFloat, intersectionRange)
+TEST(WrappedFloat, rangeOverlap)
 {
     // non intersecting ranges
     EXPECT_EQ(
         0.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(0, 0, 100),
             WrappedFloat(49, 0, 100),
             WrappedFloat(50, 0, 100),
@@ -184,7 +184,7 @@ TEST(WrappedFloat, intersectionRange)
     // basic intersection
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(0, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(40, 0, 100),
@@ -192,7 +192,7 @@ TEST(WrappedFloat, intersectionRange)
 
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(40, 0, 100),
             WrappedFloat(90, 0, 100),
             WrappedFloat(0, 0, 100),
@@ -201,7 +201,7 @@ TEST(WrappedFloat, intersectionRange)
     // one range contained entirely in the other
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(0, 0, 100),
             WrappedFloat(90, 0, 100),
             WrappedFloat(30, 0, 100),
@@ -209,7 +209,7 @@ TEST(WrappedFloat, intersectionRange)
 
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(0, 0, 100),
@@ -218,7 +218,7 @@ TEST(WrappedFloat, intersectionRange)
     // two intersections
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(50, 0, 100),
@@ -227,7 +227,7 @@ TEST(WrappedFloat, intersectionRange)
     // one adjacent boundary, no intersection
     EXPECT_EQ(
         0.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(60, 0, 100),
@@ -236,7 +236,7 @@ TEST(WrappedFloat, intersectionRange)
     // one adjacent boundary, one intersection
     EXPECT_EQ(
         20.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(30, 0, 100),
             WrappedFloat(80, 0, 100),
             WrappedFloat(60, 0, 100),
@@ -245,7 +245,7 @@ TEST(WrappedFloat, intersectionRange)
     // duplicate range
     EXPECT_EQ(
         30.0f,
-        WrappedFloat::intersectionRange(
+        WrappedFloat::rangeOverlap(
             WrappedFloat(30, 0, 100),
             WrappedFloat(60, 0, 100),
             WrappedFloat(30, 0, 100),
