@@ -76,24 +76,18 @@ WrappedFloat WrappedFloat::operator-(const WrappedFloat& other) const
     return temp;
 }
 
-void WrappedFloat::operator+=(float value)
-{
-    *this += WrappedFloat(value, this->lowerBound, this->upperBound);
-}
+void WrappedFloat::operator+=(float value) { *this += this->withSameBounds(value); }
 
-void WrappedFloat::operator-=(float value)
-{
-    *this -= WrappedFloat(value, this->lowerBound, this->upperBound);
-}
+void WrappedFloat::operator-=(float value) { *this -= this->withSameBounds(value); }
 
 WrappedFloat WrappedFloat::operator+(float value) const
 {
-    return *this + WrappedFloat(value, this->lowerBound, this->upperBound);
+    return *this + this->withSameBounds(value);
 }
 
 WrappedFloat WrappedFloat::operator-(float value) const
 {
-    return *this - WrappedFloat(value, this->lowerBound, this->upperBound);
+    return *this - this->withSameBounds(value);
 }
 
 float WrappedFloat::minDifference(const WrappedFloat& other) const
@@ -110,7 +104,7 @@ float WrappedFloat::minDifference(const WrappedFloat& other) const
 
 float WrappedFloat::minDifference(const float& unwrappedValue) const
 {
-    return minDifference(WrappedFloat(unwrappedValue, this->lowerBound, this->upperBound));
+    return minDifference(this->withSameBounds(unwrappedValue));
 }
 
 WrappedFloat WrappedFloat::minInterpolate(const WrappedFloat& other, const float alpha) const
