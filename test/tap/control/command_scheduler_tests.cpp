@@ -634,7 +634,7 @@ TEST(CommandScheduler, runHardwareTest_runs_test_command)
     scheduler.registerSubsystem(&s1);
     scheduler.runHardwareTest(&s1);
     EXPECT_TRUE(scheduler.runningTest(&s1));
-    EXPECT_EQ(scheduler.runningHardwareTests(), 1);
+    EXPECT_EQ(scheduler.countRunningHardwareTests(), 1);
     scheduler.run();
 }
 

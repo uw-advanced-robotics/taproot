@@ -1,5 +1,24 @@
 # Taproot Changelog
 
+## October 2024
+
+- Refactored the hardware testing feature.
+    - Hardware tests are now done through commands set with `Subsystem::setTestCommand`
+    - Hardware tests now only run when the robot is out of safe disconnect mode.
+    - All tests are runnable with `CommandScheduler::runAllHardwareTests`, while individual tests can be run with `CommandScheduler::runHardwareTest(const Subsystem*)`
+    - Similarly, `CommandScheduler::stopAllHardwareTests` and `CommandScheduler::stopHardwareTest(const Subsystem*)` exist.
+    - `CommandScheduler::runningTest(const Subsystem*)` returns true if the subsystem is running a hardware test.
+    - `CommandScheduler::countRunningHardwareTests()` returns the number of hardware tests currently running.
+    - Hardware Test Menu:
+        - The tests now must be manually run and don't start when the menu is open.
+        - There is now a line showing how many tests are running.
+        - Each test is individually runnable and stoppable.
+        - `x` is shown for failed/incomplete tests, `+` is shown for passed tests.
+
+### Breaking Changes
+- Removed `Subsystem::isHardwareTestComplete`, `Subsystem::setHardwareTestsIncomplete`, `Subsystem::setHardwareTestsComplete`, `Subsystem::runHardwareTests`, `Subsystem::onHardwareTestStart`, `Subsystem::onHardwareTestComplete`
+- Removed `CommandScheduler::startHardwareTests`, `CommandScheduler::stopHardwareTests`
+
 ## September 2024
 
 ### Breaking Changes

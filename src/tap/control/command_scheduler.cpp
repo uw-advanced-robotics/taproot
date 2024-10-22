@@ -378,7 +378,7 @@ void CommandScheduler::stopHardwareTest(const Subsystem *subsystem)
     }
 }
 
-int CommandScheduler::runningHardwareTests()
+int CommandScheduler::countRunningHardwareTests()
 {
     int total = 0;
     for (auto it = subMapBegin(); it != subMapEnd(); it++)

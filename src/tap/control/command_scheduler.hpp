@@ -236,7 +236,7 @@ public:
     /**
      * @return the count of subsystems currently running a test.
      */
-    mockable int runningHardwareTests();
+    mockable int countRunningHardwareTests();
 
     /**
      * @param[in] subsystem the subsystem to check
