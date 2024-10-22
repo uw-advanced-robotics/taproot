@@ -199,18 +199,6 @@ bool WrappedFloat::withinRange(const WrappedFloat& lowerBound, const WrappedFloa
              this->getWrappedValue() < upperBound.getWrappedValue()));
 }
 
-bool WrappedFloat::withinRangeInclusive(
-    const WrappedFloat& lowerBound,
-    const WrappedFloat& upperBound) const
-{
-    return (lowerBound.getWrappedValue() < upperBound.getWrappedValue() &&
-            (this->getWrappedValue() >= lowerBound.getWrappedValue() &&
-             this->getWrappedValue() <= upperBound.getWrappedValue())) ||
-           (lowerBound.getWrappedValue() > upperBound.getWrappedValue() &&
-            (this->getWrappedValue() >= lowerBound.getWrappedValue() ||
-             this->getWrappedValue() <= upperBound.getWrappedValue()));
-}
-
 float WrappedFloat::intersectionRange(
     const WrappedFloat& lowerA,
     const WrappedFloat& upperA,
