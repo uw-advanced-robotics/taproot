@@ -257,21 +257,6 @@ public:
     bool withinRange(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const;
 
     /**
-     * Checks whether `this` is within the wrapped range defined from `lowerBound` to `upperBound`.
-     * For example given a value wrapped from 0 to 10, with the following conditions:
-     * - this: 9, min: 3, max: 7, returns false.
-     * - this: 5, min: 3, max: 7, returns true.
-     * - this: 9, min: 7, max: 3, returns true.
-     * - this: 5, min: 7, max: 3, returns false.
-     *
-     * @param[in] lowerBound
-     * @param[in] upperBound
-     * @return whether `this` is within the specified range
-     * @throws: An assertion error if the WrappedFloats themselves have different bounds.
-     */
-    bool withinRangeInclusive(const WrappedFloat& lowerBound, const WrappedFloat& upperBound) const;
-
-    /**
      * Calculates how much of the two given wrapped ranges overlap. If mentally visualizing on a
      * circle, this method takes two arbitrary arcs on the perimeter and returns the length of the
      * overlapping portion(s).
