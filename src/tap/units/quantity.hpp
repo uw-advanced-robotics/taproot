@@ -78,7 +78,7 @@ public:
      * @brief Construct a new Quantity object
      * @param other The other quantity to copy
      */
-    constexpr Quantity(const Quantity other) : value(other.value) {}
+    constexpr Quantity(const Self other) : value(other.value) {}
 
     /**
      * @brief Returns the value of the quantity in its base unit
@@ -236,7 +236,7 @@ using Exponentiated = Named<Quantity<
  * @tparam Q The base quantity type
  * @tparam R The root to take
  */
-template <isQuantity Q, typename R>
+template <isQuantity Q, typename R> 
 using Rooted = Exponentiated < Q,
       std::ratio_divide<std::ratio<1>, R>;
 
@@ -247,7 +247,7 @@ using Rooted = Exponentiated < Q,
  * @return The sum of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R>
-Named<Q> operator+(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr Named<Q> operator+(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return Named<Q>(lhs.valueOf() + rhs.valueOf());
 }
@@ -259,7 +259,7 @@ Named<Q> operator+(Q lhs, R rhs) requires Isomorphic<Q, R>
  * @return The difference of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R>
-Named<Q> operator-(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr Named<Q> operator-(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return Named<Q>(lhs.valueOf() - rhs.valueOf());
 }
@@ -271,7 +271,7 @@ Named<Q> operator-(Q lhs, R rhs) requires Isomorphic<Q, R>
  * @return The product of the quantity and the scalar, as a named type if it exists.
  */
 template <isQuantity Q>
-Named<Q> operator*(Q lhs, float rhs)
+constexpr Named<Q> operator*(Q lhs, float rhs)
 {
     return Named<Q>(lhs.valueOf() * rhs);
 }
@@ -283,7 +283,7 @@ Named<Q> operator*(Q lhs, float rhs)
  * @return The product of the quantity and the scalar, as a named type if it exists.
  */
 template <isQuantity Q>
-Named<Q> operator*(float lhs, Q rhs)
+constexpr Named<Q> operator*(float lhs, Q rhs)
 {
     return Named<Q>(lhs * rhs.valueOf());
 }
@@ -295,7 +295,7 @@ Named<Q> operator*(float lhs, Q rhs)
  * @return The product of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R, isQuantity S = Multiplied<Q, R>>
-S operator*(Q lhs, R rhs)
+constexpr S operator*(Q lhs, R rhs)
 {
     return S(lhs.valueOf() * rhs.valueOf());
 }
@@ -307,7 +307,7 @@ S operator*(Q lhs, R rhs)
  * @return The quotient of the quantity and the scalar, as a named type if it exists.
  */
 template <isQuantity Q>
-Named<Q> operator/(Q lhs, float rhs)
+constexpr Named<Q> operator/(Q lhs, float rhs)
 {
     return Named<Q>(lhs.valueOf() / rhs);
 }
@@ -319,7 +319,7 @@ Named<Q> operator/(Q lhs, float rhs)
  * @return The quotient of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R, isQuantity S = Divided<Q, R>>
-S operator/(Q lhs, R rhs)
+constexpr S operator/(Q lhs, R rhs)
 {
     return S(lhs.valueOf() / rhs.valueOf());
 }
@@ -331,7 +331,7 @@ S operator/(Q lhs, R rhs)
  * @return True if the two quantities; values are equal, false otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator==(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator==(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() == rhs.valueOf();
 }
@@ -343,7 +343,7 @@ bool operator==(Q lhs, R rhs) requires Isomorphic<Q, R>
  * @return True if the two quantities; values are not equal, false otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator!=(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator!=(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() != rhs.valueOf();
 }
@@ -355,7 +355,7 @@ bool operator!=(Q lhs, R rhs) requires Isomorphic<Q, R>
  * @return True if the left hand quantity is less than the right hand quantity, false otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator<(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator<(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() < rhs.valueOf();
 }
@@ -367,7 +367,7 @@ bool operator<(Q lhs, R rhs) requires Isomorphic<Q, R>
  * @return True if the left hand quantity is greater than the right hand quantity, false otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator>(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator>(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() > rhs.valueOf();
 }
@@ -380,7 +380,7 @@ bool operator>(Q lhs, R rhs) requires Isomorphic<Q, R>
  * otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator<=(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator<=(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() <= rhs.valueOf();
 }
@@ -393,7 +393,7 @@ bool operator<=(Q lhs, R rhs) requires Isomorphic<Q, R>
  * otherwise.
  */
 template <isQuantity Q, isQuantity R>
-bool operator>=(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr bool operator>=(Q lhs, R rhs) requires Isomorphic<Q, R>
 {
     return lhs.valueOf() >= rhs.valueOf();
 }
