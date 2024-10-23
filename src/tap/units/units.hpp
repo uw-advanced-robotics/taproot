@@ -19,7 +19,9 @@
 
 #ifndef TAPROOT_UNITS_HPP_
 #define TAPROOT_UNITS_HPP_
+#include "temperature.hpp"
 #include "unit_macros.hpp"
+
 
 namespace tap::units
 {
