@@ -142,6 +142,8 @@ tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
 
+bool DjiMotor::isInCurrentControl() const {return currentControl;}
+
 int64_t DjiMotor::getEncoderUnwrapped() const
 {
     return static_cast<int64_t>(encoderWrapped) +
