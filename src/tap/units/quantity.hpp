@@ -35,7 +35,7 @@ template <
     typename Current = ratio<0>,
     typename Temperature = ratio<0>,
     typename Angle = ratio<0>,
-    typename Frame = ratio<0>>
+    int Frame = 0>
 class Quantity
 {
 protected:
@@ -56,13 +56,13 @@ public:
     typedef Temperature temperature;
     /// The angle dimension of the quantity, with a base unit of radians
     typedef Angle angle;
-    /// The "context frame" of the quantity, that can be user-defined.
-    typedef Frame frame;
+    /// The frame of reference of the quantity
+    static constexpr int frame = Frame;
 
     /**
      * @brief convenience label. Represents an isomorphic unit (equal dimensions)
      */
-    using Self = Quantity<Time, Length, Mass, Current, Temperature, Angle, Frame>;
+    using Self = Quantity<Time, Length, Mass, Current, Temperature, Angle>;
 
     // Constructors
     /**
@@ -141,7 +141,7 @@ template <
     typename C = ratio<0>,
     typename O = ratio<0>,
     typename A = ratio<0>,
-    typename F = ratio<0>>
+    int F = 0>
 constexpr void quantityChecker(Quantity<T, L, M, C, O, A, F> q)
 {
 }
@@ -188,18 +188,15 @@ using Named = typename lookupName<Q>::Named;
  * @tparam Q The first multiplcand type
  * @tparam R The second multiplicand type
  */
-template <
-    isQuantity Q,
-    isQuantity R,
-    typename = std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
-using Multiplied = Named<Quantity<
+template <isQuantity Q, isQuantity R>
+requires(Q::frame == R::frame) using Multiplied = Named<Quantity<
     ratio_add<typename Q::time, typename R::time>,
     ratio_add<typename Q::length, typename R::length>,
     ratio_add<typename Q::mass, typename R::mass>,
     ratio_add<typename Q::current, typename R::current>,
     ratio_add<typename Q::temperature, typename R::temperature>,
     ratio_add<typename Q::angle, typename R::angle>,
-    typanem Q::frame>>;
+    Q::frame>>;
 
 /**
  * @brief Simplifiation of Quantity division. Represents two quantity types in the same frame
@@ -207,18 +204,15 @@ using Multiplied = Named<Quantity<
  * @tparam Q The dividend type
  * @tparam R The divisor type
  */
-template <
-    isQuantity Q,
-    isQuantity R,
-    typename = std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
-using Divided = Named<Quantity<
+template <isQuantity Q, isQuantity R>
+requires(Q::frame == R::frame) using Divided = Named<Quantity<
     ratio_subtract<typename Q::time, typename R::time>,
     ratio_subtract<typename Q::length, typename R::length>,
     ratio_subtract<typename Q::mass, typename R::mass>,
     ratio_subtract<typename Q::current, typename R::current>,
     ratio_subtract<typename Q::temperature, typename R::temperature>,
     ratio_subtract<typename Q::angle, typename R::angle>,
-    typename Q::frame>>;
+    Q::frame>>;
 
 /**
  * @brief Simplifiation of Quantity exponentiation. Represents a quantity type raised to a power, as
@@ -234,7 +228,7 @@ using Exponentiated = Named<Quantity<
     ratio_multiply<typename Q::current, R>,
     ratio_multiply<typename Q::temperature, R>,
     ratio_multiply<typename Q::angle, R>,
-    typename Q::frame>>;
+    Q::frame>>;
 
 /**
  * @brief Simplifiation of Quantity root. Represents the root of a quantity type, as a named type if
