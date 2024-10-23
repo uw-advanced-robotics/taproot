@@ -128,7 +128,8 @@ void DjiMotorTxHandler::encodeAndSendCanData()
         }
         if (can1ValidMotorMessage6020Current)
         {
-            messageSuccess &= drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1Message6020Current);
+            messageSuccess &=
+                drivers->can.sendMessage(can::CanBus::CAN_BUS1, can1Message6020Current);
         }
     }
     if (drivers->can.isReadyToSend(can::CanBus::CAN_BUS2))
@@ -143,7 +144,8 @@ void DjiMotorTxHandler::encodeAndSendCanData()
         }
         if (can2ValidMotorMessageHigh)
         {
-            messageSuccess &= drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2Message6020Current);
+            messageSuccess &=
+                drivers->can.sendMessage(can::CanBus::CAN_BUS2, can2Message6020Current);
         }
     }
 
@@ -167,7 +169,6 @@ void DjiMotorTxHandler::serializeMotorStoreSendData(
         const DjiMotor* const motor = canMotorStore[i];
         if (motor != nullptr)
         {
-            
             if (DJI_MOTOR_TO_NORMALIZED_ID(motor->getMotorIdentifier()) <=
                 DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR4))
             {
