@@ -166,7 +166,8 @@ concept Isomorphic = isQuantity<Q> && (isQuantity<R> && ...) &&
                      (std::is_convertible<typename Q::Self, typename R::Self>::value && ...);
 
 /**
- * @brief Utility struct to look up the named class representation of a quantity type. Should not be used directly.
+ * @brief Utility struct to look up the named class representation of a quantity type. Should not be
+ * used directly.
  */
 template <isQuantity Q>
 struct lookupName
@@ -175,10 +176,72 @@ struct lookupName
 };
 
 /**
- * @brief Helper type to look up the named class representation of a quantity type. Should rarely need to be used directly.
+ * @brief Helper type to look up the named class representation of a quantity type. Should rarely
+ * need to be used directly.
  */
 template <isQuantity Q>
 using Named = typename lookupName<Q>::Named;
 
+/**
+ * @brief Simplifiation of Quantity multiplication. Multiplies two quantity types together, if they
+ * are in the same frame.
+ * @tparam Q The first multiplcand type
+ * @tparam R The second multiplicand type
+ */
+template <
+    isQuantity Q,
+    isQuantity R,
+    std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
+using Multiplied = Named<Quantity<
+    ratio_add<typename Q::time, typename R::time>,
+    ratio_add<typename Q::length, typename R::length>,
+    ratio_add<typename Q::mass, typename R::mass>,
+    ratio_add<typename Q::current, typename R::current>,
+    ratio_add<typename Q::temperature, typename R::temperature>,
+    ratio_add<typename Q::angle, typename R::angle>,
+    typanem Q::frame>>;
+
+/**
+ * @brief Simplifiation of Quantity division. Divides two quantity types together, if they are in
+ * the same frame.
+ * @tparam Q The dividend type
+ * @tparam R The divisor type
+ */
+template <
+    isQuantity Q,
+    isQuantity R,
+    std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
+using Divided = Named<Quantity<
+    ratio_subtract<typename Q::time, typename R::time>,
+    ratio_subtract<typename Q::length, typename R::length>,
+    ratio_subtract<typename Q::mass, typename R::mass>,
+    ratio_subtract<typename Q::current, typename R::current>,
+    ratio_subtract<typename Q::temperature, typename R::temperature>,
+    ratio_subtract<typename Q::angle, typename R::angle>,
+    typename Q::frame>>;
+
+/**
+ * @brief Simplifiation of Quantity exponentiation. Raises a quantity type to a power.
+ * @tparam Q The base quantity type
+ * @tparam R The power to raise to
+ */
+template <isQuantity Q, typename R>
+using Exponentiated = Named<Quantity<
+    ratio_multiply<typename Q::time, R>,
+    ratio_multiply<typename Q::length, R>,
+    ratio_multiply<typename Q::mass, R>,
+    ratio_multiply<typename Q::current, R>,
+    ratio_multiply<typename Q::temperature, R>,
+    ratio_multiply<typename Q::angle, R>,
+    typename Q::frame>>;
+
+/**
+ * @brief Simplifiation of Quantity root. Takes the root of a quantity type.
+ * @tparam Q The base quantity type
+ * @tparam R The root to take
+ */
+template <isQuantity Q, typename R>
+using Rooted = Exponentiated < Q,
+      std::ratio_divide<std::ratio<1>, R>;
 }  // namespace tap::units
 #endif  // TAPROOT_QUANTITY_HPP_
