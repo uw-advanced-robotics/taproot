@@ -21,6 +21,9 @@
 #define TAPROOT_UNIT_MACROS_HPP_
 #include "quantity.hpp"
 
+/**
+ * @brief Macro to define a new constant for a unit, and create conversion functions and literals for it. 
+ */
 #define NEW_UNIT_LITERAL(_name, _qname, _qsuffix, _value)                 \
     namespace constants                                                   \
     {                                                                     \
@@ -52,22 +55,34 @@
     }                                                                     \
     }
 
+/**
+ * @brief Utility macro to create large metric prefixes (kilo, mega, giga, tera) for a unit.
+ */
 #define UNIT_METRIC_PREFIXES_LARGE(_name, _qname, _qsuffix)               \
     NEW_UNIT_LITERAL(_name, kilo##_qname, k##_qsuffix, _qname<F> * 10E3f) \
     NEW_UNIT_LITERAL(_name, mega##_qname, M##_qsuffix, _qname<F> * 10E6f) \
     NEW_UNIT_LITERAL(_name, giga##_qname, G##_qsuffix, _qname<F> * 10E9f) \
-    NEW_UNIT_LITERAL(_name, terra##_qname, T##_qsuffix, _qname<F> * 10E12f)
+    NEW_UNIT_LITERAL(_name, tera##_qname, T##_qsuffix, _qname<F> * 10E12f)
 
+/**
+ * @brief Utility macro to create small metric prefixes (centi, milli, micro, nano) for a unit.
+ */
 #define UNIT_METRIC_PREFIXES_SMALL(_name, _qname, _qsuffix)                 \
     NEW_UNIT_LITERAL(_name, centi##_qname, c##_qsuffix, _qname<F> * 10E-2f) \
     NEW_UNIT_LITERAL(_name, milli##_qname, m##_qsuffix, _qname<F> * 10E-3f) \
     NEW_UNIT_LITERAL(_name, micro##_qname, u##_qsuffix, _qname<F> * 10E-6f) \
     NEW_UNIT_LITERAL(_name, nano##_qname, n##_qsuffix, _qname<F> * 10E-9f)
 
+/**
+ * @brief Utility macro to create metric prefixes (nano through tera) for a unit.
+ */
 #define UNIT_METRIC_PREFIXES_ALL(_name, _qname, _qsuffix) \
     UNIT_METRIC_PREFIXES_LARGE(_name, _qname, _qsuffix)   \
     UNIT_METRIC_PREFIXES_SMALL(_name, _qname, _qsuffix)
 
+/**
+ * @brief Macro to define a new unit type. Also creates the constant with the value 1.0.
+ */
 #define NEW_UNIT(_name, _qname, _qsuffix, _time, _length, _mass, _current, _temperature, _angle) \
     template <int Frame = 0>                                                                     \
     class _name : public Quantity<                                                               \
