@@ -130,5 +130,55 @@ public:
         value = other;
     }
 };
+
+/**
+ * @brief Internal utility function to check if a type is a Quantity. Should not be used directly.
+ */
+template <
+    typename T = ratio<0>,
+    typename L = ratio<0>,
+    typename M = ratio<0>,
+    typename C = ratio<0>,
+    typename O = ratio<0>,
+    typename A = ratio<0>,
+    typename F = ratio<0>>
+constexpr void quantityChecker(Quantity<T, L, M, C, O, A, F> q)
+{
+}
+
+/**
+ * @brief Concept to use in template arguments (EX: template <isQuantity Q>). Requires Q to inherit
+ * from Quantity and have matching dimensions
+ */
+template <typename Q>
+concept isQuantity = requires(Q q)
+{
+    quantityChecker(q);
+};
+
+/**
+ * @brief Concept to use when determining dimensional equivalence.
+ * @tparam Q The first quantity type to compare
+ * @tparam R Additional quantity type(s) to compare
+ */
+template <typename Q, typename... R>
+concept Isomorphic = isQuantity<Q> && (isQuantity<R> && ...) &&
+                     (std::is_convertible<typename Q::Self, typename R::Self>::value && ...);
+
+/**
+ * @brief Utility struct to look up the named class representation of a quantity type. Should not be used directly.
+ */
+template <isQuantity Q>
+struct lookupName
+{
+    using Named = Q;
+};
+
+/**
+ * @brief Helper type to look up the named class representation of a quantity type. Should rarely need to be used directly.
+ */
+template <isQuantity Q>
+using Named = typename lookupName<Q>::Named;
+
 }  // namespace tap::units
 #endif  // TAPROOT_QUANTITY_HPP_
