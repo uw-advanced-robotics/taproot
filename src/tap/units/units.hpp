@@ -23,9 +23,12 @@
 
 namespace tap::units
 {
+#define M_PI_F 3.14159265358979323846f
+#define M_2PI_F 6.28318530717958647692f
+
 // Number
 NEW_UNIT(Number, number, n, 0, 0, 0, 0, 0, 0)
-NEW_UNIT_LITERAL(Number, percent, pct, 0.01f);
+NEW_UNIT_LITERAL(Number, percent, pct, number<F> * 0.01f);
 
 // Time, Frequency
 NEW_UNIT(Time, second, s, 1, 0, 0, 0, 0, 0)
@@ -42,6 +45,8 @@ NEW_UNIT(Length, meter, m, 0, 1, 0, 0, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Length, meter, m)
 NEW_UNIT_LITERAL(Length, inch, in, centimeter<F> * 2.54f)
 NEW_UNIT_LITERAL(Length, foot, ft, inch<F> * 12.0f)
+NEW_UNIT_LITERAL(Length, yard, yd, foot<F> * 3.0f)
+NEW_UNIT_LITERAL(Length, mile, mi, foot<F> * 5280.0f)
 
 NEW_UNIT(Area, square_meter, m2, 0, 2, 0, 0, 0, 0)
 NEW_UNIT_LITERAL(Area, square_inch, in2, inch<F>* inch<F>)
@@ -81,7 +86,6 @@ NEW_UNIT(LinearVelocity, meter_per_second, mps, -1, 1, 0, 0, 0, 0)
 NEW_UNIT_LITERAL(LinearVelocity, foot_per_second, fps, foot<F> / second<F>)
 NEW_UNIT_LITERAL(LinearVelocity, mile_per_hour, mph, mile<F> / hour<F>)
 NEW_UNIT_LITERAL(LinearVelocity, kilometer_per_hour, kmph, kilometer<F> / hour<F>)
-NEW_UNIT_LITERAL(LinearVelocity, knot, knot, nautical_mile<F> / hour<F>)
 
 NEW_UNIT(LinearAcceleration, meter_per_second_squared, mps2, -2, 1, 0, 0, 0, 0)
 NEW_UNIT_LITERAL(

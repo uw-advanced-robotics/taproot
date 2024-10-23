@@ -117,18 +117,6 @@ public:
      * @param scalar The factor to divide by
      */
     constexpr void operator/=(const float dividend) { value /= dividend; }
-
-    /**
-     * @brief Assign a raw numerical value to this quantity. Only works if this quantity is
-     * dimensionless.
-     */
-    constexpr void operator=(const float other)  // TODO: how much do we actually care about this?
-    {
-        static_assert(
-            std::convertable_to<Self, Quantity<>>,
-            "Cannot assign a raw float to a non-dimensionless quanity");
-        value = other;
-    }
 };
 
 /**
@@ -236,7 +224,7 @@ using Exponentiated = Named<Quantity<
  * @tparam Q The base quantity type
  * @tparam R The root to take
  */
-template <isQuantity Q, typename R> 
+template <isQuantity Q, typename R>
 using Rooted = Exponentiated < Q,
       std::ratio_divide<std::ratio<1>, R>;
 

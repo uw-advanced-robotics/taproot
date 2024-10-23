@@ -37,28 +37,28 @@
     template <int F = 0>                                                  \
     constexpr inline float to_##_qname(_name<F> quantity)                 \
     {                                                                     \
-        return quantity.internal() / constants::_qname<F>.internal();     \
+        return quantity.valueOf() / constants::_qname<F>.valueOf();       \
     }                                                                     \
     }                                                                     \
     namespace literals                                                    \
     {                                                                     \
     constexpr _name<> operator""_##_qsuffix(long double value)            \
     {                                                                     \
-        return constants::_qname<> * static_cast<float>(value);          \
+        return constants::_qname<> * static_cast<float>(value);           \
     }                                                                     \
     constexpr _name<> operator""_##_qsuffix(unsigned long long int value) \
     {                                                                     \
-        return constants::_qname<> * static_cast<float>(value);          \
+        return constants::_qname<> * static_cast<float>(value);           \
     }                                                                     \
     }
 
-#define UNIT_METRIC_PREFIXES_LARGE(_name, _qname, _qsuffix)            \
+#define UNIT_METRIC_PREFIXES_LARGE(_name, _qname, _qsuffix)               \
     NEW_UNIT_LITERAL(_name, kilo##_qname, k##_qsuffix, _qname<F> * 10E3f) \
     NEW_UNIT_LITERAL(_name, mega##_qname, M##_qsuffix, _qname<F> * 10E6f) \
     NEW_UNIT_LITERAL(_name, giga##_qname, G##_qsuffix, _qname<F> * 10E9f) \
     NEW_UNIT_LITERAL(_name, terra##_qname, T##_qsuffix, _qname<F> * 10E12f)
 
-#define UNIT_METRIC_PREFIXES_SMALL(_name, _qname, _qsuffix)              \
+#define UNIT_METRIC_PREFIXES_SMALL(_name, _qname, _qsuffix)                 \
     NEW_UNIT_LITERAL(_name, centi##_qname, c##_qsuffix, _qname<F> * 10E-2f) \
     NEW_UNIT_LITERAL(_name, milli##_qname, m##_qsuffix, _qname<F> * 10E-3f) \
     NEW_UNIT_LITERAL(_name, micro##_qname, u##_qsuffix, _qname<F> * 10E-6f) \
