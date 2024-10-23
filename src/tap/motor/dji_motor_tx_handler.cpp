@@ -179,6 +179,8 @@ void DjiMotorTxHandler::serializeMotorStoreSendData(
             {
                 motor->serializeCanSendData(messageHigh);
                 *validMotorMessageHigh = true;
+                motor->serializeCanSendData(message6020Current);
+                *validMotorMessage6020Current = true;
             }
         }
     }
