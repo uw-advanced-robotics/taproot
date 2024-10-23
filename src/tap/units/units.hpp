@@ -75,7 +75,7 @@ UNIT_METRIC_PREFIXES_ALL(Current, amp, A)
 NEW_UNIT(Charge, coulomb, C, 1, 0, 0, 1, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Charge, coulomb, C)
 
-NEW_UNIT(Voltage, volt, V, 2, 1, 1, -1, 0, 0)
+NEW_UNIT(Voltage, volt, V, -3, 2, 1, -1, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Voltage, volt, V)
 
 // Angle
@@ -117,7 +117,7 @@ NEW_UNIT_LITERAL(AngularJerk, rpm3, rpm3, rotation<F> / (minute<F> * minute<F> *
 NEW_UNIT(Force, newton, N, -2, 1, 1, 0, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Force, newton, N)
 
-NEW_UNIT(Pressure, pascal, Pa, -1, -1, 1, 0, 0, 0)
+NEW_UNIT(Pressure, pascal, Pa, -2, -1, 1, 0, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Pressure, pascal, Pa)
 
 NEW_UNIT(Momentum, newton_second, Ns, -1, 1, 1, 0, 0, 0)
@@ -127,7 +127,7 @@ using Impulse = Momentum<F>;
 NEW_UNIT(Energy, joule, J, -2, 2, 1, 0, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Energy, joule, J)
 
-NEW_UNIT(Power, watt, W, -2, 2, 1, 0, 0, 0)
+NEW_UNIT(Power, watt, W, -3, 2, 1, 0, 0, 0)
 UNIT_METRIC_PREFIXES_ALL(Power, watt, W)
 
 // Radius, Curvature
