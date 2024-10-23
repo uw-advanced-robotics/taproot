@@ -183,15 +183,15 @@ template <isQuantity Q>
 using Named = typename lookupName<Q>::Named;
 
 /**
- * @brief Simplifiation of Quantity multiplication. Multiplies two quantity types together, if they
- * are in the same frame.
+ * @brief Simplifiation of Quantity multiplication. Represents two quantity types in the same frame
+ * multiplied, as a named type if it exists.
  * @tparam Q The first multiplcand type
  * @tparam R The second multiplicand type
  */
 template <
     isQuantity Q,
     isQuantity R,
-    std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
+    typename = std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
 using Multiplied = Named<Quantity<
     ratio_add<typename Q::time, typename R::time>,
     ratio_add<typename Q::length, typename R::length>,
@@ -202,15 +202,15 @@ using Multiplied = Named<Quantity<
     typanem Q::frame>>;
 
 /**
- * @brief Simplifiation of Quantity division. Divides two quantity types together, if they are in
- * the same frame.
+ * @brief Simplifiation of Quantity division. Represents two quantity types in the same frame
+ * divided, as a named type if it exists.
  * @tparam Q The dividend type
  * @tparam R The divisor type
  */
 template <
     isQuantity Q,
     isQuantity R,
-    std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
+    typename = std::enable_if_t<ratio_equal<typename Q::frame, typename R::Frame>::value>>
 using Divided = Named<Quantity<
     ratio_subtract<typename Q::time, typename R::time>,
     ratio_subtract<typename Q::length, typename R::length>,
@@ -221,7 +221,8 @@ using Divided = Named<Quantity<
     typename Q::frame>>;
 
 /**
- * @brief Simplifiation of Quantity exponentiation. Raises a quantity type to a power.
+ * @brief Simplifiation of Quantity exponentiation. Represents a quantity type raised to a power, as
+ * a named type if it exists.
  * @tparam Q The base quantity type
  * @tparam R The power to raise to
  */
@@ -236,12 +237,171 @@ using Exponentiated = Named<Quantity<
     typename Q::frame>>;
 
 /**
- * @brief Simplifiation of Quantity root. Takes the root of a quantity type.
+ * @brief Simplifiation of Quantity root. Represents the root of a quantity type, as a named type if
+ * it exists.
  * @tparam Q The base quantity type
  * @tparam R The root to take
  */
 template <isQuantity Q, typename R>
 using Rooted = Exponentiated < Q,
       std::ratio_divide<std::ratio<1>, R>;
+
+/**
+ * @brief Adds two isomorphic quantities.
+ * @param lhs The left hand addend
+ * @param rhs The right hand addend
+ * @return The sum of the two quantities, as a named type if it exists.
+ */
+template <isQuantity Q, isQuantity R>
+Named<Q> operator+(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return Named<Q>(lhs.valueOf() + rhs.valueOf());
+}
+
+/**
+ * @brief Subtracts two isomorphic quantities.
+ * @param lhs The left hand minuend
+ * @param rhs The right hand subtrahend
+ * @return The difference of the two quantities, as a named type if it exists.
+ */
+template <isQuantity Q, isQuantity R>
+Named<Q> operator-(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return Named<Q>(lhs.valueOf() - rhs.valueOf());
+}
+
+/**
+ * @brief Multiplies a quantity by a unitless scalar.
+ * @param lhs The quantity to multiply
+ * @param rhs The scalar to multiply by
+ * @return The product of the quantity and the scalar, as a named type if it exists.
+ */
+template <isQuantity Q>
+Named<Q> operator*(Q lhs, float rhs)
+{
+    return Named<Q>(lhs.valueOf() * rhs);
+}
+
+/**
+ * @brief Multiplies a quantity by a unitless scalar.
+ * @param lhs The scalar to multiply by
+ * @param rhs The quantity to multiply
+ * @return The product of the quantity and the scalar, as a named type if it exists.
+ */
+template <isQuantity Q>
+Named<Q> operator*(float lhs, Q rhs)
+{
+    return Named<Q>(lhs * rhs.valueOf());
+}
+
+/**
+ * @brief Multiplies two quantities.
+ * @param lhs The left hand multiplicand
+ * @param rhs The right hand multiplicand
+ * @return The product of the two quantities, as a named type if it exists.
+ */
+template <isQuantity Q, isQuantity R, isQuantity S = Multiplied<Q, R>>
+S operator*(Q lhs, R rhs)
+{
+    return S(lhs.valueOf() * rhs.valueOf());
+}
+
+/**
+ * Divides a quantity by a unitless scalar.
+ * @param lhs The quantity to divide
+ * @param rhs The scalar to divide by
+ * @return The quotient of the quantity and the scalar, as a named type if it exists.
+ */
+template <isQuantity Q>
+Named<Q> operator/(Q lhs, float rhs)
+{
+    return Named<Q>(lhs.valueOf() / rhs);
+}
+
+/**
+ * @brief Divides two quantities.
+ * @param lhs The dividend
+ * @param rhs The divisor
+ * @return The quotient of the two quantities, as a named type if it exists.
+ */
+template <isQuantity Q, isQuantity R, isQuantity S = Divided<Q, R>>
+S operator/(Q lhs, R rhs)
+{
+    return S(lhs.valueOf() / rhs.valueOf());
+}
+
+/**
+ * @brief Compares two isomorphic quantities for equality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the two quantities; values are equal, false otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator==(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() == rhs.valueOf();
+}
+
+/**
+ * @brief Compares two isomorphic quantities for inequality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the two quantities; values are not equal, false otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator!=(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() != rhs.valueOf();
+}
+
+/**
+ * @brief Compares two isomorphic quantities for equality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the left hand quantity is less than the right hand quantity, false otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator<(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() < rhs.valueOf();
+}
+
+/**
+ * @brief Compares two isomorphic quantities for equality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the left hand quantity is greater than the right hand quantity, false otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator>(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() > rhs.valueOf();
+}
+
+/**
+ * @brief Compares two isomorphic quantities for equality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the left hand quantity is less than or equal to the right hand quantity, false
+ * otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator<=(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() <= rhs.valueOf();
+}
+
+/**
+ * @brief Compares two isomorphic quantities for equality.
+ * @param lhs The left hand quantity
+ * @param rhs The right hand quantity
+ * @return True if the left hand quantity is greater than or equal to the right hand quantity, false
+ * otherwise.
+ */
+template <isQuantity Q, isQuantity R>
+bool operator>=(Q lhs, R rhs) requires Isomorphic<Q, R>
+{
+    return lhs.valueOf() >= rhs.valueOf();
+}
 }  // namespace tap::units
 #endif  // TAPROOT_QUANTITY_HPP_
