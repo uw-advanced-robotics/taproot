@@ -20,6 +20,7 @@
 #ifndef TAPROOT_QUANTITY_HPP_
 #define TAPROOT_QUANTITY_HPP_
 #include <ratio>
+#include <type_traits>
 using std::ratio, std::ratio_add, std::ratio_subtract, std::ratio_multiply, std::ratio_divide,
     std::ratio_equal;
 namespace tap::units
@@ -77,13 +78,57 @@ public:
      * @brief Construct a new Quantity object
      * @param other The other quantity to copy
      */
-    constexpr Quantity(const Quantity &other) : value(other.value) {}
+    constexpr Quantity(const Quantity other) : value(other.value) {}
 
     /**
      * @brief Returns the value of the quantity in its base unit
      * @return The value of the quantity
      */
     constexpr float valueOf() const { return value; }
+
+    /**
+     * @brief Returns the value of the quantity converted to another unit
+     * @param other The other unit to convert to
+     */
+    constexpr float convertTo(const Self unit) const { return value / unit.value; }
+
+    // Operators
+
+    /**
+     * @brief Adds another quantity to this one
+     * @param other The right hand addend
+     */
+    constexpr void operator+=(const Self other) { value += other.value; }
+
+    /**
+     * @brief Subtracts another quantity from this one
+     * @param other The right hand minuend
+     */
+    constexpr void operator-=(const Self other) { value -= other.value; }
+
+    /**
+     * @brief Multiplies this quantity by a unitless factor
+     * @param multiple The factor to multiply by
+     */
+    constexpr void operator*=(const float multiple) { value *= multiple; }
+
+    /**
+     * @brief Divides this quantity by a unitless factor
+     * @param scalar The factor to divide by
+     */
+    constexpr void operator/=(const float dividend) { value /= dividend; }
+
+    /**
+     * @brief Assign a raw numerical value to this quantity. Only works if this quantity is
+     * dimensionless.
+     */
+    constexpr void operator=(const float other)  // TODO: how much do we actually care about this?
+    {
+        static_assert(
+            std::convertable_to<Self, Quantity<>>,
+            "Cannot assign a raw float to a non-dimensionless quanity");
+        value = other;
+    }
 };
 }  // namespace tap::units
 #endif  // TAPROOT_QUANTITY_HPP_
