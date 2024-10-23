@@ -151,7 +151,28 @@ concept isQuantity = requires(Q q)
  */
 template <typename Q, typename... R>
 concept Isomorphic = isQuantity<Q> && (isQuantity<R> && ...) &&
-                     (std::is_convertible<typename Q::Self, typename R::Self>::value && ...);
+                     (std::ratio_equal<typename Q::time, typename R::time>::value && ...) &&
+                     (std::ratio_equal<typename Q::length, typename R::length>::value && ...) &&
+                     (std::ratio_equal<typename Q::mass, typename R::mass>::value && ...) &&
+                     (std::ratio_equal<typename Q::current, typename R::current>::value && ...) &&
+                     (std::ratio_equal<typename Q::temperature, typename R::temperature>::value &&
+                      ...) &&
+                     (std::ratio_equal<typename Q::angle, typename R::angle>::value && ...);
+/**
+ * @brief Concept to use when determing if quantities are in the same frame of reference.
+ * @tparam Q The first quantity type to compare
+ * @tparam R Additional quantity type(s) to compare
+ */
+template <typename Q, typename... R>
+concept SameFrame = isQuantity<Q> && (isQuantity<R> && ...) && (Q::frame == R::frame && ...);
+
+/**
+ * @brief Concept to determine if quantities are isomorphic and in the same frame of reference.
+ * @tparam Q The first quantity type to compare
+ * @tparam R Additional quantity type(s) to compare
+ */
+template <typename Q, typename... R>
+concept IsomorphicFrame = Isomorphic<Q, R...>&& SameFrame<Q, R...>;
 
 /**
  * @brief Utility struct to look up the named class representation of a quantity type. Should not be
@@ -229,25 +250,25 @@ using Rooted = Exponentiated < Q,
       std::ratio_divide<std::ratio<1>, R>;
 
 /**
- * @brief Adds two isomorphic quantities.
+ * @brief Adds two isomorphic and same-frame quantities.
  * @param lhs The left hand addend
  * @param rhs The right hand addend
  * @return The sum of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R>
-constexpr Named<Q> operator+(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr Named<Q> operator+(Q lhs, R rhs) requires IsomorphicFrame<Q, R>
 {
     return Named<Q>(lhs.valueOf() + rhs.valueOf());
 }
 
 /**
- * @brief Subtracts two isomorphic quantities.
+ * @brief Subtracts two isomorphic and same-frame quantities.
  * @param lhs The left hand minuend
  * @param rhs The right hand subtrahend
  * @return The difference of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R>
-constexpr Named<Q> operator-(Q lhs, R rhs) requires Isomorphic<Q, R>
+constexpr Named<Q> operator-(Q lhs, R rhs) requires IsomorphicFrame<Q, R>
 {
     return Named<Q>(lhs.valueOf() - rhs.valueOf());
 }
@@ -277,13 +298,13 @@ constexpr Named<Q> operator*(float lhs, Q rhs)
 }
 
 /**
- * @brief Multiplies two quantities.
+ * @brief Multiplies two quantities which are in the same reference frame.
  * @param lhs The left hand multiplicand
  * @param rhs The right hand multiplicand
  * @return The product of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R, isQuantity S = Multiplied<Q, R>>
-constexpr S operator*(Q lhs, R rhs)
+constexpr S operator*(Q lhs, R rhs) requires SameFrame<Q, R>
 {
     return S(lhs.valueOf() * rhs.valueOf());
 }
@@ -301,13 +322,13 @@ constexpr Named<Q> operator/(Q lhs, float rhs)
 }
 
 /**
- * @brief Divides two quantities.
+ * @brief Divides two quantities which are in the same reference frame.
  * @param lhs The dividend
  * @param rhs The divisor
  * @return The quotient of the two quantities, as a named type if it exists.
  */
 template <isQuantity Q, isQuantity R, isQuantity S = Divided<Q, R>>
-constexpr S operator/(Q lhs, R rhs)
+constexpr S operator/(Q lhs, R rhs) requires SameFrame<Q, R>
 {
     return S(lhs.valueOf() / rhs.valueOf());
 }

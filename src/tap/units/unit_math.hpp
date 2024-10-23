@@ -248,10 +248,10 @@ constexpr Q round(const Q& lhs, const R& rhs) requires Isomorphic<Q, R>
  * @param rhs the angle
  * @return constexpr Number the sine of the angle
  */
-template <int F = 0>
-constexpr Number<F> sin(const Angle<F>& rhs)
+template <int F = 0, int G>
+constexpr Number<F> sin(const Angle<G>& rhs)
 {
-    return Number(std::sin(rhs.internal()));
+    return Number<F>(std::sin(rhs.internal()));
 }
 
 /**
@@ -259,10 +259,10 @@ constexpr Number<F> sin(const Angle<F>& rhs)
  * @param rhs the angle
  * @return constexpr Number the cosine of the angle
  */
-template <int F = 0>
-constexpr Number<F> cos(const Angle<F>& rhs)
+template <int F = 0, int G>
+constexpr Number<F> cos(const Angle<G>& rhs)
 {
-    return Number(std::cos(rhs.internal()));
+    return Number<F>(std::cos(rhs.internal()));
 }
 
 /**
@@ -270,10 +270,10 @@ constexpr Number<F> cos(const Angle<F>& rhs)
  * @param rhs the angle
  * @return constexpr Number the tangent of the angle
  */
-template <int F = 0>
-constexpr Number<F> tan(const Angle<F>& rhs)
+template <int F = 0, int G>
+constexpr Number<F> tan(const Angle<G>& rhs)
 {
-    return Number(std::tan(rhs.internal()));
+    return Number<F>(std::tan(rhs.internal()));
 }
 
 /**
@@ -281,7 +281,7 @@ constexpr Number<F> tan(const Angle<F>& rhs)
  * @param rhs the ratio
  * @return the angle
  */
-template <isQuantity Q, int F = 0>
+template <int F = 0, isQuantity Q>
 constexpr Angle<F> asin(const Q& rhs)
 {
     return Angle<F>(std::asin(rhs.internal()));
@@ -292,7 +292,7 @@ constexpr Angle<F> asin(const Q& rhs)
  * @param rhs the ratio
  * @return the angle
  */
-template <isQuantity Q, int F = 0>
+template <int F = 0, isQuantity Q>
 constexpr Angle<F> acos(const Q& rhs)
 {
     return Angle<F>(std::acos(rhs.internal()));
@@ -303,7 +303,7 @@ constexpr Angle<F> acos(const Q& rhs)
  * @param rhs the ratio
  * @return the angle
  */
-template <isQuantity Q, int F = 0>
+template <int F = 0,isQuantity Q>
 constexpr Angle<F> atan(const Q& rhs)
 {
     return Angle<F>(std::atan(rhs.internal()));
@@ -315,7 +315,7 @@ constexpr Angle<F> atan(const Q& rhs)
  * @param rhs the x coordinate
  * @return the angle
  */
-template <isQuantity Q, int F = 0>
+template <int F = 0, isQuantity Q>
 constexpr Angle<F> atan2(const Q& lhs, const Q& rhs)
 {
     return Angle<F>(std::atan2(lhs.internal(), rhs.internal()));
