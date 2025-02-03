@@ -20,9 +20,8 @@
 #ifndef TAPROOT_WRAPPED_ENCODER_HPP_
 #define TAPROOT_WRAPPED_ENCODER_HPP_
 
-#include "tap/util_macros.hpp"
-
 #include "tap/communication/sensors/encoder/encoder_interface.hpp"
+#include "tap/util_macros.hpp"
 
 namespace tap::encoder
 {
@@ -35,7 +34,7 @@ public:
         float gearRatio = 1,
         uint32_t encoderHomePosition = 0);
 
-    void initialize() override {};
+    void initialize() override{};
 
     tap::algorithms::WrappedFloat getPosition() const override;
 
@@ -54,7 +53,7 @@ public:
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
     bool isOnline() const override { return true; }
 #else
-    protected:
+protected:
 #endif
 
     /**
@@ -62,7 +61,6 @@ public:
      * special logic necessary for keeping track of unwrapped encoder value.
      */
     void updateEncoderValue(uint32_t encoderActual);
-
 
     tap::algorithms::WrappedFloat encoder;
 
@@ -87,7 +85,7 @@ private:
     uint32_t encoderHomePosition;
 
     tap::algorithms::WrappedFloat pastPosition;
-    
+
     uint64_t lastUpdateTime;
 };
 

@@ -19,9 +19,9 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/mock/encoder_interface_mock.hpp"
 #include "tap/communication/sensors/encoder/multi_encoder.hpp"
 #include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
+#include "tap/mock/encoder_interface_mock.hpp"
 
 using namespace tap::encoder;
 using namespace tap::algorithms;
@@ -228,14 +228,13 @@ TEST(MultiEncoderTests, is_online_when_primary_goes_off_and_online_and_secondary
                                                                            \
     EXPECT_CALL(mock, isOnline).WillRepeatedly(Return(PRIMARY_ONLINE));    \
     EXPECT_CALL(mock2, isOnline).WillRepeatedly(Return(SECONDARY_ONLINE)); \
-    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE & SECONDARY_ONLINE)
+    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE &SECONDARY_ONLINE)
 
 TEST(MultiEncoderTests, get_position_averages_positions)
 {
     SETUP_TEST(true, true);
 
-    EXPECT_CALL(mock, getPosition)
-        .WillOnce(Return(Angle(M_PI)));
+    EXPECT_CALL(mock, getPosition).WillOnce(Return(Angle(M_PI)));
     EXPECT_CALL(mock2, getPosition).WillOnce(Return(Angle(0)));
 
     EXPECT_EQ(multi.getPosition(), Angle(M_PI_2));
@@ -245,8 +244,7 @@ TEST(MultiEncoderTests, get_position_averages_online_positions)
 {
     SETUP_TEST(true, false);
 
-    EXPECT_CALL(mock, getPosition)
-        .WillOnce(Return(WrappedFloat(M_PI, 0, M_TWOPI)));
+    EXPECT_CALL(mock, getPosition).WillOnce(Return(WrappedFloat(M_PI, 0, M_TWOPI)));
     EXPECT_CALL(mock2, getPosition).Times(0);
 
     EXPECT_EQ(multi.getPosition(), Angle(M_PI));
@@ -324,11 +322,11 @@ TEST(MultiEncoderTests, reset_encoder_value_resets_encoders)
 
 TEST(MultiEncoderTests, moving_relative_to_home_after_zeroed_ok)
 {
-    WrappedEncoder mock(false, 4, 1, 0);                                             
-    WrappedEncoder mock2(false, 4, 1, 0);                                            
-                                                                           
-    std::array<EncoderInterface *, 2> encoders = {&mock, &mock2};          
-    MultiEncoder<2> multi(encoders);                                       
+    WrappedEncoder mock(false, 4, 1, 0);
+    WrappedEncoder mock2(false, 4, 1, 0);
+
+    std::array<EncoderInterface *, 2> encoders = {&mock, &mock2};
+    MultiEncoder<2> multi(encoders);
 
     mock.updateEncoderValue(2);
     mock2.updateEncoderValue(2);
@@ -346,9 +344,9 @@ TEST(MultiEncoderTests, moving_relative_to_home_after_zeroed_ok)
     EXPECT_FLOAT_EQ(Angle(M_PI).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
 
     // We need to make sure that the encoder thinks its going backward
-    mock.updateEncoderValue(3); 
+    mock.updateEncoderValue(3);
     mock2.updateEncoderValue(3);
-    mock.updateEncoderValue(2); 
+    mock.updateEncoderValue(2);
     mock2.updateEncoderValue(2);
 
     mock.updateEncoderValue(1);

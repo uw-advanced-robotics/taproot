@@ -24,12 +24,12 @@
 
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/can/can_rx_listener.hpp"
+#include "tap/communication/sensors/encoder/multi_encoder.hpp"
 
 #include "modm/math/geometry/angle.hpp"
 
 #include "dji_motor_encoder.hpp"
 #include "dji_motor_ids.hpp"
-#include "tap/communication/sensors/encoder/multi_encoder.hpp"
 #include "motor_interface.hpp"
 
 namespace tap::motor

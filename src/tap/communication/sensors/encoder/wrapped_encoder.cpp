@@ -44,15 +44,13 @@ WrappedEncoder::WrappedEncoder(
 
 void WrappedEncoder::resetEncoderValue()
 {
-    encoderHomePosition = ((uint32_t) encoder.getWrappedValue() + encoderHomePosition) % encoderResolution;
+    encoderHomePosition =
+        ((uint32_t)encoder.getWrappedValue() + encoderHomePosition) % encoderResolution;
     encoder.setUnwrappedValue(0);
     position.setUnwrappedValue(0);
 }
 
-tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const
-{
-    return position;
-}
+tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const { return position; }
 
 float WrappedEncoder::getVelocity() const
 {
@@ -66,11 +64,11 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
 
     int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition;
 
-    uint32_t newEncWrapped = 
-        encoderRelativeToHome < 0 ? (int32_t)encoderResolution + encoderRelativeToHome
-                                  : encoderRelativeToHome;
+    uint32_t newEncWrapped = encoderRelativeToHome < 0
+                                 ? (int32_t)encoderResolution + encoderRelativeToHome
+                                 : encoderRelativeToHome;
 
-    if (encoder.getUpperBound() != encoderResolution) // The first time we get a value
+    if (encoder.getUpperBound() != encoderResolution)  // The first time we get a value
     {
         encoder = tap::algorithms::WrappedFloat(newEncWrapped, 0, encoderResolution);
     }
@@ -81,7 +79,8 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
 
     pastPosition = position;
     lastUpdateTime = tap::arch::clock::getTimeMicroseconds();
-    position = tap::algorithms::Angle(encoder.getUnwrappedValue() * M_TWOPI / encoderResolution * gearRatio);
+    position = tap::algorithms::Angle(
+        encoder.getUnwrappedValue() * M_TWOPI / encoderResolution * gearRatio);
 }
 }  // namespace encoder
 

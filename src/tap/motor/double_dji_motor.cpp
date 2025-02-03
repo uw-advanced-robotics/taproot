@@ -19,7 +19,9 @@
 
 #include "double_dji_motor.hpp"
 
-#define CAST_ENC(x) const_cast<tap::encoder::EncoderInterface*>(static_cast<const tap::encoder::EncoderInterface*>(x))
+#define CAST_ENC(x)                              \
+    const_cast<tap::encoder::EncoderInterface*>( \
+        static_cast<const tap::encoder::EncoderInterface*>(x))
 
 namespace tap::motor
 {

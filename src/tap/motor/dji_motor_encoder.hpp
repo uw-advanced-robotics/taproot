@@ -21,12 +21,11 @@
 #define TAPROOT_DJI_MOTOR_ENCODER_HPP_
 
 #include "tap/architecture/timeout.hpp"
+#include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/architecture/interface/can_message.hpp"
 #include "modm/math/geometry/angle.hpp"
-
-#include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 
 namespace tap::motor
 {
@@ -78,10 +77,7 @@ public:
      * @param encoderRevolutions the starting number of encoder revolutions to store.
      *      See comment for DjiMotor::encoderRevolutions for more details.
      */
-    DjiMotorEncoder(
-        bool isInverted,
-        float gearRatio = 1,
-        uint32_t encoderHomePosition = 0);
+    DjiMotorEncoder(bool isInverted, float gearRatio = 1, uint32_t encoderHomePosition = 0);
 
     void initialize() override{};
 
