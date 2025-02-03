@@ -179,7 +179,7 @@ TEST(SequentialCommand, cancelling_command_ends_internal_commands)
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(SequentialCommand, null_command_asserts)
+TEST(SequentialCommand, null_command_asserts_DEATH)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);

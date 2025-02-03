@@ -40,7 +40,7 @@ TEST(MultiEncoderTests, constructing_multi_encoder_succeeds_when_first_encoder_i
     MultiEncoder<2> multi2(encoders2);
 }
 
-TEST(MultiEncoderTests, constructing_multi_encoder_fails_when_first_encoder_is_null)
+TEST(MultiEncoderTests, constructing_multi_encoder_fails_when_first_encoder_is_null_DEATH)
 {
     std::array<EncoderInterface *, 1> encoders = {nullptr};
     ASSERT_DEATH({ MultiEncoder<1> multi(encoders); }, ".*");

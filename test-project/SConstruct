@@ -102,7 +102,7 @@ elif args["TARGET_ENV"] == "tests":
             'thisfileshouldnotexist',
             program,
             '@"%s"' % program[0].abspath 
-                + (f" --gtest_filter=\"{args['TEST']}.*\"" if 'TEST' in args else "")
+                + (f" --gtest_filter={args['TEST']}" if 'TEST' in args else "")
             )
         )
     env.Alias("run-tests-gcov", [env.RunGCOV(program, True, GCOV_SOURCES_TO_IGNORE)])
