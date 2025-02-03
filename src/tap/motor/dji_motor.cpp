@@ -43,8 +43,8 @@ DjiMotor::DjiMotor(
     tap::can::CanBus motorCanBus,
     bool isInverted,
     const char* name,
-    uint16_t encoderWrapped,
-    int64_t encoderRevolutions,
+    float gearRatio,
+    uint32_t encoderHomePosition,
     tap::encoder::EncoderInterface* externalEncoder)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       motorName(name),
@@ -56,7 +56,7 @@ DjiMotor::DjiMotor(
       temperature(0),
       torque(0),
       motorInverted(isInverted),
-      internalEncoder(isInverted, encoderWrapped, encoderRevolutions),
+      internalEncoder(isInverted, gearRatio, encoderHomePosition),
       encoder(
           {externalEncoder != nullptr ? externalEncoder
                                       : const_cast<DjiMotorEncoder*>(this->getInternalEncoder()),

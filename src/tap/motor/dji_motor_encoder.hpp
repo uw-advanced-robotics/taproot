@@ -26,7 +26,7 @@
 #include "modm/architecture/interface/can_message.hpp"
 #include "modm/math/geometry/angle.hpp"
 
-#include "tap/communication/sensors/encoder/encoder_interface.hpp"
+#include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 
 namespace tap::motor
 {
@@ -51,7 +51,7 @@ namespace tap::motor
  * @note Currently there is no error handling for using a motor without having it be properly
  * initialize. You must call the `initialize` function in order for this class to work properly.
  */
-class DjiMotorEncoder : public tap::encoder::EncoderInterface
+class DjiMotorEncoder : public tap::encoder::WrappedEncoder
 {
 public:
     // 0 - 8191 for dji motors
@@ -80,14 +80,12 @@ public:
      */
     DjiMotorEncoder(
         bool isInverted,
-        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0);
+        float gearRatio = 1,
+        uint32_t encoderHomePosition = 0);
 
     void initialize() override{};
 
     bool isOnline() const override;
-
-    tap::algorithms::WrappedFloat getPosition() const override;
 
     float getVelocity() const override;
 
@@ -96,14 +94,6 @@ public:
     mockable uint16_t getEncoderWrapped() const;
 
     mockable int16_t getShaftRPM() const;
-
-    void alignWith(EncoderInterface* other) override { UNUSED(other); };
-
-    /**
-     * Resets this motor's current encoder home position to the current encoder position reported by
-     * CAN messages, and resets this motor's encoder revolutions to 0.
-     */
-    void resetEncoderValue() override;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotorEncoder)
 
@@ -116,70 +106,7 @@ public:
      */
     mockable void processMessage(const modm::can::Message& message);
 
-    template <typename T>
-    static void assertEncoderType()
-    {
-        constexpr bool good_type =
-            std::is_same<typename std::decay<T>::type, std::int64_t>::value ||
-            std::is_same<typename std::decay<T>::type, std::uint16_t>::value;
-        static_assert(good_type, "x is not of the correct type");
-    }
-
-    template <typename T>
-    static T degreesToEncoder(float angle)
-    {
-        assertEncoderType<T>();
-        return static_cast<T>((ENC_RESOLUTION * angle) / 360);
-    }
-
-    template <typename T>
-    static float encoderToDegrees(T encoder)
-    {
-        assertEncoderType<T>();
-        return (360.0f * static_cast<float>(encoder)) / ENC_RESOLUTION;
-    }
-
 private:
-    /**
-     * Updates the stored encoder value given a newly received encoder value
-     * special logic necessary for keeping track of unwrapped encoder value.
-     */
-    void updateEncoderValue(uint16_t newEncWrapped);
-
-    /**
-     * If `false` the positive rotation direction of the shaft is counter-clockwise when
-     * looking at the shaft from the side opposite the motor. If `true` then the positive
-     * rotation direction will be clockwise.
-     */
-    bool motorInverted;
-
-    /**
-     * The raw encoder value reported by the motor controller relative to
-     * encoderHomePosition. It wraps around from {0..8191}, hence "Wrapped"
-     */
-    uint16_t encoderWrapped;
-
-    /**
-     * The raw encoder value reported by the motor controller relative to
-     * encoderHomePosition.
-     */
-    int16_t encoderUnwrapped;
-
-    /**
-     * Absolute unwrapped encoder position =
-     *      encoderRevolutions * ENCODER_RESOLUTION + encoderWrapped
-     * This lets us keep track of some sense of absolute position even while
-     * raw encoderValue continuosly loops within {0..8191}. Origin value is
-     * arbitrary.
-     */
-    int64_t encoderRevolutions;
-
-    /**
-     * The actual encoder wrapped value received from CAN messages where this motor
-     * is considered to have an encoder value of 0. encoderHomePosition is 0 by default.
-     */
-    uint16_t encoderHomePosition;
-
     // wait time before the motor is considered disconnected, in milliseconds
     static const uint32_t MOTOR_DISCONNECT_TIME = 100;
 

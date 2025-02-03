@@ -58,7 +58,7 @@ void MotorSpecificMenu::draw()
     currDesiredOutput = associatedMotor->getOutputDesired();
     currIsInverted = associatedMotor->isMotorInverted();
     currEncoderWrapped = associatedMotor->getInternalEncoder()->getEncoderWrapped();
-    currRPM = associatedMotor->getShaftRPM();
+    currRPM = associatedMotor->getInternalEncoder()->getShaftRPM();
 
     display << "  Motor ID: " << associatedMotor->getMotorIdentifier() << modm::endl
             << "  Des. Output: " << currDesiredOutput << modm::endl

@@ -101,8 +101,8 @@ public:
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
-        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0,
+        float gearRatio = 1,
+        uint32_t encoderHomePosition = 0,
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
 
     mockable ~DjiMotor();
@@ -166,11 +166,6 @@ public:
     int16_t getTorque() const override;
 
     mockable bool isMotorInverted() const;
-
-    mockable int16_t getShaftRPM() const override
-    {
-        return this->getInternalEncoder()->getShaftRPM();
-    }
 
     mockable tap::can::CanBus getCanBus() const;
 

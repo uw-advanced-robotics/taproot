@@ -42,8 +42,9 @@ public:
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
-        uint16_t encWrapped = ENC_RESOLUTION / 2,
-        int64_t encRevolutions = 0);
+        float gearRatio = 1,
+        uint32_t encoderHomePosition = 0,
+        tap::encoder::EncoderInterface* externalEncoder = nullptr);
     virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));

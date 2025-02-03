@@ -21,8 +21,10 @@
 
 #include "tap/mock/encoder_interface_mock.hpp"
 #include "tap/communication/sensors/encoder/multi_encoder.hpp"
+#include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 
 using namespace tap::encoder;
+using namespace tap::algorithms;
 using namespace tap::mock;
 using namespace testing;
 
@@ -226,17 +228,17 @@ TEST(MultiEncoderTests, is_online_when_primary_goes_off_and_online_and_secondary
                                                                            \
     EXPECT_CALL(mock, isOnline).WillRepeatedly(Return(PRIMARY_ONLINE));    \
     EXPECT_CALL(mock2, isOnline).WillRepeatedly(Return(SECONDARY_ONLINE)); \
-    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE &SECONDARY_ONLINE)
+    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE & SECONDARY_ONLINE)
 
 TEST(MultiEncoderTests, get_position_averages_positions)
 {
     SETUP_TEST(true, true);
 
     EXPECT_CALL(mock, getPosition)
-        .WillOnce(Return(tap::algorithms::WrappedFloat(M_PI, 0, M_TWOPI)));
-    EXPECT_CALL(mock2, getPosition).WillOnce(Return(tap::algorithms::WrappedFloat(0, 0, M_TWOPI)));
+        .WillOnce(Return(Angle(M_PI)));
+    EXPECT_CALL(mock2, getPosition).WillOnce(Return(Angle(0)));
 
-    EXPECT_FLOAT_EQ(multi.getPosition().getUnwrappedValue(), M_PI_2);
+    EXPECT_EQ(multi.getPosition(), Angle(M_PI_2));
 }
 
 TEST(MultiEncoderTests, get_position_averages_online_positions)
@@ -244,10 +246,10 @@ TEST(MultiEncoderTests, get_position_averages_online_positions)
     SETUP_TEST(true, false);
 
     EXPECT_CALL(mock, getPosition)
-        .WillOnce(Return(tap::algorithms::WrappedFloat(M_PI, 0, M_TWOPI)));
+        .WillOnce(Return(WrappedFloat(M_PI, 0, M_TWOPI)));
     EXPECT_CALL(mock2, getPosition).Times(0);
 
-    EXPECT_FLOAT_EQ(multi.getPosition().getUnwrappedValue(), M_PI);
+    EXPECT_EQ(multi.getPosition(), Angle(M_PI));
 }
 
 TEST(MultiEncoderTests, get_position_averages_no_online_positions_without_primary)
@@ -257,7 +259,7 @@ TEST(MultiEncoderTests, get_position_averages_no_online_positions_without_primar
     EXPECT_CALL(mock, getPosition).Times(0);
     EXPECT_CALL(mock2, getPosition).Times(0);
 
-    EXPECT_FLOAT_EQ(multi.getPosition().getUnwrappedValue(), 0);
+    EXPECT_EQ(multi.getPosition(), Angle(0));
 }
 
 TEST(MultiEncoderTests, get_position_averages_offline_positions)
@@ -267,7 +269,7 @@ TEST(MultiEncoderTests, get_position_averages_offline_positions)
     EXPECT_CALL(mock, getPosition).Times(0);
     EXPECT_CALL(mock2, getPosition).Times(0);
 
-    EXPECT_FLOAT_EQ(multi.getPosition().getUnwrappedValue(), 0);
+    EXPECT_EQ(multi.getPosition(), Angle(0));
 }
 
 TEST(MultiEncoderTests, get_velocity_averages_velocities)
@@ -318,6 +320,40 @@ TEST(MultiEncoderTests, reset_encoder_value_resets_encoders)
     EXPECT_CALL(mock2, resetEncoderValue).Times(1);
 
     multi.resetEncoderValue();
+}
+
+TEST(MultiEncoderTests, moving_relative_to_home_after_zeroed_ok)
+{
+    WrappedEncoder mock(false, 4, 1, 0);                                             
+    WrappedEncoder mock2(false, 4, 1, 0);                                            
+                                                                           
+    std::array<EncoderInterface *, 2> encoders = {&mock, &mock2};          
+    MultiEncoder<2> multi(encoders);                                       
+
+    mock.updateEncoderValue(2);
+    mock2.updateEncoderValue(2);
+    EXPECT_EQ(Angle(M_PI), multi.getPosition());
+
+    multi.resetEncoderValue();
+    EXPECT_EQ(Angle(0), multi.getPosition());
+
+    mock.updateEncoderValue(3);
+    mock2.updateEncoderValue(3);
+    EXPECT_FLOAT_EQ(Angle(M_PI_2).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
+
+    mock.updateEncoderValue(4);
+    mock2.updateEncoderValue(4);
+    EXPECT_FLOAT_EQ(Angle(M_PI).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
+
+    // We need to make sure that the encoder thinks its going backward
+    mock.updateEncoderValue(3); 
+    mock2.updateEncoderValue(3);
+    mock.updateEncoderValue(2); 
+    mock2.updateEncoderValue(2);
+
+    mock.updateEncoderValue(1);
+    mock2.updateEncoderValue(1);
+    EXPECT_FLOAT_EQ(Angle(-M_PI_2).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
 }
 
 TEST(MultiEncoderTests, align_with_aligns_encoders)

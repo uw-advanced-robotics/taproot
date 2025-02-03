@@ -27,14 +27,9 @@ namespace motor
 {
 DjiMotorEncoder::DjiMotorEncoder(
     bool isInverted,
-    uint16_t encoderWrapped,
-    int64_t encoderRevolutions)
-    : motorInverted(isInverted),
-      encoderWrapped(encoderWrapped),
-      encoderUnwrapped(encoderWrapped),
-      encoderRevolutions(encoderRevolutions),
-      encoderHomePosition(0),
-      shaftRPM(0)
+    float gearRatio,
+    uint32_t encoderHomePosition)
+    : WrappedEncoder(isInverted, ENC_RESOLUTION, gearRatio, encoderHomePosition)
 {
     encoderDisconnectTimeout.stop();
 }
@@ -43,19 +38,12 @@ void DjiMotorEncoder::processMessage(const modm::can::Message& message)
 {
     encoderDisconnectTimeout.restart(MOTOR_DISCONNECT_TIME);
     shaftRPM = static_cast<int16_t>(message.data[2] << 8 | message.data[3]);  // rpm
-    shaftRPM = motorInverted ? -shaftRPM : shaftRPM;
+    shaftRPM = inverted ? -shaftRPM : shaftRPM;
 
     uint16_t encoderActual =
         static_cast<uint16_t>(message.data[0] << 8 | message.data[1]);  // encoder value
 
-    // invert motor if necessary
-    encoderActual = motorInverted ? ENC_RESOLUTION - 1 - encoderActual : encoderActual;
-
-    int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition;
-
-    updateEncoderValue(
-        encoderRelativeToHome < 0 ? (int32_t)ENC_RESOLUTION + encoderRelativeToHome
-                                  : encoderRelativeToHome);
+    updateEncoderValue(encoderActual);
 }
 
 bool DjiMotorEncoder::isOnline() const
@@ -68,47 +56,16 @@ bool DjiMotorEncoder::isOnline() const
     return !encoderDisconnectTimeout.isExpired() && !encoderDisconnectTimeout.isStopped();
 }
 
-void DjiMotorEncoder::resetEncoderValue()
-{
-    encoderRevolutions = 0;
-    encoderHomePosition = (encoderWrapped + encoderHomePosition) % ENC_RESOLUTION;
-    encoderWrapped = 0;
-    encoderUnwrapped = 0;
-}
-
-tap::algorithms::WrappedFloat DjiMotorEncoder::getPosition() const
-{
-    return tap::algorithms::WrappedFloat(
-        getEncoderUnwrapped() * M_TWOPI / ENC_RESOLUTION,
-        0,
-        M_TWOPI);
-}
-
 float DjiMotorEncoder::getVelocity() const
 {
     return this->shaftRPM * static_cast<float>(M_TWOPI) / 60.f;
 }
 
-int64_t DjiMotorEncoder::getEncoderUnwrapped() const { return encoderUnwrapped; }
+int64_t DjiMotorEncoder::getEncoderUnwrapped() const { return encoder.getUnwrappedValue(); }
 
-uint16_t DjiMotorEncoder::getEncoderWrapped() const { return encoderWrapped; }
+uint16_t DjiMotorEncoder::getEncoderWrapped() const { return encoder.getWrappedValue(); }
 
 int16_t DjiMotorEncoder::getShaftRPM() const { return shaftRPM; }
-
-void DjiMotorEncoder::updateEncoderValue(uint16_t newEncWrapped)
-{
-    int16_t enc_dif = newEncWrapped - encoderWrapped;
-    if (enc_dif < -ENC_RESOLUTION / 2)
-    {
-        encoderUnwrapped += ENC_RESOLUTION;
-    }
-    else if (enc_dif > ENC_RESOLUTION / 2)
-    {
-        encoderUnwrapped -= ENC_RESOLUTION;
-    }
-    encoderWrapped = newEncWrapped;
-    encoderUnwrapped += enc_dif;
-}
 }  // namespace motor
 
 }  // namespace tap

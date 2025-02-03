@@ -112,7 +112,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly)
 
     EXPECT_EQ(motorData.encoder, motor.getInternalEncoder()->getEncoderWrapped());
     EXPECT_EQ(motorData.encoder, motor.getInternalEncoder()->getEncoderUnwrapped());
-    EXPECT_EQ(motorData.shaftRPM, motor.getShaftRPM());
+    EXPECT_EQ(motorData.shaftRPM, motor.getInternalEncoder()->getShaftRPM());
     EXPECT_EQ(motorData.torque, motor.getTorque());
     EXPECT_EQ(motorData.temperature, motor.getTemperature());
 }
@@ -142,7 +142,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     EXPECT_EQ(
         DjiMotor::ENC_RESOLUTION - motorData.encoder - 1,
         motor.getInternalEncoder()->getEncoderUnwrapped());
-    EXPECT_EQ(-motorData.shaftRPM, motor.getShaftRPM());
+    EXPECT_EQ(-motorData.shaftRPM, motor.getInternalEncoder()->getShaftRPM());
     EXPECT_EQ(-motorData.torque, motor.getTorque());
     EXPECT_EQ(motorData.temperature, motor.getTemperature());
 }

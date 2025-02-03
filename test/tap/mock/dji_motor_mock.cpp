@@ -27,17 +27,19 @@ DjiMotorMock::DjiMotorMock(
     tap::can::CanBus motorCanBus,
     bool isInverted,
     const char *name,
-    uint16_t encWrapped,
-    int64_t encRevolutions)
+    float gearRatio,
+    uint32_t encoderHomePosition,
+    tap::encoder::EncoderInterface* externalEncoder)
     : DjiMotor(
           drivers,
           desMotorIdentifier,
           motorCanBus,
           isInverted,
           name,
-          encWrapped,
-          encRevolutions),
-      mockedInternalEncoder(isInverted, encWrapped, encRevolutions)
+          gearRatio,
+          encoderHomePosition,
+          externalEncoder),
+      mockedInternalEncoder(isInverted, gearRatio, encoderHomePosition)
 {
 }
 DjiMotorMock::~DjiMotorMock() {}

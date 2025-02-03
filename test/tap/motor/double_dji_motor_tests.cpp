@@ -38,8 +38,6 @@ using namespace tap::motor;
         "m1",                       \
         "m2");
 
-static constexpr uint16_t ENC_RESOLUTION = 8192;
-
 TEST(DoubleDjiMotor, initialize__both_motors_initialized)
 {
     SETUP_TEST();

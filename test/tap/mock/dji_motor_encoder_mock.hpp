@@ -49,7 +49,7 @@ public:
 
     MOCK_METHOD(uint16_t, getEncoderWrapped, (), (const));
 
-    MOCK_METHOD(int16_t, getShaftRPM, (), (const));
+    MOCK_METHOD(int16_t, getShaftRPM, (), (const override));
 
     MOCK_METHOD(void, resetEncoderValue, (), (override));
 
