@@ -29,7 +29,7 @@
 
 #include "dji_motor_encoder.hpp"
 #include "dji_motor_ids.hpp"
-#include "fallback_encoder.hpp"
+#include "tap/communication/sensors/encoder/multi_encoder.hpp"
 #include "motor_interface.hpp"
 
 namespace tap::motor
@@ -103,15 +103,15 @@ public:
         const char* name,
         uint16_t encoderWrapped = ENC_RESOLUTION / 2,
         int64_t encoderRevolutions = 0,
-        EncoderInterface* externalEncoder = nullptr);
+        tap::encoder::EncoderInterface* externalEncoder = nullptr);
 
     mockable ~DjiMotor();
 
     void initialize() override;
 
-    EncoderInterface* getEncoder() const override
+    tap::encoder::EncoderInterface* getEncoder() const override
     {
-        return const_cast<FallbackEncoder<2>*>(&this->encoder);
+        return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
     }
 
     mockable const DjiMotorEncoder* getInternalEncoder() const { return &this->internalEncoder; }
@@ -204,7 +204,7 @@ private:
     bool motorInverted;
 
     DjiMotorEncoder internalEncoder;
-    FallbackEncoder<2> encoder;
+    tap::encoder::MultiEncoder<2> encoder;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
 };

@@ -52,12 +52,12 @@ public:
         const char* nameTwo,
         uint16_t encWrapped = DjiMotor::ENC_RESOLUTION / 2,
         int64_t encRevolutions = 0,
-        EncoderInterface* externalEncoder = nullptr);
+        tap::encoder::EncoderInterface* externalEncoder = nullptr);
 
     void initialize() override;
-    EncoderInterface* getEncoder() const override
+    tap::encoder::EncoderInterface* getEncoder() const override
     {
-        return const_cast<FallbackEncoder<3>*>(&this->encoder);
+        return const_cast<tap::encoder::MultiEncoder<3>*>(&this->encoder);
     }
     void setDesiredOutput(int32_t desiredOutput) override;
     bool isMotorOnline() const override;
@@ -76,7 +76,7 @@ protected:
     DjiMotor motorOne;
     DjiMotor motorTwo;
 #endif
-    FallbackEncoder<3> encoder;
+    tap::encoder::MultiEncoder<3> encoder;
 };
 }  // namespace tap::motor
 

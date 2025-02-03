@@ -17,20 +17,18 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_FALLBACK_ENCODER_HPP_
-#define TAPROOT_FALLBACK_ENCODER_HPP_
+#ifndef TAPROOT_MULTI_ENCODER_HPP_
+#define TAPROOT_MULTI_ENCODER_HPP_
 
 #include <array>
 
 #include "tap/util_macros.hpp"
 
 #include "modm/architecture/interface/assert.hpp"
-#include "modm/architecture/interface/can_message.hpp"
-#include "modm/math/geometry/angle.hpp"
 
 #include "encoder_interface.hpp"
 
-namespace tap::motor
+namespace tap::encoder
 {
 /**
  * A way to combine multiple encoders into one functional unit. The first encoder in the array
@@ -43,14 +41,14 @@ namespace tap::motor
  * encoders.
  */
 template <uint32_t COUNT>
-class FallbackEncoder : public EncoderInterface
+class MultiEncoder : public EncoderInterface
 {
 public:
-    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders)
+    MultiEncoder(std::array<EncoderInterface*, COUNT> encoders)
         : encoders(encoders),
           seenEncoders(0)
     {
-        modm_assert(this->encoders[0] != nullptr, "FallbackEncoder", "FallbackEncoder");
+        modm_assert(this->encoders[0] != nullptr, "MultiEncoder", "MultiEncoder");
     }
 
     void initialize() override
@@ -66,7 +64,7 @@ public:
 
     bool isOnline() const override
     {
-        const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        const_cast<MultiEncoder<COUNT>*>(this)->syncEncoders();
 
         for (uint32_t i = 0; i < COUNT; i++)
         {
@@ -81,7 +79,7 @@ public:
 
     tap::algorithms::WrappedFloat getPosition() const override
     {
-        const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        const_cast<MultiEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float position = 0;
 
@@ -102,7 +100,7 @@ public:
 
     float getVelocity() const override
     {
-        const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        const_cast<MultiEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float velocity = 0;
 
@@ -144,7 +142,7 @@ public:
         }
     }
 
-    DISALLOW_COPY_AND_ASSIGN(FallbackEncoder)
+    DISALLOW_COPY_AND_ASSIGN(MultiEncoder)
 
 private:
     std::array<EncoderInterface*, COUNT> encoders;
@@ -196,6 +194,6 @@ private:
     }
 };
 
-}  // namespace tap::motor
+}  // namespace tap::encoder
 
-#endif  // TAPROOT_FALLBACK_ENCODER_HPP_
+#endif  // TAPROOT_MULTI_ENCODER_HPP_

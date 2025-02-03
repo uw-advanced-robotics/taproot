@@ -22,7 +22,7 @@
 
 #include <cstdint>
 
-#include "encoder_interface.hpp"
+#include "tap/communication/sensors/encoder/encoder_interface.hpp"
 
 namespace tap::motor
 {
@@ -30,7 +30,7 @@ class MotorInterface
 {
 public:
     virtual void initialize() = 0;
-    virtual EncoderInterface* getEncoder() const = 0;
+    virtual tap::encoder::EncoderInterface* getEncoder() const = 0;
     virtual void setDesiredOutput(int32_t desiredOutput) = 0;
     virtual bool isMotorOnline() const = 0;
     virtual int16_t getOutputDesired() const = 0;

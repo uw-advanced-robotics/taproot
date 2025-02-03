@@ -45,7 +45,7 @@ DjiMotor::DjiMotor(
     const char* name,
     uint16_t encoderWrapped,
     int64_t encoderRevolutions,
-    EncoderInterface* externalEncoder)
+    tap::encoder::EncoderInterface* externalEncoder)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       motorName(name),
       drivers(drivers),

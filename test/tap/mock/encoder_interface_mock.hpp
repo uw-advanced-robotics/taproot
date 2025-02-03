@@ -22,11 +22,11 @@
 
 #include <gmock/gmock.h>
 
-#include "tap/motor/encoder_interface.hpp"
+#include "tap/communication/sensors/encoder/encoder_interface.hpp"
 
 namespace tap::mock
 {
-class EncoderInterfaceMock : public tap::motor::EncoderInterface
+class EncoderInterfaceMock : public tap::encoder::EncoderInterface
 {
 public:
     EncoderInterfaceMock();

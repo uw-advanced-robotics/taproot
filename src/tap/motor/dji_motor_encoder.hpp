@@ -26,7 +26,7 @@
 #include "modm/architecture/interface/can_message.hpp"
 #include "modm/math/geometry/angle.hpp"
 
-#include "encoder_interface.hpp"
+#include "tap/communication/sensors/encoder/encoder_interface.hpp"
 
 namespace tap::motor
 {
@@ -51,7 +51,7 @@ namespace tap::motor
  * @note Currently there is no error handling for using a motor without having it be properly
  * initialize. You must call the `initialize` function in order for this class to work properly.
  */
-class DjiMotorEncoder : public EncoderInterface
+class DjiMotorEncoder : public tap::encoder::EncoderInterface
 {
 public:
     // 0 - 8191 for dji motors

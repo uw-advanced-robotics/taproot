@@ -22,7 +22,7 @@
 
 #include "tap/algorithms/wrapped_float.hpp"
 
-namespace tap::motor
+namespace tap::encoder
 {
 class EncoderInterface
 {
@@ -36,6 +36,6 @@ public:
     virtual void alignWith(EncoderInterface* other) = 0;
 };
 
-}  // namespace tap::motor
+}  // namespace tap::encoder
 
 #endif  // TAPROOT_ENCODER_INTERFACE_HPP_
