@@ -26,7 +26,8 @@ namespace tap
 namespace motor
 {
 DjiMotorEncoder::DjiMotorEncoder(bool isInverted, float gearRatio, uint32_t encoderHomePosition)
-    : WrappedEncoder(isInverted, ENC_RESOLUTION, gearRatio, encoderHomePosition)
+    : WrappedEncoder(isInverted, ENC_RESOLUTION, gearRatio, encoderHomePosition),
+      shaftRPM(0)
 {
     encoderDisconnectTimeout.stop();
 }
