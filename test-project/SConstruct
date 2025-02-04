@@ -65,6 +65,10 @@ sources = env.FindSourceFiles(
     "src",
     ignoreFiles=IGNORED_FILES_WHILE_TESTING if args["TARGET_ENV"] == "tests" else [])
 
+# Setup SCons to use directory based caching, not global
+from SCons.SConsign import File
+File(None)
+
 # Tests must be included as sources (rather than built as a separate library) in order for
 # googletest to identify any tests that need to be run
 if args["TARGET_ENV"] == "tests":
@@ -91,6 +95,7 @@ elif args["TARGET_ENV"] == "tests":
     # then add various tools
     env.Append(toolpath=[TAPROOT_SCRIPTS_TOOLPATH])
     env.Tool("run_gcov")
+    env["CCFLAGS"].append("--coverage")
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
 

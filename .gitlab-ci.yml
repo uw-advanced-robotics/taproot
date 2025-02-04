@@ -103,6 +103,13 @@ before_script:
   script:
     - cd test-project
     - scons build $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/hardware/scons-release/
+      fallback_keys:
+        - tap-build-$BOARD_TYPE-develop
+      when: 'always'
 
 .sim_build:
   stage: "Build all Targets"
@@ -110,6 +117,13 @@ before_script:
   script:
     - cd test-project
     - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-sim-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/sim/scons-fast/
+      fallback_keys:
+        - tap-build-sim-$BOARD_TYPE-develop
+      when: 'always'
 
 .tests_build:
   stage: "Build all Targets"
@@ -131,6 +145,13 @@ before_script:
         coverage_format: cobertura
         path: cobertura.xml
     expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$BOARD_TYPE-develop
+      when: 'always'
 
 "Type A: Generate Test Project":
   needs: []

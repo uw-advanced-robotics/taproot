@@ -27,3 +27,5 @@ rm -rf taproot
 rm -rf build
 rm -f .sconsign.dblite
 rm -f project.xml.log
+rm -f *.gcov
+rm -f .sconsign 
