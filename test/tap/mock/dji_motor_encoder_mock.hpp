@@ -31,10 +31,7 @@ namespace tap::mock
 class DjiMotorEncoderMock : public tap::motor::DjiMotorEncoder
 {
 public:
-    DjiMotorEncoderMock(
-        bool isInverted,
-        float gearRatio = 1,
-        uint32_t encoderHomePosition = 0);
+    DjiMotorEncoderMock(bool isInverted, float gearRatio = 1, uint32_t encoderHomePosition = 0);
     virtual ~DjiMotorEncoderMock();
 
     MOCK_METHOD(void, initialize, (), (override));
