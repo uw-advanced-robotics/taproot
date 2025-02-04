@@ -36,7 +36,7 @@ DoubleDjiMotor::DoubleDjiMotor(
     const char* nameOne,
     const char* nameTwo,
     float gearRatio,
-    uint32_t encoderHomePosition,
+    tap::algorithms::WrappedFloat encoderHomePosition,
     tap::encoder::EncoderInterface* externalEncoder)
     : motorOne(
           drivers,

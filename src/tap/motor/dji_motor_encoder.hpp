@@ -77,7 +77,7 @@ public:
      * @param encoderRevolutions the starting number of encoder revolutions to store.
      *      See comment for DjiMotor::encoderRevolutions for more details.
      */
-    DjiMotorEncoder(bool isInverted, float gearRatio = 1, uint32_t encoderHomePosition = 0);
+    DjiMotorEncoder(bool isInverted, float gearRatio = 1, tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1));
 
     void initialize() override{};
 

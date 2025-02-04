@@ -43,7 +43,7 @@ public:
         bool isInverted,
         const char* name,
         float gearRatio = 1,
-        uint32_t encoderHomePosition = 0,
+        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1),
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
     virtual ~DjiMotorMock();
 

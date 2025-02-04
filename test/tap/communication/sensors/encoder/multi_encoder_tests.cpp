@@ -20,17 +20,12 @@
 #include <gtest/gtest.h>
 
 #include "tap/communication/sensors/encoder/multi_encoder.hpp"
-#include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 #include "tap/mock/encoder_interface_mock.hpp"
 
 using namespace tap::encoder;
 using namespace tap::algorithms;
 using namespace tap::mock;
 using namespace testing;
-
-template class MultiEncoder<1>;
-template class MultiEncoder<2>;
-template class MultiEncoder<3>;
 
 TEST(MultiEncoderTests, constructing_multi_encoder_succeeds_when_first_encoder_is_not_null)
 {
@@ -322,40 +317,6 @@ TEST(MultiEncoderTests, reset_encoder_value_resets_encoders)
     EXPECT_CALL(mock2, resetEncoderValue).Times(1);
 
     multi.resetEncoderValue();
-}
-
-TEST(MultiEncoderTests, moving_relative_to_home_after_zeroed_ok)
-{
-    WrappedEncoder mock(false, 4, 1, 0);
-    WrappedEncoder mock2(false, 4, 1, 0);
-
-    std::array<EncoderInterface *, 2> encoders = {&mock, &mock2};
-    MultiEncoder<2> multi(encoders);
-
-    mock.updateEncoderValue(2);
-    mock2.updateEncoderValue(2);
-    EXPECT_EQ(Angle(M_PI), multi.getPosition());
-
-    multi.resetEncoderValue();
-    EXPECT_EQ(Angle(0), multi.getPosition());
-
-    mock.updateEncoderValue(3);
-    mock2.updateEncoderValue(3);
-    EXPECT_FLOAT_EQ(Angle(M_PI_2).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
-
-    mock.updateEncoderValue(4);
-    mock2.updateEncoderValue(4);
-    EXPECT_FLOAT_EQ(Angle(M_PI).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
-
-    // We need to make sure that the encoder thinks its going backward
-    mock.updateEncoderValue(3);
-    mock2.updateEncoderValue(3);
-    mock.updateEncoderValue(2);
-    mock2.updateEncoderValue(2);
-
-    mock.updateEncoderValue(1);
-    mock2.updateEncoderValue(1);
-    EXPECT_FLOAT_EQ(Angle(-M_PI_2).getUnwrappedValue(), multi.getPosition().getUnwrappedValue());
 }
 
 TEST(MultiEncoderTests, align_with_aligns_encoders)

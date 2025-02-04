@@ -23,9 +23,9 @@ namespace tap::mock
 {
 DjiMotorEncoderMock::DjiMotorEncoderMock(
     bool isInverted,
-    uint16_t encoderWrapped,
-    int64_t encoderRevolutions)
-    : DjiMotorEncoder(isInverted, encoderWrapped, encoderRevolutions)
+    float gearRatio,
+    tap::algorithms::WrappedFloat encoderHomePosition)
+    : DjiMotorEncoder(isInverted, gearRatio, encoderHomePosition)
 
 {
 }

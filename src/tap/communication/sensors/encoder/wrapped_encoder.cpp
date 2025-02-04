@@ -30,13 +30,15 @@ WrappedEncoder::WrappedEncoder(
     bool isInverted,
     uint32_t encoderResolution,
     float gearRatio,
-    uint32_t encoderHomePosition)
+    tap::algorithms::WrappedFloat encoderHomePosition)
     : encoder(tap::algorithms::WrappedFloat(0, 0, 1)),
       position(tap::algorithms::Angle(0)),
       inverted(isInverted),
       encoderResolution(encoderResolution),
       gearRatio(gearRatio),
-      encoderHomePosition(encoderHomePosition),
+      encoderHomePosition(
+        tap::algorithms::WrappedFloat(encoderHomePosition.getUnwrappedValue(), 0, encoderResolution)
+      ),
       pastPosition(tap::algorithms::Angle(0)),
       lastUpdateTime(0)
 {
@@ -44,8 +46,7 @@ WrappedEncoder::WrappedEncoder(
 
 void WrappedEncoder::resetEncoderValue()
 {
-    encoderHomePosition =
-        ((uint32_t)encoder.getWrappedValue() + encoderHomePosition) % encoderResolution;
+    encoderHomePosition = encoder + encoderHomePosition;
     encoder.setUnwrappedValue(0);
     position.setUnwrappedValue(0);
 }
@@ -54,7 +55,21 @@ tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const { return posit
 
 float WrappedEncoder::getVelocity() const
 {
+    if (lastUpdateTime == 0)
+    {
+        return 0;
+    }
+    
     return (position - pastPosition).getUnwrappedValue() / lastUpdateTime * 1'000'000;
+}
+
+void WrappedEncoder::alignWith(EncoderInterface* other)
+{
+    tap::algorithms::WrappedFloat positionDifference = other->getPosition() - position;
+    float offset = positionDifference.getUnwrappedValue() / M_TWOPI * encoderResolution / gearRatio;
+    this->encoderHomePosition += offset;
+    this->encoder += offset;
+    this->position = other->getPosition();
 }
 
 void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
@@ -62,7 +77,7 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
     // invert motor if necessary
     encoderActual = inverted ? encoderResolution - 1 - encoderActual : encoderActual;
 
-    int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition;
+    int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition.getWrappedValue();
 
     uint32_t newEncWrapped = encoderRelativeToHome < 0
                                  ? (int32_t)encoderResolution + encoderRelativeToHome

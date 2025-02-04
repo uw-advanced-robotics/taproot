@@ -32,7 +32,7 @@ public:
         bool isInverted,
         uint32_t encoderResolution,
         float gearRatio = 1,
-        uint32_t encoderHomePosition = 0);
+        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1));
 
     void initialize() override{};
 
@@ -40,7 +40,7 @@ public:
 
     float getVelocity() const override;
 
-    void alignWith(EncoderInterface* other) override { UNUSED(other); }
+    void alignWith(EncoderInterface* other) override;
 
     /**
      * Resets this motor's current encoder home position to the current encoder position reported by
@@ -82,7 +82,7 @@ private:
      * The actual encoder wrapped value received from CAN messages where this motor
      * is considered to have an encoder value of 0. encoderHomePosition is 0 by default.
      */
-    uint32_t encoderHomePosition;
+    tap::algorithms::WrappedFloat encoderHomePosition;
 
     tap::algorithms::WrappedFloat pastPosition;
 

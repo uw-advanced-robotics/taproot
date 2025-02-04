@@ -25,7 +25,7 @@ namespace tap
 {
 namespace motor
 {
-DjiMotorEncoder::DjiMotorEncoder(bool isInverted, float gearRatio, uint32_t encoderHomePosition)
+DjiMotorEncoder::DjiMotorEncoder(bool isInverted, float gearRatio, tap::algorithms::WrappedFloat encoderHomePosition)
     : WrappedEncoder(isInverted, ENC_RESOLUTION, gearRatio, encoderHomePosition),
       shaftRPM(0)
 {

@@ -33,8 +33,8 @@ class DjiMotorEncoderMock : public tap::motor::DjiMotorEncoder
 public:
     DjiMotorEncoderMock(
         bool isInverted,
-        uint16_t encoderWrapped = ENC_RESOLUTION / 2,
-        int64_t encoderRevolutions = 0);
+        float gearRatio = 1,
+        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1));
     virtual ~DjiMotorEncoderMock();
 
     MOCK_METHOD(void, initialize, (), (override));
