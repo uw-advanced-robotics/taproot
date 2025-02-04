@@ -43,11 +43,7 @@ namespace tap::motor
  *      == false`) is counter clockwise when looking at the shaft from the side opposite
  *      the motor. This is specified in the C620 user manual (page 18).
  *
- * DJI motor encoders store a consistent encoding for a given angle across power-cycles.
- * This means the encoder angle reported by the motor can have meaning if the encoding
- * for an angle is unique as it is for the GM6020s. However for geared motors like the
- * M3508 where a full encoder revolution does not correspond 1:1 to a shaft revolution,
- * it is impossible to know the orientation of the shaft given just the encoder value.
+ * @see DjiMotorEncoder
  *
  * Extends the CanRxListener class to attach a message handler for feedback data from the
  * motor to the CAN Rx dispatch handler.
@@ -90,10 +86,9 @@ public:
      *      counter-clockwise when looking at the shaft from the side opposite the motor.
      *      If `true` then the positive rotation direction will be clockwise.
      * @param name a name to associate with the motor for use in the motor menu
-     * @param encoderWrapped the starting encoderValue to store for this motor.
-     *      Will be overwritten by the first reported encoder value from the motor
-     * @param encoderRevolutions the starting number of encoder revolutions to store.
-     *      See comment for DjiMotor::encoderRevolutions for more details.
+     * @param gearRatio the ratio of input revolutions to output revolutions of this encoder.
+     * @param encoderHomePosition the zero position for the encoder in encoder ticks.
+     * @param externalEncoder a pointer to an external encoder to average with the internal encoder.
      */
     DjiMotor(
         Drivers* drivers,
@@ -102,7 +97,7 @@ public:
         bool isInverted,
         const char* name,
         float gearRatio = 1,
-        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1),
+        uint32_t encoderHomePosition = 0,
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
 
     mockable ~DjiMotor();
@@ -114,6 +109,9 @@ public:
         return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
     }
 
+    /**
+     * Returns the builtin encoder associated with the motor.
+     */
     mockable const DjiMotorEncoder* getInternalEncoder() const { return &this->internalEncoder; }
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)

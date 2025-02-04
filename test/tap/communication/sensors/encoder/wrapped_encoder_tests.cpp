@@ -19,9 +19,9 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/architecture/clock.hpp"
 #include "tap/communication/sensors/encoder/wrapped_encoder.hpp"
 #include "tap/mock/encoder_interface_mock.hpp"
-#include "tap/architecture/clock.hpp"
 
 using namespace tap::encoder;
 using namespace tap::algorithms;
@@ -46,7 +46,7 @@ TEST(WrappedEncoder, resetEncoderValue_zeroes_encoder_fields)
 TEST(WrappedEncoder, moving_relative_to_home_after_zeroed_ok)
 {
     WrappedEncoder encoder(false, 4);
-    
+
     encoder.updateEncoderValue(2);
     EXPECT_EQ(Angle(M_PI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
 

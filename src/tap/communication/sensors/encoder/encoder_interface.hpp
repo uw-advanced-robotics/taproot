@@ -27,12 +27,32 @@ namespace tap::encoder
 class EncoderInterface
 {
 public:
+    /**
+     * Initialize the encoder. For instance: attaching a can receiver.
+     */
     virtual void initialize() = 0;
+    /**
+     * Returns true when the encoder is online and reporting valid values.
+     */
     virtual bool isOnline() const = 0;
+    /**
+     * Zeros the encoder to its current position. All encoder positions will be based from this
+     * position.
+     */
     virtual void resetEncoderValue() = 0;
+    /**
+     * Gets the current position of the encoder, in a wrapped float on the range [0, M_TWOPI)
+     */
     virtual tap::algorithms::WrappedFloat getPosition() const = 0;
-    // rad/s
+    /**
+     * Gets the current velocity reported by the encoder. Returned in a value of radians / second
+     */
     virtual float getVelocity() const = 0;
+    /**
+     * Aligns this encoder to another encoder so that their positions are equal.
+     * If the two encoders are mechanically linked, they would then continue to report the same
+     * position.
+     */
     virtual void alignWith(EncoderInterface* other) = 0;
 };
 

@@ -44,7 +44,7 @@ DjiMotor::DjiMotor(
     bool isInverted,
     const char* name,
     float gearRatio,
-    tap::algorithms::WrappedFloat encoderHomePosition,
+    uint32_t encoderHomePosition,
     tap::encoder::EncoderInterface* externalEncoder)
     : CanRxListener(drivers, static_cast<uint32_t>(desMotorIdentifier), motorCanBus),
       motorName(name),

@@ -25,14 +25,25 @@
 
 namespace tap::encoder
 {
+/**
+ * Represents an encoder that reports its values as a wrapped number of ticks.
+ */
 class WrappedEncoder : public EncoderInterface
 {
 public:
+    /**
+     * @param isInverted if `false` the positive rotation direction of the shaft is
+     *      counter-clockwise when looking at the shaft from.
+     *      If `true` then the positive rotation direction will be clockwise.
+     * @param encoderResolution the number of encoder ticks before the value wraps.
+     * @param gearRatio the ratio of input revolutions to output revolutions of this encoder.
+     * @param encoderHomePosition the zero position for the encoder in encoder ticks.
+     */
     WrappedEncoder(
         bool isInverted,
         uint32_t encoderResolution,
         float gearRatio = 1,
-        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1));
+        uint32_t encoderHomePosition = 0);
 
     void initialize() override{};
 
@@ -42,10 +53,6 @@ public:
 
     void alignWith(EncoderInterface* other) override;
 
-    /**
-     * Resets this motor's current encoder home position to the current encoder position reported by
-     * CAN messages, and resets this motor's encoder revolutions to 0.
-     */
     void resetEncoderValue() override;
 
     DISALLOW_COPY_AND_ASSIGN(WrappedEncoder)
@@ -62,15 +69,16 @@ protected:
      */
     void updateEncoderValue(uint32_t encoderActual);
 
+    /**
+     * The current encoder position.
+     */
     tap::algorithms::WrappedFloat encoder;
 
+    /**
+     * The encoder position converted into output rotations
+     */
     tap::algorithms::WrappedFloat position;
 
-    /**
-     * If `false` the positive rotation direction of the shaft is counter-clockwise when
-     * looking at the shaft from the side opposite the motor. If `true` then the positive
-     * rotation direction will be clockwise.
-     */
     bool inverted;
 
 private:
@@ -84,8 +92,14 @@ private:
      */
     tap::algorithms::WrappedFloat encoderHomePosition;
 
+    /**
+     * The past position for the encoder. Used in velocity calculations.
+     */
     tap::algorithms::WrappedFloat pastPosition;
 
+    /**
+     * The last update time for the encoder. Used in velocity calculations.
+     */
     uint64_t lastUpdateTime;
 };
 

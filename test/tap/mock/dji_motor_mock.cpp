@@ -28,7 +28,7 @@ DjiMotorMock::DjiMotorMock(
     bool isInverted,
     const char *name,
     float gearRatio,
-    tap::algorithms::WrappedFloat encoderHomePosition,
+    uint32_t encoderHomePosition,
     tap::encoder::EncoderInterface *externalEncoder)
     : DjiMotor(
           drivers,

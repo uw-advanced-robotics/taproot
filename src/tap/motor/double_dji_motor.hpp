@@ -51,7 +51,8 @@ public:
         const char* nameOne,
         const char* nameTwo,
         float gearRatio = 1,
-        tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1),
+        uint32_t encoderHomePositionOne = 0,
+        uint32_t encoderHomePositionTwo = 0,
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
 
     void initialize() override;

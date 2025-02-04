@@ -36,7 +36,8 @@ DoubleDjiMotor::DoubleDjiMotor(
     const char* nameOne,
     const char* nameTwo,
     float gearRatio,
-    tap::algorithms::WrappedFloat encoderHomePosition,
+    uint32_t encoderHomePositionOne,
+    uint32_t encoderHomePositionTwo,
     tap::encoder::EncoderInterface* externalEncoder)
     : motorOne(
           drivers,
@@ -45,7 +46,7 @@ DoubleDjiMotor::DoubleDjiMotor(
           isInvertedOne,
           nameOne,
           gearRatio,
-          encoderHomePosition),
+          encoderHomePositionOne),
       motorTwo(
           drivers,
           desMotorIdentifierTwo,
@@ -53,7 +54,7 @@ DoubleDjiMotor::DoubleDjiMotor(
           isInvertedTwo,
           nameTwo,
           gearRatio,
-          encoderHomePosition),
+          encoderHomePositionTwo),
       encoder(
           {externalEncoder != nullptr ? externalEncoder : CAST_ENC(motorOne.getInternalEncoder()),
            externalEncoder != nullptr ? CAST_ENC(motorOne.getInternalEncoder())

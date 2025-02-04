@@ -30,9 +30,9 @@
 namespace tap::motor
 {
 /**
- * A class designed to interface with DJI brand motors and motor controllers over CAN.
- * This includes the C610 and C620 motor controllers and the GM6020 motor (that has a
- * built-in motor controller).
+ * A class designed to interface with the encoder for DJI brand motors and motor controllers over
+ * CAN. This includes the C610 and C620 motor controllers and the GM6020 motor (that has a built-in
+ * motor controller).
  *
  * @note: the default positive rotation direction (i.e.: when `this->isMotorInverted()
  *      == false`) is counter clockwise when looking at the shaft from the side opposite
@@ -44,11 +44,8 @@ namespace tap::motor
  * M3508 where a full encoder revolution does not correspond 1:1 to a shaft revolution,
  * it is impossible to know the orientation of the shaft given just the encoder value.
  *
- * Extends the CanRxListener class to attach a message handler for feedback data from the
- * motor to the CAN Rx dispatch handler.
- *
- * @note Currently there is no error handling for using a motor without having it be properly
- * initialize. You must call the `initialize` function in order for this class to work properly.
+ * Combining them with some form of absolute encoder on the output shaft would give you knowledge of
+ * the orientation of the output shaft.
  */
 class DjiMotorEncoder : public tap::encoder::WrappedEncoder
 {
@@ -65,19 +62,14 @@ public:
     static constexpr float GEAR_RATIO_M2006 = 36.0f / 1.0f;
 
     /**
-     * @param drivers a pointer to the drivers struct
-     * @param desMotorIdentifier the ID of this motor controller
-     * @param motorCanBus the CAN bus the motor is on
      * @param isInverted if `false` the positive rotation direction of the shaft is
-     *      counter-clockwise when looking at the shaft from the side opposite the motor.
+     *      counter-clockwise when looking at the shaft from.
      *      If `true` then the positive rotation direction will be clockwise.
-     * @param name a name to associate with the motor for use in the motor menu
-     * @param encoderWrapped the starting encoderValue to store for this motor.
-     *      Will be overwritten by the first reported encoder value from the motor
-     * @param encoderRevolutions the starting number of encoder revolutions to store.
-     *      See comment for DjiMotor::encoderRevolutions for more details.
+     * @param encoderResolution the number of encoder ticks before the value wraps.
+     * @param gearRatio the ratio of input revolutions to output revolutions of this encoder.
+     * @param encoderHomePosition the zero position for the encoder in encoder ticks.
      */
-    DjiMotorEncoder(bool isInverted, float gearRatio = 1, tap::algorithms::WrappedFloat encoderHomePosition = tap::algorithms::WrappedFloat(0, 0, 1));
+    DjiMotorEncoder(bool isInverted, float gearRatio = 1, uint32_t encoderHomePosition = 0);
 
     void initialize() override{};
 
@@ -85,10 +77,19 @@ public:
 
     float getVelocity() const override;
 
+    /**
+     * The encoder position from home, including full rotations.
+     */
     mockable int64_t getEncoderUnwrapped() const;
 
+    /**
+     * The raw encoder value relative to the encoder home.
+     */
     mockable uint16_t getEncoderWrapped() const;
 
+    /**
+     * The current RPM reported by the motor controller.
+     */
     mockable int16_t getShaftRPM() const;
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotorEncoder)

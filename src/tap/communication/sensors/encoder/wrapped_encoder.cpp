@@ -30,15 +30,13 @@ WrappedEncoder::WrappedEncoder(
     bool isInverted,
     uint32_t encoderResolution,
     float gearRatio,
-    tap::algorithms::WrappedFloat encoderHomePosition)
+    uint32_t encoderHomePosition)
     : encoder(tap::algorithms::WrappedFloat(0, 0, 1)),
       position(tap::algorithms::Angle(0)),
       inverted(isInverted),
       encoderResolution(encoderResolution),
       gearRatio(gearRatio),
-      encoderHomePosition(
-        tap::algorithms::WrappedFloat(encoderHomePosition.getUnwrappedValue(), 0, encoderResolution)
-      ),
+      encoderHomePosition(tap::algorithms::WrappedFloat(encoderHomePosition, 0, encoderResolution)),
       pastPosition(tap::algorithms::Angle(0)),
       lastUpdateTime(0)
 {
@@ -59,7 +57,7 @@ float WrappedEncoder::getVelocity() const
     {
         return 0;
     }
-    
+
     return (position - pastPosition).getUnwrappedValue() / lastUpdateTime * 1'000'000;
 }
 
@@ -77,7 +75,8 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
     // invert motor if necessary
     encoderActual = inverted ? encoderResolution - 1 - encoderActual : encoderActual;
 
-    int32_t encoderRelativeToHome = (int32_t)encoderActual - (int32_t)encoderHomePosition.getWrappedValue();
+    int32_t encoderRelativeToHome =
+        (int32_t)encoderActual - (int32_t)encoderHomePosition.getWrappedValue();
 
     uint32_t newEncWrapped = encoderRelativeToHome < 0
                                  ? (int32_t)encoderResolution + encoderRelativeToHome
