@@ -28,6 +28,10 @@ using namespace tap::algorithms;
 using namespace tap::mock;
 using namespace testing;
 
+template class MultiEncoder<1>;
+template class MultiEncoder<2>;
+template class MultiEncoder<3>;
+
 TEST(MultiEncoderTests, constructing_multi_encoder_succeeds_when_first_encoder_is_not_null)
 {
     EncoderInterfaceMock mock;
