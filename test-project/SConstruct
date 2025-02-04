@@ -95,7 +95,7 @@ elif args["TARGET_ENV"] == "tests":
     # then add various tools
     env.Append(toolpath=[TAPROOT_SCRIPTS_TOOLPATH])
     env.Tool("run_gcov")
-    env["CCFLAGS"].append("--coverage")
+    env["CCFLAGS"] += ["--coverage", "-fno-inline", "-fno-inline-small-function", "-fno-default-inline"]
 
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+"-tests.elf", source=sources)
 
