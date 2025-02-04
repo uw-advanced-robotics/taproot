@@ -182,32 +182,44 @@ before_script:
   extends:
     - .type_a_config_dependencies
     - .mcb_build
+  variables:
+    BOARD_TYPE: type_a
 
 "Type A: Sim Build":
   extends:
     - .type_a_config_dependencies
     - .sim_build
+  variables:
+    BOARD_TYPE: type_a
 
 "Type A: Tests Build":
   extends:
     - .type_a_config_dependencies
     - .tests_build
+  variables:
+    BOARD_TYPE: type_a
 
 # Type C CI
 "Type C: MCB Build":
   extends:
     - .type_c_config_dependencies
     - .mcb_build
+  variables:
+    BOARD_TYPE: type_c
 
 "Type C: Sim Build":
   extends:
     - .type_c_config_dependencies
     - .sim_build
+  variables:
+    BOARD_TYPE: type_c
 
 "Type C: Tests Build":
   extends:
     - .type_c_config_dependencies
     - .tests_build
+  variables:
+    BOARD_TYPE: type_c
 
 # Pages deploy
 
