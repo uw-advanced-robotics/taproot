@@ -27,6 +27,7 @@ DjiMotorMock::DjiMotorMock(
     tap::can::CanBus motorCanBus,
     bool isInverted,
     const char *name,
+    bool currentControl,
     float gearRatio,
     uint32_t encoderHomePosition,
     tap::encoder::EncoderInterface *externalEncoder)
@@ -36,6 +37,7 @@ DjiMotorMock::DjiMotorMock(
           motorCanBus,
           isInverted,
           name,
+          currentControl,
           gearRatio,
           encoderHomePosition,
           externalEncoder),

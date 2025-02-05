@@ -43,6 +43,7 @@ DjiMotor::DjiMotor(
     tap::can::CanBus motorCanBus,
     bool isInverted,
     const char* name,
+    bool currentControl,
     float gearRatio,
     uint32_t encoderHomePosition,
     tap::encoder::EncoderInterface* externalEncoder)
@@ -56,6 +57,7 @@ DjiMotor::DjiMotor(
       temperature(0),
       torque(0),
       motorInverted(isInverted),
+      currentControl(currentControl),
       internalEncoder(isInverted, gearRatio, encoderHomePosition),
       encoder(
           {externalEncoder != nullptr ? externalEncoder
@@ -131,6 +133,9 @@ bool DjiMotor::isMotorInverted() const { return motorInverted; }
 tap::can::CanBus DjiMotor::getCanBus() const { return motorCanBus; }
 
 const char* DjiMotor::getName() const { return motorName; }
+
+bool DjiMotor::isInCurrentControl() const { return currentControl; }
+
 }  // namespace motor
 
 }  // namespace tap

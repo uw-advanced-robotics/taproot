@@ -96,6 +96,7 @@ public:
         tap::can::CanBus motorCanBus,
         bool isInverted,
         const char* name,
+        bool currentControl = false,
         float gearRatio = 1,
         uint32_t encoderHomePosition = 0,
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
@@ -169,6 +170,8 @@ public:
 
     mockable const char* getName() const;
 
+    mockable bool isInCurrentControl() const;
+
 private:
     // wait time before the motor is considered disconnected, in milliseconds
     static const uint32_t MOTOR_DISCONNECT_TIME = 100;
@@ -195,6 +198,8 @@ private:
      * rotation direction will be clockwise.
      */
     bool motorInverted;
+
+    bool currentControl;
 
     DjiMotorEncoder internalEncoder;
     tap::encoder::MultiEncoder<2> encoder;
