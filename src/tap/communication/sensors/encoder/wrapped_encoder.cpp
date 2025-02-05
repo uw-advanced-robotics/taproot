@@ -64,7 +64,8 @@ float WrappedEncoder::getVelocity() const
 void WrappedEncoder::alignWith(EncoderInterface* other)
 {
     tap::algorithms::WrappedFloat positionDifference = other->getPosition() - position;
-    float offset = positionDifference.getUnwrappedValue() / static_cast<float>(M_TWOPI) * encoderResolution / gearRatio;
+    float offset = positionDifference.getUnwrappedValue() / static_cast<float>(M_TWOPI) *
+                   encoderResolution / gearRatio;
     this->encoderHomePosition += offset;
     this->encoder += offset;
     this->position = other->getPosition();
