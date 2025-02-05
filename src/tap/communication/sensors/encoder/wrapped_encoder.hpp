@@ -45,7 +45,7 @@ public:
         float gearRatio = 1,
         uint32_t encoderHomePosition = 0);
 
-    void initialize() override{};
+    void initialize() override {};
 
     tap::algorithms::WrappedFloat getPosition() const override;
 
