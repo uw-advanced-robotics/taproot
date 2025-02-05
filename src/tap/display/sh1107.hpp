@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -84,7 +84,6 @@ private:
      * to have local variables in protothreads these are stored by this class.
      */
     uint8_t x, y;
-    int balls = 0;
 
     modm::atomic::Flag writeToDisplay;
 };

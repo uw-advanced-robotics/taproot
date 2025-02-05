@@ -60,7 +60,7 @@ public:
     OledButtonHandler(tap::Drivers *drivers);
 
     // Constructor for setting custom ADC button values
-    OledButtonHandler(tap::Drivers *drivers, const AnalogConfig *analogConfig);
+    OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig);
 
     /**
      * Updates the status of the current button and returns the updated button.
@@ -91,7 +91,7 @@ private:
     modm::filter::Debounce<int> rightButtonPressed;
     modm::filter::Debounce<int> okButtonPressed;
 
-    const struct AnalogConfig *ADC_CONFIG;
+    const struct AnalogConfig adcConfig;
 };  // class OledButtonHandler
 }  // namespace display
 }  // namespace tap
