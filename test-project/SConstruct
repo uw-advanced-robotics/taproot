@@ -110,8 +110,6 @@ elif args["TARGET_ENV"] == "tests":
             )
         )
 
-    if COMMAND_LINE_TARGETS[0] == "run-tests-gcov":
-        env["CCFLAGS"] += ["--coverage"]
     env.Alias("run-tests-gcov", [env.RunGCOV(program, True, GCOV_SOURCES_TO_IGNORE)])
 else:
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
