@@ -167,7 +167,7 @@ elif args["TARGET_ENV"] == "tests":
         env.AppendUnique(LIBS=COVERAGE_LIBS)
 else:  # hardware target env
     # Update linkerscript file
-    if sys.platform == "win32":
+    if sys.platform == "win32" and "-Tmodm\\link\\linkerscript.ld" in env["LINKFLAGS"]:
         env["LINKFLAGS"].remove("-Tmodm\\link\\linkerscript.ld")
     else:
         env["LINKFLAGS"].remove("-Tmodm/link/linkerscript.ld")

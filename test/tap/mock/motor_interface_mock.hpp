@@ -25,6 +25,7 @@
 #include <gmock/gmock.h>
 
 #include "tap/motor/motor_interface.hpp"
+#include "encoder_interface_mock.hpp"
 
 namespace tap::mock
 {
@@ -40,6 +41,14 @@ public:
     MOCK_METHOD(int16_t, getOutputDesired, (), (const override));
     MOCK_METHOD(int8_t, getTemperature, (), (const override));
     MOCK_METHOD(int16_t, getTorque, (), (const override));
+    
+    EncoderInterfaceMock* getEncoder() const override
+    { 
+        return const_cast<testing::NiceMock<tap::mock::EncoderInterfaceMock>*>(&encoder);
+    }
+
+private:
+    testing::NiceMock<tap::mock::EncoderInterfaceMock> encoder;
 };
 
 }  // namespace tap::mock

@@ -64,7 +64,7 @@ public:
     MOCK_METHOD(tap::can::CanBus, getCanBus, (), (const override));
     MOCK_METHOD(const char*, getName, (), (const override));
 
-    const tap::motor::DjiMotorEncoder* getInternalEncoder() const override
+    const DjiMotorEncoderMock* getInternalEncoder() const override
     {
         return &this->mockedInternalEncoder;
     }
