@@ -22,8 +22,7 @@
 #endif
 
 template <unsigned int Width, unsigned int Height, bool Flipped, bool Rotate>
-bool tap::display::Sh1107<Width, Height, Flipped, Rotate>::
-    updateNonblocking()
+bool tap::display::Sh1107<Width, Height, Flipped, Rotate>::updateNonblocking()
 {
     // no-op
     return false;
