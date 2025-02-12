@@ -85,12 +85,10 @@ template <
     unsigned int Height,
     bool Flipped,
     bool Rotate>
-modm::ResumableResult<bool> tap::display::Sh1107<SPI, A0, Reset, Width, Height, Flipped, Rotate>::
+bool tap::display::Sh1107<SPI, A0, Reset, Width, Height, Flipped, Rotate>::
     updateNonblocking()
 {
-    RF_BEGIN(0);
-
-    if (!writeToDisplay.testAndSet(false)) RF_RETURN(false);
+    if (!writeToDisplay.testAndSet(false)) return false;
 
     if (Rotate)
     {
@@ -101,9 +99,9 @@ modm::ResumableResult<bool> tap::display::Sh1107<SPI, A0, Reset, Width, Height, 
     {
         // command mode
         a0.reset();
-        RF_CALL(spi.transfer(SH1107_PAGE_ADDRESS | y));  // Row select
-        RF_CALL(spi.transfer(SH1107_COL_ADDRESS_MSB));   // Column select high
-        RF_CALL(spi.transfer(SH1107_COL_ADDRESS_LSB));   // Column select low
+        spi.transfer(SH1107_PAGE_ADDRESS | y);  // Row select
+        spi.transfer(SH1107_COL_ADDRESS_MSB);   // Column select high
+        spi.transfer(SH1107_COL_ADDRESS_LSB);   // Column select low
 
         // switch to data mode
         a0.set();
@@ -111,17 +109,17 @@ modm::ResumableResult<bool> tap::display::Sh1107<SPI, A0, Reset, Width, Height, 
         {
             if (Rotate)
             {
-                RF_CALL(spi.transfer(rotatedMatrix[y][x]));
+                spi.transfer(rotatedMatrix[y][x]);
             }
             else
             {
-                RF_CALL(spi.transfer(this->buffer[y][x]));
+                spi.transfer(this->buffer[y][x]);
             }
         }
     }
     a0.reset();
 
-    RF_END_RETURN(true);
+    return true;
 }
 
 template <
