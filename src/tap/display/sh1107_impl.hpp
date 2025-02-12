@@ -85,8 +85,7 @@ template <
     unsigned int Height,
     bool Flipped,
     bool Rotate>
-bool tap::display::Sh1107<SPI, A0, Reset, Width, Height, Flipped, Rotate>::
-    updateNonblocking()
+bool tap::display::Sh1107<SPI, A0, Reset, Width, Height, Flipped, Rotate>::updateNonblocking()
 {
     if (!writeToDisplay.testAndSet(false)) return false;
 
