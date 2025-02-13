@@ -44,8 +44,7 @@ public:
         const char* name,
         bool currentControl = false,
         float gearRatio = 1,
-        uint32_t encoderHomePosition = 0,
-        tap::encoder::EncoderInterface* externalEncoder = nullptr);
+        uint32_t encoderHomePosition = 0);
     virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));

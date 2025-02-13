@@ -29,8 +29,7 @@ DjiMotorMock::DjiMotorMock(
     const char *name,
     bool currentControl,
     float gearRatio,
-    uint32_t encoderHomePosition,
-    tap::encoder::EncoderInterface *externalEncoder)
+    uint32_t encoderHomePosition)
     : DjiMotor(
           drivers,
           desMotorIdentifier,
@@ -40,7 +39,7 @@ DjiMotorMock::DjiMotorMock(
           currentControl,
           gearRatio,
           encoderHomePosition,
-          externalEncoder),
+          &mockedInternalEncoder),
       mockedInternalEncoder(isInverted, gearRatio, encoderHomePosition)
 {
 }

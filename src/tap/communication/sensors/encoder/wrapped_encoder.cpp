@@ -31,7 +31,7 @@ WrappedEncoder::WrappedEncoder(
     uint32_t encoderResolution,
     float gearRatio,
     uint32_t encoderHomePosition)
-    : encoder(tap::algorithms::WrappedFloat(0, 0, 1)),
+    : encoder(tap::algorithms::WrappedFloat(0, 0, encoderResolution)),
       position(tap::algorithms::Angle(0)),
       inverted(isInverted),
       encoderResolution(encoderResolution),
