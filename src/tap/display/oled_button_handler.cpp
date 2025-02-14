@@ -25,17 +25,6 @@ namespace tap
 {
 namespace display
 {
-OledButtonHandler::OledButtonHandler(tap::Drivers *drivers)
-    : drivers(drivers),
-      downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      upButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      leftButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      rightButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      okButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      adcConfig(DEFAULT_ADC_CONFIG)
-{
-}
-
 OledButtonHandler::OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig)
     : drivers(drivers),
       downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),

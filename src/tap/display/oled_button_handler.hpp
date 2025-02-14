@@ -57,10 +57,8 @@ public:
         NONE,
     };
 
-    OledButtonHandler(tap::Drivers *drivers);
-
     // Constructor for setting custom ADC button values
-    OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig);
+    OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig = DEFAULT_ADC_CONFIG);
 
     /**
      * Updates the status of the current button and returns the updated button.
@@ -75,7 +73,7 @@ private:
     static constexpr int BUTTON_DEBOUNCE_SAMPLES = 10;
     static constexpr int ADC_PRESSED_RANGE = 100;
 
-    const struct AnalogConfig DEFAULT_ADC_CONFIG = {
+    static constexpr struct AnalogConfig DEFAULT_ADC_CONFIG = {
         .ok = 0,
         .left = 900,
         .right = 1700,
