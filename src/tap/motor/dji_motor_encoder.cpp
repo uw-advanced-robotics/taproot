@@ -56,7 +56,7 @@ bool DjiMotorEncoder::isOnline() const
 
 float DjiMotorEncoder::getVelocity() const
 {
-    return this->shaftRPM * static_cast<float>(M_TWOPI) / 60.f * this->gearRatio;
+    return this->shaftRPM * static_cast<float>(M_TWOPI) / 60.f / this->gearRatio;
 }
 
 int64_t DjiMotorEncoder::getEncoderUnwrapped() const { return encoder.getUnwrappedValue(); }

@@ -126,3 +126,18 @@ TEST(WrappedEncoder, align_with_updates_values)
     encoder.updateEncoderValue(2);
     EXPECT_EQ(Angle(M_TWOPI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
 }
+
+TEST(WrappedEncoder, gear_ratio_works)
+{
+    tap::arch::clock::ClockStub clock;
+    WrappedEncoder encoder(false, 4, 2);
+
+    encoder.updateEncoderValue(0);
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
+    EXPECT_EQ(Angle(0).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
+
+    clock.time = 1000;
+    encoder.updateEncoderValue(2);
+    EXPECT_FLOAT_EQ(M_PI_2, encoder.getVelocity());
+    EXPECT_EQ(Angle(M_PI_2).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
+}

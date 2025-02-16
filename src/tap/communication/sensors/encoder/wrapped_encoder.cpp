@@ -95,7 +95,7 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
     pastPosition = position;
     lastUpdateTime = tap::arch::clock::getTimeMicroseconds();
     position = tap::algorithms::Angle(
-        encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution * gearRatio);
+        encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution / gearRatio);
 }
 }  // namespace encoder
 

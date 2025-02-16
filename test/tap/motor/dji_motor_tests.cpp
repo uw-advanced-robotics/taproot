@@ -151,6 +151,38 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     EXPECT_EQ(motorData.temperature, motor.getTemperature());
 }
 
+TEST(DjiMotor, parseCanRxData_encoder_info_interpreted_correctly_with_ratio)
+{
+    tap::arch::clock::ClockStub clock;
+    DjiMotorEncoder encoder(false, 2);
+
+    modm::can::Message msg(MOTOR1, 8);
+    msg.setExtended(false);
+
+    MotorData motorData;
+
+    motorData.encoder = 0;
+    motorData.shaftRPM = 0;
+    motorData.encode(msg.data);
+    encoder.processMessage(msg);
+
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
+    EXPECT_EQ(
+        tap::algorithms::Angle(0).getUnwrappedValue(),
+        encoder.getPosition().getUnwrappedValue());
+
+    clock.time = 1000;
+    motorData.encoder = DjiMotorEncoder::ENC_RESOLUTION / 2;
+    motorData.shaftRPM = 100;
+    motorData.encode(msg.data);
+    encoder.processMessage(msg);
+
+    EXPECT_FLOAT_EQ(100 * static_cast<float>(M_TWOPI) / 60.f / 2, encoder.getVelocity());
+    EXPECT_EQ(
+        tap::algorithms::Angle(M_PI_2).getUnwrappedValue(),
+        encoder.getPosition().getUnwrappedValue());
+}
+
 TEST(DjiMotor, setDesiredOutput_limits_output)
 {
     tap::Drivers drivers;
