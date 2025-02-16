@@ -187,8 +187,8 @@ void DjiMotorTerminalSerialHandler::getMotorInfoToString(
     {
         outputStream << (DJI_MOTOR_TO_NORMALIZED_ID(motor->getMotorIdentifier()) + 1) << ". "
                      << motor->getName() << ": online: " << (motor->isMotorOnline() ? "yes" : "no")
-                     << ", enc: " << motor->getInternalEncoder()->getEncoderWrapped()
-                     << ", rpm: " << motor->getInternalEncoder()->getShaftRPM()
+                     << ", enc: " << motor->getInternalEncoder().getEncoderWrapped()
+                     << ", rpm: " << motor->getInternalEncoder().getShaftRPM()
                      << ", out des: " << motor->getOutputDesired() << modm::endl;
     }
 }

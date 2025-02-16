@@ -44,7 +44,8 @@ public:
         const char* name,
         bool currentControl = false,
         float gearRatio = 1,
-        uint32_t encoderHomePosition = 0);
+        uint32_t encoderHomePosition = 0,
+        tap::encoder::EncoderInterface* externalEncoder = nullptr);
     virtual ~DjiMotorMock();
 
     MOCK_METHOD(void, initialize, (), (override));
@@ -62,13 +63,6 @@ public:
     MOCK_METHOD(bool, isMotorInverted, (), (const override));
     MOCK_METHOD(tap::can::CanBus, getCanBus, (), (const override));
     MOCK_METHOD(const char*, getName, (), (const override));
-
-    const DjiMotorEncoderMock* getInternalEncoder() const override
-    {
-        return &this->mockedInternalEncoder;
-    }
-
-    testing::NiceMock<DjiMotorEncoderMock> mockedInternalEncoder;
 
 };  // class DjiMotor
 

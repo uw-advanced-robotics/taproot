@@ -32,8 +32,21 @@
 #include "dji_motor_ids.hpp"
 #include "motor_interface.hpp"
 
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+#include <gmock/gmock.h>
+
+#include "tap/mock/dji_motor_encoder_mock.hpp"
+#endif
+
 namespace tap::motor
 {
+
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+using Encoder = tap::mock::DjiMotorEncoderMock;
+#else
+using Encoder = DjiMotorEncoder;
+#endif
+
 /**
  * A class designed to interface with DJI brand motors and motor controllers over CAN.
  * This includes the C610 and C620 motor controllers and the GM6020 motor (that has a
@@ -113,7 +126,7 @@ public:
     /**
      * Returns the builtin encoder associated with the motor.
      */
-    mockable const DjiMotorEncoder* getInternalEncoder() const { return &this->internalEncoder; }
+    mockable const Encoder& getInternalEncoder() const { return this->internalEncoder; }
 
     DISALLOW_COPY_AND_ASSIGN(DjiMotor)
 
@@ -201,7 +214,12 @@ private:
 
     bool currentControl;
 
-    DjiMotorEncoder internalEncoder;
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+    testing::NiceMock<Encoder> internalEncoder;
+#else
+    Encoder internalEncoder;
+#endif
+
     tap::encoder::MultiEncoder<2> encoder;
 
     tap::arch::MilliTimeout motorDisconnectTimeout;

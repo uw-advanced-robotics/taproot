@@ -45,6 +45,8 @@ TEST(WrappedEncoder, resetEncoderValue_zeroes_encoder_fields)
 
 TEST(WrappedEncoder, moving_relative_to_home_after_zeroed_ok)
 {
+    tap::arch::clock::ClockStub clock;
+    clock.time = 1;
     WrappedEncoder encoder(false, 4);
 
     encoder.updateEncoderValue(2);
@@ -69,6 +71,8 @@ TEST(WrappedEncoder, moving_relative_to_home_after_zeroed_ok)
 
 TEST(WrappedEncoder, inverted_moving_relative_to_home_after_zeroed_ok)
 {
+    tap::arch::clock::ClockStub clock;
+    clock.time = 1;
     WrappedEncoder encoder(true, 4);
 
     encoder.updateEncoderValue(2);
@@ -106,6 +110,9 @@ TEST(WrappedEncoder, calculates_velocity_correctly)
 
 TEST(WrappedEncoder, align_with_updates_values)
 {
+    tap::arch::clock::ClockStub clock;
+    clock.time = 1;
+
     WrappedEncoder encoder(false, 4);
     EncoderInterfaceMock mock;
     EXPECT_CALL(mock, getPosition).WillRepeatedly(Return(Angle(M_PI)));

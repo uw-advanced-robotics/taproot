@@ -83,7 +83,7 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
                                  ? (int32_t)encoderResolution + encoderRelativeToHome
                                  : encoderRelativeToHome;
 
-    if (encoder.getUpperBound() != encoderResolution)  // The first time we get a value
+    if (lastUpdateTime == 0)  // The first time we get a value
     {
         encoder = tap::algorithms::WrappedFloat(newEncWrapped, 0, encoderResolution);
     }
