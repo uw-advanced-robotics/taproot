@@ -1,5 +1,8 @@
 # Taproot Changelog
 
+## February 2025
+- Implemented SH1107 functionality with the ability to rotate the screen 90 degrees.
+
 ## January 2025
 
 ### Breaking Changes
