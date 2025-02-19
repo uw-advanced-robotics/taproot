@@ -39,7 +39,9 @@ Mpu6500::Mpu6500(Drivers *drivers) : AbstractIMU(drivers), drivers(drivers), imu
 
 void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
+    AbstractIMU::initialize(sampleFrequency, mahonyKp, mahonyKi);
 #ifndef PLATFORM_HOSTED
+
     // Configure NSS pin
     Board::ImuNss::GpioOutput();
 
@@ -104,7 +106,6 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 
     readTimeout.restart(delayBtwnCalcAndReadReg);
 
-    AbstractIMU::initialize(sampleFrequency, mahonyKp, mahonyKi);
 }
 
 void Mpu6500::periodicIMUUpdate()

@@ -66,8 +66,6 @@ public:
      */
     virtual void periodicIMUUpdate();
 
-    virtual bool read() = 0;
-
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, or
      * calibrated. When not connected, IMU data will be garbage. When not calibrated, IMU data is
