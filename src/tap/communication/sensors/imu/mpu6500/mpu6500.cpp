@@ -39,8 +39,6 @@ Mpu6500::Mpu6500(Drivers *drivers)
     : AbstractIMU(drivers),
       Fiber([this] { run(); }),
       drivers(drivers),
-      processRawMpu6500DataFn(Mpu6500::defaultProcessRawMpu6500Data),
-      raw(),
       imuHeater(drivers)
 {
 }
