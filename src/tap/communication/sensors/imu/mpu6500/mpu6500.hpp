@@ -88,7 +88,7 @@ public:
      *
      * @return `true` if the function is not done, `false` otherwise
      */
-    mockable bool read() override;
+    mockable bool read();
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, calibrating

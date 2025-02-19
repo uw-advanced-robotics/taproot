@@ -98,7 +98,7 @@ public:
      *
      * @note This function blocks for 129 microseconds to read registers from the BMI088.
      */
-    mockable bool read() override;
+    mockable bool read();
 
     inline const char *getName() const final_mockable { return "bmi088"; }
 
