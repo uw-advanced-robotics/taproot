@@ -57,7 +57,7 @@ namespace tap::communication::sensors::imu::mpu6500
 #define MPU_FIBER_STACK_SIZE 512
 #endif
 
-class Mpu6500 final_mockable : public ::modm::Fiber<MPU_FIBER_STACK_SIZE>, public ImuInterface
+class Mpu6500 final_mockable : public ::modm::Fiber<MPU_FIBER_STACK_SIZE>, public AbstractIMU
 {
 public:
     /**
