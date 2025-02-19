@@ -82,8 +82,6 @@ void AbstractIMU::setGyroOffset(float x, float y, float z)
     imuData.gyroOffsetRaw[ImuData::Z] = z;
 }
 
-
-
 void AbstractIMU::computeOffsets()
 {
     calibrationSample++;

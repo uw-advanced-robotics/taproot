@@ -179,9 +179,8 @@ bool Bmi088::read()
         ACC_G_PER_ACC_COUNT * (imuData.accRaw[ImuData::Y] - imuData.accOffsetRaw[ImuData::Y]);
     imuData.accG[ImuData::Z] =
         ACC_G_PER_ACC_COUNT * (imuData.accRaw[ImuData::Z] - imuData.accOffsetRaw[ImuData::Z]);
-    
-    return true;
 
+    return true;
 }
 
 void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)

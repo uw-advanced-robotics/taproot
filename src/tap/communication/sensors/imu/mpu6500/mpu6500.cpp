@@ -36,8 +36,8 @@ using namespace tap::arch;
 namespace tap::communication::sensors::imu::mpu6500
 {
 Mpu6500::Mpu6500(Drivers *drivers)
-    : AbstractIMU(drivers), 
-        Fiber([this] { run(); }),
+    : AbstractIMU(drivers),
+      Fiber([this] { run(); }),
       drivers(drivers),
       processRawMpu6500DataFn(Mpu6500::defaultProcessRawMpu6500Data),
       raw(),
@@ -113,7 +113,6 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
     assert(delayBtwnCalcAndReadReg >= 0);
 
     readTimeout.restart(delayBtwnCalcAndReadReg);
-
 }
 
 void Mpu6500::periodicIMUUpdate()
@@ -149,11 +148,11 @@ bool Mpu6500::read()
         imuData.gyroRaw[2] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
 
         imuData.accG[0] = (imuData.accRaw[0] - imuData.accOffsetRaw[ImuData::X]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
+                          ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
         imuData.accG[1] = (imuData.accRaw[1] - imuData.accOffsetRaw[ImuData::Y]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
+                          ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
         imuData.accG[2] = (imuData.accRaw[2] - imuData.accOffsetRaw[ImuData::Z]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
+                          ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
 
         imuData.gyroDegPerSec[0] =
             (imuData.gyroRaw[0] - imuData.gyroOffsetRaw[ImuData::X]) / LSB_D_PER_S_TO_D_PER_S;
@@ -165,7 +164,6 @@ bool Mpu6500::read()
         imuData.temperature = parseTemp(static_cast<float>(rxBuff[6] << 8 | rxBuff[7]));
 
         prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
-
     }
     PT_END();
 #else

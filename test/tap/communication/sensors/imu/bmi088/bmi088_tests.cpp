@@ -25,7 +25,6 @@
 
 using namespace tap::communication::sensors::imu::bmi088;
 
-
 static void initializeBmi088(Bmi088 &bmi088)
 {
     Bmi088Hal::expectAccReadSingleReg(Bmi088Data::Acc::ACC_CHIP_ID_VALUE);
