@@ -99,7 +99,7 @@ public:
      */
     mockable bool read();
 
-    inline const char *getName() const final_mockable { return "bmi088"; }
+    virtual inline const char *getName() const { return "bmi088"; }
 
     inline void setAccOversampling(Acc::AccBandwidth oversampling)
     {
