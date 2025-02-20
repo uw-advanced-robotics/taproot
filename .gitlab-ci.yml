@@ -237,7 +237,7 @@ before_script:
     - python3 -m venv .venv
     - source .venv/bin/activate
     - python3 -m pip install lxml
-    - python3 -m pip install sphinx breathe exhale
+    - python3 -m pip install sphinx==8.1.3 breathe exhale
     - python3 -m pip install sphinx_rtd_theme
     - apk add doxygen
   script:

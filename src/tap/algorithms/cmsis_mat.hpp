@@ -156,20 +156,6 @@ struct CMSISMat
                 }
             }
         }
-
-        // for i_maj in range(modify.shape[0]):
-        // temp = modify[i_maj, i_maj]
-        // for j in range(modify.shape[1]):
-        //     modify[i_maj, j] /= temp
-        //     ret[i_maj, j] /= temp
-
-        // for i in range(modify.shape[0]):
-        //     if i == i_maj:
-        //         continue
-        //     temp = modify[i, i_maj]
-        //     for j in range(modify.shape[1]):
-        //         modify[i, j] -= temp * modify[i_maj, j]
-        //         ret[i, j] -= temp * ret[i_maj, j]
 #endif
         return ret;
     }
