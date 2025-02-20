@@ -21,8 +21,6 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
-#include "arm_math.h"
-
 using namespace tap::algorithms;
 
 TEST(CMSISMat, default_constructor_matrix_zeroed_cmsis_mat_inited)

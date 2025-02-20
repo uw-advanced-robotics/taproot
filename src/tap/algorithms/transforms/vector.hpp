@@ -22,6 +22,10 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
+#ifdef PLATFORM_HOSTED
+#include <cmath>
+#endif
+
 namespace tap::algorithms::transforms
 {
 // forward declare position to avoid circular dependency
