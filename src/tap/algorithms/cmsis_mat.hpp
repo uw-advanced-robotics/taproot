@@ -30,6 +30,7 @@
 #ifndef PLATFORM_HOSTED
 #include "arm_math.h"
 #else
+#include <cstring>
 struct arm_matrix_instance_f32
 {
     uint16_t numRows;
