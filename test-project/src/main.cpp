@@ -19,4 +19,8 @@
 
 #include "tap/drivers.hpp"
 
-int main() { return 0; }
+int main()
+{ 
+    modm::fiber::Scheduler::run();
+    return 0;
+}
