@@ -30,24 +30,15 @@
 namespace tap::algorithms::transforms
 {
 
-typedef enum Mode
-{
-    STATIC,
-    DYNAMIC
-};
-
-template <Mode M>
-class Transform;
-
 /**
  Represents a transformation from one coordinate frame to another.
 
-    A Transform from frame A to frame B defines a relationship between the two frames, such that a
-    spatial measurement in frame A can be represented equivalently in frame B by applying a
+    A Transform from frame A to frame B defines a relationship between the two frames, such
+ that a spatial measurement in frame A can be represented equivalently in frame B by applying a
     translational and rotational offset. This process is known as *applying* a transform.
 
-    Transforms are specified as a translation and rotation of some "target" frame relative to some
-    "source" frame. The "translation" is the target frame's origin in source frame, and the
+    Transforms are specified as a translation and rotation of some "target" frame relative to
+ some "source" frame. The "translation" is the target frame's origin in source frame, and the
     "rotation" is the target frame's orientation relative to the source frame's orientation.
 
     Conceptually, translations are applied "before" rotations. This means that the origin of the
@@ -59,8 +50,7 @@ class Transform;
     @param SOURCE represents the source frame of the transformation.
     @param TARGET represents the target frame of the transformation.
  */
-template <>
-class Transform<STATIC>
+class Transform
 {
 public:
     /**
@@ -92,190 +82,11 @@ public:
      */
     Transform(float x, float y, float z, float roll, float pitch, float yaw);
 
-    // TODO: template specialization for transform between identical frames??
-    /**
-     * Constructs an identity transform.
-     */
-    static inline Transform identity() { return Transform(0., 0., 0., 0., 0., 0.); }
-
-    /**
-     * Apply this transform to a position.
-     *
-     * @param[in] position Position in source frame.
-     * @return Position in target frame.
-     */
-    Position apply(const Position& position) const;
-
-    /**
-     * Rotates a vector in the source frame to a vector in the target frame.
-     *
-     * Intended to be used for things like velocities and accelerations which represent the
-     * difference between two positions in space, since both positions get translated the same way,
-     * causing the translation to cancel out.
-     *
-     * @param vector Vector as read by source frame.
-     * @return Vector in target frame's basis.
-     */
-    Vector apply(const Vector& vector) const;
-
-    /**
-     *
-     */
-    Orientation apply(const Orientation& orientation) const;
-
-    /**
-     * Updates the translation of the current transformation matrix.
-     *
-     * @param newTranslation updated position of target in source frame.
-     */
-    inline void updateTranslation(const Position& newTranslation)
-    {
-        this->translation = newTranslation.coordinates();
-    }
-
-    inline void updateTranslation(Position&& newTranslation)
-    {
-        this->translation = std::move(newTranslation.coordinates());
-    }
-
-    /**
-     * Updates the translation of the current transformation matrix.
-     *
-     * @param x new translation x-component.
-     * @param y new translation y-component.
-     * @param z new translation z-component.
-     */
-    inline void updateTranslation(float x, float y, float z)
-    {
-        this->translation = CMSISMat<3, 1>({x, y, z});
-    }
-
-    /**
-     * Updates the rotation of the current transformation matrix.
-     *
-     * @param newRotation updated orienation of target frame in source frame.
-     */
-    inline void updateRotation(const Orientation& newRotation)
-    {
-        this->rotation = newRotation.matrix();
-        this->tRotation = this->rotation.transpose();
-    }
-
-    inline void updateRotation(Orientation&& newRotation)
-    {
-        this->rotation = std::move(newRotation.matrix());
-        this->tRotation = this->rotation.transpose();
-    }
-
-    /**
-     * Updates the rotation of the current transformation matrix.
-     * Takes rotation angles in the order of roll->pitch->yaw.
-     *
-     * @param roll updated rotation angle about the x-axis.
-     * @param pitch updated rotation angle about the y-axis.
-     * @param yaw updated rotation angle about the z-axis.
-     */
-    void updateRotation(float roll, float pitch, float yaw)
-    {
-        this->rotation = Orientation(roll, pitch, yaw).matrix();
-        this->tRotation = this->rotation.transpose();
-    }
-
-    /**
-     * @return Inverse of this Transform.
-     */
-    Transform<STATIC> getInverse() const;
-
-    /**
-     * Returns the composed transformation of the given transformations.
-     * @return Transformation from frame A to frame C.
-     */
-    Transform<STATIC> compose(const Transform<STATIC>& second) const;
-
-    /* Getters */
-    inline Position getTranslation() const { return Position(translation); };
-
-    inline Orientation getRotation() const { return Orientation(rotation); }
-
-    /**
-     * Get the roll of this transformation
-     */
-    float getRoll() const;
-
-    /**
-     * Get the pitch of this transformation
-     */
-    float getPitch() const;
-
-    /**
-     * Get the yaw of this transformation
-     */
-    float getYaw() const;
-
-    /**
-     * Get the x-component of this transform's translation
-     */
-    inline float getX() const { return this->translation.data[0]; }
-
-    /**
-     * Get the y-component of this transform's translation
-     */
-    inline float getY() const { return this->translation.data[1]; }
-
-    /**
-     * Get the z-component of this transform's translation
-     */
-    inline float getZ() const { return this->translation.data[2]; }
-
-private:
-    /**
-     * Translation vector.
-     */
-    CMSISMat<3, 1> translation;
-
-    /**
-     * Rotation matrix.
-     */
-    CMSISMat<3, 3> rotation;
-
-    /**
-     * Transpose of rotation matrix. Computed and stored at beginning
-     * for use in other computations.
-     *
-     * The transpose of a rotation is its inverse.
-     */
-    CMSISMat<3, 3> tRotation;
-};  // class Transform
-
-/**
- Represents a transformation from one coordinate frame to another.
-
-    A Transform from frame A to frame B defines a relationship between the two frames, such
- that a spatial measurement in frame A can be represented equivalently in frame B by applying a
-    translational and rotational offset. This process is known as *applying* a transform.
-
-    Transforms are specified as a translation and rotation of some "target" frame relative to
- some "source" frame. The "translation" is the target frame's origin in source frame, and the
-    "rotation" is the target frame's orientation relative to the source frame's orientation.
-
-    Conceptually, translations are applied "before" rotations. This means that the origin of the
-    target frame is entirely defined by the translation in the source frame, and the rotation serves
-    only to change the orientation of the target frame's axes relative to the source frame.
-
-    Utilizes arm's CMSIS matrix operations.
-
-    @param SOURCE represents the source frame of the transformation.
-    @param TARGET represents the target frame of the transformation.
- */
-template <>
-class Transform<DYNAMIC>
-{
-public:
     /**
      * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
-     * @param acceleration Translational åcceleration of this transformation.
+     * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
     // Transform(
@@ -289,7 +100,7 @@ public:
      * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
-     * @param acceleration Translational åcceleration of this transformation.
+     * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
     // Transform(
@@ -303,7 +114,7 @@ public:
      * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
-     * @param acceleration Translational åcceleration of this transformation.
+     * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
     Transform(
@@ -317,7 +128,7 @@ public:
      * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
-     * @param acceleration Translational åcceleration of this transformation.
+     * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
     Transform(
@@ -456,9 +267,11 @@ public:
 
     /**
      * Returns the composed transformation of the given transformations.
-     * @return Transformation from frame A to frame C.
+     * @return Transformation from this transform's base frame to `second`'s follower frame.
      */
     Transform compose(const Transform& second) const;
+
+    Transform composeStatic(const Transform& second) const;
 
     Transform projectForward(float dt) const;
 
@@ -489,6 +302,21 @@ public:
     float getYaw() const;
 
     /**
+     * Get the roll velocity of this transformation
+     */
+    float getRollVelocity() const;
+
+    /**
+     * Get the pitch velocity of this transformation
+     */
+    float getPitchVelocity() const;
+
+    /**
+     * Get the yaw velocity of this transformation
+     */
+    float getYawVelocity() const;
+
+    /**
      * Get the x-component of this transform's translation
      */
     inline float getX() const { return this->translation.data[0]; }
@@ -503,7 +331,39 @@ public:
      */
     inline float getZ() const { return this->translation.data[2]; }
 
+    /**
+     * Get the x-component of this transform's translation
+     */
+    inline float getXVel() const { return this->transVel.data[0]; }
+
+    /**
+     * Get the y-component of this transform's translation
+     */
+    inline float getYVel() const { return this->transVel.data[1]; }
+
+    /**
+     * Get the z-component of this transform's translation
+     */
+    inline float getZVel() const { return this->transVel.data[2]; }
+
+    /**
+     * Get the x-component of this transform's translation
+     */
+    inline float getXAcc() const { return this->transAcc.data[0]; }
+
+    /**
+     * Get the y-component of this transform's translation
+     */
+    inline float getYAcc() const { return this->transAcc.data[1]; }
+
+    /**
+     * Get the z-component of this transform's translation
+     */
+    inline float getZAcc() const { return this->transAcc.data[2]; }
+
 private:
+    bool dynamic;
+
     /**
      * Translation vector.
      */
