@@ -76,35 +76,35 @@ Transform::Transform(float x, float y, float z, float roll, float pitch, float y
 {
 }
 
-// Transform::Transform(
-//     const Position& translation,
-//     const Orientation& rotation,
-//     const Vector& velocity,
-//     const Vector& acceleration,
-//     const Vector& angularVelocity)
-//     : translation(translation.coordinates()),
-//       transVel(velocity.coordinates()),
-//       transAcc(acceleration.coordinates()),
-//       rotation(rotation.matrix()),
-//       tRotation(rotation.matrix().transpose()),
-//       angVel(angularVelocity.coordinates())
-// {
-// }
+Transform::Transform(
+    const Position& translation,
+    const Orientation& rotation,
+    const Vector& velocity,
+    const Vector& acceleration,
+    const Vector& angularVelocity)
+    : translation(translation.coordinates()),
+      transVel(velocity.coordinates()),
+      transAcc(acceleration.coordinates()),
+      rotation(rotation.matrix()),
+      tRotation(rotation.matrix().transpose()),
+      angVel(skewMatFromAngVel(angularVelocity.x(), angularVelocity.y(), angularVelocity.z()))
+{
+}
 
-// Transform::Transform(
-//     Position&& translation,
-//     Orientation&& rotation,
-//     Vector&& velocity,
-//     Vector&& acceleration,
-//     Vector&& angularVelocity)
-//     : translation(std::move(translation.coordinates())),
-//       transVel(std::move(velocity.coordinates())),
-//       transAcc(std::move(acceleration.coordinates())),
-//       rotation(std::move(rotation.matrix())),
-//       tRotation(rotation.matrix().transpose()),
-//       angVel(std::move(angularVelocity.coordinates()))
-// {
-// }
+Transform::Transform(
+    Position&& translation,
+    Orientation&& rotation,
+    Vector&& velocity,
+    Vector&& acceleration,
+    Vector&& angularVelocity)
+    : translation(std::move(translation.coordinates())),
+      transVel(std::move(velocity.coordinates())),
+      transAcc(std::move(acceleration.coordinates())),
+      rotation(std::move(rotation.matrix())),
+      tRotation(rotation.matrix().transpose()),
+      angVel(skewMatFromAngVel(angularVelocity.x(), angularVelocity.y(), angularVelocity.z()))
+{
+}
 
 Transform::Transform(
     const CMSISMat<3, 1>& translation,

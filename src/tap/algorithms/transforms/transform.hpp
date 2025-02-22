@@ -89,12 +89,12 @@ public:
      * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
-    // Transform(
-    //     const Position& translation,
-    //     const Orientation& rotation,
-    //     const Vector& velocity,
-    //     const Vector& acceleration,
-    //     const Vector& angularVelocity);
+    Transform(
+        const Position& translation,
+        const Orientation& rotation,
+        const Vector& velocity,
+        const Vector& acceleration,
+        const Vector& angularVelocity);
 
     /**
      * @param translation Initial translation of this transformation.
@@ -103,12 +103,12 @@ public:
      * @param acceleration Translational acceleration of this transformation.
      * @param angularVelocity Angular velocity pseudovector of this transformation.
      */
-    // Transform(
-    //     Position&& translation,
-    //     Orientation&& rotation,
-    //     Vector&& velocity,
-    //     Vector&& acceleration,
-    //     Vector&& angularVelocity);
+    Transform(
+        Position&& translation,
+        Orientation&& rotation,
+        Vector&& velocity,
+        Vector&& acceleration,
+        Vector&& angularVelocity);
 
     /**
      * @param translation Initial translation of this transformation.
@@ -397,6 +397,14 @@ private:
      * Angular velocity skew matrix.
      */
     CMSISMat<3, 3> angVel;
+
+    /**
+     * Generates a 3x3 skew matrix from euler angle velocities (in radians/sec)
+     */
+    inline static CMSISMat<3, 3> skewMatFromAngVel(const float wx, const float wy, const float wz)
+    {
+        return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wz, 0});
+    }
 };  // class Transform
 }  // namespace tap::algorithms::transforms
 
