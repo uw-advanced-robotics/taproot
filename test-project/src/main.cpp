@@ -19,8 +19,24 @@
 
 #include "tap/drivers.hpp"
 
+class Drivers : public tap::Drivers
+{
+public: 
+    Drivers(): tap::Drivers() {}
+};
+
+Drivers drivers;
+
+modm::Fiber<4096> io([]{
+    while (true)
+    {
+        drivers.mpu6500.periodicIMUUpdate();
+        modm::this_fiber::yield();
+    }
+});
+
 int main()
-{ 
+{
     modm::fiber::Scheduler::run();
     return 0;
 }
