@@ -168,14 +168,10 @@ public:
         float pitchVel,
         float yawVel);
 
-    // TODO: template specialization for transform between identical frames??
     /**
-     * Constructs an identity transform.
+     * Constructs an identity static transform.
      */
-    static inline Transform identity()
-    {
-        return Transform(0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.);
-    }
+    static inline Transform identity() { return Transform(0., 0., 0., 0., 0., 0.); }
 
     /**
      * Apply this transform to a position.
@@ -212,6 +208,11 @@ public:
         this->translation = newTranslation.coordinates();
     }
 
+    /**
+     * Updates the translation of the current transformation matrix.
+     *
+     * @param newTranslation updated position of target in source frame.
+     */
     inline void updateTranslation(Position&& newTranslation)
     {
         this->translation = std::move(newTranslation.coordinates());

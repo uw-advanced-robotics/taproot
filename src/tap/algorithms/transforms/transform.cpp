@@ -159,8 +159,8 @@ Transform::Transform(
       transVel({vx, vy, vz}),
       transAcc({ax, ay, az}),
       rotation(fromEulerAngles(roll, pitch, yaw)),
-      angVel(skewMatFromAngVel(rollVel, pitchVel, yawVel)),
-      tRotation(rotation.transpose())
+      tRotation(rotation.transpose()),
+      angVel(skewMatFromAngVel(rollVel, pitchVel, yawVel))
 {
 }
 
@@ -240,7 +240,7 @@ Transform Transform::projectForward(float dt) const
     velDt = velDt + sin(dt) * this->angVel + (1 - cos(dt)) * this->angVel * this->angVel;
     CMSISMat<3, 3> newRot = velDt * this->rotation;
     CMSISMat<3, 1> newPos =
-        this->translation + dt * this->transVel + 0.5 * dt * dt * this->transAcc;
+        this->translation + dt * this->transVel + 0.5f * dt * dt * this->transAcc;
     CMSISMat<3, 1> newVel = this->transVel + dt * this->transAcc;
     return Transform(newPos, newRot, newVel, this->transAcc, this->angVel);
 }
