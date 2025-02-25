@@ -31,12 +31,24 @@ modm::Fiber<4096> io([]{
     while (true)
     {
         drivers.mpu6500.periodicIMUUpdate();
-        modm::this_fiber::yield();
+        modm::this_fiber::sleep_for(std::chrono::milliseconds(2));
     }
 });
 
 int main()
 {
+    Board::initialize();
+    
+    drivers.analog.init();
+    drivers.pwm.init();
+    drivers.digital.init();
+    drivers.leds.init();
+    drivers.can.initialize();
+    drivers.errorController.init();
+    drivers.remote.initialize();
+    drivers.mpu6500.init(500.f, 0.1f, 0.f);
+    drivers.refSerial.initialize();
+    
     modm::fiber::Scheduler::run();
     return 0;
 }
