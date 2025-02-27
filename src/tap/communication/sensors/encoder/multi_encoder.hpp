@@ -48,7 +48,7 @@ public:
         : encoders(encoders),
           seenEncoders(0)
     {
-        modm_assert(this->encoders[0] != nullptr, "MultiEncoder", "MultiEncoder");
+        modm_assert(this->encoders[0] != nullptr, "MultiEncoder", "nullptr first encoder");
     }
 
     void initialize() override

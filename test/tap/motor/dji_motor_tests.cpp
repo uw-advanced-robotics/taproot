@@ -140,8 +140,10 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     motor.processMessage(msg);
     encoder.processMessage(msg);
 
-    EXPECT_EQ(DjiMotor::ENC_RESOLUTION - motorData.encoder - 1, encoder.getEncoderWrapped());
-    EXPECT_EQ(DjiMotor::ENC_RESOLUTION - motorData.encoder - 1, encoder.getEncoderUnwrapped());
+    EXPECT_EQ(DjiMotorEncoder::ENC_RESOLUTION - motorData.encoder - 1, encoder.getEncoderWrapped());
+    EXPECT_EQ(
+        DjiMotorEncoder::ENC_RESOLUTION - motorData.encoder - 1,
+        encoder.getEncoderUnwrapped());
     EXPECT_EQ(-motorData.shaftRPM, encoder.getShaftRPM());
     EXPECT_EQ(-motorData.torque, motor.getTorque());
     EXPECT_EQ(motorData.temperature, motor.getTemperature());

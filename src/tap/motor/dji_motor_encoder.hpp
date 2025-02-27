@@ -60,6 +60,7 @@ public:
     static constexpr float GEAR_RATIO_M3510_L3 = 19.0f / 1.0f;
     static constexpr float GEAR_RATIO_M3510_L4 = 27.0f / 1.0f;
     static constexpr float GEAR_RATIO_M2006 = 36.0f / 1.0f;
+    static constexpr float GEAR_RATIO_M6020 = 1.0f / 1.0f;
 
     /**
      * @param isInverted if `false` the positive rotation direction of the shaft is
