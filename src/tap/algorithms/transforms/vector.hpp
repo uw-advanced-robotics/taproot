@@ -54,12 +54,12 @@ public:
 
     inline Vector operator+(const Position& other) const;
 
-    inline Vector Vector::operator+(const Vector& other) const
+    inline Vector operator+(const Vector& other) const
     {
         return Vector(this->coordinates_ + other.coordinates_);
     }
 
-    inline Vector Vector::operator-(const Vector& other) const
+    inline Vector operator-(const Vector& other) const
     {
         return Vector(this->coordinates_ - other.coordinates_);
     }
