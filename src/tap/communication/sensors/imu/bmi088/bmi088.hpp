@@ -22,10 +22,10 @@
 
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/algorithms/math_user_utils.hpp"
+#include "tap/communication/sensors/imu/abstract_imu.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
-#include "tap/communication/sensors/imu/abstract_imu.hpp"
 
 #include "bmi088_data.hpp"
 
@@ -81,7 +81,6 @@ public:
     static constexpr float ACC_G_PER_ACC_COUNT =
         modm::pow(2, ACC_RANGE.value + 1) * 1.5f * tap::algorithms::ACCELERATION_GRAVITY / 32768.0f;
 
-
     /**
      * Starts and configures the bmi088. Blocks for < 200 ms.
      */
@@ -114,8 +113,6 @@ public:
     {
         imuHeater.setDesiredTemperature(temperatureC);
     }
-
-
 
 private:
     Drivers *drivers;

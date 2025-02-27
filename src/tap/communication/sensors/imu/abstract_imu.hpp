@@ -96,12 +96,12 @@ public:
 
     struct ImuData
     {
-        tap::algorithms::transforms::Vector accRaw = {0,0,0};
-        tap::algorithms::transforms::Vector gyroRaw = {0,0,0};
-        tap::algorithms::transforms::Vector accOffsetRaw = {0,0,0};
-        tap::algorithms::transforms::Vector gyroOffsetRaw = {0,0,0};
-        tap::algorithms::transforms::Vector accG = {0,0,0};
-        tap::algorithms::transforms::Vector gyroDegPerSec = {0,0,0};
+        tap::algorithms::transforms::Vector accRaw = {0, 0, 0};
+        tap::algorithms::transforms::Vector gyroRaw = {0, 0, 0};
+        tap::algorithms::transforms::Vector accOffsetRaw = {0, 0, 0};
+        tap::algorithms::transforms::Vector gyroOffsetRaw = {0, 0, 0};
+        tap::algorithms::transforms::Vector accG = {0, 0, 0};
+        tap::algorithms::transforms::Vector gyroDegPerSec = {0, 0, 0};
 
         float temperature = 0;
     };

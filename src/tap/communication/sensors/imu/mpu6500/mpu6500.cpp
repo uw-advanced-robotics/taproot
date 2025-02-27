@@ -105,7 +105,6 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
     assert(delayBtwnCalcAndReadReg >= 0);
 
     readTimeout.restart(delayBtwnCalcAndReadReg);
-
 }
 
 void Mpu6500::periodicIMUUpdate()
@@ -150,7 +149,6 @@ bool Mpu6500::read()
         imuData.temperature = parseTemp(static_cast<float>(rxBuff[6] << 8 | rxBuff[7]));
 
         prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
-
     }
     PT_END();
 #else

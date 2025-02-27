@@ -80,7 +80,8 @@ void AbstractIMU::computeOffsets()
     calibrationSample++;
 
     imuData.gyroOffsetRaw = imuData.gyroOffsetRaw + imuData.gyroRaw;
-    imuData.accOffsetRaw = imuData.accOffsetRaw + imuData.accRaw - tap::algorithms::transforms::Vector(0, 0, getAccelerationSensitivity());
+    imuData.accOffsetRaw = imuData.accOffsetRaw + imuData.accRaw -
+                           tap::algorithms::transforms::Vector(0, 0, getAccelerationSensitivity());
 
     if (calibrationSample >= offsetSampleCount)
     {

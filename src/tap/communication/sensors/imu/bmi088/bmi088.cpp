@@ -160,7 +160,7 @@ bool Bmi088::read()
     imuData.accRaw = tap::algorithms::transforms::Vector(rawAccX, rawAccY, rawAccZ);
 
     Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    
+
     float rawGyroX = bigEndianInt16ToFloat(rxBuff);
     float rawGyroY = bigEndianInt16ToFloat(rxBuff + 2);
     float rawGyroZ = bigEndianInt16ToFloat(rxBuff + 4);
@@ -173,7 +173,6 @@ bool Bmi088::read()
     imuData.accG = (imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT;
 
     return true;
-
 }
 
 void Bmi088::setAndCheckAccRegister(Acc::Register reg, Acc::Registers_t value)

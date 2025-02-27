@@ -70,7 +70,7 @@ public:
      * @note this function can block for approximately 12 seconds.
      */
     mockable void initialize(float sampleFrequency, float mahonyKp, float mahonyKi) override;
-    
+
     mockable inline void init(float sampleFrequency, float mahonyKp, float mahonyKi)
     {
         initialize(sampleFrequency, mahonyKp, mahonyKi);
@@ -129,7 +129,6 @@ private:
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
     inline float getAccelerationSensitivity() override { return ACCELERATION_SENSITIVITY; }
-
 
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
@@ -195,10 +194,7 @@ private:
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
 
-
     float parseTemp(float temperature) { return 21.0f + temperature / 333.87f; }
-
-
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
