@@ -90,14 +90,12 @@ TEST(TerminalSerial, update__with_some_header_calls_callback_when_header_valid)
     TerminalSerialCallbackInterfaceMock interface;
 
     EXPECT_CALL(interface, terminalSerialCallback)
-        .WillOnce(
-            [](char *, modm::IOStream &outputStream, bool streamingEnabled)
-            {
-                EXPECT_FALSE(streamingEnabled);
+        .WillOnce([](char *, modm::IOStream &outputStream, bool streamingEnabled) {
+            EXPECT_FALSE(streamingEnabled);
 
-                outputStream << "hello world";
-                return true;
-            });
+            outputStream << "hello world";
+            return true;
+        });
 
     serial.addHeader("foo", &interface);
 
@@ -123,16 +121,14 @@ TEST(TerminalSerial, update__with_some_header_calls_callback_passes_stream_enabl
     TerminalSerialCallbackInterfaceMock interface;
 
     EXPECT_CALL(interface, terminalSerialCallback)
-        .WillOnce(
-            [](char *inputLine, modm::IOStream &outputStream, bool streamingEnabled)
-            {
-                EXPECT_TRUE(streamingEnabled);
-                // the -S shouldn't be passed, instead it is passed via `streamingEnabled`
-                EXPECT_THAT(inputLine, Not(HasSubstr("-S")));
+        .WillOnce([](char *inputLine, modm::IOStream &outputStream, bool streamingEnabled) {
+            EXPECT_TRUE(streamingEnabled);
+            // the -S shouldn't be passed, instead it is passed via `streamingEnabled`
+            EXPECT_THAT(inputLine, Not(HasSubstr("-S")));
 
-                outputStream << "hello world";
-                return true;
-            });
+            outputStream << "hello world";
+            return true;
+        });
 
     serial.addHeader("foo", &interface);
 
@@ -160,12 +156,10 @@ TEST(
     TerminalSerialCallbackInterfaceMock interface;
 
     EXPECT_CALL(interface, terminalSerialCallback)
-        .WillOnce(
-            [](char *, modm::IOStream &, bool streamingEnabled)
-            {
-                EXPECT_TRUE(streamingEnabled);
-                return true;
-            });
+        .WillOnce([](char *, modm::IOStream &, bool streamingEnabled) {
+            EXPECT_TRUE(streamingEnabled);
+            return true;
+        });
 
     EXPECT_CALL(interface, terminalSerialStreamCallback)
         .Times(2)
@@ -200,12 +194,10 @@ TEST(TerminalSerial, update__with_some_header_doesnt_enter_streaming_mode_if_cal
     TerminalSerialCallbackInterfaceMock interface;
 
     EXPECT_CALL(interface, terminalSerialCallback)
-        .WillOnce(
-            [](char *, modm::IOStream &, bool streamingEnabled)
-            {
-                EXPECT_TRUE(streamingEnabled);
-                return false;
-            });
+        .WillOnce([](char *, modm::IOStream &, bool streamingEnabled) {
+            EXPECT_TRUE(streamingEnabled);
+            return false;
+        });
 
     EXPECT_CALL(interface, terminalSerialStreamCallback).Times(0);
 

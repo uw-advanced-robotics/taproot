@@ -22,6 +22,7 @@
 
 #include "modm/architecture/driver/atomic/flag.hpp"
 #include "modm/architecture/interface/delay.hpp"
+#include "modm/processing/resumable.hpp"
 #include "modm/ui/display/monochrome_graphic_display_vertical.hpp"
 
 namespace tap
@@ -41,7 +42,7 @@ template <
     unsigned int Height,
     bool Flipped,
     bool Rotate>
-class Sh1107 : public modm::MonochromeGraphicDisplayVertical<Width, Height>
+class Sh1107 : public modm::MonochromeGraphicDisplayVertical<Width, Height>, modm::Resumable<1>
 {
 public:
     virtual ~Sh1107() {}
@@ -56,7 +57,7 @@ public:
     /**
      * Update the display with the content of the RAM buffer.
      */
-    bool updateNonblocking();
+    modm::ResumableResult<bool> updateNonblocking();
 
     /**
      * Invert the display content.

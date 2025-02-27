@@ -22,10 +22,12 @@
 #endif
 
 template <unsigned int Width, unsigned int Height, bool Flipped, bool Rotate>
-bool tap::display::Sh1107<Width, Height, Flipped, Rotate>::updateNonblocking()
+modm::ResumableResult<bool> tap::display::Sh1107<Width, Height, Flipped, Rotate>::
+    updateNonblocking()
 {
+    RF_BEGIN(0);
     // no-op
-    return false;
+    RF_END_RETURN(false);
 }
 
 template <unsigned int Width, unsigned int Height, bool Flipped, bool Rotate>

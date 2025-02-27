@@ -147,12 +147,10 @@ TEST_F(CanRxHandlerTest, pollCanData_can1_calls_process_message_passing_msg_to_c
     modm::can::Message msg(tap::motor::MOTOR1, 8, 0xffff'ffff'ffff'ffff, false);
 
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
-        .WillByDefault(
-            [&](tap::can::CanBus, modm::can::Message *message)
-            {
-                *message = msg;
-                return true;
-            });
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *message) {
+            *message = msg;
+            return true;
+        });
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS2, _))
         .WillByDefault([&](tap::can::CanBus, modm::can::Message *) { return false; });
 
@@ -172,12 +170,10 @@ TEST_F(CanRxHandlerTest, pollCanData_can2_calls_process_message_passing_msg_to_c
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
         .WillByDefault([&](tap::can::CanBus, modm::can::Message *) { return false; });
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS2, _))
-        .WillByDefault(
-            [&](tap::can::CanBus, modm::can::Message *message)
-            {
-                *message = msg;
-                return true;
-            });
+        .WillByDefault([&](tap::can::CanBus, modm::can::Message *message) {
+            *message = msg;
+            return true;
+        });
 
     EXPECT_CALL(*listeners[0], processMessage);
 

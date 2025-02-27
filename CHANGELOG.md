@@ -3,11 +3,6 @@
 ## February 2025
 - Implemented SH1107 functionality with the ability to rotate the screen 90 degrees.
 
-## January 2025
-
-### Breaking Changes
-- Updated modm, scons, GCC, and related tools and dependencies to modern versions. **Note that this update may require significant changes to your project and setup.** See the [extended changelog](./extended-changelogs/modm-update-jan2025-changes.md) for more details and upgrade instructions.
-
 ## October 2024
 
 - Added `SequentialCommand`

@@ -33,6 +33,7 @@ namespace gpio
 void Pwm::init()
 {
 #ifndef PLATFORM_HOSTED
+
 %% for timer in timers
     %% set pins_associated_with_timer = []
     %% for pin in pins
@@ -44,13 +45,10 @@ void Pwm::init()
     {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ timer }}::enable();
     {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
-    std::chrono::microseconds {{ timer|lower }}Period{1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY};
-    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>({{ timer|lower }}Period);
-    %% if timer == "Timer1" or timer == "Timer8"
-    {{ timer }}::enableOutput();
-    %% endif
+    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
     {{ timer }}::start();
-    
+    {{ timer }}::enableOutput();
+
 %% endfor
 #endif
     // Set all out pins to 0 duty
@@ -96,12 +94,11 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
     UNUSED(timer);
     UNUSED(frequency);
 #else
-    std::chrono::microseconds period{1'000'000 / frequency};
     switch (timer)
     {
 %% for timer in timers
         case {{ timer|upper }}:
-            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(period);
+            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
 %% endfor
     }

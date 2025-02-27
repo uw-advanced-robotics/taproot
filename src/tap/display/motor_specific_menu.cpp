@@ -82,7 +82,8 @@ bool MotorSpecificMenu::hasChanged()
     bool sameEncoderWrapped =
         (associatedMotor->getInternalEncoder().getEncoderWrapped() == currEncoderWrapped);
 
-    return !(sameOutputDesired && sameInverted && sameEncoderWrapped);
+    return !(sameOutputDesired && sameInverted && sameEncoderWrapped) &&
+           updatePeriodicTimer.execute();
 }
 }  // namespace display
 }  // namespace tap

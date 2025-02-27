@@ -52,9 +52,17 @@ public:
         return *this;
     }
 
-    inline Vector operator+(const Vector& other) const;
-
     inline Vector operator+(const Position& other) const;
+
+    inline Vector operator+(const Vector& other) const
+    {
+        return Vector(this->coordinates_ + other.coordinates_);
+    }
+
+    inline Vector operator-(const Vector& other) const
+    {
+        return Vector(this->coordinates_ - other.coordinates_);
+    }
 
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 

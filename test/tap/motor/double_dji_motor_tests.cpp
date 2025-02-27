@@ -54,10 +54,12 @@ TEST(DoubleDjiMotor, setDesiredOutput__sets_both_motors_output)
 
     int32_t expectedDesOut = 0;
 
-    EXPECT_CALL(motor.motorOne, setDesiredOutput)
-        .WillRepeatedly([&](int32_t desOut) { EXPECT_EQ(expectedDesOut, desOut); });
-    EXPECT_CALL(motor.motorTwo, setDesiredOutput)
-        .WillRepeatedly([&](int32_t desOut) { EXPECT_EQ(expectedDesOut, desOut); });
+    EXPECT_CALL(motor.motorOne, setDesiredOutput).WillRepeatedly([&](int32_t desOut) {
+        EXPECT_EQ(expectedDesOut, desOut);
+    });
+    EXPECT_CALL(motor.motorTwo, setDesiredOutput).WillRepeatedly([&](int32_t desOut) {
+        EXPECT_EQ(expectedDesOut, desOut);
+    });
 
     std::vector<int32_t> possibleDesOut{-30000, -15000, -1000, 0, 1500, 12434};
     for (int32_t desOut : possibleDesOut)

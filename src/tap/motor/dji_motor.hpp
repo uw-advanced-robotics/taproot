@@ -40,7 +40,6 @@
 
 namespace tap::motor
 {
-
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 using Encoder = tap::mock::DjiMotorEncoderMock;
 #else

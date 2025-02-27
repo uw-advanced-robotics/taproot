@@ -23,13 +23,13 @@
 #include <cstdint>
 
 #include "tap/algorithms/MahonyAHRS.h"
-#include "tap/architecture/timeout.hpp"
+#include "tap/communication/sensors/imu/abstract_imu.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
 #include "tap/communication/sensors/imu_heater/imu_heater.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/math/geometry.hpp"
-#include "modm/processing/fiber.hpp"
+#include "modm/processing/protothread.hpp"
 
 #define LITTLE_ENDIAN_INT16_TO_FLOAT(buff) \
     (static_cast<float>(static_cast<int16_t>((*(buff) << 8) | *(buff + 1))))
@@ -51,54 +51,13 @@ namespace tap::communication::sensors::imu::mpu6500
  * @note if you are shaking the imu while it is initializing, the offsets will likely
  *      be calibrated poorly and unexpectedly bad results may occur.
  */
-#ifdef ENV_UNIT_TESTS
-#define MPU_FIBER_STACK_SIZE 4096
-#else
-#define MPU_FIBER_STACK_SIZE 512
-#endif
-
-class Mpu6500 final_mockable : public ::modm::Fiber<MPU_FIBER_STACK_SIZE>, public ImuInterface
+class Mpu6500 final_mockable : public ::modm::pt::Protothread, public AbstractIMU
 {
 public:
     /**
      * The number of bytes read to read acceleration, gyro, and temperature.
      */
     static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
-
-    /**
-     * Storage for the raw data we receive from the mpu6500, as well as offsets
-     * that are used each time we receive data.
-     */
-    struct RawData
-    {
-        /**
-         * Raw acceleration data.
-         */
-        modm::Vector3f accel;
-        /**
-         * Raw gyroscope data.
-         */
-        modm::Vector3f gyro;
-
-        /**
-         * Raw temperature.
-         */
-        uint16_t temperature = 0;
-
-        /**
-         * Acceleration offset calculated in init.
-         */
-        modm::Vector3f accelOffset;
-        /**
-         * Gyroscope offset calculated in init.
-         */
-        modm::Vector3f gyroOffset;
-    };
-
-    using ProcessRawMpu6500DataFn = void (*)(
-        const uint8_t (&)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
-        modm::Vector3f &accel,
-        modm::Vector3f &gyro);
 
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
@@ -110,14 +69,18 @@ public:
      *
      * @note this function can block for approximately 12 seconds.
      */
-    mockable void init(float sampleFrequency, float mahonyKp, float mahonyKi);
+    mockable void initialize(float sampleFrequency, float mahonyKp, float mahonyKi) override;
 
+    mockable inline void init(float sampleFrequency, float mahonyKp, float mahonyKi)
+    {
+        initialize(sampleFrequency, mahonyKp, mahonyKi);
+    }
     /**
      * Calculates the IMU's pitch, roll, and yaw angles usign the Mahony AHRS algorithm.
      * Also runs a controller to keep the temperature constant.
      * Call at 500 hz for best performance.
      */
-    mockable void periodicIMUUpdate();
+    mockable void periodicIMUUpdate() override;
 
     /**
      * Read data from the imu. This is a protothread that reads the SPI bus using
@@ -126,8 +89,6 @@ public:
      * @return `true` if the function is not done, `false` otherwise
      */
     mockable bool read();
-
-    bool run() { return this->read(); }
 
     /**
      * Returns the state of the IMU. Can be not connected, connected but not calibrated, calibrating
@@ -140,141 +101,10 @@ public:
      * temperature, and angle) data, call this function to ensure the data you are about to receive
      * is not undefined.
      */
-    mockable inline ImuState getImuState() const { return imuState; }
 
     virtual inline const char *getName() const { return "mpu6500"; }
 
-    /**
-     * If the imu is not initialized, logs an error and returns 0.
-     * Otherwise, returns the value passed in.
-     */
-    inline float validateReading(float reading)
-    {
-        if (imuState == ImuState::IMU_CALIBRATED)
-        {
-            return reading;
-        }
-        else if (imuState == ImuState::IMU_NOT_CALIBRATED)
-        {
-            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CALIBRATED);
-            return reading;
-        }
-        else if (imuState == ImuState::IMU_CALIBRATING)
-        {
-            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_CALIBRATING);
-            return 0.0f;
-        }
-        else
-        {
-            errorState |= 1 << static_cast<uint8_t>(ImuState::IMU_NOT_CONNECTED);
-            return 0.0f;
-        }
-    }
-
-    /**
-     * Returns the acceleration reading in the x direction, in
-     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
-     */
-    inline float getAx() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.accel.x - raw.accelOffset.x) * ACCELERATION_GRAVITY /
-            ACCELERATION_SENSITIVITY);
-    }
-
-    /**
-     * Returns the acceleration reading in the y direction, in
-     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
-     */
-    inline float getAy() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.accel.y - raw.accelOffset.y) * ACCELERATION_GRAVITY /
-            ACCELERATION_SENSITIVITY);
-    }
-
-    /**
-     * Returns the acceleration reading in the z direction, in
-     * \f$\frac{\mbox{m}}{\mbox{second}^2}\f$.
-     */
-    inline float getAz() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.accel.z - raw.accelOffset.z) * ACCELERATION_GRAVITY /
-            ACCELERATION_SENSITIVITY);
-    }
-
-    /**
-     * Returns the gyroscope reading in the x direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
-     */
-    inline float getGx() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.gyro.x - raw.gyroOffset.x) / LSB_D_PER_S_TO_D_PER_S);
-    }
-
-    /**
-     * Returns the gyroscope reading in the y direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
-     */
-    inline float getGy() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.gyro.y - raw.gyroOffset.y) / LSB_D_PER_S_TO_D_PER_S);
-    }
-
-    /**
-     * Returns the gyroscope reading in the z direction, in
-     * \f$\frac{\mbox{degrees}}{\mbox{second}}\f$.
-     */
-    inline float getGz() final_mockable
-    {
-        return validateReading(
-            static_cast<float>(raw.gyro.z - raw.gyroOffset.z) / LSB_D_PER_S_TO_D_PER_S);
-    }
-
-    /**
-     * Returns the temperature of the imu in degrees C.
-     *
-     * @see page 33 of this datasheet:
-     * https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
-     * for what the magic numbers are used.
-     */
-    inline float getTemp() final_mockable
-    {
-        return 21.0f + static_cast<float>(raw.temperature) / 333.87f;
-    }
-
-    /**
-     * Returns yaw angle. in degrees.
-     */
-    inline float getYaw() final_mockable { return validateReading(mahonyAlgorithm.getYaw()); }
-
-    /**
-     * Returns pitch angle in degrees.
-     */
-    inline float getPitch() final_mockable { return validateReading(mahonyAlgorithm.getPitch()); }
-
-    /**
-     * Returns roll angle in degrees.
-     */
-    inline float getRoll() final_mockable { return validateReading(mahonyAlgorithm.getRoll()); }
-
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
-
-    /**
-     * Returns the angle difference between the normal vector of the plane that the
-     * type A board lies on and of the angle directly upward.
-     */
-    mockable float getTiltAngle();
-
-    /**
-     * Uninitializes the mpu6500 and enters calibration mode.
-     */
-    mockable void requestCalibration();
-
-    void attachProcessRawMpu6500DataFn(ProcessRawMpu6500DataFn fn) { processRawMpu6500DataFn = fn; }
 
     /**
      * Use for converting from gyro values we receive to more conventional degrees / second.
@@ -289,12 +119,16 @@ public:
     }
 
 private:
+    Drivers *drivers;
+
     static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
     /**
      * Use to convert the raw acceleration into more conventional degrees / second^2
      */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
+
+    inline float getAccelerationSensitivity() override { return ACCELERATION_SENSITIVITY; }
 
     /**
      * The number of samples we take while calibrating in order to determine the mpu offsets.
@@ -321,36 +155,15 @@ private:
      */
     static constexpr uint8_t MPU6500_READ_BIT = 0x80;
 
-    Drivers *drivers;
-
-    ProcessRawMpu6500DataFn processRawMpu6500DataFn;
-
     int delayBtwnCalcAndReadReg = 2000 - NONBLOCKING_TIME_TO_READ_REG;
 
-    ImuState imuState = ImuState::IMU_NOT_CONNECTED;
-
-    tap::arch::MicroTimeout readRegistersTimeout;
     uint8_t tx = 0;  ///< Byte used for reading data in the read protothread
     uint8_t rx = 0;  ///< Byte used for reading data in the read protothread
 
-    RawData raw;
-
-    Mahony mahonyAlgorithm;
-
     imu_heater::ImuHeater imuHeater;
 
-    float tiltAngle = 0.0f;
-    bool tiltAngleCalculated = false;
-
     uint8_t txBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
-
     uint8_t rxBuff[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE] = {0};
-
-    int calibrationSample = 0;
-
-    uint8_t errorState = 0;
-
-    uint32_t prevIMUDataReceivedTime = 0;
 
     // Functions for interacting with hardware directly.
 
@@ -381,16 +194,7 @@ private:
      */
     void spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len);
 
-    /**
-     * Add any errors to the error handler that have came up due to calls to validateReading.
-     */
-    void addValidationErrors();
-
-    /// Default processing function when IMU is lying flat on the robot.
-    static void defaultProcessRawMpu6500Data(
-        const uint8_t (&rxBuff)[ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE],
-        modm::Vector3f &accel,
-        modm::Vector3f &gyro);
+    float parseTemp(float temperature) { return 21.0f + temperature / 333.87f; }
 };
 
 }  // namespace tap::communication::sensors::imu::mpu6500
