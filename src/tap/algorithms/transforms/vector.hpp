@@ -56,6 +56,8 @@ public:
 
     inline Vector operator+(const Position& other) const;
 
+    inline Vector operator-(const Vector& other) const;
+
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
     inline static float dot(const Vector& a, const Vector& b)

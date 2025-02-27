@@ -23,6 +23,7 @@
 #include "tap/algorithms/MahonyAHRS.h"
 #include "tap/algorithms/transforms/orientation.hpp"
 #include "tap/algorithms/transforms/transform.hpp"
+#include "tap/algorithms/transforms/vector.hpp"
 #include "tap/architecture/timeout.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
 
@@ -78,14 +79,14 @@ public:
      */
     virtual ImuState getImuState() const { return imuState; }
 
-    inline float getAx() override { return imuData.accG[ImuData::X]; }
-    inline float getAy() override { return imuData.accG[ImuData::Y]; }
-    inline float getAz() override { return imuData.accG[ImuData::Z]; }
-    inline float getAzMinusG()  { return imuData.accG[ImuData::Z] - GRAVITY_MPS2; }
+    inline float getAx() override { return imuData.accG.x(); }
+    inline float getAy() override { return imuData.accG.y(); }
+    inline float getAz() override { return imuData.accG.z(); }
+    inline float getAzMinusG() { return imuData.accG.z() - GRAVITY_MPS2; }
 
-    inline float getGx() override { return imuData.gyroDegPerSec[ImuData::X]; }
-    inline float getGy() override { return imuData.gyroDegPerSec[ImuData::Y]; }
-    inline float getGz() override { return imuData.gyroDegPerSec[ImuData::Z]; }
+    inline float getGx() override { return imuData.gyroDegPerSec.x(); }
+    inline float getGy() override { return imuData.gyroDegPerSec.y(); }
+    inline float getGz() override { return imuData.gyroDegPerSec.z(); }
 
     inline float getTemp() override { return imuData.temperature; }
 
@@ -95,19 +96,12 @@ public:
 
     struct ImuData
     {
-        enum Axis
-        {
-            X = 0,
-            Y = 1,
-            Z = 2,
-        };
-
-        float accRaw[3] = {0};
-        float gyroRaw[3] = {0};
-        float accOffsetRaw[3] = {0};
-        float gyroOffsetRaw[3] = {0};
-        float accG[3] = {0};
-        float gyroDegPerSec[3] = {0};
+        tap::algorithms::transforms::Vector accRaw = {0,0,0};
+        tap::algorithms::transforms::Vector gyroRaw = {0,0,0};
+        tap::algorithms::transforms::Vector accOffsetRaw = {0,0,0};
+        tap::algorithms::transforms::Vector gyroOffsetRaw = {0,0,0};
+        tap::algorithms::transforms::Vector accG = {0,0,0};
+        tap::algorithms::transforms::Vector gyroDegPerSec = {0,0,0};
 
         float temperature = 0;
     };
@@ -117,7 +111,7 @@ public:
 protected:
     void resetOffsets();
     void computeOffsets();
-    void setAccrlOffset(float x, float y, float z);
+    void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
 
     virtual inline float getAccelerationSensitivity() = 0;

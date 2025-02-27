@@ -33,4 +33,9 @@ inline Vector Vector::operator+(const Vector& other) const
     return Vector(this->coordinates_ + other.coordinates_);
 }
 
+inline Vector Vector::operator-(const Vector& other) const
+{
+    return Vector(this->coordinates_ - other.coordinates_);
+}
+
 }  // namespace tap::algorithms::transforms

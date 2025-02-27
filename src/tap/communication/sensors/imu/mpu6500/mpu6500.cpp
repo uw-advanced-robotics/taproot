@@ -132,27 +132,20 @@ bool Mpu6500::read()
         PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
-        imuData.accRaw[0] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
-        imuData.accRaw[1] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
-        imuData.accRaw[2] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+        float accRawX = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
+        float accRawY = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 2);
+        float accRawZ = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 4);
+        imuData.accRaw = tap::algorithms::transforms::Vector(accRawX, accRawY, accRawZ);
 
-        imuData.gyroRaw[0] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
-        imuData.gyroRaw[1] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
-        imuData.gyroRaw[2] = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
+        float gyroRawX = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 8);
+        float gyroRawY = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 10);
+        float gyroRawZ = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
+        imuData.gyroRaw = tap::algorithms::transforms::Vector(gyroRawX, gyroRawY, gyroRawZ);
 
-        imuData.accG[0] = (imuData.accRaw[0] - imuData.accOffsetRaw[ImuData::X]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
-        imuData.accG[1] = (imuData.accRaw[1] - imuData.accOffsetRaw[ImuData::Y]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
-        imuData.accG[2] = (imuData.accRaw[2] - imuData.accOffsetRaw[ImuData::Z]) *
-                            ACCELERATION_GRAVITY / ACCELERATION_SENSITIVITY;
+        imuData.accG = (imuData.accRaw - imuData.accOffsetRaw) * ACCELERATION_GRAVITY /
+                       ACCELERATION_SENSITIVITY;
 
-        imuData.gyroDegPerSec[0] =
-            (imuData.gyroRaw[0] - imuData.gyroOffsetRaw[ImuData::X]) / LSB_D_PER_S_TO_D_PER_S;
-        imuData.gyroRaw[1] =
-            (imuData.gyroDegPerSec[1] - imuData.gyroOffsetRaw[ImuData::Y]) / LSB_D_PER_S_TO_D_PER_S;
-        imuData.gyroRaw[2] =
-            (imuData.gyroDegPerSec[2] - imuData.gyroOffsetRaw[ImuData::Z]) / LSB_D_PER_S_TO_D_PER_S;
+        imuData.gyroDegPerSec = (imuData.gyroRaw - imuData.gyroOffsetRaw) / LSB_D_PER_S_TO_D_PER_S;
 
         imuData.temperature = parseTemp(static_cast<float>(rxBuff[6] << 8 | rxBuff[7]));
 

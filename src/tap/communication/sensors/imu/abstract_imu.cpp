@@ -50,60 +50,43 @@ void AbstractIMU::periodicIMUUpdate()
     else
     {
         mahonyAlgorithm.updateIMU(
-            imuData.gyroDegPerSec[ImuData::X],
-            imuData.gyroDegPerSec[ImuData::Y],
-            imuData.gyroDegPerSec[ImuData::Z],
-            imuData.accG[ImuData::X],
-            imuData.accG[ImuData::Y],
-            imuData.accG[ImuData::Z]);
+            imuData.gyroDegPerSec.x(),
+            imuData.gyroDegPerSec.z(),
+            imuData.gyroDegPerSec.y(),
+            imuData.accG.x(),
+            imuData.accG.y(),
+            imuData.accG.z());
     }
 }
 
 void AbstractIMU::resetOffsets()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        imuData.accOffsetRaw[i] = 0;
-        imuData.gyroOffsetRaw[i] = 0;
-    }
+    imuData.accOffsetRaw = {0, 0, 0};
+    imuData.gyroOffsetRaw = {0, 0, 0};
 }
 
-void AbstractIMU::setAccrlOffset(float x, float y, float z)
+void AbstractIMU::setAccelOffset(float x, float y, float z)
 {
-    imuData.accOffsetRaw[ImuData::X] = x;
-    imuData.accOffsetRaw[ImuData::Y] = y;
-    imuData.accOffsetRaw[ImuData::Z] = z;
+    imuData.accOffsetRaw = tap::algorithms::transforms::Vector(x, y, z);
 }
 
 void AbstractIMU::setGyroOffset(float x, float y, float z)
 {
-    imuData.gyroOffsetRaw[ImuData::X] = x;
-    imuData.gyroOffsetRaw[ImuData::Y] = y;
-    imuData.gyroOffsetRaw[ImuData::Z] = z;
+    imuData.gyroOffsetRaw = tap::algorithms::transforms::Vector(x, y, z);
 }
-
-
 
 void AbstractIMU::computeOffsets()
 {
     calibrationSample++;
 
-    imuData.gyroOffsetRaw[ImuData::X] += imuData.gyroRaw[ImuData::X];
-    imuData.gyroOffsetRaw[ImuData::Y] += imuData.gyroRaw[ImuData::Y];
-    imuData.gyroOffsetRaw[ImuData::Z] += imuData.gyroRaw[ImuData::Z];
-    imuData.accOffsetRaw[ImuData::X] += imuData.accRaw[ImuData::X];
-    imuData.accOffsetRaw[ImuData::Y] += imuData.accRaw[ImuData::Y];
-    imuData.accOffsetRaw[ImuData::Z] += imuData.accRaw[ImuData::Z] - getAccelerationSensitivity();
+    imuData.gyroOffsetRaw = imuData.gyroOffsetRaw + imuData.gyroRaw;
+    imuData.accOffsetRaw = imuData.accOffsetRaw + imuData.accRaw - tap::algorithms::transforms::Vector(0, 0, getAccelerationSensitivity());
 
     if (calibrationSample >= offsetSampleCount)
     {
         calibrationSample = 0;
-        imuData.gyroOffsetRaw[ImuData::X] /= offsetSampleCount;
-        imuData.gyroOffsetRaw[ImuData::Y] /= offsetSampleCount;
-        imuData.gyroOffsetRaw[ImuData::Z] /= offsetSampleCount;
-        imuData.accOffsetRaw[ImuData::X] /= offsetSampleCount;
-        imuData.accOffsetRaw[ImuData::Y] /= offsetSampleCount;
-        imuData.accOffsetRaw[ImuData::Z] /= offsetSampleCount;
+        imuData.gyroOffsetRaw = imuData.gyroOffsetRaw / offsetSampleCount;
+        imuData.accOffsetRaw = imuData.accOffsetRaw / offsetSampleCount;
         imuState = ImuState::IMU_CALIBRATED;
         mahonyAlgorithm.reset();
     }

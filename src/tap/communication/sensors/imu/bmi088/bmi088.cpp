@@ -154,32 +154,24 @@ bool Bmi088::read()
 
     prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
 
-    imuData.accRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
-    imuData.accRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
-    imuData.accRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
+    float rawAccX = bigEndianInt16ToFloat(rxBuff);
+    float rawAccY = bigEndianInt16ToFloat(rxBuff + 2);
+    float rawAccZ = bigEndianInt16ToFloat(rxBuff + 4);
+    imuData.accRaw = tap::algorithms::transforms::Vector(rawAccX, rawAccY, rawAccZ);
 
     Bmi088Hal::bmi088GyroReadMultiReg(Gyro::RATE_X_LSB, rxBuff, 6);
-    imuData.gyroRaw[ImuData::X] = bigEndianInt16ToFloat(rxBuff);
-    imuData.gyroRaw[ImuData::Y] = bigEndianInt16ToFloat(rxBuff + 2);
-    imuData.gyroRaw[ImuData::Z] = bigEndianInt16ToFloat(rxBuff + 4);
+    
+    float rawGyroX = bigEndianInt16ToFloat(rxBuff);
+    float rawGyroY = bigEndianInt16ToFloat(rxBuff + 2);
+    float rawGyroZ = bigEndianInt16ToFloat(rxBuff + 4);
+    imuData.gyroRaw = tap::algorithms::transforms::Vector(rawGyroX, rawGyroY, rawGyroZ);
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
     imuData.temperature = parseTemp(rxBuff[0], rxBuff[1]);
 
-    imuData.gyroDegPerSec[ImuData::X] =
-        GYRO_DS_PER_GYRO_COUNT * (imuData.gyroRaw[ImuData::X] - imuData.gyroOffsetRaw[ImuData::X]);
-    imuData.gyroDegPerSec[ImuData::Y] =
-        GYRO_DS_PER_GYRO_COUNT * (imuData.gyroRaw[ImuData::Y] - imuData.gyroOffsetRaw[ImuData::Y]);
-    imuData.gyroDegPerSec[ImuData::Z] =
-        GYRO_DS_PER_GYRO_COUNT * (imuData.gyroRaw[ImuData::Z] - imuData.gyroOffsetRaw[ImuData::Z]);
+    imuData.gyroDegPerSec = (imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_DS_PER_GYRO_COUNT;
+    imuData.accG = (imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT;
 
-    imuData.accG[ImuData::X] =
-        ACC_G_PER_ACC_COUNT * (imuData.accRaw[ImuData::X] - imuData.accOffsetRaw[ImuData::X]);
-    imuData.accG[ImuData::Y] =
-        ACC_G_PER_ACC_COUNT * (imuData.accRaw[ImuData::Y] - imuData.accOffsetRaw[ImuData::Y]);
-    imuData.accG[ImuData::Z] =
-        ACC_G_PER_ACC_COUNT * (imuData.accRaw[ImuData::Z] - imuData.accOffsetRaw[ImuData::Z]);
-    
     return true;
 
 }
