@@ -182,9 +182,20 @@ Orientation Transform::apply(const Orientation& orientation) const
 Transform Transform::getInverse() const
 {
     // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invTranslation = tRotation * translation;
-    invTranslation = -invTranslation;
-    return Transform(invTranslation, tRotation);
+    CMSISMat<3, 1> invTranslation = -(tRotation * translation);
+    if (dynamic)
+    {
+        CMSISMat<3, 1> angVelVec = getAngularVel().coordinates();
+        CMSISMat<3, 1> invVel =
+            -(tRotation * transVel) - cross(-(tRotation * angVelVec), -(tRotation * translation));
+        CMSISMat<3, 1> invAcc = -(tRotation * transVel) - cross(-(tRotation * angVelVec), invVel);
+        CMSISMat<3, 3> invAngVel = -(tRotation * angVel * rotation);
+        return Transform(invTranslation, tRotation, invVel, invAcc, invAngVel);
+    }
+    else
+    {
+        return Transform(invTranslation, tRotation);
+    }
 }
 
 Transform Transform::compose(const Transform& second) const

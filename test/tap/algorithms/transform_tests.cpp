@@ -217,3 +217,85 @@ TEST(Transform, transform_compose_with_inverse_yields_identity)
     EXPECT_NEAR(identity.getRotation().pitch(), composed.getRotation().pitch(), 1E-5);
     EXPECT_NEAR(identity.getRotation().yaw(), composed.getRotation().yaw(), 1E-5);
 }
+
+TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
+{
+    // Given
+    Transform transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+
+    // When
+    Transform composed = transform.compose(transform.getInverse());
+
+    // Then
+    Transform identity = Transform::identity();
+    EXPECT_NEAR(identity.getX(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getY(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getZ(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getXVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getYVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getZVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getXAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getYAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getZAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getRoll(), composed.getRoll(), 1E-5);
+    EXPECT_NEAR(identity.getPitch(), composed.getPitch(), 1E-5);
+    EXPECT_NEAR(identity.getYaw(), composed.getYaw(), 1E-5);
+    EXPECT_NEAR(identity.getRollVelocity(), composed.getRollVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getPitchVelocity(), composed.getPitchVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getYawVelocity(), composed.getYawVelocity(), 1E-5);
+}
+
+TEST(Transform, dynamic_transform_no_translation_compose_with_inverse_yields_identity)
+{
+    // Given
+    Transform transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+
+    // When
+    Transform composed = transform.compose(transform.getInverse());
+
+    // Then
+    Transform identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    EXPECT_NEAR(identity.getX(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getY(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getZ(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getXVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getYVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getZVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getXAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getYAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getZAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getRoll(), composed.getRoll(), 1E-5);
+    EXPECT_NEAR(identity.getPitch(), composed.getPitch(), 1E-5);
+    EXPECT_NEAR(identity.getYaw(), composed.getYaw(), 1E-5);
+    EXPECT_NEAR(identity.getRollVelocity(), composed.getRollVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getPitchVelocity(), composed.getPitchVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getYawVelocity(), composed.getYawVelocity(), 1E-5);
+}
+
+TEST(Transform, dynamic_transform_rotating_compose_with_translation)
+{
+    // Given
+    Transform
+        transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2, 1.0, 1.0, 1.0);
+
+    // When
+    Transform composed = transform.compose(transform.getInverse());
+
+    // Then
+    Transform identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    EXPECT_NEAR(identity.getX(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getY(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getZ(), composed.getX(), 1E-5);
+    EXPECT_NEAR(identity.getXVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getYVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getZVel(), composed.getXVel(), 1E-5);
+    EXPECT_NEAR(identity.getXAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getYAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getZAcc(), composed.getXAcc(), 1E-5);
+    EXPECT_NEAR(identity.getRoll(), composed.getRoll(), 1E-5);
+    EXPECT_NEAR(identity.getPitch(), composed.getPitch(), 1E-5);
+    EXPECT_NEAR(identity.getYaw(), composed.getYaw(), 1E-5);
+    EXPECT_NEAR(identity.getRollVelocity(), composed.getRollVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getPitchVelocity(), composed.getPitchVelocity(), 1E-5);
+    EXPECT_NEAR(identity.getYawVelocity(), composed.getYawVelocity(), 1E-5);
+}

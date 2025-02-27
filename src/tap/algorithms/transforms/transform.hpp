@@ -76,9 +76,9 @@ public:
      * @param x: Initial x-component of the translation.
      * @param y: Initial y-component of the translation.
      * @param z: Initial z-component of the translation.
-     * @param A: Initial rotation angle about the x-axis.
-     * @param B: Initial rotation angle about the y-axis.
-     * @param C: Initial rotation angle about the z-axis.
+     * @param roll: Initial rotation angle about the x-axis.
+     * @param pitch: Initial rotation angle about the y-axis.
+     * @param yaw: Initial rotation angle about the z-axis.
      */
     Transform(float x, float y, float z, float roll, float pitch, float yaw);
 
@@ -115,7 +115,7 @@ public:
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
      * @param acceleration Translational acceleration of this transformation.
-     * @param angularVelocity Angular velocity pseudovector of this transformation.
+     * @param angularVelocity Angular velocity skew symmetric matrix of this transformation.
      */
     Transform(
         const CMSISMat<3, 1>& translation,
@@ -129,7 +129,7 @@ public:
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.
      * @param acceleration Translational acceleration of this transformation.
-     * @param angularVelocity Angular velocity pseudovector of this transformation.
+     * @param angularVelocity Angular velocity skew symmetric matrix of this transformation.
      */
     Transform(
         CMSISMat<3, 1>&& translation,
@@ -233,7 +233,7 @@ public:
     /**
      * Updates the rotation of the current transformation matrix.
      *
-     * @param newRotation updated orienation of target frame in source frame.
+     * @param newRotation updated orientation of target frame in source frame.
      */
     inline void updateRotation(const Orientation& newRotation)
     {
@@ -241,6 +241,11 @@ public:
         this->tRotation = this->rotation.transpose();
     }
 
+    /**
+     * Updates the rotation of the current transformation matrix.
+     *
+     * @param newRotation updated orientation of target frame in source frame.
+     */
     inline void updateRotation(Orientation&& newRotation)
     {
         this->rotation = std::move(newRotation.matrix());
@@ -259,6 +264,117 @@ public:
     {
         this->rotation = Orientation(roll, pitch, yaw).matrix();
         this->tRotation = this->rotation.transpose();
+    }
+
+    /**
+     * Updates the velocity of the current transform.
+     *
+     * @param newVelocity updated velocity of target in source frame.
+     */
+    inline void updateVelocity(const Vector& newVelocity)
+    {
+        this->transVel = newVelocity.coordinates();
+        checkDynamic();
+    }
+
+    /**
+     * Updates the velocity of the current transform.
+     *
+     * @param newVelocity updated velocity of target in source frame.
+     */
+    inline void updateVelocity(Vector&& newVelocity)
+    {
+        this->transVel = std::move(newVelocity.coordinates());
+        checkDynamic();
+    }
+
+    /**
+     * Updates the velocity of the current transform.
+     *
+     * @param vx new velocity x-component.
+     * @param vy new velocity y-component.
+     * @param vz new velocity z-component.
+     */
+    inline void updateVelocity(float vx, float vy, float vz)
+    {
+        this->transVel = CMSISMat<3, 1>({vx, vy, vz});
+        checkDynamic();
+    }
+
+    /**
+     * Updates the acceleration of the current transform.
+     *
+     * @param updateAcceleration updated acceleration of target in source frame.
+     */
+    inline void updateAcceleration(const Vector& newAcceleration)
+    {
+        this->transVel = newAcceleration.coordinates();
+        checkDynamic();
+    }
+
+    /**
+     * Updates the acceleration of the current transform.
+     *
+     * @param updateAcceleration updated acceleration of target in source frame.
+     */
+    inline void updateAcceleration(Vector&& newAcceleration)
+    {
+        this->transVel = std::move(newAcceleration.coordinates());
+        checkDynamic();
+    }
+
+    /**
+     * Updates the acceleration of the current transform.
+     *
+     * @param ax new acceleration x-component.
+     * @param ay new acceleration y-component.
+     * @param az new acceleration z-component.
+     */
+    inline void updateAcceleration(float ax, float ay, float az)
+    {
+        this->transAcc = CMSISMat<3, 1>({ax, ay, az});
+        checkDynamic();
+    }
+
+    /**
+     * Updates the angular velocity of the current transform.
+     *
+     * @param updateAngularVelocity updated angular velocity of target in source frame.
+     */
+    inline void updateAngularVelocity(const Vector& newAngularVelocity)
+    {
+        this->angVel = skewMatFromAngVel(
+            newAngularVelocity.x(),
+            newAngularVelocity.y(),
+            newAngularVelocity.z());
+        checkDynamic();
+    }
+
+    /**
+     * Updates the angular velocity of the current transform.
+     *
+     * @param updateAngularVelocity updated angular velocity of target in source frame.
+     */
+    inline void updateAngularVelocity(Position&& newAngularVelocity)
+    {
+        this->angVel = skewMatFromAngVel(
+            newAngularVelocity.x(),
+            newAngularVelocity.y(),
+            newAngularVelocity.z());
+        checkDynamic();
+    }
+
+    /**
+     * Updates the angular velocity of the current transform.
+     *
+     * @param ax new angular velocity x-component.
+     * @param ay new angular velocity y-component.
+     * @param az new angular velocity z-component.
+     */
+    inline void updateAngularVelocity(float vr, float vp, float vy)
+    {
+        this->angVel = skewMatFromAngVel(vr, vp, vy);
+        checkDynamic();
     }
 
     /**
@@ -285,7 +401,10 @@ public:
 
     inline Orientation getRotation() const { return Orientation(rotation); }
 
-    // inline Vector getAngularVel() const { return Vector(angVel); };
+    inline Vector getAngularVel() const
+    {
+        return Vector(getRollVelocity(), getPitchVelocity(), getYawVelocity());
+    }
 
     /**
      * Get the roll of this transformation
@@ -404,6 +523,24 @@ private:
     inline static CMSISMat<3, 3> skewMatFromAngVel(const float wx, const float wy, const float wz)
     {
         return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wz, 0});
+    }
+
+    inline void checkDynamic()
+    {
+        dynamic = false;
+
+        dynamic |=
+            !(compareFloatClose(getXVel(), 0, 1e-5) && compareFloatClose(getYVel(), 0, 1e-5) &&
+              compareFloatClose(getZVel(), 0, 1e-5));
+
+        dynamic |=
+            !(compareFloatClose(getXAcc(), 0, 1e-5) && compareFloatClose(getYAcc(), 0, 1e-5) &&
+              compareFloatClose(getZAcc(), 0, 1e-5));
+
+        dynamic |=
+            !(compareFloatClose(getRollVelocity(), 0, 1e-5) &&
+              compareFloatClose(getPitchVelocity(), 0, 1e-5) &&
+              compareFloatClose(getYawVelocity(), 0, 1e-5));
     }
 };  // class Transform
 }  // namespace tap::algorithms::transforms
