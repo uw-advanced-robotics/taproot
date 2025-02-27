@@ -35,7 +35,7 @@ using namespace tap::arch;
 
 namespace tap::communication::sensors::imu::mpu6500
 {
-Mpu6500::Mpu6500(Drivers *drivers) : AbstractIMU(drivers), drivers(drivers), imuHeater(drivers) {}
+Mpu6500::Mpu6500(Drivers *drivers) : AbstractIMU(), drivers(drivers), imuHeater(drivers) {}
 
 void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 {
@@ -98,23 +98,14 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 #endif
 
     imuHeater.initialize();
-
-    delayBtwnCalcAndReadReg =
-        static_cast<int>(1e6f / sampleFrequency) - NONBLOCKING_TIME_TO_READ_REG;
-
-    assert(delayBtwnCalcAndReadReg >= 0);
-
-    readTimeout.restart(delayBtwnCalcAndReadReg);
 }
 
 void Mpu6500::periodicIMUUpdate()
 {
     AbstractIMU::periodicIMUUpdate();
-
-    readTimeout.restart(delayBtwnCalcAndReadReg);
-
     imuHeater.runTemperatureController(getTemp());
 }
+
 bool Mpu6500::read()
 {
 #ifndef PLATFORM_HOSTED
@@ -141,8 +132,8 @@ bool Mpu6500::read()
         float gyroRawZ = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff + 12);
         imuData.gyroRaw = tap::algorithms::transforms::Vector(gyroRawX, gyroRawY, gyroRawZ);
 
-        imuData.accG = (imuData.accRaw - imuData.accOffsetRaw) * ACCELERATION_GRAVITY /
-                       ACCELERATION_SENSITIVITY;
+        imuData.accG =
+            (imuData.accRaw - imuData.accOffsetRaw) * GRAVITY_MPS2 / ACCELERATION_SENSITIVITY;
 
         imuData.gyroDegPerSec = (imuData.gyroRaw - imuData.gyroOffsetRaw) / LSB_D_PER_S_TO_D_PER_S;
 
