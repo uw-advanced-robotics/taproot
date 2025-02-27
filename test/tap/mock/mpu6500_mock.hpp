@@ -47,6 +47,7 @@ public:
     MOCK_METHOD(float, getYaw, (), (override));
     MOCK_METHOD(float, getPitch, (), (override));
     MOCK_METHOD(float, getRoll, (), (override));
+    MOCK_METHOD(ImuState, getImuState, (), (const final override));
 };  // Mpu6500Mock
 }  // namespace mock
 }  // namespace tap
