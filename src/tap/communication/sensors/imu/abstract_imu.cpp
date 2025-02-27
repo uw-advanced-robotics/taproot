@@ -24,7 +24,7 @@ void AbstractIMU::initialize(float sampleFrequency, float mahonyKp, float mahony
 {
     mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
     imuState = ImuState::IMU_NOT_CALIBRATED;
-    readTimeout.restart(1'000'000 * sampleFrequency);
+    readTimeout.restart(1'000'000 / sampleFrequency);
 }
 
 void AbstractIMU::requestCalibration()
