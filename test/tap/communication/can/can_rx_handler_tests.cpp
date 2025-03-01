@@ -61,7 +61,7 @@ TEST(CanRxHandler, ListenerAttachesSelf)
 
 TEST_F(CanRxHandlerTest, attachReceiveHandler_attaches_listener_can2)
 {
-    tap::can::CanRxListener *listener =
+    CanRxListenerMock *listener =
         new CanRxListenerMock(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS2);
 
     handler.attachReceiveHandler(listener);
