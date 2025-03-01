@@ -35,6 +35,7 @@ namespace tap
 class Drivers;
 namespace can
 {
+class CanRxHandler;
 /**
  * A class that when extended allows you to interface with the `can_rx_handler`.
  *
@@ -84,6 +85,8 @@ namespace can
  */
 class CanRxListener
 {
+    friend class CanRxHandler;
+
 public:
     /**
      * Construct a new CanRxListener, must specify the can identifier
@@ -131,6 +134,12 @@ public:
     const CanBus canBus;
 
     Drivers* drivers;
+
+private:
+    /**
+     * The next CanRxListener in the linked list for lookups.
+     */
+    CanRxListener* next = nullptr;
 };  // class CanRxListener
 
 }  // namespace can
