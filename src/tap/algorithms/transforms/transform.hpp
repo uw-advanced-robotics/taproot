@@ -23,6 +23,7 @@
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 
+#include "angular_velocity.hpp"
 #include "orientation.hpp"
 #include "position.hpp"
 #include "vector.hpp"
@@ -30,24 +31,23 @@
 namespace tap::algorithms::transforms
 {
 /**
- Represents a transformation from one coordinate frame to another.
-
-    A Transform from frame A to frame B defines a relationship between the two frames, such
- that a spatial measurement in frame A can be represented equivalently in frame B by applying a
-    translational and rotational offset. This process is known as *applying* a transform.
-
-    Transforms are specified as a translation and rotation of some "target" frame relative to
- some "source" frame. The "translation" is the target frame's origin in source frame, and the
-    "rotation" is the target frame's orientation relative to the source frame's orientation.
-
-    Conceptually, translations are applied "before" rotations. This means that the origin of the
-    target frame is entirely defined by the translation in the source frame, and the rotation serves
-    only to change the orientation of the target frame's axes relative to the source frame.
-
-    Utilizes arm's CMSIS matrix operations.
-
-    @param SOURCE represents the source frame of the transformation.
-    @param TARGET represents the target frame of the transformation.
+ * Represents a transformation from one coordinate frame to another.
+ * A Static Transform from frame A to frame B defines a relationship between the two frames, such
+ * that a spatial measurement in frame A can be represented equivalently in frame B by applying a
+ * translational and rotational offset. This process is known as *applying* a transform.
+ *
+ * Static Transforms are specified as a translation and rotation of some "follower" frame relative
+ * to some "base" frame. The "translation" is the follower frame's origin in base frame, and the
+ * "rotation" is the follower frame's orientation relative to the base frame's orientation.
+ *
+ * Conceptually, translations are applied "before" rotations. This means that the origin of the
+ * follower frame is entirely defined by the translation in the base frame, and the rotation serves
+ * only to change the orientation of the follower frame's axes relative to the base frame.
+ *
+ * A Dynamic Transform is an extension of a Static Transform that can store linear velocity, linear
+ * acceleration, and angular velocity.
+ *
+ * Utilizes ARM's CMSIS matrix operations.
  */
 class Transform
 {
@@ -168,39 +168,43 @@ public:
         float yawVel);
 
     /**
-     * Constructs an identity static transform.
+     * @brief Constructs an identity transform.
      */
     static inline Transform identity() { return Transform(0., 0., 0., 0., 0., 0.); }
 
     /**
-     * Apply this transform to a position.
+     * @brief Apply this transform to a position.
      *
-     * @param[in] position Position in source frame.
-     * @return Position in target frame.
+     * @param[in] position Position in base frame.
+     * @return Position in follower frame.
      */
     Position apply(const Position& position) const;
 
     /**
-     * Rotates a vector in the source frame to a vector in the target frame.
+     * @brief Rotates a vector in the base frame to a vector in the follower frame.
      *
      * Intended to be used for things like velocities and accelerations which represent the
      * difference between two positions in space, since both positions get translated the same way,
      * causing the translation to cancel out.
      *
-     * @param vector Vector as read by source frame.
-     * @return Vector in target frame's basis.
+     * @param vector Vector as read by base frame.
+     * @return Vector in follower frame's basis.
      */
     Vector apply(const Vector& vector) const;
 
+    Vector applyToVelocity(const Vector& vector) const;
+
+    Vector applyToAcceleration(const Vector& vector) const;
+
     /**
-     *
+     * @brief Rotates an orientation in the base frame to a vector in the follower frame.
      */
     Orientation apply(const Orientation& orientation) const;
 
     /**
-     * Updates the translation of the current transformation matrix.
+     * @brief Updates the translation of the current transformation matrix.
      *
-     * @param newTranslation updated position of target in source frame.
+     * @param newTranslation updated position of follower in base frame.
      */
     inline void updateTranslation(const Position& newTranslation)
     {
@@ -208,9 +212,9 @@ public:
     }
 
     /**
-     * Updates the translation of the current transformation matrix.
+     * @brief Updates the translation of the current transformation matrix.
      *
-     * @param newTranslation updated position of target in source frame.
+     * @param newTranslation updated position of follower in base frame.
      */
     inline void updateTranslation(Position&& newTranslation)
     {
@@ -218,7 +222,7 @@ public:
     }
 
     /**
-     * Updates the translation of the current transformation matrix.
+     * @brief Updates the translation of the current transformation matrix.
      *
      * @param x new translation x-component.
      * @param y new translation y-component.
@@ -230,9 +234,9 @@ public:
     }
 
     /**
-     * Updates the rotation of the current transformation matrix.
+     * @brief Updates the rotation of the current transformation matrix.
      *
-     * @param newRotation updated orientation of target frame in source frame.
+     * @param newRotation updated orientation of follower frame in base frame.
      */
     inline void updateRotation(const Orientation& newRotation)
     {
@@ -241,9 +245,9 @@ public:
     }
 
     /**
-     * Updates the rotation of the current transformation matrix.
+     * @brief Updates the rotation of the current transformation matrix.
      *
-     * @param newRotation updated orientation of target frame in source frame.
+     * @param newRotation updated orientation of follower frame in base frame.
      */
     inline void updateRotation(Orientation&& newRotation)
     {
@@ -252,7 +256,7 @@ public:
     }
 
     /**
-     * Updates the rotation of the current transformation matrix.
+     * @brief Updates the rotation of the current transformation matrix.
      * Takes rotation angles in the order of roll->pitch->yaw.
      *
      * @param roll updated rotation angle about the x-axis.
@@ -266,9 +270,9 @@ public:
     }
 
     /**
-     * Updates the velocity of the current transform.
+     * @brief Updates the velocity of the current transform.
      *
-     * @param newVelocity updated velocity of target in source frame.
+     * @param newVelocity updated velocity of follower in base frame.
      */
     inline void updateVelocity(const Vector& newVelocity)
     {
@@ -277,9 +281,9 @@ public:
     }
 
     /**
-     * Updates the velocity of the current transform.
+     * @brief Updates the velocity of the current transform.
      *
-     * @param newVelocity updated velocity of target in source frame.
+     * @param newVelocity updated velocity of follower in base frame.
      */
     inline void updateVelocity(Vector&& newVelocity)
     {
@@ -288,7 +292,7 @@ public:
     }
 
     /**
-     * Updates the velocity of the current transform.
+     * @brief Updates the velocity of the current transform.
      *
      * @param vx new velocity x-component.
      * @param vy new velocity y-component.
@@ -301,9 +305,9 @@ public:
     }
 
     /**
-     * Updates the acceleration of the current transform.
+     * @brief Updates the acceleration of the current transform.
      *
-     * @param updateAcceleration updated acceleration of target in source frame.
+     * @param updateAcceleration updated acceleration of follower in base frame.
      */
     inline void updateAcceleration(const Vector& newAcceleration)
     {
@@ -312,9 +316,9 @@ public:
     }
 
     /**
-     * Updates the acceleration of the current transform.
+     * @brief Updates the acceleration of the current transform.
      *
-     * @param updateAcceleration updated acceleration of target in source frame.
+     * @param updateAcceleration updated acceleration of follower in base frame.
      */
     inline void updateAcceleration(Vector&& newAcceleration)
     {
@@ -323,7 +327,7 @@ public:
     }
 
     /**
-     * Updates the acceleration of the current transform.
+     * @brief Updates the acceleration of the current transform.
      *
      * @param ax new acceleration x-component.
      * @param ay new acceleration y-component.
@@ -336,13 +340,13 @@ public:
     }
 
     /**
-     * Updates the angular velocity of the current transform.
+     * @brief Updates the angular velocity of the current transform.
      *
-     * @param updateAngularVelocity updated angular velocity of target in source frame.
+     * @param updateAngularVelocity updated angular velocity of follower in base frame.
      */
     inline void updateAngularVelocity(const Vector& newAngularVelocity)
     {
-        this->angVel = skewMatFromAngVel(
+        this->angVel = AngularVelocity::skewMatFromAngVel(
             newAngularVelocity.x(),
             newAngularVelocity.y(),
             newAngularVelocity.z());
@@ -350,13 +354,13 @@ public:
     }
 
     /**
-     * Updates the angular velocity of the current transform.
+     * @brief Updates the angular velocity of the current transform.
      *
-     * @param updateAngularVelocity updated angular velocity of target in source frame.
+     * @param updateAngularVelocity updated angular velocity of follower in base frame.
      */
     inline void updateAngularVelocity(Position&& newAngularVelocity)
     {
-        this->angVel = skewMatFromAngVel(
+        this->angVel = AngularVelocity::skewMatFromAngVel(
             newAngularVelocity.x(),
             newAngularVelocity.y(),
             newAngularVelocity.z());
@@ -364,7 +368,7 @@ public:
     }
 
     /**
-     * Updates the angular velocity of the current transform.
+     * @brief Updates the angular velocity of the current transform.
      *
      * @param ax new angular velocity x-component.
      * @param ay new angular velocity y-component.
@@ -372,23 +376,48 @@ public:
      */
     inline void updateAngularVelocity(float vr, float vp, float vy)
     {
-        this->angVel = skewMatFromAngVel(vr, vp, vy);
+        this->angVel = AngularVelocity::skewMatFromAngVel(vr, vp, vy);
         checkDynamic();
     }
 
     /**
      * @return Inverse of this Transform.
+     *
+     * @note This is only correct instantaneously for dynamic transforms; It can no longer be
+     * projected forward in time and behave the same way as the original. This is due to the now
+     * reversed translation-rotation that would be required to truly mimic the motion of the
+     * original. Ex: Consider a dynamic transform with only non-zero translation and angular
+     * velocity. Projecting this forward will cause the follower frame to rotate around its origin.
+     * Intuitively, one would expect the inverted transform to have its follower frame rotate around
+     * the base frame origin. However, this circular translation can only be approximated here with
+     * translational velocity/acceleration. The true inverse would need to be the composition of a
+     * rotation *then* a translation.
      */
     Transform getInverse() const;
 
     /**
-     * Returns the composed transformation of the given transformations.
+     * @brief Returns the composed transformation of the given transformations.
+     *
      * @return Transformation from this transform's base frame to `second`'s follower frame.
      */
     Transform compose(const Transform& second) const;
 
+    /**
+     * @brief Returns the composed transformation of the given transformations, ignoring any time
+     * derivatives.
+     *
+     * @return Static transformation from this transform's base frame to `second`'s
+     * follower frame.
+     */
     Transform composeStatic(const Transform& second) const;
 
+    /**
+     * @brief Projects this transform forward in time according to its translational
+     * velocity/acceleration and angular velocity.
+     *
+     * @param dt Seconds to project forward (can be negative)
+     * @return Projected transform
+     */
     Transform projectForward(float dt) const;
 
     /* Getters */
@@ -406,77 +435,77 @@ public:
     }
 
     /**
-     * Get the roll of this transformation
+     * @brief Get the roll of this transformation
      */
     float getRoll() const;
 
     /**
-     * Get the pitch of this transformation
+     * @brief Get the pitch of this transformation
      */
     float getPitch() const;
 
     /**
-     * Get the yaw of this transformation
+     * @brief Get the yaw of this transformation
      */
     float getYaw() const;
 
     /**
-     * Get the roll velocity of this transformation
+     * @brief Get the roll velocity of this transformation
      */
     float getRollVelocity() const;
 
     /**
-     * Get the pitch velocity of this transformation
+     * @brief Get the pitch velocity of this transformation
      */
     float getPitchVelocity() const;
 
     /**
-     * Get the yaw velocity of this transformation
+     * @brief Get the yaw velocity of this transformation
      */
     float getYawVelocity() const;
 
     /**
-     * Get the x-component of this transform's translation
+     * @brief Get the x-component of this transform's translation
      */
     inline float getX() const { return this->translation.data[0]; }
 
     /**
-     * Get the y-component of this transform's translation
+     * @brief Get the y-component of this transform's translation
      */
     inline float getY() const { return this->translation.data[1]; }
 
     /**
-     * Get the z-component of this transform's translation
+     * @brief Get the z-component of this transform's translation
      */
     inline float getZ() const { return this->translation.data[2]; }
 
     /**
-     * Get the x-component of this transform's translation
+     * @brief Get the x-component of this transform's translation
      */
     inline float getXVel() const { return this->transVel.data[0]; }
 
     /**
-     * Get the y-component of this transform's translation
+     * @brief Get the y-component of this transform's translation
      */
     inline float getYVel() const { return this->transVel.data[1]; }
 
     /**
-     * Get the z-component of this transform's translation
+     * @brief Get the z-component of this transform's translation
      */
     inline float getZVel() const { return this->transVel.data[2]; }
 
     /**
-     * Get the x-component of this transform's translation
+     * @brief Get the x-component of this transform's translation
      */
     inline float getXAcc() const { return this->transAcc.data[0]; }
 
     /**
-     * Get the y-component of this transform's translation
+     * @brief Get the y-component of this transform's translation
      */
     inline float getYAcc() const { return this->transAcc.data[1]; }
 
     /**
-     * Get the z-component of this transform's translation
+     * @brief Get the z-component of this transform's translation
      */
     inline float getZAcc() const { return this->transAcc.data[2]; }
 
@@ -515,14 +544,6 @@ private:
      * Angular velocity skew matrix.
      */
     CMSISMat<3, 3> angVel;
-
-    /**
-     * Generates a 3x3 skew matrix from euler angle velocities (in radians/sec)
-     */
-    inline static CMSISMat<3, 3> skewMatFromAngVel(const float wx, const float wy, const float wz)
-    {
-        return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wz, 0});
-    }
 
     inline void checkDynamic()
     {

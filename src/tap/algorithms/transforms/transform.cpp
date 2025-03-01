@@ -160,7 +160,7 @@ Transform::Transform(
       transAcc({ax, ay, az}),
       rotation(fromEulerAngles(roll, pitch, yaw)),
       tRotation(rotation.transpose()),
-      angVel(skewMatFromAngVel(rollVel, pitchVel, yawVel))
+      angVel(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
 {
 }
 
@@ -172,6 +172,16 @@ Position Transform::apply(const Position& position) const
 Vector Transform::apply(const Vector& vector) const
 {
     return Vector(tRotation * vector.coordinates());
+}
+
+Vector Transform::applyToVelocity(const Vector& vector) const
+{
+    return Vector(tRotation * vector.coordinates());  // todo: make dynamic
+}
+
+Vector Transform::applyToAcceleration(const Vector& vector) const
+{
+    return Vector(tRotation * vector.coordinates());  // todo: make dynamic
 }
 
 Orientation Transform::apply(const Orientation& orientation) const
