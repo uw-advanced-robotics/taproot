@@ -73,6 +73,7 @@ TEST_F(CanRxHandlerTest, attachReceiveHandler_attaches_listener_can2)
             listener->canIdentifier)]);
 
     handler.removeReceiveHandler(*listener);
+    delete listener;
 }
 
 TEST_F(CanRxHandlerTest, ListenerAttachesAndDetatchesInArray)
