@@ -85,8 +85,6 @@ TEST_F(CanRxHandlerTest, ListenerAttachesAndDetatchesInArray)
 
         int bin = tap::can::CanRxHandler::binIndexForCanId(listener->canIdentifier);
 
-        std::cout << bin << std::endl;
-
         EXPECT_EQ(listener.get(), handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[bin]);
 
         handler.removeReceiveHandler(*listener);
