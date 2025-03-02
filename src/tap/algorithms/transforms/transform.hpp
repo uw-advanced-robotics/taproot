@@ -24,6 +24,8 @@
 #include "tap/algorithms/math_user_utils.hpp"
 
 #include "angular_velocity.hpp"
+#include "dynamic_orientation.hpp"
+#include "dynamic_position.hpp"
 #include "orientation.hpp"
 #include "position.hpp"
 #include "vector.hpp"
@@ -192,14 +194,14 @@ public:
      */
     Vector apply(const Vector& vector) const;
 
-    Vector applyToVelocity(const Vector& vector) const;
-
-    Vector applyToAcceleration(const Vector& vector) const;
+    DynamicPosition apply(const DynamicPosition& dynamicPosition) const;
 
     /**
      * @brief Rotates an orientation in the base frame to a vector in the follower frame.
      */
     Orientation apply(const Orientation& orientation) const;
+
+    DynamicOrientation apply(const DynamicOrientation& dynamicOrientation) const;
 
     /**
      * @brief Updates the translation of the current transformation matrix.
@@ -427,12 +429,22 @@ public:
 
     inline Vector getAcceleration() const { return Vector(transAcc); };
 
+    inline DynamicPosition getDynamicTranslation() const
+    {
+        return DynamicPosition(translation, transVel, transAcc);
+    };
+
     inline Orientation getRotation() const { return Orientation(rotation); }
 
     inline Vector getAngularVel() const
     {
         return Vector(getRollVelocity(), getPitchVelocity(), getYawVelocity());
     }
+
+    inline DynamicOrientation getDynamicOrientation() const
+    {
+        return DynamicOrientation(rotation, angVel);
+    };
 
     /**
      * @brief Get the roll of this transformation

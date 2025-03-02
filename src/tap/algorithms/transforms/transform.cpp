@@ -166,27 +166,33 @@ Transform::Transform(
 
 Position Transform::apply(const Position& position) const
 {
-    return Position(tRotation * (position.coordinates() - translation));
+    return Position(tRotation * (position.coordinates_ - translation));
 }
 
 Vector Transform::apply(const Vector& vector) const
 {
-    return Vector(tRotation * vector.coordinates());
+    return Vector(tRotation * vector.coordinates_);
 }
 
-Vector Transform::applyToVelocity(const Vector& vector) const
+DynamicPosition Transform::apply(const DynamicPosition& dynamicPosition) const
 {
-    return Vector(tRotation * vector.coordinates());  // todo: make dynamic
-}
-
-Vector Transform::applyToAcceleration(const Vector& vector) const
-{
-    return Vector(tRotation * vector.coordinates());  // todo: make dynamic
+    CMSISMat<3, 1> pf = tRotation * dynamicPosition.position;
+    CMSISMat<3, 1> vf = tRotation * (dynamicPosition.velocity - transVel - angVel * translation);
+    CMSISMat<3, 1> af = tRotation * (dynamicPosition.acceleration - transAcc -
+                                     angVel * angVel * translation - 2 * angVel * vf);
+    return DynamicPosition(pf, vf, af);
 }
 
 Orientation Transform::apply(const Orientation& orientation) const
 {
-    return Orientation(tRotation * orientation.matrix());
+    return Orientation(tRotation * orientation.matrix_);
+}
+
+DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation) const
+{
+    return DynamicOrientation(
+        tRotation * dynamicOrientation.orientation,
+        tRotation * dynamicOrientation.angularVelocity * rotation);
 }
 
 Transform Transform::getInverse() const
@@ -195,7 +201,7 @@ Transform Transform::getInverse() const
     CMSISMat<3, 1> invTranslation = -(tRotation * translation);
     if (dynamic)
     {
-        CMSISMat<3, 1> angVelVec = getAngularVel().coordinates();
+        CMSISMat<3, 1> angVelVec = getAngularVel().coordinates_;
         CMSISMat<3, 1> invVel =
             -(tRotation * transVel) - cross(-(tRotation * angVelVec), -(tRotation * translation));
         CMSISMat<3, 1> invAcc = -(tRotation * transVel) - cross(-(tRotation * angVelVec), invVel);
