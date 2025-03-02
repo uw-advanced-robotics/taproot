@@ -64,13 +64,13 @@ void CanRxHandler::attachReceiveHandler(
         while (node->next != nullptr)
         {
             modm_assert(
-                node->canIdentifier == canRxListener->canIdentifier,
+                node->canIdentifier != canRxListener->canIdentifier,
                 "CAN",
                 "overloading",
                 1);
             node = node->next;
         }
-        modm_assert(node->canIdentifier == canRxListener->canIdentifier, "CAN", "overloading", 1);
+        modm_assert(node->canIdentifier != canRxListener->canIdentifier, "CAN", "overloading", 1);
         node->next = canRxListener;
     }
 }
@@ -142,7 +142,7 @@ void CanRxHandler::removeReceiveHandler(
             if (node->next->canIdentifier == canRxListener.canIdentifier)
             {
                 node->next = node->next->next;
-                break;
+                return;
             }
         }
         modm_assert(false, "CAN", "removing unadded handler", 1);

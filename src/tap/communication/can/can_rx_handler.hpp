@@ -75,6 +75,8 @@ class CanRxListener;
 class CanRxHandler
 {
 public:
+    static constexpr uint8_t CAN_BINS = 8;
+
     CanRxHandler(Drivers* drivers);
     mockable ~CanRxHandler() = default;
     DISALLOW_COPY_AND_ASSIGN(CanRxHandler)
@@ -124,8 +126,6 @@ public:
     mockable void removeReceiveHandler(const CanRxListener& rxListener);
 
 protected:
-    static constexpr uint8_t CAN_BINS = 8;
-
     Drivers* drivers;
 
     /**

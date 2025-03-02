@@ -135,7 +135,9 @@ public:
 
     Drivers* drivers;
 
+#ifndef ENV_UNIT_TESTS
 private:
+#endif
     /**
      * The next CanRxListener in the linked list for lookups.
      */
