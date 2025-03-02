@@ -82,6 +82,9 @@ public:
 
     inline float magnitude() const { return sqrt(dot(*this, *this)); }
 
+    friend class Transform;
+    friend class DynamicPosition;
+
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Vector

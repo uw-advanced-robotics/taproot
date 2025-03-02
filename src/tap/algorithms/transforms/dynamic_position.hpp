@@ -30,28 +30,67 @@ namespace tap::algorithms::transforms
 class DynamicPosition
 {
 public:
-    inline DynamicPosition(const float rollVel, const float pitchVel, const float yawVel)
-        : matrix_((rollVel, pitchVel, yawVel))
+    inline DynamicPosition(
+        const float x,
+        const float y,
+        const float z,
+        const float vx,
+        const float vy,
+        const float vz,
+        const float ax,
+        const float ay,
+        const float az)
+        : position({x, y, z}),
+          velocity({vx, vy, vz}),
+          acceleration({ax, ay, az})
     {
     }
 
     /* rvalue reference */
-    inline DynamicPosition(DynamicPosition&& other) : matrix_(std::move(other.matrix_)) {}
+    inline DynamicPosition(DynamicPosition&& other)
+        : position(std::move(other.position)),
+          velocity(std::move(other.velocity)),
+          acceleration(std::move(other.acceleration))
+    {
+    }
 
     /* Costly; use rvalue reference whenever possible */
-    inline DynamicPosition(DynamicPosition& other) : matrix_(CMSISMat(other.matrix_)) {}
+    inline DynamicPosition(DynamicPosition& other)
+        : position(CMSISMat(other.position)),
+          velocity(CMSISMat(other.velocity)),
+          acceleration(CMSISMat(other.acceleration))
+    {
+    }
 
     /* Costly; use rvalue reference whenever possible */
-    inline DynamicPosition(const CMSISMat<3, 3>& matrix) : matrix_(matrix) {}
+    inline DynamicPosition(
+        const CMSISMat<3, 1>& position,
+        const CMSISMat<3, 1>& velocity,
+        const CMSISMat<3, 1>& acceleration)
+        : position(position),
+          velocity(velocity),
+          acceleration(acceleration)
+    {
+    }
 
-    inline DynamicPosition(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
+    inline DynamicPosition(
+        CMSISMat<3, 1>&& position,
+        CMSISMat<3, 1>&& velocity,
+        CMSISMat<3, 1>&& acceleration)
+        : position(std::move(position)),
+          velocity(std::move(velocity)),
+          acceleration(std::move(acceleration))
+    {
+    }
+
+    friend class Transform;
 
 private:
-    Position position;
+    CMSISMat<3, 1> position;
 
-    Velocity velocity;
+    CMSISMat<3, 1> velocity;
 
-    Acceleration acceleration;
+    CMSISMat<3, 1> acceleration;
 
 };  // class DynamicPosition
 }  // namespace tap::algorithms::transforms

@@ -74,6 +74,9 @@ public:
 
     static float distance(const Position& a, const Position& b);
 
+    friend class Transform;
+    friend class DynamicPosition;
+
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Position

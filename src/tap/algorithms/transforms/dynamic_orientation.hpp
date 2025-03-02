@@ -29,38 +29,67 @@ namespace tap::algorithms::transforms
 class DynamicOrientation
 {
 public:
-    inline DynamicOrientation(const float rollVel, const float pitchVel, const float yawVel)
-        : matrix_((rollVel, pitchVel, yawVel))
+    inline DynamicOrientation(
+        const float roll,
+        const float pitch,
+        const float yaw,
+        const float rollVel,
+        const float pitchVel,
+        const float yawVel)
+        : orientation(Orientation::fromEulerAngles(roll, pitch, yaw)),
+          angularVelocity(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
     {
     }
 
     inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
-        : orientation(orientation),
-          angularVelocity(angularVelocity)
+        : orientation(std::move(orientation.matrix_)),
+          angularVelocity(std::move(angularVelocity.matrix_))
     {
     }
 
     inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
+        : orientation(orientation.matrix_),
+          angularVelocity(angularVelocity.matrix_)
+    {
+    }
+
+    /* rvalue reference */
+    inline DynamicOrientation(DynamicOrientation&& other)
+        : orientation(std::move(other.orientation)),
+          angularVelocity(std::move(other.angularVelocity))
+    {
+    }
+
+    /* Costly; use rvalue reference whenever possible */
+    inline DynamicOrientation(DynamicOrientation& other)
+        : orientation(other.orientation),
+          angularVelocity(other.angularVelocity)
+    {
+    }
+
+    inline DynamicOrientation(
+        const CMSISMat<3, 3>&& orientation,
+        const CMSISMat<3, 3>&& angularVelocity)
+        : orientation(std::move(orientation)),
+          angularVelocity(std::move(angularVelocity))
+    {
+    }
+
+    /* Costly; use rvalue reference whenever possible */
+    inline DynamicOrientation(
+        const CMSISMat<3, 3>& orientation,
+        const CMSISMat<3, 3>& angularVelocity)
         : orientation(orientation),
           angularVelocity(angularVelocity)
     {
     }
 
-    /* rvalue reference */
-    inline DynamicOrientation(DynamicOrientation&& other) : matrix_(std::move(other.matrix_)) {}
-
-    /* Costly; use rvalue reference whenever possible */
-    inline DynamicOrientation(DynamicOrientation& other) : matrix_(CMSISMat(other.matrix_)) {}
-
-    /* Costly; use rvalue reference whenever possible */
-    inline DynamicOrientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) {}
-
-    inline DynamicOrientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
+    friend class Transform;
 
 private:
-    Orientation orientation;
+    CMSISMat<3, 3> orientation;
 
-    AngularVelocity angularVelocity;
+    CMSISMat<3, 3> angularVelocity;
 
 };  // class DynamicOrientation
 }  // namespace tap::algorithms::transforms

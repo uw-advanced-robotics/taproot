@@ -68,6 +68,9 @@ public:
         return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wz, 0});
     }
 
+    friend class Transform;
+    friend class DynamicOrientation;
+
 private:
     CMSISMat<3, 3> matrix_;
 };  // class AngularVelocity
