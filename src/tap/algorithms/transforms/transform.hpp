@@ -480,32 +480,32 @@ public:
     inline float getZ() const { return this->translation.data[2]; }
 
     /**
-     * @brief Get the x-component of this transform's translation
+     * @brief Get the x-component of this transform's linear velocity
      */
     inline float getXVel() const { return this->transVel.data[0]; }
 
     /**
-     * @brief Get the y-component of this transform's translation
+     * @brief Get the y-component of this transform's linear velocity
      */
     inline float getYVel() const { return this->transVel.data[1]; }
 
     /**
-     * @brief Get the z-component of this transform's translation
+     * @brief Get the z-component of this transform's linear velocity
      */
     inline float getZVel() const { return this->transVel.data[2]; }
 
     /**
-     * @brief Get the x-component of this transform's translation
+     * @brief Get the x-component of this transform's linear acceleration
      */
     inline float getXAcc() const { return this->transAcc.data[0]; }
 
     /**
-     * @brief Get the y-component of this transform's translation
+     * @brief Get the y-component of this transform's linear acceleration
      */
     inline float getYAcc() const { return this->transAcc.data[1]; }
 
     /**
-     * @brief Get the z-component of this transform's translation
+     * @brief Get the z-component of this transform's linear acceleration
      */
     inline float getZAcc() const { return this->transAcc.data[2]; }
 
