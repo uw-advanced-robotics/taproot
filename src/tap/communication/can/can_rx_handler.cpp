@@ -61,16 +61,19 @@ void CanRxHandler::attachReceiveHandler(
     else
     {
         CanRxListener* node = messageHandlerStore[bin];
-        while (node->next != nullptr)
+
+        do
         {
-            modm_assert(
-                node->canIdentifier != canRxListener->canIdentifier,
-                "CAN",
-                "overloading",
-                1);
+            if (node->canIdentifier == canRxListener->canIdentifier)
+            {
+                RAISE_ERROR(drivers, "overloading can rx listener");
+                return;
+            }
+
+            if (node->next == nullptr) break;
             node = node->next;
-        }
-        modm_assert(node->canIdentifier != canRxListener->canIdentifier, "CAN", "overloading", 1);
+        } while (true);
+
         node->next = canRxListener;
     }
 }
@@ -128,7 +131,11 @@ void CanRxHandler::removeReceiveHandler(
 {
     int bin = binIndexForCanId(canRxListener.canIdentifier);
 
-    modm_assert(messageHandlerStore[bin] != nullptr, "CAN", "removing unadded handler", 1);
+    if (messageHandlerStore[bin] == nullptr)
+    {
+        RAISE_ERROR(drivers, "listener not in handler storage");
+        return;
+    }
 
     if (messageHandlerStore[bin]->canIdentifier == canRxListener.canIdentifier)
     {
@@ -145,7 +152,7 @@ void CanRxHandler::removeReceiveHandler(
                 return;
             }
         }
-        modm_assert(false, "CAN", "removing unadded handler", 1);
+        RAISE_ERROR(drivers, "listener not in handler storage");
     }
 }
 

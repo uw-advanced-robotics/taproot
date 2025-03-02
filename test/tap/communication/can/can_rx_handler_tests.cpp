@@ -213,6 +213,49 @@ TEST_F(CanRxHandlerTest, process_messages_with_bin_conflicts)
     handler.removeReceiveHandler(listener2);
 }
 
+TEST_F(CanRxHandlerTest, attachReceiveHandler__error_logged_with_overloading_can_rx_listener_id)
+{
+    CanRxListenerMock canRxListener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
+    CanRxListenerMock canRxListener2(&drivers, 0, tap::can::CanBus::CAN_BUS1);
+
+    handler.attachReceiveHandler(&canRxListener);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    handler.attachReceiveHandler(&canRxListener2);
+    EXPECT_EQ(&canRxListener, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[0]);
+
+    handler.removeReceiveHandler(canRxListener);
+}
+
+TEST_F(
+    CanRxHandlerTest,
+    removeReceiveHandler__error_logged_with_missing_can_rx_listener_id_with_empty_bin)
+{
+    CanRxListenerMock canRxListener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+
+    handler.removeReceiveHandler(canRxListener);
+}
+
+TEST_F(
+    CanRxHandlerTest,
+    removeReceiveHandler__error_logged_with_missing_can_rx_listener_id_with_existing_bin)
+{
+    CanRxListenerMock canRxListener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
+    CanRxListenerMock canRxListener2(
+        &drivers,
+        tap::can::CanRxHandler::CAN_BINS,
+        tap::can::CanBus::CAN_BUS1);
+
+    handler.attachReceiveHandler(&canRxListener);
+
+    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    handler.removeReceiveHandler(canRxListener2);
+
+    handler.removeReceiveHandler(canRxListener);
+}
+
 TEST_F(CanRxHandlerTest, pollCanData_can1_calls_process_message_passing_msg_to_correct_listener)
 {
     constructListeners();
