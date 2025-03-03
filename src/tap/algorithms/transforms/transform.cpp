@@ -70,7 +70,7 @@ Transform::Transform(float x, float y, float z, float roll, float pitch, float y
       translation({x, y, z}),
       transVel({0, 0, 0}),
       transAcc({0, 0, 0}),
-      rotation(fromEulerAngles(roll, pitch, yaw)),
+      rotation(Orientation::fromEulerAngles(roll, pitch, yaw)),
       tRotation(rotation.transpose()),
       angVel({0, 0, 0, 0, 0, 0, 0, 0, 0})
 {
@@ -87,7 +87,10 @@ Transform::Transform(
       transAcc(acceleration.coordinates()),
       rotation(rotation.matrix()),
       tRotation(rotation.matrix().transpose()),
-      angVel(skewMatFromAngVel(angularVelocity.x(), angularVelocity.y(), angularVelocity.z()))
+      angVel(AngularVelocity::skewMatFromAngVel(
+          angularVelocity.x(),
+          angularVelocity.y(),
+          angularVelocity.z()))
 {
 }
 
@@ -102,7 +105,10 @@ Transform::Transform(
       transAcc(std::move(acceleration.coordinates())),
       rotation(std::move(rotation.matrix())),
       tRotation(rotation.matrix().transpose()),
-      angVel(skewMatFromAngVel(angularVelocity.x(), angularVelocity.y(), angularVelocity.z()))
+      angVel(AngularVelocity::skewMatFromAngVel(
+          angularVelocity.x(),
+          angularVelocity.y(),
+          angularVelocity.z()))
 {
 }
 
@@ -158,7 +164,7 @@ Transform::Transform(
       translation({x, y, z}),
       transVel({vx, vy, vz}),
       transAcc({ax, ay, az}),
-      rotation(fromEulerAngles(roll, pitch, yaw)),
+      rotation(Orientation::fromEulerAngles(roll, pitch, yaw)),
       tRotation(rotation.transpose()),
       angVel(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
 {
