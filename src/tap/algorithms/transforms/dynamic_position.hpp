@@ -83,6 +83,12 @@ public:
     {
     }
 
+    inline Position getPosition() const { return Position(position); }
+
+    inline Vector getVelocity() const { return Vector(velocity); }
+
+    inline Vector getAcceleration() const { return Vector(acceleration); }
+
     inline float x() const { return position.data[0]; }
 
     inline float y() const { return position.data[1]; }

@@ -84,6 +84,10 @@ public:
     {
     }
 
+    inline Orientation getOrientation() const { return Orientation(orientation); }
+
+    inline AngularVelocity getAngularVelocity() const { return AngularVelocity(angularVelocity); }
+
     /**
      * Returns roll as values between [-pi, +pi].
      *
