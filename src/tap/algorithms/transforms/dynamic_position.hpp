@@ -83,6 +83,24 @@ public:
     {
     }
 
+    inline float x() const { return position.data[0]; }
+
+    inline float y() const { return position.data[1]; }
+
+    inline float z() const { return position.data[2]; }
+
+    inline float vx() const { return velocity.data[0]; }
+
+    inline float vy() const { return velocity.data[1]; }
+
+    inline float vz() const { return velocity.data[2]; }
+
+    inline float ax() const { return acceleration.data[0]; }
+
+    inline float ay() const { return acceleration.data[1]; }
+
+    inline float az() const { return acceleration.data[2]; }
+
     friend class Transform;
 
 private:

@@ -84,6 +84,33 @@ public:
     {
     }
 
+    /**
+     * Returns roll as values between [-pi, +pi].
+     *
+     * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
+     * this case, roll is taken to be 0.
+     */
+    inline float roll() const { return atan2(orientation.data[7], orientation.data[8]); }
+
+    inline float pitch() const { return asinf(-orientation.data[6]); }
+
+    inline float yaw() const { return atan2(orientation.data[3], orientation.data[0]); }
+
+    /**
+     * @brief Get the roll velocity
+     */
+    inline float getRollVelocity() const { return angularVelocity.data[0 * 3 + 2]; }
+
+    /**
+     * @brief Get the pitch velocity
+     */
+    inline float getPitchVelocity() const { return -angularVelocity.data[1 * 3 + 2]; }
+
+    /**
+     * @brief Get the yaw velocity
+     */
+    inline float getYawVelocity() const { return -angularVelocity.data[0 * 3 + 1]; }
+
     friend class Transform;
 
 private:
