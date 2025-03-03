@@ -24,6 +24,7 @@ void AbstractIMU::initialize(float sampleFrequency, float mahonyKp, float mahony
 {
     mahonyAlgorithm.begin(sampleFrequency, mahonyKp, mahonyKi);
     imuState = ImuState::IMU_NOT_CALIBRATED;
+    readTimeout.restart(1'000'000 / sampleFrequency);
 }
 
 void AbstractIMU::requestCalibration()
@@ -51,8 +52,8 @@ void AbstractIMU::periodicIMUUpdate()
     {
         mahonyAlgorithm.updateIMU(
             imuData.gyroDegPerSec.x(),
-            imuData.gyroDegPerSec.z(),
             imuData.gyroDegPerSec.y(),
+            imuData.gyroDegPerSec.z(),
             imuData.accG.x(),
             imuData.accG.y(),
             imuData.accG.z());

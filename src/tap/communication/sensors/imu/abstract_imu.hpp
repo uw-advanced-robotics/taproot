@@ -24,29 +24,23 @@
 #include "tap/algorithms/transforms/orientation.hpp"
 #include "tap/algorithms/transforms/transform.hpp"
 #include "tap/algorithms/transforms/vector.hpp"
-#include "tap/architecture/timeout.hpp"
+#include "tap/architecture/periodic_timer.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
-
-namespace tap
-{
-class Drivers;
-}
-using tap::algorithms::transforms::Orientation;
-using tap::algorithms::transforms::Transform;
 
 namespace tap::communication::sensors::imu
 {
+using tap::algorithms::transforms::Orientation;
+using tap::algorithms::transforms::Transform;
+
 constexpr float GRAVITY_MPS2 = 9.81f;
 class AbstractIMU : public ImuInterface
 {
 public:
-    explicit AbstractIMU(tap::Drivers* drivers)
-        : drivers(drivers),
-          mountingTransform(Transform::identity())
+    AbstractIMU(const Transform& mountingTransform = Transform(Transform::identity()))
+        : mountingTransform(mountingTransform)
     {
     }
 
-    AbstractIMU(const Transform& mountingTransform = Transform(Transform::identity()));
     void setMountingTransform(const Transform& transform);
 
     virtual ~AbstractIMU() = default;
@@ -116,7 +110,6 @@ protected:
 
     virtual inline float getAccelerationSensitivity() = 0;
 
-    tap::Drivers* drivers;
     tap::algorithms::transforms::Transform mountingTransform;
 
     Mahony mahonyAlgorithm;
@@ -127,7 +120,7 @@ protected:
 
     ImuData imuData;
 
-    tap::arch::MicroTimeout readTimeout;
+    tap::arch::PeriodicMicroTimer readTimeout;
 
     uint32_t prevIMUDataReceivedTime = 0;
 };

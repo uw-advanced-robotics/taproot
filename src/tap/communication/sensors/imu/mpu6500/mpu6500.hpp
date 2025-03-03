@@ -111,8 +111,6 @@ public:
      */
     static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
 
-    inline void setCalibrationSamples(float samples) { MPU6500_OFFSET_SAMPLES = samples; }
-
     inline void setTargetTemperature(float temperatureC)
     {
         imuHeater.setDesiredTemperature(temperatureC);
@@ -121,24 +119,12 @@ public:
 private:
     Drivers *drivers;
 
-    static constexpr float ACCELERATION_GRAVITY = 9.80665f;
-
     /**
      * Use to convert the raw acceleration into more conventional degrees / second^2
      */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
     inline float getAccelerationSensitivity() override { return ACCELERATION_SENSITIVITY; }
-
-    /**
-     * The number of samples we take while calibrating in order to determine the mpu offsets.
-     */
-    float MPU6500_OFFSET_SAMPLES = 1000;
-
-    /**
-     * The time to read the registers in nonblocking mode, in microseconds.
-     */
-    static constexpr int NONBLOCKING_TIME_TO_READ_REG = 450;
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.
@@ -154,8 +140,6 @@ private:
      * Bit appended or removed from a register while reading/writing.
      */
     static constexpr uint8_t MPU6500_READ_BIT = 0x80;
-
-    int delayBtwnCalcAndReadReg = 2000 - NONBLOCKING_TIME_TO_READ_REG;
 
     uint8_t tx = 0;  ///< Byte used for reading data in the read protothread
     uint8_t rx = 0;  ///< Byte used for reading data in the read protothread
