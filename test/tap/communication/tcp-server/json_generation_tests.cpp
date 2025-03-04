@@ -36,13 +36,14 @@ TEST(JSONMessages, ReturnsCorrectString)
 {
     Drivers drivers;
     DjiMotorMock mockMotor(&drivers, MotorId::MOTOR1, CanBus::CAN_BUS1, false, "MockMotor");
-    ON_CALL(mockMotor.getInternalEncoder(), isOnline).WillByDefault(Return(true));
 
     EXPECT_CALL(mockMotor, getCanBus()).Times(1).WillOnce(Return(tap::can::CanBus::CAN_BUS2));
     EXPECT_CALL(mockMotor, getMotorIdentifier()).Times(1);
     EXPECT_CALL(mockMotor.getInternalEncoder(), getShaftRPM()).Times(1);
     EXPECT_CALL(mockMotor, getTorque()).Times(1);
-    EXPECT_CALL(mockMotor.getInternalEncoder(), getEncoderUnwrapped()).Times(1);
+    EXPECT_CALL(mockMotor.getInternalEncoder(), getEncoder())
+        .Times(1)
+        .WillOnce(Return(tap::algorithms::WrappedFloat(0, 0, DjiMotorEncoder::ENC_RESOLUTION)));
     EXPECT_CALL(drivers.canRxHandler, removeReceiveHandler).Times(AnyNumber());
 
     std::string s = makeMotorMessage(mockMotor);

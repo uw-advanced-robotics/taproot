@@ -34,7 +34,13 @@ DjiMotorEncoderMock::DjiMotorEncoderMock(
     ON_CALL(*this, getPosition).WillByDefault(testing::Invoke([&]() {
         return this->DjiMotorEncoder::getPosition();
     }));
+    ON_CALL(*this, getEncoder)
+        .WillByDefault(testing::Return(tap::algorithms::WrappedFloat(0, 0, ENC_RESOLUTION)));
 }
 
-DjiMotorEncoderMock::~DjiMotorEncoderMock() {}
+DjiMotorEncoderMock::~DjiMotorEncoderMock()
+{
+    ON_CALL(*this, getVelocity).WillByDefault(testing::Return(0));
+    ON_CALL(*this, getPosition).WillByDefault(testing::Return(tap::algorithms::Angle(0)));
+}
 }  // namespace tap::mock
