@@ -26,8 +26,15 @@ DjiMotorEncoderMock::DjiMotorEncoderMock(
     float gearRatio,
     uint32_t encoderHomePosition)
     : DjiMotorEncoder(isInverted, gearRatio, encoderHomePosition)
-
 {
+    ON_CALL(*this, isOnline).WillByDefault(testing::Return(true));
+    ON_CALL(*this, getVelocity).WillByDefault(testing::Invoke([&]() {
+        return this->DjiMotorEncoder::getVelocity();
+    }));
+    ON_CALL(*this, getPosition).WillByDefault(testing::Invoke([&]() {
+        return this->DjiMotorEncoder::getPosition();
+    }));
 }
+
 DjiMotorEncoderMock::~DjiMotorEncoderMock() {}
 }  // namespace tap::mock

@@ -70,6 +70,11 @@ protected:
     void updateEncoderValue(uint32_t encoderActual);
 
     /**
+     * Gets the raw encoder position. 
+     */
+    mockable tap::algorithms::WrappedFloat getEncoder() const { return encoder; }
+
+    /**
      * The current encoder position.
      */
     tap::algorithms::WrappedFloat encoder;

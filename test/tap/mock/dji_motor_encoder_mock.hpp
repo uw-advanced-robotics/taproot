@@ -42,9 +42,7 @@ public:
 
     MOCK_METHOD(float, getVelocity, (), (const override));
 
-    MOCK_METHOD(int64_t, getEncoderUnwrapped, (), (const));
-
-    MOCK_METHOD(uint16_t, getEncoderWrapped, (), (const));
+    MOCK_METHOD(tap::algorithms::WrappedFloat, getEncoder, (), (const));
 
     MOCK_METHOD(int16_t, getShaftRPM, (), (const override));
 

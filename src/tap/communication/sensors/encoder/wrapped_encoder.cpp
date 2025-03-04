@@ -49,7 +49,16 @@ void WrappedEncoder::resetEncoderValue()
     position.setUnwrappedValue(0);
 }
 
-tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const { return position; }
+tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const
+{
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+    return tap::algorithms::Angle(
+        this->getEncoder().getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution /
+        gearRatio);
+#else
+    return position;
+#endif
+}
 
 float WrappedEncoder::getVelocity() const
 {
