@@ -198,7 +198,7 @@ DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation
 {
     return DynamicOrientation(
         tRotation * dynamicOrientation.orientation,
-        tRotation * dynamicOrientation.angularVelocity * rotation);
+        tRotation * (dynamicOrientation.angularVelocity - angVel) * rotation);
 }
 
 Transform Transform::getInverse() const
