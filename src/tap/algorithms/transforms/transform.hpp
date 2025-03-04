@@ -236,6 +236,30 @@ public:
     }
 
     /**
+     * @brief Updates the translation of the current transformation matrix.
+     *
+     * @param newTranslation updated position of follower in base frame.
+     */
+    inline void updateTranslation(const DynamicPosition& newTranslation)
+    {
+        this->translation = newTranslation.position;
+        this->transVel = newTranslation.velocity;
+        this->transAcc = newTranslation.acceleration;
+    }
+
+    /**
+     * @brief Updates the translation of the current transformation matrix.
+     *
+     * @param newTranslation updated position of follower in base frame.
+     */
+    inline void updateTranslation(DynamicPosition&& newTranslation)
+    {
+        this->translation = std::move(newTranslation.position);
+        this->transVel = std::move(newTranslation.velocity);
+        this->transAcc = std::move(newTranslation.acceleration);
+    }
+
+    /**
      * @brief Updates the rotation of the current transformation matrix.
      *
      * @param newRotation updated orientation of follower frame in base frame.
@@ -269,6 +293,30 @@ public:
     {
         this->rotation = Orientation(roll, pitch, yaw).matrix();
         this->tRotation = this->rotation.transpose();
+    }
+
+    /**
+     * @brief Updates the rotation of the current transformation matrix.
+     *
+     * @param newRotation updated orientation of follower frame in base frame.
+     */
+    inline void updateRotation(const DynamicOrientation& newRotation)
+    {
+        this->rotation = newRotation.orientation;
+        this->tRotation = this->rotation.transpose();
+        this->angVel = newRotation.angularVelocity;
+    }
+
+    /**
+     * @brief Updates the rotation of the current transformation matrix.
+     *
+     * @param newRotation updated orientation of follower frame in base frame.
+     */
+    inline void updateRotation(DynamicOrientation&& newRotation)
+    {
+        this->rotation = std::move(newRotation.orientation);
+        this->tRotation = this->rotation.transpose();
+        this->angVel = std::move(newRotation.angularVelocity);
     }
 
     /**
