@@ -72,37 +72,16 @@ public:
         float my,
         float mz);
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
-    float getRoll()
+    float getRoll() const { return roll * 57.29578f; }
+    float getPitch() const { return pitch * 57.29578f; }
+    float getYaw() const
     {
-        if (!anglesComputed) computeAngles();
-        return roll * 57.29578f;
-    }
-    float getPitch()
-    {
-        if (!anglesComputed) computeAngles();
-        return pitch * 57.29578f;
-    }
-    float getYaw()
-    {
-        if (!anglesComputed) computeAngles();
         float yawDegrees = yaw * 57.29578f;
         return fmod(yawDegrees + 360.0f, 360.0f);
     }
-    float getRollRadians()
-    {
-        if (!anglesComputed) computeAngles();
-        return roll;
-    }
-    float getPitchRadians()
-    {
-        if (!anglesComputed) computeAngles();
-        return pitch;
-    }
-    float getYawRadians()
-    {
-        if (!anglesComputed) computeAngles();
-        return yaw;
-    }
+    float getRollRadians() const { return roll; }
+    float getPitchRadians() const { return pitch; }
+    float getYawRadians() const { return yaw; }
 };
 
 #endif  // MAHONY_AHRS_H_

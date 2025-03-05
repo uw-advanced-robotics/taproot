@@ -268,6 +268,7 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
     q2 *= recipNorm;
     q3 *= recipNorm;
     anglesComputed = 0;
+    computeAngles();
 }
 
 //-------------------------------------------------------------------------------------------
