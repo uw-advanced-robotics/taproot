@@ -50,6 +50,7 @@ public:
         bool isInvertedTwo,
         const char* nameOne,
         const char* nameTwo,
+        bool currentControl = false,
         float gearRatio = 1,
         uint32_t encoderHomePositionOne = 0,
         tap::encoder::EncoderInterface* externalEncoder = nullptr);
