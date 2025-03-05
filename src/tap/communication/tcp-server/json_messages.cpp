@@ -53,7 +53,7 @@ string makeMotorMessage(const tap::motor::DjiMotor& motor)
         "\"shaftRPM\":" + std::to_string(motor.getInternalEncoder().getShaftRPM()) + "," +
         "\"torque\":" + std::to_string(motor.getTorque()) + "," + "\"encoderValue\":" +
         std::to_string(
-            static_cast<uint64_t>(motor.getInternalEncoder().getEncoder().getUnwrappedValue())) +
+            static_cast<uint64_t>(motor.getInternalEncoder().getEncoder().getWrappedValue())) +
         "}";
     return jsonMessage;
 }

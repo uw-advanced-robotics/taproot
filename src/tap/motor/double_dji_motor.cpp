@@ -48,7 +48,14 @@ DoubleDjiMotor::DoubleDjiMotor(
           currentControl,
           gearRatio,
           encoderHomePositionOne),
-      motorTwo(drivers, desMotorIdentifierTwo, motorCanBusTwo, isInvertedTwo, nameTwo, currentControl, gearRatio),
+      motorTwo(
+          drivers,
+          desMotorIdentifierTwo,
+          motorCanBusTwo,
+          isInvertedTwo,
+          nameTwo,
+          currentControl,
+          gearRatio),
       encoder(
           {externalEncoder != nullptr ? externalEncoder : CAST_ENC(motorOne.getInternalEncoder()),
            externalEncoder != nullptr ? CAST_ENC(motorOne.getInternalEncoder())
