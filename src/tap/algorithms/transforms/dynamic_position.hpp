@@ -83,6 +83,27 @@ public:
     {
     }
 
+    DynamicPosition operator+(const DynamicPosition& other) const
+    {
+        return DynamicPosition(
+            this->position + other.position,
+            this->velocity + other.velocity,
+            this->acceleration + other.acceleration);
+    }
+
+    DynamicPosition operator-(const DynamicPosition& other) const
+    {
+        return DynamicPosition(
+            this->position - other.position,
+            this->velocity - other.velocity,
+            this->acceleration - other.acceleration);
+    }
+
+    DynamicPosition operator-() const
+    {
+        return DynamicPosition(-this->position, -this->velocity, -this->acceleration);
+    }
+
     inline Position getPosition() const { return Position(position); }
 
     inline Vector getVelocity() const { return Vector(velocity); }

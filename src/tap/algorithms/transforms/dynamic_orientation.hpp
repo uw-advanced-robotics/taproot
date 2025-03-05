@@ -84,6 +84,21 @@ public:
     {
     }
 
+    DynamicOrientation compose(const DynamicOrientation& other) const
+    {
+        return DynamicOrientation(
+            this->orientation * other.orientation,
+            this->angularVelocity +
+                this->orientation * other.angularVelocity * this->orientation.transpose());
+    }
+
+    DynamicOrientation inverse() const
+    {
+        return DynamicOrientation(
+            this->orientation.transpose(),
+            -(this->orientation.transpose() * this->angularVelocity * this->orientation));
+    }
+
     inline Orientation getOrientation() const { return Orientation(orientation); }
 
     inline AngularVelocity getAngularVelocity() const { return AngularVelocity(angularVelocity); }

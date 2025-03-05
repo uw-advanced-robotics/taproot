@@ -44,6 +44,11 @@ public:
 
     inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
 
+    inline Orientation compose(const Orientation& other) const
+    {
+        return Orientation(this->matrix_ * other.matrix_);
+    }
+
     /**
      * Returns roll as values between [-pi, +pi].
      *
