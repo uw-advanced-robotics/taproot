@@ -32,7 +32,6 @@ private:
     float integralFBx, integralFBy, integralFBz;  // integral error terms scaled by Ki
     float invSampleFreq;
     float roll, pitch, yaw;
-    char anglesComputed;
     static float invSqrt(float x);
     void computeAngles();
 
@@ -56,7 +55,6 @@ public:
         integralFBx = 0.0f;
         integralFBy = 0.0f;
         integralFBz = 0.0f;
-        anglesComputed = 0;
         roll = 0.0f;
         pitch = 0.0f;
         yaw = 0.0f;
