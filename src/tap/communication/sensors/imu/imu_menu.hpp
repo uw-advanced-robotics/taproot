@@ -61,7 +61,7 @@ public:
     const char *getMenuName();
 
 private:
-    using ImuInterfaceFnPtr = float (ImuInterface::*)();
+    using ImuInterfaceFnPtr = float (ImuInterface::*)() const;
 
     static constexpr int IMU_DATA_START_X = 20;
     static constexpr int IMU_DATA_START_Y = 10;
