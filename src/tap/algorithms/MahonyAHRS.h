@@ -70,8 +70,20 @@ public:
         float my,
         float mz);
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
-    float getRoll() const { return roll * 57.29578f; }
-    float getPitch() const { return pitch * 57.29578f; }
+
+    [[deprecated]]
+    float getRoll() const
+    {
+        return roll * 57.29578f;
+    }
+
+    [[deprecated]]
+    float getPitch() const
+    {
+        return pitch * 57.29578f;
+    }
+
+    [[deprecated]]
     float getYaw() const
     {
         float yawDegrees = yaw * 57.29578f;
