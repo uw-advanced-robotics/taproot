@@ -285,16 +285,3 @@ TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
     Transform identity = Transform::identity();
     expectDynamicEq(composed, identity);
 }
-
-TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
-{
-    // Given
-    Transform transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-
-    // When
-    Transform composed = transform.compose(transform.getInverse());
-
-    // Then
-    Transform identity = Transform::identity();
-    expectDynamicEq(composed, identity);
-}
