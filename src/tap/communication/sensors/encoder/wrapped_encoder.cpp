@@ -53,7 +53,7 @@ tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const
 {
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
     return tap::algorithms::Angle(
-        this->getEncoder().getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution /
+        this->getEncoder().getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution *
         gearRatio);
 #else
     return position;
@@ -74,7 +74,7 @@ void WrappedEncoder::alignWith(EncoderInterface* other)
 {
     tap::algorithms::WrappedFloat positionDifference = other->getPosition() - position;
     float offset = positionDifference.getUnwrappedValue() / static_cast<float>(M_TWOPI) *
-                   encoderResolution / gearRatio;
+                   encoderResolution * gearRatio;
     this->encoderHomePosition += offset;
     this->encoder += offset;
     this->position = other->getPosition();
@@ -104,7 +104,7 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
     pastPosition = position;
     lastUpdateTime = tap::arch::clock::getTimeMicroseconds();
     position = tap::algorithms::Angle(
-        encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution / gearRatio);
+        encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution * gearRatio);
 }
 }  // namespace encoder
 

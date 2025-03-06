@@ -36,7 +36,7 @@ public:
      *      counter-clockwise when looking at the shaft from.
      *      If `true` then the positive rotation direction will be clockwise.
      * @param encoderResolution the number of encoder ticks before the value wraps.
-     * @param gearRatio the ratio of input revolutions to output revolutions of this encoder.
+     * @param gearRatio the ratio of input revolutions over output revolutions of this encoder.
      * @param encoderHomePosition the zero position for the encoder in encoder ticks.
      */
     WrappedEncoder(

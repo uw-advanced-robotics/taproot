@@ -130,7 +130,7 @@ TEST(WrappedEncoder, align_with_updates_values)
 TEST(WrappedEncoder, gear_ratio_works)
 {
     tap::arch::clock::ClockStub clock;
-    WrappedEncoder encoder(false, 4, 2);
+    WrappedEncoder encoder(false, 4, 0.5f);
 
     encoder.updateEncoderValue(0);
     EXPECT_FLOAT_EQ(0, encoder.getVelocity());

@@ -152,7 +152,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
 TEST(DjiMotor, parseCanRxData_encoder_info_interpreted_correctly_with_ratio)
 {
     tap::arch::clock::ClockStub clock;
-    DjiMotorEncoder encoder(false, 2);
+    DjiMotorEncoder encoder(false, 0.5f);
 
     modm::can::Message msg(MOTOR1, 8);
     msg.setExtended(false);
