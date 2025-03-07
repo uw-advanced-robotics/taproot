@@ -53,7 +53,6 @@ DjiMotor::DjiMotor(
       motorIdentifier(desMotorIdentifier),
       motorCanBus(motorCanBus),
       desiredOutput(0),
-      shaftRPM(0),
       temperature(0),
       torque(0),
       motorInverted(isInverted),

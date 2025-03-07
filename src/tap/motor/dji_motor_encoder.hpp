@@ -55,12 +55,12 @@ public:
 
     // Internal gear ratio of the following motors
     static constexpr float GEAR_RATIO_M3508 = 3591.0f / 187.0f;
-    static constexpr float GEAR_RATIO_M3510_L1 = 3.7f / 1.0f;
-    static constexpr float GEAR_RATIO_M3510_L2 = 5.2f / 1.0f;
-    static constexpr float GEAR_RATIO_M3510_L3 = 19.0f / 1.0f;
-    static constexpr float GEAR_RATIO_M3510_L4 = 27.0f / 1.0f;
+    static constexpr float GEAR_RATIO_GM3510_L1 = 3.7f / 1.0f;
+    static constexpr float GEAR_RATIO_GM3510_L2 = 5.2f / 1.0f;
+    static constexpr float GEAR_RATIO_GM3510_L3 = 19.0f / 1.0f;
+    static constexpr float GEAR_RATIO_GM3510_L4 = 27.0f / 1.0f;
     static constexpr float GEAR_RATIO_M2006 = 36.0f / 1.0f;
-    static constexpr float GEAR_RATIO_M6020 = 1.0f / 1.0f;
+    static constexpr float GEAR_RATIO_GM6020 = 1.0f / 1.0f;
 
     /**
      * @param isInverted if `false` the positive rotation direction of the shaft is
@@ -77,16 +77,6 @@ public:
     bool isOnline() const override;
 
     float getVelocity() const override;
-
-    /**
-     * The encoder position from home, including full rotations.
-     */
-    mockable int64_t getEncoderUnwrapped() const;
-
-    /**
-     * The raw encoder value relative to the encoder home.
-     */
-    mockable uint16_t getEncoderWrapped() const;
 
     /**
      * The current RPM reported by the motor controller.

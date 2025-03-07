@@ -59,13 +59,6 @@ float DjiMotorEncoder::getVelocity() const
     return this->getShaftRPM() * static_cast<float>(M_TWOPI) / 60.f * this->gearRatio;
 }
 
-int64_t DjiMotorEncoder::getEncoderUnwrapped() const
-{
-    return this->getEncoder().getUnwrappedValue();
-}
-
-uint16_t DjiMotorEncoder::getEncoderWrapped() const { return this->getEncoder().getWrappedValue(); }
-
 int16_t DjiMotorEncoder::getShaftRPM() const { return shaftRPM; }
 }  // namespace motor
 
