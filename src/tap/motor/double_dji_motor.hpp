@@ -67,16 +67,6 @@ public:
     int16_t getTorque() const override;
 
 protected:
-    template <typename T>
-    T callIfOnline(T (DjiMotor::*func)() const) const
-    {
-        if (motorOne.isMotorOnline())
-        {
-            return (motorOne.*func)();
-        }
-        return (motorTwo.*func)();
-    }
-
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 public:
     testing::NiceMock<mock::DjiMotorMock> motorOne;
