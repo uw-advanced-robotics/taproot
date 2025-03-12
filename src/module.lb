@@ -35,7 +35,7 @@ def prepare(module, options):
     module.depends(":build")
 
     # motor-specific dependencies
-    module.depends(":communication:can", ":communication:tcp-server")
+    module.depends(":communication:can", ":communication:tcp-server", ":communication:sensors:encoder")
 
     # command mapper dependencies
     module.depends(":communication:serial:remote")

@@ -96,6 +96,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly)
     tap::arch::clock::ClockStub clock;
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
+    DjiMotorEncoder encoder(false);
 
     modm::can::Message msg(MOTOR1, 8, {}, false);
 
@@ -109,10 +110,11 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly)
     motorData.encode(msg.data);
 
     motor.processMessage(msg);
+    encoder.processMessage(msg);
 
-    EXPECT_EQ(motorData.encoder, motor.getEncoderWrapped());
-    EXPECT_EQ(motorData.encoder, motor.getEncoderUnwrapped());
-    EXPECT_EQ(motorData.shaftRPM, motor.getShaftRPM());
+    EXPECT_EQ(motorData.encoder, encoder.getEncoder().getWrappedValue());
+    EXPECT_EQ(motorData.encoder, encoder.getEncoder().getUnwrappedValue());
+    EXPECT_EQ(motorData.shaftRPM, encoder.getShaftRPM());
     EXPECT_EQ(motorData.torque, motor.getTorque());
     EXPECT_EQ(motorData.temperature, motor.getTemperature());
 }
@@ -122,6 +124,7 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     tap::arch::clock::ClockStub clock;
     tap::Drivers drivers;
     DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, true, "cool motor");
+    DjiMotorEncoder encoder(true);
 
     modm::can::Message msg(MOTOR1, 8, {}, false);
 
@@ -135,12 +138,49 @@ TEST(DjiMotor, parseCanRxData_motor_info_interpreted_correctly_motor_inverted)
     motorData.encode(msg.data);
 
     motor.processMessage(msg);
+    encoder.processMessage(msg);
 
-    EXPECT_EQ(DjiMotor::ENC_RESOLUTION - motorData.encoder - 1, motor.getEncoderWrapped());
-    EXPECT_EQ(DjiMotor::ENC_RESOLUTION - motorData.encoder - 1, motor.getEncoderUnwrapped());
-    EXPECT_EQ(-motorData.shaftRPM, motor.getShaftRPM());
+    EXPECT_EQ(
+        DjiMotorEncoder::ENC_RESOLUTION - motorData.encoder - 1,
+        encoder.getEncoder().getWrappedValue());
+    EXPECT_EQ(
+        DjiMotorEncoder::ENC_RESOLUTION - motorData.encoder - 1,
+        encoder.getEncoder().getUnwrappedValue());
+    EXPECT_EQ(-motorData.shaftRPM, encoder.getShaftRPM());
     EXPECT_EQ(-motorData.torque, motor.getTorque());
     EXPECT_EQ(motorData.temperature, motor.getTemperature());
+}
+
+TEST(DjiMotor, parseCanRxData_encoder_info_interpreted_correctly_with_ratio)
+{
+    tap::arch::clock::ClockStub clock;
+    DjiMotorEncoder encoder(false, 0.5f);
+
+    modm::can::Message msg(MOTOR1, 8);
+    msg.setExtended(false);
+
+    MotorData motorData;
+
+    motorData.encoder = 0;
+    motorData.shaftRPM = 0;
+    motorData.encode(msg.data);
+    encoder.processMessage(msg);
+
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
+    EXPECT_EQ(
+        tap::algorithms::Angle(0).getUnwrappedValue(),
+        encoder.getPosition().getUnwrappedValue());
+
+    clock.time = 1000;
+    motorData.encoder = DjiMotorEncoder::ENC_RESOLUTION / 2;
+    motorData.shaftRPM = 100;
+    motorData.encode(msg.data);
+    encoder.processMessage(msg);
+
+    EXPECT_FLOAT_EQ(100 * static_cast<float>(M_TWOPI) / 60.f / 2, encoder.getVelocity());
+    EXPECT_EQ(
+        tap::algorithms::Angle(M_PI_2).getUnwrappedValue(),
+        encoder.getPosition().getUnwrappedValue());
 }
 
 TEST(DjiMotor, setDesiredOutput_limits_output)
@@ -180,122 +220,4 @@ TEST(DjiMotor, serializeCanSendData_serializes_desired_output_in_correct_positio
         (static_cast<int16_t>(msg.data[4]) << 8) | static_cast<int16_t>(msg.data[5]);
 
     EXPECT_EQ(serializedDesiredOutput, motor.getOutputDesired());
-}
-
-TEST(DjiMotor, resetEncoderValue_zeroes_encoder_fields)
-{
-    tap::Drivers drivers;
-    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
-
-    modm::can::Message msg(MOTOR1, 8, {}, false);
-
-    MotorData motorData;
-
-    motorData.encoder = 1000;
-    motorData.shaftRPM = -100;
-    motorData.torque = 100;
-    motorData.temperature = 43;
-
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-
-    motor.resetEncoderValue();
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorData.encoder = 8000;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-
-    motor.resetEncoderValue();
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-}
-
-TEST(DjiMotor, moving_relative_to_home_after_zeroed_ok)
-{
-    tap::Drivers drivers;
-    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, false, "cool motor");
-
-    static constexpr uint16_t ENC_RESOLUTION = 8192;
-
-    modm::can::Message msg(MOTOR1, 8, {}, false);
-
-    MotorData motorData;
-
-    motorData.encoder = 1000;
-    motorData.shaftRPM = -100;
-    motorData.torque = 100;
-    motorData.temperature = 43;
-
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(1000, motor.getEncoderUnwrapped());
-    EXPECT_EQ(1000, motor.getEncoderWrapped());
-
-    motor.resetEncoderValue();
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorData.encoder = 5000;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(4000, motor.getEncoderUnwrapped());
-    EXPECT_EQ(4000, motor.getEncoderWrapped());
-
-    motorData.encoder = 2500;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(1500, motor.getEncoderUnwrapped());
-    EXPECT_EQ(1500, motor.getEncoderWrapped());
-
-    motorData.encoder = 500;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(-500, motor.getEncoderUnwrapped());
-    EXPECT_EQ(ENC_RESOLUTION - 500, motor.getEncoderWrapped());
-}
-
-TEST(DjiMotor, inverted_moving_relative_to_home_after_zeroed_ok)
-{
-    tap::Drivers drivers;
-    DjiMotor motor(&drivers, MOTOR1, tap::can::CanBus::CAN_BUS1, true, "inverted motor");
-
-    static constexpr uint16_t ENC_RESOLUTION = 8192;
-
-    modm::can::Message msg(MOTOR1, 8, {}, false);
-
-    MotorData motorData;
-
-    motorData.encoder = 1000;
-    motorData.shaftRPM = -100;
-    motorData.torque = 100;
-    motorData.temperature = 43;
-
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(ENC_RESOLUTION - 1001, motor.getEncoderUnwrapped());
-    EXPECT_EQ(ENC_RESOLUTION - 1001, motor.getEncoderWrapped());
-
-    motor.resetEncoderValue();
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorData.encoder = 5000;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(-4000, motor.getEncoderUnwrapped());
-    EXPECT_EQ(4192, motor.getEncoderWrapped());
-
-    motorData.encoder = 2500;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(-1500, motor.getEncoderUnwrapped());
-    EXPECT_EQ(6692, motor.getEncoderWrapped());
-
-    motorData.encoder = 500;
-    motorData.encode(msg.data);
-    motor.processMessage(msg);
-    EXPECT_EQ(500, motor.getEncoderUnwrapped());
-    EXPECT_EQ(500, motor.getEncoderWrapped());
 }

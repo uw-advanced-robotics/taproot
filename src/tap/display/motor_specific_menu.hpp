@@ -20,6 +20,8 @@
 #ifndef TAPROOT_MOTOR_SPECIFIC_MENU_HPP_
 #define TAPROOT_MOTOR_SPECIFIC_MENU_HPP_
 
+#include "tap/architecture/periodic_timer.hpp"
+
 #include "modm/ui/menu/abstract_menu.hpp"
 
 #include "dummy_allocator.hpp"
@@ -36,6 +38,9 @@ namespace display
 class MotorSpecificMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
 {
 public:
+    /// Time between calls to `draw`, which will redraw the motor menu.
+    static constexpr uint32_t DISPLAY_DRAW_PERIOD = 500;
+
     MotorSpecificMenu(
         modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
         Drivers* drivers,
@@ -52,6 +57,8 @@ public:
 private:
     Drivers* drivers;
     const tap::motor::DjiMotor* associatedMotor;
+
+    arch::PeriodicMilliTimer updatePeriodicTimer{DISPLAY_DRAW_PERIOD};
 
     int16_t currDesiredOutput = 0;
     bool currIsInverted = false;
