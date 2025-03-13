@@ -105,6 +105,13 @@ before_script:
   script:
     - cd test-project
     - scons build $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/hardware/scons-release/
+      fallback_keys:
+        - tap-build-$BOARD_TYPE-develop
+      when: 'always'
 
 .sim_build:
   stage: "Build all Targets"
@@ -112,6 +119,13 @@ before_script:
   script:
     - cd test-project
     - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-sim-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/sim/scons-fast/
+      fallback_keys:
+        - tap-build-sim-$BOARD_TYPE-develop
+      when: 'always'
 
 .tests_build:
   stage: "Build all Targets"
@@ -121,7 +135,7 @@ before_script:
   script:
     - cd test-project
     - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
-    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf --gtest_filter=-*DEATH*
     - cd .. && gcovr -g --xml > cobertura.xml
     - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
     - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
@@ -133,6 +147,13 @@ before_script:
         coverage_format: cobertura
         path: cobertura.xml
     expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$BOARD_TYPE-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$BOARD_TYPE-develop
+      when: 'always'
 
 "Type A: Generate Test Project":
   needs: []
@@ -163,32 +184,44 @@ before_script:
   extends:
     - .type_a_config_dependencies
     - .mcb_build
+  variables:
+    BOARD_TYPE: type_a
 
 "Type A: Sim Build":
   extends:
     - .type_a_config_dependencies
     - .sim_build
+  variables:
+    BOARD_TYPE: type_a
 
 "Type A: Tests Build":
   extends:
     - .type_a_config_dependencies
     - .tests_build
+  variables:
+    BOARD_TYPE: type_a
 
 # Type C CI
 "Type C: MCB Build":
   extends:
     - .type_c_config_dependencies
     - .mcb_build
+  variables:
+    BOARD_TYPE: type_c
 
 "Type C: Sim Build":
   extends:
     - .type_c_config_dependencies
     - .sim_build
+  variables:
+    BOARD_TYPE: type_c
 
 "Type C: Tests Build":
   extends:
     - .type_c_config_dependencies
     - .tests_build
+  variables:
+    BOARD_TYPE: type_c
 
 # Pages deploy
 

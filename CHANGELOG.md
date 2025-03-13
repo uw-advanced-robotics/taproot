@@ -1,5 +1,41 @@
 # Taproot Changelog
 
+## March 2025
+- Added Encoders
+    - Added `EncoderInterface`, which is a interface for all possible encoders.
+        - `getPosition()` returns a `WrappedFloat` for the position in radians.
+        - `getVelocity()` returns a `float` in radians/second.
+        - `isOnline()` returns `true` is the encoder is online.
+        - `resetEncoderValue()` zeros the encoder to its current location.
+        - `alignWith(EncoderInterface*)` aligns the position of `this` encoder to another encoder.
+    - Added `WrappedEncoder`, which is an base class for all encoders that have a certain number of ticks per revolution.
+        - The constructor takes a gear ratio, which is output rotations over input rotations.
+        - Calculates the velocity as the instananeous difference between two positions and the timestep.
+        - `getEncoder()` returns the raw encoder value as a `WrappedFloat`.
+        - Can be inverted, similar to motors.
+    - Added `MultiEncoder`, which allows the combination of multiple encoders into a single encoder.
+        - Has a primary encoder (first in the array), that is used to align other encoders.
+        - Averages out the position and velocity of all online encoders.
+    - Added `MotorInterface::getEncoder()`
+        - Replaces the use for the encoder related methods in the interface, which have been deprecated.
+        - Removed the `getEncoderWrapped` and `getEncoderUnwrapped` methods as those no longer make sense.
+    - Added `DjiMotorEncoder`
+        - Refactored version of the encoder that was in `DjiMotor`
+        - `getShaftRpm()` returns the shaft rpm reported by the encoder.
+        - Moved the gear ratios from `DjiMotor` to this class.
+    - Modified `DjiMotor` and `DoubleDjiMotor` constructors.
+        - No longer able to specify the starting position and rotation count.
+        - Added parameters:
+            - `gearRatio`, defaults to 1.
+            - `encoderHomePosition[One]`, defaults to 0.
+            - `externalEncoder`, defaults to `nullptr`.
+- Removed a lot of `drivers.hpp` and `dji_motor.hpp` includes where not needed.
+    - Moved `MotorId` into `dji_motor_ids.hpp`
+- Testing
+    - Made it possible to specify the raw encoder position and shaft rpm to `DjiMotorEncoderMock` to minimize test changes.
+    - Can now specify `test="..."` to run specific tests that match GTest's regex. Only available in test-project, but code is copyable.
+- Added proper build caching to speed up pipelines, taproot only.
+
 ## February 2025
 - Implemented SH1107 functionality with the ability to rotate the screen 90 degrees.
 

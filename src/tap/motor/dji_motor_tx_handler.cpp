@@ -28,6 +28,8 @@
 #include "modm/architecture/interface/assert.h"
 #include "modm/architecture/interface/can_message.hpp"
 
+#include "dji_motor.hpp"
+
 namespace tap::motor
 {
 void DjiMotorTxHandler::addMotorToManager(DjiMotor** canMotorStore, DjiMotor* const motor)

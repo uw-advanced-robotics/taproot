@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2024 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,15 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "dji_motor_tx_handler_mock.hpp"
-
-#include "tap/motor/dji_motor.hpp"
+#include "encoder_interface_mock.hpp"
 
 namespace tap::mock
 {
-DjiMotorTxHandlerMock::DjiMotorTxHandlerMock(tap::Drivers *drivers)
-    : tap::motor::DjiMotorTxHandler(drivers)
-{
-}
-DjiMotorTxHandlerMock::~DjiMotorTxHandlerMock() {}
+EncoderInterfaceMock::EncoderInterfaceMock() : EncoderInterface() {}
+EncoderInterfaceMock::~EncoderInterfaceMock() {}
 }  // namespace tap::mock

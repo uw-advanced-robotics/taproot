@@ -65,6 +65,10 @@ sources = env.FindSourceFiles(
     "src",
     ignoreFiles=IGNORED_FILES_WHILE_TESTING if args["TARGET_ENV"] == "tests" else [])
 
+# Setup SCons to use directory based caching, not global
+from SCons.SConsign import File
+File(None)
+
 # Tests must be included as sources (rather than built as a separate library) in order for
 # googletest to identify any tests that need to be run
 if args["TARGET_ENV"] == "tests":
@@ -97,7 +101,15 @@ elif args["TARGET_ENV"] == "tests":
     # Add target environment-specific SCons aliases
     # WARNING: all aliases must be checked during argument validation
     env.Alias("build-tests", program)
-    env.Alias("run-tests", env.Run(program))
+    env.Alias("run-tests", 
+        env.Command(
+            'thisfileshouldnotexist',
+            program,
+            '@"%s"' % program[0].abspath 
+                + (f" --gtest_filter={args['TEST']}" if 'TEST' in args else "")
+            )
+        )
+
     env.Alias("run-tests-gcov", [env.RunGCOV(program, True, GCOV_SOURCES_TO_IGNORE)])
 else:
     program = env.Program(target=env["CONFIG_PROJECT_NAME"]+".elf", source=sources)
