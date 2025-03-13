@@ -25,64 +25,80 @@
 
 using namespace tap::algorithms::transforms;
 
-void expectPosEq(const Transform& a, const Transform& b)
+const float EPS = 1E-5;
+
+void expectPosEq(const Position& a, const Position& b, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getX(), b.getX(), 1E-5);
-    EXPECT_NEAR(a.getY(), b.getX(), 1E-5);
-    EXPECT_NEAR(a.getZ(), b.getX(), 1E-5);
+    EXPECT_NEAR(a.x(), b.x(), epsilon);
+    EXPECT_NEAR(a.y(), b.y(), epsilon);
+    EXPECT_NEAR(a.z(), b.z(), epsilon);
 }
 
-void expectVelEq(const Transform& a, const Transform& b)
+void expectVecEq(const Vector& a, const Vector& b, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getXVel(), b.getXVel(), 1E-5);
-    EXPECT_NEAR(a.getYVel(), b.getXVel(), 1E-5);
-    EXPECT_NEAR(a.getZVel(), b.getXVel(), 1E-5);
+    EXPECT_NEAR(a.x(), b.x(), epsilon);
+    EXPECT_NEAR(a.y(), b.y(), epsilon);
+    EXPECT_NEAR(a.z(), b.z(), epsilon);
 }
 
-void expectAccEq(const Transform& a, const Transform& b)
+void expectPosEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getXAcc(), b.getXAcc(), 1E-5);
-    EXPECT_NEAR(a.getYAcc(), b.getXAcc(), 1E-5);
-    EXPECT_NEAR(a.getZAcc(), b.getXAcc(), 1E-5);
+    EXPECT_NEAR(a.getX(), b.getX(), epsilon);
+    EXPECT_NEAR(a.getY(), b.getX(), epsilon);
+    EXPECT_NEAR(a.getZ(), b.getX(), epsilon);
 }
 
-void expectDynPosEq(const Transform& a, const Transform& b)
+void expectVelEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    expectPosEq(a, b);
-    expectVelEq(a, b);
-    expectAccEq(a, b);
+    EXPECT_NEAR(a.getXVel(), b.getXVel(), epsilon);
+    EXPECT_NEAR(a.getYVel(), b.getXVel(), epsilon);
+    EXPECT_NEAR(a.getZVel(), b.getXVel(), epsilon);
 }
 
-void expectAngEq(const Transform& a, const Transform& b)
+void expectAccEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getRoll(), b.getRoll(), 1E-5);
-    EXPECT_NEAR(a.getPitch(), b.getPitch(), 1E-5);
-    EXPECT_NEAR(a.getYaw(), b.getYaw(), 1E-5);
+    EXPECT_NEAR(a.getXAcc(), b.getXAcc(), epsilon);
+    EXPECT_NEAR(a.getYAcc(), b.getXAcc(), epsilon);
+    EXPECT_NEAR(a.getZAcc(), b.getXAcc(), epsilon);
 }
 
-void expectAngVelEq(const Transform& a, const Transform& b)
+void expectDynPosEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getRollVelocity(), b.getRollVelocity(), 1E-5);
-    EXPECT_NEAR(a.getPitchVelocity(), b.getPitchVelocity(), 1E-5);
-    EXPECT_NEAR(a.getYawVelocity(), b.getYawVelocity(), 1E-5);
+    expectPosEq(a, b, epsilon);
+    expectVelEq(a, b, epsilon);
+    expectAccEq(a, b, epsilon);
 }
 
-void expectDynAngEq(const Transform& a, const Transform& b)
+void expectAngEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    expectAngEq(a, b);
-    expectAngVelEq(a, b);
+    EXPECT_NEAR(a.getRoll(), b.getRoll(), epsilon);
+    EXPECT_NEAR(a.getPitch(), b.getPitch(), epsilon);
+    EXPECT_NEAR(a.getYaw(), b.getYaw(), epsilon);
 }
 
-void expectStaticEq(const Transform& a, const Transform& b)
+void expectAngVelEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    expectPosEq(a, b);
-    expectAngEq(a, b);
+    EXPECT_NEAR(a.getRollVelocity(), b.getRollVelocity(), epsilon);
+    EXPECT_NEAR(a.getPitchVelocity(), b.getPitchVelocity(), epsilon);
+    EXPECT_NEAR(a.getYawVelocity(), b.getYawVelocity(), epsilon);
 }
 
-void expectDynamicEq(const Transform& a, const Transform& b)
+void expectDynAngEq(const Transform& a, const Transform& b, const float epsilon = EPS)
 {
-    expectDynPosEq(a, b);
-    expectDynAngEq(a, b);
+    expectAngEq(a, b, epsilon);
+    expectAngVelEq(a, b, epsilon);
+}
+
+void expectStaticEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+{
+    expectPosEq(a, b, epsilon);
+    expectAngEq(a, b, epsilon);
+}
+
+void expectDynamicEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+{
+    expectDynPosEq(a, b, epsilon);
+    expectDynAngEq(a, b, epsilon);
 }
 
 TEST(Transform, identity_transform_retains_position)
@@ -95,9 +111,7 @@ TEST(Transform, identity_transform_retains_position)
     Position finish = identity.apply(start);
 
     // Then
-    EXPECT_NEAR(start.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(start.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(start.z(), finish.z(), 1E-5);
+    expectPosEq(start, finish);
 }
 
 TEST(Transform, identity_transform_retains_vector)
@@ -110,9 +124,7 @@ TEST(Transform, identity_transform_retains_vector)
     Vector finish = identity.apply(start);
 
     // Then
-    EXPECT_NEAR(start.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(start.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(start.z(), finish.z(), 1E-5);
+    expectVecEq(start, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
@@ -127,9 +139,7 @@ TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
     // Then
     Position expected(0.0, 0.0, 0.0);
 
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negative_translation)
@@ -144,9 +154,7 @@ TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negat
     // Then
     Position expected(-1.0, -2.0, -3.0);
 
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_vector)
@@ -159,9 +167,7 @@ TEST(Transform, pure_translation_transform_apply_to_vector)
     Vector finish = translation.apply(start);
 
     // Then
-    EXPECT_NEAR(start.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(start.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(start.z(), finish.z(), 1E-5);
+    expectVecEq(start, finish);
 }
 
 TEST(Transform, pure_roll_transform_apply_to_position)
@@ -175,9 +181,7 @@ TEST(Transform, pure_roll_transform_apply_to_position)
 
     // Then
     Position expected(1.0, 3.0, -2.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, pure_pitch_transform_apply_to_position)
@@ -191,9 +195,7 @@ TEST(Transform, pure_pitch_transform_apply_to_position)
 
     // Then
     Position expected(-3.0, 2.0, 1.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, pure_yaw_transform_apply_to_position)
@@ -207,9 +209,7 @@ TEST(Transform, pure_yaw_transform_apply_to_position)
 
     // Then
     Position expected(2.0, -1.0, 3.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, pure_rotation_transform_apply_to_zero_position)
@@ -223,9 +223,7 @@ TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
@@ -239,9 +237,7 @@ TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, transform_apply_to_source_origin_position)
@@ -255,9 +251,7 @@ TEST(Transform, transform_apply_to_source_origin_position)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    EXPECT_NEAR(expected.x(), finish.x(), 1E-5);
-    EXPECT_NEAR(expected.y(), finish.y(), 1E-5);
-    EXPECT_NEAR(expected.z(), finish.z(), 1E-5);
+    expectPosEq(expected, finish);
 }
 
 TEST(Transform, transform_compose_with_inverse_yields_identity)
