@@ -65,7 +65,7 @@ public:
      */
     inline static CMSISMat<3, 3> skewMatFromAngVel(const float wx, const float wy, const float wz)
     {
-        return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wz, 0});
+        return tap::algorithms::CMSISMat<3, 3>({0, -wz, wx, wz, 0, -wy, -wx, wy, 0});
     }
 
     friend class Transform;
