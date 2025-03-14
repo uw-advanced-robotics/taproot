@@ -24,6 +24,7 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/can_rx_handler_mock.hpp"
 #include "tap/mock/can_rx_listener_mock.hpp"
+#include "tap/motor/dji_motor_ids.hpp"
 
 using namespace testing;
 using namespace std;

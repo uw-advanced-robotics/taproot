@@ -235,13 +235,13 @@ TEST(ConcurrentCommands, cancelling_command_ends_internal_commands)
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }
 
-TEST(ConcurrentCommands, null_command_asserts)
+TEST(ConcurrentCommands, null_command_asserts_DEATH)
 {
     std::array<Command *, 1> commands = {nullptr};
     ASSERT_DEATH({ ConcurrentCommand<1> command(commands, "test command"); }, ".*");
 }
 
-TEST(ConcurrentCommands, overlapping_requirements_asserts)
+TEST(ConcurrentCommands, overlapping_requirements_asserts_DEATH)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
