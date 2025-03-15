@@ -18,5 +18,22 @@
  */
 
 #include "tap/drivers.hpp"
+#include "tap/communication/sensors/encoder/can_encoder/can_encoder.hpp"
+#include "modm/architecture/interface/delay.hpp"
 
-int main() { return 0; }
+tap::Drivers drivers;
+tap::encoder::CanEncoder encoder(&drivers, tap::encoder::CanEncoderId::ID0, tap::can::CanBus::CAN_BUS2);
+
+int main()
+{
+    Board::initialize();
+
+    encoder.initialize();
+
+    while (1)
+    {
+        drivers.canRxHandler.pollCanData();
+        modm::delay_us(10);
+    }
+    return 0;
+}
