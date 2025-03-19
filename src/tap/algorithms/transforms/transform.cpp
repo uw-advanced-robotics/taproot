@@ -208,9 +208,10 @@ Transform Transform::getInverse() const
     if (dynamic)
     {
         CMSISMat<3, 1> angVelVec = getAngularVel().coordinates_;
-        CMSISMat<3, 1> invVel =
-            -(tRotation * transVel) - cross(-(tRotation * angVelVec), -(tRotation * translation));
-        CMSISMat<3, 1> invAcc = -(tRotation * transVel) - cross(-(tRotation * angVelVec), invVel);
+        CMSISMat<3, 1> rotAngVel = -(tRotation * angVelVec);
+
+        CMSISMat<3, 1> invVel = -(tRotation * transVel) - cross(rotAngVel, invTranslation);
+        CMSISMat<3, 1> invAcc = -(tRotation * transAcc) - cross(rotAngVel, invVel);
         CMSISMat<3, 3> invAngVel = -(tRotation * angVel * rotation);
         return Transform(invTranslation, tRotation, invVel, invAcc, invAngVel);
     }
