@@ -24,81 +24,109 @@
 #include "tap/algorithms/transforms/vector.hpp"
 
 using namespace tap::algorithms::transforms;
+using namespace testing;
 
 const float EPS = 1E-5;
 
-void expectPosEq(const Position& a, const Position& b, const float epsilon = EPS)
+inline void expectPosEq(const Position& actual, const Position& expected, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.x(), b.x(), epsilon);
-    EXPECT_NEAR(a.y(), b.y(), epsilon);
-    EXPECT_NEAR(a.z(), b.z(), epsilon);
+    EXPECT_NEAR(actual.x(), expected.x(), epsilon);
+    EXPECT_NEAR(actual.y(), expected.y(), epsilon);
+    EXPECT_NEAR(actual.z(), expected.z(), epsilon);
 }
 
-void expectVecEq(const Vector& a, const Vector& b, const float epsilon = EPS)
+inline void expectVecEq(const Vector& actual, const Vector& expected, const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.x(), b.x(), epsilon);
-    EXPECT_NEAR(a.y(), b.y(), epsilon);
-    EXPECT_NEAR(a.z(), b.z(), epsilon);
+    EXPECT_NEAR(actual.x(), expected.x(), epsilon);
+    EXPECT_NEAR(actual.y(), expected.y(), epsilon);
+    EXPECT_NEAR(actual.z(), expected.z(), epsilon);
 }
 
-void expectPosEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectPosEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getX(), b.getX(), epsilon);
-    EXPECT_NEAR(a.getY(), b.getX(), epsilon);
-    EXPECT_NEAR(a.getZ(), b.getX(), epsilon);
+    EXPECT_NEAR(actual.getX(), expected.getX(), epsilon);
+    EXPECT_NEAR(actual.getY(), expected.getY(), epsilon);
+    EXPECT_NEAR(actual.getZ(), expected.getZ(), epsilon);
 }
 
-void expectVelEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectVelEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getXVel(), b.getXVel(), epsilon);
-    EXPECT_NEAR(a.getYVel(), b.getXVel(), epsilon);
-    EXPECT_NEAR(a.getZVel(), b.getXVel(), epsilon);
+    EXPECT_NEAR(actual.getXVel(), expected.getXVel(), epsilon);
+    EXPECT_NEAR(actual.getYVel(), expected.getYVel(), epsilon);
+    EXPECT_NEAR(actual.getZVel(), expected.getZVel(), epsilon);
 }
 
-void expectAccEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectAccEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getXAcc(), b.getXAcc(), epsilon);
-    EXPECT_NEAR(a.getYAcc(), b.getXAcc(), epsilon);
-    EXPECT_NEAR(a.getZAcc(), b.getXAcc(), epsilon);
+    EXPECT_NEAR(actual.getXAcc(), expected.getXAcc(), epsilon);
+    EXPECT_NEAR(actual.getYAcc(), expected.getYAcc(), epsilon);
+    EXPECT_NEAR(actual.getZAcc(), expected.getZAcc(), epsilon);
 }
 
-void expectDynPosEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectDynPosEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    expectPosEq(a, b, epsilon);
-    expectVelEq(a, b, epsilon);
-    expectAccEq(a, b, epsilon);
+    expectPosEq(actual, expected, epsilon);
+    expectVelEq(actual, expected, epsilon);
+    expectAccEq(actual, expected, epsilon);
 }
 
-void expectAngEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectAngEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getRoll(), b.getRoll(), epsilon);
-    EXPECT_NEAR(a.getPitch(), b.getPitch(), epsilon);
-    EXPECT_NEAR(a.getYaw(), b.getYaw(), epsilon);
+    EXPECT_NEAR(actual.getRoll(), expected.getRoll(), epsilon);
+    EXPECT_NEAR(actual.getPitch(), expected.getPitch(), epsilon);
+    EXPECT_NEAR(actual.getYaw(), expected.getYaw(), epsilon);
 }
 
-void expectAngVelEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectAngVelEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    EXPECT_NEAR(a.getRollVelocity(), b.getRollVelocity(), epsilon);
-    EXPECT_NEAR(a.getPitchVelocity(), b.getPitchVelocity(), epsilon);
-    EXPECT_NEAR(a.getYawVelocity(), b.getYawVelocity(), epsilon);
+    EXPECT_NEAR(actual.getRollVelocity(), expected.getRollVelocity(), epsilon);
+    EXPECT_NEAR(actual.getPitchVelocity(), expected.getPitchVelocity(), epsilon);
+    EXPECT_NEAR(actual.getYawVelocity(), expected.getYawVelocity(), epsilon);
 }
 
-void expectDynAngEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectDynAngEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    expectAngEq(a, b, epsilon);
-    expectAngVelEq(a, b, epsilon);
+    expectAngEq(actual, expected, epsilon);
+    expectAngVelEq(actual, expected, epsilon);
 }
 
-void expectStaticEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectStaticEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    expectPosEq(a, b, epsilon);
-    expectAngEq(a, b, epsilon);
+    expectPosEq(actual, expected, epsilon);
+    expectAngEq(actual, expected, epsilon);
 }
 
-void expectDynamicEq(const Transform& a, const Transform& b, const float epsilon = EPS)
+inline void expectDynamicEq(
+    const Transform& actual,
+    const Transform& expected,
+    const float epsilon = EPS)
 {
-    expectDynPosEq(a, b, epsilon);
-    expectDynAngEq(a, b, epsilon);
+    expectDynPosEq(actual, expected, epsilon);
+    expectDynAngEq(actual, expected, epsilon);
 }
 
 TEST(Transform, identity_transform_retains_position)
@@ -270,7 +298,9 @@ TEST(Transform, transform_compose_with_inverse_yields_identity)
 TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
 {
     // Given
-    Transform transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+    Transform transform(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
+    // Transform
+    // transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 
     // When
     Transform composed = transform.compose(transform.getInverse());
@@ -279,3 +309,47 @@ TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
     Transform identity = Transform::identity();
     expectDynamicEq(composed, identity);
 }
+
+struct CompositionTestConfig
+{
+    Transform a, b, e;
+};
+
+class CompositionTest : public TestWithParam<CompositionTestConfig>
+{
+};
+
+TEST_P(CompositionTest, dynamic_compose)
+{
+    expectDynamicEq(GetParam().a.compose(GetParam().b), GetParam().e);
+}
+
+//        Transform(  x,   y,   z,  vx,  vy,  vz,  ax,  ay,  az, roll, pitch, yaw, rollVel,
+//        pitchVel, yawVel)
+std::vector<CompositionTestConfig> dynamicComposeTestCases = {
+    // dynamic * static
+    // (+yaw vel) * (+x+z translation) = (+x+z translation, +y vel, -x acc, +yaw vel)
+    {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0),
+     .b = Transform(1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(1.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0)},
+    {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0),
+     .b = Transform(1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(1.0, 1.0, 0.0, 0.0, 0.0, -1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0)},
+    {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0),
+     .b = Transform(1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)},
+
+};
+
+INSTANTIATE_TEST_SUITE_P(Transform, CompositionTest, ValuesIn(dynamicComposeTestCases));
+
+/*
+tests to do:
+
+rot vel composed with static
+    tangent vel
+    centripetal acc
+coriolis effect
+
+
+*/
