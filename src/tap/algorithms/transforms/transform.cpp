@@ -204,15 +204,13 @@ DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation
 Transform Transform::getInverse() const
 {
     // negative transposed rotation matrix times original position = new position
-    CMSISMat<3, 1> invTranslation = -(tRotation * translation);
+    CMSISMat<3, 1> invTranslation = -tRotation * translation;
     if (dynamic)
     {
-        CMSISMat<3, 1> angVelVec = getAngularVel().coordinates_;
-        CMSISMat<3, 1> rotAngVel = -(tRotation * angVelVec);
-
-        CMSISMat<3, 1> invVel = -(tRotation * transVel) - cross(rotAngVel, invTranslation);
-        CMSISMat<3, 1> invAcc = -(tRotation * transAcc) - cross(rotAngVel, invVel);
-        CMSISMat<3, 3> invAngVel = -(tRotation * angVel * rotation);
+        CMSISMat<3, 1> invVel = tRotation * (angVel * translation - transVel);
+        CMSISMat<3, 1> invAcc =
+            tRotation * (angVel * (2 * transVel - angVel * translation) - transAcc);
+        CMSISMat<3, 3> invAngVel = -tRotation * angVel * rotation;
         return Transform(invTranslation, tRotation, invVel, invAcc, invAngVel);
     }
     else
