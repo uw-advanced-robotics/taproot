@@ -52,6 +52,7 @@ def prepare(module, options):
 
     # power limiter dependencies
     module.depends(":communication:sensors:current")
+    module.depends(":communication:sensors:voltage")
 
     return True
 
