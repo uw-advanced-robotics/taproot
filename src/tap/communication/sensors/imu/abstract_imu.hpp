@@ -31,6 +31,7 @@ namespace tap::communication::sensors::imu
 {
 using tap::algorithms::transforms::Orientation;
 using tap::algorithms::transforms::Transform;
+using tap::algorithms::transforms::Vector;
 
 constexpr float GRAVITY_MPS2 = 9.81f;
 class AbstractIMU : public ImuInterface
@@ -88,6 +89,9 @@ public:
     virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }
     virtual float getRoll() const override { return mahonyAlgorithm.getRoll(); }
 
+    Vector getWorldAccel() const;
+    Vector getWorldAccelNormalized() const;
+
     struct ImuData
     {
         tap::algorithms::transforms::Vector accRaw = {0, 0, 0};
@@ -110,7 +114,7 @@ protected:
 
     virtual inline float getAccelerationSensitivity() = 0;
 
-    tap::algorithms::transforms::Transform mountingTransform;
+    Transform mountingTransform;
 
     Mahony mahonyAlgorithm;
 

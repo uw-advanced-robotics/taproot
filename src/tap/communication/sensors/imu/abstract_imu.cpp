@@ -42,6 +42,14 @@ void AbstractIMU::setMountingTransform(const Transform& transform)
     mountingTransform = transform;
 }
 
+Vector AbstractIMU::getWorldAccel() const { return mountingTransform.apply(imuData.accG); }
+
+Vector AbstractIMU::getWorldAccelNormalized() const
+{
+    Vector gravityNormalizedVector = imuData.accG - Vector(0, 0, GRAVITY_MPS2);
+    return mountingTransform.apply(gravityNormalizedVector);
+}
+
 void AbstractIMU::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_CALIBRATING)
