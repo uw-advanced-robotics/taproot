@@ -50,6 +50,16 @@ Vector AbstractIMU::getWorldAccelNormalized() const
     return mountingTransform.apply(gravityNormalizedVector);
 }
 
+float AbstractIMU::getWorldPitch() const {
+    Orientation worldFrameOrientation = mountingTransform.apply(Orientation(getRoll(), getPitch(), getYaw()));
+    return worldFrameOrientation.pitch();
+}
+
+float AbstractIMU::getWorldRoll() const {
+    Orientation worldFrameOrientation = mountingTransform.apply(Orientation(getRoll(), getPitch(), getYaw()));
+    return worldFrameOrientation.roll();
+}
+
 void AbstractIMU::periodicIMUUpdate()
 {
     if (imuState == ImuState::IMU_CALIBRATING)

@@ -57,7 +57,7 @@ public:
     virtual void requestCalibration();
 
     /**
-     * Call this function at same rate as intialized sample frequency.
+     * Call this function at same rate as initalized sample frequency.
      * Performs the mahony AHRS algorithm to compute pitch/roll/yaw.
      */
     virtual void periodicIMUUpdate();
@@ -91,6 +91,9 @@ public:
 
     Vector getWorldAccel() const;
     Vector getWorldAccelNormalized() const;
+
+    float getWorldPitch() const;
+    float getWorldRoll() const;
 
     struct ImuData
     {
