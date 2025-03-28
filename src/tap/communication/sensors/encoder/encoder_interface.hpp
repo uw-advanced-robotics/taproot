@@ -49,6 +49,12 @@ public:
      */
     virtual float getVelocity() const = 0;
     /**
+     * Gets the current velocity reported by the encoder. Returned in a value of rotations / minute
+     */
+    virtual float getVelocityRPM() const {
+        return getVelocity() * 60.0f / (2.0f * M_PI);
+    }
+    /**
      * Aligns this encoder to another encoder so that their positions are equal.
      * If the two encoders are mechanically linked, they would then continue to report the same
      * position.
