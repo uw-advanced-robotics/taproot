@@ -246,7 +246,7 @@ public:
         /**
          * The Maximum launch speed for a 17mm barrel in m/s.
          */
-        static constexpr int MAX_LAUNCH_SPEED_17MM = 30;
+        static constexpr int MAX_LAUNCH_SPEED_17MM = 25;
 
         /**
          * The Maximum launch speed for a 42mm barrel in m/s.
