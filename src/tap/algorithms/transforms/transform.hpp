@@ -112,6 +112,13 @@ public:
         Vector&& angularVelocity);
 
     /**
+     * @param rotation Initial rotation of this transformation.
+     * @param position Initial translation of this transformation.
+     */
+    Transform(const DynamicPosition& dynamicPosition, const DynamicOrientation& dynamicOrientation);
+    Transform(DynamicPosition&& dynamicPosition, DynamicOrientation&& dynamicOrientation);
+
+    /**
      * @param translation Initial translation of this transformation.
      * @param rotation Initial rotation of this transformation.
      * @param velocity Translational velocity of this transformation.

@@ -113,6 +113,30 @@ Transform::Transform(
 }
 
 Transform::Transform(
+    const DynamicPosition& dynamicPosition,
+    const DynamicOrientation& dynamicOrientation)
+    : dynamic(true),
+      translation(dynamicPosition.position),
+      transVel(dynamicPosition.velocity),
+      transAcc(dynamicPosition.acceleration),
+      rotation(dynamicOrientation.orientation),
+      tRotation(rotation.transpose()),
+      angVel(dynamicOrientation.angularVelocity)
+{
+}
+
+Transform::Transform(DynamicPosition&& dynamicPosition, DynamicOrientation&& dynamicOrientation)
+    : dynamic(true),
+      translation(std::move(dynamicPosition.position)),
+      transVel(std::move(dynamicPosition.velocity)),
+      transAcc(std::move(dynamicPosition.acceleration)),
+      rotation(std::move(dynamicOrientation.orientation)),
+      tRotation(rotation.transpose()),
+      angVel(std::move(dynamicOrientation.angularVelocity))
+{
+}
+
+Transform::Transform(
     const CMSISMat<3, 1>& translation,
     const CMSISMat<3, 3>& rotation,
     const CMSISMat<3, 1>& velocity,

@@ -54,18 +54,18 @@ public:
     }
 
     /* rvalue reference */
-    inline DynamicOrientation(DynamicOrientation&& other)
-        : orientation(std::move(other.orientation)),
-          angularVelocity(std::move(other.angularVelocity))
-    {
-    }
+    // inline DynamicOrientation(DynamicOrientation&& other)
+    //     : orientation(std::move(other.orientation)),
+    //       angularVelocity(std::move(other.angularVelocity))
+    // {
+    // }
 
     /* Costly; use rvalue reference whenever possible */
-    inline DynamicOrientation(DynamicOrientation& other)
-        : orientation(other.orientation),
-          angularVelocity(other.angularVelocity)
-    {
-    }
+    // inline DynamicOrientation(DynamicOrientation& other)
+    //     : orientation(other.orientation),
+    //       angularVelocity(other.angularVelocity)
+    // {
+    // }
 
     inline DynamicOrientation(
         const CMSISMat<3, 3>&& orientation,

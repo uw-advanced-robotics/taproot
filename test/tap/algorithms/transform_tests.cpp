@@ -17,6 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <tuple>
+
 #include <gtest/gtest.h>
 
 #include "tap/algorithms/transforms/position.hpp"
@@ -327,8 +329,11 @@ TEST_P(CompositionTest, dynamic_compose)
 //        Transform(  x,   y,   z,  vx,  vy,  vz,  ax,  ay,  az, roll, pitch, yaw, rollVel,
 //        pitchVel, yawVel)
 std::vector<CompositionTestConfig> dynamicComposeTestCases = {
+    {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
     // dynamic * static
-    // (+yaw vel) * (+x+z translation) = (+x+z translation, +y vel, -x acc, +yaw vel)
+    // (ang vel) * (translation) = (translation, vel, acc, ang vel)
     {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0),
      .b = Transform(1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .e = Transform(1.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0)},
@@ -339,17 +344,77 @@ std::vector<CompositionTestConfig> dynamicComposeTestCases = {
      .b = Transform(1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .e = Transform(1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)},
 
+    // dynamic * dynamic
+    {.a = Transform(1.0, 3.0, 2.0, 5.0, 4.0, 7.0, 6.0, 9.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = Transform(9.0, 7.0, 8.0, 5.0, 6.0, 3.0, 4.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, .0, .0, .0, .0, .0, .0)},
+
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, CompositionTest, ValuesIn(dynamicComposeTestCases));
 
-/*
-tests to do:
+struct PositionAdditionConsistencyTestConfig
+{
+    DynamicPosition a, b;
+};
 
-rot vel composed with static
-    tangent vel
-    centripetal acc
-coriolis effect
+class PositionAdditionConsistencyTest : public TestWithParam<PositionAdditionConsistencyTestConfig>
+{
+};
 
+TEST_P(PositionAdditionConsistencyTest, position_composition_consistency)
+{
+    Transform tA(GetParam().a, DynamicOrientation(0, 0, 0, 0, 0, 0));
+    Transform tB(GetParam().b, DynamicOrientation(0, 0, 0, 0, 0, 0));
+    Transform tAc = tA.compose(tB);
 
-*/
+    Transform tE(GetParam().a + GetParam().b, DynamicOrientation(0, 0, 0, 0, 0, 0));
+
+    expectDynamicEq(tAc, tE);
+}
+
+std::vector<PositionAdditionConsistencyTestConfig> positionAdditionConsistencyTestCases = {
+    {.a = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+    {.a = DynamicPosition(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+     .b = DynamicPosition(2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0)},
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    Transform,
+    PositionAdditionConsistencyTest,
+    ValuesIn(positionAdditionConsistencyTestCases));
+
+struct OrientationCompositionConsistencyTestConfig
+{
+    DynamicOrientation a, b;
+};
+
+class OrientationCompositionConsistencyTest
+    : public TestWithParam<OrientationCompositionConsistencyTestConfig>
+{
+};
+
+TEST_P(OrientationCompositionConsistencyTest, position_composition_consistency)
+{
+    Transform tA(DynamicPosition(0, 0, 0, 0, 0, 0, 0, 0, 0), GetParam().a);
+    Transform tB(DynamicPosition(0, 0, 0, 0, 0, 0, 0, 0, 0), GetParam().b);
+    Transform tAc = tA.compose(tB);
+
+    Transform tE(DynamicPosition(0, 0, 0, 0, 0, 0, 0, 0, 0), GetParam().a.compose(GetParam().b));
+
+    expectDynamicEq(tAc, tE);
+}
+
+std::vector<OrientationCompositionConsistencyTestConfig>
+    orientationCompositionConsistencyTestCases = {
+        {.a = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+         .b = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+        {.a = DynamicOrientation(1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
+         .b = DynamicOrientation(2.0, 2.0, 2.0, 2.0, 2.0, 2.0)},
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    Transform,
+    OrientationCompositionConsistencyTest,
+    ValuesIn(orientationCompositionConsistencyTestCases));

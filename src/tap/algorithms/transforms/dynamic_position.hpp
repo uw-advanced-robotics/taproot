@@ -47,20 +47,20 @@ public:
     }
 
     /* rvalue reference */
-    inline DynamicPosition(DynamicPosition&& other)
-        : position(std::move(other.position)),
-          velocity(std::move(other.velocity)),
-          acceleration(std::move(other.acceleration))
-    {
-    }
+    // inline DynamicPosition(DynamicPosition&& other)
+    //     : position(std::move(other.position)),
+    //       velocity(std::move(other.velocity)),
+    //       acceleration(std::move(other.acceleration))
+    // {
+    // }
 
     /* Costly; use rvalue reference whenever possible */
-    inline DynamicPosition(DynamicPosition& other)
-        : position(CMSISMat(other.position)),
-          velocity(CMSISMat(other.velocity)),
-          acceleration(CMSISMat(other.acceleration))
-    {
-    }
+    // inline DynamicPosition(DynamicPosition& other)
+    //     : position(CMSISMat(other.position)),
+    //       velocity(CMSISMat(other.velocity)),
+    //       acceleration(CMSISMat(other.acceleration))
+    // {
+    // }
 
     /* Costly; use rvalue reference whenever possible */
     inline DynamicPosition(
