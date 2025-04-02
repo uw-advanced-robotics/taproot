@@ -41,6 +41,8 @@ enum CanEncoderId
 class CanEncoder : public can::CanRxListener, public WrappedEncoder
 {
 public:
+    static constexpr uint32_t ENCODER_RESOLUTION = 4096;
+
     CanEncoder(
         Drivers* drivers,
         CanEncoderId id,
@@ -61,7 +63,6 @@ public:
 private:
     // wait time before the encoder is considered disconnected, in milliseconds
     static const uint32_t DISCONNECT_TIME = 100;
-    static const uint32_t ENCODER_RESOLUTION = 8192;
 
     tap::arch::MilliTimeout motorDisconnectTimeout{DISCONNECT_TIME};
 

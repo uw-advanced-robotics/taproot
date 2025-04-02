@@ -68,12 +68,12 @@ TEST(CanEncoderTests, encoder_reads_correctly)
     CanEncoder encoder(&drivers, CanEncoderId::ID0, tap::can::CanBus::CAN_BUS1);
 
     modm::can::Message message(CanEncoderId::ID0, 4);
-    uint16_t data[] = {8192 / 4, 1000};
+    uint16_t data[] = {CanEncoder::ENCODER_RESOLUTION / 4, 1000};
     memcpy(message.data, &data, 4);
 
     encoder.processMessage(message);
 
-    EXPECT_EQ(encoder.getEncoder(), tap::algorithms::WrappedFloat(8192 / 4, 0, 8192));
+    EXPECT_EQ(encoder.getEncoder(), tap::algorithms::WrappedFloat(CanEncoder::ENCODER_RESOLUTION / 4, 0, CanEncoder::ENCODER_RESOLUTION));
     EXPECT_EQ(encoder.getPosition(), Angle(M_PI_2));
     
     EXPECT_EQ(encoder.getGauss(), 1000);

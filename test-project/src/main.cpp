@@ -22,12 +22,14 @@
 #include "modm/architecture/interface/delay.hpp"
 
 tap::Drivers drivers;
-tap::encoder::CanEncoder encoder(&drivers, tap::encoder::CanEncoderId::ID0, tap::can::CanBus::CAN_BUS2);
+tap::encoder::CanEncoder encoder(&drivers, tap::encoder::CanEncoderId::ID3, tap::can::CanBus::CAN_BUS2);
 
 int main()
 {
     Board::initialize();
 
+
+    drivers.can.initialize();
     encoder.initialize();
 
     while (1)
