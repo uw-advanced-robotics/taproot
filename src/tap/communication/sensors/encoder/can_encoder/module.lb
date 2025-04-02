@@ -17,7 +17,7 @@
 
 def init(module):
     module.name = ":communication:sensors:encoder:can_encoder"
-    module.description = "Aruw Can Encoder"
+    module.description = "ARUW CAN Encoder"
 
 def prepare(module, options):
     module.depends(":communication:sensors:encoder")
