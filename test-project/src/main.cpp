@@ -17,25 +17,4 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
-#include "tap/communication/sensors/encoder/can_encoder/can_encoder.hpp"
-#include "modm/architecture/interface/delay.hpp"
-
-tap::Drivers drivers;
-tap::encoder::CanEncoder encoder(&drivers, tap::encoder::CanEncoderId::ID3, tap::can::CanBus::CAN_BUS2);
-
-int main()
-{
-    Board::initialize();
-
-
-    drivers.can.initialize();
-    encoder.initialize();
-
-    while (1)
-    {
-        drivers.canRxHandler.pollCanData();
-        modm::delay_us(10);
-    }
-    return 0;
-}
+int main() { return 0; }
