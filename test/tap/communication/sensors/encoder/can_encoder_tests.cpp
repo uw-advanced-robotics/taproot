@@ -73,8 +73,13 @@ TEST(CanEncoderTests, encoder_reads_correctly)
 
     encoder.processMessage(message);
 
-    EXPECT_EQ(encoder.getEncoder(), tap::algorithms::WrappedFloat(CanEncoder::ENCODER_RESOLUTION / 4, 0, CanEncoder::ENCODER_RESOLUTION));
+    EXPECT_EQ(
+        encoder.getEncoder(),
+        tap::algorithms::WrappedFloat(
+            CanEncoder::ENCODER_RESOLUTION / 4,
+            0,
+            CanEncoder::ENCODER_RESOLUTION));
     EXPECT_EQ(encoder.getPosition(), Angle(M_PI_2));
-    
+
     EXPECT_EQ(encoder.getGauss(), 1000);
 }
