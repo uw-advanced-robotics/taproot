@@ -36,7 +36,7 @@ CanEncoder::CanEncoder(
 {
 }
 
-bool CanEncoder::isOnline() const { return !this->motorDisconnectTimeout.isExpired(); }
+bool CanEncoder::isOnline() const { return !this->encoderDisconnectTimeout.isExpired(); }
 
 void CanEncoder::initialize() { attachSelfToRxHandler(); }
 
@@ -46,7 +46,7 @@ void CanEncoder::processMessage(const modm::can::Message& message)
     this->updateEncoderValue(encoder);
 
     this->gauss = (message.data[3] << 8) | message.data[2];
-    this->motorDisconnectTimeout.restart(DISCONNECT_TIME);
+    this->encoderDisconnectTimeout.restart(DISCONNECT_TIME);
 }
 
 }  // namespace tap::encoder

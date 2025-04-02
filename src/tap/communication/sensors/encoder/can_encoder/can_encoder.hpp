@@ -64,7 +64,7 @@ private:
     // wait time before the encoder is considered disconnected, in milliseconds
     static const uint32_t DISCONNECT_TIME = 100;
 
-    tap::arch::MilliTimeout motorDisconnectTimeout{DISCONNECT_TIME};
+    tap::arch::MilliTimeout encoderDisconnectTimeout{DISCONNECT_TIME};
 
     float gauss;
 };

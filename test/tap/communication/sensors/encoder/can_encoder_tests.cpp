@@ -53,7 +53,8 @@ TEST(CanEncoderTests, encoder_timeout_is_offline)
     ASSERT_TRUE(encoder.isOnline());
     clock.time = 101;
     ASSERT_FALSE(encoder.isOnline());
-    modm::can::Message message;
+    modm::can::Message message{};
+    memset(message.data, 0, 8);
     encoder.processMessage(message);
     clock.time = 200;
     ASSERT_TRUE(encoder.isOnline());
