@@ -71,12 +71,12 @@ public:
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
-    virtual ImuState getImuState() const { return imuState; }
+     virtual ImuState getImuState() const { return imuState; }
 
-    inline float getAx() const override { return mountingTransform.apply(imuData.accG).x(); }
-     inline float getAy() const override { return mountingTransform.apply(imuData.accG).y(); }
-     inline float getAz() const override { return mountingTransform.apply(imuData.accG).z(); }
-     inline float getAzMinusG() const { return mountingTransform.apply(imuData.accG).z() - GRAVITY_MPS2; }
+     inline float getAx() const override {  return imuData.accG.x(); }
+     inline float getAy() const override {  return imuData.accG.y(); }
+     inline float getAz() const override {  return imuData.accG.z(); }
+     inline float getAzMinusG() const {  return imuData.accG.z() - GRAVITY_MPS2; }
                  // mountingTransform.apply(tap::algorithms::transforms::Vector(0,0,GRAVITY_MPS2)).z(); }
  
      inline float getGx() const override { return imuData.gyroDegPerSec.x(); }
