@@ -174,7 +174,7 @@ bool Bmi088::read()
     imuData.accG =
         (imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT;
 
-    imuData = applyTransform(imuData);
+    applyTransform(imuData);
 
     return true;
 }
