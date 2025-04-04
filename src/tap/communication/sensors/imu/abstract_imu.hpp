@@ -71,23 +71,23 @@ public:
      * To be safe, whenever you call the functions below, call this function to ensure
      * the data you are about to receive is not garbage.
      */
-     virtual ImuState getImuState() const { return imuState; }
+    virtual ImuState getImuState() const { return imuState; }
 
-     inline float getAx() const override {  return imuData.accG.x(); }
-     inline float getAy() const override {  return imuData.accG.y(); }
-     inline float getAz() const override {  return imuData.accG.z(); }
-     inline float getAzMinusG() const {  return imuData.accG.z() - GRAVITY_MPS2; }
-                 // mountingTransform.apply(tap::algorithms::transforms::Vector(0,0,GRAVITY_MPS2)).z(); }
- 
-     inline float getGx() const override { return imuData.gyroDegPerSec.x(); }
-     inline float getGy() const override { return imuData.gyroDegPerSec.y(); }
-     inline float getGz() const override { return imuData.gyroDegPerSec.z(); }
- 
-     inline float getTemp() const override { return imuData.temperature; }
- 
-     virtual float getYaw() const override { return mahonyAlgorithm.getYaw(); }
-     virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }
-     virtual float getRoll() const override { return mahonyAlgorithm.getRoll(); }
+    inline float getAx() const override { return imuData.accG.x(); }
+    inline float getAy() const override { return imuData.accG.y(); }
+    inline float getAz() const override { return imuData.accG.z(); }
+    inline float getAzMinusG() const { return imuData.accG.z() - GRAVITY_MPS2; }
+    // mountingTransform.apply(tap::algorithms::transforms::Vector(0,0,GRAVITY_MPS2)).z(); }
+
+    inline float getGx() const override { return imuData.gyroDegPerSec.x(); }
+    inline float getGy() const override { return imuData.gyroDegPerSec.y(); }
+    inline float getGz() const override { return imuData.gyroDegPerSec.z(); }
+
+    inline float getTemp() const override { return imuData.temperature; }
+
+    virtual float getYaw() const override { return mahonyAlgorithm.getYaw(); }
+    virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }
+    virtual float getRoll() const override { return mahonyAlgorithm.getRoll(); }
 
     struct ImuData
     {

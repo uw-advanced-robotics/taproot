@@ -169,8 +169,10 @@ bool Bmi088::read()
     Bmi088Hal::bmi088AccReadMultiReg(Acc::TEMP_MSB, rxBuff, 2);
     imuData.temperature = parseTemp(rxBuff[0], rxBuff[1]);
 
-    imuData.gyroDegPerSec = mountingTransform.apply((imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_DS_PER_GYRO_COUNT);
-    imuData.accG = mountingTransform.apply((imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT);
+    imuData.gyroDegPerSec =
+        mountingTransform.apply((imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_DS_PER_GYRO_COUNT);
+    imuData.accG =
+        mountingTransform.apply((imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT);
 
     return true;
 }
