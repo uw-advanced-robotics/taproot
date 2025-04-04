@@ -77,7 +77,6 @@ public:
     inline float getAy() const override { return imuData.accG.y(); }
     inline float getAz() const override { return imuData.accG.z(); }
     inline float getAzMinusG() const { return imuData.accG.z() - GRAVITY_MPS2; }
-    // mountingTransform.apply(tap::algorithms::transforms::Vector(0,0,GRAVITY_MPS2)).z(); }
 
     inline float getGx() const override { return imuData.gyroDegPerSec.x(); }
     inline float getGy() const override { return imuData.gyroDegPerSec.y(); }
