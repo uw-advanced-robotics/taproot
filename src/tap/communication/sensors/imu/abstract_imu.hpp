@@ -88,6 +88,7 @@ public:
     virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }
     virtual float getRoll() const override { return mahonyAlgorithm.getRoll(); }
 
+    
     struct ImuData
     {
         tap::algorithms::transforms::Vector accRaw = {0, 0, 0};
@@ -107,6 +108,12 @@ protected:
     void computeOffsets();
     void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
+
+    inline void applyTransform(const ImuData& data)
+    {
+        imuData.accG = mountingTransform.apply(data.accG);
+        imuData.gyroDegPerSec = mountingTransform.apply(data.gyroDegPerSec);
+    } 
 
     virtual inline float getAccelerationSensitivity() = 0;
 

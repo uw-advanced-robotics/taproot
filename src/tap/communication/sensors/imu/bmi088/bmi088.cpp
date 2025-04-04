@@ -170,9 +170,11 @@ bool Bmi088::read()
     imuData.temperature = parseTemp(rxBuff[0], rxBuff[1]);
 
     imuData.gyroDegPerSec =
-        mountingTransform.apply((imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_DS_PER_GYRO_COUNT);
+        (imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_DS_PER_GYRO_COUNT;
     imuData.accG =
-        mountingTransform.apply((imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT);
+        (imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT;
+
+    imuData = applyTransform(imuData);
 
     return true;
 }
