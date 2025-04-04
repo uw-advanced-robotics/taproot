@@ -301,8 +301,6 @@ TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
 {
     // Given
     Transform transform(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
-    // Transform
-    // transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
 
     // When
     Transform composed = transform.compose(transform.getInverse());
@@ -326,8 +324,8 @@ TEST_P(CompositionTest, dynamic_compose)
     expectDynamicEq(GetParam().a.compose(GetParam().b), GetParam().e);
 }
 
-//        Transform(  x,   y,   z,  vx,  vy,  vz,  ax,  ay,  az, roll, pitch, yaw, rollVel,
-//        pitchVel, yawVel)
+// Transform(  x,   y,   z,  vx,  vy,  vz,  ax,  ay,  az, roll, pitch, yaw, rollVel, pitchVel,
+// yawVel)
 std::vector<CompositionTestConfig> dynamicComposeTestCases = {
     {.a = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .b = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
@@ -344,7 +342,18 @@ std::vector<CompositionTestConfig> dynamicComposeTestCases = {
      .b = Transform(1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .e = Transform(1.0, 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0)},
 
+    // static * dynamic
+    {.a = Transform(1.0, 1.0, 1.0, 2.0, 1.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = Transform(2.0, 2.0, 2.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0, 3.0, 5.0, 5.0, 1.0, 3.0, 2.0),
+     .e = Transform(3.0, 3.0, 3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 1.0, 3.0, 5.0, 5.0, 1.0, 3.0, 2.0)},
+    {.a = Transform(1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = Transform(2.0, 2.0, 2.0, 2.0, 1.0, 3.0, 1.0, 2.0, 1.0, 3.0, 5.0, 5.0, 1.0, 3.0, 2.0),
+     .e = Transform(3.0, 3.0, 3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 1.0, 3.0, 5.0, 5.0, 1.0, 3.0, 2.0)},
+
     // dynamic * dynamic
+    {.a = Transform(1.0, 3.0, 2.0, 5.0, 4.0, 7.0, 6.0, 9.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .b = Transform(9.0, 7.0, 8.0, 5.0, 6.0, 3.0, 4.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = Transform(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, .0, .0, .0, .0, .0, .0)},
     {.a = Transform(1.0, 3.0, 2.0, 5.0, 4.0, 7.0, 6.0, 9.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .b = Transform(9.0, 7.0, 8.0, 5.0, 6.0, 3.0, 4.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .e = Transform(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, .0, .0, .0, .0, .0, .0)},
@@ -418,3 +427,49 @@ INSTANTIATE_TEST_SUITE_P(
     Transform,
     OrientationCompositionConsistencyTest,
     ValuesIn(orientationCompositionConsistencyTestCases));
+
+struct ProjectionTestConfig
+{
+    Transform t;
+    float dt;
+    Transform e;
+};
+
+class ProjectionTest : public TestWithParam<ProjectionTestConfig>
+{
+};
+
+TEST_P(ProjectionTest, projection_test)
+{
+    expectDynamicEq(GetParam().t.projectForward(GetParam().dt), GetParam().e);
+}
+
+std::vector<ProjectionTestConfig> projectionTestCases = {
+    // trivial case
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .dt = 1.0f,
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    // static transform not affected by projection
+    {.t = Transform(1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0),
+     .dt = 1.0f,
+     .e = Transform(1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0)},
+
+    // pure translation projection
+    {.t = Transform(3.0, 3.0, 3.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .dt = 2.0f,
+     .e = Transform(9.0, 9.0, 9.0, 4.0, 4.0, 4.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    // pure rotation projection
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1, 0.0, 0.0),
+     .dt = 2.0f,
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 0.0, 0.0, 0.1, 0.0, 0.0)},
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1, 0.0),
+     .dt = 2.0f,
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 0.0, 0.0, 0.1, 0.0)},
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1),
+     .dt = 2.0f,
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 0.0, 0.0, 0.1)},
+};
+
+INSTANTIATE_TEST_SUITE_P(Transform, ProjectionTest, ValuesIn(projectionTestCases));
