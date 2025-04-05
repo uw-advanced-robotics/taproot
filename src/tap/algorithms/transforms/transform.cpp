@@ -125,6 +125,7 @@ Transform::Transform(
       tRotation(rotation.transpose()),
       angVel(dynamicOrientation.angularVelocity)
 {
+    checkDynamic();
 }
 
 Transform::Transform(DynamicPosition&& dynamicPosition, DynamicOrientation&& dynamicOrientation)
@@ -136,6 +137,7 @@ Transform::Transform(DynamicPosition&& dynamicPosition, DynamicOrientation&& dyn
       tRotation(rotation.transpose()),
       angVel(std::move(dynamicOrientation.angularVelocity))
 {
+    checkDynamic();
 }
 
 Transform::Transform(
