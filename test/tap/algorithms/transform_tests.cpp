@@ -354,10 +354,6 @@ std::vector<CompositionTestConfig> dynamicComposeTestCases = {
     {.a = Transform(1.0, 3.0, 2.0, 5.0, 4.0, 7.0, 6.0, 9.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .b = Transform(9.0, 7.0, 8.0, 5.0, 6.0, 3.0, 4.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
      .e = Transform(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, .0, .0, .0, .0, .0, .0)},
-    {.a = Transform(1.0, 3.0, 2.0, 5.0, 4.0, 7.0, 6.0, 9.0, 8.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-     .b = Transform(9.0, 7.0, 8.0, 5.0, 6.0, 3.0, 4.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-     .e = Transform(10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, .0, .0, .0, .0, .0, .0)},
-
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, CompositionTest, ValuesIn(dynamicComposeTestCases));
@@ -470,6 +466,9 @@ std::vector<ProjectionTestConfig> projectionTestCases = {
     {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1),
      .dt = 2.0f,
      .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 0.0, 0.0, 0.1)},
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1, 0.0, 0.0),
+     .dt = M_PI * 20.0f,
+     .e = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.1, 0.0, 0.0)},
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, ProjectionTest, ValuesIn(projectionTestCases));
