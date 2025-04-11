@@ -51,9 +51,9 @@ void AbstractIMU::periodicIMUUpdate()
     else
     {
         mahonyAlgorithm.updateIMU(
-            imuData.gyroDegPerSec.x(),
-            imuData.gyroDegPerSec.y(),
-            imuData.gyroDegPerSec.z(),
+            imuData.gyroRadPerSec.x(),
+            imuData.gyroRadPerSec.y(),
+            imuData.gyroRadPerSec.z(),
             imuData.accG.x(),
             imuData.accG.y(),
             imuData.accG.z());

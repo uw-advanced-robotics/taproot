@@ -135,7 +135,8 @@ bool Mpu6500::read()
         imuData.accG =
             (imuData.accRaw - imuData.accOffsetRaw) * GRAVITY_MPS2 / ACCELERATION_SENSITIVITY;
 
-        imuData.gyroDegPerSec = (imuData.gyroRaw - imuData.gyroOffsetRaw) / LSB_D_PER_S_TO_D_PER_S;
+        imuData.gyroRadPerSec =
+            (imuData.gyroRaw - imuData.gyroOffsetRaw) / LSB_D_PER_S_TO_RAD_PER_S;
 
         imuData.temperature = parseTemp(static_cast<float>(rxBuff[6] << 8 | rxBuff[7]));
 

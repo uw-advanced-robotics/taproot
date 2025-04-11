@@ -78,9 +78,9 @@ public:
     inline float getAz() const override { return imuData.accG.z(); }
     inline float getAzMinusG() const { return imuData.accG.z() - GRAVITY_MPS2; }
 
-    inline float getGx() const override { return imuData.gyroDegPerSec.x(); }
-    inline float getGy() const override { return imuData.gyroDegPerSec.y(); }
-    inline float getGz() const override { return imuData.gyroDegPerSec.z(); }
+    inline float getGx() const override { return imuData.gyroRadPerSec.x(); }
+    inline float getGy() const override { return imuData.gyroRadPerSec.y(); }
+    inline float getGz() const override { return imuData.gyroRadPerSec.z(); }
 
     inline float getTemp() const override { return imuData.temperature; }
 
@@ -95,7 +95,7 @@ public:
         tap::algorithms::transforms::Vector accOffsetRaw = {0, 0, 0};
         tap::algorithms::transforms::Vector gyroOffsetRaw = {0, 0, 0};
         tap::algorithms::transforms::Vector accG = {0, 0, 0};
-        tap::algorithms::transforms::Vector gyroDegPerSec = {0, 0, 0};
+        tap::algorithms::transforms::Vector gyroRadPerSec = {0, 0, 0};
 
         float temperature = 0;
     };
