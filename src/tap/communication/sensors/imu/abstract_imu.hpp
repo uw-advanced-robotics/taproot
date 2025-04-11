@@ -33,6 +33,9 @@ using tap::algorithms::transforms::Orientation;
 using tap::algorithms::transforms::Transform;
 
 constexpr float GRAVITY_MPS2 = 9.81f;
+/**
+ * A class that represents any directly connected IMU.
+ */
 class AbstractIMU : public ImuInterface
 {
 public:
@@ -82,7 +85,7 @@ public:
     inline float getGy() const override { return imuData.gyroRadPerSec.y(); }
     inline float getGz() const override { return imuData.gyroRadPerSec.z(); }
 
-    inline float getTemp() const override { return imuData.temperature; }
+    inline float getTemp() const { return imuData.temperature; }
 
     virtual float getYaw() const override { return mahonyAlgorithm.getYaw(); }
     virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }

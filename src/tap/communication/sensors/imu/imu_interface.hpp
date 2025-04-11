@@ -85,11 +85,6 @@ public:
     virtual inline float getGz() const = 0;
 
     /**
-     * Returns the temperature of the imu in degrees C.
-     */
-    virtual inline float getTemp() const = 0;
-
-    /**
      * Returns yaw angle. in radians.
      */
     virtual inline float getYaw() const = 0;

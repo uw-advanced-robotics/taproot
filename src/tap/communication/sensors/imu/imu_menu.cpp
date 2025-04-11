@@ -23,7 +23,7 @@ namespace tap::communication::sensors::imu
 {
 ImuMenu::ImuMenu(
     modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
-    ImuInterface *imu)
+    AbstractIMU *imu)
     : modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >(stack, 1),
       imu(imu),
       imuAccelGyroAngleFnPtrs{
