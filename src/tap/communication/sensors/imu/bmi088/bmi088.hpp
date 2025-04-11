@@ -117,7 +117,7 @@ public:
 private:
     Drivers *drivers;
 
-    inline float getAccelerationSensitivity() override { return ACC_G_PER_ACC_COUNT; }
+    inline float getAccelerationSensitivity() const override { return ACC_G_PER_ACC_COUNT; }
 
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
     /// Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET.

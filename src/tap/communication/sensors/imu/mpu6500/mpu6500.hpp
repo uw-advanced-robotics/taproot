@@ -112,7 +112,7 @@ private:
      */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-    inline float getAccelerationSensitivity() override { return ACCELERATION_SENSITIVITY; }
+    inline float getAccelerationSensitivity() const override { return ACCELERATION_SENSITIVITY; }
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,22 +17,23 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_IMU_INTERFACE_MOCK_HPP_
-#define TAPROOT_IMU_INTERFACE_MOCK_HPP_
+#ifndef TAPROOT_ABSTRACT_IMU_MOCK_HPP_
+#define TAPROOT_ABSTRACT_IMU_MOCK_HPP_
 
 #include <gmock/gmock.h>
 
-#include "tap/communication/sensors/imu/imu_interface.hpp"
+#include "tap/communication/sensors/imu/abstract_imu.hpp"
 
 namespace tap::mock
 {
-class ImuInterfaceMock : public tap::communication::sensors::imu::ImuInterface
+class AbstractImuMock : public tap::communication::sensors::imu::AbstractIMU
 {
 public:
-    ImuInterfaceMock();
-    virtual ~ImuInterfaceMock();
+    AbstractImuMock();
+    virtual ~AbstractImuMock();
 
     MOCK_METHOD(const char *, getName, (), (const override));
+    MOCK_METHOD(float, getTemp, (), (const override));
     MOCK_METHOD(float, getAx, (), (const override));
     MOCK_METHOD(float, getAy, (), (const override));
     MOCK_METHOD(float, getAz, (), (const override));
@@ -42,7 +43,8 @@ public:
     MOCK_METHOD(float, getYaw, (), (const override));
     MOCK_METHOD(float, getPitch, (), (const override));
     MOCK_METHOD(float, getRoll, (), (const override));
+    MOCK_METHOD(float, getAccelerationSensitivity, (), (const override));
 };
 }  // namespace tap::mock
 
-#endif  // TAPROOT_IMU_INTERFACE_MOCK_HPP_
+#endif  // TAPROOT_ABSTRACT_IMU_MOCK_HPP_

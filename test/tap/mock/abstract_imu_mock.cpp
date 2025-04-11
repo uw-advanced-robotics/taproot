@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,15 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "imu_terminal_serial_handler_mock.hpp"
+#include "abstract_imu_mock.hpp"
 
 namespace tap::mock
 {
-ImuTerminalSerialHandlerMock::ImuTerminalSerialHandlerMock(
-    tap::Drivers* drivers,
-    communication::sensors::imu::AbstractIMU* imu)
-    : communication::sensors::imu::ImuTerminalSerialHandler(drivers, imu)
-{
-}
-ImuTerminalSerialHandlerMock::~ImuTerminalSerialHandlerMock() {}
+AbstractImuMock::AbstractImuMock() {}
+AbstractImuMock::~AbstractImuMock() {}
 }  // namespace tap::mock

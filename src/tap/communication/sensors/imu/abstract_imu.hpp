@@ -26,6 +26,7 @@
 #include "tap/algorithms/transforms/vector.hpp"
 #include "tap/architecture/periodic_timer.hpp"
 #include "tap/communication/sensors/imu/imu_interface.hpp"
+#include "tap/util_macros.hpp"
 
 namespace tap::communication::sensors::imu
 {
@@ -76,20 +77,20 @@ public:
      */
     virtual ImuState getImuState() const { return imuState; }
 
-    inline float getAx() const override { return imuData.accG.x(); }
-    inline float getAy() const override { return imuData.accG.y(); }
-    inline float getAz() const override { return imuData.accG.z(); }
-    inline float getAzMinusG() const { return imuData.accG.z() - GRAVITY_MPS2; }
+    mockable inline float getAx() const override { return imuData.accG.x(); }
+    mockable inline float getAy() const override { return imuData.accG.y(); }
+    mockable inline float getAz() const override { return imuData.accG.z(); }
+    mockable inline float getAzMinusG() const { return imuData.accG.z() - GRAVITY_MPS2; }
 
-    inline float getGx() const override { return imuData.gyroRadPerSec.x(); }
-    inline float getGy() const override { return imuData.gyroRadPerSec.y(); }
-    inline float getGz() const override { return imuData.gyroRadPerSec.z(); }
+    mockable inline float getGx() const override { return imuData.gyroRadPerSec.x(); }
+    mockable inline float getGy() const override { return imuData.gyroRadPerSec.y(); }
+    mockable inline float getGz() const override { return imuData.gyroRadPerSec.z(); }
 
-    inline float getTemp() const { return imuData.temperature; }
+    mockable inline float getTemp() const { return imuData.temperature; }
 
-    virtual float getYaw() const override { return mahonyAlgorithm.getYaw(); }
-    virtual float getPitch() const override { return mahonyAlgorithm.getPitch(); }
-    virtual float getRoll() const override { return mahonyAlgorithm.getRoll(); }
+    virtual inline float getYaw() const override { return mahonyAlgorithm.getYaw(); }
+    virtual inline float getPitch() const override { return mahonyAlgorithm.getPitch(); }
+    virtual inline float getRoll() const override { return mahonyAlgorithm.getRoll(); }
 
     struct ImuData
     {
@@ -111,7 +112,7 @@ protected:
     void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
 
-    virtual inline float getAccelerationSensitivity() = 0;
+    virtual inline float getAccelerationSensitivity() const = 0;
 
     tap::algorithms::transforms::Transform mountingTransform;
 
