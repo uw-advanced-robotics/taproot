@@ -27,9 +27,9 @@ ImuMenu::ImuMenu(
     : modm::AbstractMenu<display::DummyAllocator<modm::IAbstractView> >(stack, 1),
       imu(imu),
       imuAccelGyroAngleFnPtrs{
-          {&ImuInterface::getAx, &ImuInterface::getAy, &ImuInterface::getAz},
-          {&ImuInterface::getGx, &ImuInterface::getGy, &ImuInterface::getGz},
-          {&ImuInterface::getPitch, &ImuInterface::getRoll, &ImuInterface::getYaw},
+          {&AbstractIMU::getAx, &AbstractIMU::getAy, &AbstractIMU::getAz},
+          {&AbstractIMU::getGx, &AbstractIMU::getGy, &AbstractIMU::getGz},
+          {&AbstractIMU::getPitch, &AbstractIMU::getRoll, &AbstractIMU::getYaw},
       }
 {
 }
