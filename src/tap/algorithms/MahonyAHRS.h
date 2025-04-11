@@ -74,7 +74,7 @@ public:
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
     float getRoll() const { return roll; }
     float getPitch() const { return pitch; }
-    float getYaw() const { return fmod(yaw + 2 * M_PI, 2 * M_PI); }
+    float getYaw() const { return fmod(yaw + 6.28318530718, 6.28318530718); }
     float getRollRadians() const { return roll; }
     float getPitchRadians() const { return pitch; }
     float getYawRadians() const { return yaw; }
