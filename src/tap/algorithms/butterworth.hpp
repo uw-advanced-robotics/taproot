@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2024-2024 Advanced Robotics at the University of Washington
+ * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington
  * <robomstr@uw.edu>
  *
  * This file is part of Taproot.
@@ -19,6 +19,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>;.
  */
 
+#ifndef TAPROOT_BUTTERWORTH_HPP_
+#define TAPROOT_BUTTERWORTH_HPP_
 #include <array>
 #include <cmath>
 #include <complex>
@@ -190,3 +192,5 @@ private:
 }  // namespace algorithms
 
 }  // namespace tap
+
+#endif  // TAPROOT_BUTTERWORTH_HPP_
