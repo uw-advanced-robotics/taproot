@@ -1,6 +1,10 @@
 # Taproot Changelog
 
 ## March 2025
+- `ImuInterface` no longer contains `getTemp` in order to support more inertial measurement sources
+- **Breaking:** All IMU related values are now in radians. (`get[Roll/Pitch/Yaw]()` in rad, `getG[x/y/z]()` in rad/s)
+
+## March 2025
 - Added Encoders
     - Added `EncoderInterface`, which is a interface for all possible encoders.
         - `getPosition()` returns a `WrappedFloat` for the position in radians.
