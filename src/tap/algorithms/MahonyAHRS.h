@@ -75,9 +75,6 @@ public:
     float getRoll() const { return roll; }
     float getPitch() const { return pitch; }
     float getYaw() const { return fmod(yaw + 6.28318530718, 6.28318530718); }
-    float getRollRadians() const { return roll; }
-    float getPitchRadians() const { return pitch; }
-    float getYawRadians() const { return yaw; }
 };
 
 #endif  // MAHONY_AHRS_H_
