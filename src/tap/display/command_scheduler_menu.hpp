@@ -45,7 +45,8 @@ class CommandSchedulerMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbs
 public:
     CommandSchedulerMenu(
         modm::ViewStack<DummyAllocator<modm::IAbstractView>> *stack,
-        Drivers *drivers);
+        Drivers *drivers,
+        int entriesToDisplay = MAX_ENTRIES_DISPLAYED);
 
     ~CommandSchedulerMenu() = default;
 
