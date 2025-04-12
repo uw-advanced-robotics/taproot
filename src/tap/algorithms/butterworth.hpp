@@ -50,8 +50,8 @@ constexpr std::complex<double> s2z(std::complex<double> s, double Ts)
  *
  * @param [in] zeros a vector of complex poles or zeros to multiply out, works
  * for any polynomial
- * 
- * @return a vector of coefficients for the polynomial with the 0th index being the 
+ *
+ * @return a vector of coefficients for the polynomial with the 0th index being the
  * constant term and the last index being the leading coefficient
  * @note the coefficients are returned as doubles, the imaginary part of the
  * complex number is ignored
