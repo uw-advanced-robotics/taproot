@@ -1,7 +1,5 @@
-
 /*
- * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington
- * <robomstr@uw.edu>
+ * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -16,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Taproot.  If not, see <https://www.gnu.org/licenses/>;.
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef TAPROOT_DISCRETE_FILTER_HPP_
@@ -41,9 +39,17 @@ template <uint8_t SIZE>
 class DiscreteFilter
 {
 public:
+    /**
+     * @brief Constructor for the DiscreteFilter class.
+     * @param [in] naturalResponseCoefficients The coefficients for the natural response (a).
+     * @param [in] forcedResponseCoefficients The coefficients for the forced response (b).
+     *
+     * This constructor initializes the filter with the given coefficients and resets the filter
+     * state to zero.
+     */
     DiscreteFilter(
-        std::array<float, SIZE> &naturalResponseCoefficients,  // a
-        std::array<float, SIZE> &forcedResponseCoefficients)   // b
+        std::array<float, SIZE> &naturalResponseCoefficients,
+        std::array<float, SIZE> &forcedResponseCoefficients)
         : naturalResponseCoefficients(naturalResponseCoefficients),
           forcedResponseCoefficients(forcedResponseCoefficients)
     {

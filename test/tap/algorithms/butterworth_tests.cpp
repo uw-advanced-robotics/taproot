@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington
- * <robomstr@uw.edu>
+ * Copyright (c) 2024-2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -15,8 +14,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Taproot.  If not, see <https://www.gnu.org/licenses/>;.
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 
 #include <algorithm>
 
