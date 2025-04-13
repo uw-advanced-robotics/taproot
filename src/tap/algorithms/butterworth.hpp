@@ -17,7 +17,6 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #ifndef TAPROOT_BUTTERWORTH_HPP_
 #define TAPROOT_BUTTERWORTH_HPP_
 #include <array>

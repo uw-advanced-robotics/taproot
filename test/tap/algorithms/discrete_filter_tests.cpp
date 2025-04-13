@@ -17,7 +17,6 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include <gtest/gtest.h>
 
 #include "tap/algorithms/discrete_filter.hpp"

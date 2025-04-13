@@ -17,7 +17,6 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 #include <algorithm>
 
 #include <gtest/gtest.h>
