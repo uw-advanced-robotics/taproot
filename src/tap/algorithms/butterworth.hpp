@@ -161,8 +161,8 @@ public:
         zZeros.fill(zZero);
 
         // Calculate polynomial coefficients
-        forcedResponseCoefficients = expandPolynomial<ORDER>(zZeros);
-        naturalResponseCoefficients = expandPolynomial<ORDER>(zPoles);
+        auto forcedResponseCoefficients = expandPolynomial<ORDER>(zZeros);
+        auto naturalResponseCoefficients = expandPolynomial<ORDER>(zPoles);
 
         // Calculate and apply the scalar so the DC gain is 1
         double scale_factor =
@@ -172,21 +172,27 @@ public:
         {
             forcedResponseCoefficients[i] *= scale_factor;
         }
+
+        for (size_t i = 0; i < ORDER + 1; i++)
+        {
+            this->naturalResponseCoefficients[ORDER - i] = naturalResponseCoefficients[i];
+            this->forcedResponseCoefficients[ORDER - i] = forcedResponseCoefficients[i];
+        }
     }
 
-    std::array<double, ORDER + 1> getNaturalResponseCoefficients() const
+    std::array<float, ORDER + 1> getNaturalResponseCoefficients() const
     {
         return naturalResponseCoefficients;
     }
-    std::array<double, ORDER + 1> getForcedResponseCoefficients() const
+    std::array<float, ORDER + 1> getForcedResponseCoefficients() const
     {
         return forcedResponseCoefficients;
     }
 
 private:
-    std::array<double, ORDER + 1> naturalResponseCoefficients;
+    std::array<float, ORDER + 1> naturalResponseCoefficients;
 
-    std::array<double, ORDER + 1> forcedResponseCoefficients;
+    std::array<float, ORDER + 1> forcedResponseCoefficients;
 };
 
 }  // namespace algorithms

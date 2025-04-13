@@ -18,13 +18,13 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>;.
  */
 
- #include <gtest/gtest.h>
+#include <gtest/gtest.h>
 
- #include "tap/algorithms/discrete_filter.hpp"
- 
- using namespace tap::algorithms;
- 
- TEST(DiscreteFilter, initial_output_is_zero)
+#include "tap/algorithms/discrete_filter.hpp"
+
+using namespace tap::algorithms;
+
+TEST(DiscreteFilter, initial_output_is_zero)
 {
     constexpr uint8_t SIZE = 3;
     std::array<float, SIZE> natural = {1.0, 0.0, 0.0};
@@ -44,7 +44,6 @@ TEST(DiscreteFilter, single_input_response_matches_coefficients)
     float out = filter.filterData(1.0f);
     EXPECT_NEAR(out, 0.5, 1e-6);
     EXPECT_FLOAT_EQ(filter.getLastFiltered(), out);
-
 }
 
 TEST(DiscreteFilter, double_input_response_matches_coefficients)
@@ -91,6 +90,25 @@ TEST(DiscreteFilter, zero_input_remains_zero)
         float output = filter.filterData(0.0);
         EXPECT_NEAR(output, 0.0, 1e-6);
     }
+}
+
+TEST(DiscreteFilter, filter_resets_properly)
+{
+    constexpr uint8_t SIZE = 3;
+    std::array<float, SIZE> natural = {1.0, -0.3, 0.1};
+    std::array<float, SIZE> forced = {0.1, 0.2, 0.3};
+    DiscreteFilter<SIZE> filter(natural, forced);
+
+    // Apply some input to the filter
+    filter.filterData(1.0);
+    filter.filterData(1.0);
+    filter.filterData(1.0);
+    // check that the state has changed
+    EXPECT_NE(filter.getLastFiltered(), 0.0f);
+    // Reset the filter
+    filter.reset();
+    // Check that the filter state is reset to zero
+    EXPECT_EQ(filter.getLastFiltered(), 0.0f);
 }
 
 TEST(DiscreteFilter, handles_step_input)

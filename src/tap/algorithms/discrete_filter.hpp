@@ -29,20 +29,25 @@ namespace tap
 {
 namespace algorithms
 {
+/**
+ * @brief DiscreteFilter class implements a discrete-time filter using the finite difference
+ * equation.
+ * @tparam SIZE The size of the filter coefficients.
+ *
+ * This class provides methods to filter input data using the finite difference equation and
+ * maintain the internal state of the filter.
+ */
 template <uint8_t SIZE>
 class DiscreteFilter
 {
 public:
     DiscreteFilter(
-        std::array<float, SIZE> &naturalResponseCoefficients, // a
-        std::array<float, SIZE> &forcedResponseCoefficients)  // b
+        std::array<float, SIZE> &naturalResponseCoefficients,  // a
+        std::array<float, SIZE> &forcedResponseCoefficients)   // b
         : naturalResponseCoefficients(naturalResponseCoefficients),
           forcedResponseCoefficients(forcedResponseCoefficients)
     {
-        // Fill with zeros to ensure that if getLastFiltered is called
-        // before filterData, it returns 0.0
-        naturalResponse.fill(0.0f);
-        forcedResponse.fill(0.0f);
+        reset();
     }
 
     /**
@@ -60,15 +65,11 @@ public:
      */
     float filterData(float dat)
     {
-        for (int i = SIZE - 1; i >= 0; i--)
+        for (int i = SIZE - 1; i > 0; i--)
         {
-            if (i == 0)
-            {
-                forcedResponse[i] = dat;
-                break;
-            }
             forcedResponse[i] = forcedResponse[i - 1];
         }
+        forcedResponse[0] = dat;
 
         float sum = 0;
         // Sum of forced response coefficients multiplied by the forced response X(n-k)
@@ -87,13 +88,28 @@ public:
         sum /= naturalResponseCoefficients[0];
 
         // Shift the natural response array to make room for the new output
-        std::rotate(naturalResponse.rbegin(), naturalResponse.rbegin() + 1, naturalResponse.rend());
+        for (int i = SIZE - 1; i > 0; i--)
+        {
+            naturalResponse[i] = naturalResponse[i - 1];
+        }
+
         naturalResponse[0] = sum;
 
         return naturalResponse[0];
     }
 
+    /** @brief Returns the last filtered value*/
     float getLastFiltered() { return naturalResponse[0]; }
+
+    /** @brief Resets the filter's state to zero, keeps the coefficients  */
+
+    float reset()
+    {
+        // Reset the filter state to zero
+        naturalResponse.fill(0.0f);
+        forcedResponse.fill(0.0f);
+        return 0.0f;
+    }
 
 private:
     std::array<float, SIZE> naturalResponseCoefficients;

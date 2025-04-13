@@ -18,9 +18,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>;.
  */
 
+#include <algorithm>
+
 #include <gtest/gtest.h>
 
 #include "tap/algorithms/butterworth.hpp"
+#include "tap/algorithms/discrete_filter.hpp"
 
 using namespace tap::algorithms;
 
@@ -101,17 +104,60 @@ TEST(ButterworthFilter, second_order_filter_has_correct_size)
 
 TEST(ButterworthFilter, coefficients_are_what_they_should_be)
 {
-    constexpr uint8_t ORDER = 2;
-    double wc = 10.0;
-    double Ts = 1 / 500.0;
-    Butterworth<ORDER> filter(wc, Ts);
+    static constexpr uint8_t ORDER = 2;
+    static constexpr double wc = 10.0;
+    static constexpr double Ts = 1 / 500.0;
+    static constexpr Butterworth<ORDER> filter(wc, Ts);
     auto num = filter.getForcedResponseCoefficients();
     auto den = filter.getNaturalResponseCoefficients();
     EXPECT_NEAR(num[0], 0.099858678643663 * 1.0e-5, 1e-3);
     EXPECT_NEAR(num[1], 0.199717357287326 * 1.0e-5, 1e-3);
     EXPECT_NEAR(num[2], 0.099858678643663 * 1.0e-5, 1e-3);
 
-    EXPECT_NEAR(den[0], 0.972, 1e-3);
+    EXPECT_NEAR(den[0], 1, 1e-3);
     EXPECT_NEAR(den[1], -1.971, 1e-3);
-    EXPECT_NEAR(den[2], 1, 1e-3);
+    EXPECT_NEAR(den[2], 0.972, 1e-3);
 }
+
+struct AttenuationParams
+{
+    float frequency;
+    float max, min = 0;
+};
+
+class AttenuationTest : public testing::Test, public testing::WithParamInterface<AttenuationParams>
+{
+protected:
+    static constexpr uint8_t ORDER = 2;
+    static constexpr double wc = 10.0;
+    static constexpr double Ts = 1 / 500.0;
+    static constexpr Butterworth<ORDER> filter{wc, Ts};
+};
+
+TEST_P(AttenuationTest, filter_attenuates_properly)
+{
+    auto nat = filter.getNaturalResponseCoefficients();
+    auto force = filter.getForcedResponseCoefficients();
+
+    DiscreteFilter<ORDER + 1> discreteFilter(nat, force);
+
+    float max_val = 0.0f;
+    for (int i = 0; i < 10000; i++)
+    {
+        float val = discreteFilter.filterData(sin(
+            GetParam().frequency * (i * Ts)));  // Feed in a sin wave with frequency and amp of 1
+        if (i > 5000)
+        {
+            max_val = std::max(max_val, std::abs(val));
+        }
+    }
+    EXPECT_LT(max_val, GetParam().max);  // Check that the output is attenuated
+    EXPECT_GT(max_val, GetParam().min);  // Check that the output is not too attenuated
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ButterworthFilter,
+    AttenuationTest,
+    testing::Values(
+        AttenuationParams{.frequency = 1.0, .max = 1.0 + 1e-3, .min = 1.0 - 1e-3},
+        AttenuationParams{.frequency = 100.0, .max = 1e-2}));
