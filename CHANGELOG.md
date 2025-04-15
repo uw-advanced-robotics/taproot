@@ -2,7 +2,7 @@
 
 ## March 2025
 - Added Butterworth filter coefficient generation.
-    -When constructing a butterworth filter of n order pass in the sample time difference and cutoff frequency in radians to obtain a list of coefficients for use in the discrete filter.
+    -When constructing a butterworth filter of n order pass in the sample time difference and cutoff frequency in radians/s to obtain a list of coefficients for use in the discrete filter.
 - Added discrete filter object
     -Takes in a list of natural and forced response coefficients; will compute the next filtered value when .filterData() is called.
     `.reset()` clears the natural and forced response but keeps the coefficients.
