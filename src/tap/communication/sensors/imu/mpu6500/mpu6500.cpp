@@ -139,6 +139,8 @@ bool Mpu6500::read()
 
         imuData.temperature = parseTemp(static_cast<float>(rxBuff[6] << 8 | rxBuff[7]));
 
+        applyTransform(imuData);
+
         prevIMUDataReceivedTime = tap::arch::clock::getTimeMicroseconds();
     }
     PT_END();

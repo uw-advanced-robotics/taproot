@@ -173,6 +173,8 @@ bool Bmi088::read()
         (imuData.gyroRaw - imuData.gyroOffsetRaw) * GYRO_RAD_PER_S_PER_GYRO_COUNT;
     imuData.accG = (imuData.accRaw - imuData.accOffsetRaw) * ACC_G_PER_ACC_COUNT;
 
+    applyTransform(imuData);
+
     return true;
 }
 
