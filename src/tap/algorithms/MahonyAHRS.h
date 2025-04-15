@@ -22,6 +22,8 @@
 
 #include <cmath>
 
+#include "modm/math/geometry/angle.hpp"
+
 //--------------------------------------------------------------------------------------------
 // Variable declaration
 
@@ -74,7 +76,7 @@ public:
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
     float getRoll() const { return roll; }
     float getPitch() const { return pitch; }
-    float getYaw() const { return fmod(yaw + 6.28318530718, 6.28318530718); }
+    float getYaw() const { return fmod(yaw + M_TWOPI, M_TWOPI); }
 };
 
 #endif  // MAHONY_AHRS_H_
