@@ -1,12 +1,31 @@
+/*
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "hud_graphic.hpp"
 #include "hud_graphics.hpp"
 #include "hud_graphic_manager.hpp"
 
 #define UPDATE_GRAPHIC_FIELD_BASE(field, val, method) \
         this->changed |= static_cast<uint32_t>(this->graphic.field) != static_cast<uint32_t>(val);\
-        this->updateGraphicOp();\
+        this->changed |= this->updateGraphicOp();\
         this->graphic.field = val;\
-        if (this->needsRedraw() && !this->queued)\
+        if (this->needsRedraw())\
         {\
             this->manager.method(this);\
         }\
@@ -71,22 +90,26 @@ void HudGraphic::hideGraphic()
     if (this->graphic.operation != RefSerialData::Tx::GraphicOperation::GRAPHIC_DELETE)
     {
         this->graphic.operation = RefSerialData::Tx::GraphicOperation::GRAPHIC_DELETE;
+        this->changed = true;
         this->manager.needsUpdate(this);
     } 
 }
 
 void HudGraphic::showGraphic()
 {
-    if (this->graphic.operation == RefSerialData::Tx::GraphicOperation::GRAPHIC_DELETE)
+    if (this->graphic.operation == RefSerialData::Tx::GraphicOperation::GRAPHIC_DELETE
+        || this->graphic.operation == RefSerialData::Tx::GraphicOperation::GRAPHIC_NO_OP)
     {
         this->graphic.operation = RefSerialData::Tx::GraphicOperation::GRAPHIC_ADD;
+        this->changed = true;
+        this->added = false;
         this->manager.needsUpdate(this);
     } 
 }
 
 bool HudGraphic::updateGraphicOp()
 {
-    if (this->graphic.operation == RefSerialData::Tx::GraphicOperation::GRAPHIC_ADD)
+    if (this->graphic.operation == RefSerialData::Tx::GraphicOperation::GRAPHIC_ADD && this->added)
     {
         this->graphic.operation = RefSerialData::Tx::GraphicOperation::GRAPHIC_MODIFY;
         return true;
@@ -320,10 +343,10 @@ Character::Character(HudGraphicManager& manager,
 
 void Character::setMessage(char* message, uint32_t length)
 {
-    UPDATE_CHARACTER_GRAPHIC_FIELD(endAngle, length);
+    UPDATE_CHARACTER_GRAPHIC_FIELD(endAngle, length - 1);
     this->changed |= strncmp(this->message, message, length);
     strncpy(this->message, message, length);
-    if (this->needsRedraw() && !this->queued)
+    if (this->needsRedraw())
     {
         this->manager.needsUpdate(this);
     }

@@ -159,7 +159,6 @@ public:
      */
     static void configFloatingNumber(
         uint16_t fontSize,
-        uint16_t decimalPrecision,
         uint16_t width,
         uint16_t startX,
         uint16_t startY,

@@ -127,7 +127,6 @@ void RefSerialTransmitter::configArc(
 
 void RefSerialTransmitter::configFloatingNumber(
     uint16_t fontSize,
-    uint16_t decimalPrecision,
     uint16_t width,
     uint16_t startX,
     uint16_t startY,
@@ -136,7 +135,6 @@ void RefSerialTransmitter::configFloatingNumber(
 {
     sharedData->type = static_cast<uint8_t>(Tx::GraphicType::FLOATING_NUM);
     sharedData->startAngle = fontSize;
-    sharedData->endAngle = decimalPrecision;
     sharedData->lineWidth = width;
     sharedData->startX = startX;
     sharedData->startY = startY;

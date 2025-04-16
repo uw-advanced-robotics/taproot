@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+# Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
 #
@@ -26,21 +26,5 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/refree/hud"
+    env.outbasepath = "taproot/src/tap/communication/referee/hud"
     env.copy(".")
-
-# def init(module):
-#     module.name = ":communication:referee"
-#     module.description = "Various referee communication interfaces"
-
-# def prepare(module, options):
-#     module.depends("taproot:communication:serial:ref_serial")
-
-#     module.add_submodule(Hud())
-
-#     return True
-
-# def build(env):
-#     env.outbasepath = "taproot/src/tap/communication/refree"
-#     env.copy("state_hud_indicator.hpp")
-

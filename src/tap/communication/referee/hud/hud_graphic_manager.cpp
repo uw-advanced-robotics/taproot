@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "hud_graphic_manager.hpp"
 
 #include "tap/drivers.hpp"
@@ -9,6 +28,7 @@
     {\
         graphic ## count.graphicData[index++] = draw->graphic;\
         draw->changed = false;\
+        draw->added = true; \
         draw = draw->nextDraw;\
     }\
     toDraw -= count;\
@@ -16,7 +36,7 @@
 
 namespace tap::hud
 {
-HudGraphicManager::HudGraphicManager(RefSerialTransmitter transmitter):
+HudGraphicManager::HudGraphicManager(RefSerialTransmitter& transmitter):
     transmitter(transmitter)
 {}
 
@@ -74,6 +94,7 @@ bool HudGraphicManager::run()
     {
         if (layersToDelete & (1 << 10))
         {
+            std::cout<< "del all";
             PT_CALL(transmitter.deleteGraphicLayer(RefSerialTransmitter::Tx::DELETE_ALL, 0));
         }
         else
@@ -83,6 +104,7 @@ bool HudGraphicManager::run()
             {
                 if (layersToDelete & (1 << index))
                 {
+                    std::cout << "del " << index;
                     PT_CALL(transmitter.deleteGraphicLayer(RefSerialTransmitter::Tx::DELETE_GRAPHIC_LAYER, index));
                     layersToDelete &= ~(1 << index);
                     index += 1;
@@ -95,6 +117,7 @@ bool HudGraphicManager::run()
             graphicCharacter.graphicData = drawCharacter->graphic;
             strncpy(graphicCharacter.msg, drawCharacter->message, 30); 
             draw->changed = false;
+            draw->added = true;
             drawCharacter = drawCharacter->nextDraw;
             PT_CALL(transmitter.sendGraphic(&graphicCharacter));
         }
@@ -117,11 +140,13 @@ bool HudGraphicManager::run()
             {
                 graphic1.graphicData = draw->graphic;
                 draw->changed = false;
+                draw->added = true;
                 draw = draw->nextDraw;
                 toDraw -= 1;
                 PT_CALL(transmitter.sendGraphic(&graphic1));
             }
         }
+        PT_YIELD();
     }
     PT_END();
 }
