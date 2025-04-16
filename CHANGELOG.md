@@ -1,6 +1,12 @@
 # Taproot Changelog
 
 ## March 2025
+- Added Butterworth filter coefficient generation.
+    -When constructing a butterworth filter of n order pass in the sample time difference and cutoff frequency in radians/s to obtain a list of coefficients for use in the discrete filter.
+- Added discrete filter object
+    -Takes in a list of natural and forced response coefficients; will compute the next filtered value when .filterData() is called.
+    `.reset()` clears the natural and forced response but keeps the coefficients.
+    `.getLastFilteredValue()` gets the last filtered value.
 - Added Encoders
     - Added `EncoderInterface`, which is a interface for all possible encoders.
         - `getPosition()` returns a `WrappedFloat` for the position in radians.
