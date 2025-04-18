@@ -1,6 +1,11 @@
 # Taproot Changelog
 
 ## April 2025
+- `Transform` now stores translational velocity and acceleration, as well as angular velocity.
+  - `compose()`ing such "Dynamic Transforms" correctly updates all derivatives.
+  - `staticCompose()` can be used to ignore derivatives if they're not needed to reduce computation.
+  - `projectForward()` projects the transform forward in time.
+- Added `DynamicPosition` and `DynamicOrientation` classes, which also store their derivatives.
 - `ImuInterface` no longer contains `getTemp` in order to support more inertial measurement sources
 - **Breaking:** All IMU related values are now in radians. (`get[Roll/Pitch/Yaw]()` in rad, `getG[x/y/z]()` in rad/s)
 - Added Butterworth filter coefficient generation.
