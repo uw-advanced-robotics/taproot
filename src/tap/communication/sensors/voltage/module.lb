@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
 #
 # This file is part of Taproot.
 #
@@ -16,15 +16,12 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":communication:sensors:encoder"
-    module.description = "Encoder related interfaces/drivers"
+    module.name = ":communication:sensors:voltage"
+    module.description = "Voltage sensor interface"
 
 def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/sensors/encoder"
-    env.copy("encoder_interface.hpp")
-    env.copy("multi_encoder.hpp")
-    env.copy("wrapped_encoder.cpp")
-    env.copy("wrapped_encoder.hpp")
+    env.outbasepath = "taproot/src/tap/communication/sensors/voltage"
+    env.copy(".")

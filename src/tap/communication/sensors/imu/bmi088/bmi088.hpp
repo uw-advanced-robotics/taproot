@@ -60,19 +60,19 @@ public:
     static constexpr Acc::AccRange_t ACC_RANGE = Acc::AccRange::G3;
     static constexpr Gyro::GyroRange_t GYRO_RANGE = Gyro::GyroRange::DPS2000;
     /**
-     * The maximum angular velocity in degrees / second that the gyro can read based on GYRO_RANGE
+     * The maximum angular velocity in radians / second that the gyro can read based on GYRO_RANGE
      * specified above.
      */
-    static constexpr float GYRO_RANGE_MAX_DS = 2000.0f;
+    static constexpr float GYRO_RANGE_MAX_RAD_PER_S = modm::toRadian(2000.0f);
 
     static constexpr float BMI088_TEMP_FACTOR = 0.125f;
     static constexpr float BMI088_TEMP_OFFSET = 23.0f;
 
     /**
-     * Used to convert raw gyro values to units of degrees / second. Ratio has units
-     * (degrees / second) / gyro counts.
+     * Used to convert raw gyro values to units of radians / second. Ratio has units
+     * (radians / second) / gyro counts.
      */
-    static constexpr float GYRO_DS_PER_GYRO_COUNT = GYRO_RANGE_MAX_DS / 32767.0f;
+    static constexpr float GYRO_RAD_PER_S_PER_GYRO_COUNT = GYRO_RANGE_MAX_RAD_PER_S / 32767.0f;
 
     /**
      * Refer to page 27 of the bmi088 datasheet for explination of this equation.
@@ -117,7 +117,7 @@ public:
 private:
     Drivers *drivers;
 
-    inline float getAccelerationSensitivity() override { return ACC_G_PER_ACC_COUNT; }
+    inline float getAccelerationSensitivity() const override { return ACC_G_PER_ACC_COUNT; }
 
     static constexpr uint16_t RAW_TEMPERATURE_TO_APPLY_OFFSET = 1023;
     /// Offset parsed temperature reading by this amount if > RAW_TEMPERATURE_TO_APPLY_OFFSET.

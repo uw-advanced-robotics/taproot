@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,15 +17,24 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "imu_terminal_serial_handler_mock.hpp"
+#ifndef TAPROOT_VOLTAGE_SENSOR_INTERFACE_HPP_
+#define TAPROOT_VOLTAGE_SENSOR_INTERFACE_HPP_
 
-namespace tap::mock
+#include "tap/communication/sensors/sensor_interface.hpp"
+
+namespace tap::communication::sensors::voltage
 {
-ImuTerminalSerialHandlerMock::ImuTerminalSerialHandlerMock(
-    tap::Drivers* drivers,
-    communication::sensors::imu::AbstractIMU* imu)
-    : communication::sensors::imu::ImuTerminalSerialHandler(drivers, imu)
+/**
+ * Interface for a generic voltage sensor.
+ */
+class VoltageSensorInterface : public tap::communication::sensors::SensorInterface
 {
-}
-ImuTerminalSerialHandlerMock::~ImuTerminalSerialHandlerMock() {}
-}  // namespace tap::mock
+public:
+    /**
+     * @return The voltage read by the voltage sensor, in millivolts.
+     */
+    virtual float getVoltageMv() const = 0;
+};
+}  // namespace tap::communication::sensors::voltage
+
+#endif  // TAPROOT_CURRENT_SENSOR_INTERFACE_HPP_

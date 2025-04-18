@@ -96,7 +96,7 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     EXPECT_NEAR(accData.x * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAx(), ALPHA);
     EXPECT_NEAR(accData.y * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAy(), ALPHA);
     EXPECT_NEAR(accData.z * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAz(), ALPHA);
-    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
-    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
-    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
+    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
+    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
+    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
 }

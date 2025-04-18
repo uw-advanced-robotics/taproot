@@ -38,7 +38,8 @@ WrappedEncoder::WrappedEncoder(
       gearRatio(gearRatio),
       encoderHomePosition(tap::algorithms::WrappedFloat(encoderHomePosition, 0, encoderResolution)),
       pastPosition(tap::algorithms::Angle(0)),
-      lastUpdateTime(0)
+      lastUpdateTime(0),
+      deltaTime(0)
 {
 }
 
@@ -46,6 +47,7 @@ void WrappedEncoder::resetEncoderValue()
 {
     encoderHomePosition = encoder + encoderHomePosition;
     encoder.setUnwrappedValue(0);
+    pastPosition -= position;
     position.setUnwrappedValue(0);
 }
 
@@ -62,12 +64,12 @@ tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const
 
 float WrappedEncoder::getVelocity() const
 {
-    if (lastUpdateTime == 0)
+    if (deltaTime == 0)
     {
         return 0;
     }
 
-    return (position - pastPosition).getUnwrappedValue() / lastUpdateTime * 1'000'000;
+    return (position - pastPosition).getUnwrappedValue() / deltaTime * 1'000'000;
 }
 
 void WrappedEncoder::alignWith(EncoderInterface* other)
@@ -78,6 +80,7 @@ void WrappedEncoder::alignWith(EncoderInterface* other)
     this->encoderHomePosition += offset;
     this->encoder += offset;
     this->position = other->getPosition();
+    this->pastPosition += positionDifference;
 }
 
 void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
@@ -92,7 +95,7 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
                                  ? (int32_t)encoderResolution + encoderRelativeToHome
                                  : encoderRelativeToHome;
 
-    if (lastUpdateTime == 0)  // The first time we get a value
+    if (lastUpdateTime == 0)  // The first time we get a value, want it to always be positive
     {
         encoder = tap::algorithms::WrappedFloat(newEncWrapped, 0, encoderResolution);
     }
@@ -102,8 +105,9 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
     }
 
     pastPosition = position;
+    deltaTime = tap::arch::clock::getTimeMicroseconds() - lastUpdateTime;
     lastUpdateTime = tap::arch::clock::getTimeMicroseconds();
-    position = tap::algorithms::Angle(
+    position.setUnwrappedValue(
         encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution * gearRatio);
 }
 }  // namespace encoder

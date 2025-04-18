@@ -106,12 +106,37 @@ TEST(WrappedEncoder, calculates_velocity_correctly)
     clock.time = 1000;
     encoder.updateEncoderValue(1);
     EXPECT_FLOAT_EQ(M_PI_2, encoder.getVelocity());
+
+    clock.time = 2000;
+    encoder.updateEncoderValue(2);
+    EXPECT_FLOAT_EQ(M_PI_2, encoder.getVelocity());
+}
+
+TEST(WrappedEncoder, calculates_velocity_through_reset)
+{
+    tap::arch::clock::ClockStub clock;
+    WrappedEncoder encoder(false, 4);
+
+    encoder.updateEncoderValue(0);
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
+
+    encoder.resetEncoderValue();
+
+    clock.time = 1000;
+    encoder.updateEncoderValue(1);
+    EXPECT_FLOAT_EQ(M_PI_2, encoder.getVelocity());
+
+    encoder.resetEncoderValue();
+
+    clock.time = 2000;
+    encoder.updateEncoderValue(2);
+    EXPECT_FLOAT_EQ(M_PI_2, encoder.getVelocity());
 }
 
 TEST(WrappedEncoder, align_with_updates_values)
 {
     tap::arch::clock::ClockStub clock;
-    clock.time = 1;
+    clock.time = 1000;
 
     WrappedEncoder encoder(false, 4);
     EncoderInterfaceMock mock;
@@ -119,12 +144,16 @@ TEST(WrappedEncoder, align_with_updates_values)
 
     encoder.updateEncoderValue(0);
     EXPECT_EQ(Angle(0).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
 
     encoder.alignWith(&mock);
     EXPECT_EQ(Angle(M_PI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
+    EXPECT_FLOAT_EQ(0, encoder.getVelocity());
 
+    clock.time = 2000;
     encoder.updateEncoderValue(2);
     EXPECT_EQ(Angle(M_TWOPI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
+    EXPECT_FLOAT_EQ(M_PI, encoder.getVelocity());
 }
 
 TEST(WrappedEncoder, gear_ratio_works)
