@@ -87,10 +87,11 @@ Transform::Transform(
       transAcc(acceleration.coordinates()),
       rotation(rotation.matrix()),
       tRotation(rotation.matrix().transpose()),
-      angVel(AngularVelocity::skewMatFromAngVel(
-          angularVelocity.x(),
-          angularVelocity.y(),
-          angularVelocity.z()))
+      angVel(
+          AngularVelocity::skewMatFromAngVel(
+              angularVelocity.x(),
+              angularVelocity.y(),
+              angularVelocity.z()))
 {
     checkDynamic();
 }
@@ -106,10 +107,11 @@ Transform::Transform(
       transAcc(std::move(acceleration.coordinates())),
       rotation(std::move(rotation.matrix())),
       tRotation(rotation.matrix().transpose()),
-      angVel(AngularVelocity::skewMatFromAngVel(
-          angularVelocity.x(),
-          angularVelocity.y(),
-          angularVelocity.z()))
+      angVel(
+          AngularVelocity::skewMatFromAngVel(
+              angularVelocity.x(),
+              angularVelocity.y(),
+              angularVelocity.z()))
 {
     checkDynamic();
 }
@@ -210,7 +212,7 @@ Vector Transform::apply(const Vector& vector) const
 
 DynamicPosition Transform::apply(const DynamicPosition& dynamicPosition) const
 {
-    CMSISMat<3, 1> pf = tRotation * dynamicPosition.position;
+    CMSISMat<3, 1> pf = tRotation * (dynamicPosition.position - translation);
     CMSISMat<3, 1> vf = tRotation * (dynamicPosition.velocity - transVel - angVel * translation);
     CMSISMat<3, 1> af = tRotation * (dynamicPosition.acceleration - transAcc -
                                      angVel * angVel * translation - 2 * angVel * vf);
