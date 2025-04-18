@@ -131,38 +131,6 @@ inline void expectDynamicEq(
     expectDynAngEq(actual, expected, epsilon);
 }
 
-std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
-
-std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)
-{
-    return stream << "DynamicPosition";
-}
-
-std::ostream& operator<<(std::ostream& stream, const DynamicOrientation&)
-{
-    return stream << "DynamicOrientation";
-}
-
-std::ostream& operator<<(std::ostream& stream, const CompositionTestConfig&)
-{
-    return stream << "CompositionTestConfig";
-}
-
-std::ostream& operator<<(std::ostream& stream, const PositionAdditionConsistencyTestConfig&)
-{
-    return stream << "PositionAdditionConsistencyTestConfig";
-}
-
-std::ostream& operator<<(std::ostream& stream, const OrientationCompositionConsistencyTestConfig&)
-{
-    return stream << "OrientationCompositionConsistencyTestConfig";
-}
-
-std::ostream& operator<<(std::ostream& stream, const ProjectionTestConfig&)
-{
-    return stream << "ProjectionTestConfig";
-}
-
 TEST(Transform, identity_transform_retains_position)
 {
     // Given
@@ -504,3 +472,35 @@ std::vector<ProjectionTestConfig> projectionTestCases = {
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, ProjectionTest, ValuesIn(projectionTestCases));
+
+std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
+
+std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)
+{
+    return stream << "DynamicPosition";
+}
+
+std::ostream& operator<<(std::ostream& stream, const DynamicOrientation&)
+{
+    return stream << "DynamicOrientation";
+}
+
+std::ostream& operator<<(std::ostream& stream, const CompositionTestConfig&)
+{
+    return stream << "CompositionTestConfig";
+}
+
+std::ostream& operator<<(std::ostream& stream, const PositionAdditionConsistencyTestConfig&)
+{
+    return stream << "PositionAdditionConsistencyTestConfig";
+}
+
+std::ostream& operator<<(std::ostream& stream, const OrientationCompositionConsistencyTestConfig&)
+{
+    return stream << "OrientationCompositionConsistencyTestConfig";
+}
+
+std::ostream& operator<<(std::ostream& stream, const ProjectionTestConfig&)
+{
+    return stream << "ProjectionTestConfig";
+}
