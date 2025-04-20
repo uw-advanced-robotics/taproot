@@ -541,3 +541,13 @@ std::ostream& operator<<(std::ostream& stream, const ProjectionTestConfig&)
 {
     return stream << "ProjectionTestConfig";
 }
+
+std::ostream& operator<<(std::ostream& stream, const ApplyDynamicPosTestConfig&)
+{
+    return stream << "ApplyDynamicPosTestConfig";
+}
+
+std::ostream& operator<<(std::ostream& stream, const ApplyDynamicOriTestConfig&)
+{
+    return stream << "ApplyDynamicOriTestConfig";
+}
