@@ -88,9 +88,9 @@ Transform::Transform(
       rotation(rotation.matrix()),
       tRotation(rotation.matrix().transpose()),
       angVel(AngularVelocity::skewMatFromAngVel(
-              angularVelocity.x(),
-              angularVelocity.y(),
-              angularVelocity.z()))
+          angularVelocity.x(),
+          angularVelocity.y(),
+          angularVelocity.z()))
 {
     checkDynamic();
 }
@@ -107,9 +107,9 @@ Transform::Transform(
       rotation(std::move(rotation.matrix())),
       tRotation(rotation.matrix().transpose()),
       angVel(AngularVelocity::skewMatFromAngVel(
-              angularVelocity.x(),
-              angularVelocity.y(),
-              angularVelocity.z()))
+          angularVelocity.x(),
+          angularVelocity.y(),
+          angularVelocity.z()))
 {
     checkDynamic();
 }
