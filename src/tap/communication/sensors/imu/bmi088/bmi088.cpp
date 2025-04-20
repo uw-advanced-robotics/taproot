@@ -148,6 +148,11 @@ void Bmi088::periodicIMUUpdate()
 
 bool Bmi088::read()
 {
+    if (!readTimeout.execute())
+    {
+        return false;
+    }
+
     uint8_t rxBuff[6] = {};
 
     Bmi088Hal::bmi088AccReadMultiReg(Acc::ACC_X_LSB, rxBuff, 6);
