@@ -30,73 +30,43 @@ using namespace testing;
 
 const float EPS = 1E-5;
 
-inline void expectPosEq(const Position& actual, const Position& expected, const float epsilon = EPS)
+inline void expectEq(const Position& actual, const Position& expected, const float epsilon = EPS)
 {
     EXPECT_NEAR(actual.x(), expected.x(), epsilon);
     EXPECT_NEAR(actual.y(), expected.y(), epsilon);
     EXPECT_NEAR(actual.z(), expected.z(), epsilon);
 }
 
-inline void expectVecEq(const Vector& actual, const Vector& expected, const float epsilon = EPS)
+inline void expectEq(const Vector& actual, const Vector& expected, const float epsilon = EPS)
 {
     EXPECT_NEAR(actual.x(), expected.x(), epsilon);
     EXPECT_NEAR(actual.y(), expected.y(), epsilon);
     EXPECT_NEAR(actual.z(), expected.z(), epsilon);
 }
 
-inline void expectPosEq(
-    const Transform& actual,
-    const Transform& expected,
+inline void expectEq(
+    const DynamicPosition& actual,
+    const DynamicPosition& expected,
     const float epsilon = EPS)
 {
-    EXPECT_NEAR(actual.getX(), expected.getX(), epsilon);
-    EXPECT_NEAR(actual.getY(), expected.getY(), epsilon);
-    EXPECT_NEAR(actual.getZ(), expected.getZ(), epsilon);
+    expectEq(actual.getPosition(), expected.getPosition(), epsilon);
+    expectEq(actual.getVelocity(), expected.getVelocity(), epsilon);
+    expectEq(actual.getAcceleration(), expected.getAcceleration(), epsilon);
 }
 
-inline void expectVelEq(
-    const Transform& actual,
-    const Transform& expected,
+inline void expectEq(
+    const Orientation& actual,
+    const Orientation& expected,
     const float epsilon = EPS)
 {
-    EXPECT_NEAR(actual.getXVel(), expected.getXVel(), epsilon);
-    EXPECT_NEAR(actual.getYVel(), expected.getYVel(), epsilon);
-    EXPECT_NEAR(actual.getZVel(), expected.getZVel(), epsilon);
+    EXPECT_NEAR(actual.roll(), expected.roll(), epsilon);
+    EXPECT_NEAR(actual.pitch(), expected.pitch(), epsilon);
+    EXPECT_NEAR(actual.yaw(), expected.yaw(), epsilon);
 }
 
-inline void expectAccEq(
-    const Transform& actual,
-    const Transform& expected,
-    const float epsilon = EPS)
-{
-    EXPECT_NEAR(actual.getXAcc(), expected.getXAcc(), epsilon);
-    EXPECT_NEAR(actual.getYAcc(), expected.getYAcc(), epsilon);
-    EXPECT_NEAR(actual.getZAcc(), expected.getZAcc(), epsilon);
-}
-
-inline void expectDynPosEq(
-    const Transform& actual,
-    const Transform& expected,
-    const float epsilon = EPS)
-{
-    expectPosEq(actual, expected, epsilon);
-    expectVelEq(actual, expected, epsilon);
-    expectAccEq(actual, expected, epsilon);
-}
-
-inline void expectAngEq(
-    const Transform& actual,
-    const Transform& expected,
-    const float epsilon = EPS)
-{
-    EXPECT_NEAR(actual.getRoll(), expected.getRoll(), epsilon);
-    EXPECT_NEAR(actual.getPitch(), expected.getPitch(), epsilon);
-    EXPECT_NEAR(actual.getYaw(), expected.getYaw(), epsilon);
-}
-
-inline void expectAngVelEq(
-    const Transform& actual,
-    const Transform& expected,
+inline void expectEq(
+    const AngularVelocity& actual,
+    const AngularVelocity& expected,
     const float epsilon = EPS)
 {
     EXPECT_NEAR(actual.getRollVelocity(), expected.getRollVelocity(), epsilon);
@@ -104,13 +74,13 @@ inline void expectAngVelEq(
     EXPECT_NEAR(actual.getYawVelocity(), expected.getYawVelocity(), epsilon);
 }
 
-inline void expectDynAngEq(
-    const Transform& actual,
-    const Transform& expected,
+inline void expectEq(
+    const DynamicOrientation& actual,
+    const DynamicOrientation& expected,
     const float epsilon = EPS)
 {
-    expectAngEq(actual, expected, epsilon);
-    expectAngVelEq(actual, expected, epsilon);
+    expectEq(actual.getOrientation(), expected.getOrientation(), epsilon);
+    expectEq(actual.getAngularVelocity(), expected.getAngularVelocity(), epsilon);
 }
 
 inline void expectStaticEq(
@@ -118,17 +88,14 @@ inline void expectStaticEq(
     const Transform& expected,
     const float epsilon = EPS)
 {
-    expectPosEq(actual, expected, epsilon);
-    expectAngEq(actual, expected, epsilon);
+    expectEq(actual.getTranslation(), expected.getTranslation(), epsilon);
+    expectEq(actual.getRotation(), expected.getRotation(), epsilon);
 }
 
-inline void expectDynamicEq(
-    const Transform& actual,
-    const Transform& expected,
-    const float epsilon = EPS)
+inline void expectEq(const Transform& actual, const Transform& expected, const float epsilon = EPS)
 {
-    expectDynPosEq(actual, expected, epsilon);
-    expectDynAngEq(actual, expected, epsilon);
+    expectEq(actual.getDynamicTranslation(), expected.getDynamicTranslation(), epsilon);
+    expectEq(actual.getDynamicOrientation(), expected.getDynamicOrientation(), epsilon);
 }
 
 TEST(Transform, identity_transform_retains_position)
@@ -141,7 +108,7 @@ TEST(Transform, identity_transform_retains_position)
     Position finish = identity.apply(start);
 
     // Then
-    expectPosEq(start, finish);
+    expectEq(start, finish);
 }
 
 TEST(Transform, identity_transform_retains_vector)
@@ -154,7 +121,7 @@ TEST(Transform, identity_transform_retains_vector)
     Vector finish = identity.apply(start);
 
     // Then
-    expectVecEq(start, finish);
+    expectEq(start, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
@@ -169,7 +136,7 @@ TEST(Transform, pure_translation_transform_apply_to_target_position_yields_zero)
     // Then
     Position expected(0.0, 0.0, 0.0);
 
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negative_translation)
@@ -184,7 +151,7 @@ TEST(Transform, pure_translation_transform_apply_to_source_position_yields_negat
     // Then
     Position expected(-1.0, -2.0, -3.0);
 
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, pure_translation_transform_apply_to_vector)
@@ -197,7 +164,7 @@ TEST(Transform, pure_translation_transform_apply_to_vector)
     Vector finish = translation.apply(start);
 
     // Then
-    expectVecEq(start, finish);
+    expectEq(start, finish);
 }
 
 TEST(Transform, pure_roll_transform_apply_to_position)
@@ -211,7 +178,7 @@ TEST(Transform, pure_roll_transform_apply_to_position)
 
     // Then
     Position expected(1.0, 3.0, -2.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, pure_pitch_transform_apply_to_position)
@@ -225,7 +192,7 @@ TEST(Transform, pure_pitch_transform_apply_to_position)
 
     // Then
     Position expected(-3.0, 2.0, 1.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, pure_yaw_transform_apply_to_position)
@@ -239,7 +206,7 @@ TEST(Transform, pure_yaw_transform_apply_to_position)
 
     // Then
     Position expected(2.0, -1.0, 3.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, pure_rotation_transform_apply_to_zero_position)
@@ -253,7 +220,7 @@ TEST(Transform, pure_rotation_transform_apply_to_zero_position)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
@@ -267,7 +234,7 @@ TEST(Transform, transform_apply_to_target_origin_position_yields_zero)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, transform_apply_to_source_origin_position)
@@ -281,7 +248,7 @@ TEST(Transform, transform_apply_to_source_origin_position)
 
     // Then
     Position expected(0.0, 0.0, 0.0);
-    expectPosEq(expected, finish);
+    expectEq(expected, finish);
 }
 
 TEST(Transform, transform_compose_with_inverse_yields_identity)
@@ -294,7 +261,7 @@ TEST(Transform, transform_compose_with_inverse_yields_identity)
 
     // Then
     Transform identity(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-    expectStaticEq(composed, identity);
+    expectEq(composed, identity);
 }
 
 TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
@@ -307,7 +274,7 @@ TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
 
     // Then
     Transform identity = Transform::identity();
-    expectDynamicEq(composed, identity);
+    expectEq(composed, identity);
 }
 
 struct CompositionTestConfig
@@ -321,7 +288,7 @@ class CompositionTest : public TestWithParam<CompositionTestConfig>
 
 TEST_P(CompositionTest, dynamic_compose)
 {
-    expectDynamicEq(GetParam().a.compose(GetParam().b), GetParam().e);
+    expectEq(GetParam().a.compose(GetParam().b), GetParam().e);
 }
 
 // Transform(  x,   y,   z,  vx,  vy,  vz,  ax,  ay,  az, roll, pitch, yaw, rollVel, pitchVel,
@@ -375,7 +342,7 @@ TEST_P(PositionAdditionConsistencyTest, position_composition_consistency)
 
     Transform tE(GetParam().a + GetParam().b, DynamicOrientation(0, 0, 0, 0, 0, 0));
 
-    expectDynamicEq(tAc, tE);
+    expectEq(tAc, tE);
 }
 
 std::vector<PositionAdditionConsistencyTestConfig> positionAdditionConsistencyTestCases = {
@@ -408,7 +375,7 @@ TEST_P(OrientationCompositionConsistencyTest, position_composition_consistency)
 
     Transform tE(DynamicPosition(0, 0, 0, 0, 0, 0, 0, 0, 0), GetParam().a.compose(GetParam().b));
 
-    expectDynamicEq(tAc, tE);
+    expectEq(tAc, tE);
 }
 
 std::vector<OrientationCompositionConsistencyTestConfig>
@@ -435,9 +402,9 @@ class ProjectionTest : public TestWithParam<ProjectionTestConfig>
 {
 };
 
-TEST_P(ProjectionTest, projection_test)
+TEST_P(ProjectionTest, projection)
 {
-    expectDynamicEq(GetParam().t.projectForward(GetParam().dt), GetParam().e);
+    expectEq(GetParam().t.projectForward(GetParam().dt), GetParam().e);
 }
 
 std::vector<ProjectionTestConfig> projectionTestCases = {
@@ -472,6 +439,76 @@ std::vector<ProjectionTestConfig> projectionTestCases = {
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, ProjectionTest, ValuesIn(projectionTestCases));
+
+struct ApplyDynamicPosTestConfig
+{
+    Transform t;
+    DynamicPosition p, e;
+};
+
+class ApplyDynamicPosTest : public TestWithParam<ApplyDynamicPosTestConfig>
+{
+};
+
+TEST_P(ApplyDynamicPosTest, apply_dynamic_position)
+{
+    expectEq(GetParam().t.apply(GetParam().p), GetParam().e);
+}
+
+std::vector<ApplyDynamicPosTestConfig> applyDynamicPosTestCases = {
+    // trivial case
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .p = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    {.t = Transform(1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .p = DynamicPosition(1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0),
+     .e = DynamicPosition(0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0)},
+    {.t = Transform(1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .p = DynamicPosition(1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0),
+     .e = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    {.t = Transform(1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0, 1.0),
+     .p = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = DynamicPosition(0.0, 1.0, -1.0, 1.0, 0.0, 0.0, 0.0, -1.0, 0.0)},
+};
+
+struct ApplyDynamicOriTestConfig
+{
+    Transform t;
+    DynamicOrientation o, e;
+};
+
+class ApplyDynamicOriTest : public TestWithParam<ApplyDynamicOriTestConfig>
+{
+};
+
+TEST_P(ApplyDynamicOriTest, apply_dynamic_orientation)
+{
+    expectEq(GetParam().t.apply(GetParam().o), GetParam().e);
+}
+
+std::vector<ApplyDynamicOriTestConfig> applyDynamicOriTestCases = {
+    // trivial case
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .o = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    // translation shouldn't affect this
+    {.t = Transform(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .o = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .e = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
+
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+     .o = DynamicOrientation(0.1, 0.2, 0.3, 0.3, 0.2, 0.1),
+     .e = DynamicOrientation(0.1, 0.2, 0.3, 0.3, 0.2, 0.1)},
+
+    {.t = Transform(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, M_PI_2, 0.0, 0.0, 1.0),
+     .o = DynamicOrientation(0.0, 0.0, M_PI_2, 0.0, 0.0, 0.0),
+     .e = DynamicOrientation(0.0, 0.0, 0.0, 0.0, 0.0, -1.0)},
+};
+
+INSTANTIATE_TEST_SUITE_P(Transform, ApplyDynamicOriTest, ValuesIn(applyDynamicOriTestCases));
 
 std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
 

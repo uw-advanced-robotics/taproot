@@ -201,13 +201,19 @@ public:
      */
     Vector apply(const Vector& vector) const;
 
+    /**
+     * @brief Brings a dynamic position in the base frame to one in the follower frame.
+     */
     DynamicPosition apply(const DynamicPosition& dynamicPosition) const;
 
     /**
-     * @brief Rotates an orientation in the base frame to a vector in the follower frame.
+     * @brief Brings an orientation in the base frame to one in the follower frame.
      */
     Orientation apply(const Orientation& orientation) const;
 
+    /**
+     * @brief Brings a dynamic orientation in the base frame to one in the follower frame.
+     */
     DynamicOrientation apply(const DynamicOrientation& dynamicOrientation) const;
 
     /**

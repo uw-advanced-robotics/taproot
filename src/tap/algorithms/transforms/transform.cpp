@@ -210,12 +210,13 @@ Vector Transform::apply(const Vector& vector) const
     return Vector(tRotation * vector.coordinates_);
 }
 
-DynamicPosition Transform::apply(const DynamicPosition& dynamicPosition) const
+DynamicPosition Transform::apply(const DynamicPosition& p) const
 {
-    CMSISMat<3, 1> pf = tRotation * (dynamicPosition.position - translation);
-    CMSISMat<3, 1> vf = tRotation * (dynamicPosition.velocity - transVel - angVel * translation);
-    CMSISMat<3, 1> af = tRotation * (dynamicPosition.acceleration - transAcc -
-                                     angVel * angVel * translation - 2 * angVel * vf);
+    CMSISMat<3, 1> pf = tRotation * (p.position - translation);
+    CMSISMat<3, 1> vf = tRotation * (p.velocity - transVel + angVel * (translation - p.position));
+    CMSISMat<3, 1> af =
+        tRotation * (p.acceleration - transAcc +
+                     angVel * (2 * (transVel - p.velocity) + angVel * (p.position - translation)));
     return DynamicPosition(pf, vf, af);
 }
 
