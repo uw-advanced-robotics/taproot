@@ -65,12 +65,12 @@ Transform::Transform(CMSISMat<3, 1>&& translation, CMSISMat<3, 3>&& rotation)
 {
 }
 
-Transform::Transform(float x, float y, float z, float roll, float pitch, float yaw)
+Transform::Transform(float x, float y, float z, float rx, float ry, float rz)
     : dynamic(false),
       translation({x, y, z}),
       transVel({0, 0, 0}),
       transAcc({0, 0, 0}),
-      rotation(Orientation::fromEulerAngles(roll, pitch, yaw)),
+      rotation(Orientation::fromEulerAngles(rx, ry, rz)),
       tRotation(rotation.transpose()),
       angVel({0, 0, 0, 0, 0, 0, 0, 0, 0})
 {
@@ -184,18 +184,18 @@ Transform::Transform(
     float ax,
     float ay,
     float az,
-    float roll,
-    float pitch,
-    float yaw,
-    float rollVel,
-    float pitchVel,
-    float yawVel)
+    float rx,
+    float ry,
+    float rz,
+    float wx,
+    float wy,
+    float wz)
     : translation({x, y, z}),
       transVel({vx, vy, vz}),
       transAcc({ax, ay, az}),
-      rotation(Orientation::fromEulerAngles(roll, pitch, yaw)),
+      rotation(Orientation::fromEulerAngles(rx, ry, rz)),
       tRotation(rotation.transpose()),
-      angVel(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
+      angVel(AngularVelocity::skewMatFromAngVel(wx, wy, wz))
 {
     checkDynamic();
 }
