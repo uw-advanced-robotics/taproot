@@ -595,7 +595,7 @@ public:
     /**
      * @brief Whether there are any non-zero derivatives.
      */
-    inline const bool isDynamic() const { return dynamic; }
+    inline bool isDynamic() const { return dynamic; }
 
 private:
     bool dynamic{true};
