@@ -9,6 +9,7 @@
     -Takes in a list of natural and forced response coefficients; will compute the next filtered value when .filterData() is called.
     `.reset()` clears the natural and forced response but keeps the coefficients.
     `.getLastFilteredValue()` gets the last filtered value.
+- Brought `bmi088.read()` in line with the `mpu6500.read()` method, which now waits to read till the sampling frequency is reached. 
 
 ## March 2025
 - Added Encoders
