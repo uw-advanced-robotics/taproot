@@ -22,7 +22,6 @@ def init(module):
 
 def prepare(module, options):
     module.depends(":communication:sensors:imu_heater")
-    module.depends(":communication:serial:terminal_serial")
     module.depends(":communication:sensors:imu")
     return options[":dev_board"] == "rm-dev-board-a"
 

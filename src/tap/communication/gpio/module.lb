@@ -160,7 +160,7 @@ def init(module):
     module.description = "Various GPIO HAL wrappers"
 
 def prepare(module, options):
-    module.depends(":core", ":board")
+    module.depends(":board")
 
     metadata = board_info_parser.parse_board_info(options[":dev_board"])
     module.add_submodule(Analog(metadata))

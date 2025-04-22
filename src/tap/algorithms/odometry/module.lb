@@ -16,17 +16,13 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 def init(module):
-    module.name = ":errors"
-    module.description = "Error handler"
+    module.name = ":algorithms:odometry"
+    module.description = "Taproot odometry algorithms"
 
 def prepare(module, options):
-    module.depends(
-        ":core", 
-        ":communication:serial:terminal_serial",
-        ":communication:gpio:leds")
-
+    module.depends(":control")
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/errors"
+    env.outbasepath = "taproot/src/tap/algorithms/odometry"
     env.copy(".")

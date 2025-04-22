@@ -28,7 +28,7 @@ class Mock(Module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
-        module.depends(":core")
+        module.depends(":drivers")
         return True
 
     def build(self, env):

@@ -100,8 +100,6 @@ def init(module):
     module.description = "Various serial communication interfaces"
 
 def prepare(module, options):
-    module.depends("taproot:core")
-
     module.add_submodule(Remote())
     module.add_submodule(RefSerial())
     module.add_submodule(TerminalSerial())

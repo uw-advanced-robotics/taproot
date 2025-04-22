@@ -15,18 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("src/tap/drivers"))
+import drivers
+
 def init(module):
-    module.name = ":communication:tcp-server"
-    module.description = "Generic TCP server that runs on a hosted Linux environment " \
-        "Provides utility for opening and connecting to a port. Provides read/write " \
-        "utilities for interacting with a TCP port. This is a **simulation-only module** - " \
-        "it will only be built when running on the hosted platform."
+    module.name = ":drivers"
+    module.description = "Taproot drivers"
 
 def prepare(module, options):
-    # module.depends(":motor")
+    module.depends(
+        ":testing:mock",
+        ":modm-project.xml",
+        ":board")
 
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap/communication/tcp-server"
-    env.copy(".")
+    env.outbasepath = "taproot/src"
+    env.substitutions = {
+        "object_and_mocks": drivers.get_object_and_mock_names(env),
+        "mock_driver_includes": drivers.get_mock_headers_sorted(env),
+        "src_driver_includes": drivers.get_src_files_sorted(env),
+        "include_command_scheduler": env.has_module(":control")
+    }
+    env.template("drivers.hpp.in", "tap/drivers.hpp")
