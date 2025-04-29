@@ -63,7 +63,7 @@ def build(env):
     env.copy("src/tap/util_macros.hpp", "util_macros.hpp")
     env.copy("src/tap/errors/create_errors.hpp", "errors/create_errors.hpp")
     env.copy("src/tap/errors/system_error.hpp", "errors/system_error.hpp")
-    env.copy("src/tap/architecture", "architecture/")
+    # env.copy("src/tap/architecture", "architecture/")
 
     if env[":rebuild_modm"]:
         print("building modm")

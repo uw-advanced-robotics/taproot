@@ -23,10 +23,15 @@ def prepare(module, options):
     module.depends(
         ":drivers",
         ":algorithms",
-        ":communicatin:sensor:encoder")
+        ":communication:sensors:encoder",
+        ":communication:can")
 
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/motor"
-    env.copy(".")
+    terminalFiles = ["dji_motor_terminal_serial_handler.hpp", "dji_motor_terminal_serial_handler.cpp"]
+    env.copy(".", ignore=env.ignore_files(*terminalFiles))
+
+    if env.has_module(":communication:serial:terminal_serial"):
+        env.copy(terminalFiles)

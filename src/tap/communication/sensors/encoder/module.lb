@@ -20,6 +20,7 @@ def init(module):
     module.description = "Encoder related interfaces/drivers"
 
 def prepare(module, options):
+    module.depends(":algorithms", ":architecture")
     return True
 
 def build(env):

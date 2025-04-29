@@ -60,6 +60,6 @@ def build(env):
     env.outbasepath = "taproot/src"
 
     # env.copy("tap/algorithms")
-    env.copy("tap/architecture")
+    # env.copy("tap/architecture")
     # env.copy("tap/control")
     # env.copy("tap/motor")
