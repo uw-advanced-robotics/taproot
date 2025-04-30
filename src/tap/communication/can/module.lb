@@ -24,6 +24,10 @@ def init(module):
     module.description = "CAN I/O interface wrappers"
 
 def prepare(module, options):
+    module.depends(
+        ":board",
+        ":drivers"
+    )
     return True
 
 def build(env):

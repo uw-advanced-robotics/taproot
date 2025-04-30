@@ -24,4 +24,9 @@ def prepare(module, options):
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/current"
-    env.copy(".")
+    
+    env.copy("current_sensor_interface.hpp")
+
+    if env.has_module(":communication:gpio:analog"):
+        env.copy("analog_current_sensor.cpp")
+        env.copy("analog_current_sensor.hpp")

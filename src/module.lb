@@ -23,19 +23,24 @@ def init(module):
     module.description = "Core library features"
 
 def prepare(module, options):
-    module.depends(
-        ":drivers",
-        ":errors",
-        ":ext")
-
     # build system dependencies
     module.depends(":build")
 
     # drivers
     module.depends(":drivers")
 
+    module.depends(
+        ":drivers",
+        ":errors",
+        ":ext")
+
+    module.depends(":algorithms")
+    module.depends(":architecture")
+    module.depends(":control")
+    module.depends(":motor")
+
     # motor-specific dependencies
-    module.depends(":communication:can", ":communication:tcp-server", ":communication:sensors:encoder")
+    module.depends(":communication:can", ":communication:sensors:encoder")
 
     # command mapper dependencies
     module.depends(":communication:serial:remote")
@@ -58,8 +63,3 @@ def prepare(module, options):
 
 def build(env):
     env.outbasepath = "taproot/src"
-
-    # env.copy("tap/algorithms")
-    # env.copy("tap/architecture")
-    # env.copy("tap/control")
-    # env.copy("tap/motor")

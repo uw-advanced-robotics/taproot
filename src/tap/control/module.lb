@@ -20,8 +20,29 @@ def init(module):
     module.description = "Robot control systems"
 
 def prepare(module, options):
+    # General Depends
+    module.depends(":drivers")
+
+    # Remote Map State -> To be replaced with triggers
+    module.depends(":communication:serial:remote")
+
+    # Needed for command scheduler time overrun check
+    module.depends(":architecture")
+
+    # Needed for chassis power limiter
+    module.depends(":communication:sensors:current")
+    module.depends(":communication:sensors:voltage")
+    module.depends(":communication:serial:ref_serial")
+    
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/control"
-    env.copy(".")
+
+    terminalFiles = ["scheduler_terminal_handler.cpp", "scheduler_terminal_handler.hpp"]
+    env.copy(".", ignore=env.ignore_files(*terminalFiles))
+
+    if env.has_module(":communication:serial:terminal_serial"):
+        for file in terminalFiles:
+                    env.copy(file)
+

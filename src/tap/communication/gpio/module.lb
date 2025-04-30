@@ -115,6 +115,7 @@ class Pwm(Module):
 
     def prepare(self, module, options):
         module.depends(":board")
+        module.depends(":algorithms")
         return True
 
     def build(self, env):

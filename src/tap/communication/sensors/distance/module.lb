@@ -24,4 +24,12 @@ def prepare(module, options):
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/distance"
-    env.copy(".")
+
+    env.copy("distance_sensor.cpp")
+    env.copy("distance_sensor.hpp")
+
+    if env.has_module(":communication:gpio:analog"):
+        env.copy("analog_distance_sensor.cpp")
+        env.copy("analog_distance_sensor.hpp")
+        env.copy("sharp_ir_GP2Y0A41.cpp")
+        env.copy("sharp_ir_GP2Y0A41.hpp")

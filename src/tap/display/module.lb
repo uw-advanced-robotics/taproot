@@ -26,10 +26,42 @@ def init(module):
         "(https://www.robomaster.com/en-US/products/components/general/development-board)"
 
 def prepare(module, options):
-    module.depends(":core")
+    module.depends(":board")
+    module.depends(":drivers")
+
+    module.depends(":communication:gpio:analog")
 
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/display"
-    env.copy(".")
+
+    motorFiles = [
+        "motor_menu.cpp",
+        "motor_menu.hpp",
+        "motor_specific_menu.cpp",
+        "motor_specific_menu.hpp",
+    ]
+    controlFiles = [
+        "command_scheduler_menu.cpp",
+        "command_scheduler_menu.hpp",
+        "hardware_test_menu.cpp",
+        "hardware_test_menu.hpp"
+    ]
+    refSerialFiles = [
+        "ref_serial_menu.cpp",
+        "ref_serial_menu.hpp"
+    ]
+    env.copy(".", ignore=env.ignore_files(*(motorFiles + controlFiles + refSerialFiles)))
+
+    if env.has_module(":motor"):
+        for file in motorFiles:
+            env.copy(file)
+    
+    if env.has_module(":control"):
+        for file in controlFiles:
+            env.copy(file)
+
+    if env.has_module(":communication:serial:ref_serial"):
+        for file in refSerialFiles:
+            env.copy(file)

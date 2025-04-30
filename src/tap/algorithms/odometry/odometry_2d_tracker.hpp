@@ -92,6 +92,10 @@ private:
     bool displacementPrimed = false;
 };
 
+void getVelocityWorldRelative(
+    modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
+    float chassisHeading);
+
 }  // namespace tap::algorithms::odometry
 
 #endif  // TAPROOT_ODOMETRY_2D_TRACKER_HPP_

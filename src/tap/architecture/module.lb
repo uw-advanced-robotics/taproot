@@ -24,4 +24,14 @@ def prepare(module, options):
 
 def build(env):
     env.outbasepath = "taproot/src/tap/architecture"
-    env.copy(".")
+    
+    env.copy("clock.cpp")
+    env.copy("clock.hpp")
+    env.copy("conditional_timer.hpp")
+    env.copy("endianness_wrappers.hpp")
+    env.copy("periodic_timer.hpp")
+    env.copy("timeout.hpp")
+
+    if env.has_module(":drivers"):
+        env.copy("profiler.cpp")
+        env.copy("profiler.hpp")

@@ -20,7 +20,7 @@ def init(module):
     module.description = "Taproot odometry algorithms"
 
 def prepare(module, options):
-    module.depends(":control")
+    module.depends(":architecture")
     return True
 
 def build(env):

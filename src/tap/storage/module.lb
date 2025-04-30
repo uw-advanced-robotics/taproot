@@ -20,7 +20,6 @@ def init(module):
     module.description = "Support for non-volatile storage"
 
 def prepare(module, options):
-    module.depends(":core")
     return True
 
 def build(env):

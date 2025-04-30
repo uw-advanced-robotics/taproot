@@ -30,8 +30,14 @@ def prepare(module, options):
 
 def build(env):
     env.outbasepath = "taproot/src/tap/motor"
+    pwmFiles = ["servo.cpp", "servo.hpp"]
     terminalFiles = ["dji_motor_terminal_serial_handler.hpp", "dji_motor_terminal_serial_handler.cpp"]
-    env.copy(".", ignore=env.ignore_files(*terminalFiles))
+    env.copy(".", ignore=env.ignore_files(*(terminalFiles + pwmFiles)))
 
     if env.has_module(":communication:serial:terminal_serial"):
-        env.copy(terminalFiles)
+        for file in terminalFiles:
+            env.copy(file)
+
+    if env.has_module(":communication:gpio:pwm"):
+        for file in pwmFiles:
+            env.copy(file)

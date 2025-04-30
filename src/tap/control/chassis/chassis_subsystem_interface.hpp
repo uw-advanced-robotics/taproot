@@ -21,6 +21,7 @@
 #define TAPROOT_CHASSIS_SUBSYSTEM_INTERFACE_HPP_
 
 #include "tap/algorithms/math_user_utils.hpp"
+#include "tap/algorithms/odometry/odometry_2d_tracker.hpp"
 
 #include "../subsystem.hpp"
 #include "modm/math/matrix.hpp"
@@ -61,22 +62,7 @@ public:
         modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
         float chassisHeading)
     {
-        modm::Matrix<float, 3, 3> transform;
-        float headingCos = cosf(chassisHeading);
-        float headingSin = sinf(chassisHeading);
-        headingCos = tap::algorithms::compareFloatClose(headingCos, 0.0f, 1e-6) ? 0.0f : headingCos;
-        headingSin = tap::algorithms::compareFloatClose(headingSin, 0.0f, 1e-6) ? 0.0f : headingSin;
-
-        transform[0][0] = headingCos;
-        transform[1][0] = headingSin;
-        transform[2][0] = 0;
-        transform[0][1] = -headingSin;
-        transform[1][1] = headingCos;
-        transform[2][1] = 0;
-        transform[0][2] = 0;
-        transform[1][2] = 0;
-        transform[2][2] = 1;
-        chassisRelativeVelocity = transform * chassisRelativeVelocity;
+        algorithms::odometry::getVelocityWorldRelative(chassisRelativeVelocity, chassisHeading);
     }
 };
 }  // namespace tap::control::chassis

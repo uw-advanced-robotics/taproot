@@ -26,8 +26,7 @@ def init(module):
 def prepare(module, options):
     module.depends(
         ":testing:mock",
-        ":modm-project.xml",
-        ":board")
+        ":modm-project.xml")
 
     return True
 

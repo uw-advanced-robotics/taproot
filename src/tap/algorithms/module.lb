@@ -58,6 +58,3 @@ def build(env):
     env.copy("transforms")
     env.copy("wrapped_float.cpp")
     env.copy("wrapped_float.hpp")
-
-
-    # env.copy(".", ignore=env.ignore_paths("odometry/*.**"))

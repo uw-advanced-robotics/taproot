@@ -139,7 +139,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/control/scheduler_terminal_handler.hpp",
         "mock-header": "tap/mock/scheduler_terminal_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": [":communication:serial:terminal_serial"],
+        "module-dependencies": [":communication:serial:terminal_serial", ":control"],
     },
     {
         "object-name": "errors::ErrorController",
@@ -147,7 +147,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/errors/error_controller.hpp",
         "mock-header": "tap/mock/error_controller_mock.hpp",
         "constructor": "this",
-        "module-dependencies": [":error"],
+        "module-dependencies": [":errors"],
     },
     {
         "object-name": "motor::DjiMotorTerminalSerialHandler",
