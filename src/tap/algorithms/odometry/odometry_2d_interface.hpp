@@ -59,7 +59,7 @@ public:
      */
     virtual uint32_t getLastComputedOdometryTime() const = 0;
 
-    virtual void overrideOdometryPosition(float positionX, float positionY) = 0;
+    virtual void overrideOdometryPosition(const float positionX, const float positionY) = 0;
 };
 
 }  // namespace tap::algorithms::odometry
