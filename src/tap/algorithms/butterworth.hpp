@@ -75,8 +75,7 @@
  *
  * @warning High-order filters can introduce numerical instability and should be
  *          used with caution. For most applications, low-pass and high-pass filters
- *          of order 2 or lower are sufficient. For band-pass and band-stop filters,
- *          ensure the bandwidth is less than fs/4 to avoid excessive peaking.
+ *          of order 2 or lower are sufficient.
  *
  * @author Aiden Prevey
  * @date 4/29/2025
@@ -226,7 +225,7 @@ constexpr std::complex<double> complex_sqrt(std::complex<double> z)
     return {r * std::cos(theta), r * std::sin(theta)};
 }
 
-template <uint8_t ORDER, FilterType Type = LOWPASS>
+template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 class Butterworth
 {
 public:
@@ -456,21 +455,21 @@ public:
         }
     }
 
-    static constexpr size_t COEFFICIENTS = (1 + ((Type & 0b10) != 0)) * ORDER + 1;
+    static constexpr int COEFFICIENTS = (1 + ((Type & 0b10) != 0)) * ORDER + 1;
 
-    std::array<float, COEFFICIENTS> getNaturalResponseCoefficients() const
+    std::array<T, COEFFICIENTS> getNaturalResponseCoefficients() const
     {
         return naturalResponseCoefficients;
     }
 
-    std::array<float, COEFFICIENTS> getForcedResponseCoefficients() const
+    std::array<T, COEFFICIENTS> getForcedResponseCoefficients() const
     {
         return forcedResponseCoefficients;
     }
 
 private:
-    std::array<float, COEFFICIENTS> naturalResponseCoefficients;
-    std::array<float, COEFFICIENTS> forcedResponseCoefficients;
+    std::array<T, COEFFICIENTS> naturalResponseCoefficients;
+    std::array<T, COEFFICIENTS> forcedResponseCoefficients;
 };
 
 }  // namespace algorithms

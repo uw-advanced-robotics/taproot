@@ -35,7 +35,7 @@ namespace algorithms
  * This class provides methods to filter input data using the finite difference equation and
  * maintain the internal state of the filter.
  */
-template <uint8_t SIZE>
+template <uint8_t SIZE, typename T = float>
 class DiscreteFilter
 {
 public:
@@ -48,8 +48,8 @@ public:
      * state to zero.
      */
     DiscreteFilter(
-        std::array<float, SIZE> &naturalResponseCoefficients,
-        std::array<float, SIZE> &forcedResponseCoefficients)
+        std::array<T, SIZE> &naturalResponseCoefficients,
+        std::array<T, SIZE> &forcedResponseCoefficients)
         : naturalResponseCoefficients(naturalResponseCoefficients),
           forcedResponseCoefficients(forcedResponseCoefficients)
     {
@@ -69,7 +69,7 @@ public:
      * a_{k}y(n-k)\right]. \qquad{(2)} \f$
      *
      */
-    float filterData(float dat)
+    T filterData(float dat)
     {
         for (int i = SIZE - 1; i > 0; i--)
         {
@@ -105,11 +105,11 @@ public:
     }
 
     /** @brief Returns the last filtered value*/
-    float getLastFiltered() { return naturalResponse[0]; }
+    T getLastFiltered() { return naturalResponse[0]; }
 
     /** @brief Resets the filter's state to zero, keeps the coefficients  */
 
-    float reset()
+    T reset()
     {
         // Reset the filter state to zero
         naturalResponse.fill(0.0f);
@@ -118,10 +118,10 @@ public:
     }
 
 private:
-    std::array<float, SIZE> naturalResponseCoefficients;
-    std::array<float, SIZE> forcedResponseCoefficients;
-    std::array<float, SIZE> naturalResponse;
-    std::array<float, SIZE> forcedResponse;
+    std::array<T, SIZE> naturalResponseCoefficients;
+    std::array<T, SIZE> forcedResponseCoefficients;
+    std::array<T, SIZE> naturalResponse;
+    std::array<T, SIZE> forcedResponse;
 };
 
 }  // namespace algorithms
