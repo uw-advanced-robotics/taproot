@@ -77,4 +77,9 @@ void Odometry2DTracker::update()
     }
 }
 
+void Odometry2DTracker::overrideOdometryPosition(float positionX, float positionY)
+{
+    location.setPosition(positionX, positionY);
+}
+
 }  // namespace tap::algorithms::odometry
