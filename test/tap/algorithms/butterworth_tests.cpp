@@ -60,14 +60,18 @@ TEST(PolynomialExpansion, real_roots_order_2)
 TEST(EvaluateFrequencyResponse, unity_gain)
 {
     constexpr int ORDER = 2;
-    constexpr double Ts = 1/500.0;
-    /* 
+    constexpr double Ts = 1 / 500.0;
+    /*
      * Coefficients for a lowpass filter with a wc of 1 and a Ts of 1/500.
-     * Note: it's in backwards order as everything within Butterworth is calculated in reverse from delivered.
-     * Also, it's actually necessary to have this amount of digits; 6 digits of precision is not enough.
+     * Note: it's in backwards order as everything within Butterworth is calculated in reverse from
+     * delivered. Also, it's actually necessary to have this amount of digits; 6 digits of precision
+     * is not enough.
      */
-    std::array<double, ORDER + 1> numerator = {9.985875464857408e-07 , 1.997175092971482e-06 , 9.985875464857408e-07};
-    std::array<double, ORDER + 1> denominator = {9.971755689727204e-01 , -1.997171574622534, 1};
+    std::array<double, ORDER + 1> numerator = {
+        9.985875464857408e-07,
+        1.997175092971482e-06,
+        9.985875464857408e-07};
+    std::array<double, ORDER + 1> denominator = {9.971755689727204e-01, -1.997171574622534, 1};
     std::complex<double> resp = evaluateFrequencyResponse<ORDER>(numerator, denominator, 0, Ts);
     double scalar = complex_abs(resp);
     double expected = 1;
@@ -90,7 +94,7 @@ TEST(ButterworthFilter, low_order_filter_coefficients_sum_to_one)
         numSum += num[i];
         denSum += den[i];
     }
-    
+
     // Check DC gain is 1 (numerator and denominator sums are equal)
     EXPECT_NEAR(numSum, denSum, 1e-6);
 }
@@ -131,7 +135,6 @@ struct AttenuationParams
     float max, min = 0;
 };
 
-
 template <FilterType Type>
 class AttenuationTest : public testing::Test, public testing::WithParamInterface<AttenuationParams>
 {
@@ -143,6 +146,7 @@ protected:
     static constexpr Butterworth<ORDER, Type, double> filter{wc, Ts, wh};
 };
 
+// clang-format off
 #define ATTENUATION_TEST(Type) \
     using Type##AttenuationTest = AttenuationTest<Type>; \
     TEST_P(Type##AttenuationTest, filter_attenuates_properly) \
@@ -164,6 +168,7 @@ protected:
         EXPECT_LT(max_val, GetParam().max);  /* Check that the output is attenuated */ \
         EXPECT_GT(max_val, GetParam().min);  /* Check that the output is not too attenuated */ \
     }
+// clang-format on
 
 ATTENUATION_TEST(LOWPASS)
 INSTANTIATE_TEST_SUITE_P(
