@@ -1,5 +1,8 @@
 # Taproot Changelog
 
+## May 1 2025
+ - Butterworth filter generation now supports lowpass, highpass, bandpass, and bandstop.
+
 ## April 2025
 - `Transform` now stores translational velocity and acceleration, as well as angular velocity.
   - `compose()`ing such "Dynamic Transforms" correctly updates all derivatives.
