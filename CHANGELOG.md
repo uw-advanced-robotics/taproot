@@ -1,5 +1,21 @@
 # Taproot Changelog
 
+## April 2025
+- `Transform` now stores translational velocity and acceleration, as well as angular velocity.
+  - `compose()`ing such "Dynamic Transforms" correctly updates all derivatives.
+  - `staticCompose()` can be used to ignore derivatives if they're not needed to reduce computation.
+  - `projectForward()` projects the transform forward in time.
+- Added `DynamicPosition` and `DynamicOrientation` classes, which also store their derivatives.
+- `ImuInterface` no longer contains `getTemp` in order to support more inertial measurement sources
+- **Breaking:** All IMU related values are now in radians. (`get[Roll/Pitch/Yaw]()` in rad, `getG[x/y/z]()` in rad/s)
+- Added Butterworth filter coefficient generation.
+    -When constructing a butterworth filter of n order pass in the sample time difference and cutoff frequency in radians/s to obtain a list of coefficients for use in the discrete filter.
+- Added discrete filter object
+    -Takes in a list of natural and forced response coefficients; will compute the next filtered value when .filterData() is called.
+    `.reset()` clears the natural and forced response but keeps the coefficients.
+    `.getLastFilteredValue()` gets the last filtered value.
+- Brought `bmi088.read()` in line with the `mpu6500.read()` method, which now waits to read till the sampling frequency is reached. 
+
 ## March 2025
 - Added Butterworth filter coefficient generation.
     -When constructing a butterworth filter of n order pass in the sample time difference and cutoff frequency in radians/s to obtain a list of coefficients for use in the discrete filter.

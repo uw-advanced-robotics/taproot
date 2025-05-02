@@ -46,7 +46,7 @@ TEST(S2ZTransform, known_input_output)
 
 TEST(PolynomialExpansion, real_roots_order_2)
 {
-    constexpr int ORDER = 2;
+    constexpr uint8_t ORDER = 2;
     std::array<std::complex<double>, ORDER> zeros = {
         std::complex<double>(-1.0, 0.0),
         std::complex<double>(-2.0, 0.0)};
@@ -80,7 +80,7 @@ TEST(EvaluateFrequencyResponse, unity_gain)
 
 TEST(ButterworthFilter, low_order_filter_coefficients_sum_to_one)
 {
-    constexpr int ORDER = 1;
+    constexpr uint8_t ORDER = 1;
     double wc = 10.0;
     double Ts = 1 / 500.0;
     Butterworth<ORDER> filter(wc, Ts);
@@ -101,7 +101,7 @@ TEST(ButterworthFilter, low_order_filter_coefficients_sum_to_one)
 
 TEST(ButterworthFilter, second_order_filter_has_correct_size)
 {
-    constexpr int ORDER = 2;
+    constexpr uint8_t ORDER = 2;
     double wc = 20.0;
     double Ts = 0.01;
     Butterworth<ORDER> filter(wc, Ts);
@@ -114,7 +114,7 @@ TEST(ButterworthFilter, second_order_filter_has_correct_size)
 
 TEST(ButterworthFilter, coefficients_are_what_they_should_be)
 {
-    static constexpr int ORDER = 2;
+    static constexpr uint8_t ORDER = 2;
     static constexpr double wc = 10.0;
     static constexpr double Ts = 1 / 500.0;
     static constexpr Butterworth<ORDER> filter(wc, Ts);
@@ -139,7 +139,7 @@ template <FilterType Type>
 class AttenuationTest : public testing::Test, public testing::WithParamInterface<AttenuationParams>
 {
 protected:
-    static constexpr int ORDER = 2;
+    static constexpr uint8_t ORDER = 2;
     static constexpr double wc = 10.0;
     static constexpr double wh = 100.0;
     static constexpr double Ts = 1 / 500.0;

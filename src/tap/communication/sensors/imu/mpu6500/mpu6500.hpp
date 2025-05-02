@@ -90,26 +90,14 @@ public:
      */
     mockable bool read();
 
-    /**
-     * Returns the state of the IMU. Can be not connected, connected but not calibrated, calibrating
-     * or calibrated. When not connected, IMU data is undefiend. When not calibrated, IMU data is
-     * valid but the computed yaw angle data will drift. When calibrating, the IMU data is invalid.
-     * When calibrated, the IMU data is valid and assuming proper calibration the IMU data should
-     * not drift.
-     *
-     * To be safe, whenever you call functions that return IMU (acceleration, gyroscope,
-     * temperature, and angle) data, call this function to ensure the data you are about to receive
-     * is not undefined.
-     */
-
     virtual inline const char *getName() const { return "mpu6500"; }
 
     mockable inline uint32_t getPrevIMUDataReceivedTime() const { return prevIMUDataReceivedTime; }
 
     /**
-     * Use for converting from gyro values we receive to more conventional degrees / second.
+     * Use for converting from gyro values we receive to more conventional radians / second.
      */
-    static constexpr float LSB_D_PER_S_TO_D_PER_S = 16.384f;
+    static constexpr float LSB_PER_RAD_PER_S = modm::toDegree(16.384f);
 
     inline void setTargetTemperature(float temperatureC)
     {
@@ -120,11 +108,11 @@ private:
     Drivers *drivers;
 
     /**
-     * Use to convert the raw acceleration into more conventional degrees / second^2
+     * Use to convert the raw acceleration into more conventional meters / second^2
      */
     static constexpr float ACCELERATION_SENSITIVITY = 4096.0f;
 
-    inline float getAccelerationSensitivity() override { return ACCELERATION_SENSITIVITY; }
+    inline float getAccelerationSensitivity() const override { return ACCELERATION_SENSITIVITY; }
 
     /**
      * Time in ms to wait for the IMU heat to stabalize upon initialization.

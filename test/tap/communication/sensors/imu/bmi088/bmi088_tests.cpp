@@ -19,6 +19,7 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/architecture/clock.hpp"
 #include "tap/communication/sensors/imu/bmi088/bmi088.hpp"
 #include "tap/communication/sensors/imu/bmi088/bmi088_hal.hpp"
 #include "tap/drivers.hpp"
@@ -68,6 +69,7 @@ TEST(Bmi088, periodicIMUUpdate_initialize_called_no_errors)
 TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
 {
     tap::Drivers drivers;
+    tap::arch::clock::ClockStub clock;
     Bmi088 bmi088(&drivers);
 
     initializeBmi088(bmi088);
@@ -89,6 +91,7 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
     Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
 
+    clock.time = 200;
     bmi088.read();
     bmi088.periodicIMUUpdate();
 
@@ -96,7 +99,7 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     EXPECT_NEAR(accData.x * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAx(), ALPHA);
     EXPECT_NEAR(accData.y * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAy(), ALPHA);
     EXPECT_NEAR(accData.z * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAz(), ALPHA);
-    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
-    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
-    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
+    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
+    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
+    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
 }
