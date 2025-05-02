@@ -167,7 +167,20 @@ protected:
         } \
         EXPECT_LT(max_val, GetParam().max);  /* Check that the output is attenuated */ \
         EXPECT_GT(max_val, GetParam().min);  /* Check that the output is not too attenuated */ \
-    }
+    } \
+    TEST_P(Type##AttenuationTest, runtime_matches_constexpr) \
+    { \
+        Butterworth<ORDER, Type, double> runtime{wc, Ts, wh}; \
+        auto nat = runtime.getNaturalResponseCoefficients(); \
+        auto force = runtime.getForcedResponseCoefficients(); \
+        auto nat_constexpr = filter.getNaturalResponseCoefficients(); \
+        auto force_constexpr = filter.getForcedResponseCoefficients(); \
+        for (size_t i = 0; i < Butterworth<ORDER, Type, double>::COEFFICIENTS; ++i) \
+        { \
+            EXPECT_NEAR(nat[i], nat_constexpr[i], 1e-6); \
+            EXPECT_NEAR(force[i], force_constexpr[i], 1e-6); \
+        } \
+    } \
 // clang-format on
 
 ATTENUATION_TEST(LOWPASS)
