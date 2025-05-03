@@ -66,11 +66,11 @@
  * After analog transformation, apply the bilinear transform:
  * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
  *
- * .. note::
+ * @note
  *    This implementation was is designed for C++20 ``constexpr``, enabling
  *    compile-time computation of filter configurations.
  *
- * .. warning::
+ * @warning
  *    High-order filters can introduce high phase delays and should be used with caution.
  *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
  *
@@ -87,13 +87,13 @@
  * ``Butterworth`` class with the desired filter order, type, and parameters.
  * Then, pass those coefficients into a ``DiscreteFilter``.
  *
- * .. code::
- * 
+ * @code
  *    static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
  *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
  *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
  *
+ * @endcode
  */
 
 namespace tap
