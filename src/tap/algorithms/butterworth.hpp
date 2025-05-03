@@ -23,8 +23,6 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
-#include <iomanip>
-#include <iostream>
 
 #include "modm/math/geometry/angle.hpp"
 
@@ -47,6 +45,8 @@
  *
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
+ *
+ *  * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$ TESTSTESTESTESTE
  *
  * @details
  * The following transforms map a lowpass prototype into other filter types (s-domain):
@@ -95,7 +95,7 @@
  *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
  *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
- * 
+ *
  */
 
 namespace tap
