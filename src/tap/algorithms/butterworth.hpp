@@ -46,8 +46,6 @@
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
  *
- * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$ TESTSTESTESTESTE
- *
  * @details
  * The following transforms map a lowpass prototype into other filter types (s-domain):
  *
@@ -64,10 +62,10 @@
  *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
  *
  * Where:
- *  \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}`, :math:`B = \Omega_h - \Omega_l \f$
+ * \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}, \quad B = \Omega_h - \Omega_l \f$
  *
  * After analog transformation, apply the bilinear transform:
- * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$
+ * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
  *
  * .. note::
  *    This implementation was is designed for C++20 ``constexpr``, enabling
@@ -90,12 +88,12 @@
  * ``Butterworth`` class with the desired filter order, type, and parameters.
  * Then, pass those coefficients into a ``DiscreteFilter``.
  *
- * .. code::
+ *```
  *    static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
  *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
  *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
- *
+ *```
  */
 
 namespace tap
