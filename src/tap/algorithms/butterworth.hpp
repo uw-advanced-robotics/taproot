@@ -46,7 +46,7 @@
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
  *
- *  * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$ TESTSTESTESTESTE
+ * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$ TESTSTESTESTESTE
  *
  * @details
  * The following transforms map a lowpass prototype into other filter types (s-domain):
