@@ -91,7 +91,7 @@
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
  *
  * @endcode
- * 
+ *
  * @author Aiden Prevey
  * @date 4/29/2025
  * @version 2.0
