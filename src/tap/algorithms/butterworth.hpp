@@ -67,7 +67,7 @@
  * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
  *
  * @note
- *    This implementation was is designed for C++20 ``constexpr``, enabling
+ *    This implementation is designed for C++20 ``constexpr``, enabling
  *    compile-time computation of filter configurations.
  *
  * @warning
@@ -77,9 +77,6 @@
  *    If results are suspicious, verify filter coefficients using external tools
  *    such as MATLAB or Python (e.g., SciPy).
  *
- * @author Aiden Prevey
- * @date 4/29/2025
- * @version 1.1
  *
  * @section Usage
  *
@@ -94,6 +91,10 @@
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
  *
  * @endcode
+ * 
+ * @author Aiden Prevey
+ * @date 4/29/2025
+ * @version 2.0
  */
 
 namespace tap
