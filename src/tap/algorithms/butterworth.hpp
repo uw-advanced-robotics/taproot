@@ -52,33 +52,30 @@
  * The following transforms map a lowpass prototype into other filter types (s-domain):
  *
  * - **Lowpass to Lowpass**:
- *   :math:`s \rightarrow \frac{s}{\Omega_c}`
+ *   \f$ s \rightarrow \frac{s}{\Omega_c} \f$
  *
  * - **Lowpass to Highpass**:
- *   :math:`s \rightarrow \frac{\Omega_c}{s}`
+ *   \f$ s \rightarrow \frac{\Omega_c}{s} \f$
  *
  * - **Lowpass to Bandpass**:
- *   :math:`s \rightarrow \frac{s^2 + \Omega_0^2}{B s}`
+ *   \f$ s \rightarrow \frac{s^2 + \Omega_0^2}{B s} \f$
  *
  * - **Lowpass to Bandstop**:
- *   :math:`s \rightarrow \frac{B s}{s^2 + \Omega_0^2}`
+ *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
  *
  * Where:
- * :math:`\Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}`, :math:`B = \Omega_h - \Omega_l`
+ *  \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}`, :math:`B = \Omega_h - \Omega_l \f$
  *
  * After analog transformation, apply the bilinear transform:
- * :math:`s = \frac{2}{T} \cdot \frac{z - 1}{z + 1}`
+ * \f$ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f$
  *
  * .. note::
- *    This implementation was originally designed for C++20 ``constexpr``, enabling
- *    compile-time computation of filter configurations. However, the current compiler
- *    in use only supports C++11, which limits some functionality.
+ *    This implementation was is designed for C++20 ``constexpr``, enabling
+ *    compile-time computation of filter configurations.
  *
  * .. warning::
- *    High-order filters can introduce numerical instability and should be used with caution.
+ *    High-order filters can introduce high phase delays and should be used with caution.
  *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
- *    For band-pass and band-stop filters, ensure the bandwidth is less than ``fs / 4``
- *    to avoid excessive peaking.
  *
  *    If results are suspicious, verify filter coefficients using external tools
  *    such as MATLAB or Python (e.g., SciPy).
@@ -93,12 +90,12 @@
  * ``Butterworth`` class with the desired filter order, type, and parameters.
  * Then, pass those coefficients into a ``DiscreteFilter``.
  *
- * @code
- * static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
- * auto naturalCoeffs = filter.getNaturalResponseCoefficients();
- * auto forcedCoeffs = filter.getForcedResponseCoefficients();
- * DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
- * @endcode
+ * .. code::
+ *    static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
+ *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
+ *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
+ *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
+ * 
  */
 
 namespace tap
