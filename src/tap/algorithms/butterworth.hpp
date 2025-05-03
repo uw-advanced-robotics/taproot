@@ -27,7 +27,6 @@
 #include "modm/math/geometry/angle.hpp"
 
 /**
- * @class Butterworth
  * @brief Implementation of Butterworth filter design in the discrete domain.
  *
  * This header file provides a comprehensive implementation of Butterworth filters,
@@ -46,7 +45,6 @@
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
  *
- * @details
  * The following transforms map a lowpass prototype into other filter types (s-domain):
  *
  * - **Lowpass to Lowpass**:
