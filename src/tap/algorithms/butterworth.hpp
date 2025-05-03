@@ -27,8 +27,8 @@
 #include "modm/math/geometry/angle.hpp"
 
 /**
- * @file butterworth.hpp
- * @brief Implementation of Butterworth filter design in the digital domain.
+ * @class Butterworth
+ * @brief Implementation of Butterworth filter design in the discrete domain.
  *
  * This header file provides a comprehensive implementation of Butterworth filters,
  * including low-pass, high-pass, band-pass, and band-stop filters. The Butterworth
@@ -88,12 +88,13 @@
  * ``Butterworth`` class with the desired filter order, type, and parameters.
  * Then, pass those coefficients into a ``DiscreteFilter``.
  *
- *```
+ * .. code::
+ * 
  *    static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
  *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
  *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
  *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
- *```
+ *
  */
 
 namespace tap
