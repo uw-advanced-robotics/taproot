@@ -27,6 +27,7 @@
 #include "modm/math/geometry/angle.hpp"
 
 /**
+ * @class Butterworth
  * @brief Implementation of Butterworth filter design in the discrete domain.
  *
  * This header file provides a comprehensive implementation of Butterworth filters,
