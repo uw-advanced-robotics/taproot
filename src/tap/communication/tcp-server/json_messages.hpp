@@ -24,12 +24,10 @@
 
 #include <string>
 
+#include "tap/motor/dji_motor.hpp"
+
 namespace tap
 {
-namespace motor
-{
-class DjiMotor;
-}
 namespace communication
 {
 /**

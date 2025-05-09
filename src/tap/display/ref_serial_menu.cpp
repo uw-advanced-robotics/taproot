@@ -121,7 +121,10 @@ void RefSerialMenu::printPowerBuf(modm::IOStream& stream)
 void RefSerialMenu::printPower(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    stream.printf("Power limit: %i", robotData.chassis.powerConsumptionLimit);
+    stream.printf(
+        "Power: %.2f / %i",
+        static_cast<double>(robotData.chassis.power),
+        robotData.chassis.powerConsumptionLimit);
 }
 
 }  // namespace tap::display
