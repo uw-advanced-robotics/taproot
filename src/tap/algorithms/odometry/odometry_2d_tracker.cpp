@@ -20,7 +20,6 @@
 
 #include <cmath>
 
-#include "tap/architecture/clock.hpp"
 #include "tap/control/chassis/chassis_subsystem_interface.hpp"
 
 #include "modm/math/geometry/angle.hpp"
@@ -75,11 +74,6 @@ void Odometry2DTracker::update()
 
         lastComputedOdometryTime = tap::arch::clock::getTimeMicroseconds();
     }
-}
-
-void Odometry2DTracker::overrideOdometryPosition(const float positionX, const float positionY)
-{
-    location.setPosition(positionX, positionY);
 }
 
 }  // namespace tap::algorithms::odometry

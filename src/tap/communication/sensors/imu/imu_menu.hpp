@@ -25,7 +25,7 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
-#include "abstract_imu.hpp"
+#include "imu_interface.hpp"
 
 namespace tap::communication::sensors::imu
 {
@@ -44,7 +44,7 @@ public:
      */
     ImuMenu(
         modm::ViewStack<display::DummyAllocator<modm::IAbstractView> > *stack,
-        AbstractIMU *imu);
+        ImuInterface *imu);
 
     void draw() override;
 
@@ -61,14 +61,14 @@ public:
     const char *getMenuName();
 
 private:
-    using ImuInterfaceFnPtr = float (AbstractIMU::*)() const;
+    using ImuInterfaceFnPtr = float (ImuInterface::*)();
 
     static constexpr int IMU_DATA_START_X = 20;
     static constexpr int IMU_DATA_START_Y = 10;
 
     static constexpr const char *IMU_DATA_COL_HEADERS[] = {"X", "Y", "Z"};
 
-    AbstractIMU *imu;
+    ImuInterface *imu;
 
     tap::arch::PeriodicMilliTimer imuUpdateTimer{IMU_UPDATE_TIME};
 

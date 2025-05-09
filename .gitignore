@@ -7,4 +7,3 @@ docs/api
 docs/doxyoutput
 gcov-result
 **/.DS_Store
-.sconsign

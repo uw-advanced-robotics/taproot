@@ -35,13 +35,10 @@ namespace tap
 {
 namespace display
 {
-MotorMenu::MotorMenu(
-    modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
-    Drivers* drivers,
-    int entriesToDisplay)
+MotorMenu::MotorMenu(modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack, Drivers* drivers)
     : modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >(stack, MOTOR_MENU_ID),
       drivers(drivers),
-      verticalScroll(drivers, DjiMotorTxHandler::DJI_MOTORS_PER_CAN * 2, entriesToDisplay)
+      verticalScroll(drivers, DjiMotorTxHandler::DJI_MOTORS_PER_CAN * 2, DISPLAY_MAX_ENTRIES)
 {
 }
 
