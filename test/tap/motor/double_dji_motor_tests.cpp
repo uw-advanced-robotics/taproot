@@ -38,8 +38,6 @@ using namespace tap::motor;
         "m1",                       \
         "m2");
 
-static constexpr uint16_t ENC_RESOLUTION = 8192;
-
 TEST(DoubleDjiMotor, initialize__both_motors_initialized)
 {
     SETUP_TEST();
@@ -48,56 +46,6 @@ TEST(DoubleDjiMotor, initialize__both_motors_initialized)
     EXPECT_CALL(motor.motorTwo, initialize);
 
     motor.initialize();
-}
-
-TEST(DoubleDjiMotor, getEncoderUnwrapped__returns_m1_enc)
-{
-    SETUP_TEST();
-
-    int64_t motorOneEnc = 0, motorTwoEnc = 0;
-    ON_CALL(motor.motorOne, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorOneEnc));
-    ON_CALL(motor.motorTwo, getEncoderUnwrapped).WillByDefault(ReturnPointee(&motorTwoEnc));
-
-    EXPECT_EQ(0, motor.getEncoderUnwrapped());
-
-    motorOneEnc = -1000;
-    motorTwoEnc = -1000;
-    EXPECT_EQ(-1000, motor.getEncoderUnwrapped());
-
-    motorOneEnc = -1000;
-    motorTwoEnc = 1000;
-    EXPECT_EQ(-1000, motor.getEncoderUnwrapped());
-
-    motorOneEnc = 1500;
-    motorTwoEnc = 1500;
-    EXPECT_EQ(1500, motor.getEncoderUnwrapped());
-
-    motorOneEnc = 20000;
-    motorTwoEnc = 30000;
-    EXPECT_EQ(20000, motor.getEncoderUnwrapped());
-}
-
-TEST(DoubleDjiMotor, getEncoderWrapped__returns_motor_one_enc)
-{
-    SETUP_TEST();
-
-    uint16_t motorOneEnc = 0, motorTwoEnc = 0;
-    ON_CALL(motor.motorOne, getEncoderWrapped).WillByDefault(ReturnPointee(&motorOneEnc));
-    ON_CALL(motor.motorTwo, getEncoderWrapped).WillByDefault(ReturnPointee(&motorTwoEnc));
-
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorOneEnc = 0;
-    motorTwoEnc = 1000;
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorOneEnc = 1500;
-    motorTwoEnc = 1400;
-    EXPECT_EQ(1500, motor.getEncoderWrapped());
-
-    motorOneEnc = 20000;
-    motorTwoEnc = 30000;
-    EXPECT_EQ(20000, motor.getEncoderWrapped());
 }
 
 TEST(DoubleDjiMotor, setDesiredOutput__sets_both_motors_output)
@@ -194,6 +142,9 @@ TEST(DoubleDjiMotor, getTorque__returns_average_torque)
 {
     SETUP_TEST();
 
+    ON_CALL(motor.motorOne, isMotorOnline).WillByDefault(Return(true));
+    ON_CALL(motor.motorTwo, isMotorOnline).WillByDefault(Return(true));
+
     int16_t motorOneTorque = 0, motorTwoTorque = 0;
 
     ON_CALL(motor.motorOne, getTorque).WillByDefault(ReturnPointee(&motorOneTorque));
@@ -212,101 +163,16 @@ TEST(DoubleDjiMotor, getTorque__returns_average_torque)
     motorOneTorque = 2000;
     motorTwoTorque = 2000;
     EXPECT_EQ(2000, motor.getTorque());
-}
 
-TEST(DoubleDjiMotor, getShaftRPM__returns_average_RPM)
-{
-    SETUP_TEST();
+    // Test if same functionality works with motors offline
+    motorOneTorque = -1000;
+    motorTwoTorque = 0;
+    ON_CALL(motor.motorTwo, isMotorOnline).WillByDefault(Return(false));
+    EXPECT_EQ(-1000, motor.getTorque());
 
-    int16_t motorOneRPM = 0, motorTwoRPM = 0;
-
-    ON_CALL(motor.motorOne, getShaftRPM).WillByDefault(ReturnPointee(&motorOneRPM));
-    ON_CALL(motor.motorTwo, getShaftRPM).WillByDefault(ReturnPointee(&motorTwoRPM));
-
-    EXPECT_EQ(0, motor.getShaftRPM());
-
-    motorOneRPM = -1000;
-    motorTwoRPM = -1000;
-    EXPECT_EQ(-1000, motor.getShaftRPM());
-
-    motorOneRPM = -1000;
-    motorTwoRPM = 1000;
-    EXPECT_EQ(0, motor.getShaftRPM());
-
-    motorOneRPM = 2000;
-    motorTwoRPM = 2000;
-    EXPECT_EQ(2000, motor.getShaftRPM());
-}
-
-TEST(DoubleDjiMotor, resetEncoderValue_zeroes_both_motor_encoders)
-{
-    SETUP_TEST();
-
-    int16_t motorOneEncoder = 1000, motorTwoEncoder = 1000;
-
-    EXPECT_CALL(motor.motorOne, resetEncoderValue).WillOnce([&]() { motorOneEncoder = 0; });
-    EXPECT_CALL(motor.motorTwo, resetEncoderValue).WillOnce([&]() { motorTwoEncoder = 0; });
-
-    ON_CALL(motor.motorOne, getEncoderWrapped).WillByDefault(ReturnPointee(&motorOneEncoder));
-    ON_CALL(motor.motorTwo, getEncoderWrapped).WillByDefault(ReturnPointee(&motorTwoEncoder));
-
-    motor.resetEncoderValue();
-
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-}
-
-// for double_moving_relative_to_home_after_zeroed_ok test
-int16_t getRelativeToHome(int16_t received, int16_t home)
-{
-    // logic from dji_motor.cpp
-    int16_t difference = (received - home);
-    return difference < 0 ? ENC_RESOLUTION + difference : difference;
-}
-
-TEST(DjiMotor, double_moving_relative_to_home_after_zeroed_ok)
-{
-    SETUP_TEST();
-
-    int16_t motorOneEncoderReceive = 1000, motorOneEncoderRelToHome = motorOneEncoderReceive,
-            motorOneHome = 0;
-    int16_t motorTwoEncoderReceive = 1000, motorTwoEncoderRelToHome = motorTwoEncoderReceive,
-            motorTwoHome = 0;
-
-    ON_CALL(motor.motorOne, getEncoderWrapped)
-        .WillByDefault(ReturnPointee(&motorOneEncoderRelToHome));
-    ON_CALL(motor.motorTwo, getEncoderWrapped)
-        .WillByDefault(ReturnPointee(&motorTwoEncoderRelToHome));
-    EXPECT_CALL(motor.motorOne, resetEncoderValue).WillOnce([&]() {
-        // logic from dji_motor.cpp
-        motorOneHome = (motorOneEncoderRelToHome + motorOneHome) % ENC_RESOLUTION;
-        motorOneEncoderRelToHome = 0;
-    });
-    EXPECT_CALL(motor.motorTwo, resetEncoderValue).WillOnce([&]() {
-        // logic from dji_motor.cpp
-        motorTwoHome = (motorTwoEncoderRelToHome + motorTwoHome) % ENC_RESOLUTION;
-        motorTwoEncoderRelToHome = 0;
-    });
-
-    EXPECT_EQ(1000, motor.getEncoderWrapped());
-
-    motor.resetEncoderValue();
-    EXPECT_EQ(0, motor.getEncoderWrapped());
-
-    motorOneEncoderReceive = 5000;
-    motorTwoEncoderReceive = 5000;
-    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
-    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
-    EXPECT_EQ(4000, motor.getEncoderWrapped());
-
-    motorOneEncoderReceive = 2500;
-    motorTwoEncoderReceive = 2500;
-    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
-    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
-    EXPECT_EQ(1500, motor.getEncoderWrapped());
-
-    motorOneEncoderReceive = 500;
-    motorTwoEncoderReceive = 500;
-    motorOneEncoderRelToHome = getRelativeToHome(motorOneEncoderReceive, motorOneHome);
-    motorTwoEncoderRelToHome = getRelativeToHome(motorTwoEncoderReceive, motorTwoHome);
-    EXPECT_EQ(ENC_RESOLUTION - 500, motor.getEncoderWrapped());
+    ON_CALL(motor.motorOne, isMotorOnline).WillByDefault(Return(false));
+    ON_CALL(motor.motorTwo, isMotorOnline).WillByDefault(Return(true));
+    motorOneTorque = 0;
+    motorTwoTorque = 1000;
+    EXPECT_EQ(1000, motor.getTorque());
 }
