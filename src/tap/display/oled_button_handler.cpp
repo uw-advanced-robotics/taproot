@@ -25,14 +25,13 @@ namespace tap
 {
 namespace display
 {
-OledButtonHandler::OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig)
+OledButtonHandler::OledButtonHandler(tap::Drivers *drivers)
     : drivers(drivers),
       downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       upButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       leftButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       rightButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      okButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      adcConfig(analogConfig)
+      okButtonPressed(BUTTON_DEBOUNCE_SAMPLES)
 {
 }
 
@@ -40,11 +39,11 @@ OledButtonHandler::Button OledButtonHandler::getCurrentButtonState()
 {
     int buttonADC = drivers->analog.read(gpio::Analog::Pin::OledJoystick);
 
-    downButtonPressed.update(abs(buttonADC - adcConfig.down) < ADC_PRESSED_RANGE);
-    upButtonPressed.update(abs(buttonADC - adcConfig.up) < ADC_PRESSED_RANGE);
-    leftButtonPressed.update(abs(buttonADC - adcConfig.left) < ADC_PRESSED_RANGE);
-    rightButtonPressed.update(abs(buttonADC - adcConfig.right) < ADC_PRESSED_RANGE);
-    okButtonPressed.update(abs(buttonADC - adcConfig.ok) < ADC_PRESSED_RANGE);
+    downButtonPressed.update(abs(buttonADC - DOWN_ADC_VAL) < ADC_PRESSED_RANGE);
+    upButtonPressed.update(abs(buttonADC - UP_ADC_VAL) < ADC_PRESSED_RANGE);
+    leftButtonPressed.update(abs(buttonADC - LEFT_ADC_VAL) < ADC_PRESSED_RANGE);
+    rightButtonPressed.update(abs(buttonADC - RIGHT_ADC_VAL) < ADC_PRESSED_RANGE);
+    okButtonPressed.update(abs(buttonADC - OK_ADC_VAL) < ADC_PRESSED_RANGE);
 
     if (downButtonPressed.getValue())
     {

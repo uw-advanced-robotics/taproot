@@ -131,7 +131,6 @@ private:
      */
     const int globalIdentifier;
 
-protected:
     command_scheduler_bitmap_t commandRequirementsBitwise = 0;
 };  // class Command
 

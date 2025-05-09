@@ -40,10 +40,7 @@ namespace display
 class MotorMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
 {
 public:
-    MotorMenu(
-        modm::ViewStack<DummyAllocator<modm::IAbstractView> > *stack,
-        Drivers *drivers,
-        int entriesToDisplay = DISPLAY_MAX_ENTRIES);
+    MotorMenu(modm::ViewStack<DummyAllocator<modm::IAbstractView> > *stack, Drivers *drivers);
 
     virtual ~MotorMenu() = default;
 
