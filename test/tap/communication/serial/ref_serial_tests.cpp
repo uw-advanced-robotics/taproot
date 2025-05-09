@@ -115,7 +115,7 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
         uint16_t red2RobotHP;
         uint16_t red3RobotHP;
         uint16_t red4RobotHP;
-        uint16_t red5RobotHP;
+        uint16_t unused = 0;
         uint16_t red7RobotHP;
         uint16_t redOutpostHP;
         uint16_t redBaseHP;
@@ -123,7 +123,7 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
         uint16_t blue2RobotHP;
         uint16_t blue3RobotHP;
         uint16_t blue4RobotHP;
-        uint16_t blue5RobotHP;
+        uint16_t _unused = 0;
         uint16_t blue7RobotHP;
         uint16_t blueOutpostHP;
         uint16_t blueBaseHP;
@@ -139,7 +139,6 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     testData.red2RobotHP = 2;
     testData.red3RobotHP = 3;
     testData.red4RobotHP = 4;
-    testData.red5RobotHP = 5;
     testData.red7RobotHP = 6;
     testData.redOutpostHP = 7;
     testData.redBaseHP = 8;
@@ -147,7 +146,6 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     testData.blue2RobotHP = 10;
     testData.blue3RobotHP = 11;
     testData.blue4RobotHP = 12;
-    testData.blue5RobotHP = 13;
     testData.blue7RobotHP = 14;
     testData.blueOutpostHP = 15;
     testData.blueBaseHP = 16;
@@ -159,7 +157,6 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     EXPECT_EQ(2, refSerial.getRobotData().allRobotHp.red.engineer2);
     EXPECT_EQ(3, refSerial.getRobotData().allRobotHp.red.standard3);
     EXPECT_EQ(4, refSerial.getRobotData().allRobotHp.red.standard4);
-    EXPECT_EQ(5, refSerial.getRobotData().allRobotHp.red.standard5);
     EXPECT_EQ(6, refSerial.getRobotData().allRobotHp.red.sentry7);
     EXPECT_EQ(7, refSerial.getRobotData().allRobotHp.red.outpost);
     EXPECT_EQ(8, refSerial.getRobotData().allRobotHp.red.base);
@@ -167,7 +164,6 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     EXPECT_EQ(10, refSerial.getRobotData().allRobotHp.blue.engineer2);
     EXPECT_EQ(11, refSerial.getRobotData().allRobotHp.blue.standard3);
     EXPECT_EQ(12, refSerial.getRobotData().allRobotHp.blue.standard4);
-    EXPECT_EQ(13, refSerial.getRobotData().allRobotHp.blue.standard5);
     EXPECT_EQ(14, refSerial.getRobotData().allRobotHp.blue.sentry7);
     EXPECT_EQ(15, refSerial.getRobotData().allRobotHp.blue.outpost);
     EXPECT_EQ(16, refSerial.getRobotData().allRobotHp.blue.base);
@@ -420,9 +416,7 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
 {
     struct PowerHeatData
     {
-        uint16_t chassisVolt;
-        uint16_t chassisCurrent;
-        float chassisPower;
+        uint64_t unused = 0;
         uint16_t chassis_power_buffer;
         uint16_t shooterId117mmCoolingHeat;
         uint16_t shooterId217mmCoolingHeat;
@@ -434,9 +428,6 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
     DJISerial::ReceivedSerialMessage msg;
     PowerHeatData testData;
 
-    testData.chassisVolt = 1234;
-    testData.chassisCurrent = 4321;
-    testData.chassisPower = 6789;
     testData.chassis_power_buffer = 120;
     testData.shooterId117mmCoolingHeat = 145;
     testData.shooterId217mmCoolingHeat = 431;
@@ -445,9 +436,6 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
 
     refSerial.messageReceiveCallback(msg);
 
-    EXPECT_EQ(1234, refSerial.getRobotData().chassis.volt);
-    EXPECT_EQ(4321, refSerial.getRobotData().chassis.current);
-    EXPECT_EQ(6789, refSerial.getRobotData().chassis.power);
     EXPECT_EQ(120, refSerial.getRobotData().chassis.powerBuffer);
     EXPECT_EQ(145, refSerial.getRobotData().turret.heat17ID1);
     EXPECT_EQ(431, refSerial.getRobotData().turret.heat17ID2);
@@ -486,42 +474,36 @@ TEST(RefSerial, messageReceiveCallback__robot_buffs)
     RefSerial refSerial(&drivers);
     DJISerial::ReceivedSerialMessage msg;
 
-    RefSerial::Rx::RobotBuffStatus buff;
-    buff.attackBuff = 10;
-    buff.coolingBuff = 20;
-    buff.defenseBuff = 30;
-    buff.recoveryBuff = 40;
-    buff.vulnerabilityBuff = 50;
+    struct buff_t
+    {
+        uint8_t recovery_buff;
+        uint8_t cooling_buff;
+        uint8_t defence_buff;
+        uint8_t vulnerability_buff;
+        uint16_t attack_buff;
+        uint8_t remaining_energy;
+    } modm_packed;
+
+    buff_t buff;
+    buff.attack_buff = 10;
+    buff.cooling_buff = 20;
+    buff.defence_buff = 30;
+    buff.recovery_buff = 40;
+    buff.vulnerability_buff = 50;
+    buff.remaining_energy =
+        static_cast<uint8_t>(RefSerialData::Rx::RobotEnergyLevel::ABOVE_50_PERCENT);
 
     msg = constructMsg(buff, 0x0204);
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(10, refSerial.getRobotData().robotBuffStatus.attackBuff);
-
     EXPECT_EQ(20, refSerial.getRobotData().robotBuffStatus.coolingBuff);
-
     EXPECT_EQ(30, refSerial.getRobotData().robotBuffStatus.defenseBuff);
-
     EXPECT_EQ(40, refSerial.getRobotData().robotBuffStatus.recoveryBuff);
-
     EXPECT_EQ(50, refSerial.getRobotData().robotBuffStatus.vulnerabilityBuff);
-}
-
-TEST(RefSerial, messageReceiveCallback__air_support_data)
-{
-    Drivers drivers;
-    RefSerial refSerial(&drivers);
-    RefSerial::Rx::AirSupportData air;
-    air.remainingStateTime = 255;
-    air.state = RefSerial::Rx::AirSupportState::IN_AIR;
-
-    DJISerial::ReceivedSerialMessage msg;
-    msg = constructMsg(air, 0x0205);
-
-    refSerial.messageReceiveCallback(msg);
-
-    EXPECT_EQ(255, refSerial.getGameData().airSupportData.remainingStateTime);
-    EXPECT_EQ(RefSerial::Rx::AirSupportState::IN_AIR, refSerial.getGameData().airSupportData.state);
+    EXPECT_EQ(
+        RefSerialData::Rx::RobotEnergyLevel::ABOVE_50_PERCENT,
+        refSerial.getRobotData().robotEnergyRemaining);
 }
 
 TEST(RefSerial, messageReceiveCallback__damage_status)
