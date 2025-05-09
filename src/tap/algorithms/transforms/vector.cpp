@@ -27,10 +27,4 @@ inline Vector Vector::operator+(const Position& other) const
 {
     return Vector(this->coordinates_ + other.coordinates());
 }
-
-inline Vector Vector::operator+(const Vector& other) const
-{
-    return Vector(this->coordinates_ + other.coordinates_);
-}
-
 }  // namespace tap::algorithms::transforms

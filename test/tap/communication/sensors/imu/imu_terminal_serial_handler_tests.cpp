@@ -21,7 +21,7 @@
 
 #include "tap/communication/sensors/imu/imu_terminal_serial_handler.hpp"
 #include "tap/drivers.hpp"
-#include "tap/mock/imu_interface_mock.hpp"
+#include "tap/mock/abstract_imu_mock.hpp"
 #include "tap/stub/terminal_device_stub.hpp"
 
 using namespace tap;
@@ -42,7 +42,7 @@ protected:
     void SetUp() override { ON_CALL(imu, getName).WillByDefault(Return("imu")); }
 
     Drivers drivers;
-    NiceMock<ImuInterfaceMock> imu;
+    NiceMock<AbstractImuMock> imu;
     ImuTerminalSerialHandler serialHandler;
     tap::stub::TerminalDeviceStub terminalDevice;
     modm::IOStream stream;
