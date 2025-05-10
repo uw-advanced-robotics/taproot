@@ -223,7 +223,7 @@ constexpr double complex_abs(std::complex<double> z)
 constexpr std::complex<double> complex_sqrt(std::complex<double> z)
 {
     double r = std::sqrt(complex_abs(z));
-    double theta = std::atan2(z.imag(), z.real()) * 0.5;
+    double theta = static_cast<double>(std::atan2(z.imag(), z.real())) * static_cast<double>(0.5f);
     return {r * std::cos(theta), r * std::sin(theta)};
 }
 
@@ -251,8 +251,8 @@ public:
         std::array<std::complex<double>, 2 * ORDER> bandpass_stop_poles;
 
         // pre-warp all edges for bilinear transform
-        wl = (2.0 / Ts) * std::tan(wl * (Ts / 2.0));
-        whp = (2.0 / Ts) * std::tan(whp * (Ts / 2.0));
+        wl = static_cast<double>(2.0) / Ts * std::tan(wl * (Ts / static_cast<double>(2.0)));
+        whp = static_cast<double>(2.0) / Ts * std::tan(whp * (Ts / static_cast<double>(2.0)));
 
         // generate N prototype poles on unit circle
         std::array<std::complex<double>, COEFFICIENTS - 1> poles;
@@ -428,7 +428,11 @@ public:
             case HIGHPASS:
             {
                 // Eval at niquest
-                auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, M_PI / Ts, Ts);
+                auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(
+                    b,
+                    a,
+                    static_cast<double>(M_PI) / Ts,
+                    Ts);
                 auto mag = complex_abs(freqResp);
                 double scale = 1 / mag;
                 for (auto &coef : b) coef *= scale;
