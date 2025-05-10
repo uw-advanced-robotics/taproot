@@ -119,7 +119,8 @@ enum FilterType : uint8_t
  */
 constexpr std::complex<double> s2z(std::complex<double> s, double Ts)
 {
-    return (1.0 + (Ts / 2) * s) / (1.0 - (Ts / 2) * s);
+    return (static_cast<std::complex<double>>(1.0) + (Ts / 2) * s) /
+           (static_cast<std::complex<double>>(1.0) - (Ts / 2) * s);
 }
 
 /**
@@ -307,11 +308,14 @@ public:
                 {
                     std::complex<double> p = poles[j];
 
-                    std::complex<double> discriminant = (p * B) * (p * B) - 4.0 * W0sq;
+                    std::complex<double> discriminant =
+                        (p * B) * (p * B) - static_cast<std::complex<double>>(4.0) * W0sq;
                     std::complex<double> root = complex_sqrt(discriminant);
 
-                    bandpass_stop_poles[2 * j] = (p * B + root) * 0.5;
-                    bandpass_stop_poles[2 * j + 1] = (p * B - root) * 0.5;
+                    bandpass_stop_poles[2 * j] =
+                        (p * B + root) * static_cast<std::complex<double>>(0.5);
+                    bandpass_stop_poles[2 * j + 1] =
+                        (p * B - root) * static_cast<std::complex<double>>(0.5);
                 }
 
                 // now map each analog pole into the z-plane
@@ -340,11 +344,14 @@ public:
                 {
                     std::complex<double> p = poles[j];
 
-                    std::complex<double> discriminant = B * B - (4.0 * -p * W0sq);
+                    std::complex<double> discriminant =
+                        B * B - (static_cast<std::complex<double>>(4.0) * -p * W0sq);
                     std::complex<double> root = complex_sqrt(discriminant);
 
-                    bandpass_stop_poles[2 * j] = (B + root) / (2.0 * p);
-                    bandpass_stop_poles[2 * j + 1] = (B - root) / (2.0 * p);
+                    bandpass_stop_poles[2 * j] =
+                        (B + root) / (static_cast<std::complex<double>>(2.0) * p);
+                    bandpass_stop_poles[2 * j + 1] =
+                        (B - root) / (static_cast<std::complex<double>>(2.0) * p);
                 }
 
                 // now map each analog pole into the z-plane
