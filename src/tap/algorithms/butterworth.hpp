@@ -264,7 +264,7 @@ public:
 
         std::array<std::complex<double>, COEFFICIENTS - 1> zPoles;
 
-        // apply the appropriate s-domain transform to each pole
+        // apply the appropriate s-domaisn transform to each pole
         switch (Type)
         {
             case LOWPASS:
@@ -291,10 +291,7 @@ public:
             case BANDPASS:
             {
                 // check for validity of the filter edges
-                if (whp <= wl)
-                {
-                    throw std::invalid_argument("wh must be > wl for BANDPASS");
-                }
+                modm_assert(whp > wl, "wh must be > wl for BANDPASS")
                 /*
                  *  transform in the form of s → (s² + Ω₀²) / (B · s)
                  *  where:
@@ -328,10 +325,7 @@ public:
             case BANDSTOP:
             {
                 // check for validity of the filter edges
-                if (whp <= wl)
-                {
-                    throw std::invalid_argument("wh must be > wl for BANDSTOP");
-                }
+                modm_assert(whp > wl, "wh must be > wl for BANDSTOP")
                 /*
                  *  transform in the form of  s → B · s / (s² + Ω₀²)
                  *  where:
@@ -361,7 +355,9 @@ public:
                 break;
             }
             default:
-                throw std::invalid_argument("Unknown filter type");
+            {
+                static_assert(false, "Invalid Filter")
+            }
         }
 
         std::array<std::complex<double>, COEFFICIENTS - 1> zZeros;
