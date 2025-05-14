@@ -457,6 +457,8 @@ public:
             naturalResponseCoefficients[COEFFICIENTS - i - 1] = a[i];
             forcedResponseCoefficients[COEFFICIENTS - i - 1] = b[i];
         }
+        both_coefficients.naturalResponseCoefficients = naturalResponseCoefficients;
+        both_coefficients.forcedResponseCoefficients = forcedResponseCoefficients;
     }
 
     static constexpr int COEFFICIENTS = (1 + ((Type & 0b10) != 0)) * ORDER + 1;
