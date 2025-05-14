@@ -127,3 +127,24 @@ TEST(DiscreteFilter, handles_step_input)
     EXPECT_GT(output, 0.0);
     EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
 }
+
+TEST(DiscreteFilter, accepts_coefficients_struct)
+{
+    constexpr uint8_t SIZE = 3;
+    DiscreteFilter<SIZE>::Coefficients coe;
+    std::array<float, SIZE> natural = {1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced = {0.2, 0.1, 0.05};
+    coe.naturalResponseCoefficients = natural;
+    coe.forcedResponseCoefficients = forced;
+    DiscreteFilter<SIZE> filter(coe);
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = filter.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
+}

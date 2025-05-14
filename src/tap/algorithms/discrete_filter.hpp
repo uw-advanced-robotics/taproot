@@ -39,12 +39,22 @@ template <uint8_t SIZE, typename T = float>
 class DiscreteFilter
 {
 public:
-    template <uint8_t SIZE, typename T = float>
-    struct Coefficients{
-        std::array<T, SIZE> &naturalResponseCoefficients,
-        std::array<T, SIZE> &forcedResponseCoefficients
-    }
-
+    /**
+     * @struct Coefficients
+     * @brief Represents the coefficients used in a discrete filter.
+     *
+     * This structure holds two sets of coefficients:
+     * - `naturalResponseCoefficients`: Coefficients related to the natural response of the system.
+     * - `forcedResponseCoefficients`: Coefficients related to the forced response of the system.
+     *
+     * @tparam T The data type of the coefficients (e.g., float, double).
+     * @tparam SIZE The size of the coefficient arrays.
+     */
+    struct Coefficients
+    {
+        std::array<T, SIZE> naturalResponseCoefficients;
+        std::array<T, SIZE> forcedResponseCoefficients;
+    };
     /**
      * @brief Constructor for the DiscreteFilter class.
      * @param [in] naturalResponseCoefficients The coefficients for the natural response (a).
@@ -62,7 +72,9 @@ public:
         reset();
     }
 
-    DiscreteFilter(Coefficients<T, SIZE> &coefficients) :  naturalResponseCoefficients(coefficients.naturalResponseCoefficients), forcedResponseCoefficients(coefficients.forcedResponseCoefficients)
+    DiscreteFilter(const Coefficients &coefficients)
+        : naturalResponseCoefficients(coefficients.naturalResponseCoefficients),
+          forcedResponseCoefficients(coefficients.forcedResponseCoefficients)
     {
         reset();
     }

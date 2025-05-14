@@ -129,6 +129,23 @@ TEST(ButterworthFilter, coefficients_are_what_they_should_be)
     EXPECT_NEAR(den[2], 0.972, 1e-3);
 }
 
+TEST(ButterworthFilter, coefficients_struct_works)
+{
+    static constexpr uint8_t ORDER = 2;
+    static constexpr double wc = 10.0;
+    static constexpr double Ts = 1 / 500.0;
+    static constexpr Butterworth<ORDER> filter(wc, Ts);
+    auto coe = filter.getCoefficients();
+
+    EXPECT_NEAR(coe.forcedResponseCoefficients[0], 0.099858678643663 * 1.0e-5, 1e-3);
+    EXPECT_NEAR(coe.forcedResponseCoefficients[1], 0.199717357287326 * 1.0e-5, 1e-3);
+    EXPECT_NEAR(coe.forcedResponseCoefficients[2], 0.099858678643663 * 1.0e-5, 1e-3);
+
+    EXPECT_NEAR(coe.naturalResponseCoefficients[0], 1, 1e-3);
+    EXPECT_NEAR(coe.naturalResponseCoefficients[1], -1.971, 1e-3);
+    EXPECT_NEAR(coe.naturalResponseCoefficients[2], 0.972, 1e-3);
+}
+
 struct AttenuationParams
 {
     float frequency;

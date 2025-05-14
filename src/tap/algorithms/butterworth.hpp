@@ -24,7 +24,10 @@
 #include <complex>
 #include <cstdint>
 
+#include "modm/architecture/interface.hpp"
 #include "modm/math/geometry/angle.hpp"
+
+#include "discrete_filter.hpp"
 
 /**
  * @class Butterworth
@@ -241,9 +244,9 @@ public:
      */
     constexpr Butterworth(double wc, double Ts, double wh = 0.0)
         : naturalResponseCoefficients(),
-          forcedResponseCoefficients()
+          forcedResponseCoefficients(),
+          both_coefficients(naturalResponseCoefficients, forcedResponseCoefficients)
     {
-        static_assert(((wh > wc) && (Type == BANDPASS || Type == BANDSTOP)) || (Type == LOWPASS || Type == HIGHPASS), "Check that wh > wc");
         const int n = ORDER;
 
         // For band filters we treat wc as ωl
@@ -468,9 +471,15 @@ public:
         return forcedResponseCoefficients;
     }
 
+    DiscreteFilter<COEFFICIENTS, T>::Coefficients getCoefficients() const
+    {
+        return both_coefficients;
+    }
+
 private:
     std::array<T, COEFFICIENTS> naturalResponseCoefficients;
     std::array<T, COEFFICIENTS> forcedResponseCoefficients;
+    DiscreteFilter<COEFFICIENTS, T>::Coefficients both_coefficients;
 };
 
 }  // namespace algorithms
