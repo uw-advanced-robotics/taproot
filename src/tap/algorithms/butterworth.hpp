@@ -243,6 +243,7 @@ public:
         : naturalResponseCoefficients(),
           forcedResponseCoefficients()
     {
+        static_assert(((wh > wc) && (Type == BANDPASS || Type == BANDSTOP)) || (Type == LOWPASS || Type == HIGHPASS), "Check that wh > wc");
         const int n = ORDER;
 
         // For band filters we treat wc as ωl
@@ -290,8 +291,6 @@ public:
             // In the case of a bandpass or a bandstop the amount of poles doubles.
             case BANDPASS:
             {
-                // check for validity of the filter edges
-                modm_assert(whp > wl, "wh must be > wl for BANDPASS")
                 /*
                  *  transform in the form of s → (s² + Ω₀²) / (B · s)
                  *  where:
@@ -324,8 +323,6 @@ public:
 
             case BANDSTOP:
             {
-                // check for validity of the filter edges
-                modm_assert(whp > wl, "wh must be > wl for BANDSTOP")
                 /*
                  *  transform in the form of  s → B · s / (s² + Ω₀²)
                  *  where:
@@ -353,10 +350,6 @@ public:
                     zPoles[i] = s2z(bandpass_stop_poles[i], Ts);
 
                 break;
-            }
-            default:
-            {
-                static_assert(false, "Invalid Filter")
             }
         }
 
