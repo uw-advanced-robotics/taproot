@@ -140,7 +140,7 @@ public:
         return 0.0f;
     }
 
-    void setCoefficients(Coefficients<SIZE,T> coe)
+    void setCoefficients(Coefficients<SIZE, T> coe)
     {
         this->naturalResponseCoefficients = coe.naturalResponseCoefficients;
         this->forcedResponseCoefficients = coe.forcedResponseCoefficients;
