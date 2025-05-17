@@ -30,10 +30,9 @@
 #include "discrete_filter.hpp"
 
 /**
- * @class Butterworth
  * @brief Implementation of Butterworth filter design in the discrete domain.
  *
- * This header file provides a comprehensive implementation of Butterworth filters,
+ * This header file provides a implementation of Butterworth filters,
  * including low-pass, high-pass, band-pass, and band-stop filters. The Butterworth
  * filter is known for its maximally flat frequency response in the passband, making
  * it ideal for applications requiring minimal signal distortion.
@@ -70,8 +69,7 @@
  * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
  *
  * @note
- *    This implementation is designed for C++20 ``constexpr``, enabling
- *    compile-time computation of filter configurations.
+ *    This implementation is designed for C++20 ``constexpr``.
  *
  * @warning
  *    High-order filters can introduce high phase delays and should be used with caution.
@@ -88,10 +86,8 @@
  * Then, pass those coefficients into a ``DiscreteFilter``.
  *
  * @code
- *    static constexpr Butterworth<1, LOWPASS> filter(wc, Ts);
- *    auto naturalCoeffs = filter.getNaturalResponseCoefficients();
- *    auto forcedCoeffs = filter.getForcedResponseCoefficients();
- *    DiscreteFilter<2> Filter(naturalCoeffs, forcedCoeffs);
+ *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
+ *    DiscreteFilter<2> Filter(coe);
  *
  * @endcode
  *
@@ -100,9 +96,7 @@
  * @version 2.0
  */
 
-namespace tap
-{
-namespace algorithms
+namespace tap::algorithms::filter
 {
 enum FilterType : uint8_t
 {
@@ -212,7 +206,7 @@ constexpr std::complex<double> evaluateFrequencyResponse(
  * @param [in] z the complex number to calculate the magnitude of
  * @return the magnitude of the complex number
  */
-constexpr double complex_abs(std::complex<double> z)
+constexpr double complexAbs(std::complex<double> z)
 {
     return std::sqrt(z.real() * z.real() + z.imag() * z.imag());
 }
@@ -223,269 +217,252 @@ constexpr double complex_abs(std::complex<double> z)
  * @return the square root of the complex number
  */
 
-constexpr std::complex<double> complex_sqrt(std::complex<double> z)
+constexpr std::complex<double> complexSqrt(std::complex<double> z)
 {
-    double r = std::sqrt(complex_abs(z));
+    double r = std::sqrt(complexAbs(z));
     double theta = static_cast<double>(std::atan2(z.imag(), z.real())) * static_cast<double>(0.5f);
     return {r * std::cos(theta), r * std::sin(theta)};
 }
 
-template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
-class Butterworth
+constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 {
-public:
-    /**
-     * @param[in] wc   for LOW/HIGHPASS: cutoff ωc.
-     *                 for BANDPASS/BANDSTOP: lower edge ωl.
-     * @param[in] Ts   sample time.
-     * @param[in] type filter type, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP.
-     *                 defaults to LOWPASS.
-     * @param[in] wh   upper edge ωh (only used for band filters).
-     */
-    constexpr Butterworth(double wc, double Ts, double wh = 0.0)
-        : naturalResponseCoefficients(),
-          forcedResponseCoefficients(),
-          both_coefficients(naturalResponseCoefficients, forcedResponseCoefficients)
+    return (1 + ((type & 0b10) != 0)) * ORDER + 1;
+}
+
+/**
+ * @param[in] wc   for LOW/HIGHPASS: cutoff ωc.
+ *                 for BANDPASS/BANDSTOP: lower edge ωl.
+ * @param[in] Ts   sample time.
+ * @param[in] type filter type, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP.
+ *                 defaults to LOWPASS.
+ * @param[in] wh   upper edge ωh (only used for band filters).
+ */
+template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
+Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
+    double wc,
+    double Ts,
+    double wh = 0.0)
+{
+    const uint16_t COEFFICIENTS = getNumCoefficients(ORDER, Type);
+
+    std::array<T, COEFFICIENTS> naturalResponseCoefficients;
+    std::array<T, COEFFICIENTS> forcedResponseCoefficients;
+
+    const int n = ORDER;
+
+    // For band filters we treat wc as ωl
+    double wl = wc;
+    double whp = wh;
+    std::array<std::complex<double>, 2 * ORDER> bandpass_stop_poles;
+
+    // pre-warp all edges for bilinear transform
+    wl = static_cast<double>(2.0) / Ts * std::tan(wl * (Ts / static_cast<double>(2.0)));
+    whp = static_cast<double>(2.0) / Ts * std::tan(whp * (Ts / static_cast<double>(2.0)));
+
+    // generate N prototype poles on unit circle
+    std::array<std::complex<double>, COEFFICIENTS - 1> poles;
+    for (int k = 0; k < n; ++k)
     {
-        const int n = ORDER;
+        double theta = M_PI * (2.0 * k + 1) / (2.0 * n) + M_PI / 2.0;
+        poles[k] = std::complex<double>(std::cos(theta), std::sin(theta));
+    }
 
-        // For band filters we treat wc as ωl
-        double wl = wc;
-        double whp = wh;
-        std::array<std::complex<double>, 2 * ORDER> bandpass_stop_poles;
+    std::array<std::complex<double>, COEFFICIENTS - 1> zPoles;
 
-        // pre-warp all edges for bilinear transform
-        wl = static_cast<double>(2.0) / Ts * std::tan(wl * (Ts / static_cast<double>(2.0)));
-        whp = static_cast<double>(2.0) / Ts * std::tan(whp * (Ts / static_cast<double>(2.0)));
-
-        // generate N prototype poles on unit circle
-        std::array<std::complex<double>, COEFFICIENTS - 1> poles;
-        for (int k = 0; k < n; ++k)
+    // apply the appropriate s-domaisn transform to each pole
+    switch (Type)
+    {
+        case LOWPASS:
         {
-            double theta = M_PI * (2.0 * k + 1) / (2.0 * n) + M_PI / 2.0;
-            poles[k] = std::complex<double>(std::cos(theta), std::sin(theta));
+            // poles are multiplied by wl to scale them to the desired cutoff frequency
+            for (int j = 0; j < n; ++j) poles[j] = poles[j] * wl;
+
+            // now map each analog pole into the z-plane
+            for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(poles[i], Ts);
+            break;
         }
-
-        std::array<std::complex<double>, COEFFICIENTS - 1> zPoles;
-
-        // apply the appropriate s-domaisn transform to each pole
-        switch (Type)
+        case HIGHPASS:
         {
-            case LOWPASS:
+            // applys the inverse transform of the butterworth lowpass filter
+            for (int j = 0; j < n; ++j)
             {
-                // poles are multiplied by wl to scale them to the desired cutoff frequency
-                for (int j = 0; j < n; ++j) poles[j] = poles[j] * wl;
-
-                // now map each analog pole into the z-plane
-                for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(poles[i], Ts);
-                break;
+                poles[j] = wl / poles[j];
             }
-            case HIGHPASS:
-            {
-                // applys the inverse transform of the butterworth lowpass filter
-                for (int j = 0; j < n; ++j)
-                {
-                    poles[j] = wl / poles[j];
-                }
-                // now map each analog pole into the z-plane
-                for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(poles[i], Ts);
-                break;
-            }
-            // In the case of a bandpass or a bandstop the amount of poles doubles.
-            case BANDPASS:
-            {
-                /*
-                 *  transform in the form of s → (s² + Ω₀²) / (B · s)
-                 *  where:
-                 *      Ω₀ = √(Ω_low * Ω_high)      // Center frequency (rad/sec)
-                 *      B  = Ω_high - Ω_low         // Bandwidth (rad/sec)
-                 */
-                double B = whp - wl;
-                double W0sq = whp * wl;
-
-                for (int j = 0; j < ORDER; ++j)
-                {
-                    std::complex<double> p = poles[j];
-
-                    std::complex<double> discriminant =
-                        (p * B) * (p * B) - static_cast<std::complex<double>>(4.0) * W0sq;
-                    std::complex<double> root = complex_sqrt(discriminant);
-
-                    bandpass_stop_poles[2 * j] =
-                        (p * B + root) * static_cast<std::complex<double>>(0.5);
-                    bandpass_stop_poles[2 * j + 1] =
-                        (p * B - root) * static_cast<std::complex<double>>(0.5);
-                }
-
-                // now map each analog pole into the z-plane
-                for (int i = 0; i < COEFFICIENTS - 1; ++i)
-                    zPoles[i] = s2z(bandpass_stop_poles[i], Ts);
-
-                break;
-            }
-
-            case BANDSTOP:
-            {
-                /*
-                 *  transform in the form of  s → B · s / (s² + Ω₀²)
-                 *  where:
-                 *      Ω₀ = √(Ω_low * Ω_high)      // Center frequency (rad/sec)
-                 *      B  = Ω_high - Ω_low         // Bandwidth (rad/sec)
-                 */
-                double B = whp - wl;
-                double W0sq = whp * wl;
-                for (int j = 0; j < n; ++j)
-                {
-                    std::complex<double> p = poles[j];
-
-                    std::complex<double> discriminant =
-                        B * B - (static_cast<std::complex<double>>(4.0) * -p * W0sq);
-                    std::complex<double> root = complex_sqrt(discriminant);
-
-                    bandpass_stop_poles[2 * j] =
-                        (B + root) / (static_cast<std::complex<double>>(2.0) * p);
-                    bandpass_stop_poles[2 * j + 1] =
-                        (B - root) / (static_cast<std::complex<double>>(2.0) * p);
-                }
-
-                // now map each analog pole into the z-plane
-                for (int i = 0; i < COEFFICIENTS - 1; ++i)
-                    zPoles[i] = s2z(bandpass_stop_poles[i], Ts);
-
-                break;
-            }
+            // now map each analog pole into the z-plane
+            for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(poles[i], Ts);
+            break;
         }
-
-        std::array<std::complex<double>, COEFFICIENTS - 1> zZeros;
-
-        switch (Type)
+        // In the case of a bandpass or a bandstop the amount of poles doubles.
+        case BANDPASS:
         {
-            case LOWPASS:
-                // zeros: for Butterworth lowpass all z-zeros at z = –1
-                zZeros.fill(std::complex<double>(-1, 0));
-                break;
-            case HIGHPASS:
-                // zeros: for butterworth highpass all z-zeros are at z = 1
-                zZeros.fill(std::complex<double>(1, 0));
-                break;
-            case BANDPASS:
-                // zeros: for butterworth bandpass all z-zeros are at z = ±1
-                for (int i = 0; i < COEFFICIENTS - 1; ++i)
-                {
-                    zZeros[i] =
-                        (i % 2 == 0) ? std::complex<double>(1, 0) : std::complex<double>(-1, 0);
-                }
-                break;
-            case BANDSTOP:
+            /*
+             *  transform in the form of s → (s² + Ω₀²) / (B · s)
+             *  where:
+             *      Ω₀ = √(Ω_low * Ω_high)      // Center frequency (rad/sec)
+             *      B  = Ω_high - Ω_low         // Bandwidth (rad/sec)
+             */
+            double B = whp - wl;
+            double W0sq = whp * wl;
+
+            for (int j = 0; j < ORDER; ++j)
             {
-                /* zeros: for butterworth bandstop are in a circle with radius 1 at the
-                 * center of the z-domain with an angle in radians per sample of the
-                 * center frequency. The zeros are complex conjugates of each other.
-                 */
+                std::complex<double> p = poles[j];
 
-                /* the notch (center) frequency in radians/sample */
-                double omega0 = std::sqrt(wl * whp) * Ts;
+                std::complex<double> discriminant =
+                    (p * B) * (p * B) - static_cast<std::complex<double>>(4.0) * W0sq;
+                std::complex<double> root = complexSqrt(discriminant);
 
-                double realPart = std::cos(omega0);
-                double imagPart = std::sin(omega0);
-
-                std::complex<double> zeroPlus(realPart, imagPart);    // e^(+jω0)
-                std::complex<double> zeroMinus(realPart, -imagPart);  // e^(-jω0)
-
-                for (int i = 0; i < COEFFICIENTS - 1; i += 2)
-                {
-                    zZeros[i] = zeroPlus;                                 // first of pair
-                    if (i + 1 < COEFFICIENTS) zZeros[i + 1] = zeroMinus;  // second of pair
-                }
+                bandpass_stop_poles[2 * j] =
+                    (p * B + root) * static_cast<std::complex<double>>(0.5);
+                bandpass_stop_poles[2 * j + 1] =
+                    (p * B - root) * static_cast<std::complex<double>>(0.5);
             }
+
+            // now map each analog pole into the z-plane
+            for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(bandpass_stop_poles[i], Ts);
+
             break;
         }
 
-        // get expanded polynomials
-        auto b = expandPolynomial<COEFFICIENTS - 1>(zZeros);
-        auto a = expandPolynomial<COEFFICIENTS - 1>(zPoles);
-
-        // scale the gain properly
-        switch (Type)
+        case BANDSTOP:
         {
-            case LOWPASS:
+            /*
+             *  transform in the form of  s → B · s / (s² + Ω₀²)
+             *  where:
+             *      Ω₀ = √(Ω_low * Ω_high)      // Center frequency (rad/sec)
+             *      B  = Ω_high - Ω_low         // Bandwidth (rad/sec)
+             */
+            double B = whp - wl;
+            double W0sq = whp * wl;
+            for (int j = 0; j < n; ++j)
             {
-                // Eval at DC
-                auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, 0, Ts);
-                auto mag = complex_abs(freqResp);
-                double scale = 1 / mag;
-                for (auto &coef : b) coef *= scale;
-                break;
+                std::complex<double> p = poles[j];
+
+                std::complex<double> discriminant =
+                    B * B - (static_cast<std::complex<double>>(4.0) * -p * W0sq);
+                std::complex<double> root = complexSqrt(discriminant);
+
+                bandpass_stop_poles[2 * j] =
+                    (B + root) / (static_cast<std::complex<double>>(2.0) * p);
+                bandpass_stop_poles[2 * j + 1] =
+                    (B - root) / (static_cast<std::complex<double>>(2.0) * p);
             }
-            case HIGHPASS:
+
+            // now map each analog pole into the z-plane
+            for (int i = 0; i < COEFFICIENTS - 1; ++i) zPoles[i] = s2z(bandpass_stop_poles[i], Ts);
+
+            break;
+        }
+    }
+
+    std::array<std::complex<double>, COEFFICIENTS - 1> zZeros;
+
+    switch (Type)
+    {
+        case LOWPASS:
+            // zeros: for Butterworth lowpass all z-zeros at z = –1
+            zZeros.fill(std::complex<double>(-1, 0));
+            break;
+        case HIGHPASS:
+            // zeros: for butterworth highpass all z-zeros are at z = 1
+            zZeros.fill(std::complex<double>(1, 0));
+            break;
+        case BANDPASS:
+            // zeros: for butterworth bandpass all z-zeros are at z = ±1
+            for (int i = 0; i < COEFFICIENTS - 1; ++i)
             {
-                // Eval at niquest
-                auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(
-                    b,
-                    a,
-                    static_cast<double>(M_PI) / Ts,
-                    Ts);
-                auto mag = complex_abs(freqResp);
-                double scale = 1 / mag;
-                for (auto &coef : b) coef *= scale;
-                break;
+                zZeros[i] = (i % 2 == 0) ? std::complex<double>(1, 0) : std::complex<double>(-1, 0);
             }
-            case BANDPASS:
+            break;
+        case BANDSTOP:
+        {
+            /* zeros: for butterworth bandstop are in a circle with radius 1 at the
+             * center of the z-domain with an angle in radians per sample of the
+             * center frequency. The zeros are complex conjugates of each other.
+             */
+
+            /* the notch (center) frequency in radians/sample */
+            double omega0 = std::sqrt(wl * whp) * Ts;
+
+            double realPart = std::cos(omega0);
+            double imagPart = std::sin(omega0);
+
+            std::complex<double> zeroPlus(realPart, imagPart);    // e^(+jω0)
+            std::complex<double> zeroMinus(realPart, -imagPart);  // e^(-jω0)
+
+            for (int i = 0; i < COEFFICIENTS - 1; i += 2)
             {
-                // Eval at center frequency
-                auto freqResp =
-                    evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, std::sqrt(wl * whp), Ts);
-                auto mag = complex_abs(freqResp);
-                double scale = 1 / mag;
-                for (auto &coef : b) coef *= scale;
-                break;
-            }
-            case BANDSTOP:
-            {
-                // Eval at dc gain
-                auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, 0, Ts);
-                auto mag = complex_abs(freqResp);
-                double scale = 1 / mag;
-                for (auto &coef : b) coef *= scale;
-                break;
+                zZeros[i] = zeroPlus;                                 // first of pair
+                if (i + 1 < COEFFICIENTS) zZeros[i + 1] = zeroMinus;  // second of pair
             }
         }
+        break;
+    }
 
-        // store in member arrays (reverse order)
-        for (size_t i = 0; i < COEFFICIENTS; ++i)
+    // get expanded polynomials
+    auto b = expandPolynomial<COEFFICIENTS - 1>(zZeros);
+    auto a = expandPolynomial<COEFFICIENTS - 1>(zPoles);
+
+    // scale the gain properly
+    switch (Type)
+    {
+        case LOWPASS:
         {
-            naturalResponseCoefficients[COEFFICIENTS - i - 1] = a[i];
-            forcedResponseCoefficients[COEFFICIENTS - i - 1] = b[i];
+            // Eval at DC
+            auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, 0, Ts);
+            auto mag = complexAbs(freqResp);
+            double scale = 1 / mag;
+            for (auto &coef : b) coef *= scale;
+            break;
         }
-        both_coefficients.naturalResponseCoefficients = naturalResponseCoefficients;
-        both_coefficients.forcedResponseCoefficients = forcedResponseCoefficients;
+        case HIGHPASS:
+        {
+            // Eval at nyquist
+            auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(
+                b,
+                a,
+                static_cast<double>(M_PI) / Ts,
+                Ts);
+            auto mag = complexAbs(freqResp);
+            double scale = 1 / mag;
+            for (auto &coef : b) coef *= scale;
+            break;
+        }
+        case BANDPASS:
+        {
+            // Eval at center frequency
+            auto freqResp =
+                evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, std::sqrt(wl * whp), Ts);
+            auto mag = complexAbs(freqResp);
+            double scale = 1 / mag;
+            for (auto &coef : b) coef *= scale;
+            break;
+        }
+        case BANDSTOP:
+        {
+            // Eval at dc gain
+            auto freqResp = evaluateFrequencyResponse<COEFFICIENTS - 1>(b, a, 0, Ts);
+            auto mag = complexAbs(freqResp);
+            double scale = 1 / mag;
+            for (auto &coef : b) coef *= scale;
+            break;
+        }
     }
 
-    static constexpr int COEFFICIENTS = (1 + ((Type & 0b10) != 0)) * ORDER + 1;
-
-    std::array<T, COEFFICIENTS> getNaturalResponseCoefficients() const
+    // store in member arrays (reverse order)
+    for (size_t i = 0; i < COEFFICIENTS; ++i)
     {
-        return naturalResponseCoefficients;
+        naturalResponseCoefficients[COEFFICIENTS - i - 1] = a[i];
+        forcedResponseCoefficients[COEFFICIENTS - i - 1] = b[i];
     }
 
-    std::array<T, COEFFICIENTS> getForcedResponseCoefficients() const
-    {
-        return forcedResponseCoefficients;
-    }
+    // Store in
+    Coefficients<COEFFICIENTS, T> both_coefficients;
+    both_coefficients.naturalResponseCoefficients = naturalResponseCoefficients;
+    both_coefficients.forcedResponseCoefficients = forcedResponseCoefficients;
+    return both_coefficients;
+}
 
-    DiscreteFilter<COEFFICIENTS, T>::Coefficients getCoefficients() const
-    {
-        return both_coefficients;
-    }
-
-private:
-    std::array<T, COEFFICIENTS> naturalResponseCoefficients;
-    std::array<T, COEFFICIENTS> forcedResponseCoefficients;
-    DiscreteFilter<COEFFICIENTS, T>::Coefficients both_coefficients;
-};
-
-}  // namespace algorithms
-
-}  // namespace tap
+};  // namespace tap::algorithms::filter
 
 #endif  // TAPROOT_BUTTERWORTH_HPP_
