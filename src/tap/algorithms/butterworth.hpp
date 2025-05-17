@@ -24,7 +24,6 @@
 #include <complex>
 #include <cstdint>
 
-#include "modm/architecture/interface.hpp"
 #include "modm/math/geometry/angle.hpp"
 
 #include "discrete_filter.hpp"
