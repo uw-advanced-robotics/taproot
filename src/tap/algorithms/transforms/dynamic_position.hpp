@@ -67,6 +67,20 @@ public:
     {
     }
 
+    inline DynamicPosition(Position&& position, Vector&& velocity, Vector&& acceleration)
+        : position(std::move(position.coordinates_)),
+          velocity(std::move(velocity.coordinates_)),
+          acceleration(std::move(acceleration.coordinates_))
+    {
+    }
+
+    inline DynamicPosition(Position& position, Vector& velocity, Vector& acceleration)
+        : position(position.coordinates_),
+          velocity(velocity.coordinates_),
+          acceleration(acceleration.coordinates_)
+    {
+    }
+
     DynamicPosition operator+(const DynamicPosition& other) const
     {
         return DynamicPosition(

@@ -41,18 +41,6 @@ public:
     {
     }
 
-    inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
-        : orientation(std::move(orientation.matrix_)),
-          angularVelocity(std::move(angularVelocity.matrix_))
-    {
-    }
-
-    inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
-        : orientation(orientation.matrix_),
-          angularVelocity(angularVelocity.matrix_)
-    {
-    }
-
     inline DynamicOrientation(
         const CMSISMat<3, 3>&& orientation,
         const CMSISMat<3, 3>&& angularVelocity)
@@ -67,6 +55,18 @@ public:
         const CMSISMat<3, 3>& angularVelocity)
         : orientation(orientation),
           angularVelocity(angularVelocity)
+    {
+    }
+
+    inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
+        : orientation(std::move(orientation.matrix_)),
+          angularVelocity(std::move(angularVelocity.matrix_))
+    {
+    }
+
+    inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
+        : orientation(orientation.matrix_),
+          angularVelocity(angularVelocity.matrix_)
     {
     }
 
