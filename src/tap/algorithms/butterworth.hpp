@@ -455,11 +455,7 @@ Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
         forcedResponseCoefficients[COEFFICIENTS - i - 1] = b[i];
     }
 
-    // Store in
-    Coefficients<COEFFICIENTS, T> both_coefficients;
-    both_coefficients.naturalResponseCoefficients = naturalResponseCoefficients;
-    both_coefficients.forcedResponseCoefficients = forcedResponseCoefficients;
-    return both_coefficients;
+    return { naturalResponseCoefficients, forcedResponseCoefficients};
 }
 
 }  // namespace tap::algorithms::filter
