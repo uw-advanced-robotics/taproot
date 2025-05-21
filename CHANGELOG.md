@@ -2,6 +2,7 @@
 
 ## May 2025
 
+- Inverted the gear ratios in `DjiMotorEncoder` so that they are output/input.
 - Added `Odometry2DInterface::overrideOdometryPosition`.
 - Butterworth filter generation now supports lowpass, highpass, bandpass, and bandstop.
 

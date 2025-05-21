@@ -117,11 +117,11 @@ TEST(WrappedEncoder, calculates_velocity_through_time_wrap)
     tap::arch::clock::ClockStub clock;
     WrappedEncoder encoder(false, 4);
 
-    clock.time = 0xFFFFFFFF  / 1000;
+    clock.time = 0xFFFFFFFF / 1000;
     encoder.updateEncoderValue(0);
     EXPECT_FLOAT_EQ(0, encoder.getVelocity());
 
-    clock.time = 0xFFFFFFFF  / 1000 + 1000;
+    clock.time = 0xFFFFFFFF / 1000 + 1000;
     encoder.updateEncoderValue(1);
     EXPECT_NEAR(M_PI_2, encoder.getVelocity(), 2e-6);
 }
@@ -169,10 +169,14 @@ TEST(WrappedEncoder, align_with_updates_values)
     EXPECT_EQ(Angle(M_TWOPI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
     EXPECT_FLOAT_EQ(M_PI, encoder.getVelocity());
 
-    for (int i = 1; i < 10; i ++) {
+    for (int i = 1; i < 10; i++)
+    {
         clock.time = 2000 + 1000 * i;
         encoder.updateEncoderValue(2 + i);
-        EXPECT_NEAR(Angle(M_TWOPI + M_PI_2 * i).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue(), 2e-6);
+        EXPECT_NEAR(
+            Angle(M_TWOPI + M_PI_2 * i).getUnwrappedValue(),
+            encoder.getPosition().getUnwrappedValue(),
+            2e-6);
         EXPECT_NEAR(M_PI_2, encoder.getVelocity(), 2e-6);
     }
 }
@@ -214,10 +218,14 @@ TEST(WrappedEncoder, align_with_updates_values_with_gear_ratio)
     EXPECT_EQ(Angle(M_PI).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue());
     EXPECT_FLOAT_EQ(0, encoder.getVelocity());
 
-    for (int i = 1; i < 10; i ++) {
+    for (int i = 1; i < 10; i++)
+    {
         clock.time = 2000 + 1000 * i;
         encoder.updateEncoderValue(i);
-        EXPECT_NEAR(Angle(M_PI + M_PI_4 * i).getUnwrappedValue(), encoder.getPosition().getUnwrappedValue(), 2e-6);
+        EXPECT_NEAR(
+            Angle(M_PI + M_PI_4 * i).getUnwrappedValue(),
+            encoder.getPosition().getUnwrappedValue(),
+            2e-6);
         EXPECT_NEAR(M_PI_4, encoder.getVelocity(), 2e-6);
     }
 }
