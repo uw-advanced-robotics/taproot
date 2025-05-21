@@ -462,6 +462,6 @@ Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
     return both_coefficients;
 }
 
-};  // namespace tap::algorithms::filter
+}  // namespace tap::algorithms::filter
 
 #endif  // TAPROOT_BUTTERWORTH_HPP_
