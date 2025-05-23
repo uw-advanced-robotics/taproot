@@ -3,6 +3,7 @@
 ## May 2025
 
 - Inverted the gear ratios in `DjiMotorEncoder` so that they are output/input.
+- Changed Butterworth filter to a function that returns a coefficients struct to avoid issues with accidentally switching the forced and natural response coefficients
 - Added `Odometry2DInterface::overrideOdometryPosition`.
 - Butterworth filter generation now supports lowpass, highpass, bandpass, and bandstop.
 

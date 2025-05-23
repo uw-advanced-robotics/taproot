@@ -24,7 +24,7 @@
 #include "tap/algorithms/butterworth.hpp"
 #include "tap/algorithms/discrete_filter.hpp"
 
-using namespace tap::algorithms;
+using namespace tap::algorithms::filter;
 
 TEST(S2ZTransform, identity_for_zero_pole)
 {
@@ -73,7 +73,7 @@ TEST(EvaluateFrequencyResponse, unity_gain)
         9.985875464857408e-07};
     std::array<double, ORDER + 1> denominator = {9.971755689727204e-01, -1.997171574622534, 1};
     std::complex<double> resp = evaluateFrequencyResponse<ORDER>(numerator, denominator, 0, Ts);
-    double scalar = complex_abs(resp);
+    double scalar = complexAbs(resp);
     double expected = 1;
     EXPECT_NEAR(expected, scalar, 1e-6);
 }
@@ -83,16 +83,14 @@ TEST(ButterworthFilter, low_order_filter_coefficients_sum_to_one)
     constexpr uint8_t ORDER = 1;
     double wc = 10.0;
     double Ts = 1 / 500.0;
-    Butterworth<ORDER> filter(wc, Ts);
-    auto num = filter.getForcedResponseCoefficients();
-    auto den = filter.getNaturalResponseCoefficients();
+    auto coefs = butterworth<ORDER>(wc, Ts);
 
     double numSum = 0;
     double denSum = 0;
     for (int i = 0; i <= ORDER; ++i)
     {
-        numSum += num[i];
-        denSum += den[i];
+        numSum += coefs.naturalResponseCoefficients[i];
+        denSum += coefs.forcedResponseCoefficients[i];
     }
 
     // Check DC gain is 1 (numerator and denominator sums are equal)
@@ -104,12 +102,10 @@ TEST(ButterworthFilter, second_order_filter_has_correct_size)
     constexpr uint8_t ORDER = 2;
     double wc = 20.0;
     double Ts = 0.01;
-    Butterworth<ORDER> filter(wc, Ts);
-    auto num = filter.getForcedResponseCoefficients();
-    auto den = filter.getNaturalResponseCoefficients();
+    auto coe = butterworth<ORDER>(wc, Ts);
 
-    EXPECT_EQ(num.size(), ORDER + 1);
-    EXPECT_EQ(den.size(), ORDER + 1);
+    EXPECT_EQ(coe.forcedResponseCoefficients.size(), ORDER + 1);
+    EXPECT_EQ(coe.naturalResponseCoefficients.size(), ORDER + 1);
 }
 
 TEST(ButterworthFilter, coefficients_are_what_they_should_be)
@@ -117,16 +113,14 @@ TEST(ButterworthFilter, coefficients_are_what_they_should_be)
     static constexpr uint8_t ORDER = 2;
     static constexpr double wc = 10.0;
     static constexpr double Ts = 1 / 500.0;
-    static constexpr Butterworth<ORDER> filter(wc, Ts);
-    auto num = filter.getForcedResponseCoefficients();
-    auto den = filter.getNaturalResponseCoefficients();
-    EXPECT_NEAR(num[0], 0.099858678643663 * 1.0e-5, 1e-3);
-    EXPECT_NEAR(num[1], 0.199717357287326 * 1.0e-5, 1e-3);
-    EXPECT_NEAR(num[2], 0.099858678643663 * 1.0e-5, 1e-3);
+    auto coe = butterworth<ORDER>(wc, Ts);
+    EXPECT_NEAR(coe.forcedResponseCoefficients[0], 0.099858678643663 * 1.0e-5, 1e-3);
+    EXPECT_NEAR(coe.forcedResponseCoefficients[1], 0.199717357287326 * 1.0e-5, 1e-3);
+    EXPECT_NEAR(coe.forcedResponseCoefficients[2], 0.099858678643663 * 1.0e-5, 1e-3);
 
-    EXPECT_NEAR(den[0], 1, 1e-3);
-    EXPECT_NEAR(den[1], -1.971, 1e-3);
-    EXPECT_NEAR(den[2], 0.972, 1e-3);
+    EXPECT_NEAR(coe.naturalResponseCoefficients[0], 1, 1e-3);
+    EXPECT_NEAR(coe.naturalResponseCoefficients[1], -1.971, 1e-3);
+    EXPECT_NEAR(coe.naturalResponseCoefficients[2], 0.972, 1e-3);
 }
 
 struct AttenuationParams
@@ -143,7 +137,7 @@ protected:
     static constexpr double wc = 10.0;
     static constexpr double wh = 100.0;
     static constexpr double Ts = 1 / 500.0;
-    static constexpr Butterworth<ORDER, Type, double> filter{wc, Ts, wh};
+    static constexpr Coefficients coe = butterworth<ORDER, Type, double>(wc, Ts, wh);
 };
 
 // clang-format off
@@ -151,15 +145,14 @@ protected:
     using Type##AttenuationTest = AttenuationTest<Type>; \
     TEST_P(Type##AttenuationTest, filter_attenuates_properly) \
     { \
-        auto nat = filter.getNaturalResponseCoefficients(); \
-        auto force = filter.getForcedResponseCoefficients(); \
-        DiscreteFilter<Butterworth<ORDER, Type, double>::COEFFICIENTS, double> discreteFilter(nat, force); \
+        DiscreteFilter<getNumCoefficients(ORDER, Type), double> \
+        discreteFilter(coe); \
         float max_val = 0.0f; \
         constexpr int simulation_points = 50000; \
         for (int i = 0; i < simulation_points; i++) \
         { \
             float val = discreteFilter.filterData(sin( \
-                GetParam().frequency * (i * Ts)));  /* Feed in a sin wave with frequency and amp of 1 */ \
+                GetParam().frequency * (i * Ts)));  /* Feed in a sin wave with freq, amp = 1 */\
             if (i > simulation_points - ((2*M_PI)/GetParam().frequency/Ts + 100)) \
             { \
                 max_val = std::max(max_val, std::abs(val)); \
@@ -170,12 +163,12 @@ protected:
     } \
     TEST_P(Type##AttenuationTest, runtime_matches_constexpr) \
     { \
-        Butterworth<ORDER, Type, double> runtime{wc, Ts, wh}; \
-        auto nat = runtime.getNaturalResponseCoefficients(); \
-        auto force = runtime.getForcedResponseCoefficients(); \
-        auto nat_constexpr = filter.getNaturalResponseCoefficients(); \
-        auto force_constexpr = filter.getForcedResponseCoefficients(); \
-        for (size_t i = 0; i < Butterworth<ORDER, Type, double>::COEFFICIENTS; ++i) \
+        Coefficients coef = butterworth<ORDER, Type, double>(wc, Ts, wh); \
+        auto nat = coef.naturalResponseCoefficients; \
+        auto force = coef.forcedResponseCoefficients; \
+        auto nat_constexpr = coe.naturalResponseCoefficients; \
+        auto force_constexpr = coe.forcedResponseCoefficients; \
+        for (size_t i = 0; i < getNumCoefficients(ORDER, Type); ++i) \
         { \
             EXPECT_NEAR(nat[i], nat_constexpr[i], 1e-6); \
             EXPECT_NEAR(force[i], force_constexpr[i], 1e-6); \

@@ -21,13 +21,13 @@
 
 #include "tap/algorithms/discrete_filter.hpp"
 
-using namespace tap::algorithms;
+using namespace tap::algorithms::filter;
 
 TEST(DiscreteFilter, initial_output_is_zero)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0, 0.0, 0.0};
-    std::array<float, SIZE> forced = {1.0, 0.0, 0.0};
+    std::array<float, SIZE> natural{1.0, 0.0, 0.0};
+    std::array<float, SIZE> forced{1.0, 0.0, 0.0};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     EXPECT_NEAR(filter.getLastFiltered(), 0.0, 1e-6);
@@ -36,8 +36,8 @@ TEST(DiscreteFilter, initial_output_is_zero)
 TEST(DiscreteFilter, single_input_response_matches_coefficients)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0f, -1.0f, 0.0f};
-    std::array<float, SIZE> forced = {0.5f, 0.0f, 0.0f};
+    std::array<float, SIZE> natural{1.0f, -1.0f, 0.0f};
+    std::array<float, SIZE> forced{0.5f, 0.0f, 0.0f};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     float out = filter.filterData(1.0f);
@@ -48,8 +48,8 @@ TEST(DiscreteFilter, single_input_response_matches_coefficients)
 TEST(DiscreteFilter, double_input_response_matches_coefficients)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0f, -1.0f, 0.0f};
-    std::array<float, SIZE> forced = {0.5f, 0.0f, 0.0f};
+    std::array<float, SIZE> natural{1.0f, -1.0f, 0.0f};
+    std::array<float, SIZE> forced{0.5f, 0.0f, 0.0f};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     float out = filter.filterData(1.0f);
@@ -63,8 +63,8 @@ TEST(DiscreteFilter, double_input_response_matches_coefficients)
 TEST(DiscreteFilter, repeated_input_updates_internal_state)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0, -0.3, 0.1};
-    std::array<float, SIZE> forced = {0.1, 0.2, 0.3};
+    std::array<float, SIZE> natural{1.0, -0.3, 0.1};
+    std::array<float, SIZE> forced{0.1, 0.2, 0.3};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     float out1 = filter.filterData(1.0);
@@ -80,8 +80,8 @@ TEST(DiscreteFilter, repeated_input_updates_internal_state)
 TEST(DiscreteFilter, zero_input_remains_zero)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0, 0.0, 0.0};
-    std::array<float, SIZE> forced = {0.1, 0.0, 0.0};
+    std::array<float, SIZE> natural{1.0, 0.0, 0.0};
+    std::array<float, SIZE> forced{0.1, 0.0, 0.0};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     for (int i = 0; i < 5; ++i)
@@ -94,8 +94,8 @@ TEST(DiscreteFilter, zero_input_remains_zero)
 TEST(DiscreteFilter, filter_resets_properly)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0, -0.3, 0.1};
-    std::array<float, SIZE> forced = {0.1, 0.2, 0.3};
+    std::array<float, SIZE> natural{1.0, -0.3, 0.1};
+    std::array<float, SIZE> forced{0.1, 0.2, 0.3};
     DiscreteFilter<SIZE> filter(natural, forced);
 
     // Apply some input to the filter
@@ -113,9 +113,75 @@ TEST(DiscreteFilter, filter_resets_properly)
 TEST(DiscreteFilter, handles_step_input)
 {
     constexpr uint8_t SIZE = 3;
-    std::array<float, SIZE> natural = {1.0, -0.5, 0.25};
-    std::array<float, SIZE> forced = {0.2, 0.1, 0.05};
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
     DiscreteFilter<SIZE> filter(natural, forced);
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = filter.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
+}
+
+TEST(DiscreteFilter, accepts_coefficients_struct)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe;
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+    coe.naturalResponseCoefficients = natural;
+    coe.forcedResponseCoefficients = forced;
+    DiscreteFilter<SIZE> filter(coe);
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = filter.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
+}
+
+TEST(DiscreteFilter, set_coefficients_struct_works)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    Coefficients<SIZE> coe;
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+    coe.naturalResponseCoefficients = natural;
+    coe.forcedResponseCoefficients = forced;
+
+    filter.setCoefficients(coe);
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = filter.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
+}
+
+TEST(DiscreteFilter, set_coefficients_works)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+
+    filter.setCoefficients(natural, forced);
 
     float output = 0.0;
     for (int i = 0; i < 1e3; ++i)
