@@ -57,7 +57,7 @@ public:
      * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
      * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
-    virtual void requestCalibration();
+    virtual void requestCalibration() override;
 
     /**
      * Call this function at same rate as intialized sample frequency.
