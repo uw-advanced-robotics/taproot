@@ -53,27 +53,13 @@ static void initializeBmi088(Bmi088 &bmi088)
     Bmi088Hal::clearData();
 }
 
-TEST(Bmi088, periodicIMUUpdate_initialize_called_no_errors)
+class Bmi088Test : public ::testing::Test
 {
+protected:
     tap::Drivers drivers;
-    Bmi088 bmi088(&drivers);
+    Bmi088 bmi088{&drivers};
 
-    initializeBmi088(bmi088);
-
-    bmi088.read();
-    bmi088.periodicIMUUpdate();
-
-    EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CALIBRATED, bmi088.getImuState());
-}
-
-TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
-{
-    tap::Drivers drivers;
-    tap::arch::clock::ClockStub clock;
-    Bmi088 bmi088(&drivers);
-
-    initializeBmi088(bmi088);
-
+    // packed‐structs for every test
     struct
     {
         int16_t x = 0x1234;
@@ -88,18 +74,122 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
         int16_t z = 0x8769;
     } modm_packed gyroData;
 
-    Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
-    Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
+    void SetUp() override
+    {
+        // common initialization
+        initializeBmi088(bmi088);
 
-    clock.time = 200;
+        // common stubbing of the multi‐reads
+        Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
+        Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
+    }
+
+    void expectTransform(
+        float roll,
+        float pitch,
+        float yaw,
+        float expectedGx,
+        float expectedGy,
+        float expectedGz,
+        float expectedAx,
+        float expectedAy,
+        float expectedAz)
+    {
+        bmi088.setMountingTransform(
+            tap::algorithms::transforms::Transform(0, 0, 0, roll, pitch, yaw));
+        bmi088.read();
+        bmi088.periodicIMUUpdate();
+
+        static constexpr float EPS = 1E-3;
+        EXPECT_NEAR(bmi088.getGx(), expectedGx * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, EPS);
+        EXPECT_NEAR(bmi088.getGy(), expectedGy * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, EPS);
+        EXPECT_NEAR(bmi088.getGz(), expectedGz * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, EPS);
+        EXPECT_NEAR(bmi088.getAx(), expectedAx * Bmi088::ACC_G_PER_ACC_COUNT, EPS);
+        EXPECT_NEAR(bmi088.getAy(), expectedAy * Bmi088::ACC_G_PER_ACC_COUNT, EPS);
+        EXPECT_NEAR(bmi088.getAz(), expectedAz * Bmi088::ACC_G_PER_ACC_COUNT, EPS);
+    }
+};
+
+TEST_F(Bmi088Test, periodicIMUUpdate_initialize_called_no_errors)
+{
     bmi088.read();
     bmi088.periodicIMUUpdate();
+    EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CALIBRATED, bmi088.getImuState());
+}
 
-    static constexpr float ALPHA = 1E-3;
-    EXPECT_NEAR(accData.x * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAx(), ALPHA);
-    EXPECT_NEAR(accData.y * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAy(), ALPHA);
-    EXPECT_NEAR(accData.z * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAz(), ALPHA);
-    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
-    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
-    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
+TEST_F(Bmi088Test, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
+{
+    expectTransform(0, 0, 0, gyroData.x, gyroData.y, gyroData.z, accData.x, accData.y, accData.z);
+}
+
+TEST_F(Bmi088Test, mounting_transform_90_deg_yaw)
+{
+    // x -> y, y -> -x, z -> z.
+
+    // clang-format off
+    expectTransform(
+        0, 0, M_PI_2,
+        gyroData.y, -gyroData.x, gyroData.z,
+        accData.y, -accData.x, accData.z);
+    // clang-format on
+}
+
+TEST_F(Bmi088Test, mounting_transform_180_deg_yaw)
+{
+    // x -> -x. y -> -y. z -> z.
+
+    // clang-format off
+    expectTransform(
+        0, 0, M_PI,
+        -gyroData.x, -gyroData.y, gyroData.z,
+        -accData.x, -accData.y, accData.z);
+    // clang-format on
+}
+
+TEST_F(Bmi088Test, mounting_transform_90_deg_pitch)
+{
+    // x -> -z, y -> y, z -> x.
+
+    // clang-format off
+    expectTransform(
+        0, M_PI_2, 0,
+        -gyroData.z, gyroData.y, gyroData.x,
+        -accData.z, accData.y, accData.x);
+    // clang-format on
+}
+
+TEST_F(Bmi088Test, mounting_transform_180_deg_pitch)
+{
+    // x -> -x, y -> y, z -> -z.
+
+    // clang-format off
+    expectTransform(
+        0, M_PI, 0,
+        -gyroData.x, gyroData.y, -gyroData.z,
+        -accData.x, accData.y, -accData.z);
+    // clang-format on
+}
+
+TEST_F(Bmi088Test, mounting_transform_90_deg_roll)
+{
+    // x -> x, y -> z, z -> -y.
+
+    // clang-format off
+    expectTransform(
+        M_PI_2, 0, 0,
+        gyroData.x, gyroData.z, -gyroData.y,
+        accData.x, accData.z, -accData.y);
+    // clang-format on
+}
+
+TEST_F(Bmi088Test, mounting_transform_180_deg_roll)
+{
+    // x -> x, y -> -y, z -> -z.
+
+    // clang-format off
+    expectTransform(
+        M_PI, 0, 0,
+        gyroData.x, -gyroData.y, -gyroData.z,
+        accData.x, -accData.y, -accData.z);
+    // clang-format on
 }
