@@ -56,7 +56,7 @@ def add_immutable_warning(path: str):
             file_ext = file_ext[1] if len(file_ext) >= 2 else ''
 
             if file_ext in FILE_TYPE_TO_COMMENT_FORMAT_MAP:
-                with open(file, 'r+', encoding='utf-8') as f:
+                with open(file, 'r+') as f:
                     content = f.read()
                     f.seek(0, 0)
                     f.write(f'{FILE_TYPE_TO_COMMENT_FORMAT_MAP[file_ext](WARNING_HEADER)}\n\n{content}')
