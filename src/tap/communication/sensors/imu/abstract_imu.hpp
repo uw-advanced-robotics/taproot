@@ -41,7 +41,7 @@ class AbstractIMU : public ImuInterface
 {
 public:
     AbstractIMU(const Transform& mountingTransform = Transform::identity())
-        : mountingTransform(mountingTransform)
+        : mountingTransform(mountingTransform.getInverse())
     {
     }
 
@@ -112,10 +112,10 @@ protected:
     void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
 
-    inline void applyTransform(ImuData& data)
+    inline void applyMountingTransformToRaw(ImuData& data)
     {
-        data.accG = mountingTransform.apply(data.accG);
-        data.gyroRadPerSec = mountingTransform.apply(data.gyroRadPerSec);
+        data.accRaw = mountingTransform.apply(data.accRaw);
+        data.gyroRaw = mountingTransform.apply(data.gyroRaw);
     }
 
     virtual inline float getAccelerationSensitivity() const = 0;
