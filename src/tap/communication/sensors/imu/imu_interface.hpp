@@ -102,8 +102,7 @@ public:
     /**
      * When this function is called, the bmi088 enters a calibration state during which time,
      * gyro/accel calibration offsets will be computed and the mahony algorithm reset. When
-     * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
-     * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
+     * calibrating, angle, accelerometer, and gyroscope values will return 0. 
      */
     virtual void requestCalibration() = 0;
 };
