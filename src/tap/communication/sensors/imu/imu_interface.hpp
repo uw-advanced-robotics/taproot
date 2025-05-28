@@ -100,7 +100,7 @@ public:
     virtual inline float getRoll() const = 0;
 
     /**
-     * When this function is called, the bmi088 enters a calibration state during which time,
+     * When this function is called, the IMU enters a calibration state during which time,
      * gyro/accel calibration offsets will be computed and the mahony algorithm reset. When
      * calibrating, angle, accelerometer, and gyroscope values will return 0. 
      */
