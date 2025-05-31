@@ -193,14 +193,16 @@ inline void initialize()
 #endif
 }
 
+#ifndef PLATFORM_HOSTED
+
 template <uint32_t Baudrate = 100000>
 inline void initializeI2c(I2cMaster::PullUps pullups = I2cMaster::PullUps::External)
 {
-#ifndef PLATFORM_HOSTED
     I2cMaster::connect<I2cScl::Scl, I2cSda::Sda>(pullups);
     I2cMaster::initialize<SystemClock, Baudrate>();
-#endif
 }
+
+#endif
 
 }  // namespace Board
 

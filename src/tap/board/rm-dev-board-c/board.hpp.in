@@ -184,32 +184,30 @@ inline void initialize()
 #endif
 }
 
+#ifndef PLATFORM_HOSTED
+
 template <uint32_t Baudrate = 100000>
 inline void initializeI2c2(I2c2Master::PullUps pullups = I2c2Master::PullUps::External)
 {
-#ifndef PLATFORM_HOSTED
     I2c2Master::connect<I2c2Scl::Scl, I2c2Sda::Sda>(pullups);
     I2c2Master::initialize<SystemClock, Baudrate>();
-#endif
 }
 
 template <uint32_t Baudrate = 100000>
 inline void initializeI2c3(I2c3Master::PullUps pullups = I2c3Master::PullUps::Internal)
 {
-#ifndef PLATFORM_HOSTED
     I2c3Master::connect<I2c3Scl::Scl, I2c3Sda::Sda>(pullups);
     I2c3Master::initialize<SystemClock, Baudrate>();
-#endif
 }
 
 template <uint32_t Baudrate = 10000000>
 inline void initializeSpi2()
 {
-#ifndef PLATFORM_HOSTED
     Spi2Master::connect<Spi2Miso::Miso, Spi2Mosi::Mosi, Spi2Sck::Sck>();
     Spi2Master::initialize<SystemClock, Baudrate>();
-#endif
 }
+
+#endif
 
 }  // namespace Board
 
