@@ -185,7 +185,7 @@ inline void initialize()
 }
 
 template <uint32_t Baudrate = 100000>
-inline void initializeI2c2(I2c2Master::PullUps pullups = I2CMaster::PullUps::External)
+inline void initializeI2c2(I2c2Master::PullUps pullups = I2c2Master::PullUps::External)
 {
 #ifndef PLATFORM_HOSTED
     I2c2Master::connect<I2c2Scl::Scl, I2c2Sda::Sda>(pullups);
@@ -194,7 +194,7 @@ inline void initializeI2c2(I2c2Master::PullUps pullups = I2CMaster::PullUps::Ext
 }
 
 template <uint32_t Baudrate = 100000>
-inline void initializeI2c3(I2c3Master::PullUps pullups = I2CMaster::PullUps::Internal)
+inline void initializeI2c3(I2c3Master::PullUps pullups = I2c3Master::PullUps::Internal)
 {
 #ifndef PLATFORM_HOSTED
     I2c3Master::connect<I2c3Scl::Scl, I2c3Sda::Sda>(pullups);
