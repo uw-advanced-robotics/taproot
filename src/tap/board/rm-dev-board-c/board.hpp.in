@@ -158,6 +158,21 @@ using ImuInt1Gyro = GpioC5;
 using ImuHeater = GpioF6;
 using ImuSpiMaster = SpiMaster1;
 
+using I2c2Sda = GpioF0;
+using I2c2Scl = GpioF1;
+using I2c2Master = I2cMaster2;
+
+using Spi2Cs = GpioB12;
+using Spi2Sck = GpioB13;
+using Spi2Miso = GpioB14;
+using Spi2Mosi = GpioB15;
+using Spi2Master = SpiMaster2;
+
+// I2C 3 is used exclusively for the IST8310 magnetometer
+using I2c3Sda = GpioC8;
+using I2c3Scl = GpioA8;
+using I2c3Master = I2cMaster3;
+
 #endif
 
 inline void initialize()
@@ -167,6 +182,20 @@ inline void initialize()
 #ifndef PLATFORM_HOSTED
     SysTickTimer::initialize<SystemClock>();
 #endif
+}
+
+inline void initializeI2c2(uint32_t baudrate = 100000, 
+                          I2c2Master::Pullups pullups = I2c2Master::Pullups::External)
+{
+    I2c2Master::connect<I2c2Scl::Scl, I2c2Sda::Sda>(pullups);
+    I2c2Master::initialize(SystemClock, baudrate);
+}
+
+inline void initializeI2c3(uint32_t baudrate = 100000, 
+                          I2c3Master::Pullups pullups = I2c3Master::Pullups::External)
+{
+    I2c3Master::connect<I2c3Scl::Scl, I2c3Sda::Sda>(pullups);
+    I2c3Master::initialize(SystemClock, baudrate);
 }
 
 }  // namespace Board
