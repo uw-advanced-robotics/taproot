@@ -169,7 +169,7 @@ using Spi2Mosi = GpioB15;
 using Spi2Master = SpiMaster2;
 
 // I2C 3 is used exclusively for the IST8310 magnetometer
-using I2c3Sda = GpioC8;
+using I2c3Sda = GpioC9;
 using I2c3Scl = GpioA8;
 using I2c3Master = I2cMaster3;
 
