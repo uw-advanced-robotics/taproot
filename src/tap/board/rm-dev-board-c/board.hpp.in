@@ -184,18 +184,25 @@ inline void initialize()
 #endif
 }
 
-inline void initializeI2c2(uint32_t baudrate = 100000, 
-                          I2c2Master::PullUps pullups = I2CMaster::PullUps::External)
+template <uint32_t Baudrate = 100000>
+inline void initializeI2c2(I2c2Master::PullUps pullups = I2CMaster::PullUps::External)
 {
     I2c2Master::connect<I2c2Scl::Scl, I2c2Sda::Sda>(pullups);
-    I2c2Master::initialize<SystemClock, baudrate>();
+    I2c2Master::initialize<SystemClock, Baudrate>();
 }
 
-inline void initializeI2c3(uint32_t baudrate = 100000, 
-                          I2c3Master::PullUps pullups = I2CMaster::PullUps::Internal)
+template <uint32_t Baudrate = 100000>
+inline void initializeI2c3(I2c3Master::PullUps pullups = I2CMaster::PullUps::Internal)
 {
     I2c3Master::connect<I2c3Scl::Scl, I2c3Sda::Sda>(pullups);
-    I2c3Master::initialize<SystemClock, baudrate>();
+    I2c3Master::initialize<SystemClock, Baudrate>();
+}
+
+template <uint32_t Baudrate = 10000000>
+inline void initializeSpi2()
+{
+    Spi2Master::connect<Spi2Miso::Miso, Spi2Mosi::Mosi, Spi2Sck::Sck>();
+    Spi2Master::initialize<SystemClock, Baudrate>();
 }
 
 }  // namespace Board

@@ -193,10 +193,11 @@ inline void initialize()
 #endif
 }
 
-inline void initializeI2c(uint32_t baudrate = 100000, I2cMaster::PullUps pullups = I2cMaster::PullUps::External)
+template <uint32_t Baudrate = 100000>
+inline void initializeI2c(I2cMaster::PullUps pullups = I2cMaster::PullUps::External)
 {
     I2cMaster::connect<I2cScl::Scl, I2cSda::Sda>(pullups);
-    I2cMaster::initialize<SystemClock, baudrate>();
+    I2cMaster::initialize<SystemClock, Baudrate>();
 }
 
 }  // namespace Board
