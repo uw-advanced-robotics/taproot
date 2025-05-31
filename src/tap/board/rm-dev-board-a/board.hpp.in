@@ -176,9 +176,9 @@ using DisplayReset = GpioB10;
 using DisplayCommand = GpioB9;
 using DisplaySpiMaster = SpiMaster1;
 
-using I2CSda = GpioF0;
+using I2cSda = GpioF0;
 using I2cScl = GpioF1;
-using I2CMaster = I2cMaster2;
+using I2cMaster = I2cMaster2;
 
 #endif
 
@@ -193,10 +193,10 @@ inline void initialize()
 #endif
 }
 
-inline void initializeI2c(uint32_t baudrate = 100000, I2CMaster::PullUps pullups = I2CMaster::PullUps::External)
+inline void initializeI2c(uint32_t baudrate = 100000, I2cMaster::PullUps pullups = I2cMaster::PullUps::External)
 {
-    I2CMaster::connect<I2CScl::Scl, I2CSda::Sda>(pullups);
-    I2CMaster::initialize(SystemClock, baudrate);
+    I2cMaster::connect<I2cScl::Scl, I2cSda::Sda>(pullups);
+    I2cMaster::initialize<SystemClock, baudrate>();
 }
 
 }  // namespace Board
