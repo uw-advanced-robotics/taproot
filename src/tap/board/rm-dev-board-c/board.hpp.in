@@ -188,14 +188,14 @@ inline void initializeI2c2(uint32_t baudrate = 100000,
                           I2c2Master::PullUps pullups = I2CMaster::PullUps::External)
 {
     I2c2Master::connect<I2c2Scl::Scl, I2c2Sda::Sda>(pullups);
-    I2c2Master::initialize(SystemClock, baudrate);
+    I2c2Master::initialize<SystemClock, baudrate>();
 }
 
 inline void initializeI2c3(uint32_t baudrate = 100000, 
                           I2c3Master::PullUps pullups = I2CMaster::PullUps::Internal)
 {
     I2c3Master::connect<I2c3Scl::Scl, I2c3Sda::Sda>(pullups);
-    I2c3Master::initialize(SystemClock, baudrate);
+    I2c3Master::initialize<SystemClock, baudrate>();
 }
 
 }  // namespace Board
