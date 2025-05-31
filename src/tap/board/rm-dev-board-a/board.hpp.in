@@ -193,7 +193,7 @@ inline void initialize()
 #endif
 }
 
-inline void initializeI2c(uint32_t baudrate = 100000; I2CMaster::Pullups pullups = I2CMaster::Pullups::External)
+inline void initializeI2c(uint32_t baudrate = 100000, I2CMaster::PullUps pullups = I2CMaster::PullUps::External)
 {
     I2CMaster::connect<I2CScl::Scl, I2CSda::Sda>(pullups);
     I2CMaster::initialize(SystemClock, baudrate);
