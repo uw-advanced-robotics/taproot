@@ -682,7 +682,7 @@ public:
                 "Invalid type, getWaitTimeAfterGraphicSendMs only takes in ref serial message "
                 "types.");
 
-            return sizeof(T) * 1'000 / ROBOT_INTERACTION_DATA_RATE;
+            return 1'000 / ROBOT_INTERACTION_DATA_RATE;
         }
     };
 };
