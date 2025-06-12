@@ -21,7 +21,13 @@
 
 #include "modm/architecture/interface/can_message.hpp"
 
-namespace tap::encoder
+namespace tap
+{
+namespace display
+{
+__attribute__((weak)) void displayCanEncoder(tap::can::CanBus, tap::encoder::CanEncoder*){}
+}
+namespace encoder
 {
 CanEncoder::CanEncoder(
     Drivers* drivers,
@@ -38,7 +44,11 @@ CanEncoder::CanEncoder(
 
 bool CanEncoder::isOnline() const { return !this->encoderDisconnectTimeout.isExpired(); }
 
-void CanEncoder::initialize() { attachSelfToRxHandler(); }
+void CanEncoder::initialize()
+{
+    attachSelfToRxHandler();
+    tap::display::displayCanEncoder(this->canBus, this);
+}
 
 void CanEncoder::processMessage(const modm::can::Message& message)
 {
@@ -48,5 +58,6 @@ void CanEncoder::processMessage(const modm::can::Message& message)
     this->gauss = (message.data[3] << 8) | message.data[2];
     this->encoderDisconnectTimeout.restart(DISCONNECT_TIME);
 }
-
 }  // namespace tap::encoder
+
+}  // namespace tap
