@@ -37,6 +37,12 @@ def prepare(module, options):
     # motor-specific dependencies
     module.depends(":communication:can", ":communication:tcp-server", ":communication:sensors:encoder")
 
+    module.add_option(
+        BooleanOption(
+            name="use_multi_encoder",
+            default=False,
+            description="Enables MultiEncoder usage for (Double)DjiMotor with an external encoder."))
+
     # command mapper dependencies
     module.depends(":communication:serial:remote")
 
@@ -65,11 +71,19 @@ def build(env):
     env.copy("tap/algorithms")
     env.copy("tap/architecture")
     env.copy("tap/control")
-    env.copy("tap/motor")
+    env.copy("tap/motor", ignore=env.ignore_files(*[
+        "dji_motor.hpp.in", "dji_motor.cpp.in",
+        "double_dji_motor.hpp.in", "double_dji_motor.cpp.in",
+    ]))
 
     env.substitutions = {
         "object_and_mocks": drivers.get_object_and_mock_names(env),
         "mock_driver_includes": drivers.get_mock_headers_sorted(env),
         "src_driver_includes": drivers.get_src_files_sorted(env),
+        "use_multi_encoder": env[":core:use_multi_encoder"]
     }
     env.template("drivers.hpp.in", "tap/drivers.hpp")
+    env.template("tap/motor/dji_motor.hpp.in", "tap/motor/dji_motor.hpp")
+    env.template("tap/motor/dji_motor.cpp.in", "tap/motor/dji_motor.cpp")
+    env.template("tap/motor/double_dji_motor.hpp.in", "tap/motor/double_dji_motor.hpp")
+    env.template("tap/motor/double_dji_motor.cpp.in", "tap/motor/double_dji_motor.cpp")

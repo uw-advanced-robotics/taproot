@@ -1,5 +1,9 @@
 # Taproot Changelog
 
+## June 2025
+- Removed the automatic use of `MultiEncoder` for `(Double)DjiMotor`. 
+  - Can be reenabled with the option `taproot:core:use_multi_encoder`
+
 ## May 2025
 
 - Inverted the gear ratios in `DjiMotorEncoder` so that they are output/input.

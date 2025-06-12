@@ -108,7 +108,11 @@ public:
 
     tap::encoder::EncoderInterface* getEncoder() const override
     {
-        return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
+%% if use_multi_encoder
+    return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
+%% else
+    return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
+%% endif
     }
 
     /**
@@ -206,7 +210,11 @@ private:
     Encoder internalEncoder;
 #endif
 
+%% if use_multi_encoder
     tap::encoder::MultiEncoder<2> encoder;
+%% else
+    tap::encoder::EncoderInterface* encoder;
+%% endif
 
     tap::arch::MilliTimeout motorDisconnectTimeout;
 };
