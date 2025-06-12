@@ -109,9 +109,9 @@ public:
     tap::encoder::EncoderInterface* getEncoder() const override
     {
 %% if use_multi_encoder
-    return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
+        return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
 %% else
-    return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
+        return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
 %% endif
     }
 
