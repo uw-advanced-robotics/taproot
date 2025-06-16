@@ -111,6 +111,16 @@ public:
 %% if use_multi_encoder
         return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
 %% else
+        if (this->encoder == nullptr)
+        {
+            return const_cast<
+#if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
+                testing::NiceMock<Encoder>*
+#else
+                Encoder*
+#endif
+            >(&this->internalEncoder);
+        }
         return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
 %% endif
     }
