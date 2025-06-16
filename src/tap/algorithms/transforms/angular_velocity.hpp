@@ -46,12 +46,12 @@ public:
     /**
      * @brief Get the roll velocity
      */
-    inline float getRollVelocity() const { return matrix_.data[0 * 3 + 2]; }
+    inline float getRollVelocity() const { return -matrix_.data[1 * 3 + 2]; }
 
     /**
      * @brief Get the pitch velocity
      */
-    inline float getPitchVelocity() const { return -matrix_.data[1 * 3 + 2]; }
+    inline float getPitchVelocity() const { return matrix_.data[0 * 3 + 2]; }
 
     /**
      * @brief Get the yaw velocity

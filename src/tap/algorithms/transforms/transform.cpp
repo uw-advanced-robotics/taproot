@@ -335,7 +335,7 @@ float Transform::getRoll() const
     return atan2(jz, kz);
 }
 
-float Transform::getRollVelocity() const { return angVel.data[0 * 3 + 2]; }
+float Transform::getRollVelocity() const { return -angVel.data[1 * 3 + 2]; }
 
 float Transform::getPitch() const
 {
@@ -343,7 +343,7 @@ float Transform::getPitch() const
     return asinf(-iz);
 }
 
-float Transform::getPitchVelocity() const { return -angVel.data[1 * 3 + 2]; }
+float Transform::getPitchVelocity() const { return angVel.data[0 * 3 + 2]; }
 
 float Transform::getYaw() const
 {
