@@ -61,11 +61,7 @@ public:
 %% if use_multi_encoder
         return const_cast<tap::encoder::MultiEncoder<3>*>(&this->encoder);
 %% else
-        if (this->externalEncoder == nullptr)
-        {
-            return const_cast<tap::motor::Encoder*>(&this->motorOne.getInternalEncoder());
-        }
-        return const_cast<tap::encoder::EncoderInterface*>(this->externalEncoder);
+        return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
 %% endif
     }
     void setDesiredOutput(int32_t desiredOutput) override;
@@ -88,7 +84,7 @@ protected:
 %% if use_multi_encoder
     tap::encoder::MultiEncoder<3> encoder;
 %% else
-    tap::encoder::EncoderInterface* externalEncoder;
+    tap::encoder::EncoderInterface* encoder;
 %% endif
 };
 }  // namespace tap::motor

@@ -65,7 +65,8 @@ DjiMotor::DjiMotor(
            externalEncoder != nullptr ? const_cast<Encoder*>(&this->getInternalEncoder())
                                       : nullptr})
 %% else
-      encoder(externalEncoder)
+      encoder(externalEncoder != nullptr ? externalEncoder 
+                                         : const_cast<Encoder*>(&this->getInternalEncoder()))
 %% endif
 {
     motorDisconnectTimeout.stop();
@@ -78,10 +79,7 @@ void DjiMotor::initialize()
 %% if use_multi_encoder
     this->encoder.initialize();
 %% else
-    if (this->encoder != nullptr)
-    {
-        this->encoder->initialize();
-    }
+    this->encoder->initialize();
 %% endif
 }
 
