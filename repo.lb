@@ -61,7 +61,7 @@ def build(env):
     add_immutable_warning(f"taproot")
 
     if env[":rebuild_modm"]:
-        build_subproject("modm", "taproot", "modm")
+        build_subproject("modm", "taproot", "taproot/modm")
 
         for target in ALL_HOSTED_TARGET_NAMES:
             build_subproject(f"sim-modm {target}", f"taproot/sim-modm/{target}")
