@@ -64,7 +64,7 @@ def hash_directory(cwd, output):
     hashed_files = []
 
     if output != cwd:
-        hashed_files.append(os.path.join(cwd, "project.xml"))
+        files_to_hash.append(os.path.join(cwd, "project.xml"))
 
     for root, _, files in os.walk(output, topdown=True):
         files.sort()
