@@ -18,12 +18,27 @@
 import subprocess
 import os
 import hashlib
+import re
+import platform
 
-def build_subproject(name, cwd, git_dir):
+def build_subproject(name, cwd, output=""):
     print(f"building {name}")
+
+    if output == "":
+        output = cwd
+
     try:
-        git_sha = subprocess.check_output(["git", "describe", "--always"], cwd=git_dir).decode('UTF-8').strip()
-        directory_sha = hash_directory(cwd)
+        git_dir = ""
+
+        if platform.system() == "Windows":
+            override_windows(cwd)
+
+        with open(os.path.join(cwd, "project.xml"), "rb") as f:
+            data = f.read(65536).decode('UTF-8').strip()
+            git_dir = re.findall(r"<path>(.*)(\/|\\)repo\.lb</path>", data)[0][0]
+
+        git_sha = subprocess.check_output(["git", "describe", "--always"], cwd=os.path.join(cwd, git_dir)).decode('UTF-8').strip()
+        directory_sha = hash_directory(cwd, output)
 
         if os.path.exists(os.path.join(cwd, ".cache")):
             with open(os.path.join(cwd, ".cache"), "rb") as f:
@@ -32,17 +47,26 @@ def build_subproject(name, cwd, git_dir):
                     return
 
         subprocess.run(["lbuild", "build"], check=True, cwd=cwd)
+
+        if platform.system() == "Windows":
+            override_windows(cwd)
+
+        directory_sha = hash_directory(cwd, output)
         with open(os.path.join(cwd, ".cache"), "wb") as f:
             f.write(f"{git_sha} {directory_sha}".encode("UTF-8"))
     except subprocess.CalledProcessError as e:
         print(e)
         exit(1)
 
-def hash_directory(directory):
+def hash_directory(cwd, output):
     import multiprocessing 
     files_to_hash = []
     hashed_files = []
-    for root, _, files in os.walk(directory, topdown=True):
+
+    if output != cwd:
+        hashed_files.append(os.path.join(output, "project.xml"))
+
+    for root, _, files in os.walk(output, topdown=True):
         files.sort()
 
         for file in files:
@@ -68,3 +92,41 @@ def hash_file(file):
                 break
             sha.update(data)
     return sha.hexdigest()
+
+def override_windows(cwd):
+    # Note: The LF/CRLF change should be undone by git automatically when the change is staged but we do it manually to reduce confusion
+    LF_TO_CRLF = ["modm/ext/gcc/cabi.c"]
+    DOUBLE_BACKSLASHES_TO_FORWARD_SLASHES = ["modm/openocd.cfg"]
+    BACKSLASHES_TO_FORWARD_SLASHES = [
+        "project.xml",
+        "modm/SConscript",
+        "modm/ext/printf/printf.h",
+    ]
+
+    for file_path in LF_TO_CRLF:
+        if os.path.exists(os.path.join(cwd, file_path)):
+            with open(os.path.join(cwd, file_path), "rb+") as f:
+                content = f.read()
+                content = content.replace(b"\r\n", b"\n")
+                f.seek(0)
+                f.write(content)
+                f.truncate()
+    
+    for file_path in DOUBLE_BACKSLASHES_TO_FORWARD_SLASHES:
+        if os.path.exists(os.path.join(cwd, file_path)):
+            with open(os.path.join(cwd, file_path), "r+", encoding="utf8") as f:
+                content = f.read()
+                content = content.replace("\\\\", "/")
+                f.seek(0)
+                f.write(content)
+                f.truncate()
+
+    for file_path in BACKSLASHES_TO_FORWARD_SLASHES:
+        if os.path.exists(os.path.join(cwd, file_path)):
+            with open(os.path.join(cwd, file_path), "r+", encoding="utf8") as f:
+                content = f.read()
+                content = content.replace("\\", "/")
+                f.seek(0)
+                f.write(content)
+                f.truncate()
+
