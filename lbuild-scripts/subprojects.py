@@ -90,6 +90,7 @@ def hash_file(file):
             data = f.read(65536)
             if not data:
                 break
+            data = data.replace(b"\r\n", b"\n")
             sha.update(data)
     return sha.hexdigest()
 
