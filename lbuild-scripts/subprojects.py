@@ -37,7 +37,7 @@ def build_subproject(name, cwd, output=""):
             data = f.read(65536).decode('UTF-8').strip()
             git_dir = re.findall(r"<path>(.*)(\/|\\)repo\.lb</path>", data)[0][0]
 
-        git_sha = subprocess.check_output(["git", "describe", "--always"], cwd=os.path.join(cwd, git_dir)).decode('UTF-8').strip()
+        git_sha = subprocess.check_output(["git", "describe", "--always", "--abbrev=7"], cwd=os.path.join(cwd, git_dir)).decode('UTF-8').strip()
         directory_sha = hash_directory(cwd, output)
 
         if os.path.exists(os.path.join(cwd, ".cache")):
