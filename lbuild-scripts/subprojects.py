@@ -54,7 +54,7 @@ def build_subproject(name, cwd, output=""):
         directory_sha = hash_directory(cwd, output)
         with open(os.path.join(cwd, ".cache"), "wb") as f:
             f.write(f"{git_sha} {directory_sha}".encode("UTF-8"))
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         print(e)
         exit(1)
 
@@ -64,7 +64,7 @@ def hash_directory(cwd, output):
     hashed_files = []
 
     if output != cwd:
-        hashed_files.append(os.path.join(output, "project.xml"))
+        hashed_files.append(os.path.join(cwd, "project.xml"))
 
     for root, _, files in os.walk(output, topdown=True):
         files.sort()
