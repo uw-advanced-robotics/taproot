@@ -106,11 +106,12 @@ public:
 
     void setCalibrationSamples(int sampleCount) { offsetSampleCount = sampleCount; }
 
+    void setAccelOffset(float x, float y, float z);
+    void setGyroOffset(float x, float y, float z);
+
 protected:
     void resetOffsets();
     void computeOffsets();
-    void setAccelOffset(float x, float y, float z);
-    void setGyroOffset(float x, float y, float z);
 
     inline void applyMountingTransformToRaw(ImuData& data)
     {
