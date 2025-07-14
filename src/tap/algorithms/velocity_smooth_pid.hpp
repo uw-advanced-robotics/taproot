@@ -17,82 +17,28 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_SMOOTH_PID_HPP_
-#define TAPROOT_SMOOTH_PID_HPP_
+#ifndef TAPROOT_VELOCITY_SMOOTH_PID_HPP_
+#define TAPROOT_VELOCITY_SMOOTH_PID_HPP_
 
 #include <cstdint>
 #include <array>
 
 #include "tap/algorithms/extended_kalman.hpp"
+#include "tap/algorithms/smooth_pid.hpp"
 
 namespace tap
 {
 namespace algorithms
 {
-struct VelocitySmoothPidConfig
-{
-    float kp = 0.0f;
-    float ki = 0.0f;
-    float kd = 0.0f;
-    float maxICumulative = 0.0f;
-    float maxOutput = 0.0f;
-    float tQDerivativeKalman = 1.0f;   /**< The system noise covariance for the kalman filter that
-                                        * is applied to the derivative of the error. */
-    float tRDerivativeKalman = 0.0f;   /**< The measurement noise covariance for the kalman filter
-                                        * that is applied to the derivative of the error. */
-    float tQProportionalKalman = 1.0f; /**< The system noise covariance for the kalman filter that
-                                        *  is applied to the proportional error. */
-    float tRProportionalKalman = 0.0f; /**< The measurement noise covariance for the kalman filter
-                                        * that is applied to the proportional error. */
-    float errDeadzone = 0.0f;          /**< Within [-errDeadzone, errDeadzone], the PID controller
-                                        * error will be set to 0. */
-    float errorDerivativeFloor = 0.0f; /**< Minimum error value at which the PID controller will
-                                        * compute and apply the derivative term. */
-};
-
-class VelocitySmoothPid
+class VelocitySmoothPid : public SmoothPid
 {
 public:
-    VelocitySmoothPid(const VelocitySmoothPidConfig &pidConfig);
+    VelocitySmoothPid(const SmoothPidConfig& pidConfig);
 
-    /**
-     * Runs the PID controller. Should be called frequently for best results.
-     *
-     * @param[in] error The error (in user-defined units) between some target and measured value.
-     * @param[in] errorDerivative The derivative of the error passed in above (in user-defined units
-     * / time).
-     * @param[in] dt The difference in time between the time this function is being called and the
-     * last time this function was called.
-     */
-    virtual float runController(float error, float errorDerivative, float dt);
-
-    float runControllerDerivateError(float error, float dt);
-
-    float getOutput();
-
-    void reset();
-
-    inline void setP(float p) { config.kp = p; }
-    inline void setI(float i) { config.ki = i; }
-    inline void setD(float d) { config.kd = d; }
-    inline void setMaxICumulative(float maxICumulative) { config.maxICumulative = maxICumulative; }
-    inline void setMaxOutput(float maxOutput) { config.maxOutput = maxOutput; }
-    inline void setErrDeadzone(float errDeadzone) { config.errDeadzone = errDeadzone; }
+    float runController(float error, float errorDerivative, float dt) override;
 
 private:
-    // gains and constants, to be set by the user
-    VelocitySmoothPidConfig config;
-
-    // while these could be local, debugging pid is much easier if they are not
-    float currErrorP = 0.0f;
-    float currErrorI = 0.0f;
-    float currErrorD = 0.0f;
-    float output = 0.0f;
-    float prevError = 0.0f;
     std::array<float, 3> pastErrors = {0.0f, 0.0f, 0.0f};
-
-    tap::algorithms::ExtendedKalman proportionalKalman;
-    tap::algorithms::ExtendedKalman derivativeKalman;
 };
 
 }  // namespace algorithms

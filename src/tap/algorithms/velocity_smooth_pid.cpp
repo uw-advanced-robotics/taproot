@@ -27,10 +27,8 @@ namespace tap
 {
 namespace algorithms
 {
-VelocitySmoothPid::VelocitySmoothPid(const VelocitySmoothPidConfig &pidConfig)
-    : config(pidConfig),
-      proportionalKalman(pidConfig.tQProportionalKalman, pidConfig.tRProportionalKalman),
-      derivativeKalman(pidConfig.tQDerivativeKalman, pidConfig.tRDerivativeKalman)
+VelocitySmoothPid::VelocitySmoothPid(const SmoothPidConfig& pidConfig)
+    : SmoothPid(pidConfig)
 {
 }
 
@@ -68,29 +66,6 @@ float VelocitySmoothPid::runController(float error, float errorDerivative, float
     return output;
 }
 
-float VelocitySmoothPid::runControllerDerivateError(float error, float dt)
-{
-    if (compareFloatClose(dt, 0.0f, 1E-5))
-    {
-        dt = 1.0f;
-    }
-    float errorDerivative = (error - prevError) / dt;
-    prevError = error;
-    return runController(error, errorDerivative, dt);
-}
-
-float VelocitySmoothPid::getOutput() { return output; }
-
-void VelocitySmoothPid::reset()
-{
-    this->output = 0.0f;
-    this->currErrorP = 0.0f;
-    this->currErrorI = 0.0f;
-    this->currErrorD = 0.0f;
-    this->prevError = 0.0f;
-    this->derivativeKalman.reset();
-    this->proportionalKalman.reset();
-}
 
 }  // namespace algorithms
 

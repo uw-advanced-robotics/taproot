@@ -78,7 +78,7 @@ public:
     inline void setMaxOutput(float maxOutput) { config.maxOutput = maxOutput; }
     inline void setErrDeadzone(float errDeadzone) { config.errDeadzone = errDeadzone; }
 
-private:
+protected:
     // gains and constants, to be set by the user
     SmoothPidConfig config;
 
