@@ -35,7 +35,7 @@ namespace tap::errors
  * RAISE_ERROR(drivers, "CRC8 failure");
  * ```
  */
-#if __has_include("tap/error/error_control.hpp")
+#if __has_include("tap/errors/error_controller.hpp")
 #define RAISE_ERROR(drivers, desc)                                      \
     do                                                                  \
     {                                                                   \

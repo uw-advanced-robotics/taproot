@@ -18,18 +18,24 @@
  */
 
 #include "littlefs_internal.hpp"
+#include "tap/util_macros.hpp"
 
+#ifndef PLATFORM_HOSTED
 #include "modm/platform/flash/flash.hpp"
 
-using namespace tap::storage;
 using namespace modm::platform;
+#endif
+
+using namespace tap::storage;
 
 LittleFSInternal::LittleFSInternal() {}
 
 void LittleFSInternal::initialize()
 {
+#ifndef PLATFORM_HOSTED
     Flash::enable();
     Flash::unlock();
+#endif
 }
 
 int LittleFSInternal::lfs_read(
@@ -62,6 +68,14 @@ int LittleFSInternal::lfs_program(
     const void *buffer,
     lfs_size_t size)
 {
+#ifdef PLATFORM_HOSTED
+    UNUSED(c);
+    UNUSED(block);
+    UNUSED(off);
+    UNUSED(buffer);
+    UNUSED(size);
+    return true;
+#else
     // Offset and size must be aligned
     if (block >= c->block_count || (size % c->prog_size) != 0 || (off % c->prog_size) != 0)
     {
@@ -79,20 +93,28 @@ int LittleFSInternal::lfs_program(
     }
 
     return LFS_ERR_OK;
+#endif
 }
 
 int LittleFSInternal::lfs_erase(const struct lfs_config *c, lfs_block_t block)
 {
+#ifdef PLATFORM_HOSTED
+    UNUSED(c);
+    UNUSED(block);
+    return true;
+#else
     static constexpr int BANK2_INDEX_OFFSET = 4;
     if (block >= c->block_count)
     {
         return LFS_ERR_IO;
     }
     return (Flash::erase(SECTOR_ZERO + block + BANK2_INDEX_OFFSET) == 0 ? LFS_ERR_OK : LFS_ERR_IO);
+#endif
 }
 
-int LittleFSInternal::lfs_sync(__unused const struct lfs_config *c)
+int LittleFSInternal::lfs_sync(const struct lfs_config *c)
 {
+    UNUSED(c);
     // Return OK since all changes are immediately written to FLASH on Flash::program()
     return LFS_ERR_OK;
 }
