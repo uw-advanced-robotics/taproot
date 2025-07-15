@@ -75,6 +75,8 @@ bool tap::can::Can::isMessageAvailable(tap::can::CanBus bus) const
 bool tap::can::Can::getMessage(tap::can::CanBus bus, modm::can::Message* message)
 {
 #ifdef PLATFORM_HOSTED
+    UNUSED(bus);
+    UNUSED(message);
     return false;
 #else
     switch (bus)
@@ -110,6 +112,8 @@ bool tap::can::Can::isReadyToSend(CanBus bus) const
 bool tap::can::Can::sendMessage(CanBus bus, const modm::can::Message& message)
 {
 #ifdef PLATFORM_HOSTED
+    UNUSED(bus);
+    UNUSED(message);
     return true;
 #else
     switch (bus)

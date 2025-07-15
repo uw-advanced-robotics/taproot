@@ -18,6 +18,7 @@
  */
 
 #include "littlefs_internal.hpp"
+
 #include "tap/util_macros.hpp"
 
 #ifndef PLATFORM_HOSTED

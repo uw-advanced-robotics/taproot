@@ -20,11 +20,11 @@
 
 #include <cmath>
 
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 
 #include "modm/math/geometry/angle.hpp"
 #include "modm/math/geometry/vector.hpp"
-#include "tap/algorithms/math_user_utils.hpp"
 
 #include "chassis_displacement_observer_interface.hpp"
 #include "chassis_world_yaw_observer_interface.hpp"
@@ -64,9 +64,7 @@ void Odometry2DTracker::update()
             vel[0][0] = chassisVelocity.x;
             vel[1][0] = chassisVelocity.y;
             vel[2][0] = 0;  ///< Rotational velocity doesn't matter
-            getVelocityWorldRelative(
-                vel,
-                chassisYaw);
+            getVelocityWorldRelative(vel, chassisYaw);
             velocity.setX(vel[0][0]);
             velocity.setY(vel[1][0]);
         }
