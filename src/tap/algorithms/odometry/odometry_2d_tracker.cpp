@@ -77,6 +77,11 @@ void Odometry2DTracker::update()
     }
 }
 
+void Odometry2DTracker::overrideOdometryPosition(const float positionX, const float positionY)
+{
+    location.setPosition(positionX, positionY);
+}
+
 void getVelocityWorldRelative(
     modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
     float chassisHeading)

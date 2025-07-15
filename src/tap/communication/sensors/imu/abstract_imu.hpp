@@ -41,7 +41,7 @@ class AbstractIMU : public ImuInterface
 {
 public:
     AbstractIMU(const Transform& mountingTransform = Transform::identity())
-        : mountingTransform(mountingTransform)
+        : mountingTransform(mountingTransform.getInverse())
     {
     }
 
@@ -57,7 +57,7 @@ public:
      * calibrating, angle, accelerometer, and gyroscope values will return 0. When calibrating
      * the BMI088 should be level, otherwise the IMU will be calibrated incorrectly.
      */
-    virtual void requestCalibration();
+    virtual void requestCalibration() override;
 
     /**
      * Call this function at same rate as intialized sample frequency.
@@ -106,16 +106,17 @@ public:
 
     void setCalibrationSamples(int sampleCount) { offsetSampleCount = sampleCount; }
 
-protected:
-    void resetOffsets();
-    void computeOffsets();
     void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
 
-    inline void applyTransform(ImuData& data)
+protected:
+    void resetOffsets();
+    void computeOffsets();
+
+    inline void applyMountingTransformToRaw(ImuData& data)
     {
-        data.accG = mountingTransform.apply(data.accG);
-        data.gyroRadPerSec = mountingTransform.apply(data.gyroRadPerSec);
+        data.accRaw = mountingTransform.apply(data.accRaw);
+        data.gyroRaw = mountingTransform.apply(data.gyroRaw);
     }
 
     virtual inline float getAccelerationSensitivity() const = 0;

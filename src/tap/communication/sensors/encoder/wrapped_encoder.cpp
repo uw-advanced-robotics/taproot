@@ -76,7 +76,7 @@ void WrappedEncoder::alignWith(EncoderInterface* other)
 {
     tap::algorithms::WrappedFloat positionDifference = other->getPosition() - position;
     float offset = positionDifference.getUnwrappedValue() / static_cast<float>(M_TWOPI) *
-                   encoderResolution * gearRatio;
+                   encoderResolution / gearRatio;
     this->encoderHomePosition += offset;
     this->encoder += offset;
     this->position = other->getPosition();
@@ -104,9 +104,18 @@ void WrappedEncoder::updateEncoderValue(uint32_t encoderActual)
         encoder += encoder.minDifference(newEncWrapped);
     }
 
+    uint32_t time = tap::arch::clock::getTimeMicroseconds();
+    if (time < lastUpdateTime)
+    {
+        deltaTime = time + ((0xFFFFFFFFul) - lastUpdateTime);
+    }
+    else
+    {
+        deltaTime = time - lastUpdateTime;
+    }
+    lastUpdateTime = time;
+
     pastPosition = position;
-    deltaTime = tap::arch::clock::getTimeMicroseconds() - lastUpdateTime;
-    lastUpdateTime = tap::arch::clock::getTimeMicroseconds();
     position.setUnwrappedValue(
         encoder.getUnwrappedValue() * static_cast<float>(M_TWOPI) / encoderResolution * gearRatio);
 }

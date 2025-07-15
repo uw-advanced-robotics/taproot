@@ -26,13 +26,23 @@ def prepare(module, options):
         ":communication:sensors:encoder",
         ":communication:can")
 
+    module.add_option(
+        BooleanOption(
+            name="use_multi_encoder",
+            default=False,
+            description="Enables MultiEncoder usage for (Double)DjiMotor with an external encoder."))
+
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/motor"
     pwmFiles = ["servo.cpp", "servo.hpp"]
     terminalFiles = ["dji_motor_terminal_serial_handler.hpp", "dji_motor_terminal_serial_handler.cpp"]
-    env.copy(".", ignore=env.ignore_files(*(terminalFiles + pwmFiles)))
+    motorFiles = [
+        "dji_motor.hpp.in", "dji_motor.cpp.in",
+        "double_dji_motor.hpp.in", "double_dji_motor.cpp.in",
+    ]
+    env.copy(".", ignore=env.ignore_files(*(terminalFiles + pwmFiles + motorFiles)))
 
     if env.has_module(":communication:serial:terminal_serial"):
         for file in terminalFiles:
@@ -41,3 +51,12 @@ def build(env):
     if env.has_module(":communication:gpio:pwm"):
         for file in pwmFiles:
             env.copy(file)
+
+    env.substitutions = {
+        "use_multi_encoder": env[":motor:use_multi_encoder"]
+    }
+    
+    env.template("dji_motor.hpp.in", "dji_motor.hpp")
+    env.template("dji_motor.cpp.in", "dji_motor.cpp")
+    env.template("double_dji_motor.hpp.in", "double_dji_motor.hpp")
+    env.template("double_dji_motor.cpp.in", "double_dji_motor.cpp")

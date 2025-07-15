@@ -61,8 +61,8 @@ class CanRxListener;
  * pollCanData function be called at a very high frequency,
  * so call this in a high frequency thread.
  *
- * @note In the middle of this range, CAN ids [`0x201`, `0x20B`] are used by the `DjiMotor` objects
- *      to receive data from DJI branded motors. If you would like to define your own protocol, it
+ * @note CAN ids [`0x201`, `0x20B`] are used by the `DjiMotor` objects to receive
+ *      data from DJI branded motors. If you would like to define your own protocol, it
  *      is recommended to avoid avoid using CAN ids in this range.
  * @note the DjiMotor driver reserves `0x1FF` and `0x200` for commanding motors,
  *      and thus you should not attach listeners for these ids.

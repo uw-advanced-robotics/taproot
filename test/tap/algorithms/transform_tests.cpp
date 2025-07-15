@@ -277,6 +277,26 @@ TEST(Transform, dynamic_transform_compose_with_inverse_yields_identity)
     expectEq(composed, identity);
 }
 
+TEST(Transform, transform_ang_vel_getters)
+{
+    float wx = 1, wy = 2, wz = 3;
+    Transform t(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, wx, wy, wz);
+
+    EXPECT_EQ(t.getRollVelocity(), wx);
+    EXPECT_EQ(t.getPitchVelocity(), wy);
+    EXPECT_EQ(t.getYawVelocity(), wz);
+}
+
+TEST(Transform, ang_vel_getters)
+{
+    float wx = 1, wy = 2, wz = 3;
+    AngularVelocity av(wx, wy, wz);
+
+    EXPECT_EQ(av.getRollVelocity(), wx);
+    EXPECT_EQ(av.getPitchVelocity(), wy);
+    EXPECT_EQ(av.getYawVelocity(), wz);
+}
+
 struct CompositionTestConfig
 {
     Transform a, b, e;
