@@ -1,0 +1,8 @@
+{% for config in configs %}
+"{{ config["name"] }}":
+  stage: Build all Targets
+  script:
+    - echo {{ config["device"] }}
+    - echo {{ config["modules"] }}
+    - echo {{ config["options"] }}
+{% endfor %}
