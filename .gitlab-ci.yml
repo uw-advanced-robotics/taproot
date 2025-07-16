@@ -280,8 +280,8 @@ pages:
 
 run_configs:
   stage: Build all Targets
-  # needs:
-  #   - generate_configs
+  needs:
+    - "Type A: Generate Test Project"
   trigger:
     include:
      - artifact: test_project/taproot/ci-scripts/
