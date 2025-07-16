@@ -10,7 +10,7 @@ ENFORCED_OPTIONS = {"rebuild_modm": True}
 
 def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
     generation_information = {}
-    lbuild_discover = lambda args=[]: subprocess.run(['lbuild', *args, 'discover'], env={**dict(os.environ), **{"PYTHONIOENCODING": "utf-8"}}, shell=True, capture_output=True)
+    lbuild_discover = lambda args=[]: subprocess.run(['lbuild', *args, 'discover'], env={**dict(os.environ), **{"PYTHONIOENCODING": "utf-8"}}, shell=True, capture_output=True, check=True, cwd=os.getcwd())
 
     device_discover = lbuild_discover()
     print(['lbuild', *[], 'discover'])
