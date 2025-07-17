@@ -29,7 +29,7 @@ def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
         }
         modules_to_select = modules - REQUIRED_MODULES
 
-        options = set(re.findall('Option\((.*)\) = (?:true|false|yes|no)', device_discover))
+        options = set(re.findall('Option\((.*)\) = (?:[tT]rue|[fF]alse|[yY]es|[nN]o)', device_discover))
         options_to_toggle = options - ENFORCED_OPTIONS.keys()
         option_lines = {
             option: [i for i, line in enumerate(lines) if f"Option({option})" in line][0] for option in options_to_toggle
