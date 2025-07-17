@@ -274,5 +274,5 @@ pages:
   needs: ["Type A: Generate Test Project"]
   only: *default_only
   trigger:
-    include: test_project/taproot/ci-scripts/build.yml
+    include: test-project/taproot/ci-scripts/build.yml
     strategy: depend

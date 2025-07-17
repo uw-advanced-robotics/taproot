@@ -13,10 +13,6 @@ def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
     lbuild_discover = lambda args=[]: subprocess.run(['lbuild', *args, 'discover'], env={**dict(os.environ), **{"PYTHONIOENCODING": "utf-8"}}, capture_output=True, cwd=os.getcwd())
 
     device_discover = lbuild_discover()
-    print(['lbuild', *[], 'discover'])
-    print(os.getcwd())
-    print(device_discover.stdout)
-    print(device_discover.stderr)
     devices = re.findall(b'Option\(dev_board\) = .* in \\[(.*)\\]', device_discover.stdout)[0].decode("utf-8").split(", ")
     print(f"Found {len(devices)} devices: {devices}")
 
