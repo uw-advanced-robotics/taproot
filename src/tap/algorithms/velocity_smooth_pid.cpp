@@ -27,33 +27,28 @@ namespace tap
 {
 namespace algorithms
 {
-VelocitySmoothPid::VelocitySmoothPid(const SmoothPidConfig& pidConfig)
-    : SmoothPid(pidConfig)
-{
-}
+VelocitySmoothPid::VelocitySmoothPid(const SmoothPidConfig& pidConfig) : SmoothPid(pidConfig) {}
 
 float VelocitySmoothPid::runController(float error, float errorDerivative, float dt)
 {
-    
     pastErrors[0] = pastErrors[1];
     pastErrors[1] = pastErrors[2];
     pastErrors[2] = proportionalKalman.filterData(error);
-
 
     if (abs(error) < config.errDeadzone)
     {
         error = 0.0f;
     }
-    
+
     // p
     currErrorP = config.kp * derivativeKalman.filterData(errorDerivative);
     // i
-    currErrorI = limitVal<float>( 
+    currErrorI = limitVal<float>(
         config.ki * proportionalKalman.getLastFiltered() * dt,
         -config.maxICumulative,
         config.maxICumulative);
     // d
-    currErrorD = -config.kd * (pastErrors[2] - 2*pastErrors[1] + pastErrors[0]) / dt;
+    currErrorD = -config.kd * (pastErrors[2] - 2 * pastErrors[1] + pastErrors[0]) / dt;
     if (fabs(error) < config.errorDerivativeFloor)
     {
         // the error is less than some amount, so round derivative output to 0
@@ -61,11 +56,12 @@ float VelocitySmoothPid::runController(float error, float errorDerivative, float
         currErrorD = 0.0f;
     }
     // total
-    output =
-        limitVal<float>(currErrorP + currErrorI + currErrorD + output, -config.maxOutput, config.maxOutput);
+    output = limitVal<float>(
+        currErrorP + currErrorI + currErrorD + output,
+        -config.maxOutput,
+        config.maxOutput);
     return output;
 }
-
 
 }  // namespace algorithms
 

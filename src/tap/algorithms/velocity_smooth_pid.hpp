@@ -20,8 +20,8 @@
 #ifndef TAPROOT_VELOCITY_SMOOTH_PID_HPP_
 #define TAPROOT_VELOCITY_SMOOTH_PID_HPP_
 
-#include <cstdint>
 #include <array>
+#include <cstdint>
 
 #include "tap/algorithms/extended_kalman.hpp"
 #include "tap/algorithms/smooth_pid.hpp"
