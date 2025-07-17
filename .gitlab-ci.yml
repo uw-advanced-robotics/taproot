@@ -269,18 +269,10 @@ pages:
   except:
     - schedules
 
-# generate_configs:
-#   stage: Generate Test Project
-#   script:
-#     - mkdir .generated_ci
-#     - python gitlab-ci-scripts/collect_modules.py
-#   artifacts:
-#     path:
-#       - .generated_ci/
-
-run_configs:
+"Run generated configs":
   stage: Build all Targets
   needs: ["Type A: Generate Test Project"]
+  only: *default_only
   trigger:
     include: test_project/taproot/ci-scripts/build.yml
     strategy: depend
