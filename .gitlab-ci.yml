@@ -280,8 +280,7 @@ pages:
 
 run_configs:
   stage: Build all Targets
-  extends:
-    - .type_a_config_dependencies
+  needs: ["Type A: Generate Test Project"]
   trigger:
     include: test_project/taproot/ci-scripts/build.yml
     strategy: depend
