@@ -16,7 +16,7 @@ stages:
   stage: "Generate Project"
   script:
     - cd test-project
-    - xml=$(python3 ./gitlab-ci-scripts/project_xml_generation.py $DEVICE $MODULES $OPTIONS)
+    - xml=$(python3 ../gitlab-ci-scripts/project_xml_generation.py $DEVICE $MODULES $OPTIONS)
     - lbuild -c $xml build
     - cd ..
   artifacts:
