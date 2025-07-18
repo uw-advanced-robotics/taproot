@@ -11,13 +11,13 @@ def generate_project_xml(board: str, options: Dict[str, bool], modules: Iterable
         file = f.read()
         file = file.replace("$BOARD$", board)
         file = file.replace("$OPTIONS$", 
-            "\n".join(
-                f"<option name=\"{o}\">{v}<\\option>" for o, v in options.items()
+            "\n\t".join(
+                f"<option name=\"{o}\">{v}</option>" for o, v in options.items()
             )
         )
         file = file.replace("$MODULES$", 
-            "\n".join(
-                f"<module>{m}<\\module>" for m in modules
+            "\n\t".join(
+                f"<module>{m}</module>" for m in modules
             )
         )
 
