@@ -237,18 +237,12 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 }
 
 /**
- * @brief Generates Butterworth filter coefficients for the specified order and type.
- *
- * @tparam ORDER  Filter order.
- * @tparam Type   Filter type (defaults to LOWPASS).
- * @tparam T      Numeric type for coefficients (defaults to float).
- *
- * @param[in] wc  Cutoff frequency ωc for LOWPASS/HIGHPASS filters.
- *                Lower edge ωl for BANDPASS/BANDSTOP filters.
- * @param[in] Ts  Sample time.
- * @param[in] wh  Upper edge ωh for BANDPASS/BANDSTOP filters (ignored for others, default = 0.0).
- *
- * @return A constexpr Coefficients struct containing the filter coefficients.
+ * @param[in] wc   for LOW/HIGHPASS: cutoff ωc.
+ *                 for BANDPASS/BANDSTOP: lower edge ωl.
+ * @param[in] Ts   sample time.
+ * @param[in] type filter type, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP.
+ *                 defaults to LOWPASS.
+ * @param[in] wh   upper edge ωh (only used for band filters).
  */
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
