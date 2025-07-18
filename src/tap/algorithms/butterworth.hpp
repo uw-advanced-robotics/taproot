@@ -238,8 +238,17 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
+/**
+ * @fn template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
+ * constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(double wc, double Ts, double wh = 0.0)
+ *
+ * @brief Generate Butterworth filter coefficients.
+ *
+ * @details This template returns the filter coefficients for the given ORDER and filter TYPE.
+ * The number of coefficients depends on ORDER and TYPE.
+ */
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
-constexpr Coefficients<ORDER, T> butterworth(
+constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double wc,
     double Ts,
     double wh = 0.0)
