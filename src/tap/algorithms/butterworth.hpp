@@ -28,73 +28,6 @@
 
 #include "discrete_filter.hpp"
 
-/**
- * @file butterworth.hpp
- * @brief Implementation of Butterworth filter design in the discrete domain.
- *
- * This header file provides a implementation of Butterworth filters,
- * including low-pass, high-pass, band-pass, and band-stop filters. The Butterworth
- * filter is known for its maximally flat frequency response in the passband, making
- * it ideal for applications requiring minimal signal distortion.
- *
- * The implementation includes:
- * - Conversion of poles and zeros from the Laplace domain to the Z domain using
- *   the bilinear transform.
- * - Expansion of polynomial coefficients from a set of poles or zeros.
- * - Evaluation of the frequency response of the filter at a given frequency.
- * - A templated Butterworth filter class for designing filters of arbitrary order
- *   and type.
- *
- * The design process includes pre-warping of frequencies for the bilinear transform,
- * generation of prototype poles, and scaling of coefficients.
- *
- * The following transforms map a lowpass prototype into other filter types (s-domain):
- *
- * - **Lowpass to Lowpass**:
- *   \f$ s \rightarrow \frac{s}{\Omega_c} \f$
- *
- * - **Lowpass to Highpass**:
- *   \f$ s \rightarrow \frac{\Omega_c}{s} \f$
- *
- * - **Lowpass to Bandpass**:
- *   \f$ s \rightarrow \frac{s^2 + \Omega_0^2}{B s} \f$
- *
- * - **Lowpass to Bandstop**:
- *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
- *
- * Where:
- * \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}, \quad B = \Omega_h - \Omega_l \f$
- *
- * After analog transformation, apply the bilinear transform:
- * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
- *
- * @note
- *    This implementation is designed for C++20 ``constexpr``.
- *
- * @warning
- *    High-order filters can introduce high phase delays and should be used with caution.
- *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
- *
- *    If results are suspicious, verify filter coefficients using external tools
- *    such as MATLAB or Python (e.g., SciPy).
- *
- *
- * @section Usage
- *
- * To use this implementation, include this header file and instantiate the
- * ``Butterworth`` class with the desired filter order, type, and parameters.
- * Then, pass those coefficients into a ``DiscreteFilter``.
- *
- * @code
- *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
- *    DiscreteFilter<2> Filter(coe);
- *
- * @endcode
- *
- * @author Aiden Prevey
- * @date 4/29/2025
- * @version 2.0
- */
 
 namespace tap::algorithms::filter
 {
@@ -230,6 +163,71 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 }
 
 /**
+ * @brief Implementation of Butterworth filter design in the discrete domain.
+ *
+ * This header file provides a implementation of Butterworth filters,
+ * including low-pass, high-pass, band-pass, and band-stop filters. The Butterworth
+ * filter is known for its maximally flat frequency response in the passband, making
+ * it ideal for applications requiring minimal signal distortion.
+ *
+ * The implementation includes:
+ * - Conversion of poles and zeros from the Laplace domain to the Z domain using
+ *   the bilinear transform.
+ * - Expansion of polynomial coefficients from a set of poles or zeros.
+ * - Evaluation of the frequency response of the filter at a given frequency.
+ * - A templated Butterworth filter class for designing filters of arbitrary order
+ *   and type.
+ *
+ * The design process includes pre-warping of frequencies for the bilinear transform,
+ * generation of prototype poles, and scaling of coefficients.
+ *
+ * The following transforms map a lowpass prototype into other filter types (s-domain):
+ *
+ * - **Lowpass to Lowpass**:
+ *   \f$ s \rightarrow \frac{s}{\Omega_c} \f$
+ *
+ * - **Lowpass to Highpass**:
+ *   \f$ s \rightarrow \frac{\Omega_c}{s} \f$
+ *
+ * - **Lowpass to Bandpass**:
+ *   \f$ s \rightarrow \frac{s^2 + \Omega_0^2}{B s} \f$
+ *
+ * - **Lowpass to Bandstop**:
+ *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
+ *
+ * Where:
+ * \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}, \quad B = \Omega_h - \Omega_l \f$
+ *
+ * After analog transformation, apply the bilinear transform:
+ * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
+ *
+ * @note
+ *    This implementation is designed for C++20 ``constexpr``.
+ *
+ * @warning
+ *    High-order filters can introduce high phase delays and should be used with caution.
+ *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
+ *
+ *    If results are suspicious, verify filter coefficients using external tools
+ *    such as MATLAB or Python (e.g., SciPy).
+ *
+ *
+ * @section Usage
+ *
+ * To use this implementation, include this header file and instantiate the
+ * ``Butterworth`` class with the desired filter order, type, and parameters.
+ * Then, pass those coefficients into a ``DiscreteFilter``.
+ *
+ * @code
+ *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
+ *    DiscreteFilter<2> Filter(coe);
+ *
+ * @endcode
+ *
+ * @author Aiden Prevey
+ * @date 4/29/2025
+ * @version 2.0
+ *
  * @param[in] wc   for LOW/HIGHPASS: cutoff ωc.
  *                 for BANDPASS/BANDSTOP: lower edge ωl.
  * @param[in] Ts   sample time.
