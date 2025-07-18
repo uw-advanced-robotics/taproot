@@ -9,15 +9,122 @@ variables:
 stages:
   - Generate Project
   - Build all Targets
+  - Sim all Targets
   - Test all Targets
 
+.run_lbuild:
+  stage: "Generate Project"
+  script:
+    - cd test-project && lbuild build && cd ..
+  artifacts:
+    paths:
+      - test-project
+
+.mcb_build:
+  stage: "Build all Targets"
+  script:
+    - cd test-project
+    - scons build $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/hardware/scons-release/
+      fallback_keys:
+        - tap-build-$CONFIG_HASH-develop
+      when: 'always'
+
+.sim_build:
+  stage: "Sim all Targets"
+  script:
+    - cd test-project
+    - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-sim-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/sim/scons-fast/
+      fallback_keys:
+        - tap-build-sim-$CONFIG_HASH-develop
+      when: 'always'
+
+.tests_build:
+  stage: "Test all Targets"
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - cd test-project
+    - scons run-tests profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
+    expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$CONFIG_HASH-develop
+      when: 'always'
+
+.tests_build_coverage:
+  stage: "Test all Targets"
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - cd test-project
+    - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf --gtest_filter=-*DEATH*
+    - cd .. && gcovr -g --xml > cobertura.xml
+    - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
+    - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
+  coverage: '/\s+Total:\|(\d+.\d+\%).+\|.+\|.+/'
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura.xml
+    expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$CONFIG_HASH-develop
+      when: 'always'
+
 {% for config in configs %}
-"{{ config["name"] }}":
-  stage: Generate Project
+"Generate Project. {{ config["name"] }}":
   rules:
     - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
-  script:
-    - echo {{ config["device"] }}
-    - echo {{ config["modules"] }}
-    - echo {{ config["options"] }}
+  extends:
+    - .run_lbuild
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+
+"Build Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  extends:
+    - .mcb_build
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+
+"Sim Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  extends:
+    - .sim_build
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+
+"Test Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  extends:
+%% if config["run_coverage"]
+    - .tests_build_coverage
+%% else
+    - .tests_build
+%% endif
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
 {% endfor %}

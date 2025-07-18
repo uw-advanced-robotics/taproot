@@ -1,7 +1,7 @@
 import os
 from typing import Iterable, Dict
 
-PROJECT_XML_TEMPLATE_PATH = "ci-project.xml"
+PROJECT_XML_TEMPLATE_PATH = "ci-project-template.xml"
 
 def generate_project_xml(board: str, options: Dict[str, bool], modules: Iterable[str]) -> str:
     output = f"{board}-{hash(frozenset(options.items()))}-{hash(frozenset(modules))}-project.xml"
@@ -10,7 +10,7 @@ def generate_project_xml(board: str, options: Dict[str, bool], modules: Iterable
         file = file.replace("$BOARD$", board)
         file = file.replace("$OPTIONS$", 
             "\n".join(
-                f"<option name=\"{o}\">{v}<\\option>" for o, v in options
+                f"<option name=\"{o}\">{v}<\\option>" for o, v in options.items()
             )
         )
         file = file.replace("$MODULES$", 

@@ -43,24 +43,29 @@ def build(env):
 
     info = collect_modules.collect_generation_information()
 
-    build_all_configs = []
     configs = []
 
     for device, config in sorted(info.items(), key=lambda e: e[0]):
         for module, options in sorted(config.items(), key=lambda e: e[0]):
             modules = module
+            base_config = {
+                "device": device,
+                "modules": modules,
+                "run_coverage": False
+            }
 
             if module == "all":
                 modules = ",".join(sorted(list(config.keys() - {"all"})))
+                base_config["run_coverage"] = True
 
             if len(options) == 0:
                 name = f"Device: {device}, Module: {module}"
                 configs.append(
                     {
                         "name": name,
-                        "device": device,
-                        "modules": modules,
-                        "options": ""
+                        "hash": abs(hash(name)),
+                        "options": "",
+                        **base_config
                     }
                 )
             else:
@@ -71,9 +76,9 @@ def build(env):
                     configs.append(
                         {
                             "name": name,
-                            "device": device,
-                            "modules": modules,
-                            "options": option_vals
+                            "hash": abs(hash(name)),
+                            "options": option_vals,
+                            **base_config
                         }
                     )
 
