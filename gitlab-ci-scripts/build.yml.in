@@ -6,20 +6,14 @@ variables:
   NUM_JOBS: 4
   ADDITIONAL_CI_BUILD_ARGS: -j${NUM_JOBS} additional-ccflags=-Werror
 
-.default_only: &default_only
-  - merge_requests
-  - master
-  - develop
-  - schedules
-
 stages:
-  - Generate Test Project
+  - Generate Project
   - Build all Targets
   - Test all Targets
 
 {% for config in configs %}
 "{{ config["name"] }}":
-  stage: Build all Targets
+  stage: Generate Project
   script:
     - echo {{ config["device"] }}
     - echo {{ config["modules"] }}
