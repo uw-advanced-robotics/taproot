@@ -15,7 +15,10 @@ stages:
 .run_lbuild:
   stage: "Generate Project"
   script:
-    - cd test-project && lbuild build && cd ..
+    - cd test-project
+    - xml=$(python3 ./gitlab-ci-scripts/project_xml_generation.py $DEVICE $MODULES $OPTIONS)
+    - lbuild -c $xml build
+    - cd ..
   artifacts:
     paths:
       - test-project
@@ -99,10 +102,15 @@ stages:
     - .run_lbuild
   variables:
     CONFIG_HASH: {{ config["hash"] }}
+    DEVICE: {{ config["device"] }}
+    MODULES: {{ config["modules"] }}
+    OPTIONS: {{ config["options"] }}
 
 "Build Project. {{ config["name"] }}":
   rules:
     - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
   extends:
     - .mcb_build
   variables:
@@ -111,6 +119,8 @@ stages:
 "Sim Project. {{ config["name"] }}":
   rules:
     - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
   extends:
     - .sim_build
   variables:
@@ -119,6 +129,8 @@ stages:
 "Test Project. {{ config["name"] }}":
   rules:
     - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
   extends:
 %% if config["run_coverage"]
     - .tests_build_coverage
