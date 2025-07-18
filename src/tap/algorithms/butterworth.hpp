@@ -49,25 +49,6 @@
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
  *
- * The following transforms map a lowpass prototype into other filter types (s-domain):
- *
- * - **Lowpass to Lowpass**:
- *   \f$ s \rightarrow \frac{s}{\Omega_c} \f$
- *
- * - **Lowpass to Highpass**:
- *   \f$ s \rightarrow \frac{\Omega_c}{s} \f$
- *
- * - **Lowpass to Bandpass**:
- *   \f$ s \rightarrow \frac{s^2 + \Omega_0^2}{B s} \f$
- *
- * - **Lowpass to Bandstop**:
- *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
- *
- * Where:
- * \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}, \quad B = \Omega_h - \Omega_l \f$
- *
- * After analog transformation, apply the bilinear transform:
- * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
  *
  * @note
  *    This implementation is designed for C++20 ``constexpr``.
@@ -229,6 +210,27 @@ constexpr std::complex<double> complexSqrt(std::complex<double> z)
  * used to get the number of coefficients for a given filter order and type
  * @param [in] ORDER the order of the filter
  * @param [in] type the type of the filter, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP
+ * 
+ *  * The following transforms map a lowpass prototype into other filter types (s-domain):
+ *
+ * - **Lowpass to Lowpass**:
+ *   \f$ s \rightarrow \frac{s}{\Omega_c} \f$
+ *
+ * - **Lowpass to Highpass**:
+ *   \f$ s \rightarrow \frac{\Omega_c}{s} \f$
+ *
+ * - **Lowpass to Bandpass**:
+ *   \f$ s \rightarrow \frac{s^2 + \Omega_0^2}{B s} \f$
+ *
+ * - **Lowpass to Bandstop**:
+ *   \f$ s \rightarrow \frac{B s}{s^2 + \Omega_0^2} \f$
+ *
+ * Where:
+ * \f$ \Omega_0 = \sqrt{\Omega_l \cdot \Omega_h}, \quad B = \Omega_h - \Omega_l \f$
+ *
+ * After analog transformation, apply the bilinear transform:
+ * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
+ * 
  * @return the number of coefficients for the filter
  */
 constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
