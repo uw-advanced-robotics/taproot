@@ -238,12 +238,13 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
+// clang-format off
+
 // ========================================================================
 // DOXYGEN HELPER TYPES AND FUNCTION DECLARATION
 // ========================================================================
 
 #ifdef __DOXYGEN__
-/// @typedef ButterworthCoefficients
 /// @brief Placeholder type representing Butterworth filter coefficients.
 /// @details
 /// In actual code, this corresponds to:
@@ -251,21 +252,15 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 ///
 /// Used as the return type of `butterworth()`.
 // using ButterworthCoefficients = Coefficients<42, float>; ///< Dummy type for documentation only
-#define getNumCoefficients(ORDER, Type) 42  ///< Dummy function for documentation only
-/**
- * @fn template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
- * constexpr ButterworthCoefficients butterworth(double wc, double Ts, double wh = 0.0)
- * 
- * @brief Designs a Butterworth filter and returns its coefficients.
- * 
- * @details
- * The return type's actual size depends on the filter order and type.
- * This dummy signature is provided for documentation purposes only.
- */
-#endif
-
+template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
+constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
+    double wc,
+    double Ts,
+    double wh = 0.0)
+{
+#else
 // ========================================================================
-// ACTUAL FUNCTION TEMPLATE IMPLEMENTATION
+// ACTUAL FUNCTION IMPLEMENTATION
 // ========================================================================
 
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
@@ -274,6 +269,8 @@ constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double Ts,
     double wh = 0.0)
 {
+#endif
+// clang-format on
     const uint16_t COEFFICIENTS = getNumCoefficients(ORDER, Type);
 
     std::array<T, COEFFICIENTS> naturalResponseCoefficients;
