@@ -236,16 +236,8 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
-/**
- * @param[in] wc   for LOW/HIGHPASS: cutoff ωc.
- *                 for BANDPASS/BANDSTOP: lower edge ωl.
- * @param[in] Ts   sample time.
- * @param[in] type filter type, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP.
- *                 defaults to LOWPASS.
- * @param[in] wh   upper edge ωh (only used for band filters).
- */
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
-Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
+constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double wc,
     double Ts,
     double wh = 0.0)
