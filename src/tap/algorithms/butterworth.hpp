@@ -253,7 +253,7 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 /// Used as the return type of `butterworth()`.
 // using ButterworthCoefficients = Coefficients<42, float>; ///< Dummy type for documentation only
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
-constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
+constexpr Coefficients<ORDER, T> butterworth(
     double wc,
     double Ts,
     double wh = 0.0)
