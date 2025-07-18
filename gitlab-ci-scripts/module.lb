@@ -64,7 +64,7 @@ def build(env):
                     }
                 )
             else:
-                for opt_set in subslices(list(options)):
+                for opt_set in [[], *subslices(list(options))]:
                     option_vals = {o: o in opt_set for o in options}
                     option_vals = ",".join(f'{o}={v}' for o, v in option_vals.items())
                     name = f"Device: {device}, Module: {module}, Options: {option_vals}"
