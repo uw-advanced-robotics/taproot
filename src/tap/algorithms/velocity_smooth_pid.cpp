@@ -17,6 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// This pid implementation is different from smooth pid 
+// bc it uses the error derivative for the p term instead of the error itself,
+// uses the second derivative for the d term and the adds corrections to the previous output.
+
 #include "velocity_smooth_pid.hpp"
 
 #include "tap/algorithms/math_user_utils.hpp"

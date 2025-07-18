@@ -78,12 +78,7 @@
         "*.xml.in": "jinja-xml",
         "*.py.in": "jinja-py",
         "*.lb": "python",
-        "*.in": "cpp",
-        "bit": "cpp",
-        "compare": "cpp",
-        "concepts": "cpp",
-        "ranges": "cpp",
-        "stop_token": "cpp"
+        "*.in": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
