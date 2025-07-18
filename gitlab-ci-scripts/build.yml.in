@@ -14,6 +14,8 @@ stages:
 {% for config in configs %}
 "{{ config["name"] }}":
   stage: Generate Project
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
   script:
     - echo {{ config["device"] }}
     - echo {{ config["modules"] }}
