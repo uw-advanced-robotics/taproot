@@ -29,7 +29,7 @@
 #include "discrete_filter.hpp"
 
 /**
- * @file butterworth.hpp
+ * @defgroup ButterworthDesign Butterworth Filter Design Functions
  * @brief Implementation of Butterworth filter design in the discrete domain.
  *
  * This header file provides a implementation of Butterworth filters,
@@ -224,25 +224,34 @@ constexpr std::complex<double> complexSqrt(std::complex<double> z)
     return {r * std::cos(theta), r * std::sin(theta)};
 }
 
+/**
+ * used to get the number of coefficients for a given filter order and type
+ * @param [in] ORDER the order of the filter
+ * @param [in] type the type of the filter, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP
+ * @return the number of coefficients for the filter
+ */
 constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 {
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
 /**
- * @brief Designs a digital Butterworth filter of given type and order.
- *
- * @tparam ORDER Filter order.
- * @tparam Type Filter type (defaults to LOWPASS).
- * @tparam T Numeric type (defaults to float).
- *
- * @param[in] wc  For LOW/HIGHPASS: cutoff ωc. For BAND filters: lower edge ωl.
+ * @ingroup ButterworthDesign
+ * @brief Generates Butterworth filter coefficients for the specified order and type.
+ * 
+ * @tparam ORDER  Filter order.
+ * @tparam Type   Filter type (defaults to LOWPASS).
+ * @tparam T      Numeric type for coefficients (defaults to float).
+ * 
+ * @param[in] wc  Cutoff frequency ωc for LOWPASS/HIGHPASS filters.  
+ *                Lower edge ωl for BANDPASS/BANDSTOP filters.
  * @param[in] Ts  Sample time.
- * @param[in] wh  Upper edge ωh (only used for band filters, default 0.0).
- *
- * @return The filter coefficients.
- *
- * @see LOWPASS, HIGHPASS, BANDPASS, BANDSTOP
+ * @param[in] wh  Upper edge ωh for BANDPASS/BANDSTOP filters (ignored for others, default = 0.0).
+ * 
+ * @return A constexpr Coefficients object containing the filter coefficients.
+ * 
+ * @see getNumCoefficients()
+ * @see FilterType
  */
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
