@@ -238,15 +238,36 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
+// ========================================================================
+// DOXYGEN HELPER TYPES AND FUNCTION DECLARATION
+// ========================================================================
+
+#ifdef __DOXYGEN__
+/// @typedef ButterworthCoefficients
+/// @brief Placeholder type representing Butterworth filter coefficients.
+/// @details
+/// In actual code, this corresponds to:
+/// `Coefficients<getNumCoefficients(ORDER, Type), T>`
+///
+/// Used as the return type of `butterworth()`.
+using ButterworthCoefficients = Coefficients<42, float>; ///< Dummy type for documentation only
+
 /**
  * @fn template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
- * constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(double wc, double Ts, double wh = 0.0)
- *
- * @brief Generate Butterworth filter coefficients.
- *
- * @details This template returns the filter coefficients for the given ORDER and filter TYPE.
- * The number of coefficients depends on ORDER and TYPE.
+ * constexpr ButterworthCoefficients butterworth(double wc, double Ts, double wh = 0.0)
+ * 
+ * @brief Designs a Butterworth filter and returns its coefficients.
+ * 
+ * @details
+ * The return type's actual size depends on the filter order and type.
+ * This dummy signature is provided for documentation purposes only.
  */
+#endif
+
+// ========================================================================
+// ACTUAL FUNCTION TEMPLATE IMPLEMENTATION
+// ========================================================================
+
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double wc,
