@@ -29,7 +29,7 @@
 #include "discrete_filter.hpp"
 
 /**
- * @defgroup ButterworthDesign Butterworth Filter Design Functions
+ * @file butterworth.hpp
  * @brief Implementation of Butterworth filter design in the discrete domain.
  * 
  * @details
@@ -237,7 +237,6 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 }
 
 /**
- * @ingroup ButterworthDesign
  * @brief Generates Butterworth filter coefficients for the specified order and type.
  *
  * @tparam ORDER  Filter order.
@@ -249,10 +248,7 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
  * @param[in] Ts  Sample time.
  * @param[in] wh  Upper edge ωh for BANDPASS/BANDSTOP filters (ignored for others, default = 0.0).
  *
- * @return A constexpr Coefficients object containing the filter coefficients.
- *
- * @see getNumCoefficients()
- * @see FilterType
+ * @return A constexpr Coefficients struct containing the filter coefficients.
  */
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 Coefficients<getNumCoefficients(ORDER, Type), T> constexpr butterworth(
