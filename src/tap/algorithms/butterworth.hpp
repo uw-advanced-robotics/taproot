@@ -29,6 +29,7 @@
 #include "discrete_filter.hpp"
 
 /**
+ * @file butterworth.hpp
  * @brief Implementation of Butterworth filter design in the discrete domain.
  *
  * This header file provides a implementation of Butterworth filters,
