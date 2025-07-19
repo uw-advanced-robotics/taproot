@@ -5,7 +5,8 @@ from typing import Iterable, Dict, Tuple
 from project_xml_generation import generate_project_xml
 
 
-REQUIRED_MODULES = {"taproot:build", "taproot:modm-project.xml", "taproot:ci-scripts"}
+REQUIRED_MODULES = {"taproot:build", "taproot:modm-project.xml", "taproot:testing", "taproot:testing:mock", "taproot:testing:tests"}
+IGNORED_MODULES = {"taproot:ci-scripts"}
 ENFORCED_OPTIONS = {"rebuild_modm": True}
 
 def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
@@ -30,7 +31,7 @@ def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
         module_lines = {
             module: [i for i, line in enumerate(lines) if f"Module({module})" in line][0] for module in modules
         }
-        modules_to_select = modules - REQUIRED_MODULES
+        modules_to_select = modules - REQUIRED_MODULES - IGNORED_MODULES
 
         options = set(re.findall('Option\((.*)\) = (?:[tT]rue|[fF]alse|[yY]es|[nN]o)', device_discover))
         options_to_toggle = options - ENFORCED_OPTIONS.keys()

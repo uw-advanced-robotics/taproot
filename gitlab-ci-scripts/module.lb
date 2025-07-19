@@ -18,6 +18,7 @@
 import sys
 import itertools
 import operator
+import hashlib
 sys.path.append(repopath("gitlab-ci-scripts"))
 import collect_modules
 
@@ -26,6 +27,9 @@ def subslices(seq):
     # subslices('ABCD') → A AB ABC ABCD B BC BCD C CD D
     slices = itertools.starmap(slice, itertools.combinations(range(len(seq) + 1), 2))
     return map(operator.getitem, itertools.repeat(seq), slices)
+
+def hash_name(name: str):
+    return hashlib.sha256(name.encode()).hexdigest()
 
 def init(module):
     module.name = ":ci-scripts"
@@ -52,7 +56,7 @@ def build(env):
 
             base_config = {
                 "name": name,
-                "hash": hash(name),
+                "hash": hash_name(name),
                 "device": device,
                 "modules": modules,
                 "options": "",
@@ -80,7 +84,7 @@ def build(env):
                         {
                             **base_config,
                             "name": name,
-                            "hash": abs(hash(name)),
+                            "hash": hash_name(name),
                             "options": option_vals,
                         }
                     )

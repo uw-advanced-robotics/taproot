@@ -1,12 +1,29 @@
 import os
 import sys
 import itertools
-from typing import Iterable, Dict
+import hashlib
+from typing import Iterable, Dict, Any
 
 PROJECT_XML_TEMPLATE_PATH = "ci-project-template.xml"
 
-def generate_project_xml(board: str, options: Dict[str, bool], modules: Iterable[str]) -> str:
-    output = f"{board}-{hash(frozenset(options.items()))}-{hash(frozenset(modules))}-project.xml"
+def hash_dict(dict: Dict[str, Any]):
+    hasher = hashlib.sha256()
+
+    for opt, val in sorted(dict.items(), key=lambda e:e[0]):
+        hasher.update(f"{opt}={val}".encode())
+
+    return hasher.hexdigest()
+
+def hash_list(l: Iterable[str]):
+    hasher = hashlib.sha256()
+
+    for e in sorted(l):
+        hasher.update(e.encode())
+
+    return hasher.hexdigest()
+
+def generate_project_xml(board: str, options: Dict[str, Any], modules: Iterable[str]) -> str:
+    output = f"{board}-{hash_dict(options)}-{hash_list(modules)}-project.xml"
     with open(PROJECT_XML_TEMPLATE_PATH) as f:
         file = f.read()
         file = file.replace("$BOARD$", board)

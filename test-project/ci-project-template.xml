@@ -13,7 +13,6 @@
     <option name="taproot:communication:serial:ref_serial:uart_port">Uart1</option>
     <option name="taproot:board:digital_in_pins">Button</option>
     <option name="taproot:board:digital_out_pins">Laser</option>
-    <option name="taproot:board:analog_in_pins">OledJoystick</option>
     <option name="taproot:board:pwm_pins">Buzzer,ImuHeater</option>
 
     <option name="taproot:dev_board">$BOARD$</option>
@@ -23,7 +22,9 @@
   <modules>
     <module>taproot:build</module>    
     <module>taproot:modm-project.xml</module>
-    <module>taproot:ci-scripts</module>
+
+    <module>taproot:testing:tests</module>
+    <module>taproot:testing:mock</module>
 
     $MODULES$
   </modules>
