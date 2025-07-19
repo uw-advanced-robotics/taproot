@@ -17,30 +17,6 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- * @brief Header File for Implementation of "Velocity" PIDE Algorithm extending the Smooth Pid
- * Algorithm. Velocity Form PID Equation
- * * \f$
- * CV_n = CV_{n-1} + K_P \Delta E + K_I E \Delta t + K_D \frac{E_n - 2E_{n-1} + E_{n-2}}{\Delta t}
- * \f$
- *
- * where:
- * - \(CV\) = Controlled Variable
- * - \(E\) = Error
- * - \(\Delta t\) = Update time
- * - \(K_P\) = Proportional gain
- * - \(K_I\) = Integral gain
- * - \(K_D\) = Derivative gain
- *
- * @details
- * This pid implementation is different from smooth pid because
- * it uses the error derivative for the p term instead of the error itself,
- * uses the second derivative for the d term and the adds corrections to the previous output.
- *
- * For further information, the link to the paper used to implement this is below.
- * https://literature.rockwellautomation.com/idc/groups/literature/documents/wp/logix-wp008_-en-p.pdf
- *
- */
 
 #ifndef TAPROOT_VELOCITY_SMOOTH_PID_HPP_
 #define TAPROOT_VELOCITY_SMOOTH_PID_HPP_
@@ -55,6 +31,31 @@ namespace tap
 {
 namespace algorithms
 {
+/**
+ * @brief Header File for Implementation of "Velocity" PIDE Algorithm extending the Smooth Pid
+ * Algorithm. Velocity Form PID Equation
+ * * \f$
+ * CV_n = CV_{n-1} + K_P \Delta E + K_I E \Delta t + K_D \frac{E_n - 2E_{n-1} + E_{n-2}}{\Delta t}
+ * \f$
+ *
+ * where:
+ * -  \f$ \(CV\) = Controlled Variable \f$
+ * - \f$ \(E\) = Error \f$
+ * - \f$\(\Delta t\) = Update time\f$
+ * - \f$\(K_P\) = Proportional gain\f$
+ * - \f$\(K_I\) = Integral gain\f$
+ * - \f$\(K_D\) = Derivative gain\f$
+ *
+ * @details
+ * This pid implementation is different from smooth pid because
+ * it uses the error derivative for the p term instead of the error itself,
+ * uses the second derivative for the d term and adds the corrections to the previous output.
+ * It is also specifically good for changing PID gains. 
+ *
+ * For further information, the link to the paper used to implement this is below.
+ * https://literature.rockwellautomation.com/idc/groups/literature/documents/wp/logix-wp008_-en-p.pdf
+ *
+ */
 class VelocitySmoothPid : public SmoothPid
 {
 public:
