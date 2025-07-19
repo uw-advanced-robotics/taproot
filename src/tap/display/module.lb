@@ -52,7 +52,14 @@ def build(env):
         "ref_serial_menu.cpp",
         "ref_serial_menu.hpp"
     ]
-    env.copy(".", ignore=env.ignore_files(*(motorFiles + controlFiles + refSerialFiles)))
+    templateFiles = [
+        "oled_button_handler.hpp.in"
+    ]
+
+    env.copy("dummy_allocator.hpp")
+    env.copy("oled_button_handler.cpp")
+    env.copy("vertical_scroll_logic_handler.cpp")
+    env.copy("vertical_scroll_logic_handler.hpp")
 
     if env.has_module(":motor"):
         for file in motorFiles:
@@ -65,3 +72,9 @@ def build(env):
     if env.has_module(":communication:serial:ref_serial"):
         for file in refSerialFiles:
             env.copy(file)
+
+    env.substitutions = {
+        "has_joystick": "OledJoystick" in env[":board:analog_in_pins"]
+    }
+    for file in templateFiles:
+        env.template(file)

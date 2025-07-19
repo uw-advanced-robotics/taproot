@@ -25,20 +25,21 @@ namespace tap
 {
 namespace display
 {
-OledButtonHandler::OledButtonHandler(tap::Drivers *drivers, const AnalogConfig analogConfig)
+OledButtonHandler::OledButtonHandler(tap::Drivers *drivers, const tap::gpio::Analog::Pin pin, const AnalogConfig analogConfig)
     : drivers(drivers),
       downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       upButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       leftButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       rightButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       okButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      adcConfig(analogConfig)
+      adcConfig(analogConfig),
+      pin(pin)
 {
 }
 
 OledButtonHandler::Button OledButtonHandler::getCurrentButtonState()
 {
-    int buttonADC = drivers->analog.read(gpio::Analog::Pin::OledJoystick);
+    int buttonADC = drivers->analog.read(this->pin);
 
     downButtonPressed.update(abs(buttonADC - adcConfig.down) < ADC_PRESSED_RANGE);
     upButtonPressed.update(abs(buttonADC - adcConfig.up) < ADC_PRESSED_RANGE);
