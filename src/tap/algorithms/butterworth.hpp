@@ -31,7 +31,7 @@
 /**
  * @file butterworth.hpp
  * @brief Implementation of Butterworth filter design in the discrete domain.
- * 
+ *
  * @details
  * This header file provides a implementation of Butterworth filters,
  * including low-pass, high-pass, band-pass, and band-stop filters. The Butterworth
@@ -48,34 +48,6 @@
  *
  * The design process includes pre-warping of frequencies for the bilinear transform,
  * generation of prototype poles, and scaling of coefficients.
- *
- *
- * @note
- *    This implementation is designed for C++20 ``constexpr``.
- *
- * @warning
- *    High-order filters can introduce high phase delays and should be used with caution.
- *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
- *
- *    If results are suspicious, verify filter coefficients using external tools
- *    such as MATLAB or Python (e.g., SciPy).
- *
- *
- * @section Usage
- *
- * To use this implementation, include this header file and instantiate the
- * ``Butterworth`` class with the desired filter order, type, and parameters.
- * Then, pass those coefficients into a ``DiscreteFilter``.
- *
- * @code
- *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
- *    DiscreteFilter<2> Filter(coe);
- *
- * @endcode
- *
- * @author Aiden Prevey
- * @date 4/29/2025
- * @version 2.0
  */
 
 namespace tap::algorithms::filter
@@ -210,7 +182,28 @@ constexpr std::complex<double> complexSqrt(std::complex<double> z)
  * used to get the number of coefficients for a given filter order and type
  * @param [in] ORDER the order of the filter
  * @param [in] type the type of the filter, LOWPASS, HIGHPASS, BANDPASS, BANDSTOP
+ *
+ * @return the number of coefficients for the filter
+ */
+constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
+{
+    return (1 + ((type & 0b10) != 0)) * ORDER + 1;
+}
+
+// clang-format off
+
+// ========================================================================
+// DOXYGEN FUNCTION DEFINITION
+// ========================================================================
+
+#ifdef __DOXYGEN__
+/** 
+ * @brief Placeholder function definition for Doxygen documentation.
+ * @details
+ * In actual code, the template argument DOXYGEN actually this corresponds to:
+ * `Coefficients<getNumCoefficients(ORDER, Type), T>`
  * 
+ * This function is used to generate Butterworth filter coefficients.
  *  * The following transforms map a lowpass prototype into other filter types (s-domain):
  *
  * - **Lowpass to Lowpass**:
@@ -230,30 +223,35 @@ constexpr std::complex<double> complexSqrt(std::complex<double> z)
  *
  * After analog transformation, apply the bilinear transform:
  * \f[ s = \frac{2}{T} \cdot \frac{z - 1}{z + 1} \f]
+ * @note
+ *    This implementation is designed for C++20 ``constexpr``.
+ *
+ * @warning
+ *    High-order filters can introduce high phase delays and should be used with caution.
+ *    For most applications, low-pass and high-pass filters of order 2 or lower are sufficient.
+ *
+ *    If results are suspicious, verify filter coefficients using external tools
+ *    such as MATLAB or Python (e.g., SciPy).
+ *
+ *
+ * @section Usage
+ *
+ * To use this implementation, call the function with the desired filter order, type, and parameters.
+ * Then, pass the return as coefficients into a ``DiscreteFilter``.
+ *
+ * @code
+ *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
+ *    DiscreteFilter<2> Filter(coe);
+ *
+ * @endcode
+ *
+ * @author Aiden Prevey
+ * @date 4/29/2025
+ * @version 2.0
  * 
- * @return the number of coefficients for the filter
- */
-constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
-{
-    return (1 + ((type & 0b10) != 0)) * ORDER + 1;
-}
-
-// clang-format off
-
-// ========================================================================
-// DOXYGEN HELPER TYPES AND FUNCTION DECLARATION
-// ========================================================================
-
-#ifdef __DOXYGEN__
-/// @brief Placeholder type representing Butterworth filter coefficients.
-/// @details
-/// In actual code, this corresponds to:
-/// `Coefficients<getNumCoefficients(ORDER, Type), T>`
-///
-/// Used as the return type of `butterworth()`.
-// using ButterworthCoefficients = Coefficients<42, float>; ///< Dummy type for documentation only
-template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
-constexpr Coefficients<ORDER, T> butterworth(
+*/
+template <uint8_t DOXYGEN, FilterType Type = LOWPASS, typename T = float>
+constexpr Coefficients<DOXYGEN, T> butterworth(
     double wc,
     double Ts,
     double wh = 0.0)
@@ -270,7 +268,7 @@ constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double wh = 0.0)
 {
 #endif
-// clang-format on
+    // clang-format on
     const uint16_t COEFFICIENTS = getNumCoefficients(ORDER, Type);
 
     std::array<T, COEFFICIENTS> naturalResponseCoefficients;
