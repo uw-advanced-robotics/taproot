@@ -17,6 +17,9 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef TAPROOT_TEST_MACROS_HPP_
+#define TAPROOT_TEST_MACROS_HPP_
+
 #if __has_include("tap/errors/error_controller.hpp")
 #define EXPECT_ERROR() EXPECT_CALL(drivers.errorController, addToErrorList)
 #define EXPECT_ERROR_TIMES(times) EXPECT_ERROR().Times(times)
@@ -24,3 +27,5 @@
 #define EXPECT_ERROR()
 #define EXPECT_ERROR_TIMES(times)
 #endif
+
+#endif // TAPROOT_TEST_MACROS_HPP_
