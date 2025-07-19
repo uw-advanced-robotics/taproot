@@ -25,7 +25,10 @@ namespace tap
 {
 namespace display
 {
-OledButtonHandler::OledButtonHandler(tap::Drivers *drivers, const tap::gpio::Analog::Pin pin, const AnalogConfig analogConfig)
+OledButtonHandler::OledButtonHandler(
+    tap::Drivers *drivers,
+    const tap::gpio::Analog::Pin pin,
+    const AnalogConfig analogConfig)
     : drivers(drivers),
       downButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       upButtonPressed(BUTTON_DEBOUNCE_SAMPLES),

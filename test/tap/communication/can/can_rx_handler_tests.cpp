@@ -22,9 +22,9 @@
 #include <gtest/gtest.h>
 
 #include "tap/drivers.hpp"
-#include "tap/test_macros.hpp"
 #include "tap/mock/can_rx_handler_mock.hpp"
 #include "tap/mock/can_rx_listener_mock.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace testing;
 using namespace std;
