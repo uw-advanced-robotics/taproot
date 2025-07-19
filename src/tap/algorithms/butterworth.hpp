@@ -43,7 +43,7 @@
  *   the bilinear transform.
  * - Expansion of polynomial coefficients from a set of poles or zeros.
  * - Evaluation of the frequency response of the filter at a given frequency.
- * - A templated Butterworth filter class for designing filters of arbitrary order
+ * - A templated Butterworth filter function for designing filters of arbitrary order
  *   and type.
  *
  * The design process includes pre-warping of frequencies for the bilinear transform,
@@ -192,9 +192,10 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
 
 // clang-format off
 
-// ========================================================================
-// DOXYGEN FUNCTION DEFINITION
-// ========================================================================
+/*
+ * The following is a placeholder function definition for Doxygen documentation.
+ * This is because doxygen does not support template arguments in the same way as C++.
+*/
 
 #ifdef __DOXYGEN__
 /** 
@@ -240,7 +241,7 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
  * Then, pass the return as coefficients into a ``DiscreteFilter``.
  *
  * @code
- *    Coefficients coe =  butterworth<1, LOWPASS>(wc, Ts);
+ *    Coefficients<2> coe =  butterworth<1, LOWPASS>(wc, Ts);
  *    DiscreteFilter<2> Filter(coe);
  *
  * @endcode
@@ -257,9 +258,6 @@ constexpr Coefficients<DOXYGEN, T> butterworth(
     double wh = 0.0)
 {
 #else
-// ========================================================================
-// ACTUAL FUNCTION IMPLEMENTATION
-// ========================================================================
 
 template <uint8_t ORDER, FilterType Type = LOWPASS, typename T = float>
 constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
@@ -295,7 +293,7 @@ constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
 
     std::array<std::complex<double>, COEFFICIENTS - 1> zPoles;
 
-    // apply the appropriate s-domaisn transform to each pole
+    // apply the appropriate s-domain transforms to each pole
     switch (Type)
     {
         case LOWPASS:
