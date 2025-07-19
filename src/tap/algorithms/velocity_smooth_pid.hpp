@@ -49,7 +49,8 @@ namespace algorithms
  * This pid implementation is different from smooth pid because
  * it uses the error derivative for the p term instead of the error itself,
  * uses the second derivative for the d term and adds the corrections to the previous output.
- * It is also specifically good for changing PID gains.
+ * It's also typically more optimal for gain scheduling
+ * due to there not being a large jump when changing the gain set
  *
  * For further information, the link to the paper used to implement this is below.
  * https://literature.rockwellautomation.com/idc/groups/literature/documents/wp/logix-wp008_-en-p.pdf
