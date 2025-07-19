@@ -17,9 +17,30 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This pid implementation is different from smooth pid
-// bc it uses the error derivative for the p term instead of the error itself,
-// uses the second derivative for the d term and the adds corrections to the previous output.
+/**
+ * @brief Implementation of "Velocity" PIDE Algorithm extending the Smooth Pid Algorithm.
+ * Velocity Form PID Equation
+ * * \f$
+ * CV_n = CV_{n-1} + K_P \Delta E + K_I E \Delta t + K_D \frac{E_n - 2E_{n-1} + E_{n-2}}{\Delta t}
+ * \f$
+ *
+ * where:
+ * - \(CV\) = Controlled Variable
+ * - \(E\) = Error
+ * - \(\Delta t\) = Update time
+ * - \(K_P\) = Proportional gain
+ * - \(K_I\) = Integral gain
+ * - \(K_D\) = Derivative gain
+ *
+ * @details
+ * This pid implementation is different from smooth pid because
+ * it uses the error derivative for the p term instead of the error itself,
+ * uses the second derivative for the d term and the adds corrections to the previous output.
+ *
+ * For further information, the link to the paper used to implement this is below.
+ * https://literature.rockwellautomation.com/idc/groups/literature/documents/wp/logix-wp008_-en-p.pdf
+ *
+ */
 
 #include "velocity_smooth_pid.hpp"
 
