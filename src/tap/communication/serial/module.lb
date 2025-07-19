@@ -102,6 +102,7 @@ def init(module):
 
 def prepare(module, options):
     module.depends(":algorithms")
+    module.depends(":architecture")
     module.depends(":board")
     module.depends(":drivers")
 

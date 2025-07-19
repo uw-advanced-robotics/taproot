@@ -217,7 +217,7 @@ TEST_F(RemoteTest, read_invalid_joystick_values_errors)
 
     encodeRemoteData();
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     remote.read();
 }

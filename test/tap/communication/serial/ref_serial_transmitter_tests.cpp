@@ -21,6 +21,7 @@
 
 #include "tap/communication/serial/ref_serial_transmitter.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace tap::communication::serial;
 using namespace tap;
@@ -89,7 +90,7 @@ TEST_F(RefSerialTransmitterTest, configGraphicGenerics__sets_name_operation_laye
         0,
         RefSerialData::Tx::GraphicColor::PINK);
 
-    EXPECT_TRUE(0 == std::memcmp(name, data.name, sizeof(name)));
+    EXPECT_TRUE(0 == memcmp(name, data.name, sizeof(name)));
     EXPECT_EQ(RefSerialData::Tx::GraphicOperation::GRAPHIC_MODIFY, data.operation);
     EXPECT_EQ(static_cast<uint8_t>(RefSerialData::Tx::GraphicColor::PINK), data.color);
 }
@@ -391,13 +392,13 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails
     robotData.robotId = RefSerial::RobotId::INVALID;
 
     RefSerialData::Tx::RobotToRobotMessage msg{};
-
+#if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .Times(2)
         .WillRepeatedly([](const tap::errors::SystemError &error) {
             EXPECT_TRUE(errorDescriptionContainsSubstr(error, "message length cannot be 1 byte"));
         });
-
+#endif
     EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
 
     refSerialTransmitter.sendRobotToRobotMsg(&msg, 0x0200, RefSerial::RobotId::RED_HERO, 1);
@@ -413,6 +414,7 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__invalid_id_fails_to_se
 
     ON_CALL(drivers.refSerial, acquireTransmissionSemaphore).WillByDefault(Return(true));
 
+#if __has_include("tap/errors/error_controller.hpp")
     // Expected
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .Times(2)
@@ -420,7 +422,7 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__invalid_id_fails_to_se
             EXPECT_TRUE(
                 errorDescriptionContainsSubstr(error, "invalid msgId not between [0x200, 0x2ff)"));
         });
-
+#endif
     EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
 
     // When
@@ -436,13 +438,13 @@ TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_long)
     RefSerialData::Tx::RobotToRobotMessage msg{};
 
     ON_CALL(drivers.refSerial, acquireTransmissionSemaphore).WillByDefault(Return(true));
-
+#if __has_include("tap/errors/error_controller.hpp")
     // Expected
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([](const tap::errors::SystemError &error) {
             EXPECT_TRUE(errorDescriptionContainsSubstr(error, "message length > 113-char maximum"));
         });
-
+#endif
     EXPECT_CALL(drivers.uart, write(_, _, _)).Times(0);
 
     // When

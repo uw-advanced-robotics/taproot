@@ -22,9 +22,9 @@
 #include <gtest/gtest.h>
 
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 #include "tap/mock/can_rx_handler_mock.hpp"
 #include "tap/mock/can_rx_listener_mock.hpp"
-#include "tap/motor/dji_motor_ids.hpp"
 
 using namespace testing;
 using namespace std;
@@ -37,7 +37,7 @@ protected:
 
     void constructListeners(tap::can::CanBus canBus = tap::can::CanBus::CAN_BUS1)
     {
-        for (uint32_t i = tap::motor::MOTOR1; i <= tap::motor::MOTOR8; i++)
+        for (uint32_t i = 1; i <= 8; i++)
         {
             auto listener = make_unique<CanRxListenerMock>(&drivers, i, canBus);
             listeners.push_back(move(listener));
@@ -62,7 +62,7 @@ TEST(CanRxHandler, ListenerAttachesSelf)
 
 TEST_F(CanRxHandlerTest, attachReceiveHandler_attaches_listener_can2)
 {
-    CanRxListenerMock listener(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS2);
+    CanRxListenerMock listener(&drivers, 1, tap::can::CanBus::CAN_BUS2);
 
     handler.attachReceiveHandler(&listener);
 
@@ -77,10 +77,10 @@ TEST_F(CanRxHandlerTest, attachReceiveHandler_attaches_listener_can2)
 
 TEST_F(CanRxHandlerTest, attach_and_remove_recieve_handler_with_bin_conflicts_in_order)
 {
-    CanRxListenerMock listener(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS2);
+    CanRxListenerMock listener(&drivers, 1, tap::can::CanBus::CAN_BUS2);
     CanRxListenerMock listener2(
         &drivers,
-        tap::motor::MOTOR1 + tap::can::CanRxHandler::CAN_BINS,
+        1 + tap::can::CanRxHandler::CAN_BINS,
         tap::can::CanBus::CAN_BUS2);
 
     handler.attachReceiveHandler(&listener);
@@ -112,10 +112,10 @@ TEST_F(CanRxHandlerTest, attach_and_remove_recieve_handler_with_bin_conflicts_in
 
 TEST_F(CanRxHandlerTest, attach_and_remove_recieve_handler_with_bin_conflicts_in_reverse_order)
 {
-    CanRxListenerMock listener(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS2);
+    CanRxListenerMock listener(&drivers, 1, tap::can::CanBus::CAN_BUS2);
     CanRxListenerMock listener2(
         &drivers,
-        tap::motor::MOTOR1 + tap::can::CanRxHandler::CAN_BINS,
+        1 + tap::can::CanRxHandler::CAN_BINS,
         tap::can::CanBus::CAN_BUS2);
 
     handler.attachReceiveHandler(&listener);
@@ -193,10 +193,10 @@ TEST_F(CanRxHandlerTest, MessageIsProcessedByCorrectListener)
 
 TEST_F(CanRxHandlerTest, process_messages_with_bin_conflicts)
 {
-    CanRxListenerMock listener(&drivers, tap::motor::MOTOR1, tap::can::CanBus::CAN_BUS1);
+    CanRxListenerMock listener(&drivers, 1, tap::can::CanBus::CAN_BUS1);
     CanRxListenerMock listener2(
         &drivers,
-        tap::motor::MOTOR1 + tap::can::CanRxHandler::CAN_BINS,
+        1 + tap::can::CanRxHandler::CAN_BINS,
         tap::can::CanBus::CAN_BUS1);
 
     handler.attachReceiveHandler(&listener);
@@ -221,7 +221,7 @@ TEST_F(CanRxHandlerTest, attachReceiveHandler__error_logged_with_overloading_can
 
     handler.attachReceiveHandler(&canRxListener);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
     handler.attachReceiveHandler(&canRxListener2);
     EXPECT_EQ(&canRxListener, handler.getHandlerStore(tap::can::CanBus::CAN_BUS1)[0]);
 
@@ -234,7 +234,7 @@ TEST_F(
 {
     CanRxListenerMock canRxListener(&drivers, 0, tap::can::CanBus::CAN_BUS1);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
 
     handler.removeReceiveHandler(canRxListener);
 }
@@ -251,7 +251,7 @@ TEST_F(
 
     handler.attachReceiveHandler(&canRxListener);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
     handler.removeReceiveHandler(canRxListener2);
 
     handler.removeReceiveHandler(canRxListener);
@@ -263,7 +263,7 @@ TEST_F(CanRxHandlerTest, pollCanData_can1_calls_process_message_passing_msg_to_c
 
     handler.attachReceiveHandler(listeners[0].get());
 
-    modm::can::Message msg(tap::motor::MOTOR1, 8, 0xffff'ffff'ffff'ffff, false);
+    modm::can::Message msg(1, 8, 0xffff'ffff'ffff'ffff, false);
 
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
         .WillByDefault([&](tap::can::CanBus, modm::can::Message *message) {
@@ -284,7 +284,7 @@ TEST_F(CanRxHandlerTest, pollCanData_can2_calls_process_message_passing_msg_to_c
 
     handler.attachReceiveHandler(listeners[0].get());
 
-    modm::can::Message msg(tap::motor::MOTOR1, 8, 0xffff'ffff'ffff'ffff, false);
+    modm::can::Message msg(1, 8, 0xffff'ffff'ffff'ffff, false);
 
     ON_CALL(drivers.can, getMessage(tap::can::CanBus::CAN_BUS1, _))
         .WillByDefault([&](tap::can::CanBus, modm::can::Message *) { return false; });
