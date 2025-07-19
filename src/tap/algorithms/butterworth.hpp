@@ -190,20 +190,18 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
     return (1 + ((type & 0b10) != 0)) * ORDER + 1;
 }
 
-// clang-format off
-
 /*
  * The following is a placeholder function definition for Doxygen documentation.
  * This is because doxygen does not support template arguments in the same way as C++.
-*/
+ */
 
 #ifdef __DOXYGEN__
-/** 
+/**
  * @brief Placeholder function definition for Doxygen documentation.
  * @details
  * In actual code, the template argument DOXYGEN actually this corresponds to:
  * `Coefficients<getNumCoefficients(ORDER, Type), T>`
- * 
+ *
  * This function is used to generate Butterworth filter coefficients.
  *  * The following transforms map a lowpass prototype into other filter types (s-domain):
  *
@@ -237,8 +235,8 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
  *
  * @section Usage
  *
- * To use this implementation, call the function with the desired filter order, type, and parameters.
- * Then, pass the return as coefficients into a ``DiscreteFilter``.
+ * To use this implementation, call the function with the desired filter order, type, and
+ * parameters. Then, pass the return as coefficients into a ``DiscreteFilter``.
  *
  * @code
  *    Coefficients<2> coe =  butterworth<1, LOWPASS>(wc, Ts);
@@ -249,13 +247,10 @@ constexpr uint16_t getNumCoefficients(uint8_t ORDER, FilterType type)
  * @author Aiden Prevey
  * @date 4/29/2025
  * @version 2.0
- * 
-*/
+ *
+ */
 template <uint8_t DOXYGEN, FilterType Type = LOWPASS, typename T = float>
-constexpr Coefficients<DOXYGEN, T> butterworth(
-    double wc,
-    double Ts,
-    double wh = 0.0)
+constexpr Coefficients<DOXYGEN, T> butterworth(double wc, double Ts, double wh = 0.0)
 {
 #else
 
@@ -266,7 +261,6 @@ constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
     double wh = 0.0)
 {
 #endif
-    // clang-format on
     const uint16_t COEFFICIENTS = getNumCoefficients(ORDER, Type);
 
     std::array<T, COEFFICIENTS> naturalResponseCoefficients;
