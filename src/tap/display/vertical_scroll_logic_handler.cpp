@@ -17,6 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <cmath>
+
 #include "vertical_scroll_logic_handler.hpp"
 
 #include "tap/drivers.hpp"

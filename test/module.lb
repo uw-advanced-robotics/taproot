@@ -204,7 +204,7 @@ class TaprootTests(Module):
             env.copy("tap/communication/sensors/encoder/can_encoder_tests.cpp")
         if env.has_module(":communication:sensors:imu:bmi088"):
             env.copy("tap/communication/sensors/imu/bmi088")
-        if env.has_module(":communication:sensors:imu:"):
+        if env.has_module(":communication:sensors:imu") and env.has_module(":communication:serial:terminal_serial"):
             env.copy("tap/communication/sensors/imu/imu_terminal_serial_handler_tests.cpp")
         if env.has_module(":communication:sensors:imu_heater"):
             env.copy("tap/communication/sensors/imu_heater")
