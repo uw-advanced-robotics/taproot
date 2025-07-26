@@ -43,7 +43,7 @@ def init(repo):
         EnumerationOption(
             name="dev_board",
             description="Which development board to be used",
-            enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
+            enumeration=["rm-dev-board-a", "rm-dev-board-c", "stm32f446re"]))
 
 def prepare(repo, options):
     repo.add_modules_recursive("./src", modulefile="*.lb")
