@@ -29,8 +29,11 @@ def init(module):
 
 def prepare(module, options):
     metadata = board_info_parser.parse_board_info(options[":dev_board"])
-    pins = metadata.find("gpio-pins")
-    buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]
+    pins_element = metadata.find("gpio-pins")
+    if pins_element is None:
+        raise Exception("No <gpio-pins> found in board metadata. Check your board XML.")
+
+    buzzer_pins = [pin for pin in pins_element.findall("gpio") if pin.get("alias") == BUZZER_PIN]
     if len(buzzer_pins) == 1:
         global buzzer_timer
         buzzer_timer = buzzer_pins[0].find("timer").get("name")

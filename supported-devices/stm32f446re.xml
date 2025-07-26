@@ -1,0 +1,61 @@
+<board>
+  <can-pins>
+    <gpio alias="Can1Rx" name="GpioA11"/>
+    <gpio alias="Can1Tx" name="GpioA12"/>
+    <gpio alias="Can2Rx" name="GpioB12"/>
+    <gpio alias="Can2Tx" name="GpioB13"/>
+  </can-pins>
+
+  <gpio-pins>
+    <!-- Digital Input Pins
+    <gpio alias="PA0" name="GpioA0">
+      <adc name="Adc1" in="In0"/>
+    </gpio>
+    <gpio alias="PA1" name="GpioA1">
+      <adc name="Adc1" in="In1"/>
+    </gpio>
+    <gpio alias="PA4" name="GpioA4">
+      <adc name="Adc1" in="In4"/>
+    </gpio> -->
+
+    <gpio alias="PB5" name="GpioB5"/>
+
+
+    <!-- Digital Output Pins -->
+    <gpio alias="LED1" name="GpioC0"/>
+    <gpio alias="LED2" name="GpioC1"/>
+    <gpio alias="LED3" name="GpioB0"/>
+
+    <!-- PWM Pins -->
+    <!-- <gpio alias="PB1" name="GpioB1">
+      <timer name="Timer8" channel="Ch3"/>
+    </gpio>
+    <gpio alias="PC9" name="GpioC9">
+      <timer name="Timer8" channel="Ch4"/>
+    </gpio> -->
+
+    <!-- Analog Input Pins -->
+    <gpio alias="PA7" name="GpioA7">
+      <adc name="Adc1" in="In7"/>
+    </gpio>
+    <gpio alias="PA6" name="GpioA6">
+      <adc name="Adc1" in="In6"/>
+    </gpio>
+
+    <!-- <gpio alias="PC8" name="GpioC8"/> -->
+  </gpio-pins>
+
+  <uart-ports>
+    <uart sync="true" name="1" tx="GpioB6" rx="GpioA10"/>
+    <uart sync="false" name="5" tx="GpioC12" rx="GpioD2"/>
+    <uart sync="true" name="3" tx="GpioC10" rx="GpioC11"/>
+    <uart sync="false" name="4" tx="GpioA0" rx="GpioA1"/>
+    <uart sync="true" name="2" tx="GpioA2" rx="GpioA3"/>
+  </uart-ports>
+  <!-- <i2c-ports>
+    <i2c name="1" scl="GpioB8" sda="GpioB7"></i2c>
+  </i2c-ports>
+  <spi-ports>
+    <spi name="1" sck="GpioA9" miso="GpioB14" mosi="GpioB15" nss="GpioB9"/>
+  </spi-ports> -->
+</board>

@@ -73,6 +73,19 @@ public:
         Blue
     };
 
+%% elif options[":dev_board"] == "stm32f446re"
+    /**
+     * The LED corresponds to the built-in LED (LD2) on the Nucleo-F446RE board.
+     * - Green LED (LD2) is connected to PA5 (Arduino D13)
+     */
+    enum LedPin
+    {
+        Green,  // LD2 on PA5
+        A,
+        B,
+        C
+    };
+
 %% endif
 
     /**

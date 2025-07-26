@@ -23,6 +23,7 @@ sys.path.append(repopath("scripts/lbuild-helpers"))
 MCU_VARIANTS_BY_BOARD = {
     "rm-dev-board-a": "stm32f427iih6",
     "rm-dev-board-c": "stm32f407igh6",
+    "stm32f446re": "stm32f446ret6"
 }
 
 DEFAULT_MODM_OPTIONS_BY_BOARD = {
@@ -46,6 +47,15 @@ DEFAULT_MODM_OPTIONS_BY_BOARD = {
         modm:platform:uart:3:buffer.rx 256\n\
         modm:platform:uart:6:buffer.rx 256\n\
         modm:platform:uart:6:buffer.tx 256",
+    "stm32f446re": "\
+        modm:platform:uart:1:buffer.rx 256\n\
+        modm:platform:uart:1:buffer.tx 256\n\
+        modm:platform:uart:3:buffer.rx 256\n\
+        modm:platform:uart:3:buffer.tx 256\n\
+        modm:platform:uart:4:buffer.rx 256\n\
+        modm:platform:uart:4:buffer.tx 256\n\
+        modm:platform:uart:5:buffer.rx 256\n\
+        modm:platform:uart:5:buffer.tx 256",
 }
 
 def get_modm_repo_lb_file() -> str:

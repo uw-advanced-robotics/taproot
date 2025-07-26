@@ -39,13 +39,8 @@
     <module>modm:platform:flash</module>
     <module>modm:platform:gpio</module>
     <module>modm:platform:heap</module>
-    <module>modm:platform:random</module>
-    <module>modm:platform:timer:8</module>
-    <module>modm:platform:uart:1</module>
-    <module>modm:platform:uart:3</module>
-    <module>modm:platform:uart:6</module>
-    <module>modm:platform:adc:1</module>
-    <module>modm:platform:spi:1</module>
+    <!-- Remove random module since F446RE has no RNG peripheral -->
+    <!-- <module>modm:platform:random</module> -->
 %% if options[":dev_board"] == "rm-dev-board-a"
     <module>modm:platform:i2c:2</module>
     <module>modm:platform:timer:3</module>
@@ -61,6 +56,16 @@
     <module>modm:platform:timer:4</module>
     <module>modm:platform:timer:10</module>
     <module>modm:platform:adc:3</module>
+%% elif options[":dev_board"] == "stm32f446re"
+    <module>modm:platform:uart:1</module>
+    <module>modm:platform:uart:2</module>
+    <module>modm:platform:uart:3</module>
+    <module>modm:platform:uart:4</module>
+    <module>modm:platform:uart:5</module>
+    <module>modm:platform:timer:8</module>
+    <!-- <module>modm:platform:spi:2</module> -->
+    <!-- <module>modm:platform:i2c:1</module> -->
+    <module>modm:platform:adc:1</module>
 %% endif
 
 {% for m in modm_hal_modules %}    {{ m }}{% endfor %}
