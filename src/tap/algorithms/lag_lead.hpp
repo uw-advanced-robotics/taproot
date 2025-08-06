@@ -22,8 +22,38 @@
 
 #include "tap/algorithms/discrete_filter.hpp"
 
+/**
+ * @file lag_lead.hpp
+ *
+ * @brief Implementation of parts for a lag or lead controller, to be used with the discrete filter.
+ *
+ * @details
+ * Lag-lead controllers are used to adjust the phase and gain of a system by allowing
+ * for an addition of a zero and a pole in the transfer function.
+ *
+ * A lag controller is a single pole, single zero controller where the pole is at lower frequency
+ * than the zero. It usually is used to reduce steady-state error by adding low frequency gain.
+ * Think similar to a PI controller where the integral term is a lag compensator.
+ *
+ * A lead controller is a single pole, single zero controller where the pole is at higher frequency
+ * than the zero. It usually is used to improve stability margins by adding low frequency phase lead
+ * from the zero. Think similar to a PID controller where the derivative term is a lead compensator.
+ *
+ * A lead/lag controller has two poles and two zeros, with the poles sandwiching the zeros. This is
+ * essentially a lag and a lead compensator in series.
+ */
 namespace tap::algorithms::filter
 {
+/**
+ * @brief Computes the coefficients for a lag-lead controller
+ *
+ * @param k Gain of the controller
+ * @param z Zero of the controller
+ * @param p Pole of the controller
+ * @param ts Sample time
+ *
+ * @return Coefficients for the lag-lead controller
+ */
 constexpr Coefficients<2, float> phaseLagLeadCoefficients(float k, float z, float p, float ts)
 {
     const float a0 = 1.0f;

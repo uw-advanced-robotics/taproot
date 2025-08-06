@@ -131,13 +131,20 @@ public:
     T getLastFiltered() { return naturalResponse[0]; }
 
     /** @brief Resets the filter's state to zero, keeps the coefficients  */
-
     T reset()
     {
         // Reset the filter state to zero
         naturalResponse.fill(0.0f);
         forcedResponse.fill(0.0f);
         return 0.0f;
+    }
+
+    /** @brief Allows for setting a steady state value, good if starting at a non-zero value */
+    T setSteadyState(T steadyState)
+    {
+        naturalResponse.fill(steadyState);
+        forcedResponse.fill(steadyState);
+        return steadyState;
     }
 
     void setCoefficients(Coefficients<SIZE, T> coe)
