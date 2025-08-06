@@ -79,11 +79,13 @@
         "*.py.in": "jinja-py",
         "*.lb": "python",
         "*.in": "cpp",
+        "dense": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
     "C_Cpp.default.includePath": [
         "test-project/taproot/src",
         "test-project/src/",
+        "test-project/taproot/ext/",
         "test-project/taproot/modm/ext/cmsis/dsp",
         "test-project/taproot/modm/ext/cmsis/core"
     ],
