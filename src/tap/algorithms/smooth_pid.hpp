@@ -47,7 +47,7 @@ struct SmoothPidConfig
                                         * error will be set to 0. */
     float errorDerivativeFloor = 0.0f; /**< Minimum error value at which the PID controller will
                                         * compute and apply the derivative term. */
-    bool smoothError = false;          /**< If true, the error will be smoothed by subtracting
+    bool smoothDeadzone = false;          /**< If true, the error will be smoothed by subtracting
                                         * errDeadzone from positive errors and adding it to
                                         * negative errors. */
     bool antiSaturation = false;       /**< If true the controller will not
@@ -86,7 +86,7 @@ public:
     {
         config.errorDerivativeFloor = errorDerivativeFloor;
     }
-    inline void setSmoothError(bool smoothError) { config.smoothError = smoothError; }
+    inline void smoothDeadzone(bool smoothDeadzone) { config.smoothDeadzone = smoothDeadzone; }
     inline void setAntiSaturation(bool antiSaturation) { config.antiSaturation = antiSaturation; }
 
 private:

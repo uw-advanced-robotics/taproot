@@ -40,7 +40,7 @@ float SmoothPid::runController(float error, float errorDerivative, float dt)
     {
         error = 0.0f;
     }
-    else if (config.smoothError)
+    else if (config.smoothDeadzone)
     {
         error += (error > 0 ? -config.errDeadzone : config.errDeadzone);
     }
