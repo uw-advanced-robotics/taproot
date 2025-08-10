@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#ifndef TAP_ALGORITHMS_LAG_LEAD_HPP_
-#define TAP_ALGORITHMS_LAG_LEAD_HPP_
+#ifndef TAPROOT_LAG_LEAD_HPP_
+#define TAPROOT_LAG_LEAD_HPP_
 
 #include "tap/algorithms/discrete_filter.hpp"
 
@@ -68,4 +67,4 @@ constexpr Coefficients<2, float> phaseLagLeadCoefficients(float k, float z, floa
 }
 }  // namespace tap::algorithms::filter
 
-#endif  // TAP_ALGORITHMS_LAG_LEAD_HPP_
+#endif  // TAPROOT_LAG_LEAD_HPP_
