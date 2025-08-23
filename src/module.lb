@@ -54,6 +54,8 @@ def prepare(module, options):
     module.depends(":communication:sensors:current")
     module.depends(":communication:sensors:voltage")
 
+    # units dependencies
+    module.depends(":units")
     return True
 
 def build(env):
