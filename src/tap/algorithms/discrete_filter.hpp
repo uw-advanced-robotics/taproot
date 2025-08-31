@@ -24,7 +24,7 @@
  * This header defines the following:
  * - CascadeFilter: A variadic template class for composing multiple filters in series (cascade).
  *   It supports runtime and compile-time access to individual filters, as well as operator*
- *   overloads for convenient cascade construction. 
+ *   overloads for convenient cascade construction.
  *   Usage: CascadeFilter<DiscreteFilter<n>,DiscreteFilter<n>> cascade = filter1 * filter2;
  * - Coefficients: A structure representing the coefficients for discrete filters, including
  *   natural and forced response coefficients.
@@ -55,9 +55,9 @@ class CascadeFilter;
 
 // ----------------- Base case: single Filter -----------------
 /**
- * @brief 
- * 
- * @tparam Filter 
+ * @brief
+ *
+ * @tparam Filter
  */
 template <typename Filter>
 class CascadeFilter<Filter>
