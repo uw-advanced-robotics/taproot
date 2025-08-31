@@ -23,8 +23,180 @@
 #include <array>
 #include <cstdint>
 
+#include "modm/architecture/interface/assert.hpp"
+
 namespace tap::algorithms::filter
 {
+// ---------- CascadeFilter (primary + specializations) ----------
+// Primary template forward-declaration
+template <typename... Filters>
+class CascadeFilter;
+
+// ----------------- Base case: single Filter -----------------
+template <typename Filter>
+class CascadeFilter<Filter>
+{
+public:
+    explicit CascadeFilter(const Filter& f) : f_(f) {}
+
+    std::size_t size() const noexcept { return 1; }
+
+    // runtime index access
+    Filter& operator[](std::size_t i)
+    {
+        assert(i == 0);
+        return f_;
+    }
+    const Filter& operator[](std::size_t i) const
+    {
+        assert(i == 0);
+        return f_;
+    }
+
+    // compile-time getter for pack-expansion use in operator*
+    template <std::size_t I>
+    auto& get()
+    {
+        modm_assert(I == 0, "Cascade Index", "Index out of range for CascadeFilter<Filter>");
+        return f_;
+    }
+    template <std::size_t I>
+    const auto& get() const
+    {
+        modm_assert(I == 0, "Cascade Index", "Index out of range for CascadeFilter<Filter>");
+        return f_;
+    }
+
+    template <typename Float = float>
+    auto filterData(Float x)
+    {
+        return f_.filterData(x);
+    }
+
+    auto getLastFiltered() const { return f_.getLastFiltered(); }
+
+    void reset() { f_.reset(); }
+
+private:
+    Filter f_;
+};
+
+// ----------------- Recursive case: First + Rest... -----------------
+template <typename First, typename... Rest>
+class CascadeFilter<First, Rest...>
+{
+public:
+    CascadeFilter(const First& f, const Rest&... rest) : first_(f), rest_(rest...) {}
+
+    size_t size() const noexcept { return 1 + rest_.size(); }
+
+    // runtime index access
+    auto& operator[](std::size_t i)
+    {
+        if (i == 0) return first_;
+        return rest_[i - 1];
+    }
+    const auto& operator[](std::size_t i) const
+    {
+        if (i == 0) return first_;
+        return rest_[i - 1];
+    }
+
+    // compile-time getter for pack-expansion use in operator*
+    template <std::size_t I>
+    auto& get()
+    {
+        if constexpr (I == 0)
+        {
+            return first_;
+        }
+        else
+        {
+            return rest_.template get<I - 1>();
+        }
+    }
+    template <std::size_t I>
+    const auto& get() const
+    {
+        if constexpr (I == 0)
+        {
+            return first_;
+        }
+        else
+        {
+            return rest_.template get<I - 1>();
+        }
+    }
+
+    template <typename Float = float>
+    auto filterData(Float x)
+    {
+        auto tmp = first_.filterData(x);
+        return rest_.filterData(tmp);
+    }
+
+    auto getLastFiltered() const { return rest_.getLastFiltered(); }
+
+    void reset()
+    {
+        first_.reset();
+        rest_.reset();
+    }
+
+private:
+    First first_;
+    CascadeFilter<Rest...> rest_;
+};
+
+// ----------------- operator* overloads (flattening) -----------------
+// Helper: build CascadeFilter from two cascades by expanding their indices
+template <typename... As, typename... Bs, std::size_t... I, std::size_t... J>
+auto concat_impl(
+    const CascadeFilter<As...>& a,
+    const CascadeFilter<Bs...>& b,
+    std::index_sequence<I...>,
+    std::index_sequence<J...>)
+{
+    return CascadeFilter<As..., Bs...>(a.template get<I>()..., b.template get<J>()...);
+}
+
+// Cascade * Cascade
+template <typename... As, typename... Bs>
+auto operator*(const CascadeFilter<As...>& a, const CascadeFilter<Bs...>& b)
+{
+    return concat_impl(a, b, std::index_sequence_for<As...>{}, std::index_sequence_for<Bs...>{});
+}
+
+// Filter * Cascade
+template <typename A, typename... Bs>
+auto operator*(const A& a, const CascadeFilter<Bs...>& b)
+{
+    // build CascadeFilter<A, Bs...>(a, b.get<0>(), b.get<1>(), ...)
+    return [&]<std::size_t... J>(std::index_sequence<J...>)
+    {
+        return CascadeFilter<A, Bs...>(a, b.template get<J>()...);
+    }
+    (std::index_sequence_for<Bs...>{});
+}
+
+// Cascade * Filter
+template <typename... As, typename B>
+auto operator*(const CascadeFilter<As...>& a, const B& b)
+{
+    return [&]<std::size_t... I>(std::index_sequence<I...>)
+    {
+        return CascadeFilter<As..., B>(a.template get<I>()..., b);
+    }
+    (std::index_sequence_for<As...>{});
+}
+
+// Filter * Filter -> two-element cascade
+template <typename A, typename B>
+auto operator*(const A& lhs, const B& rhs)
+{
+    return CascadeFilter<A, B>(lhs, rhs);
+}
+
 /**
  * @struct Coefficients
  * @brief Represents the coefficients used in a discrete filter.
@@ -129,8 +301,10 @@ public:
 
     /** @brief Returns the last filtered value*/
     T getLastFiltered() { return naturalResponse[0]; }
+    T getLastFiltered() const { return naturalResponse[0]; }
 
     /** @brief Resets the filter's state to zero, keeps the coefficients  */
+
     T reset()
     {
         // Reset the filter state to zero
@@ -138,7 +312,6 @@ public:
         forcedResponse.fill(0.0f);
         return 0.0f;
     }
-
     /** @brief Allows for setting a steady state value, good if starting at a non-zero value */
     T setSteadyState(T steadyState)
     {

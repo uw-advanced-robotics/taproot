@@ -17,8 +17,12 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <iomanip>
+#include <iostream>
+
 #include <gtest/gtest.h>
 
+#include "tap/algorithms/butterworth.hpp"
 #include "tap/algorithms/discrete_filter.hpp"
 
 using namespace tap::algorithms::filter;
@@ -192,4 +196,130 @@ TEST(DiscreteFilter, set_coefficients_works)
     // The filter output should settle to a non-zero value
     EXPECT_GT(output, 0.0);
     EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
+}
+
+TEST(CASCADEFILTER, cascade_two_filters)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+
+    filter.setCoefficients(natural, forced);
+    auto cascade = filter * filter;
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = cascade.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
+}
+
+TEST(CASCADEFILTER, cascade_size_works)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+
+    filter.setCoefficients(natural, forced);
+    auto cascade = filter * filter * filter;
+
+    EXPECT_EQ(cascade.size(), 3);
+}
+
+TEST(CASCADEFILTER, indexing_operator_works)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+
+    filter.setCoefficients(natural, forced);
+    auto cascade = filter * filter * filter;
+
+    // Check that we can access the individual filters via the indexing operator
+    cascade[0].setCoefficients(natural, forced);
+    cascade[1].setCoefficients(natural, forced);
+    cascade[2].setCoefficients({1, 0, 0}, {0, 0, 0});
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = cascade.filterData(1.0);
+    }
+
+    // The filter output should be forced to zero by the last filter
+    EXPECT_FLOAT_EQ(output, 0.0);
+    EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
+}
+
+TEST(CASCADEFILTER, index_at_runtime)
+{
+    constexpr uint8_t SIZE = 3;
+    Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
+    DiscreteFilter<SIZE> filter(coe_empty);
+    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
+    std::array<float, SIZE> forced{0.2, 0.1, 0.05};
+
+    filter.setCoefficients(natural, forced);
+    auto cascade = filter * filter * filter;
+
+    for (size_t i = 0; i < cascade.size(); ++i)
+    {
+        cascade[i].setCoefficients({1.0f, -.5f, .25f + i * 0.1f}, forced);
+    }
+
+    float output = 0.0;
+    for (int i = 0; i < 1e3; ++i)
+    {
+        output = cascade.filterData(1.0);
+    }
+
+    // The filter output should settle to a non-zero value
+    EXPECT_GT(output, 0.0);
+    EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
+}
+
+TEST(CASCADEFILTER, cascade_filters_sucessfully)
+{
+    constexpr double wc = 10.0;
+    constexpr double Ts = 1 / 500.0;
+    float frequency = 100.0;
+
+    DiscreteFilter<3> butter2(butterworth<2, LOWPASS>(wc, Ts));
+    DiscreteFilter<2> butter1(butterworth<1, LOWPASS>(wc, Ts));
+
+    auto cascade = butter1 * butter1;
+
+    float max_val = 0.0f;
+    float max_val2 = 0.0f;
+
+    constexpr int simulation_points = 5000;
+
+    for (int i = 0; i < simulation_points; i++)
+    {
+        float data = sin(frequency * (i * Ts));
+        float val1 = butter2.filterData(data); /* Feed in a sin wave with freq, amp = 1 */
+        float val2 = cascade.filterData(data);
+        if (i > simulation_points - ((2 * M_PI) / frequency / Ts + 100))
+        {
+            max_val = std::max(max_val, std::abs(val1));
+            max_val2 = std::max(max_val2, std::abs(val2));
+        }
+    }
+
+    EXPECT_LT(max_val, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
+    EXPECT_GT(max_val, 0);         /* Check that the output is not too attenuated */
+
+    EXPECT_LT(max_val2, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
+    EXPECT_GT(max_val2, 0);         /* Check that the output is not too attenuated */
+    EXPECT_NEAR(butter2.getLastFiltered(), cascade.getLastFiltered(), 1e-3);
 }
