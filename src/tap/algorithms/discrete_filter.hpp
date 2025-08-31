@@ -17,6 +17,26 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file discrete_filter.hpp
+ * @brief Contains the implementation of discrete-time filters and filter cascades.
+ *
+ * This header defines the following:
+ * - CascadeFilter: A variadic template class for composing multiple filters in series (cascade).
+ *   It supports runtime and compile-time access to individual filters, as well as operator*
+ *   overloads for convenient cascade construction. Useage: auto cascade = filter1 * filter2 * filter3;
+ * - Coefficients: A structure representing the coefficients for discrete filters, including
+ *   natural and forced response coefficients.
+ * - DiscreteFilter: A template class implementing a generic discrete-time filter using the
+ *   finite difference equation. It supports filtering input data, resetting state, setting
+ *   coefficients, and initializing to a steady state.
+ *
+ * @note All classes are defined within the tap::algorithms::filter namespace.
+ *
+ * @author Aiden Prevey
+ * @date 8/30/2025
+ */
+
 #ifndef TAPROOT_DISCRETE_FILTER_HPP_
 #define TAPROOT_DISCRETE_FILTER_HPP_
 
@@ -33,6 +53,11 @@ template <typename... Filters>
 class CascadeFilter;
 
 // ----------------- Base case: single Filter -----------------
+/**
+ * @brief 
+ * 
+ * @tparam Filter 
+ */
 template <typename Filter>
 class CascadeFilter<Filter>
 {
