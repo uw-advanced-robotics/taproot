@@ -61,10 +61,10 @@ private:
     /**
      * PID constants for temperature control.
      */
-    static constexpr float TEMPERATURE_PID_P = 1.0f;
-    static constexpr float TEMPERATURE_PID_I = 0.0f;
-    static constexpr float TEMPERATURE_PID_D = 20.0f;
-    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.0f;
+    static constexpr float TEMPERATURE_PID_P = 0.12f;
+    static constexpr float TEMPERATURE_PID_I = 0.005f;
+    static constexpr float TEMPERATURE_PID_D = 0.0f; //Derivative control is unwanted on a 1st order system
+    static constexpr float TEMPERATURE_PID_MAX_ERR_SUM = 0.12f / TEMPERATURE_PID_I;
     static constexpr float TEMPERATURE_PID_MAX_OUT = 1.0f;
 
     /**
@@ -77,7 +77,7 @@ private:
      * Normal operating temperature is ~40 degrees C, and RM manual says the optimal operating
      * temperature is ~15-20 degrees C above the normal operating temperature of the board.
      */
-    float imuDesiredTemperature = 50.0f;
+    float imuDesiredTemperature = 35.0f;
 
     Drivers *drivers;
 
