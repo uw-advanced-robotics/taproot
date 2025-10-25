@@ -109,11 +109,9 @@ public:
 
     tap::encoder::EncoderInterface* getEncoder() const override
     {
-%% if use_multi_encoder
-        return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
-%% else
-        return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
-%% endif
+        % % if use_multi_encoder return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
+        % % else return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
+        % % endif
     }
 
     /**
@@ -149,6 +147,17 @@ public:
      *      `MOTOR_DISCONNECT_TIME` ms, `false` otherwise.
      */
     bool isMotorOnline() const override;
+
+    /**
+     * @return 'true' if the motor has been offline since
+     *     the last time offline reset has been called.
+     */
+    bool hasMotorBeenOffline() const;
+
+    /**
+     * @brief Resets the offline flag.
+     */
+    void resetHasBeenOffline();
 
     /**
      * Serializes send data and deposits it in a message to be sent.
@@ -211,13 +220,12 @@ private:
     Encoder internalEncoder;
 #endif
 
-%% if use_multi_encoder
-    tap::encoder::MultiEncoder<2> encoder;
-%% else
-    tap::encoder::EncoderInterface* encoder;
-%% endif
+    % % if use_multi_encoder tap::encoder::MultiEncoder<2> encoder;
+    % % else tap::encoder::EncoderInterface* encoder;
+    % %
+        endif
 
-    tap::arch::MilliTimeout motorDisconnectTimeout;
+            tap::arch::MilliTimeout motorDisconnectTimeout;
 };
 
 }  // namespace tap::motor
