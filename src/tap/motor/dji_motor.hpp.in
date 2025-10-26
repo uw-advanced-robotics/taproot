@@ -107,12 +107,14 @@ public:
 
     void initialize() override;
 
+    //clang-format off
     tap::encoder::EncoderInterface* getEncoder() const override
     {
-        % % if use_multi_encoder return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
-        % % else return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
-        % % endif
+%% if use_multi_encoder return const_cast<tap::encoder::MultiEncoder<2>*>(&this->encoder);
+%% else return const_cast<tap::encoder::EncoderInterface*>(this->encoder);
+%% endif
     }
+    //clang-format on
 
     /**
      * Returns the builtin encoder associated with the motor.
@@ -219,12 +221,13 @@ private:
 #else
     Encoder internalEncoder;
 #endif
-
-    % % if use_multi_encoder tap::encoder::MultiEncoder<2> encoder;
-    % % else tap::encoder::EncoderInterface* encoder;
-    % %
-        endif
-
+    // clang-format off
+%% if use_multi_encoder
+    tap::encoder::MultiEncoder<2> encoder;
+%% else
+    tap::encoder::EncoderInterface* encoder;
+%% endif
+            // clang-format on
             tap::arch::MilliTimeout motorDisconnectTimeout;
 };
 
