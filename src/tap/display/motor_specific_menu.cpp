@@ -66,7 +66,7 @@ void MotorSpecificMenu::draw()
             << "  Enc. Wrapped: " << currEncoderWrapped << modm::endl
             << "  RPM: " << currRPM << modm::endl
             << "  Inverted: " << currIsInverted << modm::endl
-            << "  Offline: " << (hasMotorBeenOffline ? "YES" : "NO");
+            << "  Has motor been offline: " << (hasMotorBeenOffline ? "YES" : "NO");
 }
 
 void MotorSpecificMenu::shortButtonPress(modm::MenuButtons::Button button)
@@ -93,6 +93,7 @@ bool MotorSpecificMenu::hasChanged()
     bool sameEncoderWrapped =
         (associatedMotor->getInternalEncoder().getEncoder().getWrappedValue() ==
          currEncoderWrapped);
+    bool sameOfflineStatus = (associatedMotor->hasMotorBeenOffline() == hasMotorBeenOffline);
 
     return !(sameOutputDesired && sameInverted && sameEncoderWrapped && sameOfflineStatus) &&
            updatePeriodicTimer.execute();
