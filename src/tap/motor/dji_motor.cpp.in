@@ -117,7 +117,7 @@ bool DjiMotor::isMotorOnline() const
     return !motorDisconnectTimeout.isExpired() && !motorDisconnectTimeout.isStopped();
 }
 
-bool DjiMotor::hasMotorBeenOffline() const { return !isMotorOnline() && offlineFlag; }
+bool DjiMotor::hasMotorBeenOffline() const { return !isMotorOnline() || offlineFlag; }
 
 void DjiMotor::resetHasBeenOffline() { offlineFlag = false; }
 

@@ -77,7 +77,8 @@ void MotorSpecificMenu::shortButtonPress(modm::MenuButtons::Button button)
             this->remove();
             break;
         case modm::MenuButtons::RIGHT:
-            associatedMotor->resetHasBeenOffline();
+            if (associatedMotor == nullptr) break;
+            resetMotorChangedFlag(associatedMotor);
             break;
         default:
             break;
@@ -86,13 +87,14 @@ void MotorSpecificMenu::shortButtonPress(modm::MenuButtons::Button button)
 
 bool MotorSpecificMenu::hasChanged()
 {
+    bool sameOfflineStatus = (associatedMotor->hasMotorBeenOffline() == hasMotorBeenOffline);
     bool sameOutputDesired = (associatedMotor->getOutputDesired() == currDesiredOutput);
     bool sameInverted = (associatedMotor->isMotorInverted() == currIsInverted);
     bool sameEncoderWrapped =
         (associatedMotor->getInternalEncoder().getEncoder().getWrappedValue() ==
          currEncoderWrapped);
 
-    return !(sameOutputDesired && sameInverted && sameEncoderWrapped) &&
+    return !(sameOutputDesired && sameInverted && sameEncoderWrapped && sameOfflineStatus) &&
            updatePeriodicTimer.execute();
 }
 }  // namespace display

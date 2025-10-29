@@ -152,7 +152,7 @@ public:
 
     /**
      * @return 'true' if the motor has been offline since
-     *     the last time offline reset has been called.
+     *     the last time 'resetHasBeenOffline()' has been called.
      */
     bool hasMotorBeenOffline() const;
 

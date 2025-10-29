@@ -44,7 +44,7 @@ public:
     MotorSpecificMenu(
         modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
         Drivers* drivers,
-        motor::DjiMotor* motor);
+        const motor::DjiMotor* motor);
 
     void draw() override;
 
@@ -56,7 +56,7 @@ public:
 
 private:
     Drivers* drivers;
-    tap::motor::DjiMotor* associatedMotor;
+    const tap::motor::DjiMotor* associatedMotor;
 
     arch::PeriodicMilliTimer updatePeriodicTimer{DISPLAY_DRAW_PERIOD};
 
@@ -65,6 +65,24 @@ private:
     uint16_t currEncoderWrapped;
     int16_t currRPM = 0;
     bool hasMotorBeenOffline = false;
+
+    // helper function that gets the mutable motor and resets its changed flag
+    inline void resetMotorChangedFlag(const motor::DjiMotor* motor){
+        const uint32_t identifier = motor->getMotorIdentifier();
+        const tap::can::CanBus Can = motor->getCanBus();
+        switch (Can)
+        {
+        case tap::can::CanBus::CAN_BUS1:
+            drivers->djiMotorTxHandler.getCan1MotorMutable(identifier)->resetHasBeenOffline();
+            break;
+        case tap::can::CanBus::CAN_BUS2:
+            drivers->djiMotorTxHandler.getCan2MotorMutable(identifier)->resetHasBeenOffline();
+            break;
+        default:
+            break;
+        }
+    };
+
 };
 }  // namespace display
 }  // namespace tap
