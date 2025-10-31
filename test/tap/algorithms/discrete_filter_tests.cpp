@@ -27,6 +27,35 @@
 
 using namespace tap::algorithms::filter;
 
+template <typename Cascade>
+float runFilterMaxValue(Cascade& c, float freq, float Ts)
+{
+    float max_val = 0.0f;
+    constexpr int N = 5000;
+
+    for (int i = 0; i < N; ++i)
+    {
+        float data = sin(freq * (i * Ts));
+        float out = c.filterData(data);
+
+        if (i > N - 1000)
+        {
+            max_val = std::max(max_val, std::abs(out));
+        }
+    }
+    return max_val;
+}
+
+template <typename C>
+void compareCascades(C& c1, C& c2, float freq, float Ts)
+{
+    auto a1 = runFilterMaxValue(c1, freq, Ts);
+    auto a2 = runFilterMaxValue(c2, freq, Ts);
+
+    EXPECT_NEAR(a1, a2, 1e-3);
+    EXPECT_NEAR(c1.getLastFiltered(), c2.getLastFiltered(), 1e-3);
+}
+
 TEST(DiscreteFilter, initial_output_is_zero)
 {
     constexpr uint8_t SIZE = 3;
@@ -266,13 +295,14 @@ TEST(CASCADEFILTER, index_at_runtime)
     constexpr uint8_t SIZE = 3;
     Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
     DiscreteFilter<SIZE> filter(coe_empty);
-    std::array<float, SIZE> natural{1.0, -0.5, 0.25};
     std::array<float, SIZE> forced{0.2, 0.1, 0.05};
 
+    // Create and empty filter
     auto cascade = filter * filter * filter;
 
     for (size_t i = 0; i < cascade.size(); ++i)
     {
+        // Fill filter with slightly different natural coefficients
         cascade[i].setCoefficients({1.0f, -.5f, .25f + i * 0.1f}, forced);
     }
 
@@ -285,35 +315,6 @@ TEST(CASCADEFILTER, index_at_runtime)
     // The filter output should settle to a non-zero value
     EXPECT_GT(output, 0.0);
     EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
-}
-
-template <typename Cascade>
-float runFilterMaxValue(Cascade& c, float freq, float Ts)
-{
-    float max_val = 0.0f;
-    constexpr int N = 5000;
-
-    for (int i = 0; i < N; ++i)
-    {
-        float data = sin(freq * (i * Ts));
-        float out = c.filterData(data);
-
-        if (i > N - 1000)
-        {
-            max_val = std::max(max_val, std::abs(out));
-        }
-    }
-    return max_val;
-}
-
-template <typename C>
-void compareCascades(C& c1, C& c2, float freq, float Ts)
-{
-    auto a1 = runFilterMaxValue(c1, freq, Ts);
-    auto a2 = runFilterMaxValue(c2, freq, Ts);
-
-    EXPECT_NEAR(a1, a2, 1e-3);
-    EXPECT_NEAR(c1.getLastFiltered(), c2.getLastFiltered(), 1e-3);
 }
 
 TEST(CASCADEFILTER, all_multiplication_permutations_work)
