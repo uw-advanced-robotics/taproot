@@ -21,7 +21,6 @@
  * @file discrete_filter.hpp
  * @brief Contains the implementation of discrete-time filters and filter cascades.
  *
- * This header defines the following:
  * - CascadeFilter: A variadic template class for composing multiple filters in series (cascade).
  *   It supports runtime and compile-time access to individual filters, as well as operator*
  *   overloads for convenient cascade construction.
@@ -48,14 +47,14 @@
 
 namespace tap::algorithms::filter
 {
-// ---------- CascadeFilter (primary + specializations) ----------
-// Primary template forward-declaration
 template <typename... Filters>
 class CascadeFilter;
 
-// ----------------- Base case: single Filter -----------------
 /**
- * @brief
+ * @brief CascadeFilter base object, holds n filters in series
+ * Each filter's output is the next filter's input
+ *
+ * @code auto cascade = filter * filter;
  *
  * @tparam Filter
  */
@@ -107,16 +106,23 @@ private:
     Filter f_;
 };
 
-// ----------------- Recursive case: First + Rest... -----------------
+/** Recursive filter, holds n filters in series
+   Each filter's output is the next filter's input
+
+   @code auto cascade = filter * filter * filter;
+
+   @tparam First First filter in the cascade
+   @tparam Rest  Remaining filters in the cascade
+ */
 template <typename First, typename... Rest>
 class CascadeFilter<First, Rest...>
 {
 public:
+    // Constructor that allows for a variadic number of filters
     CascadeFilter(const First& f, const Rest&... rest) : first_(f), rest_(rest...) {}
 
     size_t size() const noexcept { return 1 + rest_.size(); }
 
-    // runtime index access
     auto& operator[](std::size_t i)
     {
         if (i == 0) return first_;
@@ -174,8 +180,7 @@ private:
     CascadeFilter<Rest...> rest_;
 };
 
-// ----------------- operator* overloads (flattening) -----------------
-// Helper: build CascadeFilter from two cascades by expanding their indices
+// Helper to concatenate two CascadeFilters
 template <typename... As, typename... Bs, std::size_t... I, std::size_t... J>
 auto concat_impl(
     const CascadeFilter<As...>& a,
@@ -183,21 +188,32 @@ auto concat_impl(
     std::index_sequence<I...>,
     std::index_sequence<J...>)
 {
+    /* Expands into CascadeFilter<As..., Bs...>(a.get<0>(), a.get<1>(), ..., b.get<0>(), b.get<1>(),
+       ...) where .get is the filter at that index */
     return CascadeFilter<As..., Bs...>(a.template get<I>()..., b.template get<J>()...);
 }
 
-// Cascade * Cascade
+/** @brief `CascadeFilter` * `CascadeFilter`
+ * Creates a new CascadeFilter, see concat_impl for details
+ * @tparam As Filters in the existing CascadeFilter
+ * @tparam B Filter to add to the end of the CascadeFilter
+ */
 template <typename... As, typename... Bs>
 auto operator*(const CascadeFilter<As...>& a, const CascadeFilter<Bs...>& b)
 {
     return concat_impl(a, b, std::index_sequence_for<As...>{}, std::index_sequence_for<Bs...>{});
 }
 
-// Filter * Cascade
+/** @brief `Filter` * `CascadeFilter`
+ * Creates a new CascadeFilter with a variadic
+ * template expansion, adding n filters to the rhs of cascade
+ * Is the inverse case of CascadeFilter * Filter
+ * @tparam As Filters in the existing CascadeFilter
+ * @tparam B Filter to add to the end of the CascadeFilter
+ */
 template <typename A, typename... Bs>
 auto operator*(const A& a, const CascadeFilter<Bs...>& b)
 {
-    // build CascadeFilter<A, Bs...>(a, b.get<0>(), b.get<1>(), ...)
     return [&]<std::size_t... J>(std::index_sequence<J...>)
     {
         return CascadeFilter<A, Bs...>(a, b.template get<J>()...);
@@ -205,18 +221,30 @@ auto operator*(const A& a, const CascadeFilter<Bs...>& b)
     (std::index_sequence_for<Bs...>{});
 }
 
-// Cascade * Filter
+/** @brief `CascadeFilter` * `Filter`
+ * Creates a new CascadeFilter with a variadic
+ * template expansion, adding n filters to the rhs of cascade
+ * @tparam As Filters in the existing CascadeFilter
+ * @tparam B Filter to add to the end of the CascadeFilter
+ */
 template <typename... As, typename B>
 auto operator*(const CascadeFilter<As...>& a, const B& b)
 {
+    /* Create a lambda to expand the indices of get<>() for each
+       filter that exists in the CascadeFilter */
     return [&]<std::size_t... I>(std::index_sequence<I...>)
     {
+        /* Expands into CascadeFilter<As..., B>(a.get<0>(), a.get<1>(), ..., b)
+           for each existing filter in the CascadeFilter */
         return CascadeFilter<As..., B>(a.template get<I>()..., b);
     }
     (std::index_sequence_for<As...>{});
+    // call the lambda with an index sequence for the existing filters
 }
 
-// Filter * Filter -> two-element cascade
+/** @brief `DiscreteFilter` * `DiscreteFilter`
+ * Creates a normal CascadeFilter
+ */
 template <typename A, typename B>
 auto operator*(const A& lhs, const B& rhs)
 {
@@ -330,7 +358,6 @@ public:
     T getLastFiltered() const { return naturalResponse[0]; }
 
     /** @brief Resets the filter's state to zero, keeps the coefficients  */
-
     T reset()
     {
         // Reset the filter state to zero
@@ -338,6 +365,7 @@ public:
         forcedResponse.fill(0.0f);
         return 0.0f;
     }
+
     /** @brief Allows for setting a steady state value, good if starting at a non-zero value */
     T setSteadyState(T steadyState)
     {

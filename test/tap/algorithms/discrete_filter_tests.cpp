@@ -294,32 +294,48 @@ TEST(CASCADEFILTER, cascade_filters_sucessfully)
     constexpr double Ts = 1 / 500.0;
     float frequency = 100.0;
 
-    DiscreteFilter<3> butter2(butterworth<2, LOWPASS>(wc, Ts));
-    DiscreteFilter<2> butter1(butterworth<1, LOWPASS>(wc, Ts));
+    DiscreteFilter<4> butterOrder3(butterworth<3, LOWPASS>(wc, Ts));
+    DiscreteFilter<2> butterOrder1(butterworth<1, LOWPASS>(wc, Ts));
 
-    auto cascade = butter1 * butter1;
+    auto cascade = butterOrder1 * butterOrder1 * butterOrder1;
+    auto cascade_part = butterOrder1 * butterOrder1;
+    auto cascade2 = cascade_part * butterOrder1;
 
-    float max_val = 0.0f;
-    float max_val2 = 0.0f;
+    float max_val_normal = 0.0f;
+    float max_val_cascade = 0.0f;
+    float max_val_cascade2 = 0.0f;
 
     constexpr int simulation_points = 5000;
 
     for (int i = 0; i < simulation_points; i++)
     {
         float data = sin(frequency * (i * Ts));
-        float val1 = butter2.filterData(data); /* Feed in a sin wave with freq, amp = 1 */
+        float val1 = butterOrder3.filterData(data); /* Feed in a sin wave with freq, amp = 1 */
         float val2 = cascade.filterData(data);
+        float val3 = cascade2.filterData(data);
+
+        // delay simulation to let transients die out
         if (i > simulation_points - ((2 * M_PI) / frequency / Ts + 100))
         {
-            max_val = std::max(max_val, std::abs(val1));
-            max_val2 = std::max(max_val2, std::abs(val2));
+            max_val_normal = std::max(max_val_normal, std::abs(val1));
+            max_val_cascade = std::max(max_val_cascade, std::abs(val2));
+            max_val_cascade2 = std::max(max_val_cascade2, std::abs(val3));
         }
     }
 
-    EXPECT_LT(max_val, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
-    EXPECT_GT(max_val, 0);         /* Check that the output is not too attenuated */
+    EXPECT_LT(max_val_normal, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
+    EXPECT_GT(max_val_normal, 0);         /* Check that the output is not too attenuated */
 
-    EXPECT_LT(max_val2, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
-    EXPECT_GT(max_val2, 0);         /* Check that the output is not too attenuated */
-    EXPECT_NEAR(butter2.getLastFiltered(), cascade.getLastFiltered(), 1e-3);
+    EXPECT_LT(
+        max_val_cascade,
+        .1 + 1e-3);                /* Check that the output is attenuated (expected is .1 )*/
+    EXPECT_GT(max_val_cascade, 0); /* Check that the output is not too attenuated */
+
+    EXPECT_LT(
+        max_val_cascade2,
+        .1 + 1e-3);                 /* Check that the output is attenuated (expected is .1 )*/
+    EXPECT_GT(max_val_cascade2, 0); /* Check that the output is not too attenuated */
+
+    EXPECT_NEAR(butterOrder3.getLastFiltered(), cascade.getLastFiltered(), 1e-3);
+    EXPECT_NEAR(butterOrder3.getLastFiltered(), cascade2.getLastFiltered(), 1e-3);
 }
