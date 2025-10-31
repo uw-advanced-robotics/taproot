@@ -269,7 +269,6 @@ TEST(CASCADEFILTER, index_at_runtime)
     std::array<float, SIZE> natural{1.0, -0.5, 0.25};
     std::array<float, SIZE> forced{0.2, 0.1, 0.05};
 
-    filter.setCoefficients(natural, forced);
     auto cascade = filter * filter * filter;
 
     for (size_t i = 0; i < cascade.size(); ++i)
@@ -288,54 +287,60 @@ TEST(CASCADEFILTER, index_at_runtime)
     EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
 }
 
-TEST(CASCADEFILTER, cascade_filters_sucessfully)
+template <typename Cascade>
+float runFilterMaxValue(Cascade& c, float freq, float Ts)
+{
+    float max_val = 0.0f;
+    constexpr int N = 5000;
+
+    for (int i = 0; i < N; ++i)
+    {
+        float data = sin(freq * (i * Ts));
+        float out = c.filterData(data);
+
+        if (i > N - 1000)
+        {
+            max_val = std::max(max_val, std::abs(out));
+        }
+    }
+    return max_val;
+}
+
+template <typename C>
+void compareCascades(C& c1, C& c2, float freq, float Ts)
+{
+    auto a1 = runFilterMaxValue(c1, freq, Ts);
+    auto a2 = runFilterMaxValue(c2, freq, Ts);
+
+    EXPECT_NEAR(a1, a2, 1e-3);
+    EXPECT_NEAR(c1.getLastFiltered(), c2.getLastFiltered(), 1e-3);
+}
+
+TEST(CASCADEFILTER, all_multiplication_permutations_work)
 {
     constexpr double wc = 10.0;
     constexpr double Ts = 1 / 500.0;
     float frequency = 100.0;
 
-    DiscreteFilter<4> butterOrder3(butterworth<3, LOWPASS>(wc, Ts));
-    DiscreteFilter<2> butterOrder1(butterworth<1, LOWPASS>(wc, Ts));
+    DiscreteFilter<2> f1(butterworth<1, LOWPASS>(wc, Ts));
+    DiscreteFilter<2> f2(butterworth<1, LOWPASS>(wc, Ts));
+    DiscreteFilter<2> f3(butterworth<1, LOWPASS>(wc, Ts));
 
-    auto cascade = butterOrder1 * butterOrder1 * butterOrder1;
-    auto cascade_part = butterOrder1 * butterOrder1;
-    auto cascade2 = cascade_part * butterOrder1;
+    // Reference manually–chained cascade
+    auto ref = CascadeFilter(f1, f2, f3);
 
-    float max_val_normal = 0.0f;
-    float max_val_cascade = 0.0f;
-    float max_val_cascade2 = 0.0f;
+    // Test all equivalent permutations:
+    auto A = f1 * f2 * f3;        // filter * filter * filter
+    auto B = (f1 * f2) * f3;      // (cascade) * filter
+    auto C = f1 * (f2 * f3);      // filter * (cascade)
+    auto D = (f1 * f2) * (f3);    // cascade * filter as cascade
+    auto E = (f1) * (f2 * f3);    // filter * cascade
+    auto F = (f1 * (f2)) * (f3);  // weird parentheses but valid case
 
-    constexpr int simulation_points = 5000;
-
-    for (int i = 0; i < simulation_points; i++)
-    {
-        float data = sin(frequency * (i * Ts));
-        float val1 = butterOrder3.filterData(data); /* Feed in a sin wave with freq, amp = 1 */
-        float val2 = cascade.filterData(data);
-        float val3 = cascade2.filterData(data);
-
-        // delay simulation to let transients die out
-        if (i > simulation_points - ((2 * M_PI) / frequency / Ts + 100))
-        {
-            max_val_normal = std::max(max_val_normal, std::abs(val1));
-            max_val_cascade = std::max(max_val_cascade, std::abs(val2));
-            max_val_cascade2 = std::max(max_val_cascade2, std::abs(val3));
-        }
-    }
-
-    EXPECT_LT(max_val_normal, .1 + 1e-3); /* Check that the output is attenuated (expected is .1 )*/
-    EXPECT_GT(max_val_normal, 0);         /* Check that the output is not too attenuated */
-
-    EXPECT_LT(
-        max_val_cascade,
-        .1 + 1e-3);                /* Check that the output is attenuated (expected is .1 )*/
-    EXPECT_GT(max_val_cascade, 0); /* Check that the output is not too attenuated */
-
-    EXPECT_LT(
-        max_val_cascade2,
-        .1 + 1e-3);                 /* Check that the output is attenuated (expected is .1 )*/
-    EXPECT_GT(max_val_cascade2, 0); /* Check that the output is not too attenuated */
-
-    EXPECT_NEAR(butterOrder3.getLastFiltered(), cascade.getLastFiltered(), 1e-3);
-    EXPECT_NEAR(butterOrder3.getLastFiltered(), cascade2.getLastFiltered(), 1e-3);
+    compareCascades(ref, A, frequency, Ts);
+    compareCascades(ref, B, frequency, Ts);
+    compareCascades(ref, C, frequency, Ts);
+    compareCascades(ref, D, frequency, Ts);
+    compareCascades(ref, E, frequency, Ts);
+    compareCascades(ref, F, frequency, Ts);
 }

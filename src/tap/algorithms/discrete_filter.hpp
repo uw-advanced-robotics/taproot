@@ -180,6 +180,10 @@ private:
     CascadeFilter<Rest...> rest_;
 };
 
+// Deduction guide for CascadeFilter
+template <typename... Fs>
+CascadeFilter(Fs...) -> CascadeFilter<Fs...>;
+
 // Helper to concatenate two CascadeFilters
 template <typename... As, typename... Bs, std::size_t... I, std::size_t... J>
 auto concat_impl(
