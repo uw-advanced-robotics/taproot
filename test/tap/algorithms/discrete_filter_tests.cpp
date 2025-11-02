@@ -22,8 +22,8 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/algorithms/butterworth.hpp"
-#include "tap/algorithms/discrete_filter.hpp"
+#include "tap/algorithms/filter/butterworth.hpp"
+#include "tap/algorithms/filter/discrete_filter.hpp"
 
 using namespace tap::algorithms::filter;
 
@@ -227,7 +227,7 @@ TEST(DiscreteFilter, set_coefficients_works)
     EXPECT_FLOAT_EQ(filter.getLastFiltered(), output);
 }
 
-TEST(CASCADEFILTER, cascade_two_filters)
+TEST(CascadeFilter, cascade_two_filters)
 {
     constexpr uint8_t SIZE = 3;
     Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
@@ -249,7 +249,7 @@ TEST(CASCADEFILTER, cascade_two_filters)
     EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
 }
 
-TEST(CASCADEFILTER, cascade_size_works)
+TEST(CascadeFilter, cascade_size_works)
 {
     constexpr uint8_t SIZE = 3;
     Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
@@ -263,7 +263,7 @@ TEST(CASCADEFILTER, cascade_size_works)
     EXPECT_EQ(cascade.size(), 3);
 }
 
-TEST(CASCADEFILTER, indexing_operator_works)
+TEST(CascadeFilter, indexing_operator_works)
 {
     constexpr uint8_t SIZE = 3;
     Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
@@ -290,7 +290,7 @@ TEST(CASCADEFILTER, indexing_operator_works)
     EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
 }
 
-TEST(CASCADEFILTER, index_at_runtime)
+TEST(CascadeFilter, index_at_runtime)
 {
     constexpr uint8_t SIZE = 3;
     Coefficients<SIZE> coe_empty{{0, 0, 0}, {0, 0, 0}};
@@ -317,15 +317,15 @@ TEST(CASCADEFILTER, index_at_runtime)
     EXPECT_FLOAT_EQ(cascade.getLastFiltered(), output);
 }
 
-TEST(CASCADEFILTER, all_multiplication_permutations_work)
+TEST(CascadeFilter, all_multiplication_permutations_work)
 {
     constexpr double wc = 10.0;
     constexpr double Ts = 1 / 500.0;
     float frequency = 100.0;
 
     DiscreteFilter<2> f1(butterworth<1, LOWPASS>(wc, Ts));
-    DiscreteFilter<2> f2(butterworth<1, LOWPASS>(wc, Ts));
-    DiscreteFilter<2> f3(butterworth<1, LOWPASS>(wc, Ts));
+    DiscreteFilter<3> f2(butterworth<2, LOWPASS>(wc, Ts));
+    DiscreteFilter<4> f3(butterworth<3, LOWPASS>(wc, Ts));
 
     // Reference manually–chained cascade
     auto ref = CascadeFilter(f1, f2, f3);

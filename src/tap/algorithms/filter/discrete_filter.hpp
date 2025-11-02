@@ -69,12 +69,12 @@ public:
     // runtime index access
     Filter& operator[](std::size_t i)
     {
-        assert(i == 0);
+        modm_assert(i == 0, "Cascade Index", "Index out of range for CascadeFilter<Filter>");
         return f_;
     }
     const Filter& operator[](std::size_t i) const
     {
-        assert(i == 0);
+        modm_assert(i == 0, "Cascade Index", "Index out of range for CascadeFilter<Filter>");
         return f_;
     }
 
