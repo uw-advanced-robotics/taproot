@@ -24,7 +24,7 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
-#include "dummy_allocator.hpp"
+#include "dynamic_dummy_allocator.hpp"
 #include "vertical_scroll_logic_handler.hpp"
 
 namespace tap
@@ -33,10 +33,10 @@ class Drivers;
 
 namespace display
 {
-class HardwareTestMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
+class HardwareTestMenu : public modm::AbstractMenu<DynamicDummy<modm::IAbstractView> >
 {
 public:
-    HardwareTestMenu(modm::ViewStack<DummyAllocator<modm::IAbstractView> > *vs, Drivers *drivers);
+    HardwareTestMenu(modm::ViewStack<DynamicDummy<modm::IAbstractView> > *vs, Drivers *drivers);
 
     void draw() override;
 

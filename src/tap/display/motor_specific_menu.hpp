@@ -35,14 +35,14 @@ class DjiMotor;
 class Drivers;
 namespace display
 {
-class MotorSpecificMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
+class MotorSpecificMenu : public modm::AbstractMenu<DynamicDummy<modm::IAbstractView> >
 {
 public:
     /// Time between calls to `draw`, which will redraw the motor menu.
     static constexpr uint32_t DISPLAY_DRAW_PERIOD = 500;
 
     MotorSpecificMenu(
-        modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
+        modm::ViewStack<DynamicDummy<modm::IAbstractView> >* stack,
         Drivers* drivers,
         const motor::DjiMotor* motor);
 

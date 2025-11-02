@@ -46,10 +46,9 @@ public:
     {
     }
 
-    T* allocate(size_t n, bool managed = true)
+    T* allocate(size_t n)
     {
-        isManaged = managed;
-        if (!isManaged) return nullptr;
+        if (!isAllocatorManaged) return nullptr;
 
         // allocate the memory without calling the constructor
         // of the associated data-type.
@@ -58,7 +57,7 @@ public:
 
     void deallocate(T* p)
     {
-        if (!isManaged) return;
+        if (!isAllocatorManaged) return;
 
         // it is important to use this form here, otherwise the
         // destructor of p will be called which is unwanted here.
@@ -66,8 +65,12 @@ public:
         ::operator delete(p);
     }
 
+    // Set whether the allocator should manage memory or not.
+    // true for the allocator to manage memory
+    void setAllocatorManaged(bool managed) { this->managed = managed; }
+
 private:
-    bool isManaged = true;
+    bool isAllocatorManaged = false;
 };
 }  // namespace display
 }  // namespace tap

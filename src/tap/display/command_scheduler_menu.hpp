@@ -25,7 +25,7 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
-#include "dummy_allocator.hpp"
+#include "dynamic_dummy_allocator.hpp"
 #include "vertical_scroll_logic_handler.hpp"
 
 namespace tap
@@ -40,11 +40,11 @@ class Subsystem;
 
 namespace display
 {
-class CommandSchedulerMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView>>
+class CommandSchedulerMenu : public modm::AbstractMenu<DynamicDummy<modm::IAbstractView>>
 {
 public:
     CommandSchedulerMenu(
-        modm::ViewStack<DummyAllocator<modm::IAbstractView>> *stack,
+        modm::ViewStack<DynamicDummy<modm::IAbstractView>> *stack,
         Drivers *drivers,
         int entriesToDisplay = MAX_ENTRIES_DISPLAYED);
 

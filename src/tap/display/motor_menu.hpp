@@ -24,7 +24,7 @@
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
-#include "dummy_allocator.hpp"
+#include "dynamic_dummy_allocator.hpp"
 #include "vertical_scroll_logic_handler.hpp"
 
 namespace tap
@@ -37,11 +37,11 @@ class Drivers;
 
 namespace display
 {
-class MotorMenu : public modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >
+class MotorMenu : public modm::AbstractMenu<DynamicDummy<modm::IAbstractView> >
 {
 public:
     MotorMenu(
-        modm::ViewStack<DummyAllocator<modm::IAbstractView> > *stack,
+        modm::ViewStack<DynamicDummy<modm::IAbstractView> > *stack,
         Drivers *drivers,
         int entriesToDisplay = DISPLAY_MAX_ENTRIES);
 

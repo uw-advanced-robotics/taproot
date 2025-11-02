@@ -36,10 +36,10 @@ namespace tap
 namespace display
 {
 MotorMenu::MotorMenu(
-    modm::ViewStack<DummyAllocator<modm::IAbstractView> >* stack,
+    modm::ViewStack<DynamicDummy<modm::IAbstractView> >* stack,
     Drivers* drivers,
     int entriesToDisplay)
-    : modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >(stack, MOTOR_MENU_ID),
+    : modm::AbstractMenu<DynamicDummy<modm::IAbstractView> >(stack, MOTOR_MENU_ID),
       drivers(drivers),
       verticalScroll(drivers, DjiMotorTxHandler::DJI_MOTORS_PER_CAN * 2, entriesToDisplay)
 {
@@ -165,8 +165,9 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                     drivers->djiMotorTxHandler.getCan1Motor(NORMALIZED_ID_TO_DJI_MOTOR(idx));
                 if (motor != nullptr)
                 {
-                    this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                    auto menu = new MotorSpecificMenu(getViewStack(), drivers, motor);
+                    menu->setAllocatorManaged(true);
+                    this->getViewStack()->push(menu);
                 }
             }
             else  // idx between [8, 16)
@@ -176,7 +177,7 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                 if (motor != nullptr)
                 {
                     this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                        new MotorSpecificMenu(getViewStack(), drivers, motor), false);
                 }
             }
             break;
