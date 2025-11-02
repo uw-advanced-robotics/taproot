@@ -21,17 +21,13 @@
  * @file discrete_filter.hpp
  * @brief Contains the implementation of discrete-time filters and filter cascades.
  *
- * - CascadeFilter: A variadic template class for composing multiple filters in series (cascade).
+ * - `CascadeFilter`: A variadic template class for composing multiple filters in series (cascade).
  *   It supports runtime and compile-time access to individual filters, as well as operator*
  *   overloads for convenient cascade construction.
  *   Usage: CascadeFilter<DiscreteFilter<n>,DiscreteFilter<n>> cascade = filter1 * filter2;
- * - Coefficients: A structure representing the coefficients for discrete filters, including
- *   natural and forced response coefficients.
- * - DiscreteFilter: A template class implementing a generic discrete-time filter using the
- *   finite difference equation. It supports filtering input data, resetting state, setting
- *   coefficients, and initializing to a steady state.
- *
- * @note All classes are defined within the tap::algorithms::filter namespace.
+ * - `Coefficients`: A structure representing the coefficients for discrete filters.
+ * - `DiscreteFilter`: A template class implementing a generic discrete-time filter using the
+ *   finite difference equation.
  *
  * @author Aiden Prevey
  * @date 8/30/2025
