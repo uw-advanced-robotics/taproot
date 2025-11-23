@@ -23,7 +23,6 @@
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 
-
 namespace tap::algorithms::transforms
 {
 // forward declare position to avoid circular dependency
