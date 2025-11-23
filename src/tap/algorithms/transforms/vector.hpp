@@ -93,9 +93,9 @@ public:
 
     inline float magnitude() const { return sqrt(dot(*this, *this)); }
 
-    inline Vector normalize() { return (*this) * 1.0f / this->magnitude(); };
+    inline Vector normalize() const { return (*this) * 1.0f / this->magnitude(); };
 
-    inline static Vector normalize(const Vector& a) { return a * 1.0f / a.magnitude(); };
+    inline static Vector normalize(const Vector& a) const { return a * 1.0f / a.magnitude(); };
 
     friend class Transform;
     friend class DynamicPosition;
