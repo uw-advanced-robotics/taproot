@@ -21,6 +21,8 @@
 #define TAPROOT_VECTOR_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/math_user_utils.hpp"
+
 
 namespace tap::algorithms::transforms
 {
@@ -75,6 +77,13 @@ public:
     }
 
     inline float dot(const Vector& other) const { return dot(*this, other); }
+
+    inline static Vector cross(const Vector& a, const Vector& b)
+    {
+        return Vector(tap::algorithms::cross(a.coordinates(), b.coordinates()));
+    }
+
+    inline Vector cross(const Vector& other) const { return cross(*this, other); }
 
     inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
