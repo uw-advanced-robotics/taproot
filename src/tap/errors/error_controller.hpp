@@ -65,6 +65,12 @@ public:
 
     void terminalSerialStreamCallback(modm::IOStream&) override {}
 
+    auto begin() const { return errorList.begin(); }
+
+    auto end() const { return errorList.end(); }
+
+    std::size_t getErrorListSize() const { return errorList.getSize(); }
+
 private:
     static constexpr char USAGE[] =
         "Usage: error <target>\n"
