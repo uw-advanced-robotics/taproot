@@ -70,7 +70,8 @@ public:
     auto end() const { return errorList.end(); }
 
     std::size_t getErrorListSize() const { return errorList.getSize(); }
-
+    
+    bool removeSystemErrorAtIndex(error_index_t index);
 private:
     static constexpr char USAGE[] =
         "Usage: error <target>\n"
@@ -87,7 +88,6 @@ private:
 
     modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
 
-    bool removeSystemErrorAtIndex(error_index_t index);
 
     void removeAllSystemErrors();
 
