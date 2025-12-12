@@ -50,3 +50,4 @@ def build(env):
     env.copy("make.bat")
     env.copy("Makefile")
     env.copy("module.rst")
+    env.copy("guides/command_scheduler.rst")
