@@ -16,9 +16,10 @@
 
 
 # -- Project information -----------------------------------------------------
+from datetime import datetime
 
 project = 'taproot'
-copyright = '2021, taproot'
+copyright = str(datetime.now().year) + ', taproot'
 author = 'taproot'
 
 # The full version, including alpha/beta/rc tags
