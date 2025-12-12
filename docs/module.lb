@@ -94,8 +94,9 @@ def build(env):
     env.copy("Makefile")
     env.copy("module.rst")
     env.copy("guides/command_scheduler.rst")
+    env.copy("changelog.rst")
 
-    
+
     # --- CI DEBUGGING BLOCK ---
     print("\n--- DEBUG: FILE LISTING ---")
     target_file = os.path.join(env.outbasepath, "changelog.rst")
