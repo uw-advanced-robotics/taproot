@@ -37,14 +37,16 @@ def prepare(module, options):
 
 def convert_md_to_rst(source_path, dest_path, title="Changelog"):
     """
-    Simple helper to convert Markdown headers to RST headers 
-    to avoid adding the 'myst-parser' dependency.
+    Simple helper to convert Markdown headers to RST headers.
     """
     if not os.path.exists(source_path):
         print(f"Warning: Source file {source_path} not found. Skipping conversion.")
         return
-    else: 
-        print(f"Found file in {source_path}")
+
+    # Ensure the destination directory exists before creating the file
+    dest_dir = os.path.dirname(dest_path)
+    if dest_dir and not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
 
     with open(source_path, "r") as f_in, open(dest_path, "w") as f_out:
         # Write the Main Document Title (Level 1)
@@ -52,25 +54,18 @@ def convert_md_to_rst(source_path, dest_path, title="Changelog"):
         f_out.write("=" * len(title) + "\n\n")
         
         for line in f_in:
-            # Convert H1: "# Title" -> Level 2 RST
             if line.startswith("# "):
                 content = line.strip("# \n")
                 f_out.write(content + "\n")
                 f_out.write("-" * len(content) + "\n\n")
-            
-            # Convert H2: "## Title" -> Level 3 RST
             elif line.startswith("## "):
                 content = line.strip("# \n")
                 f_out.write(content + "\n")
                 f_out.write("^" * len(content) + "\n\n")
-            
-            # Convert H3: "### Title" -> Level 4 RST (Optional addition)
             elif line.startswith("### "):
                 content = line.strip("# \n")
                 f_out.write(content + "\n")
                 f_out.write("~" * len(content) + "\n\n")
-            
-            # Pass through text/lists unchanged
             else:
                 f_out.write(line)
 
