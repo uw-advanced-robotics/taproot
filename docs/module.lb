@@ -93,7 +93,7 @@ def build(env):
     env.copy("make.bat")
     env.copy("Makefile")
     env.copy("module.rst")
-    
+
     guides_src = "guides"
     guides_dest = os.path.join(env.outbasepath, "guides")
 
@@ -122,8 +122,6 @@ def build(env):
         else:
             print(f"Directory {env.outbasepath} does not exist!")
     print("---------------------------\n")
-
-    env.copy("changelog.rst")
 
     print("\n--- DEBUG: index.rst CONTENT ---")
     index_path = os.path.join(env.outbasepath, "index.rst")
