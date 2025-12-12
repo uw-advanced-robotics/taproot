@@ -11,6 +11,7 @@ This project provides control algorithms and hardware abstractions for embedded 
 .. toctree::
    :maxdepth: 2
    :caption: User Guides
+   
    guides/command_scheduler
 
 .. -- SECTION 2: API REFERENCE --
