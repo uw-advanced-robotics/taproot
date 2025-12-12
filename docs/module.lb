@@ -42,6 +42,8 @@ def convert_md_to_rst(source_path, dest_path, title="Changelog"):
     if not os.path.exists(source_path):
         print(f"Warning: Source file {source_path} not found. Skipping conversion.")
         return
+    else:
+        print(f"Converting file at {source_path} to {dest_path}")
 
     # Ensure the destination directory exists before creating the file
     dest_dir = os.path.dirname(dest_path)
