@@ -94,7 +94,6 @@ def build(env):
     env.copy("Makefile")
     env.copy("module.rst")
     env.copy("guides/command_scheduler.rst")
-    env.copy("changelog.rst")
 
 
     # --- CI DEBUGGING BLOCK ---
@@ -116,3 +115,4 @@ def build(env):
             print(f"Directory {env.outbasepath} does not exist!")
     print("---------------------------\n")
 
+    env.copy("changelog.rst")
