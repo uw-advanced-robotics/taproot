@@ -80,7 +80,7 @@ def build(env):
     source_paths = " ".join(source_paths)
 
     # convert old changelog into a .rst for use in the generated docs
-    changelog_src = os.path.abspath("../CHANGELOG.md") 
+    changelog_src = os.path.abspath("../../CHANGELOG.md") 
     changelog_dest = os.path.join(env.outbasepath, "changelog.rst")
     convert_md_to_rst(changelog_src, changelog_dest)
 

@@ -2,6 +2,7 @@ Command Subsystem Framework
 ===========================
 
 This framework is the backbone of the Taproot control architecture.
+See the wiki page `here <https://gitlab.com/aruw/controls/taproot/-/wikis/Command-Subsystem-Framework>`_ for an overview of the design and concepts.
 
 Subsystem
 ---------
