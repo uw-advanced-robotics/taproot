@@ -1,20 +1,38 @@
-.. Taproot documentation master file, created by
-    sphinx-quickstart on Sat Jun 20 20:03:07 2020.
-    You can adapt this file completely to your liking, but it should at least
-    contain the root `toctree` directive.
+Taproot Documentation
+=====================
 
-Welcome to Taproot documentation!
-==================================================
+Welcome to the documentation for the Taproot MCB embedded/control library.
 
-Here you will find documentation for MCB embedded/control code. Navigate to a specific subject by searching. Browse through code by looking through "Library API" below.
+This project provides control algorithms and hardware abstractions for embedded systems. Use the sidebar to navigate the guides or search specifically for API references.
+
+.. -- SECTION 1: CONCEPTS & GUIDES --
+.. This creates a "User Guides" header in the sidebar
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Contents:
+   :maxdepth: 2
+   :caption: User Guides
+   guides/command_scheduler
 
-    api/library_root
+.. -- SECTION 2: API REFERENCE --
+.. This keeps your Exhale/Breathe auto-docs separate
 
-Indices and tables
+.. toctree::
+   :maxdepth: 2
+   :caption: API Reference
+
+   api/library_root
+
+.. -- SECTION 3: META INFO --
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Project Info
+
+   changelog
+   license
+
+Indices and Search
 ==================
 
-:ref:`genindex`
+* :ref:`genindex`
+* :ref:`search`
