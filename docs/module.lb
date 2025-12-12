@@ -121,3 +121,20 @@ def build(env):
     print("---------------------------\n")
 
     env.copy("changelog.rst")
+
+    print("\n--- DEBUG: index.rst CONTENT ---")
+    index_path = os.path.join(env.outbasepath, "index.rst")
+    
+    if os.path.exists(index_path):
+        with open(index_path, 'r') as f:
+            content = f.read()
+            print(content)
+            
+            # Auto-check for the user
+            if "changelog" in content:
+                print("\n[CHECK] 'changelog' entry FOUND in toctree.")
+            else:
+                print("\n[ERROR] 'changelog' entry MISSING from toctree!")
+    else:
+        print(f"FAILURE: {index_path} does not exist.")
+    print("--------------------------------\n")
