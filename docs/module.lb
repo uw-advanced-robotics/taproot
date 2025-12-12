@@ -81,7 +81,7 @@ def build(env):
 
     env.substitutions = { "source_paths": source_paths }
     env.outbasepath = "taproot/docs"
-    
+
     # convert old changelog into a .rst for use in the generated docs
     changelog_src = os.path.abspath("../../CHANGELOG.md") 
     changelog_dest = os.path.join(env.outbasepath, "changelog.rst")
@@ -94,3 +94,4 @@ def build(env):
     env.copy("Makefile")
     env.copy("module.rst")
     env.copy("guides/command_scheduler.rst")
+    env.copy(changelog_dest)
