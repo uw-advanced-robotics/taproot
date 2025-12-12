@@ -93,6 +93,9 @@ def build(env):
     env.copy("make.bat")
     env.copy("Makefile")
     env.copy("module.rst")
+    
+    guides_src = "guides"
+    guides_dest = os.path.join(env.outbasepath, "guides")
 
     if os.path.exists(guides_src):
         # Clean destination if it exists to ensure updates are captured
