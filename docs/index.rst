@@ -13,6 +13,7 @@ This project provides control algorithms and hardware abstractions for embedded 
    guides/command_scheduler
    guides/filters
    guides/controllers
+   guides/transforms
 
 .. -- SECTION 2: API REFERENCE --
 .. This keeps your Exhale/Breathe auto-docs separate
