@@ -54,6 +54,7 @@ namespace tap::algorithms::filter
  */
 template <typename... Filters>
 class CascadeFilter;
+#endif  // __DOXYGEN__
 template <typename Filter>
 class CascadeFilter<Filter>
 {
@@ -101,6 +102,7 @@ public:
 private:
     Filter f_;
 };
+#ifndef __DOXYGEN__
 /** Recursive filter, holds n filters in series
    Each filter's output is the next filter's input
 
@@ -250,7 +252,7 @@ auto operator*(const A& lhs, const B& rhs)
     return CascadeFilter<A, B>(lhs, rhs);
 }
 
-#endif // __DOXYGEN__
+#endif  // __DOXYGEN__
 
 /**
  * @struct Coefficients

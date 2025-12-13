@@ -15,7 +15,7 @@ This project provides control algorithms and hardware abstractions for embedded 
    guides/controllers
    guides/transforms
    guides/commands
-   guides/command_governers
+   guides/command_governors
    guides/motors
 
 
