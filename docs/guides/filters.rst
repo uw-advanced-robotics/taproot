@@ -36,11 +36,8 @@ The Mahoney AHRS (Attitude and Heading Reference System) is an algorithm used to
    :project: taproot
    :members:
 
-Discrete Filter Architecture
+Discrete Filter Series
 ----------------------------
-
-.. doxygenfile:: discrete_filter.hpp
-   :project: taproot
 
 .. doxygenclass:: tap::algorithms::filter::DiscreteFilter
    :project: taproot
