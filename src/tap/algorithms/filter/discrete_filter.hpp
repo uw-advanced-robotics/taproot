@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+#ifndef DOXYGEN
 /**
  * @file discrete_filter.hpp
  * @brief Contains the implementation of discrete-time filters and filter cascades.
@@ -32,6 +32,7 @@
  * @author Aiden Prevey
  * @date 8/30/2025
  */
+#endif // DOXYGEN
 
 #ifndef TAPROOT_DISCRETE_FILTER_HPP_
 #define TAPROOT_DISCRETE_FILTER_HPP_
@@ -251,7 +252,7 @@ auto operator*(const A& lhs, const B& rhs)
 {
     return CascadeFilter<A, B>(lhs, rhs);
 }
-#endif 
+#endif // DOXYGEN
 /**
  * @struct Coefficients
  * @brief Represents the coefficients used in a discrete filter.
