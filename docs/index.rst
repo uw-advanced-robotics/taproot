@@ -16,17 +16,14 @@ This project provides control algorithms and hardware abstractions for embedded 
    guides/transforms
    guides/commands
    guides/command_governers
+   guides/motors
 
-.. -- SECTION 2: API REFERENCE --
-.. This keeps your Exhale/Breathe auto-docs separate
 
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
 
    api/library_root
-
-.. -- SECTION 3: META INFO --
 
 .. toctree::
    :maxdepth: 1

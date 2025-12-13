@@ -32,7 +32,7 @@ Mahoney AHRS
 -----------------
 The Mahoney AHRS (Attitude and Heading Reference System) is an algorithm used to compute the orientation of an object in 3D space using data from a gyroscope and accelerometer.
 
-.. doxygenclass:: tap::algorithms::MahoneyAHRS
+.. doxygenclass:: tap::algorithms::Mahony
    :project: taproot
    :members:
 
@@ -41,6 +41,18 @@ Discrete Filter Architecture
 
 .. doxygenfile:: discrete_filter.hpp
    :project: taproot
+
+.. doxygenclass:: tap::algorithms::filter::DiscreteFilter
+   :project: taproot
+   :members:
+
+.. doxygenclass:: tap::algorithms::filter::CascadeFilter
+   :project: taproot
+   :members:
+
+.. doxygenstruct:: tap::algorithms::filter::DiscreteFilterCoefficients
+   :project: taproot
+   :members:
 
 Butterworth Filter
 ------------------
