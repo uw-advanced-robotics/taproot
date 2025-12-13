@@ -12,7 +12,7 @@ This module contains digital signal processing filters used within the Taproot l
 
 Kalman Filter
 -----------------
-The Kalman Filter is an optimal recursive data processing algorithm used to estimate the state of a dynamic system from a series of noisy measurements.
+The Kalman Filter is an optimal recursive data processing algorithm used to estimate the state of a dynamic system from a series of noisy measurements. It is built upon the CMSIS DSP library for efficient matrix operations.
 
 .. doxygenclass:: tap::algorithms::KalmanFilter
    :project: taproot

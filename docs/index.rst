@@ -14,6 +14,8 @@ This project provides control algorithms and hardware abstractions for embedded 
    guides/filters
    guides/controllers
    guides/transforms
+   guides/commands
+   guides/command_governers
 
 .. -- SECTION 2: API REFERENCE --
 .. This keeps your Exhale/Breathe auto-docs separate
