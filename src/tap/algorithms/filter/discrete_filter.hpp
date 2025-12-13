@@ -43,6 +43,7 @@
 
 namespace tap::algorithms::filter
 {
+#ifndef DOXYGEN
 /**
  * @brief CascadeFilter base object, holds n filters in series
  * Each filter's output is the next filter's input
@@ -175,7 +176,7 @@ private:
     CascadeFilter<Rest...> rest_;
 };
 
-#ifndef DOXYGEN
+
 // Deduction guide for CascadeFilter
 template <typename... Fs>
 CascadeFilter(Fs...) -> CascadeFilter<Fs...>;
