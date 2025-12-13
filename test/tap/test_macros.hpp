@@ -28,4 +28,4 @@
 #define EXPECT_ERROR_TIMES(times)
 #endif
 
-#endif // TAPROOT_TEST_MACROS_HPP_
+#endif  // TAPROOT_TEST_MACROS_HPP_
