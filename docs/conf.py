@@ -97,12 +97,6 @@ primary_domain = 'cpp'
 highlight_language = 'cpp'
 
 
-def generate_changelog():
-    # This assumes conf.py is in taproot/docs/ and CHANGELOG is in taproot/
-    curr_dir = os.path.dirname(os.path.abspath(__file__))
-    source_path = os.path.join(curr_dir, "../CHANGELOG.md")
-    dest_path = os.path.join(curr_dir, "changelog.rst")
-
 def convert_md_to_rst(source_path, dest_path):
     """
     Converts a basic Markdown file to ReStructuredText.
@@ -149,6 +143,13 @@ def convert_md_to_rst(source_path, dest_path):
                     f_out.write(line)
     else:
         print(f"[Sphinx] WARNING: Could not find {source_path}")
+
+def generate_changelog():
+    # This assumes conf.py is in taproot/docs/ and CHANGELOG is in taproot/
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+    source_path = os.path.join(curr_dir, "../CHANGELOG.md")
+    dest_path = os.path.join(curr_dir, "changelog.rst")
+    convert_md_to_rst(source_path, dest_path)
 
 # Generates and includes the changelog in the docs
 generate_changelog()
