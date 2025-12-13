@@ -18,6 +18,7 @@
 # -- Project information -----------------------------------------------------
 from datetime import datetime
 import os
+import re
 
 # Check if we set a specific environment variable to skip the heavy lifting
 fast_build = os.getenv('FAST_BUILD') == '1'
@@ -102,20 +103,49 @@ def generate_changelog():
     source_path = os.path.join(curr_dir, "../CHANGELOG.md")
     dest_path = os.path.join(curr_dir, "changelog.rst")
 
+def convert_md_to_rst(source_path, dest_path):
+    """
+    Converts a basic Markdown file to ReStructuredText.
+    Supports H1-H4 headers.
+    """
+    
+    # Mapping: Number of '#' -> The RST underline character
+    header_map = {
+        1: "-",  # #  -> -----
+        2: "^",  # ## -> ^^^^^
+        3: "\"", # ### -> """""
+        4: "~",  # #### -> ~~~~~
+    }
+
     if os.path.exists(source_path):
         with open(source_path, "r") as f_in, open(dest_path, "w") as f_out:
+            # Write the static file header
             f_out.write("Changelog\n")
             f_out.write("=========\n\n")
+
             for line in f_in:
-                if line.startswith("# "):
-                    content = line.strip("# \n")
-                    f_out.write(content + "\n")
-                    f_out.write("-" * len(content) + "\n\n")
-                elif line.startswith("## "):
-                    content = line.strip("# \n")
-                    f_out.write(content + "\n")
-                    f_out.write("^" * len(content) + "\n\n")
+                # Regex checks for lines starting with 1 or more '#' followed by a space
+                # Group 1 captures the hashes, Group 2 captures the text
+                match = re.match(r"^(#+)\s+(.*)", line)
+
+                if match:
+                    hashes, content = match.groups()
+                    level = len(hashes)
+                    
+                    # Clean up the content (remove trailing newlines or extra # on the right)
+                    content = content.strip().rstrip("#").strip()
+
+                    if level in header_map:
+                        char = header_map[level]
+                        f_out.write(content + "\n")
+                        f_out.write(char * len(content) + "\n\n")
+                    else:
+                        # Fallback for H5+ or unmapped headers: write as bold text
+                        f_out.write(f"**{content}**\n\n")
                 else:
+                    # Simple link support [text](url) -> `text <url>`_
+                    line = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'`\1 <\2>`_', line)
+                    
                     f_out.write(line)
     else:
         print(f"[Sphinx] WARNING: Could not find {source_path}")
