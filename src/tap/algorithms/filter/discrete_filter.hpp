@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef DOXYGEN
+#ifndef __DOXYGEN__
 /**
  * @file discrete_filter.hpp
  * @brief Contains the implementation of discrete-time filters and filter cascades.
@@ -44,7 +44,7 @@
 
 namespace tap::algorithms::filter
 {
-#ifndef DOXYGEN
+#ifndef __DOXYGEN__
 /**
  * @brief CascadeFilter base object, holds n filters in series
  * Each filter's output is the next filter's input
