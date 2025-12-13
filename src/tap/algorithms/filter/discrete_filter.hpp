@@ -43,6 +43,7 @@
 
 namespace tap::algorithms::filter
 {
+#ifndef __DOXYGEN__
 /**
  * @brief CascadeFilter base object, holds n filters in series
  * Each filter's output is the next filter's input
@@ -53,7 +54,6 @@ namespace tap::algorithms::filter
  */
 template <typename... Filters>
 class CascadeFilter;
-#ifndef __DOXYGEN__
 template <typename Filter>
 class CascadeFilter<Filter>
 {
