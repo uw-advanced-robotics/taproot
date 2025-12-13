@@ -17,6 +17,10 @@
 
 # -- Project information -----------------------------------------------------
 from datetime import datetime
+import os
+
+# Check if we set a specific environment variable to skip the heavy lifting
+fast_build = os.getenv('FAST_BUILD') == '1'
 
 project = 'taproot'
 copyright = str(datetime.now().year) + ', taproot'
@@ -80,7 +84,8 @@ exhale_args = {
     "createTreeView":        True,
     # TIP: if using the sphinx-bootstrap-theme, you need
     # "treeViewIsBootstrap": True,
-    "exhaleExecutesDoxygen": True,
+    # "exhaleExecutesDoxygen": True,
+    "exhaleExecutesDoxygen": not fast_build,
     "exhaleUseDoxyfile":     True
 }
 
@@ -89,3 +94,36 @@ primary_domain = 'cpp'
 
 # Tell sphinx what the pygments highlight language should be.
 highlight_language = 'cpp'
+
+
+def generate_changelog():
+    # 1. Locate the Markdown file (Up one level from conf.py)
+    # This assumes conf.py is in taproot/docs/ and CHANGELOG is in taproot/
+    curr_dir = os.path.dirname(os.path.abspath(__file__))
+    source_path = os.path.join(curr_dir, "../CHANGELOG.md")
+    dest_path = os.path.join(curr_dir, "changelog.rst")
+
+    # Debug print to CI logs
+    print(f"[Sphinx] looking for changelog at: {source_path}")
+
+    if os.path.exists(source_path):
+        with open(source_path, "r") as f_in, open(dest_path, "w") as f_out:
+            f_out.write("Changelog\n")
+            f_out.write("=========\n\n")
+            for line in f_in:
+                if line.startswith("# "):
+                    content = line.strip("# \n")
+                    f_out.write(content + "\n")
+                    f_out.write("-" * len(content) + "\n\n")
+                elif line.startswith("## "):
+                    content = line.strip("# \n")
+                    f_out.write(content + "\n")
+                    f_out.write("^" * len(content) + "\n\n")
+                else:
+                    f_out.write(line)
+        print(f"[Sphinx] Successfully generated {dest_path}")
+    else:
+        print(f"[Sphinx] WARNING: Could not find {source_path}")
+
+# Run the generation immediately
+generate_changelog()

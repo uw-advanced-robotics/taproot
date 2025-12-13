@@ -83,9 +83,9 @@ def build(env):
     env.outbasepath = "taproot/docs"
 
     # convert old changelog into a .rst for use in the generated docs
-    changelog_src = os.path.abspath("../CHANGELOG.md") 
-    changelog_dest = os.path.join(env.outbasepath, "changelog.rst")
-    convert_md_to_rst(changelog_src, changelog_dest)
+    # changelog_src = os.path.abspath("../CHANGELOG.md") 
+    # changelog_dest = os.path.join(env.outbasepath, "changelog.rst")
+    # convert_md_to_rst(changelog_src, changelog_dest)
 
     env.template("Doxyfile.in", "Doxyfile")
     env.template("conf.py.in", "conf.py")
@@ -105,37 +105,37 @@ def build(env):
 
 
     # --- CI DEBUGGING BLOCK ---
-    print("\n--- DEBUG: FILE LISTING ---")
-    target_file = os.path.join(env.outbasepath, "changelog.rst")
+    # print("\n--- DEBUG: FILE LISTING ---")
+    # target_file = os.path.join(env.outbasepath, "changelog.rst")
     
-    if os.path.exists(target_file):
-        print(f"SUCCESS: Found {target_file}")
-        # Print the first 3 lines to prove content exists
-        with open(target_file, 'r') as f:
-            print(f"CONTENT PREVIEW:\n{f.read(100)}...")
-    else:
-        print(f"FAILURE: {target_file} does NOT exist.")
-        # Print what IS in the folder to see where we went wrong
-        print(f"Contents of {env.outbasepath}:")
-        if os.path.exists(env.outbasepath):
-            print(os.listdir(env.outbasepath))
-        else:
-            print(f"Directory {env.outbasepath} does not exist!")
-    print("---------------------------\n")
+    # if os.path.exists(target_file):
+    #     print(f"SUCCESS: Found {target_file}")
+    #     # Print the first 3 lines to prove content exists
+    #     with open(target_file, 'r') as f:
+    #         print(f"CONTENT PREVIEW:\n{f.read(100)}...")
+    # else:
+    #     print(f"FAILURE: {target_file} does NOT exist.")
+    #     # Print what IS in the folder to see where we went wrong
+    #     print(f"Contents of {env.outbasepath}:")
+    #     if os.path.exists(env.outbasepath):
+    #         print(os.listdir(env.outbasepath))
+    #     else:
+    #         print(f"Directory {env.outbasepath} does not exist!")
+    # print("---------------------------\n")
 
-    print("\n--- DEBUG: index.rst CONTENT ---")
-    index_path = os.path.join(env.outbasepath, "index.rst")
+    # print("\n--- DEBUG: index.rst CONTENT ---")
+    # index_path = os.path.join(env.outbasepath, "index.rst")
     
-    if os.path.exists(index_path):
-        with open(index_path, 'r') as f:
-            content = f.read()
-            print(content)
+    # if os.path.exists(index_path):
+    #     with open(index_path, 'r') as f:
+    #         content = f.read()
+    #         print(content)
             
-            # Auto-check for the user
-            if "changelog" in content:
-                print("\n[CHECK] 'changelog' entry FOUND in toctree.")
-            else:
-                print("\n[ERROR] 'changelog' entry MISSING from toctree!")
-    else:
-        print(f"FAILURE: {index_path} does not exist.")
-    print("--------------------------------\n")
+    #         # Auto-check for the user
+    #         if "changelog" in content:
+    #             print("\n[CHECK] 'changelog' entry FOUND in toctree.")
+    #         else:
+    #             print("\n[ERROR] 'changelog' entry MISSING from toctree!")
+    # else:
+    #     print(f"FAILURE: {index_path} does not exist.")
+    # print("--------------------------------\n")
