@@ -55,10 +55,21 @@ namespace tap::algorithms::filter
 template <typename... Filters>
 class CascadeFilter;
 #endif  // __DOXYGEN__
+
+/**
+ * @brief FILTERFILTELIRGOUSJFJDSLJLKFDSJLFKDJLKCXLMDMKJ
+ *
+ * @tparam Filter
+ */
 template <typename Filter>
 class CascadeFilter<Filter>
 {
 public:
+    /**
+     * @brief Construct a new Cascade Filter object
+     * 
+     * @param f 
+     */
     explicit CascadeFilter(const Filter& f) : f_(f) {}
 
     std::size_t size() const noexcept { return 1; }
