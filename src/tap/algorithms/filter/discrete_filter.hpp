@@ -43,9 +43,6 @@
 
 namespace tap::algorithms::filter
 {
-template <typename... Filters>
-class CascadeFilter;
-
 /**
  * @brief CascadeFilter base object, holds n filters in series
  * Each filter's output is the next filter's input
@@ -54,6 +51,8 @@ class CascadeFilter;
  *
  * @tparam Filter
  */
+template <typename... Filters>
+class CascadeFilter;
 template <typename Filter>
 class CascadeFilter<Filter>
 {
@@ -176,6 +175,7 @@ private:
     CascadeFilter<Rest...> rest_;
 };
 
+#ifndef DOXYGEN
 // Deduction guide for CascadeFilter
 template <typename... Fs>
 CascadeFilter(Fs...) -> CascadeFilter<Fs...>;
@@ -250,7 +250,7 @@ auto operator*(const A& lhs, const B& rhs)
 {
     return CascadeFilter<A, B>(lhs, rhs);
 }
-
+#endif 
 /**
  * @struct Coefficients
  * @brief Represents the coefficients used in a discrete filter.
