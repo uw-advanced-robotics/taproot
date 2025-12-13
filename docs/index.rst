@@ -13,7 +13,6 @@ This project provides control algorithms and hardware abstractions for embedded 
    :caption: User Guides
 
    guides/command_scheduler
-   changelog
 
 .. -- SECTION 2: API REFERENCE --
 .. This keeps your Exhale/Breathe auto-docs separate
@@ -26,12 +25,11 @@ This project provides control algorithms and hardware abstractions for embedded 
 
 .. -- SECTION 3: META INFO --
 
-.. okakldklas
-.. .. toctree::
-..    :maxdepth: 1
-..    :caption: Project Info
+.. toctree::
+   :maxdepth: 1
+   :caption: Project Info
 
-..    changelog
+   changelog
 
 Indices and Search
 ==================

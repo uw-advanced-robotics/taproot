@@ -97,14 +97,10 @@ highlight_language = 'cpp'
 
 
 def generate_changelog():
-    # 1. Locate the Markdown file (Up one level from conf.py)
     # This assumes conf.py is in taproot/docs/ and CHANGELOG is in taproot/
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     source_path = os.path.join(curr_dir, "../CHANGELOG.md")
     dest_path = os.path.join(curr_dir, "changelog.rst")
-
-    # Debug print to CI logs
-    print(f"[Sphinx] looking for changelog at: {source_path}")
 
     if os.path.exists(source_path):
         with open(source_path, "r") as f_in, open(dest_path, "w") as f_out:
@@ -121,9 +117,8 @@ def generate_changelog():
                     f_out.write("^" * len(content) + "\n\n")
                 else:
                     f_out.write(line)
-        print(f"[Sphinx] Successfully generated {dest_path}")
     else:
         print(f"[Sphinx] WARNING: Could not find {source_path}")
 
-# Run the generation immediately
+# Generates and includes the changelog in the docs
 generate_changelog()
