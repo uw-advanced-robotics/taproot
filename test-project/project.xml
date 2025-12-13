@@ -88,6 +88,7 @@
 
     <module>taproot:errors</module>
     <module>taproot:ext</module>
+    <module>taproot:ext:eigen</module>
     <module>taproot:ext:littlefs</module>
     
     <module>taproot:modm-project.xml</module>
@@ -99,7 +100,7 @@
     <module>taproot:testing</module>
     <module>taproot:testing:mock</module>
     <module>taproot:testing:tests</module>
-
+    
     <!-- For RoboMaster Development Board Type A -->
     <module>taproot:communication:sensors:imu:mpu6500</module>
     <!-- End For RoboMaster Development Board Type A -->

@@ -21,8 +21,8 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/algorithms/butterworth.hpp"
-#include "tap/algorithms/discrete_filter.hpp"
+#include "tap/algorithms/filter/butterworth.hpp"
+#include "tap/algorithms/filter/discrete_filter.hpp"
 
 using namespace tap::algorithms::filter;
 

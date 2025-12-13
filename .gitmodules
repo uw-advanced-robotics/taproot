@@ -8,3 +8,6 @@
 [submodule "ext/littlefs"]
 	path = ext/littlefs-project/littlefs
 	url = https://github.com/littlefs-project/littlefs
+[submodule "ext/eigen-project/eigen"]
+	path = ext/eigen-project/eigen
+	url = https://gitlab.com/libeigen/eigen.git
