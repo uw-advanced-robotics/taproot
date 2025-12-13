@@ -30,6 +30,7 @@ This project provides control algorithms and hardware abstractions for embedded 
    :caption: Project Info
 
    changelog
+   module
 
 Indices and Search
 ==================
