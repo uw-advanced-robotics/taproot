@@ -43,45 +43,67 @@
 
 namespace tap::algorithms::filter
 {
-
 #ifdef __DOXYGEN__
-/** * @brief CascadeFilter base object, holds n filters in series
- * Each filter's output is the next filter's input
+/**
+ * @brief CascadeFilter base object, holds n filters in series
+ * Each filter's output is the next filter's input. Call .filterData(x) to process data through the
+ * cascade and .getLastFiltered() to get the last output. The * operator is overloaded to allow easy
+ * composition of filters into cascades.
  *
- * @code auto cascade = filter * filter; @endcode
- * * @tparam Filters The list of filters in the cascade.
+ * @code auto cascade = filter1 * filter2;
+ *       auto doubleCascade = cascade * cascade;
+ *       auto filter1Copy = cascade[0];
+ * @endcode
+ *
+ * @tparam Filter parameter pack of filters
  */
 template <typename... Filters>
-class CascadeFilter {};  // <--- Added "template <...>" and brackets "{}"
+class CascadeFilter
+{
+public:
+    explicit CascadeFilter(const Filter& f);
+
+    std::size_t size() const noexcept;
+
+    // runtime index access
+    Filter& operator[](std::size_t i);
+    const Filter& operator[](std::size_t i) const;
+
+    // compile-time getter for pack-expansion use in operator*
+    template <std::size_t I>
+    auto& get();
+    template <std::size_t I>
+    const auto& get() const;
+
+    template <typename Float = float>
+    auto filterData(Float x);
+
+    auto getLastFiltered() const;
+
+    void reset();
+};
 #endif
 
 #ifndef __DOXYGEN__
 /**
  * @brief CascadeFilter base object, holds n filters in series
- * Each filter's output is the next filter's input
+ * Each filter's output is the next filter's input. Call .filterData(x) to process data through the
+ * cascade and .getLastFiltered() to get the last output. The * operator is overloaded to allow easy
+ * composition of filters into cascades.
  *
- * @code auto cascade = filter * filter;
+ * @code auto cascade = filter1 * filter2;
+ *       auto doubleCascade = cascade * cascade;
+ *       auto filter1Copy = cascade[0];
+ * @endcode
  *
- * @tparam Filter
+ * @tparam Filter parameter pack of filters
  */
 template <typename... Filters>
 class CascadeFilter;
-#endif  // __DOXYGEN__
-
-/**
- * @brief FILTERFILTELIRGOUSJFJDSLJLKFDSJLFKDJLKCXLMDMKJ
- *
- * @tparam Filter
- */
 template <typename Filter>
 class CascadeFilter<Filter>
 {
 public:
-    /**
-     * @brief Construct a new Cascade Filter object
-     *
-     * @param f
-     */
     explicit CascadeFilter(const Filter& f) : f_(f) {}
 
     std::size_t size() const noexcept { return 1; }
@@ -125,7 +147,6 @@ public:
 private:
     Filter f_;
 };
-#ifndef __DOXYGEN__
 /** Recursive filter, holds n filters in series
    Each filter's output is the next filter's input
 
