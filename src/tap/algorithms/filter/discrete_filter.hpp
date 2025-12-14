@@ -43,13 +43,12 @@
 
 namespace tap::algorithms::filter
 {
+    
 #ifdef __DOXYGEN__
 /** @brief CascadeFilter base object, holds n filters in series
    Each filter's output is the next filter's input
 
    @code auto cascade = filter * filter;
-
-   @tparam Filter
  */
 class CascadeFilter;
 
