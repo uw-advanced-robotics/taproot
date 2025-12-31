@@ -38,6 +38,7 @@ def build(env):
 
     env.substitutions = {
         "can_pins": can_pins,
+        "use_sim": env.has_module(":motor:motorsim")
     }
 
     env.outbasepath = "taproot/src/tap/communication/can"

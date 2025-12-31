@@ -175,7 +175,9 @@ class TaprootTests(Module):
         if env.has_module(":architecture:profiler"):
             env.copy("tap/architecture/profiler_tests.cpp")
         if env.has_module(":motor"):
-            env.copy("tap/motor", ignore=env.ignore_files("dji_motor_terminal_serial_handler_tests.cpp"))
+            env.copy("tap/motor", ignore=env.ignore_files("dji_motor_terminal_serial_handler_tests.cpp", "motorsim"))
+        if env.has_module(":motor:motorsim"):
+            env.copy("tap/motor/motorsim")
         if env.has_module(":motor:terminal_serial"):
             env.copy("tap/motor/dji_motor_terminal_serial_handler_tests.cpp")
         if env.has_module(":communication:serial"):
@@ -192,6 +194,11 @@ class TaprootTests(Module):
             env.copy("tap/communication/serial/ref_serial_transmitter_tests.cpp")
         if env.has_module(":communication:serial:terminal_serial"):
             env.copy("tap/communication/serial/terminal_serial_tests.cpp")
+        if env.has_module(":communication:tcp-server"):
+            if platform.system() == "Linux":
+                env.copy("tap/communication/tcp-server")
+            else:
+                env.copy("tap/communication/tcp-server/json_generation_tests.cpp")
         if env.has_module(":errors"):
             env.copy("tap/errors")
         if env.has_module(":control"):
