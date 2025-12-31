@@ -45,6 +45,7 @@
     <module>taproot:algorithms</module>
     <module>taproot:algorithms:odometry</module>
     <module>taproot:architecture</module>
+    <module>taproot:architecture:profiler</module>
 
     <module>taproot:board</module>
     <module>taproot:build</module>
@@ -63,10 +64,14 @@
     <module>taproot:communication:sensors</module>
     <module>taproot:communication:sensors:buzzer</module>
     <module>taproot:communication:sensors:current</module>
+    <module>taproot:communication:sensors:current:analog</module>
     <module>taproot:communication:sensors:distance</module>
+    <module>taproot:communication:sensors:distance:analog</module>
     <module>taproot:communication:sensors:encoder</module>
     <module>taproot:communication:sensors:encoder:can_encoder</module>
     <module>taproot:communication:sensors:imu</module>
+    <module>taproot:communication:sensors:imu:display</module>
+    <module>taproot:communication:sensors:imu:terminal_serial</module>
     <module>taproot:communication:sensors:imu_heater</module>
     <module>taproot:communication:sensors:limit-switch</module>
     <module>taproot:communication:sensors:voltage</module>
@@ -77,9 +82,13 @@
     <module>taproot:communication:serial:terminal_serial</module>
 
     <module>taproot:control</module>
+    <module>taproot:control:terminal_serial</module>
     <module>taproot:core</module>
 
     <module>taproot:display</module>
+    <module>taproot:display:control</module>
+    <module>taproot:display:motor</module>
+    <module>taproot:display:ref_serial</module>
     <module>taproot:display:sh1106</module>
     <module>taproot:display:sh1107</module>
 
@@ -93,6 +102,8 @@
     
     <module>taproot:modm-project.xml</module>
     <module>taproot:motor</module>
+    <module>taproot:motor:pwm</module>
+    <module>taproot:motor:terminal_serial</module>
     
     <module>taproot:storage</module>
     <module>taproot:storage:littlefs-internal</module>

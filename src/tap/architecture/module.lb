@@ -21,6 +21,7 @@ class Profiler(Module):
     
     def prepare(self, module, options):
         module.depends(":drivers")
+        module.depends(":algorithms")
 
         return True
 

@@ -29,7 +29,7 @@ class TerminalSerial(Module):
     def build(self, env):
         env.outbasepath = "taproot/src/tap/control"
 
-        for file in terminalFiles:
+        for file in TERMINAL_SERIAL_FILES:
                     env.copy(file)
 
 def init(module):
