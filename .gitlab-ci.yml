@@ -227,7 +227,8 @@ before_script:
 
 "Generate Docs":
   image: alpine
-  needs: []
+  extends:
+    - .type_a_config_dependencies
   stage: Deploy Pages
   before_script:
     - apk update
@@ -241,8 +242,8 @@ before_script:
     - python3 -m pip install sphinx_rtd_theme
     - apk add doxygen
   script:
-    - cd docs && make html
-    - mv _build/html/ ../public/
+    - cd test-project/taproot/docs && make html
+    - mv _build/html/ ../../../public/
   artifacts:
     paths:
       - public
