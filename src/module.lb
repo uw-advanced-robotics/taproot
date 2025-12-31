@@ -26,38 +26,12 @@ def prepare(module, options):
     # build system dependencies
     module.depends(":build")
 
-    # drivers
-    module.depends(":drivers")
-
-    module.depends(
-        ":drivers",
-        ":errors",
-        ":ext")
-
     module.depends(":algorithms")
     module.depends(":architecture")
-    module.depends(":control")
-    module.depends(":motor")
-
-    # motor-specific dependencies
-    module.depends(":communication:can", ":communication:sensors:encoder")
-
-    # command mapper dependencies
-    module.depends(":communication:serial:remote")
-
-    # power limiter dependencies
-    module.depends(":communication:gpio:analog")
     module.depends(":communication:serial:ref_serial")
-
-    # scheduler dependencies
-    module.depends(":communication:serial:terminal_serial")
-
-    # servo dependencies
-    module.depends(":communication:gpio:pwm")
-
-    # power limiter dependencies
-    module.depends(":communication:sensors:current")
-    module.depends(":communication:sensors:voltage")
+    module.depends(":control")
+    module.depends(":drivers")
+    module.depends(":motor")
 
     return True
 

@@ -56,8 +56,8 @@
     <module>taproot:communication:can</module>
     
     <module>taproot:communication:gpio</module>
-    <module>taproot:communication:gpio:digital</module>
     <module>taproot:communication:gpio:analog</module>
+    <module>taproot:communication:gpio:digital</module>
     <module>taproot:communication:gpio:leds</module>
     <module>taproot:communication:gpio:pwm</module>
 
