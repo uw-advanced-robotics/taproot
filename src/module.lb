@@ -36,6 +36,4 @@ def prepare(module, options):
     return True
 
 def build(env):
-    env.outbasepath = "taproot/src/tap"
-    env.copy("tap/util_macros.hpp", "util_macros.hpp")
-    env.copy("tap/errors/create_errors.hpp", "errors/create_errors.hpp")
+    env.outbasepath = "taproot/src"
