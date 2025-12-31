@@ -20,7 +20,9 @@
 #ifndef TAPROOT_CREATE_ERRORS_HPP_
 #define TAPROOT_CREATE_ERRORS_HPP_
 
+#if __has_include("tap/errors/system_error.hpp")
 #include "system_error.hpp"
+#endif
 
 namespace tap::errors
 {

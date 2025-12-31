@@ -1,5 +1,13 @@
 # Taproot Changelog
 
+## January 2026
+- Massively refactored the module system. Most projects should still work, might need to explicitly add some more modules that were transitively included.
+  - If depending solely on `core`, might need to include the `error`, `pwm`, and `profiler`.
+  - No longer need to lose a UART port to terminal serial if not needed (or ref serial).
+  - Renamed `taproot:core:use_multi_encoder` -> `taproot:motor:use_multi_encoder`.
+  - Added a parameter for the pin for the `OledButtonHandler`.
+  - Lots of files had their includes cleaned up, might need to reinclude those in your files.
+
 ## June 2025
 - Removed the automatic use of `MultiEncoder` for `(Double)DjiMotor`. 
   - Can be reenabled with the option `taproot:core:use_multi_encoder`
