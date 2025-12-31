@@ -17,6 +17,52 @@
 
 # TODO this module needs some cleaning up, see this issue: https://gitlab.com/aruw/controls/taproot/-/issues/51
 
+class Motor(Module):
+    def init(self, module):
+        module.name = ":display:motor"
+    
+    def prepare(self, module, options):
+        module.depends(":motor")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/display"
+        env.copy("motor_menu.cpp")
+        env.copy("motor_menu.hpp")
+        env.copy("motor_specific_menu.cpp")
+        env.copy("motor_specific_menu.hpp")
+
+class Control(Module):
+    def init(self, module):
+        module.name = ":display:control"
+    
+    def prepare(self, module, options):
+        module.depends(":control")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/display"
+        env.copy("command_scheduler_menu.cpp")
+        env.copy("command_scheduler_menu.hpp")
+        env.copy("hardware_test_menu.cpp")
+        env.copy("hardware_test_menu.hpp")
+
+class RefSerial(Module):
+    def init(self, module):
+        module.name = ":display:ref_serial"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:serial:ref_serial")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/display"
+        env.copy("ref_serial_menu.cpp")
+        env.copy("ref_serial_menu.hpp")
+
 def init(module):
     module.name = ":display"
     module.description = "Support for displaying information on an OLED display." \
@@ -31,27 +77,15 @@ def prepare(module, options):
 
     module.depends(":communication:gpio:analog")
 
+    module.add_submodule(Motor())
+    module.add_submodule(Control())
+    module.add_submodule(RefSerial())
+
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/display"
 
-    motorFiles = [
-        "motor_menu.cpp",
-        "motor_menu.hpp",
-        "motor_specific_menu.cpp",
-        "motor_specific_menu.hpp",
-    ]
-    controlFiles = [
-        "command_scheduler_menu.cpp",
-        "command_scheduler_menu.hpp",
-        "hardware_test_menu.cpp",
-        "hardware_test_menu.hpp"
-    ]
-    refSerialFiles = [
-        "ref_serial_menu.cpp",
-        "ref_serial_menu.hpp"
-    ]
     templateFiles = [
         "oled_button_handler.hpp.in"
     ]
@@ -61,17 +95,6 @@ def build(env):
     env.copy("vertical_scroll_logic_handler.cpp")
     env.copy("vertical_scroll_logic_handler.hpp")
 
-    if env.has_module(":motor"):
-        for file in motorFiles:
-            env.copy(file)
-    
-    if env.has_module(":control"):
-        for file in controlFiles:
-            env.copy(file)
-
-    if env.has_module(":communication:serial:ref_serial"):
-        for file in refSerialFiles:
-            env.copy(file)
 
     env.substitutions = {
         "has_joystick": "OledJoystick" in env[":board:analog_in_pins"]

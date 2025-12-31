@@ -15,6 +15,36 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":motor:terminal_serial"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:serial:terminal_serial")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/motor"
+
+        env.copy("dji_motor_terminal_serial_handler.hpp")
+        env.copy("dji_motor_terminal_serial_handler.cpp")
+
+class Pwm(Module):
+    def init(self, module):
+        module.name = ":motor:pwm"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:gpio:pwm")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/motor"
+
+        env.copy("servo.cpp")
+        env.copy("servo.hpp")
+
 def init(module):
     module.name = ":motor"
     module.description = "Motor control"
@@ -32,25 +62,23 @@ def prepare(module, options):
             default=False,
             description="Enables MultiEncoder usage for (Double)DjiMotor with an external encoder."))
 
+    module.add_submodule(TerminalSerial())
+    module.add_submodule(Pwm())
+
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/motor"
-    pwmFiles = ["servo.cpp", "servo.hpp"]
-    terminalFiles = ["dji_motor_terminal_serial_handler.hpp", "dji_motor_terminal_serial_handler.cpp"]
-    motorFiles = [
-        "dji_motor.hpp.in", "dji_motor.cpp.in",
-        "double_dji_motor.hpp.in", "double_dji_motor.cpp.in",
-    ]
-    env.copy(".", ignore=env.ignore_files(*(terminalFiles + pwmFiles + motorFiles)))
 
-    if env.has_module(":communication:serial:terminal_serial"):
-        for file in terminalFiles:
-            env.copy(file)
-
-    if env.has_module(":communication:gpio:pwm"):
-        for file in pwmFiles:
-            env.copy(file)
+    env.copy("dji_motor_encoder.cpp")
+    env.copy("dji_motor_encoder.hpp")
+    env.copy("dji_motor_ids.hpp")
+    env.copy("dji_motor_tx_handler.cpp")
+    env.copy("dji_motor_tx_handler.hpp")
+    env.copy("m3508_constants.hpp")
+    env.copy("module.lb")
+    env.copy("motor_constants.hpp")
+    env.copy("motor_interface.hpp")
 
     env.substitutions = {
         "use_multi_encoder": env[":motor:use_multi_encoder"]

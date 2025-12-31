@@ -15,11 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+class Profiler(Module):
+    def init(self, module):
+        module.name = ":architecture:profiler"
+    
+    def prepare(self, module, options):
+        module.depends(":drivers")
+
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/architecture"
+    
+        env.copy("profiler.cpp")
+        env.copy("profiler.hpp")
+
 def init(module):
     module.name = ":architecture"
     module.description = "General architecture systems"
 
 def prepare(module, options):
+    module.add_submodule(Profiler())
     return True
 
 def build(env):
@@ -31,7 +47,3 @@ def build(env):
     env.copy("endianness_wrappers.hpp")
     env.copy("periodic_timer.hpp")
     env.copy("timeout.hpp")
-
-    if env.has_module(":drivers"):
-        env.copy("profiler.cpp")
-        env.copy("profiler.hpp")

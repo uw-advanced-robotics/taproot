@@ -124,16 +124,15 @@ MODULES_TO_MOCK = {
         "dji_motor_tx_handler_mock.cpp",
         "dji_motor_tx_handler_mock.hpp",
     },
-    # VERY BAD, FIX BEFORE MERGING
-    ":motor,:communication:serial:terminal_serial": {
+    ":motor:terminal_serial": {
         "dji_motor_terminal_serial_handler_mock.cpp",
         "dji_motor_terminal_serial_handler_mock.hpp",
     },
-    ":imu,:communication:serial:terminal_serial": {
+    ":imu:terminal_serial": {
         "imu_terminal_serial_handler_mock.cpp",
         "imu_terminal_serial_handler_mock.hpp",
     },
-    ":control,:communication:serial:terminal_serial": {
+    ":control:terminal_serial": {
         "scheduler_terminal_handler_mock.cpp",
         "scheduler_terminal_handler_mock.hpp",
     },
@@ -145,14 +144,13 @@ class Mock(Module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
-        # module.depends(":drivers")
         return True
 
     def build(self, env):
         env.outbasepath = "taproot/test"
 
-        for modules, mocks in MODULES_TO_MOCK.items():
-            if all(env.has_module(module) for module in modules.split(",")):
+        for module, mocks in MODULES_TO_MOCK.items():
+            if env.has_module(module):
                 for mock in mocks:
                     env.copy(f"{MOCK_DIRECTORY}/{mock}")
 
@@ -174,12 +172,12 @@ class TaprootTests(Module):
             env.copy("tap/algorithms")
         if env.has_module(":architecture"):
             env.copy("tap/architecture/endian_wrappers_test.cpp")
-            if env.has_module(":drivers"):
-                env.copy("tap/architecture/profiler_tests.cpp")
+        if env.has_module(":architecture:profiler"):
+            env.copy("tap/architecture/profiler_tests.cpp")
         if env.has_module(":motor"):
             env.copy("tap/motor", ignore=env.ignore_files("dji_motor_terminal_serial_handler_tests.cpp"))
-            if env.has_module(":communication:serial:terminal_serial"):
-                env.copy("tap/motor/dji_motor_terminal_serial_handler_tests.cpp")
+        if env.has_module(":motor:terminal_serial"):
+            env.copy("tap/motor/dji_motor_terminal_serial_handler_tests.cpp")
         if env.has_module(":communication:serial"):
             env.copy("tap/communication/serial/dji_serial_tests.cpp")
         if env.has_module(":communication:remote"):
@@ -198,13 +196,13 @@ class TaprootTests(Module):
             env.copy("tap/errors")
         if env.has_module(":control"):
             env.copy("tap/control", ignore=env.ignore_files("scheduler_terminal_handler_tests.cpp"))
-            if env.has_module(":communication:serial:terminal_serial"):
-                env.copy("tap/control/scheduler_terminal_handler_tests.cpp")
+        if env.has_module(":control:terminal_serial"):
+            env.copy("tap/control/scheduler_terminal_handler_tests.cpp")
         if env.has_module("taproot:communication:sensors:encoder:can_encoder"):
             env.copy("tap/communication/sensors/encoder/can_encoder_tests.cpp")
         if env.has_module(":communication:sensors:imu:bmi088"):
             env.copy("tap/communication/sensors/imu/bmi088")
-        if env.has_module(":communication:sensors:imu") and env.has_module(":communication:serial:terminal_serial"):
+        if env.has_module(":communication:sensors:imu:terminal_serial"):
             env.copy("tap/communication/sensors/imu/imu_terminal_serial_handler_tests.cpp")
         if env.has_module(":communication:sensors:imu_heater"):
             env.copy("tap/communication/sensors/imu_heater")

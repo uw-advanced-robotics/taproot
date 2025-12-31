@@ -15,6 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+TERMINAL_SERIAL_FILES = ["scheduler_terminal_handler.cpp", "scheduler_terminal_handler.hpp"]
+
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":control:terminal_serial"
+    
+    def prepare(self, module, options):
+        module.depends("taproot:communication:serial:terminal_serial")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/control"
+
+        for file in terminalFiles:
+                    env.copy(file)
+
 def init(module):
     module.name = ":control"
     module.description = "Robot control systems"
@@ -33,16 +50,14 @@ def prepare(module, options):
     module.depends(":communication:sensors:current")
     module.depends(":communication:sensors:voltage")
     module.depends(":communication:serial:ref_serial")
+
+    module.add_submodule(TerminalSerial())
     
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/control"
 
-    terminalFiles = ["scheduler_terminal_handler.cpp", "scheduler_terminal_handler.hpp"]
-    env.copy(".", ignore=env.ignore_files(*terminalFiles))
+    env.copy(".", ignore=env.ignore_files(*TERMINAL_SERIAL_FILES))
 
-    if env.has_module(":communication:serial:terminal_serial"):
-        for file in terminalFiles:
-                    env.copy(file)
 
