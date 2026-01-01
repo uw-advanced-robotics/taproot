@@ -65,6 +65,10 @@ public:
 
     void terminalSerialStreamCallback(modm::IOStream&) override {}
 
+    modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> getErrorList() const { return errorList; }
+
+    bool removeSystemErrorAtIndex(error_index_t index);
+
 private:
     static constexpr char USAGE[] =
         "Usage: error <target>\n"
@@ -80,8 +84,6 @@ private:
     Drivers* drivers;
 
     modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> errorList;
-
-    bool removeSystemErrorAtIndex(error_index_t index);
 
     void removeAllSystemErrors();
 
