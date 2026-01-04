@@ -211,6 +211,8 @@ class BoardInfo:
                 self.gpio_groups.append(GpioGroup(child))
             elif child.tag == "gpio":
                 self.gpio_pins.append(Gpio(child))
+            elif isinstance(child, lxml.etree._Comment):
+                pass
             elif child.tag != "controller":
                 assert False, f"Unknown tag: {child.tag}"
 
