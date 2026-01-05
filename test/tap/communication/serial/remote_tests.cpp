@@ -17,8 +17,9 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <gtest/gtest.h>
 #include <deque>
+
+#include <gtest/gtest.h>
 
 #include "tap/communication/serial/remote.hpp"
 #include "tap/drivers.hpp"
