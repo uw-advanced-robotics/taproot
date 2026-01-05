@@ -18,6 +18,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <deque>
 
 #include "tap/communication/serial/remote.hpp"
 #include "tap/drivers.hpp"
