@@ -21,6 +21,7 @@
 
 #include "tap/communication/serial/remote.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace testing;
 using namespace tap;
