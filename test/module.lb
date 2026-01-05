@@ -130,7 +130,7 @@ MODULES_TO_MOCK = {
         "dji_motor_terminal_serial_handler_mock.cpp",
         "dji_motor_terminal_serial_handler_mock.hpp",
     },
-    ":imu:terminal_serial": {
+    ":communication:sensors:imu:terminal_serial": {
         "imu_terminal_serial_handler_mock.cpp",
         "imu_terminal_serial_handler_mock.hpp",
     },
