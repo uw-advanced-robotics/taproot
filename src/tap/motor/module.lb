@@ -76,7 +76,6 @@ def build(env):
     env.copy("dji_motor_tx_handler.cpp")
     env.copy("dji_motor_tx_handler.hpp")
     env.copy("m3508_constants.hpp")
-    env.copy("module.lb")
     env.copy("motor_constants.hpp")
     env.copy("motor_interface.hpp")
 

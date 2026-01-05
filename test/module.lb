@@ -117,6 +117,8 @@ MODULES_TO_MOCK = {
         "error_controller_mock.hpp",
     },
     ":motor": {
+        "motor_interface_mock.cpp",
+        "motor_interface_mock.hpp",
         "dji_motor_encoder_mock.cpp",
         "dji_motor_encoder_mock.hpp",
         "dji_motor_mock.cpp",

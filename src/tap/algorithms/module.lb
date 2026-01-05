@@ -47,7 +47,6 @@ def build(env):
     env.copy("linear_interpolation_predictor_wrapped.hpp")
     env.copy("math_user_utils.cpp")
     env.copy("math_user_utils.hpp")
-    env.copy("module.lb")
     env.copy("ramp.cpp")
     env.copy("ramp.hpp")
     env.copy("smooth_pid.cpp")
