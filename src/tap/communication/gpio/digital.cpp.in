@@ -31,11 +31,15 @@ namespace gpio
 void Digital::init()
 {
 #ifndef PLATFORM_HOSTED
+%% if output_pins | selectattr('gpio_type', 'ne', 'out') | select | first
     // init digital out pins
     DigitalOutPins::setOutput(modm::Gpio::Low);
+%% endif
+%% if input_pins | selectattr('gpio_type', 'ne', 'in') | select | first
     // init digital in pins
     // interrupts disabled
     DigitalInPins::setInput();
+%% endif
 #endif
 }
 
@@ -45,6 +49,9 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
     UNUSED(pin);
     UNUSED(mode);
 #else
+%% if input_pins|length == 0
+    UNUSED(mode);
+%% else
     switch (pin)
     {
 %% for pin in input_pins
@@ -53,6 +60,7 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
             break;
 %% endfor
     }
+%% endif
 #endif
 }
 
