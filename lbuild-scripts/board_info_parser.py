@@ -83,6 +83,12 @@ class Uart(Instance):
     def get_used_pins(self) -> List[str]:
         return [pin for pin in [self.rx, self.tx] if pin is not None]
 
+    def display_name(self):
+        return self.alias if self.alias is not None else self.uart_name()
+    
+    def uart_name(self):
+        return f"U{'s' if self.usart else ''}art{self.name}"
+
 class Feature(ABC):
     @staticmethod
     def parse(xml):
@@ -255,7 +261,7 @@ class DeviceList(Generic[T]):
             return None
         return self.names[name]
 
-    def aliases(self, alias):
+    def aliased(self, alias):
         if alias not in self.aliases:
             return None
         return self.aliases[alias]

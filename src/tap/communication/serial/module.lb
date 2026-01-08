@@ -19,11 +19,6 @@ import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
 import board_info_parser
 
-REMOTE_UART_PORTS_BY_BOARD = {
-    "rm-dev-board-a": "Uart1",
-    "rm-dev-board-c": "Uart3",
-}
-
 class Remote(Module):
     def init(self, module):
         module.name = ":communication:serial:remote"
@@ -32,17 +27,16 @@ class Remote(Module):
     def prepare(self, module, options):
         module.depends(":architecture")
         module.depends(":control")
-        return True
+
+        board_info = board_info_parser.parse_board_info(options[":dev_board"])
+        remote_uart = board_info.uart.aliased("Remote")
+        # assert remote_uart != None, "Board does not have a specified Remote UART port!"
+
+        return remote_uart != None
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
-        board_name = env[":dev_board"]
-        try:
-            uart_port = REMOTE_UART_PORTS_BY_BOARD[board_name]
-        except KeyError:
-            raise RuntimeError(f"Dev board {board_name} is not valid")
-        env.substitutions = {"uart_port": uart_port}
-        env.template("remote_serial_constants.hpp.in", "remote_serial_constants.hpp")
+
         env.copy("remote.cpp")
         env.copy("remote.hpp")
 
@@ -138,10 +132,7 @@ def build(env):
         configured_baud_rate[port_num] = env[f":::uart_port_{port_num}.baud_rate"]
 
     env.substitutions = {
-        "uart_ports": uart_ports,
-        "port_to_rx_pin": port_to_rx_pin,
-        "port_to_tx_pin": port_to_tx_pin,
-        "full_port_name": full_port_name,
+        "uart_ports": board_info.uart,
         "configured_baud_rate": configured_baud_rate,
     }
     env.outbasepath = "taproot/src/tap/communication/serial"

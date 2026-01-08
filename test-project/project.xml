@@ -10,8 +10,8 @@
 
     <!-- For RoboMaster Development Board Type A -->
     <option name="taproot:dev_board">rm-dev-board-a</option>
-    <option name="taproot:communication:serial:terminal_serial:uart_port">Uart3</option>
-    <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
+    <option name="taproot:communication:serial:terminal_serial:uart_port">Usart3</option>
+    <option name="taproot:communication:serial:ref_serial:uart_port">Usart6</option>
     <option name="taproot:board:digital_in_pins">A,B,C,D</option>
     <option name="taproot:board:digital_out_pins">E,F,G,H,Laser</option>
     <option name="taproot:board:analog_in_pins">S,T,U,V</option>

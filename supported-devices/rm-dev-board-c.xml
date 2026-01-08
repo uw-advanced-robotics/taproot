@@ -10,7 +10,7 @@
     <can name="2" rx="GpioB5" tx="GpioB6" />
 
     <usart name="1" tx="GpioA9" rx="GpioB7" />
-    <usart name="3" rx="GpioC11" />
+    <usart name="3" alias="Remote" rx="GpioC11" />
     <usart name="6" tx="GpioG14" rx="GpioG9" />
 
     <i2c name="2" sda="GpioF0" scl="GpioF1" />

@@ -31,11 +31,11 @@ namespace gpio
 void Digital::init()
 {
 #ifndef PLATFORM_HOSTED
-%% if output_pins | selectattr('gpio_type', 'ne', 'out') | select | first
+%% if output_pins|length > 0 and output_pins | selectattr('gpio_type', 'ne', 'out') | select | first
     // init digital out pins
     DigitalOutPins::setOutput(modm::Gpio::Low);
 %% endif
-%% if input_pins | selectattr('gpio_type', 'ne', 'in') | select | first
+%% if input_pins|length > 0 and input_pins | selectattr('gpio_type', 'ne', 'in') | select | first
     // init digital in pins
     // interrupts disabled
     DigitalInPins::setInput();

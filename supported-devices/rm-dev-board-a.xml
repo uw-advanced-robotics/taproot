@@ -9,7 +9,7 @@
     <can name="1" rx="GpioD0" tx="GpioD1" />
     <can name="2" rx="GpioB12" tx="GpioB13" />
 
-    <usart name="1" rx="GpioB7" />
+    <usart name="1" alias="Remote" rx="GpioB7" />
     <usart name="2" tx="GpioD5" rx="GpioD6" />
     <usart name="3" tx="GpioD8" rx="GpioD9" />
     <usart name="6" tx="GpioG14" rx="GpioG9" />
