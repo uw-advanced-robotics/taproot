@@ -44,18 +44,13 @@ def build(env):
     env.copy("imu_heater.cpp")
 
     # find imu heater timer
-    user_pins = extractPinDefines(env[":board:pwm_pins"])
     global metadata
 
-    for pin in metadata.gpio_pins:
-        pin_name = pin.alias
-        if pin_name in user_pins:
-            timer = pin.features["timer"]
-            timer_name = timer.name
-            if pin_name == "ImuHeater":
-                timer_to_use = f"Timer{timer_name}"
-
-    assert timer_to_use != None, "to GPIO pin named ImuHeater with a timer associated, must define a timer to control the heater on the IMU"
+    pins = metadata.get_all_gpio_pins()
+    assert "ImuHeater" in pins, "No IMU Heater pin was found. Please make sure that it exists in your board.xml file"
+    heater_pin = pins["ImuHeater"]
+    assert "timer" in heater_pin.features, "IMUHeater pin has no assosciated timer pwm channel. Please make sure to set it as a pwm pin or associate a timer."
+    timer_to_use = f"Timer{heater_pin.features['timer'].name}"
 
     env.substitutions = {"timer": timer_to_use}
     env.template("imu_heater_constants.hpp.in", "imu_heater_constants.hpp")

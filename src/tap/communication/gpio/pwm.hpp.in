@@ -38,8 +38,8 @@ namespace gpio
 class Pwm
 {
 public:
-{% for timer in timers %}
-    static constexpr uint32_t DEFAULT_{{ timer|upper }}_FREQUENCY = 2000;
+{% for timer in timers|sort %}
+    static constexpr uint32_t DEFAULT_TIMER{{ timer }}_FREQUENCY = 2000;
 {% endfor %}
     Pwm() = default;
     DISALLOW_COPY_AND_ASSIGN(Pwm)
@@ -48,14 +48,14 @@ public:
     enum Pin
     {
 %% for pin in pins
-        {{ pin }},
+        {{ pin.display_name() }},
 %% endfor
     };
 
     enum Timer
     {
-%% for timer in timers
-        {{ timer|upper }},
+%% for timer in timers|sort
+        TIMER{{ timer }},
 %% endfor
     };
 
@@ -85,9 +85,6 @@ public:
     mockable void start(Timer timer);
 
 private:
-    static constexpr int BUZZER_CHANNEL = 1;
-    static constexpr int HEATER_CHANNEL = 2;
-
     enum Ch
     {
 %% for ch in chs:
@@ -97,11 +94,11 @@ private:
 
 %% for timer in timers
     /**
-     * Overflow as calculated by the modm {{ timer }} object in its getPeriod function.
+     * Overflow as calculated by the modm Timer{{ timer }} object in its getPeriod function.
      * This is what the Auto Reload Register is set to and the pwm duty is scaled to
      * a value between 0 and this value.
      */
-    uint16_t {{ timer|lower }}CalculatedOverflow;
+    uint16_t timer{{ timer }}CalculatedOverflow;
 %% endfor
 };  // class Pwm
 

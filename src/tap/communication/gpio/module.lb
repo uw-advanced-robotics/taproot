@@ -18,6 +18,7 @@
 import sys
 sys.path.append(repopath("lbuild-scripts"))
 import board_info_parser
+from collections import defaultdict
 
 def extractPinDefines(pins):
     pins = [pin.strip() for pin in str.split(pins, ",")]
@@ -37,35 +38,22 @@ class Analog(Module):
     def build(self, env):
         user_pins = extractPinDefines(env[":board:analog_in_pins"])
 
-        # Collect adcs
-        adcs = []
-        pin_to_adc = {}
-        pin_to_in = {}
-        for pin in self.board_info.gpio_pins:
-            pin_name = pin.alias
-            if pin_name in user_pins:
-                adc = pin.features["adc"]
-                adc_name = f"Adc{adc.name}"
-                pin_to_adc[pin_name] = adc_name
-                pin_to_in[pin_name] = adc.in_channel
-                if adc_name not in adcs:
-                    adcs.append(adc_name)
+        pins = []
+        for name, pin in self.board_info.get_all_gpio_pins().items():
+            if name in user_pins:
+                assert "adc" in pin.features, f"Pin {pin.name} does not have an ADC associated with it"
+                pins.append(pin)
+            elif pin.gpio_type == "analog":
+                pins.append(pin)
 
-        # Add list of pins associated with each ADC
-        adc_to_pin_map = {}
-        for adc in adcs:
-            pins_associated_with_adc = []
-            for pin in user_pins:
-                if pin_to_adc[pin] == adc:
-                    pins_associated_with_adc.append(pin)
-            adc_to_pin_map[adc] = pins_associated_with_adc
+        adcs = defaultdict(list)
+        for pin in pins:
+            adc = pin.features["adc"]
+            adcs[f"Adc{adc.name}"].append(pin) 
 
         env.substitutions = {
-            "pins": user_pins,
+            "pins": pins,
             "adcs": adcs,
-            "pin_to_adc": pin_to_adc,
-            "pin_to_in": pin_to_in,
-            "adc_to_pin_map": adc_to_pin_map
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("analog.cpp.in", "analog.cpp")
@@ -122,36 +110,25 @@ class Pwm(Module):
         # Collect pins
         user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
 
-        # Collect timers
-        timers = []
-        chs = []
-        pin_to_ch = {}
-        pin_to_timer = {}
-        for pin in self.board_info.gpio_pins:
-            pin_name = pin.alias
-            if pin_name in user_pins:
+        pins = []
+        for name, pin in self.board_info.get_all_gpio_pins().items():
+            if name in user_pins:
+                assert "timer" in pin.features, f"Pin {pin.name} does not have a Timer associated with it"
+                pins.append(pin)
+            elif pin.gpio_type == "pwm":
+                pins.append(pin)
 
-                
-                assert "timer" in pin.features.keys(), "Tried to configure PWM pin that doesn't have associated timer"
-
-                timer = pin.features["timer"]
-                channel = timer.channel
-
-                pin_to_ch[pin_name] = channel
-
-                timer_name = f"Timer{timer.name}"
-                pin_to_timer[pin_name] = timer_name
-                if channel not in chs:
-                    chs.append(channel)
-                if timer_name not in timers:
-                    timers.append(timer_name)
+        timers = defaultdict(list)
+        chs = set()
+        for pin in pins:
+            timer = pin.features["timer"]
+            timers[timer.name].append(pin)
+            chs.add(timer.channel)
 
         env.substitutions = {
-            "pins": user_pins,
+            "pins": pins,
             "timers": timers,
-            "pin_to_ch": pin_to_ch,
-            "pin_to_timer": pin_to_timer,
-            "chs": chs,
+            "chs": sorted(list(chs)),
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("pwm.cpp.in", "pwm.cpp")

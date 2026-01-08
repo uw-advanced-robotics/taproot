@@ -47,7 +47,7 @@ public:
     enum Pin
     {
 %% for pin in pins
-        {{ pin }},
+        {{ pin.display_name() }},
 %% endfor
     };
 

@@ -26,6 +26,7 @@
 using namespace Board;
 using namespace tap::algorithms;
 
+{% macro pin_name(pin) %}Board::{% if pin.gpio_type != "pwm" %}PWMOutPin{% endif %}{{ pin.display_name() }}{% endmacro %}
 namespace tap
 {
 namespace gpio
@@ -34,20 +35,13 @@ void Pwm::init()
 {
 #ifndef PLATFORM_HOSTED
 
-%% for timer in timers
-    %% set pins_associated_with_timer = []
-    %% for pin in pins
-        %% if pin_to_timer[pin] == timer
-            %% set pins_associated_with_timer = pins_associated_with_timer.append(pin)
-        %% endif
-    %% endfor
-
-    {{ timer }}::connect<{% for pin in pins_associated_with_timer %}PWMOutPin{{ pin }}::{{ pin_to_ch[pin] }}{% if not loop.last %}, {% endif %}{% endfor %}>();
-    {{ timer }}::enable();
-    {{ timer }}::setMode({{ timer }}::Mode::UpCounter);
-    {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_{{ timer|upper }}_FREQUENCY);
-    {{ timer }}::start();
-    {{ timer }}::enableOutput();
+%% for timer in timers|sort
+    Timer{{ timer }}::connect<{% for pin in timers[timer] %}{{ pin_name(pin) }}::{{ pin.features["timer"].channel }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    Timer{{ timer }}::enable();
+    Timer{{ timer }}::setMode(Timer{{ timer }}::Mode::UpCounter);
+    timer{{ timer }}CalculatedOverflow = Timer{{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_TIMER{{ timer }}_FREQUENCY);
+    Timer{{ timer }}::start();
+    Timer{{ timer }}::enableOutput();
 
 %% endfor
 #endif
@@ -59,7 +53,7 @@ void Pwm::writeAllZeros()
 {
 #ifndef PLATFORM_HOSTED
 %% for pin in pins
-    write(0.0f, Pin::{{ pin }});
+    write(0.0f, Pin::{{ pin.display_name() }});
 %% endfor
 #endif
 }
@@ -74,12 +68,12 @@ void Pwm::write(float duty, Pin pin)
     switch (pin)
     {
 %% for pin in pins
-    %% set timer = pin_to_timer[pin]
-        case Pin::{{ pin }}:
-            {{ timer }}::configureOutputChannel(
-                {{ pin_to_ch[pin] }},
-                {{ timer }}::OutputCompareMode::Pwm,
-                duty * {{ timer|lower }}CalculatedOverflow);
+    %% set timer = pin.features["timer"].name
+        case Pin::{{ pin.display_name() }}:
+            Timer{{ timer }}::configureOutputChannel(
+                {{ pin.features["timer"].channel }},
+                Timer{{ timer }}::OutputCompareMode::Pwm,
+                duty * timer{{ timer }}CalculatedOverflow);
             break;
 %% endfor
         default:
@@ -96,9 +90,9 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
 #else
     switch (timer)
     {
-%% for timer in timers
-        case {{ timer|upper }}:
-            {{ timer|lower }}CalculatedOverflow = {{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
+%% for timer in timers|sort
+        case TIMER{{ timer }}:
+            timer{{ timer }}CalculatedOverflow = Timer{{ timer }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
 %% endfor
     }
@@ -112,9 +106,9 @@ void Pwm::pause(Timer timer)
 #else
     switch (timer)
     {
-%% for timer in timers
-        case {{ timer|upper }}:
-            {{ timer }}::pause();
+%% for timer in timers|sort
+        case TIMER{{ timer }}:
+            Timer{{ timer }}::pause();
             break;
 %% endfor
     }
@@ -128,9 +122,9 @@ void Pwm::start(Timer timer)
 #else
     switch (timer)
     {
-%% for timer in timers
-        case {{ timer|upper }}:
-            {{ timer }}::start();
+%% for timer in timers|sort
+        case TIMER{{ timer }}:
+            Timer{{ timer }}::start();
             break;
 %% endfor
     }

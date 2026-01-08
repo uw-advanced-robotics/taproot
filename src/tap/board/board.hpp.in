@@ -109,9 +109,9 @@ struct SystemClock
 
 %% for gpio in gpio_group.gpios
 %% set gpio_alias = gpio.name if gpio.alias is none else gpio.alias
-using {{ gpio_group.alias }}{{ gpio_alias }} = {{ gpio.name }};
+using {{ gpio_group.name }}{{ gpio_alias }} = {{ gpio.name }};
 %% endfor
-using {{ gpio_group.alias }}sPort = SoftwareGpioPort<{% for gpio in gpio_group.gpios %}{{ gpio_group.alias }}{{ gpio.name if gpio.alias is none else gpio.alias }}{% if not loop.last %}, {% endif %}{% endfor %}>;
+using {{ gpio_group.name }}sPort = SoftwareGpioPort<{% for gpio in gpio_group.gpios %}{{ gpio_group.name }}{{ gpio.name if gpio.alias is none else gpio.alias }}{% if not loop.last %}, {% endif %}{% endfor %}>;
 
 %% endfor
 
@@ -120,10 +120,10 @@ using {{ gpio_group.alias }}sPort = SoftwareGpioPort<{% for gpio in gpio_group.g
 // {{ comment }}
         {% if pins|length > 0 %}
             %% for pin in pins
-using {{ pin_group_name }}{{ pin }} = {{ pin_mappings[pin] }};
+using {% if pin.gpio_type == "gpio" %}{{ pin_group_name }}{% endif %}{{ pin.display_name() }} = {{ pin.name }};
             %% endfor
         {% endif %}
-using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{{ pin_group_name }}{{ pin }}{% if not loop.last %}, {% endif %}{% endfor %}>;
+using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{% if pin.gpio_type == "gpio" %}{{ pin_group_name }}{% endif %}{{ pin.display_name() }}{% if not loop.last %}, {% endif %}{% endfor %}>;
     %% endif
 %% endmacro
 
@@ -135,6 +135,9 @@ using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{{ pin_group
 %% for spi in spis
 %% set spi_alias = "Spi" + spi.name|string if spi.alias is none else spi.alias
 %% set spi_name = spi_alias + ("" if spi.alias is none else "Spi")
+%% if spi.comment is not none
+// {{ spi.comment }}
+%% endif
 using {{spi_alias}}Sck = {{spi.sck}};
 using {{spi_alias}}Cipo = {{spi.cipo}};
 using {{spi_alias}}Copi = {{spi.copi}};
@@ -149,6 +152,9 @@ using {{spi_name}} = SpiMaster{{spi.name}};
 %% for i2c in i2cs
 %% set i2c_alias = "I2c" + i2c.name|string if i2c.alias is none else i2c.alias
 %% set i2c_name = i2c_alias + ("" if i2c.alias is none else "I2c")
+%% if i2c.comment is not none
+// {{ i2c.comment }}
+%% endif
 using {{i2c_alias}}Sda = {{i2c.sda}};
 using {{i2c_alias}}Scl = {{i2c.scl}};
 %% for i2c_gpio in i2c.gpios
@@ -170,7 +176,7 @@ inline void initialize()
 %% for gpio_group in gpio_groups
     %% if gpio_group.default is not none
     {# TODO: Need to be able to support stuff like input groups #}
-    {{ gpio_group.alias }}sPort::setOutput(modm::Gpio::{{ gpio_group.default }});
+    {{ gpio_group.name }}sPort::setOutput(modm::Gpio::{{ gpio_group.default }});
     %% endif
 %% endfor
 #endif

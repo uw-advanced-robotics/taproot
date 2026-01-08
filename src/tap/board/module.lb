@@ -70,18 +70,30 @@ def get_apb_map(chip):
     return apb_map
 
 def build(env):
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    
     def extract_pin_defines(pins: str) -> str:
         pins = [pin.strip() for pin in str.split(pins, ",")]
         return [] if pins == [""] else pins
 
+    def get_pins(user_pins, gpio_type):
+        pins = []
+
+        for pin in metadata.gpio_pins:
+            if pin.gpio_type == gpio_type:
+                pins.append(pin)
+            elif pin.display_name() in user_pins:
+                pins.append(pin)
+
+        return pins
+
+
     board_name = env[":dev_board"]
 
-    digital_in_pins = extract_pin_defines(env["digital_in_pins"])
-    digital_out_pins = extract_pin_defines(env["digital_out_pins"])
-    analog_in_pins = extract_pin_defines(env["analog_in_pins"])
-    pwm_pins = extract_pin_defines(env["pwm_pins"])
-
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    digital_in_pins = get_pins(extract_pin_defines(env["digital_in_pins"]), "in")
+    digital_out_pins = get_pins(extract_pin_defines(env["digital_out_pins"]), "out")
+    analog_in_pins = get_pins(extract_pin_defines(env["analog_in_pins"]), "analog")
+    pwm_pins = get_pins(extract_pin_defines(env["pwm_pins"]), "pwm")
 
     pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
     assert len(pins) == len(set(pins)), "duplicate pin definitions"
@@ -100,11 +112,11 @@ def build(env):
         enabled_peripherals_raw["Spi"].add(spi.name)
     for uart in metadata.uart:
         enabled_peripherals_raw["Uart"].add((uart.name, uart.usart))
-    for pin in metadata.gpio_pins:
-        if "timer" in pin.features.keys():
-            enabled_peripherals_raw["Timer"].add(pin.features["timer"].name)
+    for pin in metadata.get_all_gpio_pins().values():
         if "adc" in pin.features.keys():
             enabled_peripherals_raw["Adc"].add(pin.features["adc"].name)
+        if "timer" in pin.features.keys():
+            enabled_peripherals_raw["Timer"].add(pin.features["timer"].name)
     
     enabled_peripherals = {}
     for peripheral_set, values in enabled_peripherals_raw.items():
@@ -117,9 +129,9 @@ def build(env):
         else:
             enabled_peripherals[peripheral_set] = [peripheral_set + str(v) for v in values]
 
-    for pin in pins:
-        assert any(metadata_pin.alias == pin for metadata_pin in metadata.gpio_pins),\
-            f"invalid pin {pin}"
+    # for pin in pins:
+    #     assert any(metadata_pin.alias == pin for metadata_pin in metadata.gpio_pins),\
+    #         f"invalid pin {pin}"
 
     pin_mappings = { pin.alias: pin.name for pin in metadata.gpio_pins }
 
