@@ -50,7 +50,7 @@ def build(env):
     assert "ImuHeater" in pins, "No IMU Heater pin was found. Please make sure that it exists in your board.xml file"
     heater_pin = pins["ImuHeater"]
     assert "timer" in heater_pin.features, "IMUHeater pin has no assosciated timer pwm channel. Please make sure to set it as a pwm pin or associate a timer."
-    timer_to_use = f"Timer{heater_pin.features['timer'].name}"
+    timer_to_use = f"Timer{heater_pin.features['timer'].timer.raw_name}"
 
     env.substitutions = {"timer": timer_to_use}
     env.template("imu_heater_constants.hpp.in", "imu_heater_constants.hpp")

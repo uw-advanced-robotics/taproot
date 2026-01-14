@@ -45,7 +45,7 @@ class Uart
 public:
     enum UartPort
     {
-%% for port in uart_ports|sort(attribute="name")
+%% for port in uart_ports|sort(attribute="raw_name")
         {{ port.display_name() }},
 %% endfor
     };
@@ -78,10 +78,10 @@ public:
     {
 #ifndef PLATFORM_HOSTED
 %% macro init_port(port)
-            modm::platform::{{ port.uart_name() }}::connect<{% if port.tx != None %}{{ port.tx }}::Tx{% if port.rx != None %}, {% endif %}{% endif %}{% if port.rx != None %}{{ port.rx }}::Rx{% endif %}>();
-            modm::platform::{{ port.uart_name() }}::initialize<Board::SystemClock, baudrate>(parity);
+            modm::platform::{{ port.name() }}::connect<{% if port.tx != None %}{{ port.tx }}::Tx{% if port.rx != None %}, {% endif %}{% endif %}{% if port.rx != None %}{{ port.rx }}::Rx{% endif %}>();
+            modm::platform::{{ port.name() }}::initialize<Board::SystemClock, baudrate>(parity);
 %% endmacro
-%% for port in uart_ports|sort(attribute="name")
+%% for port in uart_ports|sort(attribute="raw_name")
         {% if not loop.first %}else {% endif %}if constexpr (port == UartPort::{{ port.display_name() }})
         {
 {{ init_port(port) }}        }

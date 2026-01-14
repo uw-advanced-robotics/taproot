@@ -50,9 +50,9 @@ void DJISerial::initialize()
 {
     switch (this->port)
     {
-%% for port in uart_ports|sort(attribute="name")
+%% for port in uart_ports|sort(attribute="raw_name")
         case Uart::UartPort::{{ port.display_name() }}:
-            drivers->uart.init<Uart::UartPort::{{ port.display_name() }}, {{ configured_baud_rate[port.name] }}>();
+            drivers->uart.init<Uart::UartPort::{{ port.display_name() }}, {{ configured_baud_rate[port.raw_name] }}>();
             break;
 %% endfor
         default:

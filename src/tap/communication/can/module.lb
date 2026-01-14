@@ -33,10 +33,10 @@ def prepare(module, options):
 def build(env):
     board_info = board_info_parser.parse_board_info(env[":dev_board"])
 
-    can = { can.name: can for can in board_info.can }
+    can = { can.name().lower(): can for can in board_info.can }
 
     env.substitutions = {
-        "can": can,
+        **can,
         "use_sim": env.has_module(":motor:motorsim")
     }
 

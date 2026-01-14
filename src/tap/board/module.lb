@@ -20,7 +20,6 @@ sys.path.append(repopath("scripts/lbuild-helpers"))
 import board_info_parser
 import re
 from pathlib import Path
-from collections import defaultdict
 
 def init(module):
     module.name = ":board"
@@ -51,6 +50,18 @@ def prepare(module, options):
             description="Comma-separated list of PWM pins",
             default=""))
 
+    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+
+    for instance in board_info.i2c.values + board_info.spi.values + board_info.uart.values:
+        if instance.alias is None:
+            module.add_option(
+                StringOption(
+                    name=f"{instance.display_name().lower()}_alias",
+                    description=f"Alias for {instance.display_name()}",
+                    default=""))
+
+    print("board")
+
     return True
 
 def get_apb_map(chip):
@@ -71,6 +82,8 @@ def get_apb_map(chip):
 
 def build(env):
     metadata = board_info_parser.parse_board_info(env[":dev_board"])
+
+    metadata.validate_configuration(env)
     
     def extract_pin_defines(pins: str) -> str:
         pins = [pin.strip() for pin in str.split(pins, ",")]
@@ -87,51 +100,13 @@ def build(env):
 
         return pins
 
-
-    board_name = env[":dev_board"]
-
     digital_in_pins = get_pins(extract_pin_defines(env["digital_in_pins"]), "in")
     digital_out_pins = get_pins(extract_pin_defines(env["digital_out_pins"]), "out")
     analog_in_pins = get_pins(extract_pin_defines(env["analog_in_pins"]), "analog")
     pwm_pins = get_pins(extract_pin_defines(env["pwm_pins"]), "pwm")
 
-    pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
-    assert len(pins) == len(set(pins)), "duplicate pin definitions"
-
     apb_map = get_apb_map(metadata.controller.chip)
     
-    # TODO: Move this to the modm project file prepare. Add a dep to that module.
-    #       Also consider selectively enabling these based on configuration? ie 2 perphis on the same GPIO
-    #       How should configuration be handled seperately from the board.xml? do we consider that the actual configuration?
-    enabled_peripherals_raw = defaultdict(set)
-    for can in metadata.can:
-        enabled_peripherals_raw["Can"].add(can.name)
-    for i2c in metadata.i2c:
-        enabled_peripherals_raw["I2c"].add(i2c.name)
-    for spi in metadata.spi:
-        enabled_peripherals_raw["Spi"].add(spi.name)
-    for uart in metadata.uart:
-        enabled_peripherals_raw["Uart"].add((uart.name, uart.usart))
-    for pin in metadata.get_all_gpio_pins().values():
-        if "adc" in pin.features.keys():
-            enabled_peripherals_raw["Adc"].add(pin.features["adc"].name)
-        if "timer" in pin.features.keys():
-            enabled_peripherals_raw["Timer"].add(pin.features["timer"].name)
-    
-    enabled_peripherals = {}
-    for peripheral_set, values in enabled_peripherals_raw.items():
-        values = list(values)
-        values.sort()
-        if peripheral_set == "Uart":
-            enabled_peripherals[peripheral_set] = [
-                f"U{'s' if s else ''}art{n}" for n, s in values
-            ]
-        else:
-            enabled_peripherals[peripheral_set] = [peripheral_set + str(v) for v in values]
-
-    # for pin in pins:
-    #     assert any(metadata_pin.alias == pin for metadata_pin in metadata.gpio_pins),\
-    #         f"invalid pin {pin}"
 
     pin_mappings = { pin.alias: pin.name for pin in metadata.gpio_pins }
 
@@ -144,7 +119,7 @@ def build(env):
         "chip": metadata.controller.chip,
         "clock": metadata.controller.clock,
         "apb_map": apb_map,
-        "enabled_peripherals": enabled_peripherals,
+        "enabled_peripherals": metadata.get_enabled_peripherals(),
         "gpio_groups": metadata.gpio_groups,
         "spis": metadata.spi,
         "i2cs": metadata.i2c,

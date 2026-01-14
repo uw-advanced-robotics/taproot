@@ -30,19 +30,19 @@ from functools import lru_cache
 parsed_board_info = {}
 
 class Instance(ABC):
-    name: Union[str, int]
+    raw_name: Union[str, int]
     alias: Optional[str]
     comment: Optional[str]
 
     def __init__(self, xml, comment):
         name = xml.get("name")
-        self.name = int(name) if name.isnumeric() else name
+        self.raw_name = int(name) if name.isnumeric() else name
         
         self.alias = xml.get("alias")
         self.comment = comment.strip() if comment is not None else None
 
     def display_name(self):
-        return self.alias if self.alias is not None else str(self.name)
+        return self.alias if self.alias is not None else self.name()
 
     def __repr__(self):
         return self.display_name()
@@ -50,6 +50,12 @@ class Instance(ABC):
     @abstractmethod
     def get_used_pins(self) -> List[str]:
         ...
+
+    def name(self) -> str:
+        return str(self.raw_name)
+
+    def __lt__(self, other):
+        return self.raw_name < other.raw_name
 
 
 class CanBus(Instance):
@@ -65,6 +71,9 @@ class CanBus(Instance):
 
     def get_used_pins(self) -> List[str]:
         return [self.rx, self.tx]
+
+    def name(self) -> str:
+        return f"Can{self.raw_name}"
 
 
 class Uart(Instance):
@@ -82,53 +91,114 @@ class Uart(Instance):
 
     def get_used_pins(self) -> List[str]:
         return [pin for pin in [self.rx, self.tx] if pin is not None]
-
-    def display_name(self):
-        return self.alias if self.alias is not None else self.uart_name()
     
-    def uart_name(self):
-        return f"U{'s' if self.usart else ''}art{self.name}"
+    def name(self) -> str:
+        return f"U{'s' if self.usart else ''}art{self.raw_name}"
+
+adcs = {}
+class Adc:
+    raw_name: int
+    pins: List["Gpio"]
+
+    def __init__(self, raw_name):
+        self.raw_name = raw_name
+        self.pins = []
+
+    def name(self) -> str:
+        return f"Adc{self.raw_name}"
+
+    def add_pin(self, pin):
+        self.pins.append(pin)
+
+    @staticmethod
+    def get(raw_name):
+        global adcs
+        if raw_name not in adcs:
+            adcs[raw_name] = Adc(raw_name)
+
+        return adcs[raw_name]
+
+    def __lt__(self, other):
+        return self.raw_name < other.raw_name
+
+    def name(self) -> str:
+        return f"Adc{self.raw_name}"
+
+timers = {}
+class Timer:
+    raw_name: int
+    pins: List["Gpio"]
+
+    def __init__(self, raw_name):
+        self.raw_name = raw_name
+        self.pins = []
+
+    def name(self) -> str:
+        return f"Timer{self.raw_name}"
+
+    def add_pin(self, pin):
+        self.pins.append(pin)
+
+    @staticmethod
+    def get(raw_name):
+        global timers
+        if raw_name not in timers:
+            timers[raw_name] = Timer(raw_name)
+
+        return timers[raw_name]
+
+    def __lt__(self, other):
+        return self.raw_name < other.raw_name
+
+    def name(self) -> str:
+        return f"Timer{self.raw_name}"
 
 class Feature(ABC):
     @staticmethod
-    def parse(xml):
+    def parse(gpio, xml):
         if xml.tag == "adc":
-            return AdcFeature.parse(xml)
+            return AdcFeature.parse(gpio, xml)
         elif xml.tag == "timer":
-            return TimerFeature.parse(xml)
+            return TimerFeature.parse(gpio, xml)
 
 class AdcFeature(Feature):
-    name: int
+    adc: int
     in_channel: str
 
     @staticmethod
-    def parse(xml):
+    def parse(gpio, xml):
         assert xml.tag == "adc"
 
-        name = int(xml.get("name")[3:])
+        raw_name = int(xml.get("name")[3:])
         in_channel = xml.get("in")
 
-        return AdcFeature(name, in_channel)
+        feature = AdcFeature(raw_name, in_channel)
+        feature.adc.add_pin(gpio)
 
-    def __init__(self, name, in_channel):
-        self.name = name
+        return feature
+
+    def __init__(self, raw_name, in_channel):
+        self.adc = Adc.get(raw_name)
         self.in_channel = in_channel
 
 class TimerFeature(Feature):
-    name: int
+    timer: Timer
     channel: str
 
     @staticmethod
-    def parse(xml):
+    def parse(gpio, xml):
         assert xml.tag == "timer"
 
-        name = int(xml.get("name")[5:])
+        raw_name = int(xml.get("name")[5:])
         channel = xml.get("channel")
 
-        return TimerFeature(name, channel)
+        feature = TimerFeature(raw_name, channel)
+        feature.timer.add_pin(gpio)
 
-    def __init__(self, name, channel):
-        self.name = name
+        return feature
+
+    def __init__(self, raw_name, channel):
+        self.timer = Timer.get(raw_name)
         self.channel = channel
 
 class Gpio(Instance):
@@ -139,7 +209,7 @@ class Gpio(Instance):
         assert xml.tag in  ["gpio", "out", "in", "pwm", "analog"]
         super().__init__(xml, comment)
 
-        self.features = {child.tag: Feature.parse(child) for child in xml.iterchildren()}
+        self.features = {child.tag: Feature.parse(self, child) for child in xml.iterchildren()}
 
         self.gpio_type = xml.tag
 
@@ -149,7 +219,7 @@ class Gpio(Instance):
             self.features["timer"] = TimerFeature(int(xml.get("timer")[5:]), xml.get("channel"))
 
     def get_used_pins(self) -> List[str]:
-        return [self.name]
+        return [self.raw_name]
 
 
 class GroupGpio(Gpio):
@@ -177,7 +247,7 @@ class GpioGroup(Instance):
         self.gpios = [GroupGpio(child, None, self) for child in xml.iterchildren()]
 
     def get_used_pins(self) -> List[str]:   
-        return [pin.name for pin in self.gpios]
+        return [pin.raw_name for pin in self.gpios]
 
 
 class CommunicationGroup(Instance):
@@ -185,8 +255,6 @@ class CommunicationGroup(Instance):
 
     def __init__(self, xml, comment):
         super().__init__(xml, comment)
-        self.name = int(xml.get("name"))
-        self.alias = xml.get("alias", None)
 
         self.gpios = [GroupGpio(child, None, self) for child in xml.iterchildren()]
 
@@ -206,6 +274,9 @@ class I2C(CommunicationGroup):
     def get_used_pins(self) -> List[str]:
         return super().get_used_pins() + [self.sda, self.scl]
 
+    def name(self) -> str:
+        return f"I2c{self.raw_name}"
+
 
 class SPI(CommunicationGroup):
     sck: str
@@ -220,6 +291,9 @@ class SPI(CommunicationGroup):
 
     def get_used_pins(self) -> List[str]:
         return super().get_used_pins() + [self.sck, self.cipo, self.copi]
+
+    def name(self) -> str:
+        return f"Spi{self.raw_name}"
 
 Pll = namedtuple("Pll", ["m", "n", "p"])
 
@@ -273,11 +347,11 @@ class DeviceList(Generic[T]):
             assert v.alias not in self.aliases
             self.aliases[v.alias] = v
         
-        assert v.name not in self.names
-        self.names[v.name] = v
+        assert v.raw_name not in self.names
+        self.names[v.raw_name] = v
 
     def __iter__(self):
-        yield from self.values
+        yield from sorted(self.values)
 
 class BoardInfo:
     controller: Controller
@@ -287,6 +361,10 @@ class BoardInfo:
     spi: DeviceList[SPI]
     gpio_groups: DeviceList[GpioGroup]
     gpio_pins: DeviceList[Gpio]
+    adcs: List[Adc]
+    timers: List[Timer]
+
+    pin_to_usage: Dict[str, List[Instance]]
 
     def __init__(self, xml):
         self.controller = Controller(xml.find("controller"))
@@ -320,70 +398,109 @@ class BoardInfo:
 
             comment = None
 
+        self.adcs = list(sorted(adcs.values()))
+        self.timers = list(sorted(timers.values()))
+
         self.pin_to_usage = defaultdict(set)
         for instance in self.can.values + self.uart.values + self.i2c.values + self.spi.values + self.gpio_groups.values + self.gpio_pins.values:
             for pin in instance.get_used_pins():
                 self.pin_to_usage[pin].add(instance)
 
-        self.populate_gpio_information()
+    def validate_configuration(self, env):
+        def extract_pin_defines(pins: str) -> str:
+            pins = [pin.strip() for pin in str.split(pins, ",")]
+            return [] if pins == [""] else pins
 
-    def populate_gpio_information(self):
+        digital_in_pins = extract_pin_defines(env[":board:digital_in_pins"])
+        digital_out_pins = extract_pin_defines(env[":board:digital_out_pins"])
+        analog_in_pins = extract_pin_defines(env[":board:analog_in_pins"])
+        pwm_pins = extract_pin_defines(env[":board:pwm_pins"])
+
+        pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
+        assert len(pins) == len(set(pins)), "Duplicate pin definitions"
+
+        for instance in self.i2c.values + self.spi.values + self.uart.values:
+            if instance.alias is None:
+                alias = env[f":board:{instance.display_name().lower()}_alias"]
+
+                if alias != "":
+                    instance.alias = alias
+
+        for pin in pins:
+            usages = self.pin_to_usage[self.gpio_pins.aliased(pin).raw_name]
+
+            for usage in usages:
+                if type(usage) != Gpio:
+                    assert usage.alias == None, f"Pin {pin} has multiple enforced usages: {usages}"
+
+    def print_gpio_af_information(self):
         device = get_modm_device(self.controller.chip)
         device_gpios_raw = device.properties["driver"][-1]["gpio"]
         device_gpios = {}
         for p in device_gpios_raw:
-            # print(p)
             gpio = "Gpio" + p["port"].capitalize() + p["pin"]
-            # print(p["signal"])
             if "signal" in p.keys():
                 device_gpios[gpio] = p["signal"]
             else:
                 device_gpios[gpio] = []
 
         for gpio in self.gpio_pins:
-            afs = device_gpios[gpio.name]
-            print(gpio.alias, ": ", gpio.name)
+            afs = device_gpios[gpio.raw_name]
+            print(gpio.alias, ": ", gpio.raw_name)
 
             for af in afs:
                 if af["driver"] == "tim":
                     if "ch" in af["name"]:
                         print("\t", "Timer" + af["instance"], af["name"])
-                        # gpio.features["timer"].append(TimerFeature(int(af["instance"]), af["name"]))
                 if af["driver"] == "adc":
                     print("\t", "Adc" + af["instance"], af["name"])
-                    # if "adc" not in gpio.features:
-                    #     gpio.features["adc"].append(AdcFeature({int(af["instance"])}, af["name"].capitalize()))
-                    # elif af["name"].capitalize() == gpio.features["adc"][0].in_channel:
-                    #     gpio.features["adc"][0].name.add(int(af["instance"]))
-                    # else:
-                    #     print("Found two ADCs with different channels, currently not supported")
-                    #     print(afs)
 
     @lru_cache
     def get_all_gpio_pins(self):
         pins = {}
         for pin in self.gpio_pins:
-            name = pin.alias if pin.alias is not None else pin.name
-            pins[name] = pin
+            pins[pin.display_name()] = pin
 
         for group in self.gpio_groups.values + self.spi.values + self.i2c.values:
             for pin in group.gpios:
-                # name = pin.alias if pin.alias is not None else pin.name
                 pins[pin.display_name()] = pin
-        
+
         return pins
+
+    @lru_cache
+    def get_enabled_peripherals(self):
+        enabled_peripherals = defaultdict(set)
+        for can in self.can:
+            enabled_peripherals["Can"].add(can)
+        for i2c in self.i2c:
+            enabled_peripherals["I2c"].add(i2c)
+        for spi in self.spi:
+            enabled_peripherals["Spi"].add(spi)
+        for uart in self.uart:
+            enabled_peripherals["Uart"].add(uart)
+        for adc in self.adcs:
+            enabled_peripherals["Adc"].add(adc)
+        for timer in self.timers:
+            enabled_peripherals["Timer"].add(timer)
+
+        for key, value in enabled_peripherals.items():
+            enabled_peripherals[key] = sorted(list(value))
+
+        return enabled_peripherals
 
 
 @lru_cache
 def get_modm_device(chip):
     import importlib
     modm_devices = importlib.machinery.SourceFileLoader("modm_devices", str(repo_path_rel_repolb(__file__, "./modm/ext/modm-devices/modm_devices/__init__.py"))).load_module()
+
     device = None
     for filename in glob.glob(str(repo_path_rel_repolb(__file__, f"./modm/ext/modm-devices/devices/stm32/{chip[:7]}-*.xml"))):
         for d in modm_devices.parser.DeviceParser().parse(filename).get_devices():
             if d.partname == chip:
                 device = d
                 break
+
     return device
 
 

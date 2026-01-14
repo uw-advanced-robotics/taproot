@@ -48,12 +48,12 @@ class Analog(Module):
 
         adcs = defaultdict(list)
         for pin in pins:
-            adc = pin.features["adc"]
-            adcs[f"Adc{adc.name}"].append(pin) 
+            feature = pin.features["adc"]
+            adcs[f"Adc{feature.adc.raw_name}"].append(pin) 
 
         env.substitutions = {
-            "pins": pins,
-            "adcs": adcs,
+            "pins": sorted(pins, key=lambda p: (p.features["adc"].adc.raw_name, p.features["adc"].in_channel)),
+            "adcs": self.board_info.adcs,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
         env.template("analog.cpp.in", "analog.cpp")
@@ -82,7 +82,6 @@ class Digital(Module):
         
         input_pins = get_pins(extractPinDefines(env[":board:digital_in_pins"]))
         output_pins = get_pins(extractPinDefines(env[":board:digital_out_pins"]))
-
 
         env.substitutions = {
             "input_pins": input_pins,
@@ -122,23 +121,19 @@ class Pwm(Module):
         user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
 
         pins = []
+        chs = set()
         for name, pin in self.board_info.get_all_gpio_pins().items():
             if name in user_pins:
-                assert "timer" in pin.features, f"Pin {pin.name} does not have a Timer associated with it"
+                assert "timer" in pin.features, f"Pin {pin.name()} does not have a Timer associated with it"
                 pins.append(pin)
+                chs.add(pin.features["timer"].channel)
             elif pin.gpio_type == "pwm":
                 pins.append(pin)
-
-        timers = defaultdict(list)
-        chs = set()
-        for pin in pins:
-            timer = pin.features["timer"]
-            timers[timer.name].append(pin)
-            chs.add(timer.channel)
+                chs.add(pin.features["timer"].channel)          
 
         env.substitutions = {
-            "pins": pins,
-            "timers": timers,
+            "pins": sorted(pins, key=lambda p: (p.features["timer"].timer.raw_name, p.features["timer"].channel)),
+            "timers": self.board_info.timers,
             "chs": sorted(list(chs)),
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"

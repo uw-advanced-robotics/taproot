@@ -19,11 +19,7 @@ import sys
 import os
 
 sys.path.append(repopath("scripts/lbuild-helpers"))
-
-MCU_VARIANTS_BY_BOARD = {
-    "rm-dev-board-a": "stm32f427iih6",
-    "rm-dev-board-c": "stm32f407igh6",
-}
+import board_info_parser
 
 DEFAULT_MODM_OPTIONS_BY_BOARD = {
     "rm-dev-board-a": "\
@@ -47,6 +43,14 @@ DEFAULT_MODM_OPTIONS_BY_BOARD = {
         modm:platform:uart:6:buffer.rx 256\n\
         modm:platform:uart:6:buffer.tx 256",
 }
+
+def default_options(board):
+    options = {}
+    for uart in board.uart:
+        options[f"modm:platform:uart:{uart.raw_name}:buffer.rx"] = "256"
+        options[f"modm:platform:uart:{uart.raw_name}:buffer.tx"] = "256"
+    
+    return options
 
 def get_modm_repo_lb_file() -> str:
     '''
@@ -78,43 +82,55 @@ def prepare(module, options):
     return True
 
 def build(env):
-    board_name = env[":dev_board"]
-    try:
-        mcu = MCU_VARIANTS_BY_BOARD[board_name]
-    except KeyError:
-        raise RuntimeError(f"Dev board {board_name} is not valid")
-
+    board_info = board_info_parser.parse_board_info(env[":dev_board"])
+    
     # set default options based on specified dev board if necessary
-    modm_hal_options = env["::modm_hal_options"]
-    if modm_hal_options == "":
-        modm_hal_options = DEFAULT_MODM_OPTIONS_BY_BOARD[board_name]
-    # split up options
-    modm_hal_options = modm_hal_options.split("\n")
-    # remove leading/trailing whitespace
-    modm_hal_options = [option.strip(" \t") for option in modm_hal_options]
-    # split up option names and values
-    modm_hal_options = [option.split(' ') for option in modm_hal_options]
-    # remove blank options
-    modm_hal_options = list(filter(lambda o: o != [""], modm_hal_options))
-    # check invalid options
-    def check_modm_option_valid(o):
-        if len(o) != 2:
-            raise ValueError(f"Option {o} has {len(o)} arguments, must have 2 arguments of the form `modm:option:name option_value`")
-    [check_modm_option_valid(o) for o in modm_hal_options]
+    modm_hal_options = default_options(board_info)
+    supplied_options = env["::modm_hal_options"]
+    if supplied_options != "":
+        # split up options
+        supplied_options = supplied_options.split("\n")
+        # remove leading/trailing whitespace
+        supplied_options = [option.strip("") for option in supplied_options]
+        # split up option names and values
+        supplied_options = [option.split(' ') for option in supplied_options]
+        # remove blank options
+        supplied_options = list(filter(lambda o: o != [""], supplied_options))
+        # check invalid options
+        def check_modm_option_valid(o):
+            if len(o) != 2:
+                raise ValueError(f"Option {o} has {len(o)} arguments, must have 2 arguments of the form `modm:option:name option_value`")
+        [check_modm_option_valid(o) for o in supplied_options]
+
+        for option, val in supplied_options:
+            modm_hal_options[option] = val
 
     # stringify the options
-    modm_hal_options = [f"<option name=\"{name}\">{val}</option>\n" for name, val in modm_hal_options]
+    modm_hal_options = [f"<option name=\"{name}\">{val}</option>\n" for name, val in modm_hal_options.items()]
 
     # split modules and remove leading/trailing whitespace
     modm_hal_modules = [module.strip(" \t") for module in env["::modm_hal_modules"].split("\n")]
     # stringify the modules
     modm_hal_modules = [f"<module>{module}</module>\n" for module in modm_hal_modules if module != ""]
 
+
+    platform_modules = []
+    for drivers in [board_info.uart, board_info.i2c, board_info.spi, board_info.adcs, board_info.timers]:
+        drivers = sorted(drivers)
+        for instance in drivers:
+            platform_modules.append(f"{instance.__class__.__name__.lower()}:{instance.raw_name}")
+
+    modm_device = board_info_parser.get_modm_device(board_info.controller.chip)
+    has_rng = any(d["name"] == "rng" for d in modm_device.properties["driver"])
+    if has_rng:
+        platform_modules.append("random")
+
     env.substitutions = {
         "modm_path": get_modm_repo_lb_file(),
-        "mcu": mcu,
+        "mcu": board_info.controller.chip,
         "modm_hal_options": modm_hal_options,
-        "modm_hal_modules": modm_hal_modules
+        "modm_hal_modules": modm_hal_modules,
+        "platform_modules": platform_modules,
     }
 
     env.outbasepath = "taproot"

@@ -37,11 +37,11 @@ void Analog::init()
 %% endif
 {% for adc in adcs %}
     // Initial ADC/Timer setup
-    {{ adc }}::connect<{% for pin in adcs[adc] %}{{ pin_name(pin) }}::{{ pin.features["adc"].in_channel }}{% if not loop.last %}, {% endif %}{% endfor %}>();
-    {{ adc }}::initialize<SystemClock, 22500000_Bd>();
+    {{ adc.name() }}::connect<{% for pin in pins if pin.features["adc"].adc == adc %}{{ pin_name(pin) }}::{{ pin.features["adc"].in_channel }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+    {{ adc.name() }}::initialize<SystemClock, 22500000_Bd>();
 
-    %% for pin in adcs[adc]
-    {{ adc }}::setPinChannel<{{ pin_name(pin) }}>();
+    %% for pin in pins if pin.features["adc"].adc == adc
+    {{ adc.name() }}::setPinChannel<{{ pin_name(pin) }}>();
     %% endfor
 {% endfor %}
 #endif
@@ -57,7 +57,7 @@ uint16_t Analog::read(Pin pin) const
     {
 %% for pin in pins
         case Pin::{{ pin.display_name() }}:
-            return Adc{{ pin.features["adc"].name }}::readChannel(Adc{{ pin.features["adc"].name }}::getPinChannel<{{ pin_name(pin) }}>());
+            return Adc{{ pin.features["adc"].adc.raw_name }}::readChannel(Adc{{ pin.features["adc"].adc.raw_name }}::getPinChannel<{{ pin_name(pin) }}>());
 %% endfor
         default:
             return 0;

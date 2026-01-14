@@ -35,7 +35,7 @@ def prepare(module, options):
     buzzer_pins = [pin for pin in board_info.gpio_pins if pin.alias == BUZZER_PIN]
     if len(buzzer_pins) == 1:
         global buzzer_timer
-        buzzer_timer = f"Timer{buzzer_pins[0].features['timer'].name}"
+        buzzer_timer = f"Timer{buzzer_pins[0].features['timer'].timer.raw_name}"
     return len(buzzer_pins) == 1
 
 def build(env):
