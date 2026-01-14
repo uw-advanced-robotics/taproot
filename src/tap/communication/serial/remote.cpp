@@ -42,8 +42,7 @@ void Remote::read()
     }
     uint8_t data;  // Next byte to be read
     // Read next byte if available and more needed for the current packet
-    while (drivers->uart.read(Uart::UartPort::Remote, &data) &&
-           currentBufferIndex < REMOTE_BUF_LEN)
+    while (drivers->uart.read(Uart::UartPort::Remote, &data) && currentBufferIndex < REMOTE_BUF_LEN)
     {
         rxBuffer[currentBufferIndex] = data;
         currentBufferIndex++;
