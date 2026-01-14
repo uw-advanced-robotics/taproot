@@ -32,7 +32,7 @@ namespace gpio
 void Analog::init()
 {
 #ifndef PLATFORM_HOSTED
-%% if pins|length > 0 and pins | selectattr('gpio_type', 'ne', 'analog') | select | first
+%% if pins | selectattr('gpio_type', 'ne', 'analog') | list | length > 0
     AnalogInPins::setAnalogInput();
 %% endif
 {% for adc in adcs %}

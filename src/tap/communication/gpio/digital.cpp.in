@@ -24,6 +24,8 @@
 
 using namespace Board;
 
+{% macro in_pin_name(pin) %}Board::{% if pin.gpio_type != "in" %}DigitalInPin{% endif %}{{ pin.display_name() }}{% endmacro %}
+{% macro out_pin_name(pin) %}Board::{% if pin.gpio_type != "out" %}DigitalOutPin{% endif %}{{ pin.display_name() }}{% endmacro %}
 namespace tap
 {
 namespace gpio
@@ -31,11 +33,11 @@ namespace gpio
 void Digital::init()
 {
 #ifndef PLATFORM_HOSTED
-%% if output_pins|length > 0 and output_pins | selectattr('gpio_type', 'ne', 'out') | select | first
+%% if output_pins | selectattr('gpio_type', 'ne', 'out') | list | length > 0
     // init digital out pins
     DigitalOutPins::setOutput(modm::Gpio::Low);
 %% endif
-%% if input_pins|length > 0 and input_pins | selectattr('gpio_type', 'ne', 'in') | select | first
+%% if input_pins | selectattr('gpio_type', 'ne', 'in') | list | length > 0
     // init digital in pins
     // interrupts disabled
     DigitalInPins::setInput();
@@ -51,16 +53,15 @@ void Digital::configureInputPullMode(Digital::InputPin pin, Digital::InputPullMo
 #else
 %% if input_pins|length == 0
     UNUSED(mode);
-%% else
+%% endif
     switch (pin)
     {
 %% for pin in input_pins
-        case Digital::InputPin::{{ pin }}:
-            DigitalInPin{{ pin }}::configure(mode);
+        case Digital::InputPin::{{ pin.display_name() }}:
+            {{ in_pin_name(pin) }}::configure(mode);
             break;
 %% endfor
     }
-%% endif
 #endif
 }
 
@@ -70,11 +71,14 @@ void Digital::set(Digital::OutputPin pin, bool isSet)
     UNUSED(pin);
     UNUSED(isSet);
 #else
+%% if output_pins|length == 0
+    UNUSED(isSet);
+%% endif
     switch (pin)
     {
 %% for pin in output_pins
-        case Digital::OutputPin::{{ pin }}:
-            DigitalOutPin{{ pin }}::set(isSet);
+        case Digital::OutputPin::{{ pin.display_name() }}:
+            {{ out_pin_name(pin) }}::set(isSet);
             break;
 %% endfor
     }
@@ -90,8 +94,8 @@ bool Digital::read(Digital::InputPin pin) const
     switch (pin)
     {
 %% for pin in input_pins
-        case Digital::InputPin::{{ pin }}:
-            return DigitalInPin{{ pin }}::read();
+        case Digital::InputPin::{{ pin.display_name() }}:
+            return {{ in_pin_name(pin) }}::read();
 %% endfor
         default:
             return false;

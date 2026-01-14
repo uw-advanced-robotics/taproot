@@ -71,17 +71,19 @@ class Digital(Module):
         return True
 
     def build(self, env):
-        def get_pins(user_pins):
+        def get_pins(user_pins, gpio_type):
             pins = []
 
             for pin in self.board_info.gpio_pins:
                 if pin.display_name() in user_pins:
                     pins.append(pin)
+                elif pin.gpio_type == gpio_type:
+                    pins.append(pin)
 
-            return pins
+            return sorted(pins, key=lambda p: (p.gpio_type == gpio_type, p.display_name()))
         
-        input_pins = get_pins(extractPinDefines(env[":board:digital_in_pins"]))
-        output_pins = get_pins(extractPinDefines(env[":board:digital_out_pins"]))
+        input_pins = get_pins(extractPinDefines(env[":board:digital_in_pins"]), "in")
+        output_pins = get_pins(extractPinDefines(env[":board:digital_out_pins"]), "out")
 
         env.substitutions = {
             "input_pins": input_pins,
