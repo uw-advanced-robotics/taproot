@@ -26,6 +26,7 @@ from enum import Enum
 from abc import ABC, abstractmethod
 from collections import namedtuple, defaultdict
 from functools import lru_cache
+from lbuild.exception import LbuildValidateException as ValidateException
 
 parsed_board_info = {}
 
@@ -350,6 +351,11 @@ class DeviceList(Generic[T]):
         assert v.raw_name not in self.names
         self.names[v.raw_name] = v
 
+    def recompute_aliases(self):
+        self.aliases = {
+            v.alias: v for v in self.values
+        }
+
     def __iter__(self):
         yield from sorted(self.values)
 
@@ -374,6 +380,8 @@ class BoardInfo:
         self.spi = DeviceList()
         self.gpio_groups = DeviceList()
         self.gpio_pins = DeviceList()
+
+        self.updated = False
 
         comment = None
 
@@ -417,7 +425,20 @@ class BoardInfo:
         pwm_pins = extract_pin_defines(env[":board:pwm_pins"])
 
         pins = digital_in_pins + digital_out_pins + analog_in_pins + pwm_pins
-        assert len(pins) == len(set(pins)), "Duplicate pin definitions"
+        if len(pins) != len(set(pins)):
+            raise ValidateException("Duplicate pin definitions")
+
+        for pin in pins:
+            usages = self.pin_to_usage[self.gpio_pins.aliased(pin).raw_name]
+
+            for usage in usages:
+                if type(usage) != Gpio:
+                    if usage.alias != None:
+                        raise ValidateException(f"Pin {pin} has multiple enforced usages: {usages}")
+
+    def update_env(self, env):
+        if self.updated:
+            return
 
         for instance in self.i2c.values + self.spi.values + self.uart.values:
             if instance.alias is None:
@@ -425,13 +446,14 @@ class BoardInfo:
 
                 if alias != "":
                     instance.alias = alias
+                else:
+                    instance.alias = instance.display_name()
 
-        for pin in pins:
-            usages = self.pin_to_usage[self.gpio_pins.aliased(pin).raw_name]
+        self.i2c.recompute_aliases()
+        self.uart.recompute_aliases()
+        self.spi.recompute_aliases()
 
-            for usage in usages:
-                if type(usage) != Gpio:
-                    assert usage.alias == None, f"Pin {pin} has multiple enforced usages: {usages}"
+        self.updated = True
 
     def print_gpio_af_information(self):
         device = get_modm_device(self.controller.chip)
@@ -504,7 +526,7 @@ def get_modm_device(chip):
     return device
 
 
-def parse_board_info(device):
+def parse_board_info(device, env=None):
     global parsed_board_info
 
     device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
@@ -518,5 +540,8 @@ def parse_board_info(device):
         xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
         xmlroot.xinclude()
         parsed_board_info[device] = BoardInfo(xmlroot.getroot())
+
+    if env is not None:
+        parsed_board_info[device].update_env(env)
 
     return parsed_board_info[device]

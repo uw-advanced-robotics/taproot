@@ -24,8 +24,6 @@
 
 #include "modm/io/iodevice.hpp"
 
-#include "uart_terminal_device_constants.hpp"
-
 namespace tap
 {
 class Drivers;
@@ -71,8 +69,6 @@ private:
     static constexpr uint32_t UART_BAUDE_RATE = 115200;
 
     Drivers *drivers;
-
-    static constexpr Uart::UartPort TERMINAL_UART_PORT = bound_ports::TERMINAL_SERIAL_UART_PORT;
 };  // class UartTerminalDevice
 }  // namespace tap::communication::serial
 

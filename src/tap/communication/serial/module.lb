@@ -47,11 +47,19 @@ class RefSerial(Module):
 
     def prepare(self, module, options):
         module.depends(":architecture")
+        module.depends(":board")
         module.add_option(
             StringOption(
                 name="uart_port",
                 description="Which uart port the referee system is connected to."))
         return True
+
+    def validate(self, env):
+        board_info = board_info_parser.parse_board_info(env[":dev_board"], env)
+        uart_port = env["uart_port"]
+
+        if not any(uart.display_name() == uart_port for uart in board_info.uart):
+            raise ValidateException(f"Unabled to find {uart_port} for the board. Valid options are: {', '.join(uart.display_name() for uart in board_info.uart)}")
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
@@ -72,17 +80,14 @@ class TerminalSerial(Module):
 
     def prepare(self, module, options):
         module.depends(":architecture")
-        module.add_option(
-            StringOption(
-                name="uart_port",
-                description="Which uart port the host device that is reading data" \
-                             "from the UART port is connected to."))
-        return True
+
+        board_info = board_info_parser.parse_board_info(options[":dev_board"])  
+        terminal_serial_uart = board_info.uart.aliased("TerminalSerial")
+        return terminal_serial_uart != None
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
-        env.substitutions = {"uart_port": env["uart_port"]}
-        env.template("uart_terminal_device_constants.hpp.in", "uart_terminal_device_constants.hpp")
+        
         env.copy("uart_terminal_device.hpp")
         env.copy("uart_terminal_device.cpp")
         env.copy("terminal_serial.hpp")

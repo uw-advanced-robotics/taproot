@@ -10,7 +10,6 @@
 
     <!-- For RoboMaster Development Board Type A -->
     <option name="taproot:dev_board">rm-dev-board-a</option>
-    <option name="taproot:communication:serial:terminal_serial:uart_port">Usart3</option>
     <option name="taproot:communication:serial:ref_serial:uart_port">Usart6</option>
     <option name="taproot:board:digital_in_pins">A,B,C,D</option>
     <option name="taproot:board:digital_out_pins">E,F,G,H,Laser</option>
@@ -20,8 +19,7 @@
 
     <!-- For RoboMaster Development Board Type C --> <!--
     <option name="taproot:dev_board">rm-dev-board-c</option>
-    <option name="taproot:communication:serial:terminal_serial:uart_port">Uart1</option>
-    <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
+    <option name="taproot:communication:serial:ref_serial:uart_port">Usart6</option>
     <option name="taproot:board:digital_in_pins"></option>
     <option name="taproot:board:digital_out_pins">Laser</option>
     <option name="taproot:board:analog_in_pins"></option>
@@ -71,7 +69,6 @@
     <module>taproot:communication:sensors:encoder:can_encoder</module>
     <module>taproot:communication:sensors:imu</module>
     <module>taproot:communication:sensors:imu:display</module>
-    <module>taproot:communication:sensors:imu:terminal_serial</module>
     <module>taproot:communication:sensors:imu_heater</module>
     <module>taproot:communication:sensors:limit-switch</module>
     <module>taproot:communication:sensors:voltage</module>
@@ -79,12 +76,10 @@
     <module>taproot:communication:serial</module>
     <module>taproot:communication:serial:ref_serial</module>
     <module>taproot:communication:serial:remote</module>
-    <module>taproot:communication:serial:terminal_serial</module>
 
     <module>taproot:communication:tcp-server</module>
 
     <module>taproot:control</module>
-    <module>taproot:control:terminal_serial</module>
     <module>taproot:core</module>
 
     <module>taproot:display</module>
@@ -106,7 +101,6 @@
     <module>taproot:motor</module>
     <module>taproot:motor:pwm</module>
     <module>taproot:motor:motorsim</module>
-    <module>taproot:motor:terminal_serial</module>
     
     <module>taproot:storage</module>
     <module>taproot:storage:littlefs-internal</module>
@@ -117,6 +111,10 @@
     
     <!-- For RoboMaster Development Board Type A -->
     <module>taproot:communication:sensors:imu:mpu6500</module>
+    <module>taproot:communication:sensors:imu:terminal_serial</module>
+    <module>taproot:communication:serial:terminal_serial</module>
+    <module>taproot:control:terminal_serial</module>
+    <module>taproot:motor:terminal_serial</module>
     <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--

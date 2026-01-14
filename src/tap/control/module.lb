@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
 TERMINAL_SERIAL_FILES = ["scheduler_terminal_handler.cpp", "scheduler_terminal_handler.hpp"]
 
 class TerminalSerial(Module):
@@ -30,7 +34,7 @@ class TerminalSerial(Module):
         env.outbasepath = "taproot/src/tap/control"
 
         for file in TERMINAL_SERIAL_FILES:
-                    env.copy(file)
+            env.copy(file)
 
 def init(module):
     module.name = ":control"

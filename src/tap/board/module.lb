@@ -78,10 +78,13 @@ def get_apb_map(chip):
 
     return apb_map
 
-def build(env):
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+def validate(env):
+    metadata = board_info_parser.parse_board_info(env[":dev_board"], env)
 
     metadata.validate_configuration(env)
+
+def build(env):
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
     
     def extract_pin_defines(pins: str) -> str:
         pins = [pin.strip() for pin in str.split(pins, ",")]

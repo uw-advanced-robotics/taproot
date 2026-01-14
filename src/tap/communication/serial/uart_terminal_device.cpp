@@ -25,14 +25,14 @@ namespace tap::communication::serial
 {
 UartTerminalDevice::UartTerminalDevice(Drivers *drivers) : drivers(drivers) {}
 
-void UartTerminalDevice::initialize() { drivers->uart.init<TERMINAL_UART_PORT, UART_BAUDE_RATE>(); }
+void UartTerminalDevice::initialize() { drivers->uart.init<Uart::UartPort::TerminalSerial, UART_BAUDE_RATE>(); }
 
 bool UartTerminalDevice::read(char &c)
 {
-    return drivers->uart.read(TERMINAL_UART_PORT, &reinterpret_cast<uint8_t &>(c));
+    return drivers->uart.read(Uart::UartPort::TerminalSerial, &reinterpret_cast<uint8_t &>(c));
 }
 
-void UartTerminalDevice::write(char c) { drivers->uart.write(TERMINAL_UART_PORT, c); }
+void UartTerminalDevice::write(char c) { drivers->uart.write(Uart::UartPort::TerminalSerial, c); }
 
-void UartTerminalDevice::flush() { drivers->uart.flushWriteBuffer(TERMINAL_UART_PORT); }
+void UartTerminalDevice::flush() { drivers->uart.flushWriteBuffer(Uart::UartPort::TerminalSerial); }
 }  // namespace tap::communication::serial
