@@ -25,7 +25,10 @@ namespace tap::communication::serial
 {
 UartTerminalDevice::UartTerminalDevice(Drivers *drivers) : drivers(drivers) {}
 
-void UartTerminalDevice::initialize() { drivers->uart.init<Uart::UartPort::TerminalSerial, UART_BAUDE_RATE>(); }
+void UartTerminalDevice::initialize()
+{
+    drivers->uart.init<Uart::UartPort::TerminalSerial, UART_BAUDE_RATE>();
+}
 
 bool UartTerminalDevice::read(char &c)
 {

@@ -28,7 +28,7 @@ class TerminalSerial(Module):
     def prepare(self, module, options):
         module.depends("taproot:communication:serial:terminal_serial")
         
-        return True
+        return board_info_parser.parse_board_info(options[":dev_board"]).uart.aliased("TerminalSerial") != None
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/control"

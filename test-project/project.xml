@@ -92,7 +92,6 @@
     <module>taproot:docs</module>
     <module>taproot:drivers</module>
 
-    <module>taproot:errors</module>
     <module>taproot:ext</module>
     <module>taproot:ext:eigen</module>
     <module>taproot:ext:littlefs</module>
@@ -110,6 +109,7 @@
     <module>taproot:testing:tests</module>
     
     <!-- For RoboMaster Development Board Type A -->
+    <module>taproot:errors</module>
     <module>taproot:communication:sensors:imu:mpu6500</module>
     <module>taproot:communication:sensors:imu:terminal_serial</module>
     <module>taproot:communication:serial:terminal_serial</module>
