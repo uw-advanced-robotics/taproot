@@ -21,29 +21,6 @@ import os
 sys.path.append(repopath("scripts/lbuild-helpers"))
 import board_info_parser
 
-DEFAULT_MODM_OPTIONS_BY_BOARD = {
-    "rm-dev-board-a": "\
-        modm:platform:uart:1:buffer.rx 256\n\
-        modm:platform:uart:1:buffer.tx 256\n\
-        modm:platform:uart:2:buffer.rx 256\n\
-        modm:platform:uart:2:buffer.tx 256\n\
-        modm:platform:uart:3:buffer.tx 256\n\
-        modm:platform:uart:3:buffer.rx 256\n\
-        modm:platform:uart:6:buffer.rx 256\n\
-        modm:platform:uart:6:buffer.tx 256\n\
-        modm:platform:uart:7:buffer.tx 256\n\
-        modm:platform:uart:7:buffer.rx 256\n\
-        modm:platform:uart:8:buffer.tx 256\n\
-        modm:platform:uart:8:buffer.rx 256",
-    "rm-dev-board-c": "\
-        modm:platform:uart:1:buffer.rx 256\n\
-        modm:platform:uart:1:buffer.tx 256\n\
-        modm:platform:uart:3:buffer.tx 256\n\
-        modm:platform:uart:3:buffer.rx 256\n\
-        modm:platform:uart:6:buffer.rx 256\n\
-        modm:platform:uart:6:buffer.tx 256",
-}
-
 def default_options(board):
     options = {}
     for uart in board.uart:
@@ -119,11 +96,6 @@ def build(env):
         drivers = sorted(drivers)
         for instance in drivers:
             platform_modules.append(f"{instance.__class__.__name__.lower()}:{instance.raw_name}")
-
-    modm_device = board_info_parser.get_modm_device(board_info.controller.chip)
-    has_rng = any(d["name"] == "rng" for d in modm_device.properties["driver"])
-    if has_rng:
-        platform_modules.append("random")
 
     env.substitutions = {
         "modm_path": get_modm_repo_lb_file(),

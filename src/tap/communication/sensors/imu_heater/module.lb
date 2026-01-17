@@ -34,23 +34,25 @@ def prepare(module, options):
     module.depends(":board")
     module.depends(":drivers")
     module.depends(":communication:gpio:pwm")
-    global metadata
-    metadata = board_info_parser.parse_board_info(options[":dev_board"])
     return True
+
+def validate(env):
+    # find imu heater timer
+    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+
+    pins = metadata.get_all_gpio_pins()
+    if "ImuHeater" not in pins:
+        raise ValidateException("No IMU Heater pin was found. Please make sure that it exists in your board.xml file")
+    heater_pin = pins["ImuHeater"]
+    if heater_pin.timer is None:
+        raise ValidateException("IMUHeater pin has no assosciated timer pwm channel. Please make sure to set it as a pwm pin or associate a timer.")
+    global timer
+    timer = heater_pin.timer.timer.name()
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/imu_heater"
     env.copy("imu_heater.hpp")
     env.copy("imu_heater.cpp")
 
-    # find imu heater timer
-    global metadata
-
-    pins = metadata.get_all_gpio_pins()
-    assert "ImuHeater" in pins, "No IMU Heater pin was found. Please make sure that it exists in your board.xml file"
-    heater_pin = pins["ImuHeater"]
-    assert "timer" in heater_pin.features, "IMUHeater pin has no assosciated timer pwm channel. Please make sure to set it as a pwm pin or associate a timer."
-    timer_to_use = f"Timer{heater_pin.features['timer'].timer.raw_name}"
-
-    env.substitutions = {"timer": timer_to_use}
+    env.substitutions = {"timer": timer}
     env.template("imu_heater_constants.hpp.in", "imu_heater_constants.hpp")

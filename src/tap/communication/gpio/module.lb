@@ -35,24 +35,23 @@ class Analog(Module):
         module.depends(":board")
         return True
 
+    def validate(self, env):
+        user_pins = extractPinDefines(env[":board:analog_in_pins"])
+
+        for name, pin in self.board_info.get_all_gpio_pins().items():
+            if name in user_pins and pin.adc is None:
+                raise ValidateException(f"Pin {pin.name()} does not have an ADC associated with it")
+
     def build(self, env):
         user_pins = extractPinDefines(env[":board:analog_in_pins"])
 
         pins = []
         for name, pin in self.board_info.get_all_gpio_pins().items():
-            if name in user_pins:
-                assert "adc" in pin.features, f"Pin {pin.name} does not have an ADC associated with it"
+            if name in user_pins or pin.gpio_type == "analog":
                 pins.append(pin)
-            elif pin.gpio_type == "analog":
-                pins.append(pin)
-
-        adcs = defaultdict(list)
-        for pin in pins:
-            feature = pin.features["adc"]
-            adcs[f"Adc{feature.adc.raw_name}"].append(pin) 
 
         env.substitutions = {
-            "pins": sorted(pins, key=lambda p: (p.features["adc"].adc.raw_name, p.features["adc"].in_channel)),
+            "pins": sorted(pins, key=lambda p: (p.adc.adc.raw_name, p.adc.in_channel)),
             "adcs": self.board_info.adcs,
         }
         env.outbasepath = "taproot/src/tap/communication/gpio"
@@ -118,6 +117,14 @@ class Pwm(Module):
         module.depends(":algorithms")
         return True
 
+    def validate(self, env):
+        user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
+
+        for name, pin in self.board_info.get_all_gpio_pins().items():
+            if name in user_pins and pin.timer is None:
+                print(user_pins, name, pin)
+                raise ValidateException(f"Pin {pin.name()} does not have a Timer associated with it")
+
     def build(self, env):
         # Collect pins
         user_pins = listify(extractPinDefines(env[":board:pwm_pins"]))
@@ -125,16 +132,12 @@ class Pwm(Module):
         pins = []
         chs = set()
         for name, pin in self.board_info.get_all_gpio_pins().items():
-            if name in user_pins:
-                assert "timer" in pin.features, f"Pin {pin.name()} does not have a Timer associated with it"
+            if name in user_pins or pin.gpio_type == "pwm":
                 pins.append(pin)
-                chs.add(pin.features["timer"].channel)
-            elif pin.gpio_type == "pwm":
-                pins.append(pin)
-                chs.add(pin.features["timer"].channel)          
+                chs.add(pin.timer.channel)
 
         env.substitutions = {
-            "pins": sorted(pins, key=lambda p: (p.features["timer"].timer.raw_name, p.features["timer"].channel)),
+            "pins": sorted(pins, key=lambda p: (p.timer.timer.raw_name, p.timer.channel)),
             "timers": self.board_info.timers,
             "chs": sorted(list(chs)),
         }

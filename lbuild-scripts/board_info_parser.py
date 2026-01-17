@@ -155,12 +155,7 @@ class Timer:
         return f"Timer{self.raw_name}"
 
 class Feature(ABC):
-    @staticmethod
-    def parse(gpio, xml):
-        if xml.tag == "adc":
-            return AdcFeature.parse(gpio, xml)
-        elif xml.tag == "timer":
-            return TimerFeature.parse(gpio, xml)
+    pass
 
 class AdcFeature(Feature):
     adc: int
@@ -202,22 +197,35 @@ class TimerFeature(Feature):
         self.timer = Timer.get(raw_name)
         self.channel = channel
 
+# TODO: Add other features, such as interrupts.
+
 class Gpio(Instance):
-    features: Dict[str, Feature]
     gpio_type: str
+
+    adc: AdcFeature
+    timer: TimerFeature
 
     def __init__(self, xml, comment):
         assert xml.tag in  ["gpio", "out", "in", "pwm", "analog"]
         super().__init__(xml, comment)
 
-        self.features = {child.tag: Feature.parse(self, child) for child in xml.iterchildren()}
+        self.adc = None
+        self.timer = None
+
+        for child in xml.iterchildren():
+            if child.tag == "adc":
+                self.adc = AdcFeature.parse(self, child)
+            elif child.tag == "timer":
+                self.timer = TimerFeature.parse(self, child)
 
         self.gpio_type = xml.tag
 
         if self.gpio_type == "analog":
-            self.features["adc"] = AdcFeature(int(xml.get("adc")[3:]), xml.get("in"))
+            self.adc = AdcFeature(int(xml.get("adc")[3:]), xml.get("in"))
+            self.adc.adc.add_pin(self)
         elif self.gpio_type == "pwm":
-            self.features["timer"] = TimerFeature(int(xml.get("timer")[5:]), xml.get("channel"))
+            self.timer = TimerFeature(int(xml.get("timer")[5:]), xml.get("channel"))
+            self.timer.timer.add_pin(self)
 
     def get_used_pins(self) -> List[str]:
         return [self.raw_name]

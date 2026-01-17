@@ -10,7 +10,8 @@
     <option name="modm:build:scons:include_sconstruct">False</option>
     <option name="modm:target">{{ mcu }}</option>
 
-{% for o in modm_hal_options %}    {{ o }}{% endfor %}
+{% for o in modm_hal_options %}
+    {{ o }}{% endfor %}
   </options>
   <modules>
     <module>modm:architecture:clock</module>

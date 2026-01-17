@@ -35,8 +35,8 @@ void Pwm::init()
 {
 #ifndef PLATFORM_HOSTED
 
-%% for timer in timers
-    {{ timer.name() }}::connect<{% for pin in pins if pin.features["timer"].timer == timer %}{{ pin_name(pin) }}::{{ pin.features["timer"].channel }}{% if not loop.last %}, {% endif %}{% endfor %}>();
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
+    {{ timer.name() }}::connect<{% for pin in timer.pins if pin in pins %}{{ pin_name(pin) }}::{{ pin.timer.channel }}{% if not loop.last %}, {% endif %}{% endfor %}>();
     {{ timer.name() }}::enable();
     {{ timer.name() }}::setMode({{ timer.name() }}::Mode::UpCounter);
     timer{{ timer.raw_name }}CalculatedOverflow = {{ timer.name() }}::setPeriod<Board::SystemClock>(1'000'000 / DEFAULT_TIMER{{ timer.raw_name }}_FREQUENCY);
@@ -68,10 +68,10 @@ void Pwm::write(float duty, Pin pin)
     switch (pin)
     {
 %% for pin in pins
-    %% set timer = pin.features["timer"].timer.raw_name
+    %% set timer = pin.timer.timer.raw_name
         case Pin::{{ pin.display_name() }}:
             Timer{{ timer }}::configureOutputChannel(
-                {{ pin.features["timer"].channel }},
+                {{ pin.timer.channel }},
                 Timer{{ timer }}::OutputCompareMode::Pwm,
                 duty * timer{{ timer }}CalculatedOverflow);
             break;
@@ -90,7 +90,7 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
 #else
     switch (timer)
     {
-%% for timer in timers
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
         case TIMER{{ timer.raw_name }}:
             timer{{ timer.raw_name }}CalculatedOverflow = {{ timer.name() }}::setPeriod<Board::SystemClock>(1'000'000 / frequency);
             break;
@@ -106,7 +106,7 @@ void Pwm::pause(Timer timer)
 #else
     switch (timer)
     {
-%% for timer in timers
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
         case TIMER{{ timer.raw_name }}:
             {{ timer.name() }}::pause();
             break;
@@ -122,7 +122,7 @@ void Pwm::start(Timer timer)
 #else
     switch (timer)
     {
-%% for timer in timers
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
         case TIMER{{ timer.raw_name }}:
             {{ timer.name() }}::start();
             break;

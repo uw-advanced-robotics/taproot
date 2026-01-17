@@ -35,7 +35,7 @@ namespace gpio
 class Pwm
 {
 public:
-{% for timer in timers %}
+{% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0 %}
     static constexpr uint32_t DEFAULT_TIMER{{ timer.raw_name }}_FREQUENCY = 2000;{% endfor %}
 
     Pwm() = default;
@@ -45,13 +45,13 @@ public:
     enum Pin
     {
 %% for pin in pins
-        {{ pin.display_name() }}, // {{ pin.features["timer"].timer.name() }}
+        {{ pin.display_name() }}, // {{ pin.timer.timer.name() }} {{ pin.timer.channel }}
 %% endfor
     };
 
     enum Timer
     {
-%% for timer in timers
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
         TIMER{{ timer.raw_name }},
 %% endfor
     };
@@ -89,7 +89,7 @@ private:
 %% endfor
     };
 
-%% for timer in timers
+%% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0
     /**
      * Overflow as calculated by the modm Timer{{ timer.raw_name }} object in its getPeriod function.
      * This is what the Auto Reload Register is set to and the pwm duty is scaled to

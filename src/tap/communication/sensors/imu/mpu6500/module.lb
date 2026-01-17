@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+import sys
+sys.path.append(repopath("scripts/lbuild-helpers"))
+import board_info_parser
+
 def init(module):
     module.name = ":communication:sensors:imu:mpu6500"
     module.description = "Robomaster Development Board Type A specific communication" \
@@ -24,7 +28,9 @@ def prepare(module, options):
     module.depends(":drivers")
     module.depends(":communication:sensors:imu_heater")
     module.depends(":communication:sensors:imu")
-    return options[":dev_board"] == "rm-dev-board-a"
+
+    spi = board_info_parser.parse_board_info(options[":dev_board"]).spi.aliased("Imu")
+    return spi is not None and any(pin.display_name() == "ImuNss" for pin in spi.gpios)
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/imu/mpu6500"

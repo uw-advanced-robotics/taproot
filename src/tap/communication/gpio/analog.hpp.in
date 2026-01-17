@@ -43,7 +43,7 @@ public:
     enum Pin
     {
 %% for pin in pins
-        {{ pin.display_name() }},
+        {{ pin.display_name() }}, // {{ pin.adc.adc.name() }} {{ pin.adc.in_channel }}
 %% endfor
     };
 

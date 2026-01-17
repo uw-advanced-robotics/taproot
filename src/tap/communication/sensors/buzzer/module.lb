@@ -33,10 +33,14 @@ def prepare(module, options):
     board_info = board_info_parser.parse_board_info(options[":dev_board"])
 
     buzzer_pins = [pin for pin in board_info.gpio_pins if pin.alias == BUZZER_PIN]
-    if len(buzzer_pins) == 1:
-        global buzzer_timer
-        buzzer_timer = f"Timer{buzzer_pins[0].features['timer'].timer.raw_name}"
-    return len(buzzer_pins) == 1
+
+    if len(buzzer_pins) < 1:
+        return False
+
+    global buzzer_timer
+    buzzer_timer = buzzer_pins[0].timer.timer.name()
+
+    return True
 
 def build(env):
     global buzzer_timer

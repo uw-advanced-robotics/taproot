@@ -30,12 +30,14 @@ class Remote(Module):
 
         return True
 
-    def build(self, env):
-        env.outbasepath = "taproot/src/tap/communication/serial"
-
+    def validate(self, env):
         board_info = board_info_parser.parse_board_info(env[":dev_board"])  
         remote_uart = board_info.uart.aliased("Remote")
-        assert remote_uart != None, "Board does not have a specified Remote UART port!\nSpecify one with an alias or set it in the board.xml file!"
+        if remote_uart is None:
+            raise ValidateException("Board does not have a specified Remote UART port!\nSpecify one with an alias or set it in the board.xml file!")
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/serial"
 
         env.copy("remote.cpp")
         env.copy("remote.hpp")
@@ -130,7 +132,7 @@ def build(env):
         configured_baud_rate[port.raw_name] = env[f":::{port.name().lower()}.baud_rate"]
 
     env.substitutions = {
-        "uart_ports": board_info.uart,
+        "uart_ports": sorted(board_info.uart, key=lambda u: u.raw_name),
         "configured_baud_rate": configured_baud_rate,
     }
     env.outbasepath = "taproot/src/tap/communication/serial"

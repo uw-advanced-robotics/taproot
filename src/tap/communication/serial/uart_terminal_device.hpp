@@ -32,9 +32,9 @@ class Drivers;
 namespace tap::communication::serial
 {
 /**
- * A wrapper around UART3 used by the terminal handler. Allows for stream-based operations
- * to be performed on data being sent/received by the UART line by using an instance
- * of this class with a `modm::IOStream`.
+ * A wrapper around Uart::UartPort::TerminalSerial used by the terminal handler. 
+ * Allows for stream-based operations to be performed on data being sent/received 
+ * by the UART line by using an instance of this class with a `modm::IOStream`.
  */
 class UartTerminalDevice : public ::modm::IODevice
 {

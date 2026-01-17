@@ -36,17 +36,15 @@ namespace tap::communication::serial
 /**
  * Class that wraps modm's Uart implementation.
  *
- * Currently only wraps the uart ports that we are generating modm
- * code for. If additional `UartPort`'s are added, they must be added
- * to this wrapper class here.
+ * Only wraps the uart ports specified in the board.xml file.
  */
 class Uart
 {
 public:
     enum UartPort
     {
-%% for port in uart_ports|sort(attribute="raw_name")
-        {{ port.display_name() }},
+%% for port in uart_ports
+        {{ port.display_name() }},{% if port.alias != port.name() %} // {{ port.name() }}{% endif %}
 %% endfor
     };
 
@@ -81,7 +79,7 @@ public:
             modm::platform::{{ port.name() }}::connect<{% if port.tx != None %}{{ port.tx }}::Tx{% if port.rx != None %}, {% endif %}{% endif %}{% if port.rx != None %}{{ port.rx }}::Rx{% endif %}>();
             modm::platform::{{ port.name() }}::initialize<Board::SystemClock, baudrate>(parity);
 %% endmacro
-%% for port in uart_ports|sort(attribute="raw_name")
+%% for port in uart_ports
         {% if not loop.first %}else {% endif %}if constexpr (port == UartPort::{{ port.display_name() }})
         {
 {{ init_port(port) }}        }
