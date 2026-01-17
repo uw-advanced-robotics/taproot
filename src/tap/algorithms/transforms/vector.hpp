@@ -25,8 +25,6 @@
 
 namespace tap::algorithms::transforms
 {
-// forward declare position to avoid circular dependency
-class Position;
 
 class Vector
 {
@@ -56,11 +54,6 @@ public:
         return *this;
     }
 
-    inline Vector operator+(const Position& other) const
-    {
-        return Vector(this->coordinates_ + other.coordinates());
-    }
-
     inline Vector operator+(const Vector& other) const
     {
         return Vector(this->coordinates_ + other.coordinates_);
@@ -70,6 +63,8 @@ public:
     {
         return Vector(this->coordinates_ - other.coordinates_);
     }
+
+    inline Vector operator-() const { return Vector(-this->coordinates_); }
 
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
@@ -93,9 +88,14 @@ public:
 
     inline float magnitude() const { return sqrt(dot(*this, *this)); }
 
-    inline Vector normalize() const { return (*this) * 1.0f / this->magnitude(); };
+    inline Vector normalize() const { return (*this) / this->magnitude(); };
 
-    inline static Vector normalize(const Vector& a) { return a * 1.0f / a.magnitude(); };
+    inline static Vector normalize(const Vector& a) { return a / a.magnitude(); };
+
+    static inline Vector lerp(const Vector& a, const Vector& b, const float t)
+    {
+        return a * (1 - t) + b * t;
+    }
 
     friend class Transform;
     friend class DynamicPosition;

@@ -21,20 +21,22 @@
 
 #include "math_user_utils.hpp"
 
+using tap::algorithms::transforms::Vector;
+
 namespace tap::algorithms::ballistics
 {
 bool computeTravelTime(
-    const modm::Vector3f &targetPosition,
+    const Vector& targetPosition,
     float bulletVelocity,
-    float *travelTime,
-    float *turretPitch,
+    float* travelTime,
+    float* turretPitch,
     const float pitchAxisOffset)
 {
-    float horizontalDist = hypot(targetPosition.x, targetPosition.y) + pitchAxisOffset;
+    float horizontalDist = hypot(targetPosition.x(), targetPosition.y()) + pitchAxisOffset;
     float bulletVelocitySquared = powf(bulletVelocity, 2);
     float sqrtTerm = powf(bulletVelocitySquared, 2) -
                      ACCELERATION_GRAVITY * (ACCELERATION_GRAVITY * powf(horizontalDist, 2) +
-                                             2 * targetPosition.z * bulletVelocitySquared);
+                                             2 * targetPosition.z() * bulletVelocitySquared);
 
     if (sqrtTerm < 0)
     {
@@ -50,7 +52,7 @@ bool computeTravelTime(
     // trajectory reaches y_f
     if (compareFloatClose(*turretPitch, 0, 1E-2))
     {
-        float sqrtTerm = powf(bulletVelocity, 2.0f) - 2 * ACCELERATION_GRAVITY * targetPosition.z;
+        float sqrtTerm = powf(bulletVelocity, 2.0f) - 2 * ACCELERATION_GRAVITY * targetPosition.z();
 
         // If there isn't a real-valued root, there is no time where we can reach the target with
         // the given assumptions
@@ -70,18 +72,18 @@ bool computeTravelTime(
 }
 
 bool findTargetProjectileIntersection(
-    const AbstractKinematicState &targetInitialState,
+    const AbstractKinematicState& targetInitialState,
     float bulletVelocity,
     uint8_t numIterations,
-    float *turretPitch,
-    float *turretYaw,
-    float *projectedTravelTime,
+    float* turretPitch,
+    float* turretYaw,
+    float* projectedTravelTime,
     const float pitchAxisOffset)
 {
-    modm::Vector3f projectedTargetPosition = targetInitialState.projectForward(0);
+    Vector projectedTargetPosition = targetInitialState.projectForward(0);
 
-    if (projectedTargetPosition.x == 0 && projectedTargetPosition.y == 0 &&
-        projectedTargetPosition.z == 0)
+    if (projectedTargetPosition.x() == 0 && projectedTargetPosition.y() == 0 &&
+        projectedTargetPosition.z() == 0)
     {
         return false;
     }
@@ -100,7 +102,7 @@ bool findTargetProjectileIntersection(
         projectedTargetPosition = targetInitialState.projectForward(*projectedTravelTime);
     }
 
-    *turretYaw = atan2f(projectedTargetPosition.y, projectedTargetPosition.x);
+    *turretYaw = atan2f(projectedTargetPosition.y(), projectedTargetPosition.x());
 
     return !isnan(*turretPitch) && !isnan(*turretYaw);
 }

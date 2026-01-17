@@ -27,7 +27,6 @@
 #include "dynamic_orientation.hpp"
 #include "dynamic_position.hpp"
 #include "orientation.hpp"
-#include "position.hpp"
 #include "vector.hpp"
 
 namespace tap::algorithms::transforms
