@@ -19,7 +19,7 @@
 
 #include <gtest/gtest.h>
 
-#include "tap/communication/sensors/encoder/multi_encoder.hpp"
+#include "tap/communication/sensors/encoder/fallback_encoder.hpp"
 #include "tap/mock/encoder_interface_mock.hpp"
 
 using namespace tap::encoder;
@@ -36,44 +36,40 @@ using namespace testing;
                                                                            \
     EXPECT_CALL(mock, isOnline).WillRepeatedly(Return(PRIMARY_ONLINE));    \
     EXPECT_CALL(mock2, isOnline).WillRepeatedly(Return(SECONDARY_ONLINE)); \
-    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE &SECONDARY_ONLINE)
+    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE &SECONDARY_ONLINE); \
 
-TEST(FallbackEncoderTests, get_position_averages_main_online)
-{
+TEST(FallbackEncoderTests, get_position_averages_main_online) {
     SETUP_TEST(true, true);
 
     EXPECT_CALL(mock, getPosition).WillOnce(Return(Angle(M_PI_2)));
     EXPECT_CALL(mock2, getPosition).WillOnce(Return(Angle(M_PI)));
 
-    EXPECT_EQ(mock, getPosition).willRepeatedly(Return(M_PI_2));
+    EXPECT_EQ(fallback.getPosition(), Angle(M_PI_2));
 }
 
-TEST(FallbackEncoderTests, get_position_averages_main_offline)
-{
+TEST(FallbackEncoderTests, get_position_averages_main_offline) {
     SETUP_TEST(false, true);
 
     EXPECT_CALL(mock, getPosition).Times(0);
     EXPECT_CALL(mock2, getPosition).WillOnce(Return(Angle(M_PI)));
 
-    EXPECT_EQ(mock, getPosition).willRepeatedly(Return(M_PI));
+    EXPECT_EQ(fallback.getPosition(), Angle(M_PI));
 }
 
-TEST(FallbackEncoderTests, get_velocity_averages_main_online)
-{
+TEST(FallbackEncoderTests, get_velocity_averages_main_online) {
     SETUP_TEST(true, true);
 
     EXPECT_CALL(mock, getVelocity).WillOnce(Return(2));
-    EXPECT_CALL(mock2, getPosition).WillOnce(Return(1));
+    EXPECT_CALL(mock2, getVelocity).WillOnce(Return(1));
 
-    EXPECT_EQ(mock, getPosition).willRepeatedly(Return(2));
+    EXPECT_FLOAT_EQ(fallback.getVelocity(),  2);
 }
 
-TEST(FallbackEncoderTests, get_velocity_averages_main_offline)
-{
+TEST(FallbackEncoderTests, get_velocity_averages_main_offline) {
     SETUP_TEST(false, true);
 
     EXPECT_CALL(mock, getVelocity).Times(0);
-    EXPECT_CALL(mock2, getPosition).WillOnce(Return(1));
+    EXPECT_CALL(mock2, getVelocity).WillOnce(Return(1));
 
-    EXPECT_EQ(mock, getPosition).willRepeatedly(Return(1));
+    EXPECT_FLOAT_EQ(fallback.getVelocity(), 1);
 }

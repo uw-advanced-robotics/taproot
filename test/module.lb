@@ -191,6 +191,8 @@ class TaprootTests(Module):
         if env.has_module("taproot:communication:sensors:encoder"):
             env.copy("tap/communication/sensors/encoder/multi_encoder_tests.cpp")
             env.copy("tap/communication/sensors/encoder/wrapped_encoder_tests.cpp")
+            env.copy("tap/communication/sensors/encoder/fallback_encoder_tests.cpp")
+            env.copy("tap/communication/sensors/encoder/aligning_encoder_tests.cpp")
         if env.has_module(":communication:serial:ref_serial"):
             env.copy("tap/communication/serial/ref_serial_tests.cpp")
             env.copy("tap/communication/serial/ref_serial_transmitter_tests.cpp")

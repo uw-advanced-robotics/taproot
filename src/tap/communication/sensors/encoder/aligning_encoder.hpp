@@ -28,18 +28,19 @@ namespace tap::encoder
  * Takes in COUNT encoders and chooses one to align the rest of the encoders to
  */
 template <uint32_t COUNT>
-class AligningEncoder : public MultiEncoder
+class AligningEncoder : public MultiEncoder<COUNT>
 {
 public:
-    AlignEncoder(std::array<EncoderInterface*, COUNT> encoders, int index)
-        : MultiEncoder(encoders),
+    AligningEncoder(std::array<EncoderInterface*, COUNT> encoders, uint32_t index)
+        : MultiEncoder<COUNT>(encoders),
           index(index)
     {
+        this->seenEncoders |= 1 << index; // aligning encoder defaults as "seen" because it doesn't make sense to align to an invalid encoder
     }
 
     tap::algorithms::WrappedFloat getPosition() const override
     {
-        alignWithEncoder();
+        const_cast<AligningEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float position = 0;
 
@@ -59,7 +60,7 @@ public:
 
     float getVelocity() const override
     {
-        alignWithEncoder();
+        const_cast<AligningEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float velocity = 0;
 
@@ -74,14 +75,11 @@ public:
         return onlineEncoders == 0 ? 0 : velocity / onlineEncoders;
     }
 
-private:
-    uint32_t index;
-
-    void alignWithEncoder()
+    void syncEncoders() override
     {
         if (this->validEncoder(index))
         {
-            for (int i = 0; i < COUNT; i++)
+            for (uint32_t i = 0; i < COUNT; i++)
             {
                 if (i != index)
                 {
@@ -89,12 +87,7 @@ private:
                     if (online && !this->seenEncoder(i))
                     {
                         this->seenEncoders |= 1 << i;
-                        encoders[i]->alignWith(encoders[index]);
-                    }
-                    else if (validEncoder(i) && !seenEncoder(index))
-                    {
-                        this->seenEncoders |= 1 << index;
-                        encoders[index]->alignWith(encoders[i]);
+                        this->encoders[i]->alignWith(this->encoders[index]);
                     }
                     else if (!online)
                     {
@@ -104,6 +97,9 @@ private:
             }
         }
     }
+
+private:
+    uint32_t index;
 };
 }  // namespace tap::encoder
 

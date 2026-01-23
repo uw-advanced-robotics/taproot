@@ -144,11 +144,11 @@ public:
 
     DISALLOW_COPY_AND_ASSIGN(MultiEncoder)
 
-private:
+protected:
     std::array<EncoderInterface*, COUNT> encoders;
     uint32_t seenEncoders;
 
-    void syncEncoders()
+    virtual void syncEncoders()
     {
         // The primary encoder *must* be online before syncing anything to it
         if (this->encoders[0]->isOnline())
