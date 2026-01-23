@@ -22,27 +22,33 @@
 
 #include "multi_encoder.hpp"
 
-namespace tap::encoder {
-
+namespace tap::encoder
+{
 /**
- * Relies on best encoder readings if best encoder is online, otherwise averages remaining encoder measurements
+ * Relies on best encoder readings if best encoder is online, otherwise averages remaining encoder
+ * measurements
  */
 template <uint32_t COUNT>
 class FallbackEncoder : public MultiEncoder
 {
 public:
-    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders)
-        : MultiEncoder(encoders) {}
+    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders) : MultiEncoder(encoders) {}
 
-    tap::algorithms::WrappedFloat getPosition() const override {
+    tap::algorithms::WrappedFloat getPosition() const override
+    {
         const_cast<MultiEncoder<COUNT>*>(this)->syncEncoders();
-        if (this->validEncoder(0)) {
+        if (this->validEncoder(0))
+        {
             return encoders[0]->getPosition();
-        } else {
+        }
+        else
+        {
             int onlineEncoders = 0;
             float position = 0;
-            for (uint32_t i = 1; i < COUNT; i++) {
-                if (this->validEncoder(i)) {
+            for (uint32_t i = 1; i < COUNT; i++)
+            {
+                if (this->validEncoder(i))
+                {
                     position += encoders[i]->getPosition().getUnwrappedValue();
                     onlineEncoders++;
                 }
@@ -54,15 +60,21 @@ public:
         }
     }
 
-    float getVelocity() const override {
+    float getVelocity() const override
+    {
         const_cast<MultiEncoder<COUNT>*>(this)->syncEncoders();
-        if (this->validEncoder(0)) {
+        if (this->validEncoder(0))
+        {
             return encoders[0]->getVelocity();
-        } else {
+        }
+        else
+        {
             int onlineEncoders = 0;
             float position = 0;
-            for (uint32_t i = 1; i < COUNT; i++) {
-                if (this->validEncoder(i)) {
+            for (uint32_t i = 1; i < COUNT; i++)
+            {
+                if (this->validEncoder(i))
+                {
                     position += encoders[i]->getVelocity().getUnwrappedValue();
                     onlineEncoders++;
                 }
@@ -71,6 +83,6 @@ public:
         }
     }
 };
-}
+}  // namespace tap::encoder
 
 #endif
