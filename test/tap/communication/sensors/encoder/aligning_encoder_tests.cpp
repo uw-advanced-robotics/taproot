@@ -37,7 +37,8 @@ using namespace testing;
     EXPECT_CALL(mock2, isOnline).WillRepeatedly(Return(SECONDARY_ONLINE)); \
     EXPECT_CALL(mock2, alignWithEncoder(&mock)).Times(PRIMARY_ONLINE &SECONDARY_ONLINE)
 
-TEST(FallbackEncoderTests, get_position_averages_target_online) {
+TEST(FallbackEncoderTests, get_position_averages_target_online)
+{
     SETUP_TEST(true, true);
     AligningEncoder<2> aligning1(encoders, 0);
     AligningEncoder<2> aligning2(encoders, 1);
@@ -49,7 +50,8 @@ TEST(FallbackEncoderTests, get_position_averages_target_online) {
     EXPECT_EQ(aligning2.getPosition(), Angle(M_PI_2));
 }
 
-TEST(FallbackEncoderTests, get_position_averages_target_offline) {
+TEST(FallbackEncoderTests, get_position_averages_target_offline)
+{
     SETUP_TEST(false, true);
     AligningEncoder<2> aligning(encoders, 0);
 
@@ -59,7 +61,8 @@ TEST(FallbackEncoderTests, get_position_averages_target_offline) {
     EXPECT_EQ(aligning.getPosition(), ANGLE(M_PI_2));
 }
 
-TEST(FallbackEncoderTests, get_velocity_averages_target_online) {
+TEST(FallbackEncoderTests, get_velocity_averages_target_online)
+{
     SETUP_TEST(true, true);
     AligningEncoder<2> aligning1(encoders, 0);
     AligningEncoder<2> aligning2(encoders, 1);
@@ -71,7 +74,8 @@ TEST(FallbackEncoderTests, get_velocity_averages_target_online) {
     EXPECT_EQ(aligning2, getVelocity).WillOnce(Return(2));
 }
 
-TEST(FallbackEncoderTests, get_velocity_averages_target_offline) {
+TEST(FallbackEncoderTests, get_velocity_averages_target_offline)
+{
     SETUP_TEST(false, true);
     AligningEncoder<2> aligning(encoders, 0);
 
