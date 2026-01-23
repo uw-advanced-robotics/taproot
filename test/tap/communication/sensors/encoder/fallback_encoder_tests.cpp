@@ -34,18 +34,20 @@ using namespace testing;
     FallbackEncoder<2> fallback(encoders);                                 \
     EXPECT_CALL(mock, isOnline).WillRepeatedly(Return(PRIMARY_ONLINE));    \
     EXPECT_CALL(mock2, isOnline).WillRepeatedly(Return(SECONDARY_ONLINE)); \
-    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE & SECONDARY_ONLINE);
+    EXPECT_CALL(mock2, alignWith(&mock)).Times(PRIMARY_ONLINE& SECONDARY_ONLINE);
 
-TEST(FallbackEncoderTests, get_position_main_online) {
+TEST(FallbackEncoderTests, get_position_main_online)
+{
     SETUP_TEST(true, true);
 
     EXPECT_CALL(mock, getPosition()).WillRepeatedly(Return(Angle(M_PI_2)));
     EXPECT_CALL(mock2, getPosition()).WillRepeatedly(Return(Angle(M_PI)));
 
-    EXPECT_EQ(fallback.getPosition(), Angle(M_PI_2)); 
+    EXPECT_EQ(fallback.getPosition(), Angle(M_PI_2));
 }
 
-TEST(FallbackEncoderTests, get_position_main_offline) {
+TEST(FallbackEncoderTests, get_position_main_offline)
+{
     SETUP_TEST(false, true);
 
     EXPECT_CALL(mock, getPosition()).Times(0);
@@ -54,7 +56,8 @@ TEST(FallbackEncoderTests, get_position_main_offline) {
     EXPECT_EQ(fallback.getPosition(), Angle(M_PI));
 }
 
-TEST(FallbackEncoderTests, get_velocity_main_online) {
+TEST(FallbackEncoderTests, get_velocity_main_online)
+{
     SETUP_TEST(true, true);
 
     EXPECT_CALL(mock, getVelocity()).WillRepeatedly(Return(2));
@@ -63,11 +66,12 @@ TEST(FallbackEncoderTests, get_velocity_main_online) {
     EXPECT_FLOAT_EQ(fallback.getVelocity(), 2.0f);
 }
 
-TEST(FallbackEncoderTests, get_velocity_main_offline) {
+TEST(FallbackEncoderTests, get_velocity_main_offline)
+{
     SETUP_TEST(false, true);
 
     EXPECT_CALL(mock, getVelocity()).Times(0);
     EXPECT_CALL(mock2, getVelocity()).WillRepeatedly(Return(1));
 
-    EXPECT_FLOAT_EQ(fallback.getVelocity(), 1.0f); 
+    EXPECT_FLOAT_EQ(fallback.getVelocity(), 1.0f);
 }

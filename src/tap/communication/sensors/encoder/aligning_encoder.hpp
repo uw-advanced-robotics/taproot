@@ -35,7 +35,8 @@ public:
         : MultiEncoder<COUNT>(encoders),
           index(index)
     {
-        this->seenEncoders |= 1 << index; // aligning encoder defaults as "seen" because it doesn't make sense to align to an invalid encoder
+        this->seenEncoders |= 1 << index;  // aligning encoder defaults as "seen" because it doesn't
+                                           // make sense to align to an invalid encoder
     }
 
     tap::algorithms::WrappedFloat getPosition() const override

@@ -32,12 +32,8 @@ template <uint32_t COUNT>
 class FallbackEncoder : public MultiEncoder<COUNT>
 {
 public:
-    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders) : MultiEncoder<COUNT>(encoders) {
-        for (uint32_t i = 1; i < COUNT; i++) {
-            if (this->encoders[i] != nullptr) {
-                this->seenEncoders |= 1 << i;
-            }
-        }
+    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders) : MultiEncoder<COUNT>(encoders)
+    {
     }
 
     tap::algorithms::WrappedFloat getPosition() const override
@@ -45,7 +41,7 @@ public:
         const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float position = 0;
-        if (this->validEncoder(0))
+        if (this->validFallbackEncoder(0))
         {
             position += this->encoders[0]->getPosition().getUnwrappedValue();
             onlineEncoders++;
@@ -54,7 +50,7 @@ public:
         {
             for (uint32_t i = 1; i < COUNT; i++)
             {
-                if (this->validEncoder(i))
+                if (this->validFallbackEncoder(i))
                 {
                     position += this->encoders[i]->getPosition().getUnwrappedValue();
                     onlineEncoders++;
@@ -72,7 +68,7 @@ public:
         const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
         int onlineEncoders = 0;
         float velocity = 0;
-        if (this->validEncoder(0))
+        if (this->validFallbackEncoder(0))
         {
             velocity += this->encoders[0]->getVelocity();
             onlineEncoders++;
@@ -81,7 +77,7 @@ public:
         {
             for (uint32_t i = 1; i < COUNT; i++)
             {
-                if (this->validEncoder(i))
+                if (this->validFallbackEncoder(i))
                 {
                     velocity += this->encoders[i]->getVelocity();
                     onlineEncoders++;
@@ -89,6 +85,13 @@ public:
             }
         }
         return onlineEncoders == 0 ? 0 : velocity / onlineEncoders;
+    }
+
+private:
+    inline bool validFallbackEncoder(uint32_t index) const
+    {
+        if (index == 0) return this->validEncoder(index);
+        return this->encoders[index] != nullptr && this->encoders[index]->isOnline();
     }
 };
 }  // namespace tap::encoder
