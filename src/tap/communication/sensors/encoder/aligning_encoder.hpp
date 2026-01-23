@@ -51,7 +51,10 @@ public:
                 onlineEncoders += 1;
             }
         }
-        return position;
+        return tap::algorithms::WrappedFloat(
+            onlineEncoders == 0 ? 0 : position / onlineEncoders,
+            0,
+            static_cast<float>(M_TWOPI));
     }
 
     float getVelocity() const override
@@ -68,7 +71,7 @@ public:
                 onlineEncoders += 1;
             }
         }
-        return velocity;
+        return onlineEncoders == 0 ? 0 : velocity / onlineEncoders;
     }
 
 private:
