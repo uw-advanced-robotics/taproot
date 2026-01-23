@@ -32,19 +32,26 @@ template <uint32_t COUNT>
 class FallbackEncoder : public MultiEncoder<COUNT>
 {
 public:
-    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders) : MultiEncoder<COUNT>(encoders) {}
+    FallbackEncoder(std::array<EncoderInterface*, COUNT> encoders) : MultiEncoder<COUNT>(encoders) {
+        for (uint32_t i = 1; i < COUNT; i++) {
+            if (this->encoders[i] != nullptr) {
+                this->seenEncoders |= 1 << i;
+            }
+        }
+    }
 
     tap::algorithms::WrappedFloat getPosition() const override
     {
         const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        int onlineEncoders = 0;
+        float position = 0;
         if (this->validEncoder(0))
         {
-            return this->encoders[0]->getPosition();
+            position += this->encoders[0]->getPosition().getUnwrappedValue();
+            onlineEncoders++;
         }
         else
         {
-            int onlineEncoders = 0;
-            float position = 0;
             for (uint32_t i = 1; i < COUNT; i++)
             {
                 if (this->validEncoder(i))
@@ -53,24 +60,25 @@ public:
                     onlineEncoders++;
                 }
             }
-            return tap::algorithms::WrappedFloat(
-                onlineEncoders == 0 ? 0 : position / onlineEncoders,
-                0,
-                static_cast<float>(M_TWOPI));
         }
+        return tap::algorithms::WrappedFloat(
+            onlineEncoders == 0 ? 0 : position / onlineEncoders,
+            0,
+            static_cast<float>(M_TWOPI));
     }
 
     float getVelocity() const override
     {
         const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        int onlineEncoders = 0;
+        float velocity = 0;
         if (this->validEncoder(0))
         {
-            return this->encoders[0]->getVelocity();
+            velocity += this->encoders[0]->getVelocity();
+            onlineEncoders++;
         }
         else
         {
-            int onlineEncoders = 0;
-            float velocity = 0;
             for (uint32_t i = 1; i < COUNT; i++)
             {
                 if (this->validEncoder(i))
@@ -79,8 +87,8 @@ public:
                     onlineEncoders++;
                 }
             }
-            return onlineEncoders == 0 ? 0 : velocity / onlineEncoders;
         }
+        return onlineEncoders == 0 ? 0 : velocity / onlineEncoders;
     }
 };
 }  // namespace tap::encoder
