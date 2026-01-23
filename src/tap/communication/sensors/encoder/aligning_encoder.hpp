@@ -37,21 +37,34 @@ public:
 
     tap::algorithms::WrappedFloat getPosition() const override {
         alignWithEncoder();
-        tap::algorithms::WrappedFloat position = MultiEncoder::getPosition(!aligned);
-        aligned = false; 
+        int onlineEncoders = 0;
+        float position = 0;
+
+        for (uint32_t i = 0; i < COUNT; i++) {
+            if (this->validEncoder(i)) {
+                position += this->encoders[i]->getPosition().getUnwrappedValue();
+                onlineEncoders += 1;
+            }
+        }
         return position;
     }
 
     float getVelocity() const override {
         alignWithEncoder();
-        float velocity = MultiEncoder::getVelocity(!aligned);
-        aligned = false;
+        int onlineEncoders = 0;
+        float velocity = 0;
+
+        for (uint32_t i = 0; i < COUNT; i++) {
+            if (this->validEncoder(i)) {
+                velocity += this->encoders[i]->getVelocity();
+                onlineEncoders += 1;
+            }
+        }
         return velocity;
     }
 
 private:
     uint32_t index;
-    bool aligned = false;
 
     void alignWithEncoder() {
         if (this->validEncoder(index)) {
@@ -61,11 +74,9 @@ private:
                     if (online && !this->seenEncoder(i)) {
                         this->seenEncoders |= 1 << i;
                         encoders[i]->alignWith(encoders[index]);
-                        aligned = true;
                     } else if (validEncoder(i) && !seenEncoder(index)) {
                         this->seenEncoders |= 1 << index;
                         encoders[index]->alignWith(encoders[i]);
-                        aligned = true;
                     } else if (!online) {
                         this->seenEncoders &= ~(1 << i);
                     }
