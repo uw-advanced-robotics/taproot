@@ -79,7 +79,7 @@
         "*.yml.in": "jinja-yaml",
         "*.py.in": "jinja-py",
         "*.lb": "python",
-        "*.in": "cpp",
+        "*.in": "jinja",
         "dense": "cpp"
     },
     "C_Cpp.errorSquiggles": "Enabled",
