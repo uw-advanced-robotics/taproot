@@ -69,7 +69,7 @@ public:
     static constexpr float BMI088_TEMP_OFFSET = 23.0f;
 
     static constexpr float BMI088_TARGET_TEMP = 35.0f;
-    
+
     /**
      * Used to convert raw gyro values to units of radians / second. Ratio has units
      * (radians / second) / gyro counts.
