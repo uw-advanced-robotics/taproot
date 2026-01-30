@@ -34,6 +34,10 @@ class GenericRemoteMapState
 {
 public:
     /**
+     * Updates the state of the GenericRemoteMapState based on the state of the Remote.
+     */
+    virtual void updateState(tap::communication::serial::Remote &remote);
+    /**
      * Initializes the keys to the bit mapped set of keys provided.
      * @note `keys` must be mutally exclusive with any set of `negKeys` already provided.
      */

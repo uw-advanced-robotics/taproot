@@ -138,6 +138,7 @@ public:
         const std::list<tap::communication::serial::Remote::Key> &keySet,
         const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
 
+    
     /**
      * Initializes a RemoteMapState that will use the given mouse button (either left or
      * right) in the mapping.
@@ -146,6 +147,7 @@ public:
      */
     RemoteMapState(MouseButton button);
 
+    void updateState(tap::communication::serial::Remote &remote) override;
     /**
      * Initializes the left switch with the particular `Remote::SwitchState` provided.
      */

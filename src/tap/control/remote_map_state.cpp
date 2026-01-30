@@ -106,6 +106,13 @@ RemoteMapState::RemoteMapState(MouseButton button)
     }
 }
 
+void RemoteMapState::updateState(tap::communication::serial::Remote &remote) {
+    initLSwitch(remote.getSwitch(Remote::Switch::LEFT_SWITCH));
+    initRSwitch(remote.getSwitch(Remote::Switch::RIGHT_SWITCH));
+    if (remote.getMouseL()) initLMouseButton();
+    if (remote.getMouseR()) initRMouseButton();
+}
+
 void RemoteMapState::initLSwitch(Remote::SwitchState ss)
 {
     if (ss == Remote::SwitchState::UNKNOWN)

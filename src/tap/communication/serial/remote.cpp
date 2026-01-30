@@ -137,8 +137,7 @@ void Remote::parseBuffer()
         RAISE_ERROR(drivers, "invalid remote joystick values");
     }
 
-    drivers->commandMapper.handleKeyStateChange();
-
+    drivers->commandMapper.handleKeyStateChange(*this, remote.key);
     remote.updateCounter++;
 }
 

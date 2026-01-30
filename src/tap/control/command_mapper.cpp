@@ -33,23 +33,14 @@ namespace tap
 {
 namespace control
 {
-void CommandMapper::handleKeyStateChange()
+void CommandMapper::handleKeyStateChange(Remote &remote, uint16_t key)
 {
     // Make a new map state that represents the current state of the remote,
     // to be passed in to each of the CommandMappings.
     GenericRemoteMapState mapState;
-    /*mapstate.initLSwitch(leftSwitch);
-    mapstate.initRSwitch(rightSwitch);
-    mapstate.initKeys(key);
-    if (mouseL)
-    {
-        mapstate.initLMouseButton();
-    }
-    if (mouseR)
-    {
-        mapstate.initRMouseButton();
-    }*/
 
+    mapState.initKeys(key);
+    mapState.updateState(remote);
     for (CommandMapping *cmdMap : commandsToRun)
     {
         cmdMap->executeCommandMapping(mapState);

@@ -74,7 +74,7 @@ public:
      * in order to determine which commands should be added to or removed from the scheduler.
      * Call when new remote information has been received.
      */
-    mockable void handleKeyStateChange();
+    mockable void handleKeyStateChange(tap::communication::serial::Remote &remote, uint16_t key);
 
     /**
      * Verifies the mapping passed in can be added to `commandsToRun`
