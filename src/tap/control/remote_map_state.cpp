@@ -172,25 +172,26 @@ void RemoteMapState::initLMouseButton() { lMouseButton = true; }
 
 void RemoteMapState::initRMouseButton() { rMouseButton = true; }
 
-bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
+bool RemoteMapState::stateSubsetOf(const GenericRemoteMapState &other) const
 {
-    if (rSwitch != Remote::SwitchState::UNKNOWN && rSwitch != other.rSwitch)
+    auto &rOther = static_cast<const RemoteMapState&>(other);
+    if (rSwitch != Remote::SwitchState::UNKNOWN && rSwitch != rOther.rSwitch)
     {
         return false;
     }
-    if (lSwitch != Remote::SwitchState::UNKNOWN && lSwitch != other.lSwitch)
+    if (lSwitch != Remote::SwitchState::UNKNOWN && lSwitch != rOther.lSwitch)
     {
         return false;
     }
-    if ((keys & other.keys) != keys)
+    if ((keys & rOther.keys) != keys)
     {
         return false;
     }
-    if (lMouseButton && other.lMouseButton != lMouseButton)
+    if (lMouseButton && rOther.lMouseButton != lMouseButton)
     {
         return false;
     }
-    if (rMouseButton && other.rMouseButton != rMouseButton)
+    if (rMouseButton && rOther.rMouseButton != rMouseButton)
     {
         return false;
     }
@@ -199,12 +200,19 @@ bool RemoteMapState::stateSubsetOf(const RemoteMapState &other) const
 
 bool operator==(const RemoteMapState &rms1, const RemoteMapState &rms2)
 {
-    return rms1.lSwitch == rms2.lSwitch && rms1.rSwitch == rms2.rSwitch && rms1.keys == rms2.keys &&
-           rms1.negKeys == rms2.negKeys && rms1.lMouseButton == rms2.lMouseButton &&
-           rms1.rMouseButton == rms2.rMouseButton;
+    if (!(static_cast<const GenericRemoteMapState&>(rms1) == static_cast<const GenericRemoteMapState&>(rms2))) {
+        return false;
+    }
+    return rms1.getLSwitch() == rms2.getLSwitch() && rms1.getRSwitch() == rms2.getRSwitch() &&
+        rms1.getLMouseButton() == rms2.getLMouseButton() && rms1.getRMouseButton() == rms2.getRMouseButton();
 }
 
-bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2) { return !(rms1 == rms2); }
+bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2) { 
+    if (static_cast<const GenericRemoteMapState&>(rms1) != static_cast<const GenericRemoteMapState&>(rms2)) {
+        return true;
+    }
+    return !(rms1 == rms2);
+}
 
 }  // namespace control
 }  // namespace tap

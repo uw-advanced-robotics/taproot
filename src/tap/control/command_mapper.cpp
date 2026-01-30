@@ -23,6 +23,7 @@
 #include "tap/errors/create_errors.hpp"
 
 #include "command_mapping.hpp"
+#include "generic_remote_map_state.hpp"
 #include "remote_map_state.hpp"
 
 using namespace tap::errors;
@@ -32,17 +33,12 @@ namespace tap
 {
 namespace control
 {
-void CommandMapper::handleKeyStateChange(
-    uint16_t key,
-    Remote::SwitchState leftSwitch,
-    Remote::SwitchState rightSwitch,
-    bool mouseL,
-    bool mouseR)
+void CommandMapper::handleKeyStateChange()
 {
     // Make a new map state that represents the current state of the remote,
     // to be passed in to each of the CommandMappings.
-    RemoteMapState mapstate;
-    mapstate.initLSwitch(leftSwitch);
+    GenericRemoteMapState mapState;
+    /*mapstate.initLSwitch(leftSwitch);
     mapstate.initRSwitch(rightSwitch);
     mapstate.initKeys(key);
     if (mouseL)
@@ -52,11 +48,11 @@ void CommandMapper::handleKeyStateChange(
     if (mouseR)
     {
         mapstate.initRMouseButton();
-    }
+    }*/
 
     for (CommandMapping *cmdMap : commandsToRun)
     {
-        cmdMap->executeCommandMapping(mapstate);
+        cmdMap->executeCommandMapping(mapState);
     }
 }
 
