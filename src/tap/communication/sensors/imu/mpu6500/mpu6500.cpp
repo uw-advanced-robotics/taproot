@@ -98,6 +98,7 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 #endif
 
     imuHeater.initialize();
+    setTargetTemperature(MPU6500_TARGET_TEMP);
 }
 
 void Mpu6500::periodicIMUUpdate()
