@@ -35,28 +35,34 @@ public:
     /**
      * Updates the state of the GenericRemoteMapState based on the state of the Remote.
      */
-    virtual void updateState(tap::communication::serial::Remote &remote);
+    virtual void updateState([[maybe_unused]] tap::communication::serial::Remote &remote) {}
     /**
      * Initializes the keys to the bit mapped set of keys provided.
      * @note `keys` must be mutally exclusive with any set of `negKeys` already provided.
      */
-    virtual void initKeys(uint16_t keys);
+    virtual void initKeys([[maybe_unused]] uint16_t keys) {}
 
     /**
      * Initializes the neg keys to the bit mapped set of neg keys provided.
      * @note `negKeys` must be mutally exclusive with any set of `keys` already provided.
      */
-    virtual void initNegKeys(uint16_t negKeys);
+    virtual void initNegKeys([[maybe_unused]] uint16_t negKeys) {}
 
     /**
      * @see `initKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    virtual void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet);
+    virtual void initKeys([
+        [maybe_unused]] const std::list<tap::communication::serial::Remote::Key> &keySet)
+    {
+    }
 
     /**
      * @see `initNegKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    virtual void initNegKeys(const std::list<tap::communication::serial::Remote::Key> &negKeySet);
+    virtual void initNegKeys([
+        [maybe_unused]] const std::list<tap::communication::serial::Remote::Key> &negKeySet)
+    {
+    }
     /**
      * Checks if `this` is a subset of `other`. `this` is a subset of `other` under the following
      * conditions:
@@ -78,12 +84,15 @@ public:
      * @return `true` if `this` RemoteMapState is a subset of the `other` RemoteMapState. See above
      * for description of what it means for a `RemoteMapState` to be a subset of another.
      */
-    virtual bool stateSubsetOf(const GenericRemoteMapState &other) const;
+    virtual bool stateSubsetOf([[maybe_unused]] const GenericRemoteMapState &other) const
+    {
+        return false;
+    };
 
     /**
      * @return The negKeys currently being used.
      */
-    uint16_t getNegKeys() const { return negKeys; }
+    virtual uint16_t getNegKeys() const { return negKeys; }
 
     /**
      * @return `true` if the neg key set has been initialized, `false` otherwise.
@@ -93,7 +102,7 @@ public:
     /**
      * @return the current keys initialized in the `RemoteMapState`.
      */
-    uint16_t getKeys() const { return keys; }
+    virtual uint16_t getKeys() const { return keys; }
 
     virtual bool getLMouseButton() const { return lMouseButton; }
 

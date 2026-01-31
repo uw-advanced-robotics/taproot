@@ -187,7 +187,7 @@ public:
      * @param[in] rms1 The first RemoteMapState to check equality for.
      * @param[in] rms1 The second RemoteMapState to check equality for.
      */
-    bool friend operator==(const RemoteMapState &rms1, const GenericRemoteMapState &rms2);
+    bool friend operator==(const RemoteMapState &rms1, const RemoteMapState &rms2);
 
     /**
      * Opposite of operator==.
