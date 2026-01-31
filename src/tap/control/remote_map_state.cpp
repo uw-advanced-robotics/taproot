@@ -24,7 +24,6 @@
 #include "tap/errors/create_errors.hpp"
 
 using namespace tap::communication::serial;
-
 namespace tap
 {
 namespace control
@@ -106,7 +105,8 @@ RemoteMapState::RemoteMapState(MouseButton button)
     }
 }
 
-void RemoteMapState::updateState(tap::communication::serial::Remote &remote) {
+void RemoteMapState::updateState(tap::communication::serial::Remote &remote)
+{
     initLSwitch(remote.getSwitch(Remote::Switch::LEFT_SWITCH));
     initRSwitch(remote.getSwitch(Remote::Switch::RIGHT_SWITCH));
     if (remote.getMouseL()) initLMouseButton();
@@ -181,7 +181,7 @@ void RemoteMapState::initRMouseButton() { rMouseButton = true; }
 
 bool RemoteMapState::stateSubsetOf(const GenericRemoteMapState &other) const
 {
-    auto &rOther = static_cast<const RemoteMapState&>(other);
+    auto &rOther = static_cast<const RemoteMapState &>(other);
     if (rSwitch != Remote::SwitchState::UNKNOWN && rSwitch != rOther.rSwitch)
     {
         return false;
@@ -207,15 +207,21 @@ bool RemoteMapState::stateSubsetOf(const GenericRemoteMapState &other) const
 
 bool operator==(const RemoteMapState &rms1, const RemoteMapState &rms2)
 {
-    if (!(static_cast<const GenericRemoteMapState&>(rms1) == static_cast<const GenericRemoteMapState&>(rms2))) {
+    if (!(static_cast<const GenericRemoteMapState &>(rms1) ==
+          static_cast<const GenericRemoteMapState &>(rms2)))
+    {
         return false;
     }
     return rms1.getLSwitch() == rms2.getLSwitch() && rms1.getRSwitch() == rms2.getRSwitch() &&
-        rms1.getLMouseButton() == rms2.getLMouseButton() && rms1.getRMouseButton() == rms2.getRMouseButton();
+           rms1.getLMouseButton() == rms2.getLMouseButton() &&
+           rms1.getRMouseButton() == rms2.getRMouseButton();
 }
 
-bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2) { 
-    if (static_cast<const GenericRemoteMapState&>(rms1) != static_cast<const GenericRemoteMapState&>(rms2)) {
+bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2)
+{
+    if (static_cast<const GenericRemoteMapState &>(rms1) !=
+        static_cast<const GenericRemoteMapState &>(rms2))
+    {
         return true;
     }
     return !(rms1 == rms2);

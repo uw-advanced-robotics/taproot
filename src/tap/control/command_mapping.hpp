@@ -52,7 +52,10 @@ public:
      * @param[in] rms The map state that will be compared to the actual remote state
      *      to determine whether or not to add `cmds`.
      */
-    CommandMapping(Drivers *drivers, const std::vector<Command *> cmds, const GenericRemoteMapState &grms);
+    CommandMapping(
+        Drivers *drivers,
+        const std::vector<Command *> cmds,
+        const GenericRemoteMapState &grms);
 
     DISALLOW_COPY_AND_ASSIGN(CommandMapping)
 
@@ -90,7 +93,9 @@ public:
      * @return `true` if `state1`'s neg keys are a subset of `state2`'s keys pressed, `false`
      *      otherwise.
      */
-    static inline bool negKeysSubset(const GenericRemoteMapState &state1, const GenericRemoteMapState &state2)
+    static inline bool negKeysSubset(
+        const GenericRemoteMapState &state1,
+        const GenericRemoteMapState &state2)
     {
         return state1.getNegKeys() == (state1.getNegKeys() & state2.getKeys());
     }

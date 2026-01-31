@@ -138,7 +138,6 @@ public:
         const std::list<tap::communication::serial::Remote::Key> &keySet,
         const std::list<tap::communication::serial::Remote::Key> &negKeySet = {});
 
-    
     /**
      * Initializes a RemoteMapState that will use the given mouse button (either left or
      * right) in the mapping.
@@ -194,6 +193,7 @@ public:
      * Opposite of operator==.
      */
     bool friend operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2);
+
 private:
     tap::communication::serial::Remote::SwitchState lSwitch =
         tap::communication::serial::Remote::SwitchState::UNKNOWN;

@@ -20,7 +20,6 @@
 #ifndef TAPROOT_GENERIC_REMOTE_MAP_STATE_HPP_
 #define TAPROOT_GENERIC_REMOTE_MAP_STATE_HPP_
 
-
 #include <cstdint>
 #include <list>
 
@@ -106,18 +105,21 @@ public:
      * @param[in] rms1 The first GenericRemoteMapState to check equality for.
      * @param[in] rms1 The second GenericRemoteMapState to check equality for.
      */
-    bool friend operator==(const GenericRemoteMapState &rms1, const GenericRemoteMapState &rms2) {
+    bool friend operator==(const GenericRemoteMapState &rms1, const GenericRemoteMapState &rms2)
+    {
         return rms1.keys == rms2.keys && rms1.negKeys == rms2.negKeys;
     }
 
     /**
      * Opposite of operator==.
      */
-    bool friend operator!=(const GenericRemoteMapState &rms1, const GenericRemoteMapState &rms2) {
+    bool friend operator!=(const GenericRemoteMapState &rms1, const GenericRemoteMapState &rms2)
+    {
         return !(rms1 == rms2);
     }
 
     virtual ~GenericRemoteMapState() = default;
+
 protected:
     uint16_t keys = 0;
 
@@ -127,8 +129,7 @@ protected:
 
     bool rMouseButton = false;
 };
-}
-}
-
+}  // namespace control
+}  // namespace tap
 
 #endif
