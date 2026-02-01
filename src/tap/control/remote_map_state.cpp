@@ -179,6 +179,7 @@ void RemoteMapState::initLMouseButton() { lMouseButton = true; }
 
 void RemoteMapState::initRMouseButton() { rMouseButton = true; }
 
+// Assumes param "other" is a RemoteMapState
 bool RemoteMapState::stateSubsetOf(const GenericRemoteMapState &other) const
 {
     auto &rOther = static_cast<const RemoteMapState &>(other);
@@ -225,6 +226,16 @@ bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2)
         return true;
     }
     return !(rms1 == rms2);
+}
+
+bool operator==(const RemoteMapState &rms, const GenericRemoteMapState &grms)
+{
+    return rms.getKeys() == grms.getKeys() && rms.getNegKeys() == grms.getNegKeys();
+}
+
+bool operator!=(const RemoteMapState &rms, const GenericRemoteMapState &grms)
+{
+    return !(rms == grms);
 }
 
 }  // namespace control

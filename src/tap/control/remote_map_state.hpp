@@ -194,6 +194,10 @@ public:
      */
     bool friend operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2);
 
+    bool friend operator==(const RemoteMapState &rms, const GenericRemoteMapState &grms);
+
+    bool friend operator!=(const RemoteMapState &rms, const GenericRemoteMapState &grms);
+
 private:
     tap::communication::serial::Remote::SwitchState lSwitch =
         tap::communication::serial::Remote::SwitchState::UNKNOWN;

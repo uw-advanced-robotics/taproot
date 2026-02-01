@@ -26,7 +26,7 @@ namespace control
 void HoldCommandMapping::executeCommandMapping(const GenericRemoteMapState &currState)
 {
     if (mappingSubset(currState) &&
-        !(mapState.getNegKeysUsed() && negKeysSubset(mapState, currState)))
+        !(mapState.getNegKeysUsed() && ((mapState.getNegKeys() & currState.getKeys()) != 0)))
     {
         if (!commandScheduled)
         {
