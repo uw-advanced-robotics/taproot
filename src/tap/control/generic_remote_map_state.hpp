@@ -66,27 +66,19 @@ public:
     /**
      * Checks if `this` is a subset of `other`. `this` is a subset of `other` under the following
      * conditions:
-     * - Either `this`'s left switch state is `UNKNOWN` or `this`'s left switch state is equal to
-     *   `other`'s left switch state.
-     * - Either `this`'s right switch state is `UNKNOWN` or `this`'s right switch state is equal to
-     *   `other`'s left switch state.
-     * - Either `this`'s left mouse button is not initialized or both `this` and `other`'s left
-     *   mouse buttons are both initialized.
-     * - Either `this`'s right mouse button is not initialized or both `this` and `other`'s right
-     *   mouse buttons are both initialized.
      * - `this`'s key set is a subset of `other`'s key set, i.e. `(this.keySet & other.keySet) ==
      *   this.keySet`.
-     *
      * @attention This function does not use neg keys to determine if the map
      *      state is a subset.
      *
-     * @param[other] The RemoteMapState to check if `this` is a subset of.
-     * @return `true` if `this` RemoteMapState is a subset of the `other` RemoteMapState. See above
-     * for description of what it means for a `RemoteMapState` to be a subset of another.
+     * @param[other] The GenericRemoteMapState to check if `this` is a subset of.
+     * @return `true` if `this` GenericRemoteMapState is a subset of the `other`
+     * GenericRemoteMapState. See above for description of what it means for a
+     * `GenericRemoteMapState` to be a subset of another.
      */
-    virtual bool stateSubsetOf([[maybe_unused]] const GenericRemoteMapState &other) const
+    virtual bool stateSubsetOf(const GenericRemoteMapState &other) const
     {
-        return false;
+        return !((keys & other.keys) != keys);
     };
 
     /**
@@ -103,10 +95,6 @@ public:
      * @return the current keys initialized in the `RemoteMapState`.
      */
     virtual uint16_t getKeys() const { return keys; }
-
-    virtual bool getLMouseButton() const { return lMouseButton; }
-
-    bool getRMouseButton() const { return rMouseButton; }
 
     /**
      * Straight equality.
@@ -133,10 +121,6 @@ protected:
     uint16_t keys = 0;
 
     uint16_t negKeys = 0;  // if certain keys are pressed, the remote map will not do mapping
-
-    bool lMouseButton = false;
-
-    bool rMouseButton = false;
 };
 }  // namespace control
 }  // namespace tap

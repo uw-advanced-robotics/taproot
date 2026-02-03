@@ -113,23 +113,9 @@ void RemoteMapState::updateState(tap::communication::serial::Remote &remote)
     if (remote.getMouseR()) initRMouseButton();
 }
 
-void RemoteMapState::initLSwitch(Remote::SwitchState ss)
-{
-    if (ss == Remote::SwitchState::UNKNOWN)
-    {
-        return;
-    }
-    lSwitch = ss;
-}
+void RemoteMapState::initLSwitch(Remote::SwitchState ss) { lSwitch = ss; }
 
-void RemoteMapState::initRSwitch(Remote::SwitchState ss)
-{
-    if (ss == Remote::SwitchState::UNKNOWN)
-    {
-        return;
-    }
-    rSwitch = ss;
-}
+void RemoteMapState::initRSwitch(Remote::SwitchState ss) { rSwitch = ss; }
 
 void RemoteMapState::initKeys(uint16_t keys)
 {
@@ -179,27 +165,27 @@ void RemoteMapState::initLMouseButton() { lMouseButton = true; }
 
 void RemoteMapState::initRMouseButton() { rMouseButton = true; }
 
-// Assumes param "other" is a RemoteMapState
 bool RemoteMapState::stateSubsetOf(const GenericRemoteMapState &other) const
 {
+    if (!GenericRemoteMapState::stateSubsetOf(other)) return false;
+
     auto &rOther = static_cast<const RemoteMapState &>(other);
-    if (rSwitch != Remote::SwitchState::UNKNOWN && rSwitch != rOther.rSwitch)
+    if ((negKeys & rOther.keys) != 0) return false;
+    if (rSwitch != Remote::SwitchState::UNKNOWN &&
+        (rOther.rSwitch == Remote::SwitchState::UNKNOWN || rSwitch != rOther.rSwitch))
     {
         return false;
     }
-    if (lSwitch != Remote::SwitchState::UNKNOWN && lSwitch != rOther.lSwitch)
+    if (lSwitch != Remote::SwitchState::UNKNOWN &&
+        (rOther.lSwitch == Remote::SwitchState::UNKNOWN || lSwitch != rOther.lSwitch))
     {
         return false;
     }
-    if ((keys & rOther.keys) != keys)
+    if (lMouseButton && !rOther.lMouseButton)
     {
         return false;
     }
-    if (lMouseButton && rOther.lMouseButton != lMouseButton)
-    {
-        return false;
-    }
-    if (rMouseButton && rOther.rMouseButton != rMouseButton)
+    if (rMouseButton && !rOther.rMouseButton)
     {
         return false;
     }
@@ -226,16 +212,6 @@ bool operator!=(const RemoteMapState &rms1, const RemoteMapState &rms2)
         return true;
     }
     return !(rms1 == rms2);
-}
-
-bool operator==(const RemoteMapState &rms, const GenericRemoteMapState &grms)
-{
-    return rms.getKeys() == grms.getKeys() && rms.getNegKeys() == grms.getNegKeys();
-}
-
-bool operator!=(const RemoteMapState &rms, const GenericRemoteMapState &grms)
-{
-    return !(rms == grms);
 }
 
 }  // namespace control
