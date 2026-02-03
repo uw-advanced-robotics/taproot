@@ -65,6 +65,7 @@ void Bmi088::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
     initializeGyro();
 
     imuHeater.initialize();
+    setTargetTemperature(BMI088_TARGET_TEMP);
 }
 
 void Bmi088::initializeAcc()

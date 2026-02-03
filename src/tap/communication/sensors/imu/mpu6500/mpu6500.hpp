@@ -59,6 +59,8 @@ public:
      */
     static constexpr uint8_t ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE = 14;
 
+    static constexpr float MPU6500_TARGET_TEMP = 50.0f;
+
     Mpu6500(Drivers *drivers);
     DISALLOW_COPY_AND_ASSIGN(Mpu6500)
     mockable ~Mpu6500() = default;
