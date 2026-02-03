@@ -289,17 +289,17 @@ class I2C(CommunicationGroup):
 
 class SPI(CommunicationGroup):
     sck: str
-    cipo: str
-    copi: str
+    poci: str
+    pico: str
 
     def __init__(self, xml, comment):
         super().__init__(xml, comment)
         self.sck = xml.get("sck")
-        self.cipo = xml.get("cipo")
-        self.copi = xml.get("copi")
+        self.poci = xml.get("poci")
+        self.pico = xml.get("pico")
 
     def get_used_pins(self) -> List[str]:
-        return super().get_used_pins() + [self.sck, self.cipo, self.copi]
+        return super().get_used_pins() + [self.sck, self.poci, self.pico]
 
     def name(self) -> str:
         return f"Spi{self.raw_name}"

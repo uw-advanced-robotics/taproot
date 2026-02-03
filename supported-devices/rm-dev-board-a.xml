@@ -19,14 +19,14 @@
     <i2c name="2" sda="GpioF0" scl="GpioF1" />
 
     <!-- SPI to the display spi port on the board -->
-    <spi name="1" alias="Display" sck="GpioB3" cipo="GpioB4" copi="GpioA7">
+    <spi name="1" alias="Display" sck="GpioB3" poci="GpioB4" pico="GpioA7">
         <out alias="Reset" name="GpioB10" />
         <out alias="Command" name="GpioB9" />
         <analog alias="Joystick" name="GpioA6" adc="Adc1" in="In6" />
     </spi>
-    <spi name="4" sck="GpioE12" cipo="GpioE5" copi="GpioE6" />
+    <spi name="4" sck="GpioE12" poci="GpioE5" pico="GpioE6" />
     <!-- SPI for the Mpu6500 IMU on the board -->
-    <spi name="5" alias="Imu" sck="GpioF7" cipo="GpioF8" copi="GpioF9">
+    <spi name="5" alias="Imu" sck="GpioF7" poci="GpioF8" pico="GpioF9">
         <out alias="Nss" name="GpioF6" />
         <pwm alias="Heater" name="GpioB5" timer="Timer3" channel="Ch2" />
     </spi>

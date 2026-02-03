@@ -16,14 +16,14 @@
     <i2c name="2" sda="GpioF0" scl="GpioF1" />
     <i2c name="3" alias="IST8310" sda="GpioC9" scl="GpioA8" />
 
-    <spi name="1" alias="Imu" sck="GpioB3" cipo="GpioB4" copi="GpioA7">
+    <spi name="1" alias="Imu" sck="GpioB3" poci="GpioB4" pico="GpioA7">
         <out alias="CS1Accel" name="GpioA4" />
         <out alias="CS1Gyro" name="GpioB0" />
         <out alias="Int1Accel" name="GpioC4" />
         <out alias="Int1Gyro" name="GpioC5" />
         <pwm alias="Heater" name="GpioF6" timer="Timer10" channel="Ch1" />
     </spi>
-    <spi name="2" sck="GpioB13" cipo="GpioB14" copi="GpioB15">
+    <spi name="2" sck="GpioB13" poci="GpioB14" pico="GpioB15">
         <out alias="Cs" name="GpioB12" />
     </spi>
 

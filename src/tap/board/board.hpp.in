@@ -136,8 +136,8 @@ using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{% if pin.gp
 // {{ spi.comment }}
 %% endif
 using {{ spi.display_name() }}Sck = {{ spi.sck }};
-using {{ spi.display_name() }}Cipo = {{ spi.cipo }};
-using {{ spi.display_name() }}Copi = {{ spi.copi }};
+using {{ spi.display_name() }}Poci = {{ spi.poci }};
+using {{ spi.display_name() }}Pico = {{ spi.pico }};
 %% for spi_gpio in spi.gpios
 using {{ spi_gpio.display_name() }} = {{ spi_gpio.name() }};
 %% endfor
@@ -176,7 +176,7 @@ inline void initialize()
 template <uint32_t Baudrate = 10000000>
 inline void initialize{{ name }}()
 {
-    {{ name }}::connect<{{ spi.display_name() }}Cipo::Miso, {{ spi.display_name() }}Copi::Mosi, {{ spi.display_name() }}Sck::Sck>();
+    {{ name }}::connect<{{ spi.display_name() }}Poci::Miso, {{ spi.display_name() }}Pico::Mosi, {{ spi.display_name() }}Sck::Sck>();
     {{ name }}::initialize<SystemClock, Baudrate>();
 }
 
