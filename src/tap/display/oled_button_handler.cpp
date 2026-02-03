@@ -35,8 +35,8 @@ OledButtonHandler::OledButtonHandler(
       leftButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       rightButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
       okButtonPressed(BUTTON_DEBOUNCE_SAMPLES),
-      adcConfig(analogConfig),
-      pin(pin)
+      pin(pin),
+      adcConfig(analogConfig)
 {
 }
 

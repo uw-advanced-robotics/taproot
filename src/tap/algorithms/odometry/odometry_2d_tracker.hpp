@@ -94,6 +94,11 @@ private:
     bool displacementPrimed = false;
 };
 
+/**
+ * Transforms the chassis relative velocity of the form <vx, vy, vz> (where z is an
+ * orientation) into world relative frame, given some particular chassis heading (z direction,
+ * assumed to be in radians). Transforms the input matrix chassisRelativeVelocity. Units: m/s
+ */
 void getVelocityWorldRelative(
     modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
     float chassisHeading);

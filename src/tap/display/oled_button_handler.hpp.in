@@ -93,8 +93,8 @@ private:
     modm::filter::Debounce<int> rightButtonPressed;
     modm::filter::Debounce<int> okButtonPressed;
 
-    const struct AnalogConfig adcConfig;
     const tap::gpio::Analog::Pin pin;
+    const struct AnalogConfig adcConfig;
 };  // class OledButtonHandler
 }  // namespace display
 }  // namespace tap

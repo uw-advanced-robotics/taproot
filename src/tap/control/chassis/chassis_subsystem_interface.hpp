@@ -52,18 +52,6 @@ public:
      *      encoders. Units: m/s
      */
     virtual modm::Matrix<float, 3, 1> getActualVelocityChassisRelative() const = 0;
-
-    /**
-     * Transforms the chassis relative velocity of the form <vx, vy, vz> (where z is an
-     * orientation) into world relative frame, given some particular chassis heading (z direction,
-     * assumed to be in radians). Transforms the input matrix chassisRelativeVelocity. Units: m/s
-     */
-    static void getVelocityWorldRelative(
-        modm::Matrix<float, 3, 1>& chassisRelativeVelocity,
-        float chassisHeading)
-    {
-        algorithms::odometry::getVelocityWorldRelative(chassisRelativeVelocity, chassisHeading);
-    }
 };
 }  // namespace tap::control::chassis
 
