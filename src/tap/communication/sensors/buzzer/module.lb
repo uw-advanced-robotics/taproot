@@ -30,12 +30,12 @@ def init(module):
 def prepare(module, options):
     module.depends(":communication:gpio:pwm")
 
-    metadata = board_info_parser.parse_board_info(options[":dev_board"])
-    pins = metadata.find("gpio-pins")
-    buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]
+    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+
+    buzzer_pins = [pin for pin in board_info.gpio_pins if pin.alias == BUZZER_PIN]
     if len(buzzer_pins) == 1:
         global buzzer_timer
-        buzzer_timer = buzzer_pins[0].find("timer").get("name")
+        buzzer_timer = f"Timer{buzzer_pins[0].features['timer'].name}"
     return len(buzzer_pins) == 1
 
 def build(env):

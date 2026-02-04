@@ -1,55 +1,73 @@
 <board>
-    <can-pins>
-        <gpio alias="Can1Rx" name="GpioD0"></gpio>
-        <gpio alias="Can1Tx" name="GpioD1"></gpio>
-        <gpio alias="Can2Rx" name="GpioB5"></gpio>
-        <gpio alias="Can2Tx" name="GpioB6"></gpio>
-    </can-pins>
-    <gpio-pins>
-        <gpio alias="C1" name="GpioE9">
-            <timer name="Timer1" channel="Ch1"></timer>
-        </gpio>
-        <gpio alias="C2" name="GpioE11">
-            <timer name="Timer1" channel="Ch2"></timer>
-        </gpio>
-        <gpio alias="C3" name="GpioE13">
-            <timer name="Timer1" channel="Ch3"></timer>
-        </gpio>
-        <gpio alias="C4" name="GpioE14">
-            <timer name="Timer1" channel="Ch4"></timer>
-        </gpio>
-        <gpio alias="C5" name="GpioC6">
-            <timer name="Timer8" channel="Ch1"></timer>
-        </gpio>
-        <gpio alias="C6" name="GpioI6">
-            <timer name="Timer8" channel="Ch2"></timer>
-        </gpio>
-        <gpio alias="C7" name="GpioI7">
-            <timer name="Timer8" channel="Ch3"></timer>
-        </gpio>
-        <gpio alias="PF1" name="GpioF1"></gpio>
-        <gpio alias="PF0" name="GpioF0"></gpio>
-        <gpio alias="B12" name="GpioB12"></gpio>
-        <gpio alias="B13" name="GpioB13"></gpio>
-        <gpio alias="B14" name="GpioB14"></gpio>
-        <gpio alias="B15" name="GpioB15">
-            <!-- Can be used for RTC_REFIN -->
-        </gpio>
-        <gpio alias="Buzzer" name="GpioD14">
-            <timer name="Timer4" channel="Ch3"></timer>
-        </gpio>
-        <gpio alias="VolDetect" name="GpioF10">
-            <adc name="Adc3" in="In8"></adc>
-        </gpio>
-        <gpio alias="Laser" name="GpioC8"></gpio>
-        <gpio alias="ImuHeater" name="GpioF6">
-            <timer name="Timer10" channel="Ch1"></timer>
-        </gpio>
-        <gpio alias="Button" name="GpioA0"></gpio>
-    </gpio-pins>
-    <uart-ports>
-        <uart sync="true" name="1" tx="GpioA9" rx="GpioB7"></uart>
-        <uart sync="true" name="3" rx="GpioC11"></uart>
-        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
-    </uart-ports>
+    <controller chip="stm32f407igh6">
+        <clock frequency="168" crystal="12">
+            <prescalars ahb="1" apb1="4" apb2="2" />
+            <pll m="6" n="168" p="2" />
+        </clock>
+    </controller>
+
+    <can name="1" rx="GpioD0" tx="GpioD1" />
+    <can name="2" rx="GpioB5" tx="GpioB6" />
+
+    <usart name="1" tx="GpioA9" rx="GpioB7" />
+    <usart name="3" rx="GpioC11" />
+    <usart name="6" tx="GpioG14" rx="GpioG9" />
+
+    <i2c name="2" sda="GpioF0" scl="GpioF1" />
+    <i2c name="3" alias="IST8310" sda="GpioC9" scl="GpioA8" />
+
+    <spi name="1" alias="Imu" sck="GpioB3" cipo="GpioB4" copi="GpioA7">
+        <out alias="CS1Accel" name="GpioA4" />
+        <out alias="CS1Gyro" name="GpioB0" />
+        <out alias="Int1Accel" name="GpioC4" />
+        <out alias="Int1Gyro" name="GpioC5" />
+    </spi>
+    <spi name="2" sck="GpioB13" cipo="GpioB14" copi="GpioB15">
+        <out alias="Cs" name="GpioB12" />
+    </spi>
+
+    <gpio-group alias="Led">
+        <out alias="Red" name="GpioH12" />
+        <out alias="Green" name="GpioH11" />
+        <out alias="Blue" name="GpioH10" />
+    </gpio-group>
+
+    <gpio alias="C1" name="GpioE9">
+        <timer name="Timer1" channel="Ch1" />
+    </gpio>
+    <gpio alias="C2" name="GpioE11">
+        <timer name="Timer1" channel="Ch2" />
+    </gpio>
+    <gpio alias="C3" name="GpioE13">
+        <timer name="Timer1" channel="Ch3" />
+    </gpio>
+    <gpio alias="C4" name="GpioE14">
+        <timer name="Timer1" channel="Ch4" />
+    </gpio>
+    <gpio alias="C5" name="GpioC6">
+        <timer name="Timer8" channel="Ch1" />
+    </gpio>
+    <gpio alias="C6" name="GpioI6">
+        <timer name="Timer8" channel="Ch2" />
+    </gpio>
+    <gpio alias="C7" name="GpioI7">
+        <timer name="Timer8" channel="Ch3" />
+    </gpio>
+    <gpio alias="PF1" name="GpioF1" />
+    <gpio alias="PF0" name="GpioF0" />
+    <gpio alias="B12" name="GpioB12" />
+    <gpio alias="B13" name="GpioB13" />
+    <gpio alias="B14" name="GpioB14" />
+    <gpio alias="B15" name="GpioB15" /> <!-- Can be used for RTC_REFIN -->
+    <gpio alias="Buzzer" name="GpioD14">
+        <timer name="Timer4" channel="Ch3" />
+    </gpio>
+    <gpio alias="VolDetect" name="GpioF10">
+        <adc name="Adc3" in="In8" />
+    </gpio>
+    <gpio alias="Laser" name="GpioC8" />
+    <gpio alias="ImuHeater" name="GpioF6">
+        <timer name="Timer10" channel="Ch1" />
+    </gpio>
+    <gpio alias="Button" name="GpioA0" />
 </board>

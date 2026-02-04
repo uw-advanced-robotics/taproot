@@ -1,0 +1,211 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
+ * Copyright (c) 2015-2018, Niklas Hauser
+ * Copyright (c) 2017, Sascha Schade
+ * Copyright (c) 2018, Antal Szabó
+ *
+ * This file is part of the modm project.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+// ----------------------------------------------------------------------------
+
+#ifndef TAPROOT_BOARD_HPP_
+#define TAPROOT_BOARD_HPP_
+
+#ifndef PLATFORM_HOSTED
+#include "modm/architecture/interface/clock.hpp"
+#include "modm/platform.hpp"
+
+using namespace modm::platform;
+#else
+#include "modm/math/units.hpp"
+#endif
+
+namespace Board
+{
+using namespace modm::literals;
+
+/**
+ * {{ chip | upper }} running at {{ clock.frequency }}MHz from the external {{ clock.crystal }}MHz crystal
+ */
+struct SystemClock
+{
+    static constexpr uint32_t Frequency = {{ clock.frequency }}_MHz;
+    static constexpr uint32_t Ahb = Frequency{% if clock.prescalars["Ahb"] != 1 %} / {{ clock.prescalars["Ahb"] }}{% endif %};
+    static constexpr uint32_t Apb1 = Ahb{% if clock.prescalars["Apb1"] != 1 %} / {{ clock.prescalars["Apb1"] }}{% endif %};
+    static constexpr uint32_t Apb2 = Ahb{% if clock.prescalars["Apb2"] != 1 %} / {{ clock.prescalars["Apb2"] }}{% endif %};
+
+%% if "Adc" in enabled_peripherals.keys()
+    static constexpr uint32_t Adc = {{ apb_map[enabled_peripherals["Adc"][0]] }};
+
+%% endif
+
+
+%% macro configure_clocks(group, clock_group="")
+%% if group in enabled_peripherals.keys()
+%% for periph in enabled_peripherals[group]
+    static constexpr uint32_t {{ periph }} = {{ apb_map[periph] }};
+%% endfor
+%% endif
+%% endmacro
+
+{{ configure_clocks("Spi") }}
+{{ configure_clocks("Uart") }}
+{{ configure_clocks("Can") }}
+{{ configure_clocks("I2c") }}
+    static constexpr uint32_t Apb1Timer = Apb1{% if clock.prescalars["Apb1"] != 1 %} * 2{% endif %};
+    static constexpr uint32_t Apb2Timer = Apb2{% if clock.prescalars["Apb2"] != 1 %} * 2{% endif %};
+{{ configure_clocks("Timer", "Timer") }}
+    static bool inline enable()
+    {
+#ifndef PLATFORM_HOSTED
+        Rcc::enableExternalCrystal();  // {{ clock.crystal }} MHz
+        Rcc::PllFactors pllF = {
+            {{ clock.pll.m }},    // {{ clock.crystal }}MHz / M={{ clock.pll.m }} -> {{ clock.crystal // clock.pll.m }}MHz
+            {{ clock.pll.n }},  // {{ clock.crystal // clock.pll.m }}MHz * N={{ clock.pll.n }} -> {{ clock.crystal // clock.pll.m * clock.pll.n}}MHz
+            {{ clock.pll.p }}     // {{ clock.crystal // clock.pll.m * clock.pll.n}}MHz / P={{ clock.pll.p }} -> {{ clock.frequency }}MHz = F_cpu
+        };
+        Rcc::enablePll(Rcc::PllSource::ExternalCrystal, pllF);
+
+        Rcc::setFlashLatency<Frequency>();
+        Rcc::enableSystemClock(Rcc::SystemClockSource::Pll);
+        Rcc::setAhbPrescaler(Rcc::AhbPrescaler::Div{{ clock.prescalars["Ahb"] }});
+        Rcc::setApb1Prescaler(Rcc::Apb1Prescaler::Div{{ clock.prescalars["Apb1"] }});
+        Rcc::setApb2Prescaler(Rcc::Apb2Prescaler::Div{{ clock.prescalars["Apb2"] }});
+        Rcc::updateCoreFrequency<Frequency>();
+#endif
+
+        return true;
+    }
+};
+
+#ifndef PLATFORM_HOSTED
+
+%% for gpio_group in gpio_groups
+%% if gpio_group.comment is not none
+// {{ gpio_group.comment }}
+%% endif
+
+%% for gpio in gpio_group.gpios
+%% set gpio_alias = gpio.name if gpio.alias is none else gpio.alias
+using {{ gpio_group.alias }}{{ gpio_alias }} = {{ gpio.name }};
+%% endfor
+using {{ gpio_group.alias }}sPort = SoftwareGpioPort<{% for gpio in gpio_group.gpios %}{{ gpio_group.alias }}{{ gpio.name if gpio.alias is none else gpio.alias }}{% if not loop.last %}, {% endif %}{% endfor %}>;
+
+%% endfor
+
+%% macro configure_pins(comment, pin_group_name, pins)
+    %% if pins|length > 0
+// {{ comment }}
+        {% if pins|length > 0 %}
+            %% for pin in pins
+using {{ pin_group_name }}{{ pin }} = {{ pin_mappings[pin] }};
+            %% endfor
+        {% endif %}
+using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{{ pin_group_name }}{{ pin }}{% if not loop.last %}, {% endif %}{% endfor %}>;
+    %% endif
+%% endmacro
+
+{{ configure_pins("Initialize analog input pins", "AnalogInPin", analog_in_pins) }}
+{{ configure_pins("Initialize PWM pins", "PWMOutPin", pwm_pins) }}
+{{ configure_pins("Initialize digital input pins", "DigitalInPin", digital_in_pins) }}
+{{ configure_pins("Initialize digital output pins", "DigitalOutPin", digital_out_pins) }}
+
+%% for spi in spis
+%% set spi_alias = "Spi" + spi.name|string if spi.alias is none else spi.alias
+%% set spi_name = spi_alias + ("" if spi.alias is none else "Spi")
+using {{spi_alias}}Sck = {{spi.sck}};
+using {{spi_alias}}Cipo = {{spi.cipo}};
+using {{spi_alias}}Copi = {{spi.copi}};
+%% for spi_gpio in spi.gpios
+%% set gpio_alias = spi_gpio.name if spi_gpio.alias is none else spi_gpio.alias
+using {{spi_alias}}{{gpio_alias}} = {{spi_gpio.name}};
+%% endfor
+using {{spi_name}} = SpiMaster{{spi.name}};
+
+%% endfor
+
+%% for i2c in i2cs
+%% set i2c_alias = "I2c" + i2c.name|string if i2c.alias is none else i2c.alias
+%% set i2c_name = i2c_alias + ("" if i2c.alias is none else "I2c")
+using {{i2c_alias}}Sda = {{i2c.sda}};
+using {{i2c_alias}}Scl = {{i2c.scl}};
+%% for i2c_gpio in i2c.gpios
+%% set gpio_alias = i2c_gpio.name if i2c_gpio.alias is none else i2c_gpio.alias
+using {{i2c_alias}}{{gpio_alias}} = {{i2c_gpio.name}};
+%% endfor
+using {{i2c_name}} = I2cMaster{{i2c.name}};
+
+%% endfor
+
+#endif
+
+inline void initialize()
+{
+    // init clock
+    SystemClock::enable();
+#ifndef PLATFORM_HOSTED
+    SysTickTimer::initialize<SystemClock>();
+%% for gpio_group in gpio_groups
+    %% if gpio_group.default is not none
+    {# TODO: Need to be able to support stuff like input groups #}
+    {{ gpio_group.alias }}sPort::setOutput(modm::Gpio::{{ gpio_group.default }});
+    %% endif
+%% endfor
+#endif
+}
+
+#ifndef PLATFORM_HOSTED
+
+%% for spi in spis
+%% set spi_alias = "Spi" + spi.name|string if spi.alias is none else spi.alias
+%% set spi_name = spi_alias + ("" if spi.alias is none else "Spi")
+template <uint32_t Baudrate = 10000000>
+inline void initialize{{ spi_name }}()
+{
+    {{ spi_name }}::connect<{{ spi_alias }}Cipo::Miso, {{ spi_alias }}Copi::Mosi, {{ spi_alias }}Sck::Sck>();
+    {{ spi_name }}::initialize<SystemClock, Baudrate>();
+}
+
+%% endfor
+
+
+
+%% for i2c in i2cs
+%% set i2c_alias = "I2c" + i2c.name|string if i2c.alias is none else i2c.alias
+%% set i2c_name = i2c_alias + ("" if i2c.alias is none else "I2c")
+template <uint32_t Baudrate = 100000>
+inline void initialize{{ i2c_name }}({{ i2c_name }}::PullUps pullups = {{ i2c_name }}::PullUps::Internal)
+{
+    {{ i2c_name }}::connect<{{ i2c_alias }}Scl::Scl, {{ i2c_alias }}Sda::Sda>(pullups);
+    {{ i2c_name }}::initialize<SystemClock, Baudrate>();
+}
+%% endfor
+
+#endif
+
+}  // namespace Board
+
+#endif  // TAPROOT_BOARD_HPP_
+

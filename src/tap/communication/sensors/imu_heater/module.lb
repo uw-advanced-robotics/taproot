@@ -47,13 +47,13 @@ def build(env):
     user_pins = extractPinDefines(env[":board:pwm_pins"])
     global metadata
 
-    for pin in metadata.find("gpio-pins"):
-        pin_name = pin.get("alias")
+    for pin in metadata.gpio_pins:
+        pin_name = pin.alias
         if pin_name in user_pins:
-            timer = pin.find("timer")
-            timer_name = timer.get("name")
+            timer = pin.features["timer"]
+            timer_name = timer.name
             if pin_name == "ImuHeater":
-                timer_to_use = timer_name
+                timer_to_use = f"Timer{timer_name}"
 
     assert timer_to_use != None, "to GPIO pin named ImuHeater with a timer associated, must define a timer to control the heater on the IMU"
 

@@ -31,13 +31,12 @@ def prepare(module, options):
     return True
 
 def build(env):
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    board_info = board_info_parser.parse_board_info(env[":dev_board"])
 
-    can_pins = metadata.find("can-pins")
-    can_pins = { pin.get("alias"): pin.get("name") for pin in can_pins }
+    can = { can.name: can for can in board_info.can }
 
     env.substitutions = {
-        "can_pins": can_pins,
+        "can": can,
         "use_sim": env.has_module(":motor:motorsim")
     }
 

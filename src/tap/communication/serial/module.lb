@@ -110,9 +110,9 @@ def prepare(module, options):
     module.add_submodule(RefSerial())
     module.add_submodule(TerminalSerial())
 
-    metadata = board_info_parser.parse_board_info(options[":dev_board"])
-    for port in metadata.find("uart-ports"):
-        port_num = port.get("name")
+    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+    for port in board_info.uart:
+        port_num = port.name
         module.add_option(
             NumericOption(
                 name=f"uart_port_{port_num}.baud_rate",
@@ -128,13 +128,13 @@ def build(env):
     full_port_name = {}
     configured_baud_rate = {}
 
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
-    for port in metadata.find("uart-ports"):
-        port_num = port.get("name")
+    board_info = board_info_parser.parse_board_info(env[":dev_board"])
+    for port in board_info.uart:
+        port_num = port.name
         uart_ports.append(port_num)
-        port_to_rx_pin[port_num] = port.get("rx")
-        port_to_tx_pin[port_num] = port.get("tx")
-        full_port_name[port_num] = f"Usart{port_num}" if port.get("sync") == "true" else f"Uart{port_num}"
+        port_to_rx_pin[port_num] = port.rx
+        port_to_tx_pin[port_num] = port.tx
+        full_port_name[port_num] = f"Usart{port_num}" if port.usart else f"Uart{port_num}"
         configured_baud_rate[port_num] = env[f":::uart_port_{port_num}.baud_rate"]
 
     env.substitutions = {
