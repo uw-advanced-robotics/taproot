@@ -28,6 +28,8 @@ def init(module):
     module.description = "Analog buzzer API"
 
 def prepare(module, options):
+    module.depends(":communication:gpio:pwm")
+
     metadata = board_info_parser.parse_board_info(options[":dev_board"])
     pins = metadata.find("gpio-pins")
     buzzer_pins = [pin for pin in pins if pin.get("alias") == BUZZER_PIN]

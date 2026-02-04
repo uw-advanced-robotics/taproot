@@ -32,6 +32,8 @@ metadata = None
 
 def prepare(module, options):
     module.depends(":board")
+    module.depends(":drivers")
+    module.depends(":communication:gpio:pwm")
     global metadata
     metadata = board_info_parser.parse_board_info(options[":dev_board"])
     return True

@@ -23,6 +23,7 @@
 #include "tap/communication/serial/ref_serial.hpp"
 #include "tap/drivers.hpp"
 #include "tap/mock/robot_to_robot_message_handler_mock.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace tap;
 using namespace tap::communication::serial;
@@ -678,7 +679,7 @@ TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_out_of_b
     RefSerial refSerial(&drivers);
     tap::mock::RobotToRobotMessageHandlerMock handler;
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     refSerial.attachRobotToRobotMessageHandler(0x014, &handler);
     refSerial.attachRobotToRobotMessageHandler(0x3ff, &handler);
@@ -692,7 +693,7 @@ TEST(RefSerial, attachRobotToRobotMessageHandler__fails_to_add_if_msgId_already_
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
 
     refSerial.attachRobotToRobotMessageHandler(0x201, &handler);
 }

@@ -17,73 +17,23 @@
 
 import sys
 sys.path.append(repopath("src"))
-import drivers
 
 def init(module):
     module.name = ":core"
     module.description = "Core library features"
 
 def prepare(module, options):
-    module.depends(
-        ":testing:mock",
-        ":modm-project.xml",
-        ":board",
-        ":errors",
-        ":ext")
-
     # build system dependencies
     module.depends(":build")
 
-    # motor-specific dependencies
-    module.depends(":communication:can", ":communication:tcp-server", ":communication:sensors:encoder")
-
-    module.add_option(
-        BooleanOption(
-            name="use_multi_encoder",
-            default=False,
-            description="Enables MultiEncoder usage for (Double)DjiMotor with an external encoder."))
-
-    # command mapper dependencies
-    module.depends(":communication:serial:remote")
-
-    # power limiter dependencies
-    module.depends(":communication:gpio:analog")
+    module.depends(":algorithms")
+    module.depends(":architecture")
     module.depends(":communication:serial:ref_serial")
-
-    # scheduler dependencies
-    module.depends(":communication:serial:terminal_serial")
-
-    # servo dependencies
-    module.depends(":communication:gpio:pwm")
-
-    # power limiter dependencies
-    module.depends(":communication:sensors:current")
-    module.depends(":communication:sensors:voltage")
+    module.depends(":control")
+    module.depends(":drivers")
+    module.depends(":motor")
 
     return True
 
 def build(env):
-    # Copy all folders and files that are not configurable in this
-    # top level module
     env.outbasepath = "taproot/src"
-    env.copy("tap/util_macros.hpp")
-
-    env.copy("tap/algorithms")
-    env.copy("tap/architecture")
-    env.copy("tap/control")
-    env.copy("tap/motor", ignore=env.ignore_files(*[
-        "dji_motor.hpp.in", "dji_motor.cpp.in",
-        "double_dji_motor.hpp.in", "double_dji_motor.cpp.in",
-    ]))
-
-    env.substitutions = {
-        "object_and_mocks": drivers.get_object_and_mock_names(env),
-        "mock_driver_includes": drivers.get_mock_headers_sorted(env),
-        "src_driver_includes": drivers.get_src_files_sorted(env),
-        "use_multi_encoder": env[":core:use_multi_encoder"]
-    }
-    env.template("drivers.hpp.in", "tap/drivers.hpp")
-    env.template("tap/motor/dji_motor.hpp.in", "tap/motor/dji_motor.hpp")
-    env.template("tap/motor/dji_motor.cpp.in", "tap/motor/dji_motor.cpp")
-    env.template("tap/motor/double_dji_motor.hpp.in", "tap/motor/double_dji_motor.hpp")
-    env.template("tap/motor/double_dji_motor.cpp.in", "tap/motor/double_dji_motor.cpp")

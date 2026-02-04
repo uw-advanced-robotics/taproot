@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,4 +17,15 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-int main() { return 0; }
+#ifndef TAPROOT_TEST_MACROS_HPP_
+#define TAPROOT_TEST_MACROS_HPP_
+
+#if __has_include("tap/errors/error_controller.hpp")
+#define EXPECT_ERROR() EXPECT_CALL(drivers.errorController, addToErrorList)
+#define EXPECT_ERROR_TIMES(times) EXPECT_ERROR().Times(times)
+#else
+#define EXPECT_ERROR()
+#define EXPECT_ERROR_TIMES(times)
+#endif
+
+#endif  // TAPROOT_TEST_MACROS_HPP_
