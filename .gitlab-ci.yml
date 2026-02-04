@@ -75,10 +75,10 @@ before_script:
         src test
         -p TAPROOT_
         -i src/tap/algorithms/MahonyAHRS.h
-            src/tap/display/sh1106_impl.hpp
-            src/tap/display/sh1106_mock_impl.hpp
-            src/tap/display/sh1107_impl.hpp
-            src/tap/display/sh1107_mock_impl.hpp
+            src/tap/display/sh1106/sh1106_impl.hpp
+            src/tap/display/sh1106/sh1106_mock_impl.hpp
+            src/tap/display/sh1107/sh1107_impl.hpp
+            src/tap/display/sh1107/sh1107_mock_impl.hpp
   variables:
     GIT_SUBMODULE_STRATEGY: normal
   only: *verification_only
@@ -227,7 +227,8 @@ before_script:
 
 "Generate Docs":
   image: alpine
-  needs: []
+  extends:
+    - .type_a_config_dependencies
   stage: Deploy Pages
   before_script:
     - apk update
@@ -241,8 +242,8 @@ before_script:
     - python3 -m pip install sphinx_rtd_theme
     - apk add doxygen
   script:
-    - cd docs && make html
-    - mv _build/html/ ../public/
+    - cd test-project/taproot/docs && make html
+    - mv _build/html/ ../../../public/
   artifacts:
     paths:
       - public
@@ -268,3 +269,13 @@ pages:
     - develop
   except:
     - schedules
+
+"Run generated configs":
+  stage: Build all Targets
+  needs: ["Type A: Generate Test Project"]
+  only: *default_only
+  trigger:
+    include: 
+      - artifact: test-project/taproot/ci-scripts/build.yml
+        job: "Type A: Generate Test Project"
+    strategy: depend

@@ -17,10 +17,13 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <deque>
+
 #include <gtest/gtest.h>
 
 #include "tap/communication/serial/remote.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace testing;
 using namespace tap;
@@ -217,7 +220,7 @@ TEST_F(RemoteTest, read_invalid_joystick_values_errors)
 
     encodeRemoteData();
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     remote.read();
 }

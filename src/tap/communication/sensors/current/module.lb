@@ -15,13 +15,31 @@
 # You should have received a copy of the GNU General Public License
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
+class Analog(Module):
+    def init(self, module):
+        module.name = ":communication:sensors:current:analog"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:gpio:analog")
+        module.depends(":algorithms")
+
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/communication/sensors/current"
+    
+        env.copy("analog_current_sensor.cpp")
+        env.copy("analog_current_sensor.hpp")
+
 def init(module):
     module.name = ":communication:sensors:current"
     module.description = "Current sensor interface and various current sensors"
 
 def prepare(module, options):
+    module.add_submodule(Analog())
     return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/communication/sensors/current"
-    env.copy(".")
+    
+    env.copy("current_sensor_interface.hpp")

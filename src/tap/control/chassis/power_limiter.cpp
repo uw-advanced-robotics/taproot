@@ -23,7 +23,6 @@
 #include "tap/drivers.hpp"
 
 using namespace tap::algorithms;
-using namespace tap::motor;
 using std::max;
 
 namespace tap::control::chassis

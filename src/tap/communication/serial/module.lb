@@ -30,7 +30,8 @@ class Remote(Module):
         module.description = "Remote control communication via DR16 receiver"
 
     def prepare(self, module, options):
-        module.depends(":communication:gpio")
+        module.depends(":architecture")
+        module.depends(":control")
         return True
 
     def build(self, env):
@@ -51,7 +52,7 @@ class RefSerial(Module):
         module.description = "Ref serial communication"
 
     def prepare(self, module, options):
-        module.depends(":communication:gpio")
+        module.depends(":architecture")
         module.add_option(
             StringOption(
                 name="uart_port",
@@ -76,7 +77,7 @@ class TerminalSerial(Module):
         module.description = "Terminal serial communication"
 
     def prepare(self, module, options):
-        module.depends(":communication:gpio")
+        module.depends(":architecture")
         module.add_option(
             StringOption(
                 name="uart_port",
@@ -100,7 +101,10 @@ def init(module):
     module.description = "Various serial communication interfaces"
 
 def prepare(module, options):
-    module.depends("taproot:core")
+    module.depends(":algorithms")
+    module.depends(":architecture")
+    module.depends(":board")
+    module.depends(":drivers")
 
     module.add_submodule(Remote())
     module.add_submodule(RefSerial())

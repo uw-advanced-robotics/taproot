@@ -55,15 +55,14 @@
     <module>modm:platform:uart:2</module>
     <module>modm:platform:uart:7</module>
     <module>modm:platform:uart:8</module>
-    <module>modm:ui:display</module>
-    <module>modm:ui:menu</module>
 %% elif options[":dev_board"] == "rm-dev-board-c"
     <module>modm:platform:timer:1</module>
     <module>modm:platform:timer:4</module>
     <module>modm:platform:timer:10</module>
     <module>modm:platform:adc:3</module>
 %% endif
-
+    <module>modm:ui:display</module>
+    <module>modm:ui:menu</module>
 {% for m in modm_hal_modules %}    {{ m }}{% endfor %}
   </modules>
 </library>

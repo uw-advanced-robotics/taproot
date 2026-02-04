@@ -20,7 +20,8 @@
 #ifndef TAPROOT_POWER_LIMITER_HPP_
 #define TAPROOT_POWER_LIMITER_HPP_
 
-#include "tap/communication/gpio/analog.hpp"
+#include <stdint.h>
+
 #include "tap/communication/sensors/current/current_sensor_interface.hpp"
 #include "tap/communication/sensors/voltage/voltage_sensor_interface.hpp"
 

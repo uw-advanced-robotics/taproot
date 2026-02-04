@@ -4,3 +4,5 @@ project.xml.log
 build
 src/drivers.hpp
 pipfile.lock
+*-project.xml
+*-project.xml.log

@@ -27,6 +27,7 @@
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
+#include "tap/test_macros.hpp"
 
 using std::set;
 using tap::Drivers;
@@ -61,7 +62,7 @@ TEST(CommandScheduler, constructor_multiple_master_schedulers_throws_error)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     CommandScheduler scheduler1(&drivers, true);
     CommandScheduler scheduler2(&drivers, true);
@@ -118,7 +119,7 @@ TEST(CommandScheduler, registerSubsystem_single_subsystem_added_multiple_times_o
 
     EXPECT_CALL(sub, refresh);
     EXPECT_CALL(sub, getDefaultCommand).WillOnce(Return(nullptr));
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(&sub);
     scheduler.registerSubsystem(&sub);
@@ -130,7 +131,7 @@ TEST(CommandScheduler, registerSubsystem_doesnt_register_nullptr_subsystem)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(nullptr);
     EXPECT_FALSE(scheduler.isSubsystemRegistered(nullptr));
@@ -202,7 +203,7 @@ TEST(CommandScheduler, addCommand_null_added_command_raises_error)
     CommandScheduler scheduler(&drivers, true);
 
     // Expect an error when the command is null.
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     scheduler.addCommand(nullptr);
 }
 
@@ -216,7 +217,7 @@ TEST(CommandScheduler, addCommand_with_no_subsystem_registered_raises_error)
     set<Subsystem *> subRequirements{&s};
 
     // Expect an error with no subsystem in the command scheduler.
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     EXPECT_CALL(c, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
 
@@ -236,7 +237,7 @@ TEST(CommandScheduler, addCommand_with_not_all_subsystems_registered_raises_erro
     EXPECT_CALL(c, getRequirementsBitwise)
         .Times(3)
         .WillRepeatedly(Return(calcRequirementsBitwise(subsystemRequirements)));
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(3);
+    EXPECT_ERROR_TIMES(3);
 
     // No subsystems added, will fail.
     scheduler.addCommand(&c);
@@ -459,7 +460,7 @@ TEST(
     EXPECT_CALL(c3, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirementsC3)));
     EXPECT_CALL(c3, initialize);
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
@@ -1298,7 +1299,7 @@ TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     scheduler.removeCommand(nullptr, false);
 }
 
