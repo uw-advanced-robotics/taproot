@@ -78,7 +78,7 @@ public:
      */
     virtual bool stateSubsetOf(const GenericRemoteMapState &other) const
     {
-        return !((keys & other.keys) != keys);
+        return (keys & other.keys) == keys;
     };
 
     /**

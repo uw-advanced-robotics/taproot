@@ -170,6 +170,7 @@ void Remote::reset()
     remote.key = 0;
     remote.wheel = 0;
     clearRxBuffer();
+    drivers->commandMapper.handleKeyStateChange(*this, 0);
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }

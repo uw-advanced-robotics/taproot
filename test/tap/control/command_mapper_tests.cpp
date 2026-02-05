@@ -43,18 +43,12 @@ TEST(CommandMapper, getSize_returns_number_of_valid_maps_added)
     TestCommand tc3(&ts);
     CommandMapper cm(&drivers);
 
-    HoldCommandMapping hcm1(
-        &drivers,
-        {&tc1},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
-    HoldCommandMapping hcm2(
-        &drivers,
-        {&tc2},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID));
-    HoldCommandMapping hcm3(
-        &drivers,
-        {&tc3},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+    RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID);
+    RemoteMapState ms3(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP);
+    HoldCommandMapping hcm1(&drivers, {&tc1}, &ms1);
+    HoldCommandMapping hcm2(&drivers, {&tc2}, &ms2);
+    HoldCommandMapping hcm3(&drivers, {&tc3}, &ms3);
 
     EXPECT_EQ(0, cm.getSize());
     cm.addMap(&hcm1);
@@ -70,10 +64,8 @@ TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_mapper_size)
     TestSubsystem ts(&drivers);
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
-    HoldCommandMapping hcm(
-        &drivers,
-        {&tc},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    HoldCommandMapping hcm(&drivers, {&tc}, &ms);
 
     cm.addMap(&hcm);
     EXPECT_NE(nullptr, cm.getAtIndex(0));
@@ -92,18 +84,9 @@ TEST(CommandMapper, getAtIndex_returns_correct_CommandMapping_if_index_valid)
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID);
     RemoteMapState ms3(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP);
-    HoldCommandMapping hcm1(
-        &drivers,
-        {&tc1},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
-    HoldCommandMapping hcm2(
-        &drivers,
-        {&tc2},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID));
-    HoldCommandMapping hcm3(
-        &drivers,
-        {&tc3},
-        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+    HoldCommandMapping hcm1(&drivers, {&tc1}, &ms1);
+    HoldCommandMapping hcm2(&drivers, {&tc2}, &ms2);
+    HoldCommandMapping hcm3(&drivers, {&tc3}, &ms3);
     cm.addMap(&hcm1);
     cm.addMap(&hcm2);
     cm.addMap(&hcm3);
@@ -126,8 +109,8 @@ TEST(CommandMapper, addHoldMapping_successfully_adds_mapping_normal_case)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldCommandMapping holdCommandMappingForCompare(&drivers, {&tc}, ms);
-    HoldCommandMapping hm(&drivers, {&tc}, ms);
+    HoldCommandMapping holdCommandMappingForCompare(&drivers, {&tc}, &ms);
+    HoldCommandMapping hm(&drivers, {&tc}, &ms);
 
     cm.addMap(&hm);
     const HoldCommandMapping *holdMappingPtr =
@@ -143,7 +126,7 @@ TEST(CommandMapper, addHoldRepeatMapping_successfully_adds_mapping_normal_case)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldRepeatCommandMapping mappingForCompare(&drivers, {&tc}, ms, true);
+    HoldRepeatCommandMapping mappingForCompare(&drivers, {&tc}, &ms, true);
 
     cm.addMap(&mappingForCompare);
     const HoldRepeatCommandMapping *holdRepeatMappingPtr =
@@ -159,7 +142,7 @@ TEST(CommandMapper, addToggleMapping_successfully_adds_mapping_normal_case)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    ToggleCommandMapping mappingForCompare(&drivers, {&tc}, ms);
+    ToggleCommandMapping mappingForCompare(&drivers, {&tc}, &ms);
 
     cm.addMap(&mappingForCompare);
     const ToggleCommandMapping *toggleMappingPtr =
@@ -175,7 +158,7 @@ TEST(CommandMapper, addPressMapping_successfully_adds_mapping_normal_case)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    PressCommandMapping mappingForCompare(&drivers, {&tc}, ms);
+    PressCommandMapping mappingForCompare(&drivers, {&tc}, &ms);
 
     cm.addMap(&mappingForCompare);
     const PressCommandMapping *pressMappingPtr =

@@ -45,7 +45,7 @@ public:
     ToggleCommandMapping(
         Drivers *drivers,
         const std::vector<Command *> cmds,
-        const GenericRemoteMapState &rms)
+        const GenericRemoteMapState *rms)
         : CommandMapping(drivers, cmds, rms),
           pressed(false),
           toggled(false)

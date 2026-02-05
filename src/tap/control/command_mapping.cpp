@@ -30,7 +30,7 @@ namespace control
 CommandMapping::CommandMapping(
     Drivers *drivers,
     const std::vector<Command *> cmds,
-    const GenericRemoteMapState &rms)
+    const GenericRemoteMapState *rms)
     : mapState(rms),
       mappedCommands(cmds),
       drivers(drivers)
@@ -52,7 +52,7 @@ bool mapStateEqual(const CommandMapping &cm1, const CommandMapping &cm2)
 
 bool CommandMapping::mappingSubset(const GenericRemoteMapState &mapState)
 {
-    return this->mapState.stateSubsetOf(mapState);
+    return this->mapState->stateSubsetOf(mapState);
 }
 
 void CommandMapping::addCommands()
