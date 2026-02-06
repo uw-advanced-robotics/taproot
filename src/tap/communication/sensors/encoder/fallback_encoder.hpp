@@ -38,7 +38,7 @@ public:
 
     tap::algorithms::WrappedFloat getPosition() const override
     {
-        const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        this->syncEncoders();
         int onlineEncoders = 0;
         float position = 0;
         if (this->validFallbackEncoder(0))
@@ -65,7 +65,7 @@ public:
 
     float getVelocity() const override
     {
-        const_cast<FallbackEncoder<COUNT>*>(this)->syncEncoders();
+        this->syncEncoders();
         int onlineEncoders = 0;
         float velocity = 0;
         if (this->validFallbackEncoder(0))
