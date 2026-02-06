@@ -27,10 +27,12 @@ BOARDS = ["rm-dev-board-a", "rm-dev-board-c", "nucleo-f446re"]
 
 BOARD_OPTIONS = {
     "rm-dev-board-a": {
-        "taproot:hard_aliases": "usart6:RefSerial"
+        "taproot:hard_aliases": "usart6:RefSerial",
+        "taproot:board:digital_out_pins": "Laser"
     },
     "rm-dev-board-c": {
-        "taproot:hard_aliases": "usart6:RefSerial"
+        "taproot:hard_aliases": "usart6:RefSerial",
+        "taproot:board:digital_out_pins": "Laser"
     },
     "nucleo-f446re": {}
 }
