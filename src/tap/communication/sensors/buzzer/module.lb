@@ -30,7 +30,7 @@ def init(module):
 def prepare(module, options):
     module.depends(":communication:gpio:pwm")
 
-    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+    board_info = board_info_parser.get_board_info()
 
     buzzer_pins = [pin for pin in board_info.gpio_pins if pin.alias == BUZZER_PIN]
 

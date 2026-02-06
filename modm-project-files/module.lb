@@ -59,7 +59,7 @@ def prepare(module, options):
     return True
 
 def build(env):
-    board_info = board_info_parser.parse_board_info(env[":dev_board"])
+    board_info = board_info_parser.get_board_info()
     
     # set default options based on specified dev board if necessary
     modm_hal_options = default_options(board_info)

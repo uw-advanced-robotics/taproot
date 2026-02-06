@@ -28,7 +28,7 @@ def prepare(module, options):
     module.depends(":communication:sensors:imu_heater")
     module.depends(":communication:sensors:imu")
 
-    spi = board_info_parser.parse_board_info(options[":dev_board"]).spi.aliased("Imu")
+    spi = board_info_parser.get_board_info().spi.aliased("Imu")
     # Currently the interrupts are not used, only need to check these two
     return spi is not None and any(pin.display_name() == "ImuCS1Accel" for pin in spi.gpios) and any(pin.display_name() == "ImuCS1Gyro" for pin in spi.gpios)
 

@@ -33,24 +33,24 @@
 
     <!-- initialize 9 green Leds and 1 red LED -->
     <gpio-group name="Led">
-        <out alias="A" name="GpioG8" />
-        <out alias="B" name="GpioG7" />
-        <out alias="C" name="GpioG6" />
-        <out alias="D" name="GpioG5" />
-        <out alias="E" name="GpioG4" />
-        <out alias="F" name="GpioG3" />
-        <out alias="G" name="GpioG2" />
-        <out alias="H" name="GpioG1" />
-        <out alias="Green" name="GpioF14" />
-        <out alias="Red" name="GpioE11" />
+        <out alias="A" name="GpioG8" inverted="True" />
+        <out alias="B" name="GpioG7" inverted="True" />
+        <out alias="C" name="GpioG6" inverted="True" />
+        <out alias="D" name="GpioG5" inverted="True" />
+        <out alias="E" name="GpioG4" inverted="True" />
+        <out alias="F" name="GpioG3" inverted="True" />
+        <out alias="G" name="GpioG2" inverted="True" />
+        <out alias="H" name="GpioG1" inverted="True" />
+        <out alias="Green" name="GpioF14" inverted="True" />
+        <out alias="Red" name="GpioE11" inverted="True" />
     </gpio-group>
 
     <!-- initialize 4 24V outputs -->
     <gpio-group name="PowerOut" default="High">
-        <out alias="1" name="GpioH2" />
-        <out alias="2" name="GpioH3" />
-        <out alias="3" name="GpioH4" />
-        <out alias="4" name="GpioH5" />
+        <out alias="Port1" name="GpioH2" />
+        <out alias="Port2" name="GpioH3" />
+        <out alias="Port3" name="GpioH4" />
+        <out alias="Port4" name="GpioH5" />
     </gpio-group>
 
     <gpio alias="A" name="GpioI0">

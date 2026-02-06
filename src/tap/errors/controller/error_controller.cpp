@@ -20,7 +20,6 @@
 #include "error_controller.hpp"
 
 #include "tap/algorithms/strtok.hpp"
-#include "tap/communication/gpio/leds.hpp"
 #include "tap/drivers.hpp"
 
 #include "modm/container/linked_list.hpp"

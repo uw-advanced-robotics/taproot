@@ -26,10 +26,9 @@ def init(module):
 def prepare(module, options):
     module.depends(
         ":drivers",
-        ":communication:serial:terminal_serial",
-        ":communication:gpio:leds")
+        ":communication:serial:terminal_serial")
 
-    return board_info_parser.parse_board_info(options[":dev_board"]).uart.aliased("TerminalSerial") != None
+    return board_info_parser.get_board_info().uart.aliased("TerminalSerial") != None
 
 def build(env):
     env.outbasepath = "taproot/src/tap/errors"

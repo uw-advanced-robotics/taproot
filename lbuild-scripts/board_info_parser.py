@@ -28,7 +28,7 @@ from collections import namedtuple, defaultdict
 from functools import lru_cache
 from lbuild.exception import LbuildValidateException as ValidateException
 
-parsed_board_info = {}
+parsed_board_info = None
 
 class Instance(ABC):
     raw_name: Union[str, int]
@@ -205,12 +205,15 @@ class Gpio(Instance):
     adc: AdcFeature
     timer: TimerFeature
 
+    inverted: Optional[bool]
+
     def __init__(self, xml, comment):
         assert xml.tag in  ["gpio", "out", "in", "pwm", "analog"]
         super().__init__(xml, comment)
 
         self.adc = None
         self.timer = None
+        self.inverted = None
 
         for child in xml.iterchildren():
             if child.tag == "adc":
@@ -226,6 +229,9 @@ class Gpio(Instance):
         elif self.gpio_type == "pwm":
             self.timer = TimerFeature(int(xml.get("timer")[5:]), xml.get("channel"))
             self.timer.timer.add_pin(self)
+        
+        if self.gpio_type == "in" or self.gpio_type == "out":
+            self.inverted = xml.get("inverted") == "True"
 
     def get_used_pins(self) -> List[str]:
         return [self.raw_name]
@@ -251,7 +257,7 @@ class GpioGroup(Instance):
         super().__init__(xml, comment)
 
         self.alias = xml.get("alias")
-        self.default = xml.get("default", None)
+        self.default = xml.get("default", "Low")
 
         self.gpios = [GroupGpio(child, None, self) for child in xml.iterchildren()]
 
@@ -422,6 +428,26 @@ class BoardInfo:
             for pin in instance.get_used_pins():
                 self.pin_to_usage[pin].add(instance)
 
+    def update_aliases(self, aliases):
+        if aliases == "":
+            return
+
+        aliases = {
+            a.split(":")[0].lower(): a.split(":")[1] for a in aliases.split(",")
+        }
+
+        for instance in self.i2c.values + self.spi.values + self.uart.values:
+            name = instance.display_name().lower()
+
+            if name in aliases:
+                if instance.alias is not None:
+                    raise Exception(f"Cannot give alias {aliases[name]} to {name} that is already called {instance.alias}!")
+                instance.alias = aliases[name]
+        
+        self.i2c.recompute_aliases()
+        self.uart.recompute_aliases()
+        self.spi.recompute_aliases()
+
     def validate_configuration(self, env):
         def extract_pin_defines(pins: str) -> str:
             pins = [pin.strip() for pin in str.split(pins, ",")]
@@ -437,6 +463,9 @@ class BoardInfo:
             raise ValidateException("Duplicate pin definitions")
 
         for pin in pins:
+            if pin not in self.gpio_pins.aliases.keys():
+                raise ValidateException(f"Pin {pin} is not defined in the board.xml file!")
+
             usages = self.pin_to_usage[self.gpio_pins.aliased(pin).raw_name]
 
             for usage in usages:
@@ -534,22 +563,33 @@ def get_modm_device(chip):
     return device
 
 
-def parse_board_info(device, env=None):
+def parse_board_info(device, hard_aliases):
     global parsed_board_info
 
-    device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
-    device_file_names = [dfn for dfn in device_file_names if device in dfn]
-    assert len(device_file_names) == 1, f"Device {device} not found or there are multiple device files with the device name"
-    device = device_file_names[0]
+    if parsed_board_info is None:
+        device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
+        matching_device_file_names = [dfn for dfn in device_file_names if f"{device}.xml" in dfn]
+        device_count = len(matching_device_file_names)
 
-    if device not in parsed_board_info:
+        if device_count == 0:
+            pretty = [s.split("\\")[-1] for s in device_file_names]
+            pretty = [s.split("/")[-1] for s in pretty]
+            pretty = [s.split(".")[0] for s in pretty]
+            raise ValidateException(f"Device {device} not found. Options are: {pretty}")
+        elif device_count > 1:
+            raise ValidateException(f"Device {device} has multiple xml files! Files are: {matching_device_file_names}")
+
         # parse the xml-file if we haven't already
         parser = lxml.etree.XMLParser(no_network=True)
-        xmlroot = lxml.etree.parse(device_file_names[0], parser=parser)
+        xmlroot = lxml.etree.parse(matching_device_file_names[0], parser=parser)
         xmlroot.xinclude()
-        parsed_board_info[device] = BoardInfo(xmlroot.getroot())
+        parsed_board_info = BoardInfo(xmlroot.getroot())
+        parsed_board_info.update_aliases(hard_aliases)
 
-    if env is not None:
-        parsed_board_info[device].update_env(env)
+    return parsed_board_info
 
-    return parsed_board_info[device]
+def get_board_info():
+    return parsed_board_info
+
+def validate_board_info(env):
+    parsed_board_info.update_env(env)

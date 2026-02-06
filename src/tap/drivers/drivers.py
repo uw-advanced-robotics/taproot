@@ -78,6 +78,14 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "module-dependencies": [":communication:gpio:leds"],
     },
     {
+        "object-name": "gpio::PowerOuts",
+        "mock-object-name": nice_mock("mock::PowerOutsMock"),
+        "src-file": "tap/communication/gpio/power_outs.hpp",
+        "mock-header": "tap/mock/power_outs_mock.hpp",
+        "constructor": "",
+        "module-dependencies": [":communication:gpio:power_outs"],
+    },
+    {
         "object-name": "gpio::Pwm",
         "mock-object-name": nice_mock("mock::PwmMock"),
         "src-file": "tap/communication/gpio/pwm.hpp",

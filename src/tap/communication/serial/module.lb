@@ -28,13 +28,7 @@ class Remote(Module):
         module.depends(":architecture")
         module.depends(":control")
 
-        return True
-
-    def validate(self, env):
-        board_info = board_info_parser.parse_board_info(env[":dev_board"])  
-        remote_uart = board_info.uart.aliased("Remote")
-        if remote_uart is None:
-            raise ValidateException("Board does not have a specified Remote UART port!\nSpecify one with an alias or set it in the board.xml file!")
+        return board_info_parser.get_board_info().uart.aliased("Remote") is not None
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
@@ -50,23 +44,11 @@ class RefSerial(Module):
     def prepare(self, module, options):
         module.depends(":architecture")
         module.depends(":board")
-        module.add_option(
-            StringOption(
-                name="uart_port",
-                description="Which uart port the referee system is connected to."))
-        return True
 
-    def validate(self, env):
-        board_info = board_info_parser.parse_board_info(env[":dev_board"], env)
-        uart_port = env["uart_port"]
-
-        if not any(uart.display_name() == uart_port for uart in board_info.uart):
-            raise ValidateException(f"Unabled to find {uart_port} for the board. Valid options are: {', '.join(uart.display_name() for uart in board_info.uart)}")
+        return board_info_parser.get_board_info().uart.aliased("RefSerial") is not None
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/serial"
-        env.substitutions = {"uart_port": env["uart_port"]}
-        env.template("ref_serial_constants.hpp.in", "ref_serial_constants.hpp")
         env.copy("ref_serial.cpp")
         env.copy("ref_serial.hpp")
         env.copy("ref_serial_data.hpp")
@@ -83,7 +65,7 @@ class TerminalSerial(Module):
     def prepare(self, module, options):
         module.depends(":architecture")
 
-        board_info = board_info_parser.parse_board_info(options[":dev_board"])  
+        board_info = board_info_parser.get_board_info()  
         terminal_serial_uart = board_info.uart.aliased("TerminalSerial")
         return terminal_serial_uart != None
 
@@ -111,7 +93,7 @@ def prepare(module, options):
     module.add_submodule(RefSerial())
     module.add_submodule(TerminalSerial())
 
-    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+    board_info = board_info_parser.get_board_info()
     for port in board_info.uart:
         module.add_option(
             NumericOption(
@@ -127,7 +109,7 @@ def build(env):
     full_port_name = {}
     configured_baud_rate = {}
 
-    board_info = board_info_parser.parse_board_info(env[":dev_board"])
+    board_info = board_info_parser.get_board_info()
     for port in board_info.uart:
         configured_baud_rate[port.raw_name] = env[f":::{port.name().lower()}.baud_rate"]
 

@@ -17,27 +17,10 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_LEDS_MOCK_HPP_
-#define TAPROOT_LEDS_MOCK_HPP_
+#include "power_outs_mock.hpp"
 
-#include <gmock/gmock.h>
-
-#include "tap/communication/gpio/leds.hpp"
-
-namespace tap
+namespace tap::mock
 {
-namespace mock
-{
-class LedsMock : public tap::gpio::Leds
-{
-public:
-    LedsMock();
-    virtual ~LedsMock();
-
-    MOCK_METHOD(void, init, (), (override));
-    MOCK_METHOD(void, set, (LedPin pin, bool set), (override));
-};  // class LedsMock
-}  // namespace mock
-}  // namespace tap
-
-#endif  // TAPROOT_LEDS_MOCK_HPP_
+PowerOutsMock::PowerOutsMock() {}
+PowerOutsMock::~PowerOutsMock() {}
+}  // namespace tap::mock

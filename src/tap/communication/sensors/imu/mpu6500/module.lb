@@ -29,7 +29,7 @@ def prepare(module, options):
     module.depends(":communication:sensors:imu_heater")
     module.depends(":communication:sensors:imu")
 
-    spi = board_info_parser.parse_board_info(options[":dev_board"]).spi.aliased("Imu")
+    spi = board_info_parser.get_board_info().spi.aliased("Imu")
     return spi is not None and any(pin.display_name() == "ImuNss" for pin in spi.gpios)
 
 def build(env):

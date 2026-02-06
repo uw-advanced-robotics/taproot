@@ -28,9 +28,9 @@
     </spi>
 
     <gpio-group name="Led">
-        <out alias="Red" name="GpioH12" />
-        <out alias="Green" name="GpioH11" />
-        <out alias="Blue" name="GpioH10" />
+        <out alias="Red" name="GpioH12" inverted="True" />
+        <out alias="Green" name="GpioH11" inverted="True" />
+        <out alias="Blue" name="GpioH10" inverted="True" />
     </gpio-group>
 
     <gpio alias="C1" name="GpioE9">

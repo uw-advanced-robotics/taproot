@@ -23,6 +23,18 @@ from typing import Iterable, Dict, Any
 
 PROJECT_XML_TEMPLATE_PATH = "ci-project-template.xml"
 
+BOARDS = ["rm-dev-board-a", "rm-dev-board-c", "nucleo-f446re"]
+
+BOARD_OPTIONS = {
+    "rm-dev-board-a": {
+        "taproot:hard_aliases": "usart6:RefSerial"
+    },
+    "rm-dev-board-c": {
+        "taproot:hard_aliases": "usart6:RefSerial"
+    },
+    "nucleo-f446re": {}
+}
+
 def hash_dict(dict: Dict[str, Any]):
     hasher = hashlib.sha256()
 
@@ -46,7 +58,8 @@ def generate_project_xml(board: str, options: Dict[str, Any], modules: Iterable[
         file = file.replace("$BOARD$", board)
         file = file.replace("$OPTIONS$", 
             "\n\t".join(
-                f"<option name=\"{o}\">{v}</option>" for o, v in options.items()
+                [f"<option name=\"{o}\">{v}</option>" for o, v in options.items()] +
+                [f"<option name=\"{o}\">{v}</option>" for o, v in BOARD_OPTIONS[board].items()]
             )
         )
         file = file.replace("$MODULES$", 

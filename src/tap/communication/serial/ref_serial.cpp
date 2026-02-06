@@ -22,7 +22,6 @@
 #include "tap/algorithms/crc.hpp"
 #include "tap/architecture/clock.hpp"
 #include "tap/architecture/endianness_wrappers.hpp"
-#include "tap/communication/serial/ref_serial_constants.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
@@ -31,7 +30,7 @@ using namespace tap::arch;
 namespace tap::communication::serial
 {
 RefSerial::RefSerial(Drivers* drivers)
-    : DJISerial(drivers, bound_ports::REF_SERIAL_UART_PORT),
+    : DJISerial(drivers, Uart::UartPort::RefSerial),
       robotData(),
       gameData(),
       receivedDpsTracker(),

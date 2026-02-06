@@ -50,7 +50,7 @@ def prepare(module, options):
             description="Comma-separated list of PWM pins",
             default=""))
 
-    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+    board_info = board_info_parser.get_board_info()
 
     for instance in board_info.i2c.values + board_info.spi.values + board_info.uart.values:
         if instance.alias is None:
@@ -79,12 +79,12 @@ def get_apb_map(chip):
     return apb_map
 
 def validate(env):
-    metadata = board_info_parser.parse_board_info(env[":dev_board"], env)
+    metadata = board_info_parser.get_board_info()
 
     metadata.validate_configuration(env)
 
 def build(env):
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    metadata = board_info_parser.get_board_info()
     
     def extract_pin_defines(pins: str) -> str:
         pins = [pin.strip() for pin in str.split(pins, ",")]

@@ -38,7 +38,7 @@ def prepare(module, options):
 
 def validate(env):
     # find imu heater timer
-    metadata = board_info_parser.parse_board_info(env[":dev_board"])
+    metadata = board_info_parser.get_board_info()
 
     pins = metadata.get_all_gpio_pins()
     if "ImuHeater" not in pins:

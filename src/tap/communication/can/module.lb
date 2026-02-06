@@ -31,7 +31,7 @@ def prepare(module, options):
     return True
 
 def build(env):
-    board_info = board_info_parser.parse_board_info(env[":dev_board"])
+    board_info = board_info_parser.get_board_info()
 
     can = { can.name().lower(): can for can in board_info.can }
 

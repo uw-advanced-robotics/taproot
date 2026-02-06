@@ -16,6 +16,7 @@
 # along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
+import re
 sys.path.append(repopath("lbuild-scripts"))
 import board_info_parser
 from collections import defaultdict
@@ -92,9 +93,15 @@ class Digital(Module):
         env.template("digital.cpp.in", "digital.cpp")
         env.template("digital.hpp.in", "digital.hpp")
 
-class Leds(Module):
+class GpioGroup(Module):
+    def __init__(self, group):
+        # TODO: https://www.grammar.cl/Notes/Plural_Nouns.htm
+        self.name = group.name() + "s"
+        self.file_name = re.sub('(?<!^)(?=[A-Z])', '_', self.name).lower()
+        self.group = group
+
     def init(self, module):
-        module.name = ":communication:gpio:leds"
+        module.name = f":communication:gpio:{self.file_name}"
 
     def prepare(self, module, options):
         module.depends(":board")
@@ -102,8 +109,15 @@ class Leds(Module):
 
     def build(self, env):
         env.outbasepath = "taproot/src/tap/communication/gpio"
-        env.template("leds.cpp.in", "leds.cpp")
-        env.template("leds.hpp.in", "leds.hpp")
+
+        env.substitutions = {
+            "file_name": self.file_name,
+            "name": self.name,
+            "group": self.group
+        }
+
+        env.template("gpio_group.cpp.in", f"{self.file_name}.cpp")
+        env.template("gpio_group.hpp.in", f"{self.file_name}.hpp")
 
 class Pwm(Module):
     def __init__(self, board_info):
@@ -152,10 +166,14 @@ def init(module):
 def prepare(module, options):
     module.depends(":board")
 
-    board_info = board_info_parser.parse_board_info(options[":dev_board"])
+    board_info = board_info_parser.get_board_info()
     module.add_submodule(Analog(board_info))
     module.add_submodule(Digital(board_info))
-    module.add_submodule(Leds())
+
+    for group in board_info.gpio_groups:
+        
+        module.add_submodule(GpioGroup(group))
+
     module.add_submodule(Pwm(board_info))
 
     return True

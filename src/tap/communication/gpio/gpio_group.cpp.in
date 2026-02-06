@@ -17,15 +17,42 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_REF_SERIAL_CONSTANTS_HPP_
-#define TAPROOT_REF_SERIAL_CONSTANTS_HPP_
+#include "{{ file_name }}.hpp"
 
-#include "uart.hpp"
+#include "tap/board/board.hpp"
+#include "tap/util_macros.hpp"
 
-namespace tap::communication::serial::bound_ports
+using namespace Board;
+
+namespace tap
 {
-    static constexpr Uart::UartPort REF_SERIAL_UART_PORT = Uart::UartPort::{{ uart_port }};
-}  // namespace tap::communication::serial::bound_ports
+namespace gpio
+{
+void {{ name }}::init()
+{
+#ifndef PLATFORM_HOSTED
+    // init {{ name }}
+    {{ name }}Port::setOutput(modm::Gpio::{{ group.default }});
+#endif
+}
 
-#endif  // TAPROOT_REF_SERIAL_CONSTANTS_HPP_
+void {{ name  }}::set({{ name }}::{{ group.name() }}Pin pin, bool set)
+{
+#ifdef PLATFORM_HOSTED
+    UNUSED(pin);
+    UNUSED(set);
+#else
+    switch (pin)
+    {
+%% for pin in group.gpios
+        case {{ name  }}::{{ group.name() }}Pin::{{ pin.alias }}:
+            {{ pin.display_name() }}::set(set);
+            break;
+%% endfor
+    }
+#endif
+}
+}  // namespace gpio
+
+}  // namespace tap
 

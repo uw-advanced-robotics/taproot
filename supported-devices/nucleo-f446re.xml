@@ -1,0 +1,42 @@
+<board>
+    <controller chip="stm32f446ret6">
+        <clock frequency="180" crystal="16">
+            <prescalars ahb="1" apb1="4" apb2="2" />
+            <pll m="8" n="180" p="2" />
+        </clock> 
+    </controller>
+    
+    <can name="1" rx="GpioA11" tx="GpioA12" />
+    <can name="2" rx="GpioB12" tx="GpioB13" />
+
+    <usart name="1" tx="GpioB6" rx="GpioA10" />
+    <usart name="2" alias="StLink" tx="GpioA2" rx="GpioA3" />
+    <usart name="3" tx="GpioC10" rx="GpioC11" />
+    <uart name="4" tx="GpioA0" rx="GpioA1" />
+    <uart name="5" tx="GpioC12" rx="GpioD2" />
+
+    <i2c name="1" sda="GpioB7" scl="GpioB8" />
+
+    <spi name="1" sck="GpioA9" poci="GpioB14" pico="GpioB15">
+        <out alias="Nss" name="GpioB9" />
+    </spi>
+
+    <!-- initialize 9 green Leds and 1 red LED -->
+    <gpio-group name="Led">
+        <out alias="A" name="GpioC0" />
+        <out alias="B" name="GpioC1" />
+        <out alias="C" name="GpioB0" />
+        <out alias="Green" name="GpioA5" />
+    </gpio-group>
+
+    <in alias="Button" name="GpioC13" inverted="True" />
+
+    <gpio alias="PB5" name="GpioB5" />
+
+    <gpio alias="PA7" name="GpioA7">
+        <adc name="Adc1" in="In7" />
+    </gpio>
+    <gpio alias="PA6" name="GpioA6">
+        <adc name="Adc2" in="In6" />
+    </gpio>
+</board>

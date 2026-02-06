@@ -23,6 +23,7 @@ sys.path.append(repopath("lbuild-scripts"))
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 from add_immutable_warning import add_immutable_warning
 from subprojects import build_subproject
+import board_info_parser
 
 def init(repo):
     repo.name = "taproot"
@@ -41,12 +42,21 @@ def init(repo):
             description="Whether or not to rebuild modm HALs"))
 
     repo.add_option(
-        EnumerationOption(
+        StringOption(
             name="dev_board",
-            description="Which development board to be used",
-            enumeration=["rm-dev-board-a", "rm-dev-board-c"]))
+            description="Which development board to be used"))
+
+    repo.add_option(
+        StringOption(
+            name="hard_aliases",
+            default="",
+            description=
+            """Some modules require that aliases are known to be enabled, such as Remotes, Terminal Serial, and Ref Serial.
+            This option allows setting this through the pattern `<name>:<alias>,?`, i.e. `uart1:Remote`"""))
 
 def prepare(repo, options):
+    board_info_parser.parse_board_info(options[":dev_board"], options[":hard_aliases"])
+
     repo.add_modules_recursive("./src", modulefile="*.lb")
     repo.add_modules_recursive("./test", modulefile="*.lb")
     repo.add_modules_recursive("./modm-project-files", modulefile="*.lb")

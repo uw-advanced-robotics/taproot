@@ -1,0 +1,65 @@
+/*
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef TAPROOT_{{ file_name | upper }}_HPP_
+#define TAPROOT_{{ file_name | upper }}_HPP_
+
+#include <cstdint>
+
+#include "tap/util_macros.hpp"
+
+namespace tap
+{
+namespace gpio
+{
+class {{ name }}
+{
+public:
+    {{ name }}() = default;
+    DISALLOW_COPY_AND_ASSIGN({{ name }})
+    mockable ~{{ name }}() = default;
+
+
+    enum {{ group.name() }}Pin
+    {
+%% for pin in group.gpios
+        {{ pin.alias }}{% if loop.first %} = 0{% endif %}{% if not loop.last %},{% endif %}
+%% endfor
+    };
+
+    /**
+     * Initializes the pins in output mode and settting the pins to their default.
+     */
+    mockable void init();
+
+    /**
+     * Sets a given pin to either high or low.
+     *
+     * @param[in] pin the pin to set
+     * @param[in] set the state of the pin to set
+     */
+    mockable void set({{ group.name() }}Pin pin, bool set);
+};  // class {{ name  }}
+
+}  // namespace gpio
+
+}  // namespace tap
+
+#endif  // TAPROOT_{{ file_name | upper }}_HPP_
+

@@ -45,6 +45,10 @@ MODULES_TO_MOCK = {
         "leds_mock.cpp",
         "leds_mock.hpp",
     },
+    ":communication:gpio:power_outs": {
+        "power_outs_mock.cpp",
+        "power_outs_mock.hpp",
+    },
     ":communication:gpio:pwm": {
         "pwm_mock.cpp",
         "pwm_mock.hpp",

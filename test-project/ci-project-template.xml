@@ -9,7 +9,6 @@
     <option name="taproot:rebuild_modm">True</option>
 
     <!-- Makes sure that the code configures and compiles -->
-    <option name="taproot:communication:serial:ref_serial:uart_port">Usart6</option>
     <option name="taproot:board:digital_in_pins"></option>
     <option name="taproot:board:digital_out_pins">Laser</option>
     <option name="taproot:board:pwm_pins"></option>

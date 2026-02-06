@@ -63,11 +63,11 @@ struct SystemClock
 
 
 %% macro configure_clocks(group, apb_clock_group="")
-%% if group in enabled_peripherals.keys()
-%% for periph in enabled_peripherals[group]
+    %% if group in enabled_peripherals.keys()
+        %% for periph in enabled_peripherals[group]
     static constexpr uint32_t {{ periph.name() }} = {{ apb_map[periph.name()] }}{{ apb_clock_group }};
-%% endfor
-%% endif
+        %% endfor
+    %% endif
 %% endmacro
 
 {{ configure_clocks("Spi") }}
@@ -102,26 +102,34 @@ struct SystemClock
 
 #ifndef PLATFORM_HOSTED
 
-%% for gpio_group in gpio_groups
-%% if gpio_group.comment is not none
+{% for gpio_group in gpio_groups %}
+    %% if gpio_group.comment is not none
 // {{ gpio_group.comment }}
-%% endif
+    %% endif
 
-%% for gpio in gpio_group.gpios
+    %% for gpio in gpio_group.gpios
+        %% if gpio.inverted
+using {{ gpio.display_name() }} = GpioInverted<{{ gpio.name() }}>;
+        %% else
 using {{ gpio.display_name() }} = {{ gpio.name() }};
-%% endfor
+        %% endif
+    %% endfor
 using {{ gpio_group.name() }}sPort = SoftwareGpioPort<{% for gpio in gpio_group.gpios %}{{ gpio.display_name() }}{% if not loop.last %}, {% endif %}{% endfor %}>;
-
-%% endfor
+{% endfor %}
 
 %% macro configure_pins(comment, pin_group_name, pins)
     %% if pins|length > 0
 // {{ comment }}
-        {% if pins|length > 0 %}
+        %% if pins|length > 0 
             %% for pin in pins
-using {% if pin.gpio_type == "gpio" %}{{ pin_group_name }}{% endif %}{{ pin.display_name() }} = {{ pin.name() }};
+                %% set display_name = (pin_group_name if pin.gpio_type == "gpio" else "") + pin.display_name()
+                %% if pin.inverted
+using {{ display_name }} = GpioInverted<{{ pin.name() }}>;
+                %% else
+using {{ display_name }} = {{ pin.name() }};
+                %% endif
             %% endfor
-        {% endif %}
+        %% endif 
 using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{% if pin.gpio_type == "gpio" %}{{ pin_group_name }}{% endif %}{{ pin.display_name() }}{% if not loop.last %}, {% endif %}{% endfor %}>;
     %% endif
 %% endmacro
@@ -132,28 +140,28 @@ using {{ pin_group_name }}s = SoftwareGpioPort<{% for pin in pins %}{% if pin.gp
 {{ configure_pins("Initialize digital output pins", "DigitalOutPin", digital_out_pins) }}
 
 %% for spi in spis
-%% if spi.comment is not none
+    %% if spi.comment is not none
 // {{ spi.comment }}
-%% endif
+    %% endif
 using {{ spi.display_name() }}Sck = {{ spi.sck }};
 using {{ spi.display_name() }}Poci = {{ spi.poci }};
 using {{ spi.display_name() }}Pico = {{ spi.pico }};
-%% for spi_gpio in spi.gpios
+    %% for spi_gpio in spi.gpios
 using {{ spi_gpio.display_name() }} = {{ spi_gpio.name() }};
-%% endfor
+    %% endfor
 using {{ spi.display_name() }}{% if spi.alias is not none %}Spi{% endif %} = SpiMaster{{ spi.raw_name }};
 
 %% endfor
 
 %% for i2c in i2cs
-%% if i2c.comment is not none
+    %% if i2c.comment is not none
 // {{ i2c.comment }}
-%% endif
+    %% endif
 using {{ i2c.display_name() }}Sda = {{ i2c.sda }};
 using {{ i2c.display_name() }}Scl = {{ i2c.scl }};
-%% for i2c_gpio in i2c.gpios
+    %% for i2c_gpio in i2c.gpios
 using {{ i2c_gpio.display_name() }} = {{ i2c_gpio.name() }};
-%% endfor
+    %% endfor
 using {{ i2c.display_name()}}{% if i2c.alias is not none %}I2c{% endif %} = I2cMaster{{ i2c.raw_name }};
 
 %% endfor
@@ -172,7 +180,7 @@ inline void initialize()
 #ifndef PLATFORM_HOSTED
 
 %% for spi in spis
-%% set name = spi.display_name() + ("" if spi.alias is none else "Spi")
+    %% set name = spi.display_name() + ("" if spi.alias is none else "Spi")
 template <uint32_t Baudrate = 10000000>
 inline void initialize{{ name }}()
 {
@@ -185,7 +193,7 @@ inline void initialize{{ name }}()
 
 
 %% for i2c in i2cs
-%% set name = i2c.display_name() + ("" if i2c.alias is none else "I2c")
+    %% set name = i2c.display_name() + ("" if i2c.alias is none else "I2c")
 template <uint32_t Baudrate = 100000>
 inline void initialize{{ name }}({{ name }}::PullUps pullups = {{ name }}::PullUps::Internal)
 {
