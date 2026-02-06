@@ -34,7 +34,9 @@ BOARD_OPTIONS = {
         "taproot:hard_aliases": "usart6:RefSerial",
         "taproot:board:digital_out_pins": "Laser"
     },
-    "nucleo-f446re": {}
+    "nucleo-f446re": {
+        "taproot:hard_aliases": "usart3:RefSerial",
+    }
 }
 
 def hash_dict(dict: Dict[str, Any]):

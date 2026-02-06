@@ -29,23 +29,27 @@ def init(module):
         "imu heating element"
 
 metadata = None
+timer = None
 
 def prepare(module, options):
+    global metadata
+
     module.depends(":board")
     module.depends(":drivers")
     module.depends(":communication:gpio:pwm")
-    return True
+
+    metadata = board_info_parser.get_board_info()
+    pins = metadata.get_all_gpio_pins()
+
+    return "ImuHeater" in pins
 
 def validate(env):
     # find imu heater timer
-    metadata = board_info_parser.get_board_info()
-
     pins = metadata.get_all_gpio_pins()
-    if "ImuHeater" not in pins:
-        raise ValidateException("No IMU Heater pin was found. Please make sure that it exists in your board.xml file")
     heater_pin = pins["ImuHeater"]
     if heater_pin.timer is None:
         raise ValidateException("IMUHeater pin has no assosciated timer pwm channel. Please make sure to set it as a pwm pin or associate a timer.")
+
     global timer
     timer = heater_pin.timer.timer.name()
 
