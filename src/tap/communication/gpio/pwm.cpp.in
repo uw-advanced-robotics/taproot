@@ -88,6 +88,9 @@ void Pwm::setTimerFrequency(Timer timer, uint32_t frequency)
     UNUSED(timer);
     UNUSED(frequency);
 #else
+%% if pins | length == 0
+    UNUSED(frequency);
+%% endif
     switch (timer)
     {
 %% for timer in timers if pins | selectattr("timer.timer", "==", timer) | list | length > 0

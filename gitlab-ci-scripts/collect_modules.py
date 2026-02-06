@@ -31,10 +31,6 @@ def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
     
     lbuild_discover = lambda args=[]: subprocess.run(['lbuild', *args, 'discover'], env={**dict(os.environ), **{"PYTHONIOENCODING": "utf-8"}}, capture_output=True, cwd=os.getcwd())
 
-    # xml = generate_project_xml("rm-dev-board-a", {}, [])
-    # device_discover = lbuild_discover(["-c", xml])
-    # os.remove(xml)
-    # devices = re.findall(b'Option\(dev_board\) = .* in \\[(.*)\\]', device_discover.stdout)[0].decode("utf-8").split(", ")
     devices = BOARDS
     print(f"Found {len(devices)} devices: {devices}")
 

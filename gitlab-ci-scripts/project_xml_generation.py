@@ -20,12 +20,16 @@ import sys
 import itertools
 import hashlib
 from typing import Iterable, Dict, Any
+from collections import defaultdict
+
+sys.path.append("../lbuild-scripts")
+import board_info_parser
 
 PROJECT_XML_TEMPLATE_PATH = "ci-project-template.xml"
 
-BOARDS = ["rm-dev-board-a", "rm-dev-board-c", "nucleo-f446re"]
+BOARDS = board_info_parser.get_available_devices()
 
-BOARD_OPTIONS = {
+BOARD_OPTIONS = defaultdict(dict, {
     "rm-dev-board-a": {
         "taproot:hard_aliases": "usart6:RefSerial",
         "taproot:board:digital_out_pins": "Laser"
@@ -35,9 +39,9 @@ BOARD_OPTIONS = {
         "taproot:board:digital_out_pins": "Laser"
     },
     "nucleo-f446re": {
-        "taproot:hard_aliases": "usart3:RefSerial",
+        "taproot:hard_aliases": "usart1:Remote,usart3:RefSerial",
     }
-}
+})
 
 def hash_dict(dict: Dict[str, Any]):
     hasher = hashlib.sha256()

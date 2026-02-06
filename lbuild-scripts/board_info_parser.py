@@ -17,6 +17,7 @@
 
 import glob
 import lxml
+import os
 
 from lbuild_utils import repo_path_rel_repolb
 
@@ -563,19 +564,27 @@ def get_modm_device(chip):
     return device
 
 
+def get_available_devices():
+    device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
+    device_file_names += glob.glob(os.getcwd() + "/supported-devices/*.xml")
+
+    devices = [s.split("\\")[-1] for s in device_file_names]
+    devices = [s.split("/")[-1] for s in devices]
+    devices = [s.split(".")[0] for s in devices]
+
+    return devices
+
 def parse_board_info(device, hard_aliases):
     global parsed_board_info
 
     if parsed_board_info is None:
         device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
+        device_file_names += glob.glob(os.getcwd() + "/supported-devices/*.xml")
         matching_device_file_names = [dfn for dfn in device_file_names if f"{device}.xml" in dfn]
         device_count = len(matching_device_file_names)
 
         if device_count == 0:
-            pretty = [s.split("\\")[-1] for s in device_file_names]
-            pretty = [s.split("/")[-1] for s in pretty]
-            pretty = [s.split(".")[0] for s in pretty]
-            raise ValidateException(f"Device {device} not found. Options are: {pretty}")
+            raise ValidateException(f"Device {device} not found. Options are: {get_available_devices()}")
         elif device_count > 1:
             raise ValidateException(f"Device {device} has multiple xml files! Files are: {matching_device_file_names}")
 
