@@ -23,7 +23,7 @@ from project_xml_generation import generate_project_xml, BOARDS
 
 
 REQUIRED_MODULES = {"taproot:build", "taproot:modm-project.xml", "taproot:testing", "taproot:testing:mock", "taproot:testing:tests"}
-IGNORED_MODULES = {"taproot:ci-scripts"}
+IGNORED_MODULES = {"taproot:ci-scripts", "taproot:docs"}
 ENFORCED_OPTIONS = {"rebuild_modm": True}
 
 def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
