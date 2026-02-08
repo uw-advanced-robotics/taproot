@@ -39,7 +39,7 @@ def init(module):
     module.description = "Error handler"
 
 def prepare(module, options):
-    module.depends(":drivers", ":architecture")
+    module.depends(":drivers", ":architecture", ":algorithms")
 
     module.add_submodule(TerminalSerial())
 
