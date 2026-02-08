@@ -21,7 +21,6 @@
 #define TAPROOT_ERROR_CONTROLLER_HPP_
 
 #include "tap/architecture/timeout.hpp"
-#include "tap/communication/serial/terminal_serial.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/container.hpp"
