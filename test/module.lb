@@ -206,7 +206,9 @@ class TaprootTests(Module):
             else:
                 env.copy("tap/communication/tcp-server/json_generation_tests.cpp")
         if env.has_module(":errors"):
-            env.copy("tap/errors")
+            env.copy("tap/errors/error_controller_tests.cpp")
+        if env.has_module(":errors:terminal_serial"):
+            env.copy("tap/errors/error_terminal_handler_tests.cpp")
         if env.has_module(":control"):
             env.copy("tap/control", ignore=env.ignore_files("scheduler_terminal_handler_tests.cpp"))
         if env.has_module(":control:terminal_serial"):

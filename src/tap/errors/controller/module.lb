@@ -19,17 +19,35 @@ import sys
 sys.path.append(repopath("scripts/lbuild-helpers"))
 import board_info_parser
 
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":errors:terminal_serial"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:serial:terminal_serial")
+        
+        return board_info_parser.get_board_info().uart.aliased("TerminalSerial") != None
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/errors"
+
+        env.copy("error_terminal_handler.hpp")
+        env.copy("error_terminal_handler.cpp")
+
 def init(module):
     module.name = ":errors"
     module.description = "Error handler"
 
 def prepare(module, options):
-    module.depends(
-        ":drivers",
-        ":communication:serial:terminal_serial")
+    module.depends(":drivers")
 
-    return board_info_parser.get_board_info().uart.aliased("TerminalSerial") != None
+    module.add_submodule(TerminalSerial())
+
+    return True
 
 def build(env):
     env.outbasepath = "taproot/src/tap/errors"
-    env.copy(".")
+
+    env.copy("system_error.hpp")
+    env.copy("error_controller.cpp")
+    env.copy("error_controller.hpp")

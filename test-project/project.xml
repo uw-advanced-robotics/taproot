@@ -11,6 +11,7 @@
 
     <!-- For RoboMaster Development Board Type A -->
     <option name="taproot:dev_board">rm-dev-board-a</option>
+    <option name="taproot:hard_aliases">Usart6:RefSerial,Uart7:TerminalSerial</option>
     <option name="taproot:board:digital_in_pins">A,B,C,D</option>
     <option name="taproot:board:digital_out_pins">E,F,G,H,Laser</option>
     <option name="taproot:board:analog_in_pins">S,T,U,V</option>
@@ -19,6 +20,7 @@
 
     <!-- For RoboMaster Development Board Type C --> <!--
     <option name="taproot:dev_board">rm-dev-board-c</option>
+    <option name="taproot:hard_aliases">Usart6:RefSerial</option>
     <option name="taproot:board:digital_in_pins"></option>
     <option name="taproot:board:digital_out_pins">Laser</option>
     <option name="taproot:board:analog_in_pins"></option>
@@ -91,6 +93,8 @@
     <module>taproot:docs</module>
     <module>taproot:drivers</module>
 
+    <module>taproot:errors</module>
+
     <module>taproot:ext</module>
     <module>taproot:ext:eigen</module>
     <module>taproot:ext:littlefs</module>
@@ -108,12 +112,12 @@
     <module>taproot:testing:tests</module>
     
     <!-- For RoboMaster Development Board Type A -->
-    <module>taproot:errors</module>
     <module>taproot:communication:gpio:power_outs</module>
     <module>taproot:communication:sensors:imu:mpu6500</module>
     <module>taproot:communication:sensors:imu:terminal_serial</module>
     <module>taproot:communication:serial:terminal_serial</module>
     <module>taproot:control:terminal_serial</module>
+    <module>taproot:errors:terminal_serial</module>
     <module>taproot:motor:terminal_serial</module>
     <!-- End For RoboMaster Development Board Type A -->
 

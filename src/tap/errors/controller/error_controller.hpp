@@ -36,12 +36,11 @@ class Drivers;
 namespace tap::errors
 {
 /**
- * The ErrorController stores the errors that are currently active and allows
- * the user to query errors via the terminal serial interface.
+ * The ErrorController stores the errors that are currently active.
  *
  * Use the `RAISE_ERROR` macro to add errors to the main ErrorController.
  */
-class ErrorController : public tap::communication::serial::TerminalSerialCallbackInterface
+class ErrorController
 {
 public:
     static constexpr std::size_t ERROR_LIST_MAX_SIZE = 16;
@@ -59,27 +58,13 @@ public:
      */
     mockable void addToErrorList(const SystemError& error);
 
-    void init();
-
-    bool terminalSerialCallback(char* inputLine, modm::IOStream& outputStream, bool) override;
-
-    void terminalSerialStreamCallback(modm::IOStream&) override {}
-
     modm::BoundedDeque<SystemError, ERROR_LIST_MAX_SIZE> getErrorList() const { return errorList; }
 
     bool removeSystemErrorAtIndex(error_index_t index);
 
 private:
-    static constexpr char USAGE[] =
-        "Usage: error <target>\n"
-        "  Where <target> is one of:\n"
-        "    - [-H]: displays possible commands.\n"
-        "    - [printall]: prints all errors in errorList, displaying their"
-        "description, lineNumber, fileName, and index.\n"
-        "    - [remove [index]]: removes the error at the given index. Example: error remove 1.\n"
-        "    - [removeall]: removes all errors from the errorList.\n";
-
     friend class ErrorControllerTester;
+    friend class ErrorTerminalHandler;
 
     Drivers* drivers;
 
@@ -87,11 +72,6 @@ private:
 
     void removeAllSystemErrors();
 
-    void displayAllErrors(modm::IOStream& outputStream);
-
-    void removeTerminalError(int index, modm::IOStream& outputStream);
-
-    void clearAllTerminalErrors(modm::IOStream& outputStream);
 };  // class ErrorController
 }  // namespace tap::errors
 

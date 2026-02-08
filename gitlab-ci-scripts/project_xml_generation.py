@@ -31,7 +31,7 @@ BOARDS = board_info_parser.get_available_devices()
 
 BOARD_OPTIONS = defaultdict(dict, {
     "rm-dev-board-a": {
-        "taproot:hard_aliases": "usart6:RefSerial",
+        "taproot:hard_aliases": "usart6:RefSerial,uart7:TerminalSerial",
         "taproot:board:digital_out_pins": "Laser"
     },
     "rm-dev-board-c": {

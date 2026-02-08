@@ -68,7 +68,7 @@ def build(env):
         # split up options
         supplied_options = supplied_options.split("\n")
         # remove leading/trailing whitespace
-        supplied_options = [option.strip("") for option in supplied_options]
+        supplied_options = [option.strip() for option in supplied_options]
         # split up option names and values
         supplied_options = [option.split(' ') for option in supplied_options]
         # remove blank options
