@@ -572,16 +572,20 @@ def get_available_devices():
     devices = [s.split("/")[-1] for s in devices]
     devices = [s.split(".")[0] for s in devices]
 
-    return devices
+    return set(devices)
 
 def parse_board_info(device, hard_aliases):
     global parsed_board_info
 
     if parsed_board_info is None:
-        device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
-        device_file_names += glob.glob(os.getcwd() + "/supported-devices/*.xml")
+        device_file_names = glob.glob(os.getcwd() + "/supported-devices/*.xml")
         matching_device_file_names = [dfn for dfn in device_file_names if f"{device}.xml" in dfn]
         device_count = len(matching_device_file_names)
+
+        if device_count == 0:
+            device_file_names = glob.glob(str(repo_path_rel_repolb(__file__, "supported-devices/*.xml")))
+            matching_device_file_names = [dfn for dfn in device_file_names if f"{device}.xml" in dfn]
+            device_count = len(matching_device_file_names)
 
         if device_count == 0:
             raise ValidateException(f"Device {device} not found. Options are: {get_available_devices()}")
