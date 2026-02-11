@@ -220,7 +220,7 @@ public:
     mockable modm::ResumableResult<void> deleteGraphicLayer(
         Tx::DeleteGraphicOperation graphicOperation,
         uint8_t graphicLayer,
-        bool doubleSend);
+        bool doubleSend = false);
 
     /**
      * This function and the ones below all configure the message header and sends the specified
