@@ -21,12 +21,11 @@
 #define TAPROOT_MOTOR_SPECIFIC_MENU_HPP_
 
 #include "tap/architecture/periodic_timer.hpp"
+#include "tap/errors/create_errors.hpp"
 
 #include "modm/ui/menu/abstract_menu.hpp"
 
 #include "dummy_allocator.hpp"
-
-#include "tap/errors/create_errors.hpp"
 
 namespace tap
 {
