@@ -384,7 +384,7 @@ TEST_F(RefSerialTransmitterTest, sendGraphic__characterMessage)
         });
 
     // When
-    refSerialTransmitter.sendGraphic(&msg);
+    refSerialTransmitter.sendGraphic(&msg, true, true, false);
 }
 
 TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails_to_send)
