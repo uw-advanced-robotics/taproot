@@ -59,7 +59,17 @@ void MotorSpecificMenu::draw()
     currIsInverted = associatedMotor->isMotorInverted();
     currEncoderWrapped = associatedMotor->getInternalEncoder().getEncoder().getWrappedValue();
     currRPM = associatedMotor->getInternalEncoder().getShaftRPM();
-    hasMotorBeenOffline = associatedMotor->hasMotorBeenOffline();
+    
+    if (associatedMotor->isMotorOnline()) {
+        motorWasOnline = true;
+    }
+
+    if (motorWasOnline) {
+        hasMotorBeenOffline = associatedMotor->hasMotorBeenOffline();
+        if (hasMotorBeenOffline) {
+            RAISE_ERROR(drivers, "Motor was disconnected");
+        }
+    }
 
     display << "  Motor ID: " << associatedMotor->getMotorIdentifier() << modm::endl
             << "  Des. Output: " << currDesiredOutput << modm::endl
