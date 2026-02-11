@@ -69,7 +69,7 @@ protected:
         EXPECT_CALL(drivers.uart, write(_, _, sizeof(T))).WillOnce(Return(true));
 
         // When
-        refSerialTransmitter.sendGraphic(&msg);
+        refSerialTransmitter.sendGraphic(&msg, true, true, false);
     }
 
     Drivers drivers;
