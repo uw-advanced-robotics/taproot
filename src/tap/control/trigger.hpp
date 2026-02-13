@@ -17,41 +17,47 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_COMMAND_MAPPER_HPP_
-#define TAPROOT_COMMAND_MAPPER_HPP_
+#ifndef TAPROOT_TRIGGER_HPP_
+#define TAPROOT_TRIGGER_HPP_
 
-#include <memory>
-#include <vector>
+#include <functional>
 
-#include <tap/control/trigger_binding.hpp>
-
-#include "tap/communication/serial/remote.hpp"
-#include "tap/util_macros.hpp"
+#include "tap/control/command.hpp"
+#include "tap/drivers.hpp"
 
 namespace tap
 {
-class Drivers;
 namespace control
 {
-class CommandMapping;
-
-class CommandMapper
+class Trigger
 {
 public:
-    explicit CommandMapper(Drivers *drivers) : drivers(drivers) {}
-    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-    mockable ~CommandMapper() = default;
+    Trigger(Drivers *drivers, std::function<bool()> condition);
 
-    mockable void pollTriggerBindings();
+    bool get() const { return condition(); };
 
-    mockable void addTriggerBinding(std::unique_ptr<TriggerBinding> binding);
+    Trigger operator&&(const Trigger &other) const;
+
+    Trigger operator||(const Trigger &other) const;
+
+    Trigger operator^(const Trigger &other) const;
+
+    Trigger operator!() const;
+
+    void onTrue(Command *command);
+    void onFalse(Command *command);
+    void whileTrue(Command *command);
+    void whileFalse(Command *command);
+    void toggleOnTrue(Command *command);
+    void toggleOnFalse(Command *command);
+    void onChange(Command *command);
+    void debounce(Command *command, uint32_t timeout);
 
 private:
     Drivers *drivers;
-    std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
-};  // class CommandMapper
-
+    std::function<bool()> condition;
+};
 }  // namespace control
 }  // namespace tap
 
-#endif  // TAPROOT_COMMAND_MAPPER_HPP_
+#endif

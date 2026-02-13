@@ -32,43 +32,18 @@ namespace tap
 {
 namespace control
 {
-void CommandMapper::handleKeyStateChange(
-    uint16_t key,
-    Remote::SwitchState leftSwitch,
-    Remote::SwitchState rightSwitch,
-    bool mouseL,
-    bool mouseR)
+void CommandMapper::pollTriggerBindings()
 {
-    // Make a new map state that represents the current state of the remote,
-    // to be passed in to each of the CommandMappings.
-    RemoteMapState mapstate;
-    mapstate.initLSwitch(leftSwitch);
-    mapstate.initRSwitch(rightSwitch);
-    mapstate.initKeys(key);
-    if (mouseL)
+    for (const auto& binding : triggerBindings)
     {
-        mapstate.initLMouseButton();
-    }
-    if (mouseR)
-    {
-        mapstate.initRMouseButton();
-    }
-
-    for (CommandMapping *cmdMap : commandsToRun)
-    {
-        cmdMap->executeCommandMapping(mapstate);
+        binding->execute();
     }
 }
 
-void CommandMapper::addMap(CommandMapping *mapping) { commandsToRun.push_back(mapping); }
-
-const CommandMapping *CommandMapper::getAtIndex(std::size_t index) const
+void CommandMapper::addTriggerBinding(std::unique_ptr<TriggerBinding> binding)
 {
-    if (index >= commandsToRun.size())
-    {
-        return nullptr;
-    }
-    return commandsToRun[index];
+    triggerBindings.push_back(std::make_unique<TriggerBinding>(binding));
 }
+
 }  // namespace control
 }  // namespace tap
