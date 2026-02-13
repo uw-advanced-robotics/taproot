@@ -9,6 +9,7 @@
 - Lots of files had their includes cleaned up, might need to reinclude those in your files.
 - Moved OLED display files (i.e. `tap/display/sh1106.hpp` -> `tap/display/sh1106/sh1106.hpp`)
 - Moved `tap::control::chassis::ChassisSubsystemInterface::getVelocityWorldRelative` to `tap::algorithms::odometry::getVelocityWorldRelative`
+- Changed the constructor of sequential_command to be a variadic template
 
 ## June 2025
 - Removed the automatic use of `MultiEncoder` for `(Double)DjiMotor`. 
