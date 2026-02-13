@@ -180,5 +180,49 @@ TEST(SequentialCommand, null_command_asserts_DEATH)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    ASSERT_DEATH({ SequentialCommand<1> command(nullptr); }, ".*");
+    ASSERT_DEATH(
+        { SequentialCommand<1> command(static_cast<NiceMock<CommandMock> *>(nullptr)); },
+        ".*");
+}
+
+TEST(SequentialCommand, VariadicConstructorCorrectlySequencesCommands)
+{
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+
+    ON_CALL(c1, getRequirementsBitwise()).WillByDefault(Return(1 << 0));
+    ON_CALL(c2, getRequirementsBitwise()).WillByDefault(Return(1 << 1));
+
+    ON_CALL(c1, isFinished()).WillByDefault(Return(true));
+    ON_CALL(c2, isFinished()).WillByDefault(Return(true));
+    ON_CALL(c1, isReady()).WillByDefault(Return(true));
+    ON_CALL(c2, isReady()).WillByDefault(Return(true));
+
+    SequentialCommand seq(&c1, &c2);
+    EXPECT_EQ(seq.getRequirementsBitwise(), (1 << 0) | (1 << 1));
+
+    {
+        InSequence s;
+
+        // Expect c1 lifecycle
+        EXPECT_CALL(c1, initialize());
+        EXPECT_CALL(c1, execute());
+        EXPECT_CALL(c1, end(false));
+
+        // Expect c2 lifecycle
+        EXPECT_CALL(c2, initialize());
+        EXPECT_CALL(c2, execute());
+        EXPECT_CALL(c2, end(false));
+    }
+
+    // Manually drive the command lifecycle to trigger the expectations
+    seq.initialize();
+    
+    // Loop until the sequence reports it is finished
+    while (!seq.isFinished())
+    {
+        seq.execute();
+    }
+
+    EXPECT_TRUE(seq.isFinished());
 }
