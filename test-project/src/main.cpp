@@ -17,6 +17,4 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "tap/drivers.hpp"
-
 int main() { return 0; }

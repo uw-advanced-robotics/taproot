@@ -21,6 +21,7 @@
 
 #include "tap/display/vertical_scroll_logic_handler.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace tap::display;
 using namespace tap;
@@ -46,7 +47,7 @@ TEST(VerticalScrollLogicHandler, constructor_negative_size_raises_error)
     VerticalScrollLogicHandler scroller(&drivers, SIZE, ENTRIES);
 
     expectScrollerConstraintsEq(scroller, SIZE, SIZE - 1, 0, 0);
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     scroller.onShortButtonPress(modm::MenuButtons::DOWN);
     scroller.onShortButtonPress(modm::MenuButtons::UP);
@@ -61,7 +62,7 @@ TEST(
     const int8_t SIZE = 5;
     const int8_t ENTRIES = -1;
     Drivers drivers;
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     VerticalScrollLogicHandler scroller(&drivers, SIZE, ENTRIES);
 
     expectScrollerConstraintsEq(scroller, SIZE, 0, 0, 0);
@@ -79,7 +80,7 @@ TEST(
     const int8_t SIZE = 5;
     const int8_t ENTRIES = 0;
     Drivers drivers;
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     VerticalScrollLogicHandler scroller(&drivers, SIZE, ENTRIES);
 
     expectScrollerConstraintsEq(scroller, SIZE, 0, 0, 0);

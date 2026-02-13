@@ -23,6 +23,7 @@
 #include "tap/architecture/endianness_wrappers.hpp"
 #include "tap/communication/serial/dji_serial.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace tap::communication::serial;
 using namespace tap::arch;
@@ -51,7 +52,7 @@ TEST(DJISerial, updateSerial_parseMessage_single_byte_at_a_time_crcenforcement)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
+    EXPECT_ERROR_TIMES(0);
 
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
@@ -107,11 +108,12 @@ TEST(DJISerial, updateSerial_parseMessage_crc8_one_off)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
+#if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([&](const tap::errors::SystemError &error) {
             EXPECT_TRUE(errorDescriptionContainsSubstr(error, "CRC8 failure"));
         });
-
+#endif
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
 
@@ -152,12 +154,12 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
 {
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
-
+#if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([&](const tap::errors::SystemError &error) {
             EXPECT_TRUE(errorDescriptionContainsSubstr(error, "CRC16 failure"));
         });
-
+#endif
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
 
@@ -199,7 +201,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
+    EXPECT_ERROR_TIMES(0);
 
     uint8_t rawMessage[9];
     uint16_t currByte = 0;
@@ -237,14 +239,14 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
 {
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, false);
-
+#if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([&](const tap::errors::SystemError &error) {
             EXPECT_TRUE(errorDescriptionContainsSubstr(
                 error,
                 "received message length longer than allowed max"));
         });
-
+#endif
     uint8_t rawMessage[19];
     uint16_t currByte = 0;
 
@@ -286,7 +288,7 @@ TEST(DJISerial, updateSerial_parseMessage_all_bytes_received_at_once_crcenforcem
     Drivers drivers;
     DJISerialTester serial(&drivers, Uart::Uart1, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
+    EXPECT_ERROR_TIMES(0);
 
     uint8_t rawMessage[19];
     uint16_t currByte = 0;

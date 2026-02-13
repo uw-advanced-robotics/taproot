@@ -23,6 +23,7 @@
 #include "tap/architecture/clock.hpp"
 #include "tap/architecture/profiler.hpp"
 #include "tap/drivers.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace tap;
 using namespace testing;
@@ -40,7 +41,7 @@ protected:
 
 TEST_F(ProfilerTest, push_pop_normal_usage_no_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(0);
+    EXPECT_ERROR_TIMES(0);
 
     profiler.pop(profiler.push("hi"));
 }
@@ -54,14 +55,14 @@ TEST_F(ProfilerTest, push_returns_same_key_if_profiler_same)
 
 TEST_F(ProfilerTest, pop_without_push_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
 
     profiler.pop(0);
 }
 
 TEST_F(ProfilerTest, pop_without_previous_push_of_same_profile_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     profiler.push("Hi");
 
@@ -114,7 +115,7 @@ TEST_F(ProfilerTest, getData_multiple_push_pops_chooses_correct_min_max)
 
 TEST_F(ProfilerTest, push_big_batch_insertion)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(1);
+    EXPECT_ERROR_TIMES(1);
 
     std::string strs[Profiler::MAX_PROFILED_ELEMENTS];
 

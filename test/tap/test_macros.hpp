@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -17,14 +17,15 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "vector.hpp"
+#ifndef TAPROOT_TEST_MACROS_HPP_
+#define TAPROOT_TEST_MACROS_HPP_
 
-#include "position.hpp"
+#if __has_include("tap/errors/error_controller.hpp")
+#define EXPECT_ERROR() EXPECT_CALL(drivers.errorController, addToErrorList)
+#define EXPECT_ERROR_TIMES(times) EXPECT_ERROR().Times(times)
+#else
+#define EXPECT_ERROR()
+#define EXPECT_ERROR_TIMES(times)
+#endif
 
-namespace tap::algorithms::transforms
-{
-inline Vector Vector::operator+(const Position& other) const
-{
-    return Vector(this->coordinates_ + other.coordinates());
-}
-}  // namespace tap::algorithms::transforms
+#endif  // TAPROOT_TEST_MACROS_HPP_

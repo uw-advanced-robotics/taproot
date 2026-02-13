@@ -21,8 +21,8 @@ def init(module):
         "with the on board mpu6500"
 
 def prepare(module, options):
+    module.depends(":drivers")
     module.depends(":communication:sensors:imu_heater")
-    module.depends(":communication:serial:terminal_serial")
     module.depends(":communication:sensors:imu")
     return options[":dev_board"] == "rm-dev-board-a"
 

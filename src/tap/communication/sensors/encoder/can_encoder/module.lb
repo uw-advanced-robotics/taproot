@@ -20,7 +20,7 @@ def init(module):
     module.description = "ARUW CAN Encoder"
 
 def prepare(module, options):
-    module.depends(":communication:sensors:encoder")
+    module.depends(":communication:sensors:encoder", ":communication:can")
     return True
 
 def build(env):
