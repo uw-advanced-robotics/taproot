@@ -217,7 +217,7 @@ TEST(SequentialCommand, VariadicConstructorCorrectlySequencesCommands)
 
     // Manually drive the command lifecycle to trigger the expectations
     seq.initialize();
-    
+
     // Loop until the sequence reports it is finished
     while (!seq.isFinished())
     {
