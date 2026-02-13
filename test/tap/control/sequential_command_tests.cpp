@@ -53,8 +53,7 @@ TEST(SequentialCommand, one_command_is_run)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands);
+    SequentialCommand<1> command(&c1);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -85,8 +84,7 @@ TEST(SequentialCommand, two_commands_are_run)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands);
+    SequentialCommand<2> command(&c1, &c2);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -125,8 +123,7 @@ TEST(SequentialCommand, two_commands_are_run_until_finished)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands);
+    SequentialCommand<2> command(&c1, &c2);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -162,8 +159,7 @@ TEST(SequentialCommand, cancelling_command_ends_internal_commands)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands);
+    SequentialCommand<1> command(&c1);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -184,6 +180,5 @@ TEST(SequentialCommand, null_command_asserts_DEATH)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    std::array<Command *, 1> commands = {nullptr};
-    ASSERT_DEATH({ SequentialCommand<1> command(commands); }, ".*");
+    ASSERT_DEATH({ SequentialCommand<1> command(nullptr); }, ".*");
 }
