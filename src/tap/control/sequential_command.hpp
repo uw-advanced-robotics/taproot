@@ -54,7 +54,10 @@ public:
 
         for (Command* command : commands)
         {
-            modm_assert(command != nullptr, "SequentialCommand", "Null command pointer passed!");
+            modm_assert(
+                command != nullptr,
+                "SequentialCommand::SequentialCommand",
+                "Null pointer command passed into sequential command.");
             this->commandRequirementsBitwise |= (command->getRequirementsBitwise());
         }
     }
