@@ -113,9 +113,6 @@ bool MotorSpecificMenu::hasChanged()
            updatePeriodicTimer.execute();
 }
 
-void MotorSpecificMenu::resetMotorChangedFlag()
-{
-    associatedMotor->resetHasBeenOffline();
-}
+void MotorSpecificMenu::resetMotorChangedFlag() { associatedMotor->resetHasBeenOffline(); }
 }  // namespace display
 }  // namespace tap
