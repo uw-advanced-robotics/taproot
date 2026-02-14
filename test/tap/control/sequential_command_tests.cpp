@@ -53,8 +53,7 @@ TEST(SequentialCommand, one_command_is_run)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands);
+    SequentialCommand<1> command(&c1);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -85,8 +84,7 @@ TEST(SequentialCommand, two_commands_are_run)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands);
+    SequentialCommand<2> command(&c1, &c2);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -125,8 +123,7 @@ TEST(SequentialCommand, two_commands_are_run_until_finished)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    SequentialCommand<2> command(commands);
+    SequentialCommand<2> command(&c1, &c2);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
@@ -162,8 +159,7 @@ TEST(SequentialCommand, cancelling_command_ends_internal_commands)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    SequentialCommand<1> command(commands);
+    SequentialCommand<1> command(&c1);
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true)).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -184,6 +180,49 @@ TEST(SequentialCommand, null_command_asserts_DEATH)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    std::array<Command *, 1> commands = {nullptr};
-    ASSERT_DEATH({ SequentialCommand<1> command(commands); }, ".*");
+    ASSERT_DEATH(
+        { SequentialCommand<1> command(static_cast<NiceMock<CommandMock> *>(nullptr)); },
+        ".*");
+}
+
+TEST(SequentialCommand, VariadicConstructorCorrectlySequencesCommands)
+{
+    NiceMock<CommandMock> c1;
+    NiceMock<CommandMock> c2;
+
+    ON_CALL(c1, getRequirementsBitwise()).WillByDefault(Return(1 << 0));
+    ON_CALL(c2, getRequirementsBitwise()).WillByDefault(Return(1 << 1));
+
+    ON_CALL(c1, isFinished()).WillByDefault(Return(true));
+    ON_CALL(c2, isFinished()).WillByDefault(Return(true));
+    ON_CALL(c1, isReady()).WillByDefault(Return(true));
+    ON_CALL(c2, isReady()).WillByDefault(Return(true));
+
+    SequentialCommand seq(&c1, &c2);
+    EXPECT_EQ(seq.getRequirementsBitwise(), (1 << 0) | (1 << 1));
+
+    {
+        InSequence s;
+
+        // Expect c1 lifecycle
+        EXPECT_CALL(c1, initialize());
+        EXPECT_CALL(c1, execute());
+        EXPECT_CALL(c1, end(false));
+
+        // Expect c2 lifecycle
+        EXPECT_CALL(c2, initialize());
+        EXPECT_CALL(c2, execute());
+        EXPECT_CALL(c2, end(false));
+    }
+
+    // Manually drive the command lifecycle to trigger the expectations
+    seq.initialize();
+
+    // Loop until the sequence reports it is finished
+    while (!seq.isFinished())
+    {
+        seq.execute();
+    }
+
+    EXPECT_TRUE(seq.isFinished());
 }
