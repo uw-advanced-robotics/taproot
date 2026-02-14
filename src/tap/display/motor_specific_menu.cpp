@@ -115,20 +115,21 @@ bool MotorSpecificMenu::hasChanged()
 
 void MotorSpecificMenu::resetMotorChangedFlag()
 {
-    const tap::motor::MotorId identifier =
-        static_cast<tap::motor::MotorId>(associatedMotor->getMotorIdentifier());
-    const tap::can::CanBus Can = associatedMotor->getCanBus();
-    switch (Can)
-    {
-        case tap::can::CanBus::CAN_BUS1:
-            drivers->djiMotorTxHandler.getCan1MotorMutable(identifier)->resetHasBeenOffline();
-            break;
-        case tap::can::CanBus::CAN_BUS2:
-            drivers->djiMotorTxHandler.getCan2MotorMutable(identifier)->resetHasBeenOffline();
-            break;
-        default:
-            break;
-    }
+    // const tap::motor::MotorId identifier =
+    //     static_cast<tap::motor::MotorId>(associatedMotor->getMotorIdentifier());
+    // const tap::can::CanBus Can = associatedMotor->getCanBus();
+    // switch (Can)
+    // {
+    //     case tap::can::CanBus::CAN_BUS1:
+    //         drivers->djiMotorTxHandler.getCan1MotorMutable(identifier)->resetHasBeenOffline();
+    //         break;
+    //     case tap::can::CanBus::CAN_BUS2:
+    //         drivers->djiMotorTxHandler.getCan2MotorMutable(identifier)->resetHasBeenOffline();
+    //         break;
+    //     default:
+    //         break;
+    // }
+    associatedMotor->resetHasBeenOffline();
 }
 }  // namespace display
 }  // namespace tap

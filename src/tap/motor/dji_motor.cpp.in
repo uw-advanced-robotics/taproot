@@ -116,7 +116,7 @@ bool DjiMotor::isMotorOnline() const
 
 bool DjiMotor::hasMotorBeenOffline() const { return !isMotorOnline() || offlineFlag; }
 
-void DjiMotor::resetHasBeenOffline() { offlineFlag = false; }
+void DjiMotor::resetHasBeenOffline() const { offlineFlag = false; }
 
 void DjiMotor::serializeCanSendData(modm::can::Message* txMessage) const
 {

@@ -159,7 +159,7 @@ public:
     /**
      * @brief Resets the offline flag.
      */
-    void resetHasBeenOffline();
+    void resetHasBeenOffline()const;
 
     /**
      * Serializes send data and deposits it in a message to be sent.
@@ -216,7 +216,7 @@ private:
 
     bool currentControl;
 
-    bool offlineFlag = false;
+    mutable bool offlineFlag = false;
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
     testing::NiceMock<Encoder> internalEncoder;
