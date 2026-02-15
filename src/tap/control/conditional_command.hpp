@@ -17,38 +17,36 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_COMMAND_MAPPER_HPP_
-#define TAPROOT_COMMAND_MAPPER_HPP_
+#ifndef TAPROOT_CONDITIONAL_COMMAND_HPP_
+#define TAPROOT_CONDITIONAL_COMMAND_HPP_
 
-#include <memory>
-#include <vector>
+#include <functional>
 
-#include <tap/control/trigger_binding.hpp>
-
-#include "tap/communication/serial/remote.hpp"
-#include "tap/util_macros.hpp"
+#include "command.hpp"
 
 namespace tap
 {
 namespace control
 {
-class CommandMapping;
-
-class CommandMapper
+class ConditionalCommand : public Command
 {
 public:
-    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-    mockable ~CommandMapper() = default;
+    ConditionalCommand(std::function<bool()> condition) : Command(), condition(condition) {}
 
-    mockable void pollTriggerBindings();
+    void initialize() override {}
 
-    mockable void addTriggerBinding(std::unique_ptr<TriggerBinding> binding);
+    void execute() override {}
+
+    void end(bool interrupted) override {}
+
+    bool isFinished() const override { return !condition(); }
+
+    const char* getName() const override { return "conditional command"; }
 
 private:
-    std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
-};  // class CommandMapper
-
+    std::function<bool()> condition;
+};
 }  // namespace control
 }  // namespace tap
 
-#endif  // TAPROOT_COMMAND_MAPPER_HPP_
+#endif

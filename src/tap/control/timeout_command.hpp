@@ -17,38 +17,42 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_COMMAND_MAPPER_HPP_
-#define TAPROOT_COMMAND_MAPPER_HPP_
+#ifndef TAPROOT_TIMEOUT_COMMAND_HPP_
+#define TAPROOT_TIMEOUT_COMMAND_HPP_
 
-#include <memory>
-#include <vector>
+#include <functional>
 
-#include <tap/control/trigger_binding.hpp>
+#include <tap/architecture/clock.hpp>
 
-#include "tap/communication/serial/remote.hpp"
-#include "tap/util_macros.hpp"
+#include "command.hpp"
 
 namespace tap
 {
 namespace control
 {
-class CommandMapping;
-
-class CommandMapper
+class TimeoutCommand : public Command
 {
 public:
-    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-    mockable ~CommandMapper() = default;
+    TimeoutCommand(uint32_t timeout) : Command(), timeout(timeout) {}
 
-    mockable void pollTriggerBindings();
+    void initialize() override { startTime = tap::arch::clock::getTimeMilliseconds(); }
 
-    mockable void addTriggerBinding(std::unique_ptr<TriggerBinding> binding);
+    void execute() override {}
+
+    void end(bool interrupted) override {}
+
+    bool isFinished() const override
+    {
+        return tap::arch::clock::getTimeMilliseconds() - startTime > timeout;
+    }
+
+    const char* getName() const override { return "timeout command"; }
 
 private:
-    std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
-};  // class CommandMapper
-
+    uint32_t timeout;
+    uint32_t startTime;
+};
 }  // namespace control
 }  // namespace tap
 
-#endif  // TAPROOT_COMMAND_MAPPER_HPP_
+#endif

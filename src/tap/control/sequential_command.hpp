@@ -20,98 +20,41 @@
 #ifndef TAPROOT_SEQUENTIAL_COMMAND_HPP_
 #define TAPROOT_SEQUENTIAL_COMMAND_HPP_
 
-#include <array>
+#include <vector>
 
-#include "modm/architecture/interface/assert.hpp"
-
-#include "command.hpp"
 #include "command_scheduler_types.hpp"
 
 namespace tap
 {
 namespace control
 {
+class Command;
+
 /**
  * A generic extendable class for implementing a command. Each
  * command is attached to a subsystem. To create a new command,
  * extend the Command class and instantiate the virtual functions
  * in this class. See example_command.hpp for example of this.
  */
-template <size_t COMMANDS>
 class SequentialCommand : public Command
 {
 public:
-    SequentialCommand(std::array<Command*, COMMANDS> commands)
-        : Command(),
-          commands(commands),
-          currentCommand(0)
-    {
-        for (Command* command : commands)
-        {
-            modm_assert(
-                command != nullptr,
-                "SequentialCommand::SequentialCommand",
-                "Null pointer command passed into sequential command.");
-            this->commandRequirementsBitwise |= (command->getRequirementsBitwise());
-        }
-    }
-
-    const char* getName() const override
-    {
-        return this->currentCommand == COMMANDS ? ""
-                                                : this->commands[this->currentCommand]->getName();
-    }
-
-    bool isReady() override { return this->commands[0]->isReady(); }
-
-    void initialize() override
-    {
-        this->currentCommand = 0;
-        this->commandInitialized = false;
-    }
-
-    void execute() override
-    {
-        if (!this->commandInitialized)
-        {
-            if (this->commands[this->currentCommand]->isReady())
-            {
-                this->commands[this->currentCommand]->initialize();
-                this->commandInitialized = true;
-            }
-        }
-
-        if (this->commandInitialized)
-        {
-            this->commands[this->currentCommand]->execute();
-
-            if (this->commands[this->currentCommand]->isFinished())
-            {
-                this->commands[this->currentCommand]->end(false);
-                this->commandInitialized = false;
-                this->currentCommand++;
-            }
-        }
-    }
-
-    void end(bool interrupted) override
-    {
-        if (this->currentCommand != COMMANDS)
-        {
-            this->commands[this->currentCommand]->end(interrupted);
-        }
-    }
-
-    bool isFinished() const override { return this->currentCommand == COMMANDS; }
+    SequentialCommand(const std::vector<Command*>& commands);
+    const char* getName() const override;
+    bool isReady() override;
+    void initialize() override;
+    void execute() override;
+    void end(bool interrupted) override;
+    bool isFinished() const override;
 
 private:
-    std::array<Command*, COMMANDS> commands;
-    size_t currentCommand;
-    bool commandInitialized;
-};  // class SequentialCommand
+    std::vector<Command*> commands;
+    const char* name;
+    command_scheduler_bitmap_t finishedCommands;
+    command_scheduler_bitmap_t allCommands;
+};
 
 }  // namespace control
-
 }  // namespace tap
 
 #endif  // TAPROOT_SEQUENTIAL_COMMAND_HPP_

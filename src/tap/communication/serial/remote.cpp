@@ -137,12 +137,7 @@ void Remote::parseBuffer()
         RAISE_ERROR(drivers, "invalid remote joystick values");
     }
 
-    drivers->commandMapper.handleKeyStateChange(
-        remote.key,
-        remote.leftSwitch,
-        remote.rightSwitch,
-        remote.mouse.l,
-        remote.mouse.r);
+    drivers->commandMapper.pollTriggerBindings();
 
     remote.updateCounter++;
 }
@@ -177,11 +172,7 @@ void Remote::reset()
     remote.wheel = 0;
     clearRxBuffer();
 
-    // Refresh command mapper with all keys deactivated. This prevents bug where
-    // command states enter defaults when remote reconnects even if key/switch
-    // state should do otherwise
-    drivers->commandMapper
-        .handleKeyStateChange(0, SwitchState::UNKNOWN, SwitchState::UNKNOWN, false, false);
+    drivers->commandMapper.pollTriggerBindings();
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }

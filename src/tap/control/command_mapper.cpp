@@ -19,7 +19,6 @@
 
 #include "command_mapper.hpp"
 
-#include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
 #include "command_mapping.hpp"
@@ -42,7 +41,7 @@ void CommandMapper::pollTriggerBindings()
 
 void CommandMapper::addTriggerBinding(std::unique_ptr<TriggerBinding> binding)
 {
-    triggerBindings.push_back(std::make_unique<TriggerBinding>(binding));
+    triggerBindings.push_back(binding);
 }
 
 }  // namespace control
