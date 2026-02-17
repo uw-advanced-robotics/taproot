@@ -158,10 +158,10 @@ using ImuInt1Gyro = GpioC5;
 using ImuHeater = GpioF6;
 using ImuSpiMaster = SpiMaster1;
 
-using SpiSck = GpioB12;
-using SpiMiso = GpioB13;
-using SpiMosi = GpioB14;
-using SpiNss = GpioB15;
+using SpiSck = GpioB13;
+using SpiMiso = GpioB14;
+using SpiMosi = GpioB15;
+using SpiNss = GpioB12;  // chip select
 using GenSpiMaster = SpiMaster2;
 
 #endif
