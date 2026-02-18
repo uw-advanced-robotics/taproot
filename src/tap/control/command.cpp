@@ -20,6 +20,7 @@
 #include "command.hpp"
 
 #include "command_scheduler.hpp"
+#include <tap/control/trigger_binding.hpp>
 #include "conditional_command.hpp"
 #include "subsystem.hpp"
 #include "timeout_command.hpp"
@@ -42,48 +43,5 @@ void Command::addSubsystemRequirement(Subsystem* requirement)
 }
 
 bool Command::isReady() { return true; }
-
-SequentialCommand* Command::andThen(Command* command) &&
-{
-    return new SequentialCommand({this, command});
-}
-
-SequentialCommand* Command::beforeStarting(Command* command) &&
-{
-    return new SequentialCommand({command, this});
-}
-
-ConcurrentCommand* Command::alongWith(Command* command) &&
-{
-    return new ConcurrentCommand({this, command}, "concurrent");
-}
-
-ConcurrentRaceCommand* Command::onlyWhile(std::function<bool()> condition) &&
-{
-    std::function<bool()> negated = [condition]() { return !condition(); };
-    return new ConcurrentRaceCommand(
-        {this, new ConditionalCommand(negated)},
-        "conditional race: onlyWhile");
-}
-
-ConcurrentRaceCommand* Command::until(std::function<bool()> condition) &&
-{
-    return new ConcurrentRaceCommand(
-        {this, new ConditionalCommand(condition)},
-        "conditional race: until");
-}
-
-ConcurrentRaceCommand* Command::withTimeout(uint32_t timeout) &&
-{
-    return new ConcurrentRaceCommand(
-        {this, new TimeoutCommand(timeout)},
-        "concurrent race: withTimeout");
-}
-
-ConcurrentDeadlineCommand* Command::deadlineWith(Command* command) &&
-{
-    return new ConcurrentDeadlineCommand({this}, "concurrent deadline", command);
-}
-
 }  // namespace control
 }  // namespace tap

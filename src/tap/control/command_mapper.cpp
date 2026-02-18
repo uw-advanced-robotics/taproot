@@ -21,6 +21,7 @@
 
 #include "tap/errors/create_errors.hpp"
 
+#include "tap/control/trigger_binding.hpp"
 #include "command_mapping.hpp"
 #include "remote_map_state.hpp"
 
@@ -31,6 +32,7 @@ namespace tap
 {
 namespace control
 {
+
 void CommandMapper::pollTriggerBindings()
 {
     for (const auto& binding : triggerBindings)
@@ -41,7 +43,7 @@ void CommandMapper::pollTriggerBindings()
 
 void CommandMapper::addTriggerBinding(std::unique_ptr<TriggerBinding> binding)
 {
-    triggerBindings.push_back(binding);
+    triggerBindings.push_back(std::move(binding));
 }
 
 }  // namespace control

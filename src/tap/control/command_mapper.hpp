@@ -23,8 +23,6 @@
 #include <memory>
 #include <vector>
 
-#include <tap/control/trigger_binding.hpp>
-
 #include "tap/communication/serial/remote.hpp"
 #include "tap/util_macros.hpp"
 
@@ -32,13 +30,15 @@ namespace tap
 {
 namespace control
 {
-class CommandMapping;
+class TriggerBinding;
 
 class CommandMapper
 {
 public:
     DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-    mockable ~CommandMapper() = default;
+    mockable ~CommandMapper();
+    explicit CommandMapper(Drivers*) {}
+
 
     mockable void pollTriggerBindings();
 

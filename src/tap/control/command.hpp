@@ -26,8 +26,6 @@
 #include "tap/util_macros.hpp"
 
 #include "command_scheduler_types.hpp"
-#include "concurrent_command.hpp"
-#include "sequential_command.hpp"
 
 namespace tap
 {
@@ -45,7 +43,7 @@ class Command
 {
 public:
     Command();
-    ~Command() = default;
+    ~Command();
     Command(const Command&) = delete;
     Command(Command&&) = delete;
     Command& operator=(const Command&) = delete;
@@ -132,51 +130,7 @@ public:
      */
     virtual bool isFinished() const = 0;
 
-    virtual void addCommand(Command* command) {}
-
-    /**
-     * Adds a command to run after the current command finishes.
-     * @return SequentialCommand* of current command composed with input command.
-     */
-    SequentialCommand* andThen(Command* command) &&;
-
-    /**
-     * Adds a command to run before the current command starts.
-     * @return SequentialCommand* of current command composed with input command.
-     */
-    SequentialCommand* beforeStarting(Command* command) &&;
-
-    /**
-     * Adds a command to run in parallel with the current command.
-     * @return ConcurrentCommand* of current command and input command.
-     */
-    ConcurrentCommand* alongWith(Command* command) &&;
-
-    /**
-     * Adds a condition to run the current command only while the input condition is true.
-     * @return ConcurrentCommand* of the current command and a ConditionalCommand.
-     */
-    ConcurrentRaceCommand* onlyWhile(std::function<bool()> condition) &&;
-
-    /**
-     * Adds a condition to run the current command until the input condition becomes true.
-     * @return ConcurrentCommand* of the current command and a ConditionalCommand.
-     */
-    ConcurrentRaceCommand* until(std::function<bool()> condition) &&;
-
-    /**
-     * Adds a timeout to run the current command for a specific amount of time.
-     * @return ConcurrentRaceCommand* of the current command and a TimeoutCommand.
-     */
-    ConcurrentRaceCommand* withTimeout(uint32_t timeout) &&;
-
-    /**
-     * Adds a deadline command to terminate the current command once the deadline command is
-     * finished.
-     * @return ConcurrentDeadlineCommand of current command deadlined with the input command.
-     */
-    ConcurrentDeadlineCommand* deadlineWith(Command* command) &&;
-
+    virtual void addCommand(Command* command);
 private:
     /**
      * An identifier unique to a command that will be assigned to it automatically upon

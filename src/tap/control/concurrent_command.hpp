@@ -5,13 +5,12 @@
 #include <vector>
 
 #include "command_scheduler_types.hpp"
+#include "command.hpp"
 
 namespace tap
 {
 namespace control
 {
-class Command;
-
 template <bool RACE>
 class ConcurrentTemplateCommand : public Command
 {
