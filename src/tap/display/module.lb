@@ -86,18 +86,8 @@ def prepare(module, options):
 def build(env):
     env.outbasepath = "taproot/src/tap/display"
 
-    templateFiles = [
-        "oled_button_handler.hpp.in"
-    ]
-
     env.copy("dummy_allocator.hpp")
     env.copy("oled_button_handler.cpp")
+    env.copy("oled_button_handler.hpp")
     env.copy("vertical_scroll_logic_handler.cpp")
     env.copy("vertical_scroll_logic_handler.hpp")
-
-
-    env.substitutions = {
-        "has_joystick": "DisplayJoystick" in env[":board:analog_in_pins"]
-    }
-    for file in templateFiles:
-        env.template(file)

@@ -83,7 +83,7 @@ def build(env):
             modm_hal_options[option] = val
 
     # stringify the options
-    modm_hal_options = [f"<option name=\"{name}\">{val}</option>\n" for name, val in modm_hal_options.items()]
+    modm_hal_options = [f"<option name=\"{name}\">{val}</option>" for name, val in modm_hal_options.items()]
 
     # split modules and remove leading/trailing whitespace
     modm_hal_modules = [module.strip(" \t") for module in env["::modm_hal_modules"].split("\n")]
