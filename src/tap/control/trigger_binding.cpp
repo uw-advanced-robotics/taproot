@@ -17,17 +17,17 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include "trigger_binding.hpp"
+
 #include <functional>
 
 #include "tap/control/command.hpp"
 #include "tap/control/trigger.hpp"
-#include "trigger_binding.hpp"
 
 namespace tap
 {
 namespace control
 {
-
 void TriggerBinding::execute()
 {
     bool curTrigState = condition();

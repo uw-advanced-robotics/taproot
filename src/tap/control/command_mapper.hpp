@@ -37,12 +37,16 @@ class CommandMapper
 public:
     DISALLOW_COPY_AND_ASSIGN(CommandMapper)
     mockable ~CommandMapper();
-    explicit CommandMapper(Drivers*) {}
-
+    explicit CommandMapper(Drivers*);
 
     mockable void pollTriggerBindings();
 
     mockable void addTriggerBinding(std::unique_ptr<TriggerBinding> binding);
+
+    /**
+     * @return the number of trigger bindings in the mapper.
+     */
+    mockable std::size_t getSize() const { return triggerBindings.size(); }
 
 private:
     std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;

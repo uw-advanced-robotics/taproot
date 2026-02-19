@@ -19,8 +19,6 @@
 
 #include "sequential_command.hpp"
 
-#include "command.hpp"
-
 namespace tap
 {
 namespace control

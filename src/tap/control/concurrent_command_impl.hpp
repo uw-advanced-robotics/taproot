@@ -34,7 +34,7 @@ template <bool RACE>
 ConcurrentTemplateCommand<RACE>::ConcurrentTemplateCommand(
     std::vector<Command*> commands,
     const char* name,
-    Command* deadlineCommand=nullptr)
+    Command* deadlineCommand = nullptr)
     : Command(),
       commands(commands),
       deadlineCommand(deadlineCommand),

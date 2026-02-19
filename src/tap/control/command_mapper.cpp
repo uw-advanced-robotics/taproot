@@ -19,9 +19,9 @@
 
 #include "command_mapper.hpp"
 
+#include "tap/control/trigger_binding.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "tap/control/trigger_binding.hpp"
 #include "command_mapping.hpp"
 #include "remote_map_state.hpp"
 
@@ -32,6 +32,9 @@ namespace tap
 {
 namespace control
 {
+CommandMapper::CommandMapper(Drivers*) {}
+
+CommandMapper::~CommandMapper() = default;
 
 void CommandMapper::pollTriggerBindings()
 {

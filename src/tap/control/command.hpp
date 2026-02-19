@@ -131,6 +131,7 @@ public:
     virtual bool isFinished() const = 0;
 
     virtual void addCommand(Command* command);
+
 private:
     /**
      * An identifier unique to a command that will be assigned to it automatically upon

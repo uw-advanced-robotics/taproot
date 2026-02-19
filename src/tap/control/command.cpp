@@ -19,8 +19,9 @@
 
 #include "command.hpp"
 
-#include "command_scheduler.hpp"
 #include <tap/control/trigger_binding.hpp>
+
+#include "command_scheduler.hpp"
 #include "conditional_command.hpp"
 #include "subsystem.hpp"
 #include "timeout_command.hpp"

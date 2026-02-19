@@ -21,9 +21,11 @@
 #define TAPROOT_COMMAND_MAPPER_MOCK_HPP_
 
 #include <gmock/gmock.h>
+#include <memory>
 
 #include "tap/control/command.hpp"
 #include "tap/control/command_mapper.hpp"
+#include "tap/control/trigger_binding.hpp"
 
 namespace tap
 {
@@ -37,14 +39,9 @@ public:
 
     MOCK_METHOD(
         void,
-        handleKeyStateChange,
-        (uint16_t,
-         tap::communication::serial::Remote::SwitchState,
-         tap::communication::serial::Remote::SwitchState,
-         bool,
-         bool),
-        (override));
-    MOCK_METHOD(void, addMap, (tap::control::CommandMapping *), (override));
+        pollTriggerBindings,
+        (), (override));
+    MOCK_METHOD(void, addTriggerBinding, (std::unique_ptr<tap::control::TriggerBinding>), (override));
     MOCK_METHOD(std::size_t, getSize, (), (const override));
 };  // class CommandMapperMock
 }  // namespace mock

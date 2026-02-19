@@ -54,8 +54,8 @@ TEST(ConcurrentCommands, one_command_is_run)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    ConcurrentCommand<1> command(commands, "test command");
+    std::vector<Command *> commands = {&c1};
+    ConcurrentCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -86,8 +86,8 @@ TEST(ConcurrentCommands, two_commands_are_run)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    ConcurrentCommand<2> command(commands, "test command");
+    std::vector<Command *> commands = {&c1, &c2};
+    ConcurrentCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -123,8 +123,8 @@ TEST(ConcurrentCommands, two_commands_are_run_until_finished)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    ConcurrentCommand<2> command(commands, "test command");
+    std::vector<Command *> commands = {&c1, &c2};
+    ConcurrentCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -163,8 +163,8 @@ TEST(ConcurrentCommands, racing_two_commands_finishes_with_one)
     requirements = {&s2};
     EXPECT_CALL(c2, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    ConcurrentRaceCommand<2> command(commands, "test command");
+    std::vector<Command *> commands = {&c1, &c2};
+    ConcurrentRaceCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -198,8 +198,8 @@ TEST(ConcurrentCommands, not_added_when_not_ready)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    ConcurrentCommand<1> command(commands, "test command");
+    std::vector<Command *> commands = {&c1};
+    ConcurrentCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(false));
     scheduler.addCommand(&command);
@@ -218,8 +218,8 @@ TEST(ConcurrentCommands, cancelling_command_ends_internal_commands)
 
     set<Subsystem *> requirements = {&s1};
     EXPECT_CALL(c1, getRequirementsBitwise).WillOnce(Return(calcRequirementsBitwise(requirements)));
-    std::array<Command *, 1> commands = {&c1};
-    ConcurrentCommand<1> command(commands, "test command");
+    std::vector<Command *> commands = {&c1};
+    ConcurrentCommand command(commands, "test command");
 
     EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     EXPECT_CALL(c1, initialize).Times(1);
@@ -237,8 +237,8 @@ TEST(ConcurrentCommands, cancelling_command_ends_internal_commands)
 
 TEST(ConcurrentCommands, null_command_asserts_DEATH)
 {
-    std::array<Command *, 1> commands = {nullptr};
-    ASSERT_DEATH({ ConcurrentCommand<1> command(commands, "test command"); }, ".*");
+    std::vector<Command *> commands = {nullptr};
+    ASSERT_DEATH({ ConcurrentCommand command(commands, "test command"); }, ".*");
 }
 
 TEST(ConcurrentCommands, overlapping_requirements_asserts_DEATH)
@@ -251,6 +251,6 @@ TEST(ConcurrentCommands, overlapping_requirements_asserts_DEATH)
     TestCommand c1(&s1);
     TestCommand c2(&s1);
 
-    std::array<Command *, 2> commands = {&c1, &c2};
-    ASSERT_DEATH({ ConcurrentCommand<2> command(commands, "test command"); }, ".*");
+    std::vector<Command *> commands = {&c1, &c2};
+    ASSERT_DEATH({ ConcurrentCommand command(commands, "test command"); }, ".*");
 }

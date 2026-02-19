@@ -18,6 +18,7 @@
  */
 
 #include "command_mapper_mock.hpp"
+#include "tap/control/trigger_binding.hpp"
 
 namespace tap::mock
 {

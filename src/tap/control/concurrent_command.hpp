@@ -4,8 +4,8 @@
 #include <functional>
 #include <vector>
 
-#include "command_scheduler_types.hpp"
 #include "command.hpp"
+#include "command_scheduler_types.hpp"
 
 namespace tap
 {

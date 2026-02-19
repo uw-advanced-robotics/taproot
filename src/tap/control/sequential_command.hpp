@@ -22,14 +22,13 @@
 
 #include <vector>
 
+#include "command.hpp"
 #include "command_scheduler_types.hpp"
 
 namespace tap
 {
 namespace control
 {
-class Command;
-
 /**
  * A generic extendable class for implementing a command. Each
  * command is attached to a subsystem. To create a new command,

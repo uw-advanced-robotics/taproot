@@ -22,29 +22,31 @@
 
 #include "command.hpp"
 #include "concurrent_command.hpp"
-#include "sequential_command.hpp"
 #include "conditional_command.hpp"
+#include "sequential_command.hpp"
 #include "timeout_command.hpp"
 
 namespace tap
 {
 namespace control
 {
-class CommandCompositionHelper {
-
+class CommandCompositionHelper
+{
     /**
-     * Creates a command group that runs two commands sequentially. 
+     * Creates a command group that runs two commands sequentially.
      * @return SequentialCommand* of the input commands.
      */
-    SequentialCommand* sequence(Command* first, Command* second) {
+    SequentialCommand* sequence(Command* first, Command* second)
+    {
         return new SequentialCommand({first, second});
     }
 
     /**
-     * Creates a command group that runs two commands in parallel. 
+     * Creates a command group that runs two commands in parallel.
      * @return ConcurrentCommand* of the input commands.
      */
-    ConcurrentCommand* parallel(Command* command, Command* otherCommand) {
+    ConcurrentCommand* parallel(Command* command, Command* otherCommand)
+    {
         return new ConcurrentCommand({command, otherCommand}, "concurrent");
     }
 
@@ -52,7 +54,8 @@ class CommandCompositionHelper {
      * Adds a condition to run the input command only while the input condition is true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    ConcurrentRaceCommand* onlyWhile(Command* command, std::function<bool()> condition) {
+    ConcurrentRaceCommand* onlyWhile(Command* command, std::function<bool()> condition)
+    {
         std::function<bool()> negated = [condition]() { return !condition(); };
         return new ConcurrentRaceCommand(
             {command, new ConditionalCommand(negated)},
@@ -63,7 +66,8 @@ class CommandCompositionHelper {
      * Adds a condition to run the input command until the input condition becomes true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    ConcurrentRaceCommand* until(Command* command, std::function<bool()> condition) {
+    ConcurrentRaceCommand* until(Command* command, std::function<bool()> condition)
+    {
         return new ConcurrentRaceCommand(
             {command, new ConditionalCommand(condition)},
             "conditional race: until");
@@ -73,7 +77,8 @@ class CommandCompositionHelper {
      * Adds a timeout to run the input command for a specific amount of time.
      * @return ConcurrentRaceCommand* of the input command and a TimeoutCommand.
      */
-    ConcurrentRaceCommand* withTimeout(Command* command, uint32_t timeout) {
+    ConcurrentRaceCommand* withTimeout(Command* command, uint32_t timeout)
+    {
         return new ConcurrentRaceCommand(
             {command, new TimeoutCommand(timeout)},
             "concurrent race: withTimeout");
@@ -84,11 +89,12 @@ class CommandCompositionHelper {
      * finished.
      * @return ConcurrentDeadlineCommand of input command deadlined with the input command.
      */
-    ConcurrentDeadlineCommand* deadlineWith(Command* command, Command* deadlineCommand) {
+    ConcurrentDeadlineCommand* deadlineWith(Command* command, Command* deadlineCommand)
+    {
         return new ConcurrentDeadlineCommand({command}, "concurrent deadline", deadlineCommand);
     }
 };
-}
-}
+}  // namespace control
+}  // namespace tap
 
 #endif
