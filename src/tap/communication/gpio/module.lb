@@ -171,8 +171,8 @@ def prepare(module, options):
     module.add_submodule(Digital(board_info))
 
     for group in board_info.gpio_groups:
-        
-        module.add_submodule(GpioGroup(group))
+        if all(pin.gpio_type == "out" for pin in group.gpio_pins):
+            module.add_submodule(GpioGroup(group))
 
     module.add_submodule(Pwm(board_info))
 

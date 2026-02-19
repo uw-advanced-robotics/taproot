@@ -97,7 +97,7 @@ def build(env):
 
 
     env.substitutions = {
-        "has_joystick": "OledJoystick" in env[":board:analog_in_pins"]
+        "has_joystick": "DisplayJoystick" in env[":board:analog_in_pins"]
     }
     for file in templateFiles:
         env.template(file)

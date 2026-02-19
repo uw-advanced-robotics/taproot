@@ -61,7 +61,7 @@ public:
 
     // Constructor for setting custom ADC button values
     OledButtonHandler(tap::Drivers *drivers,
-        const tap::gpio::Analog::Pin pin {% if has_joystick %}= tap::gpio::Analog::Pin::OledJoystick{% endif %},
+        const tap::gpio::Analog::Pin pin{% if has_joystick %} = tap::gpio::Analog::Pin::OledJoystick{% endif %},
         const AnalogConfig analogConfig = DEFAULT_ADC_CONFIG);
 
     /**

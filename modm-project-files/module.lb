@@ -88,7 +88,7 @@ def build(env):
     # split modules and remove leading/trailing whitespace
     modm_hal_modules = [module.strip(" \t") for module in env["::modm_hal_modules"].split("\n")]
     # stringify the modules
-    modm_hal_modules = [f"<module>{module}</module>\n" for module in modm_hal_modules if module != ""]
+    modm_hal_modules = [f"<module>{module}</module>" for module in modm_hal_modules if module != ""]
 
 
     platform_modules = []
