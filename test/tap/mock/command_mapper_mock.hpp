@@ -20,31 +20,33 @@
 #ifndef TAPROOT_COMMAND_MAPPER_MOCK_HPP_
 #define TAPROOT_COMMAND_MAPPER_MOCK_HPP_
 
-#include <gmock/gmock.h>
 #include <memory>
 
-#include "tap/control/command.hpp"
-#include "tap/control/command_mapper.hpp"
-#include "tap/control/trigger_binding.hpp"
+#include <gmock/gmock.h>
 
-namespace tap
+#include "tap/control/command_mapper.hpp"
+
+namespace tap::control
 {
-namespace mock
+class TriggerBinding;
+}
+
+namespace tap::mock
 {
 class CommandMapperMock : public tap::control::CommandMapper
 {
 public:
-    CommandMapperMock(tap::Drivers *drivers);
-    virtual ~CommandMapperMock();
+    explicit CommandMapperMock(tap::Drivers* drivers);
+    ~CommandMapperMock() override;
 
-    MOCK_METHOD(
-        void,
-        pollTriggerBindings,
-        (), (override));
-    MOCK_METHOD(void, addTriggerBinding, (std::unique_ptr<tap::control::TriggerBinding>), (override));
-    MOCK_METHOD(std::size_t, getSize, (), (const override));
-};  // class CommandMapperMock
-}  // namespace mock
-}  // namespace tap
+    void addTriggerBinding(std::unique_ptr<tap::control::TriggerBinding> binding) override;
+
+    MOCK_METHOD(void, pollTriggerBindings, (), (override));
+    MOCK_METHOD(std::size_t, getSize, (), (const, override));
+
+    MOCK_METHOD(void, addTriggerBindingRaw, (tap::control::TriggerBinding*), ());
+};
+
+}  // namespace tap::mock
 
 #endif  // TAPROOT_COMMAND_MAPPER_MOCK_HPP_

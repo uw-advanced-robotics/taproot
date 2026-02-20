@@ -49,5 +49,14 @@ void CommandMapper::addTriggerBinding(std::unique_ptr<TriggerBinding> binding)
     triggerBindings.push_back(std::move(binding));
 }
 
+const TriggerBinding* CommandMapper::getAtIndex(std::size_t index) const
+{
+    if (index >= triggerBindings.size())
+    {
+        return nullptr;
+    }
+    return triggerBindings.at(index).get();
+}
+
 }  // namespace control
 }  // namespace tap

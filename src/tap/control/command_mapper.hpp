@@ -48,6 +48,12 @@ public:
      */
     mockable std::size_t getSize() const { return triggerBindings.size(); }
 
+    /**
+     * @return The TriggerBinding located at the specificed index, or
+     *      `nullptr` of the index is out of bounds.
+     */
+    mockable const TriggerBinding* getAtIndex(std::size_t index) const;
+
 private:
     std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
 };  // class CommandMapper

@@ -126,5 +126,17 @@ void TriggerBinding::execute()
     }
     prevTrigState = curTrigState;
 }
+
+bool operator==(const TriggerBinding &binding1, const TriggerBinding &binding2)
+{
+    return binding1.command->getGlobalIdentifier() == binding2.command->getGlobalIdentifier() &&
+           binding1.type == binding2.type;
+}
+
+bool operator!=(const TriggerBinding &binding1, const TriggerBinding &binding2)
+{
+    return !(binding1 == binding2);
+}
+
 }  // namespace control
 }  // namespace tap

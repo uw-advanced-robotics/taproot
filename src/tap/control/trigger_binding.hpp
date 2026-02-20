@@ -62,6 +62,10 @@ public:
 
     void execute();
 
+    bool friend operator==(const TriggerBinding &binding1, const TriggerBinding &binding2);
+
+    bool friend operator!=(const TriggerBinding &binding1, const TriggerBinding &binding2);
+
 private:
     Drivers *drivers;
     std::function<bool()> condition;

@@ -18,10 +18,20 @@
  */
 
 #include "command_mapper_mock.hpp"
+
 #include "tap/control/trigger_binding.hpp"
 
 namespace tap::mock
 {
-CommandMapperMock::CommandMapperMock(tap::Drivers *drivers) : control::CommandMapper(drivers) {}
-CommandMapperMock::~CommandMapperMock() {}
+CommandMapperMock::CommandMapperMock(tap::Drivers* drivers) : tap::control::CommandMapper(drivers)
+{
+}
+
+CommandMapperMock::~CommandMapperMock() = default;
+
+void CommandMapperMock::addTriggerBinding(std::unique_ptr<tap::control::TriggerBinding> binding)
+{
+    addTriggerBindingRaw(binding.get());
+}
+
 }  // namespace tap::mock

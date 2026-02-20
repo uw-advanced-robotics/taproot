@@ -43,6 +43,8 @@ void Command::addSubsystemRequirement(Subsystem* requirement)
     commandRequirementsBitwise |= (1UL << requirement->getGlobalIdentifier());
 }
 
+void Command::addCommand(Command*) {}
+
 bool Command::isReady() { return true; }
 }  // namespace control
 }  // namespace tap
