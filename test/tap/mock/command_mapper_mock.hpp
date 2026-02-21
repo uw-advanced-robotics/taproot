@@ -42,7 +42,7 @@ public:
     void addTriggerBinding(std::unique_ptr<tap::control::TriggerBinding> binding) override;
 
     MOCK_METHOD(void, pollTriggerBindings, (), (override));
-    MOCK_METHOD(std::size_t, getSize, (), (const, override));
+    //MOCK_METHOD(std::size_t, getSize, (), (const, override));
 
     MOCK_METHOD(void, addTriggerBindingRaw, (tap::control::TriggerBinding*), ());
 };

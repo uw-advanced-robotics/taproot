@@ -62,52 +62,60 @@ Trigger Trigger::operator!() const
     return Trigger(drivers, [c1]() { return !c1(); });
 }
 
-void Trigger::onTrue(Command *command)
+Trigger Trigger::onTrue(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::ON_TRUE)));
+    return *this;
 }
 
-void Trigger::onFalse(Command *command)
+Trigger Trigger::onFalse(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::ON_FALSE)));
+    return *this;
 }
 
-void Trigger::whileTrue(Command *command)
+Trigger Trigger::whileTrue(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::WHILE_TRUE)));
+    return *this;
 }
 
-void Trigger::whileFalse(Command *command)
+Trigger Trigger::whileFalse(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::WHILE_FALSE)));
+    return *this;
 }
 
-void Trigger::toggleOnTrue(Command *command)
+Trigger Trigger::toggleOnTrue(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::TOGGLE_ON_TRUE)));
+    return *this;
 }
 
-void Trigger::toggleOnFalse(Command *command)
+Trigger Trigger::toggleOnFalse(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::TOGGLE_ON_FALSE)));
+    return *this;
 }
 
-void Trigger::onChange(Command *command)
+Trigger Trigger::onChange(Command *command)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::ON_CHANGE)));
+    return *this;
 }
 
-void Trigger::debounce(Command *command, uint32_t timeout)
+Trigger Trigger::debounce(Command *command, uint32_t timeout)
 {
     drivers->commandMapper.addTriggerBinding(std::make_unique<TriggerBinding>(
         TriggerBinding(drivers, condition, command, TriggerBinding::Type::DEBOUNCE, timeout)));
+    return *this;
 }
 }  // namespace control
 }  // namespace tap

@@ -32,6 +32,7 @@ CommandMapperMock::~CommandMapperMock() = default;
 void CommandMapperMock::addTriggerBinding(std::unique_ptr<tap::control::TriggerBinding> binding)
 {
     addTriggerBindingRaw(binding.get());
+    tap::control::CommandMapper::addTriggerBinding(std::move(binding));
 }
 
 }  // namespace tap::mock

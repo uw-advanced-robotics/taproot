@@ -44,14 +44,14 @@ public:
 
     Trigger operator!() const;
 
-    void onTrue(Command *command);
-    void onFalse(Command *command);
-    void whileTrue(Command *command);
-    void whileFalse(Command *command);
-    void toggleOnTrue(Command *command);
-    void toggleOnFalse(Command *command);
-    void onChange(Command *command);
-    void debounce(Command *command, uint32_t timeout);
+    Trigger onTrue(Command *command);
+    Trigger onFalse(Command *command);
+    Trigger whileTrue(Command *command);
+    Trigger whileFalse(Command *command);
+    Trigger toggleOnTrue(Command *command);
+    Trigger toggleOnFalse(Command *command);
+    Trigger onChange(Command *command);
+    Trigger debounce(Command *command, uint32_t timeout);
 
 private:
     Drivers *drivers;

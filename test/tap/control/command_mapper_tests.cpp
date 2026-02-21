@@ -37,10 +37,6 @@ using namespace tap::control;
 using tap::Drivers;
 using namespace tap::communication::serial;
 
-/**
- * Directly using drivers.commandMapper doesn't work in tests because trigger.whileTrue and other binding updates 
- * command mapper on diff version of drivers than local version
- */
 TEST(CommandMapper, getSize_returns_number_of_valid_trigger_bindings_added)
 {
     Drivers drivers;
@@ -48,34 +44,26 @@ TEST(CommandMapper, getSize_returns_number_of_valid_trigger_bindings_added)
     TestCommand tc1(&ts);
     TestCommand tc2(&ts);
     TestCommand tc3(&ts);
-    CommandMapper cm(&drivers);
 
+    EXPECT_CALL(drivers.commandMapper, addTriggerBindingRaw(testing::_)).Times(3);
+
+    EXPECT_EQ(0, drivers.commandMapper.getSize());
     std::function<bool()> leftSwitchDown = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::DOWN;
     };
-    Trigger trigger1(&drivers, [leftSwitchDown]() { return leftSwitchDown(); });
-    trigger1.whileTrue(&tc1);
+    Trigger trigger1 = Trigger(&drivers, [leftSwitchDown]() { return leftSwitchDown(); }).whileTrue(&tc1);
 
     std::function<bool()> leftSwitchMid = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::MID;
     };
-    Trigger trigger2(&drivers, [leftSwitchMid]() { return leftSwitchMid(); });
-    trigger2.whileTrue(&tc2);
+    Trigger trigger2 = Trigger(&drivers, [leftSwitchMid]() { return leftSwitchMid(); }).whileTrue(&tc2);
+    EXPECT_EQ(2, drivers.commandMapper.getSize());
 
     std::function<bool()> leftSwitchUp = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::UP;
     };
-    Trigger trigger3(&drivers, [leftSwitchUp]() { return leftSwitchUp(); });
-    trigger3.whileTrue(&tc3);
-
-    EXPECT_EQ(0, cm.getSize());
-
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(&drivers, leftSwitchDown, &tc1, TriggerBinding::Type::WHILE_TRUE));
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(&drivers, leftSwitchMid, &tc2, TriggerBinding::Type::WHILE_TRUE));
-    EXPECT_EQ(2, cm.getSize());
-
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(&drivers, leftSwitchUp, &tc3, TriggerBinding::Type::WHILE_TRUE));
-    EXPECT_EQ(3, cm.getSize());
+    Trigger trigger3 = Trigger(&drivers, [leftSwitchUp]() { return leftSwitchUp(); }).whileTrue(&tc3);
+    EXPECT_EQ(3, drivers.commandMapper.getSize());
 }
 
 TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_number_of_trigger_bindings_size)
@@ -83,18 +71,15 @@ TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_number_of_trigge
     Drivers drivers;
     TestSubsystem ts(&drivers);
     TestCommand tc(&ts);
-    CommandMapper cm(&drivers);
 
     std::function<bool()> leftSwitchDown = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::DOWN;
     };
-    Trigger trigger(&drivers, [leftSwitchDown]() { return leftSwitchDown(); });
-    trigger.whileTrue(&tc);
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(&drivers, leftSwitchDown, &tc, TriggerBinding::Type::WHILE_TRUE));
+    Trigger trigger = Trigger(&drivers, [leftSwitchDown]() { return leftSwitchDown(); }).whileTrue(&tc);
 
-    EXPECT_NE(nullptr, cm.getAtIndex(0));
-    EXPECT_EQ(nullptr, cm.getAtIndex(1));
-    EXPECT_EQ(nullptr, cm.getAtIndex(2));
+    EXPECT_NE(nullptr, drivers.commandMapper.getAtIndex(0));
+    EXPECT_EQ(nullptr, drivers.commandMapper.getAtIndex(1));
+    EXPECT_EQ(nullptr, drivers.commandMapper.getAtIndex(2));
 }
 
 TEST(CommandMapper, getAtIndex_returns_correct_TriggerBinding_if_index_valid)
@@ -104,38 +89,31 @@ TEST(CommandMapper, getAtIndex_returns_correct_TriggerBinding_if_index_valid)
     TestCommand tc1(&ts);
     TestCommand tc2(&ts);
     TestCommand tc3(&ts);
-    CommandMapper cm(&drivers);
 
     std::function<bool()> leftSwitchDown = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::DOWN;
     };
-    Trigger trigger1(&drivers, [leftSwitchDown]() { return leftSwitchDown(); });
-    trigger1.whileTrue(&tc1);
+    Trigger trigger1 = Trigger(&drivers, [leftSwitchDown]() { return leftSwitchDown(); }).whileTrue(&tc1);
     TriggerBinding tb1 = TriggerBinding(&drivers, leftSwitchDown, &tc1, TriggerBinding::Type::WHILE_TRUE);
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(tb1));
 
     std::function<bool()> leftSwitchMid = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::MID;
     };
-    Trigger trigger2(&drivers, [leftSwitchMid]() { return leftSwitchMid(); });
-    trigger2.whileTrue(&tc2);
+    Trigger trigger2 = Trigger(&drivers, [leftSwitchMid]() { return leftSwitchMid(); }).whileTrue(&tc2);
     TriggerBinding tb2 = TriggerBinding(&drivers, leftSwitchMid, &tc2, TriggerBinding::Type::WHILE_TRUE);
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(tb2));
 
     std::function<bool()> leftSwitchUp = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::UP;
     };
-    Trigger trigger3(&drivers, [leftSwitchUp]() { return leftSwitchUp(); });
-    trigger3.whileTrue(&tc3);
+    Trigger trigger3 = Trigger(&drivers, [leftSwitchUp]() { return leftSwitchUp(); }).whileTrue(&tc3);
     TriggerBinding tb3 = TriggerBinding(&drivers, leftSwitchUp, &tc3, TriggerBinding::Type::WHILE_TRUE);
-    cm.addTriggerBinding(std::make_unique<TriggerBinding>(tb3));
 
-    const TriggerBinding *binding1 = cm.getAtIndex(0);
+    const TriggerBinding *binding1 = drivers.commandMapper.getAtIndex(0);
     EXPECT_EQ(tb1, *binding1);
 
-    const TriggerBinding *binding2 = cm.getAtIndex(1);
+    const TriggerBinding *binding2 = drivers.commandMapper.getAtIndex(1);
     EXPECT_EQ(tb2, *binding2);
 
-    const TriggerBinding *binding3 = cm.getAtIndex(2);
+    const TriggerBinding *binding3 = drivers.commandMapper.getAtIndex(2);
     EXPECT_EQ(tb3, *binding3);
 }
