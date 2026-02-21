@@ -41,7 +41,10 @@ template <size_t COMMANDS, bool RACE>
 class ConcurrentTemplateCommand : public Command
 {
 public:
-    ConcurrentTemplateCommand(std::array<Command*, COMMANDS> commands, const char* name, Command* deadlineCommand = nullptr)
+    ConcurrentTemplateCommand(
+        std::array<Command*, COMMANDS> commands,
+        const char* name,
+        Command* deadlineCommand = nullptr)
         : Command(),
           commands(commands),
           deadlineCommand(deadlineCommand),
@@ -123,7 +126,9 @@ public:
 
     bool isFinished() const override
     {
-        if (deadlineCommand != nullptr && (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()))) return true;
+        if (deadlineCommand != nullptr &&
+            (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier())))
+            return true;
         if (RACE)
         {
             return this->finishedCommands != 0;

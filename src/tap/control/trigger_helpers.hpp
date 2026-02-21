@@ -36,6 +36,14 @@ using namespace tap::communication::serial;
 class TriggerHelpers
 {
 public:
+    std::function<bool()> checkSwitchState(
+        Drivers *drivers,
+        Remote::Switch sw,
+        Remote::SwitchState ss)
+    {
+        return [drivers, sw, ss]() { return drivers->remote.getSwitch(sw) == ss; };
+    }
+
     Trigger button(Drivers *drivers, Remote::Key button)
     {
         return Trigger(drivers, [drivers, button]() { return drivers->remote.keyPressed(button); });
