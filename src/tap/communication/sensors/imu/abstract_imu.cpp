@@ -97,9 +97,6 @@ void AbstractIMU::computeOffsets()
         imuData.accOffsetRaw = imuData.accOffsetRaw / offsetSampleCount;
         imuState = ImuState::IMU_CALIBRATED;
         mahonyAlgorithm.reset();
-
-
-    
     }
 }
 
