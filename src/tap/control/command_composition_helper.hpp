@@ -36,7 +36,8 @@ class CommandCompositionHelper
      * Creates a command group that runs two commands sequentially.
      * @return SequentialCommand* of the input commands.
      */
-    SequentialCommand* sequence(Command* first, Command* second)
+    template <size_t COMMANDS>
+    SequentialCommand<COMMANDS>* sequence(Command* first, Command* second)
     {
         return new SequentialCommand({first, second});
     }
@@ -45,7 +46,8 @@ class CommandCompositionHelper
      * Creates a command group that runs two commands in parallel.
      * @return ConcurrentCommand* of the input commands.
      */
-    ConcurrentCommand* parallel(Command* command, Command* otherCommand)
+    template <size_t COMMANDS>
+    ConcurrentCommand<COMMANDS>* parallel(Command* command, Command* otherCommand)
     {
         return new ConcurrentCommand({command, otherCommand}, "concurrent");
     }
@@ -54,7 +56,8 @@ class CommandCompositionHelper
      * Adds a condition to run the input command only while the input condition is true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    ConcurrentRaceCommand* onlyWhile(Command* command, std::function<bool()> condition)
+    template <size_t COMMANDS>
+    ConcurrentRaceCommand<COMMANDS>* onlyWhile(Command* command, std::function<bool()> condition)
     {
         std::function<bool()> negated = [condition]() { return !condition(); };
         return new ConcurrentRaceCommand(
@@ -66,7 +69,8 @@ class CommandCompositionHelper
      * Adds a condition to run the input command until the input condition becomes true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    ConcurrentRaceCommand* until(Command* command, std::function<bool()> condition)
+    template <size_t COMMANDS>
+    ConcurrentRaceCommand<COMMANDS>* until(Command* command, std::function<bool()> condition)
     {
         return new ConcurrentRaceCommand(
             {command, new ConditionalCommand(condition)},
@@ -77,7 +81,8 @@ class CommandCompositionHelper
      * Adds a timeout to run the input command for a specific amount of time.
      * @return ConcurrentRaceCommand* of the input command and a TimeoutCommand.
      */
-    ConcurrentRaceCommand* withTimeout(Command* command, uint32_t timeout)
+    template <size_t COMMANDS>
+    ConcurrentRaceCommand<COMMANDS>* withTimeout(Command* command, uint32_t timeout)
     {
         return new ConcurrentRaceCommand(
             {command, new TimeoutCommand(timeout)},
@@ -89,7 +94,8 @@ class CommandCompositionHelper
      * finished.
      * @return ConcurrentDeadlineCommand of input command deadlined with the input command.
      */
-    ConcurrentDeadlineCommand* deadlineWith(Command* command, Command* deadlineCommand)
+    template <size_t COMMANDS>
+    ConcurrentDeadlineCommand<COMMANDS>* deadlineWith(Command* command, Command* deadlineCommand)
     {
         return new ConcurrentDeadlineCommand({command}, "concurrent deadline", deadlineCommand);
     }
