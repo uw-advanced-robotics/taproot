@@ -33,10 +33,9 @@ namespace control
 {
 using namespace tap::communication::serial;
 
-class TriggerHelpers
+struct TriggerHelpers
 {
-public:
-    std::function<bool()> checkSwitchState(
+    static std::function<bool()> checkSwitchState(
         Drivers *drivers,
         Remote::Switch sw,
         Remote::SwitchState ss)
@@ -44,12 +43,12 @@ public:
         return [drivers, sw, ss]() { return drivers->remote.getSwitch(sw) == ss; };
     }
 
-    Trigger button(Drivers *drivers, Remote::Key button)
+    static Trigger button(Drivers *drivers, Remote::Key button)
     {
         return Trigger(drivers, [drivers, button]() { return drivers->remote.keyPressed(button); });
     }
 
-    Trigger switchState(
+    static Trigger switchState(
         Drivers *drivers,
         Remote::Switch remoteSwitch,
         Remote::SwitchState switchState)
@@ -59,7 +58,7 @@ public:
         });
     }
 
-    Trigger channelGreaterThan(
+    static Trigger channelGreaterThan(
         Drivers *drivers,
         Remote::Channel channel,
         double thresh,
@@ -77,27 +76,27 @@ public:
         });
     }
 
-    Trigger leftMouseButton(Drivers *drivers)
+    static Trigger leftMouseButton(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseL(); });
     }
 
-    Trigger rightMouseButton(Drivers *drivers)
+    static Trigger rightMouseButton(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseR(); });
     }
 
-    Trigger mouseX(Drivers *drivers)
+    static Trigger mouseX(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseX(); });
     }
 
-    Trigger mouseY(Drivers *drivers)
+    static Trigger mouseY(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseY(); });
     }
 
-    Trigger mouseZ(Drivers *drivers)
+    static Trigger mouseZ(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseZ(); });
     }
