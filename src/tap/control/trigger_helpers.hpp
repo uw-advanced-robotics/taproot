@@ -61,7 +61,7 @@ struct TriggerHelpers
     static Trigger channelGreaterThan(
         Drivers *drivers,
         Remote::Channel channel,
-        double thresh,
+        float thresh,
         bool abs = false)
     {
         return Trigger(drivers, [drivers, channel, thresh, abs]() {
