@@ -45,7 +45,7 @@ struct CommandCompositionHelper
     template <size_t COMMANDS, typename... Args>
     static SequentialCommand<COMMANDS>* sequence(Args*... args)
     {
-        return new SequentialCommand<COMMAND>(args);
+        return new SequentialCommand<COMMANDS>(args...);
     }
 
     /**
