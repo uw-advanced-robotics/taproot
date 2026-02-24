@@ -39,23 +39,23 @@ namespace control
 struct CommandCompositionHelper
 {
     /**
-     * Creates a command group that runs two commands sequentially.
+     * Creates a command group that runs commands sequentially.
      * @return SequentialCommand* of the input commands.
      */
-    static SequentialCommand<2>* sequence(Command* first, Command* second)
+    template <size_t COMMANDS, typename... Args>
+    static SequentialCommand<COMMANDS>* sequence(Args*... args)
     {
-        return new SequentialCommand<2>(first, second);
+        return new SequentialCommand<COMMAND>(args);
     }
 
     /**
-     * Creates a command group that runs two commands in parallel.
+     * Creates a command group that runs commands in parallel.
      * @return ConcurrentCommand* of the input commands.
      */
-    static ConcurrentCommand<2>* parallel(Command* command, Command* otherCommand)
+    template <size_t COMMANDS>
+    static ConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
     {
-        return new ConcurrentCommand(
-            std::array<Command*, 2>{command, otherCommand},
-            "conditional command: parallel");
+        return new ConcurrentCommand(commands, "concurrent command: parallel");
     }
 
     /**
