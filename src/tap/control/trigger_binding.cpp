@@ -53,7 +53,8 @@ void TriggerBinding::execute()
         {
             if (curTrigState)
             {
-                if (!drivers->commandScheduler.isCommandScheduled(command)) {
+                if (!drivers->commandScheduler.isCommandScheduled(command))
+                {
                     drivers->commandScheduler.addCommand(command);
                 }
             }
@@ -67,7 +68,8 @@ void TriggerBinding::execute()
         {
             if (!curTrigState)
             {
-                if (!drivers->commandScheduler.isCommandScheduled(command)) {
+                if (!drivers->commandScheduler.isCommandScheduled(command))
+                {
                     drivers->commandScheduler.addCommand(command);
                 }
             }

@@ -66,6 +66,16 @@ public:
             this->commandRequirementsBitwise |= requirements;
             this->allCommands |= (1ull << command->getGlobalIdentifier());
         }
+        if (deadlineCommand)
+        {
+            auto requirements = deadlineCommand->getRequirementsBitwise();
+            modm_assert(
+                (this->commandRequirementsBitwise & requirements) == 0,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Deadline command has overlapping requirements.");
+            this->commandRequirementsBitwise |= requirements;
+            this->allCommands |= (1ull << deadlineCommand->getGlobalIdentifier());
+        }
     }
 
     const char* getName() const override { return this->name; }
@@ -79,6 +89,7 @@ public:
                 return false;
             }
         }
+        if (deadlineCommand && !deadlineCommand->isReady()) return false;
         return true;
     }
 
@@ -87,6 +98,9 @@ public:
         for (Command* command : commands)
         {
             command->initialize();
+        }
+        if (deadlineCommand) {
+            deadlineCommand->initialize();
         }
     }
 
@@ -99,8 +113,15 @@ public:
                 command->execute();
                 if (command->isFinished())
                 {
-                    command->end(false);
                     this->finishedCommands |= 1ull << command->getGlobalIdentifier();
+                }
+            }
+        }
+        if (deadlineCommand) {
+            if (!(this->finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()))) {
+                deadlineCommand->execute();
+                if (deadlineCommand->isFinished()) {
+                    this->finishedCommands |= 1ull << deadlineCommand->getGlobalIdentifier();
                 }
             }
         }
@@ -108,9 +129,11 @@ public:
 
     void end(bool interrupted) override
     {
+        bool deadlineEnded =
+            deadlineCommand && (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()));
         for (Command* command : commands)
         {
-            if (!(this->finishedCommands & (1ull << command->getGlobalIdentifier())))
+            if (deadlineEnded || !(this->finishedCommands & (1ull << command->getGlobalIdentifier())))
             {
                 if (RACE)
                 {
@@ -122,11 +145,12 @@ public:
                 }
             }
         }
+        if (deadlineCommand && deadlineEnded) deadlineCommand->end(interrupted);
     }
 
     bool isFinished() const override
     {
-        if (deadlineCommand != nullptr &&
+        if (deadlineCommand &&
             (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier())))
             return true;
         if (RACE)
