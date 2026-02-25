@@ -95,6 +95,7 @@ public:
 
     void initialize() override
     {
+        finishedCommands = 0;
         for (Command* command : commands)
         {
             command->initialize();
