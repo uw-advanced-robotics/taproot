@@ -28,7 +28,8 @@
 #include "sequential_command.hpp"
 #include "timeout_command.hpp"
 
-// TODO summary: none of the command groups are rescheduled after initial time the command group runs, parallel command group isnt scheduled at all
+// TODO summary: none of the command groups are rescheduled after initial time the command group
+// runs, parallel command group isnt scheduled at all
 namespace tap
 {
 namespace control
@@ -45,12 +46,12 @@ struct CommandCompositionHelper
         return new SequentialCommand<COMMANDS>(args...);
     }
 
-    //TODO concurrentcommands arent rescheduled correctly on whileTrue
+    // TODO concurrentcommands arent rescheduled correctly on whileTrue
     /**
      * Creates a command group that runs commands in parallel.
      * @return ConcurrentCommand* of the input commands.
      */
-    template <size_t COMMANDS> // TODO not scheduled
+    template <size_t COMMANDS>  // TODO not scheduled
     static ConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
     {
         return new ConcurrentCommand<COMMANDS>(commands, "concurrent command: parallel");
@@ -95,7 +96,7 @@ struct CommandCompositionHelper
      * finished.
      * @return ConcurrentDeadlineCommand of input command deadlined with the input command.
      */
-    static ConcurrentDeadlineCommand<1>* deadlineWith(Command* command, Command* deadlineCommand) 
+    static ConcurrentDeadlineCommand<1>* deadlineWith(Command* command, Command* deadlineCommand)
     {
         return new ConcurrentDeadlineCommand<1>(
             std::array<Command*, 1>{command},

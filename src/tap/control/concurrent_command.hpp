@@ -94,7 +94,8 @@ public:
         {
             command->initialize();
         }
-        if (deadlineCommand) {
+        if (deadlineCommand)
+        {
             deadlineCommand->initialize();
         }
     }
@@ -112,10 +113,13 @@ public:
                 }
             }
         }
-        if (deadlineCommand) {
-            if (!(this->finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()))) {
+        if (deadlineCommand)
+        {
+            if (!(this->finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier())))
+            {
                 deadlineCommand->execute();
-                if (deadlineCommand->isFinished()) {
+                if (deadlineCommand->isFinished())
+                {
                     this->finishedCommands |= 1ull << deadlineCommand->getGlobalIdentifier();
                 }
             }
@@ -124,11 +128,12 @@ public:
 
     void end(bool interrupted) override
     {
-        bool deadlineEnded =
-            deadlineCommand && (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()));
+        bool deadlineEnded = deadlineCommand &&
+                             (finishedCommands & (1ull << deadlineCommand->getGlobalIdentifier()));
         for (Command* command : commands)
         {
-            if (deadlineEnded || !(this->finishedCommands & (1ull << command->getGlobalIdentifier())))
+            if (deadlineEnded ||
+                !(this->finishedCommands & (1ull << command->getGlobalIdentifier())))
             {
                 if (RACE)
                 {
