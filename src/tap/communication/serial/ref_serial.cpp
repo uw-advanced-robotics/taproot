@@ -512,7 +512,6 @@ bool RefSerial::decodeToCustomControllerData(const ReceivedSerialMessage& messag
     return true;
 }
 
-
 bool RefSerial::handleRobotToRobotCommunication(const ReceivedSerialMessage& message)
 {
     if (message.header.dataLength < sizeof(Tx::RobotToRobotMessage::interactiveHeader))
