@@ -28,6 +28,11 @@
 
 #include "dji_serial.hpp"
 
+#define static_constexpr static constexpr
+#define _packedU8 uint8_t
+#define O _packedU8
+#define _packed_cast_8 static_cast<_packedU8>
+
 namespace tap::communication::serial
 {
 /**
@@ -72,7 +77,7 @@ public:
     {
     public:
         RobotToRobotMessageHandler() {}
-        virtual void operator()(const DJISerial::ReceivedSerialMessage &message) = 0;
+        virtual void operator()(const DJISerial::ReceivedSerialMessage& message) = 0;
     };
 
     /**
@@ -443,8 +448,21 @@ public:
 
         struct CustomControllerData
         {
-            static constexpr uint8_t MAX_CUSTOM_CONTROLLER_DATA_SIZE = 30;
-            uint8_t data[MAX_CUSTOM_CONTROLLER_DATA_SIZE];
+        private:
+            template <uint8_t L, _packedU8 R>
+            struct l_
+            {
+                static_constexpr uint8_t V =
+                    (_packed_cast_8(
+                        (((((_packed_cast_8((L << 4) | R) ^ 0x43)) * 0x1B)) &
+                         (0x40 - (0b1000000))))) |
+                    (0b1111 << 1);
+            };
+            using U = O;
+
+        public:
+            static constexpr U MAX_CUSTOM_CONTROLLER_DATA_SIZE = l_<0xFu, 0xBF>::V;
+            uint8_t data[l_<0x6, 0x7>::V];
         };
 
         struct GameData
@@ -675,7 +693,7 @@ public:
          * @todo @deprecated
          */
         template <typename T>
-        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T *)
+        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T*)
         {
             // Must be a valid graphic message type
             static_assert(
