@@ -53,7 +53,10 @@ void TriggerBinding::execute()
         {
             if (curTrigState)
             {
-                drivers->commandScheduler.addCommand(command);
+                if (!drivers->commandScheduler.isCommandScheduled(command))
+                {
+                    drivers->commandScheduler.addCommand(command);
+                }
             }
             else
             {
@@ -65,7 +68,10 @@ void TriggerBinding::execute()
         {
             if (!curTrigState)
             {
-                drivers->commandScheduler.addCommand(command);
+                if (!drivers->commandScheduler.isCommandScheduled(command))
+                {
+                    drivers->commandScheduler.addCommand(command);
+                }
             }
             else
             {
@@ -113,13 +119,20 @@ void TriggerBinding::execute()
         }
         case Type::DEBOUNCE:
         {
-            if (prevTrigState && curTrigState)
+            if (!prevTrigState && curTrigState)
             {
                 curTime = tap::arch::clock::getTimeMilliseconds();
             }
-            if (tap::arch::clock::getTimeMilliseconds() - curTime > debounceTimeout)
+            if (curTrigState && tap::arch::clock::getTimeMilliseconds() - curTime > debounceTimeout)
             {
-                drivers->commandScheduler.addCommand(command);
+                if (!drivers->commandScheduler.isCommandScheduled(command))
+                {
+                    drivers->commandScheduler.addCommand(command);
+                }
+            }
+            if (!curTrigState)
+            {
+                drivers->commandScheduler.removeCommand(command, false);
             }
             break;
         }
