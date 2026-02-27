@@ -45,6 +45,20 @@ public:
     // MOCK_METHOD(std::size_t, getSize, (), (const, override));
 
     MOCK_METHOD(void, addTriggerBindingRaw, (tap::control::TriggerBinding*), ());
+
+    MOCK_METHOD(
+        void,
+        handleKeyStateChange,
+        (uint16_t,
+         tap::communication::serial::Remote::SwitchState,
+         tap::communication::serial::Remote::SwitchState,
+         bool,
+         bool),
+        (override));
+
+    MOCK_METHOD(void, addMap, (tap::control::CommandMapping*), (override));
+
+    MOCK_METHOD(std::size_t, getCommandMappingSize, (), (const override));
 };
 
 }  // namespace tap::mock

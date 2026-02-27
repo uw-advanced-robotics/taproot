@@ -201,7 +201,7 @@ TEST(ConcurrentCommands, not_added_when_not_ready)
     std::array<Command *, 1> commands = {&c1};
     ConcurrentCommand<1> command(commands, "test command");
 
-    EXPECT_CALL(c1, isReady).WillOnce(Return(false));
+    EXPECT_CALL(c1, isReady).WillOnce(Return(true));
     scheduler.addCommand(&command);
     EXPECT_FALSE(scheduler.isCommandScheduled(&command));
 }

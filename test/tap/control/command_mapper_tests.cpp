@@ -48,7 +48,7 @@ TEST(CommandMapper, getSize_returns_number_of_valid_trigger_bindings_added)
 
     EXPECT_CALL(drivers.commandMapper, addTriggerBindingRaw(testing::_)).Times(3);
 
-    EXPECT_EQ(0, drivers.commandMapper.getSize());
+    EXPECT_EQ(0, drivers.commandMapper.getBindingSize());
     std::function<bool()> leftSwitchDown = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::DOWN;
     };
@@ -60,14 +60,14 @@ TEST(CommandMapper, getSize_returns_number_of_valid_trigger_bindings_added)
     };
     Trigger trigger2 =
         Trigger(&drivers, [leftSwitchMid]() { return leftSwitchMid(); }).whileTrue(&tc2);
-    EXPECT_EQ(2, drivers.commandMapper.getSize());
+    EXPECT_EQ(2, drivers.commandMapper.getBindingSize());
 
     std::function<bool()> leftSwitchUp = [&drivers]() {
         return drivers.remote.getSwitch(Remote::Switch::LEFT_SWITCH) == Remote::SwitchState::UP;
     };
     Trigger trigger3 =
         Trigger(&drivers, [leftSwitchUp]() { return leftSwitchUp(); }).whileTrue(&tc3);
-    EXPECT_EQ(3, drivers.commandMapper.getSize());
+    EXPECT_EQ(3, drivers.commandMapper.getBindingSize());
 }
 
 TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_number_of_trigger_bindings_size)
@@ -82,9 +82,9 @@ TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_number_of_trigge
     Trigger trigger =
         Trigger(&drivers, [leftSwitchDown]() { return leftSwitchDown(); }).whileTrue(&tc);
 
-    EXPECT_NE(nullptr, drivers.commandMapper.getAtIndex(0));
-    EXPECT_EQ(nullptr, drivers.commandMapper.getAtIndex(1));
-    EXPECT_EQ(nullptr, drivers.commandMapper.getAtIndex(2));
+    EXPECT_NE(nullptr, drivers.commandMapper.getBindingAtIndex(0));
+    EXPECT_EQ(nullptr, drivers.commandMapper.getBindingAtIndex(1));
+    EXPECT_EQ(nullptr, drivers.commandMapper.getBindingAtIndex(2));
 }
 
 TEST(CommandMapper, getAtIndex_returns_correct_TriggerBinding_if_index_valid)
@@ -119,12 +119,164 @@ TEST(CommandMapper, getAtIndex_returns_correct_TriggerBinding_if_index_valid)
     TriggerBinding tb3 =
         TriggerBinding(&drivers, leftSwitchUp, &tc3, TriggerBinding::Type::WHILE_TRUE);
 
-    const TriggerBinding *binding1 = drivers.commandMapper.getAtIndex(0);
+    const TriggerBinding *binding1 = drivers.commandMapper.getBindingAtIndex(0);
     EXPECT_EQ(tb1, *binding1);
 
-    const TriggerBinding *binding2 = drivers.commandMapper.getAtIndex(1);
+    const TriggerBinding *binding2 = drivers.commandMapper.getBindingAtIndex(1);
     EXPECT_EQ(tb2, *binding2);
 
-    const TriggerBinding *binding3 = drivers.commandMapper.getAtIndex(2);
+    const TriggerBinding *binding3 = drivers.commandMapper.getBindingAtIndex(2);
     EXPECT_EQ(tb3, *binding3);
+}
+
+/****************** Command mapping specific tests *****************/
+
+TEST(CommandMapper, getSize_returns_number_of_valid_maps_added)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc1(&ts);
+    TestCommand tc2(&ts);
+    TestCommand tc3(&ts);
+    CommandMapper cm(&drivers);
+
+    HoldCommandMapping hcm1(
+        &drivers,
+        {&tc1},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    HoldCommandMapping hcm2(
+        &drivers,
+        {&tc2},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID));
+    HoldCommandMapping hcm3(
+        &drivers,
+        {&tc3},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+
+    EXPECT_EQ(0, cm.getCommandMappingSize());
+    cm.addMap(&hcm1);
+    cm.addMap(&hcm2);
+    EXPECT_EQ(2, cm.getCommandMappingSize());
+    cm.addMap(&hcm3);
+    EXPECT_EQ(3, cm.getCommandMappingSize());
+}
+
+TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_mapper_size)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    HoldCommandMapping hcm(
+        &drivers,
+        {&tc},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+
+    cm.addMap(&hcm);
+    EXPECT_NE(nullptr, cm.getCommandMappingAtIndex(0));
+    EXPECT_EQ(nullptr, cm.getCommandMappingAtIndex(1));
+    EXPECT_EQ(nullptr, cm.getCommandMappingAtIndex(2));
+}
+
+TEST(CommandMapper, getAtIndex_returns_correct_CommandMapping_if_index_valid)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc1(&ts);
+    TestCommand tc2(&ts);
+    TestCommand tc3(&ts);
+    CommandMapper cm(&drivers);
+    RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID);
+    RemoteMapState ms3(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP);
+    HoldCommandMapping hcm1(
+        &drivers,
+        {&tc1},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN));
+    HoldCommandMapping hcm2(
+        &drivers,
+        {&tc2},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID));
+    HoldCommandMapping hcm3(
+        &drivers,
+        {&tc3},
+        RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+    cm.addMap(&hcm1);
+    cm.addMap(&hcm2);
+    cm.addMap(&hcm3);
+
+    const CommandMapping *mapping = cm.getCommandMappingAtIndex(0);
+    EXPECT_EQ(ms1, mapping->getAssociatedRemoteMapState());
+    EXPECT_EQ(&tc1, mapping->getAssociatedCommands()[0]);
+    mapping = cm.getCommandMappingAtIndex(1);
+    EXPECT_EQ(ms2, mapping->getAssociatedRemoteMapState());
+    EXPECT_EQ(&tc2, mapping->getAssociatedCommands()[0]);
+    mapping = cm.getCommandMappingAtIndex(2);
+    EXPECT_EQ(ms3, mapping->getAssociatedRemoteMapState());
+    EXPECT_EQ(&tc3, mapping->getAssociatedCommands()[0]);
+}
+
+TEST(CommandMapper, addHoldMapping_successfully_adds_mapping_normal_case)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    HoldCommandMapping holdCommandMappingForCompare(&drivers, {&tc}, ms);
+    HoldCommandMapping hm(&drivers, {&tc}, ms);
+
+    cm.addMap(&hm);
+    const HoldCommandMapping *holdMappingPtr =
+        dynamic_cast<const HoldCommandMapping *>(cm.getCommandMappingAtIndex(0));
+    EXPECT_NE(nullptr, holdMappingPtr);
+    EXPECT_EQ(holdCommandMappingForCompare, *holdMappingPtr);
+}
+
+TEST(CommandMapper, addHoldRepeatMapping_successfully_adds_mapping_normal_case)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    HoldRepeatCommandMapping mappingForCompare(&drivers, {&tc}, ms, true);
+
+    cm.addMap(&mappingForCompare);
+    const HoldRepeatCommandMapping *holdRepeatMappingPtr =
+        dynamic_cast<const HoldRepeatCommandMapping *>(cm.getCommandMappingAtIndex(0));
+    EXPECT_NE(nullptr, holdRepeatMappingPtr);
+    EXPECT_EQ(mappingForCompare, *holdRepeatMappingPtr);
+}
+
+TEST(CommandMapper, addToggleMapping_successfully_adds_mapping_normal_case)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    ToggleCommandMapping mappingForCompare(&drivers, {&tc}, ms);
+
+    cm.addMap(&mappingForCompare);
+    const ToggleCommandMapping *toggleMappingPtr =
+        dynamic_cast<const ToggleCommandMapping *>(cm.getCommandMappingAtIndex(0));
+    EXPECT_NE(nullptr, toggleMappingPtr);
+    EXPECT_EQ(mappingForCompare, *toggleMappingPtr);
+}
+
+TEST(CommandMapper, addPressMapping_successfully_adds_mapping_normal_case)
+{
+    Drivers drivers;
+    TestSubsystem ts(&drivers);
+    TestCommand tc(&ts);
+    CommandMapper cm(&drivers);
+    RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
+    PressCommandMapping mappingForCompare(&drivers, {&tc}, ms);
+
+    cm.addMap(&mappingForCompare);
+    const PressCommandMapping *pressMappingPtr =
+        dynamic_cast<const PressCommandMapping *>(cm.getCommandMappingAtIndex(0));
+    EXPECT_NE(nullptr, pressMappingPtr);
+    EXPECT_EQ(mappingForCompare, *pressMappingPtr);
 }

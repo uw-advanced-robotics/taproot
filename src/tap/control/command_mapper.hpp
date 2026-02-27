@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "tap/communication/serial/remote.hpp"
+#include "tap/control/command_mapping.hpp"
 #include "tap/util_macros.hpp"
 
 namespace tap
@@ -32,12 +33,56 @@ namespace control
 {
 class TriggerBinding;
 
+/**
+ * Class that controls mapping triggers or remote state to actions.
+ *
+ * Triggers are automatically registered with the CommandScheduler via TriggerBindings
+ * that are created when a condition (whileTrue, onTrue, etc.) is bound to the Trigger.
+ *
+ * All the remote mappings will be handled here. One passes a RemoteMapState and a set
+ * of `Command`s for which the RemoteMapState is mapped to a `CommandMapping`
+ * sub-object. Once a command mapping is created, pass this command mapping to
+ * the `CommandMapper`'s `addMap` function. This will register the mapping such
+ * that the `CommandMapping`'s `executeCommandMapping` function will be called
+ * each time new remote information is received.
+ *
+ * For example, given the command `coolCommand`, to map a hold mapping
+ * to the left switch in the up position, we define a `HoldCommandMapping`
+ * and then add it to the `CommandMapper` as follows (where `drivers` is assumed
+ * to be a global drivers object that has a `CommandMapper` object):
+ *
+ * ```
+ * HoldCommandMapping leftSwitchUp(
+ *      drivers(),
+ *      {&coolCommand},
+ *      RemoteMapState(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP));
+ *
+ * drivers->commandMapper.addMap(&leftSwitchUp);
+ * ```
+ *
+ * The corresponding code for a Trigger is
+ * ```
+ * Trigger leftSwitchUp(
+ *      drivers(),
+ *      TriggerHelpers::checkSwitchState(drivers(), Remote::Switch::LEFT_SWITCH,
+ * Remote::SwitchState::UP)) .whileTrue(&coolCommand);
+ * ```
+ *
+ * @note Only unique RemoteMapStates can be added to the CommandMapper. This ensures
+ *      a user will not accidently map two `Command`s to the same RemoteMapState without
+ *      knowing they did so. Instead, the user must explicitly add `Command`s to a common
+ *      vector that maps to a single RemoteMapState.
+ */
 class CommandMapper
 {
 public:
+    /*explicit CommandMapper(Drivers *drivers) : drivers(drivers) {}
+    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
+    mockable ~CommandMapper() = default;*/
+
     DISALLOW_COPY_AND_ASSIGN(CommandMapper)
     mockable ~CommandMapper();
-    explicit CommandMapper(Drivers*);
+    explicit CommandMapper(Drivers *);
 
     mockable void pollTriggerBindings();
 
@@ -46,16 +91,54 @@ public:
     /**
      * @return the number of trigger bindings in the mapper.
      */
-    mockable std::size_t getSize() const { return triggerBindings.size(); }
+    mockable std::size_t getBindingSize() const { return triggerBindings.size(); }
 
     /**
      * @return The TriggerBinding located at the specificed index, or
      *      `nullptr` of the index is out of bounds.
      */
-    mockable const TriggerBinding* getAtIndex(std::size_t index) const;
+    mockable const TriggerBinding *getBindingAtIndex(std::size_t index) const;
+
+    /**************** Command mapping specific *****************/
+
+    /**
+     * The heart of the CommandMapper.
+     *
+     * Iterates through all the current mappings to see which buttons are pressed
+     * in order to determine which commands should be added to or removed from the scheduler.
+     * Call when new remote information has been received.
+     */
+    mockable void handleKeyStateChange(
+        uint16_t key,
+        tap::communication::serial::Remote::SwitchState leftSwitch,
+        tap::communication::serial::Remote::SwitchState rightSwitch,
+        bool mouseL,
+        bool mouseR);
+
+    /**
+     * Verifies the mapping passed in can be added to `commandsToRun`
+     * and if possible adds the mapping.
+     *
+     * @param[in] mapping A pointer to the CommandMapping to be added. The
+     *      command mapper is not responsible for memory deallocation of this
+     *      command mapping.
+     */
+    mockable void addMap(CommandMapping *mapping);
+
+    /**
+     * @return the number of command mappings in the mapper.
+     */
+    mockable std::size_t getCommandMappingSize() const { return commandsToRun.size(); }
+
+    /**
+     * @return The CommandMapping located at the specificed index, or
+     *      `nullptr` of the index is out of bounds.
+     */
+    mockable const CommandMapping *getCommandMappingAtIndex(std::size_t index) const;
 
 private:
     std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
+    std::vector<CommandMapping *> commandsToRun;
 };  // class CommandMapper
 
 }  // namespace control
