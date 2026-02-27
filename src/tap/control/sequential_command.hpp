@@ -94,6 +94,7 @@ public:
 
             if (this->commands[this->currentCommand]->isFinished())
             {
+                this->commands[this->currentCommand]->end(false);
                 this->commandInitialized = false;
                 this->currentCommand++;
             }
