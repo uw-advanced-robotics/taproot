@@ -220,11 +220,11 @@ DjiMotor const* DjiMotorTxHandler::getCan1Motor(MotorId motorId)
     return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can1MotorStore[index];
 }
 
-DjiMotor* DjiMotorTxHandler::getCan1MotorMutable(MotorId motorId)
-{
-    uint32_t index = DJI_MOTOR_TO_NORMALIZED_ID(motorId);
-    return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can1MotorStore[index];
-}
+// DjiMotor* DjiMotorTxHandler::getCan1MotorMutable(MotorId motorId)
+// {
+//     uint32_t index = DJI_MOTOR_TO_NORMALIZED_ID(motorId);
+//     return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can1MotorStore[index];
+// }
 
 DjiMotor const* DjiMotorTxHandler::getCan2Motor(MotorId motorId)
 {
@@ -232,9 +232,9 @@ DjiMotor const* DjiMotorTxHandler::getCan2Motor(MotorId motorId)
     return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can2MotorStore[index];
 }
 
-DjiMotor* DjiMotorTxHandler::getCan2MotorMutable(MotorId motorId)
-{
-    uint32_t index = DJI_MOTOR_TO_NORMALIZED_ID(motorId);
-    return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can2MotorStore[index];
-}
+// DjiMotor* DjiMotorTxHandler::getCan2MotorMutable(MotorId motorId)
+// {
+//     uint32_t index = DJI_MOTOR_TO_NORMALIZED_ID(motorId);
+//     return index > DJI_MOTOR_TO_NORMALIZED_ID(tap::motor::MOTOR8) ? nullptr : can2MotorStore[index];
+// }
 }  // namespace tap::motor

@@ -104,11 +104,11 @@ public:
 
     mockable DjiMotor const* getCan1Motor(MotorId motorId);
 
-    mockable DjiMotor* getCan1MotorMutable(MotorId motorId);
+    // mockable DjiMotor* getCan1MotorMutable(MotorId motorId);
 
     mockable DjiMotor const* getCan2Motor(MotorId motorId);
 
-    mockable DjiMotor* getCan2MotorMutable(MotorId motorId);
+    // mockable DjiMotor* getCan2MotorMutable(MotorId motorId);
 
 protected:
     Drivers* drivers;
