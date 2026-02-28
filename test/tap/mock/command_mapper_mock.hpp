@@ -42,21 +42,16 @@ public:
     void addTriggerBinding(std::unique_ptr<tap::control::TriggerBinding> binding) override;
 
     MOCK_METHOD(void, pollTriggerBindings, (), (override));
-    // MOCK_METHOD(std::size_t, getSize, (), (const, override));
 
     MOCK_METHOD(void, addTriggerBindingRaw, (tap::control::TriggerBinding*), ());
 
     MOCK_METHOD(
         void,
         handleKeyStateChange,
-        (uint16_t,
-         tap::communication::serial::Remote::SwitchState,
-         tap::communication::serial::Remote::SwitchState,
-         bool,
-         bool),
+        (tap::communication::serial::Remote&, uint16_t),
         (override));
 
-    MOCK_METHOD(void, addMap, (tap::control::CommandMapping*), (override));
+    MOCK_METHOD(void, addMap, (std::unique_ptr<tap::control::CommandMapping>), (override));
 
     MOCK_METHOD(std::size_t, getCommandMappingSize, (), (const override));
 };

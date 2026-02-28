@@ -76,10 +76,6 @@ class TriggerBinding;
 class CommandMapper
 {
 public:
-    /*explicit CommandMapper(Drivers *drivers) : drivers(drivers) {}
-    DISALLOW_COPY_AND_ASSIGN(CommandMapper)
-    mockable ~CommandMapper() = default;*/
-
     DISALLOW_COPY_AND_ASSIGN(CommandMapper)
     mockable ~CommandMapper();
     explicit CommandMapper(Drivers *);
@@ -108,12 +104,7 @@ public:
      * in order to determine which commands should be added to or removed from the scheduler.
      * Call when new remote information has been received.
      */
-    mockable void handleKeyStateChange(
-        uint16_t key,
-        tap::communication::serial::Remote::SwitchState leftSwitch,
-        tap::communication::serial::Remote::SwitchState rightSwitch,
-        bool mouseL,
-        bool mouseR);
+    mockable void handleKeyStateChange(tap::communication::serial::Remote &remote, uint16_t key);
 
     /**
      * Verifies the mapping passed in can be added to `commandsToRun`
@@ -123,7 +114,7 @@ public:
      *      command mapper is not responsible for memory deallocation of this
      *      command mapping.
      */
-    mockable void addMap(CommandMapping *mapping);
+    mockable void addMap(std::unique_ptr<CommandMapping> mapping);
 
     /**
      * @return the number of command mappings in the mapper.
@@ -138,7 +129,7 @@ public:
 
 private:
     std::vector<std::unique_ptr<TriggerBinding>> triggerBindings;
-    std::vector<CommandMapping *> commandsToRun;
+    std::vector<std::unique_ptr<CommandMapping>> commandsToRun;
 };  // class CommandMapper
 
 }  // namespace control

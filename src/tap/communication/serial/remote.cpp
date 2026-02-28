@@ -138,6 +138,7 @@ void Remote::parseBuffer()
     }
 
     drivers->commandMapper.pollTriggerBindings();
+    drivers->commandMapper.handleKeyStateChange(*this, remote.key);
 
     remote.updateCounter++;
 }
@@ -173,6 +174,7 @@ void Remote::reset()
     clearRxBuffer();
 
     drivers->commandMapper.pollTriggerBindings();
+    drivers->commandMapper.handleKeyStateChange(*this, 0);
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }

@@ -17,6 +17,7 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include "tap/control/hold_command_mapping.hpp"
@@ -29,6 +30,8 @@
 using namespace tap::control;
 using tap::Drivers;
 using namespace tap::communication::serial;
+using ::testing::_;
+using ::testing::Invoke;
 
 // Adding command with switch state RemoteMapState (RMS)
 
@@ -41,9 +44,9 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2;
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
-    EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
 
+    EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
     commandMapping.executeCommandMapping(ms2);
 }
 
@@ -54,7 +57,8 @@ TEST(HoldCommandMapping, executeCommandMapping_single_command_added_if_switch_ba
     TestCommand tc(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2 = ms1;
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
+
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -70,7 +74,7 @@ TEST(HoldCommandMapping, executeCommandMapping_single_command_added_if_switch_ba
     ms2.initKeys(42);
     ms2.initRSwitch(Remote::SwitchState::UP);
     ms2.initLMouseButton();
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -87,7 +91,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B});
     RemoteMapState ms2({Remote::Key::C, Remote::Key::D});
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
 
     commandMapping.executeCommandMapping(ms2);
@@ -100,7 +104,7 @@ TEST(HoldCommandMapping, executeCommandMapping_single_command_added_if_key_based
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B});
     RemoteMapState ms2 = ms1;
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -115,7 +119,7 @@ TEST(HoldCommandMapping, executeCommandMapping_single_command_added_if_key_based
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::C});
     ms2.initLMouseButton();
     ms2.initLSwitch(Remote::SwitchState::DOWN);
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -132,7 +136,7 @@ TEST(
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::C, Remote::Key::D});
     ms2.initLMouseButton();
     ms2.initLSwitch(Remote::SwitchState::DOWN);
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
 
     commandMapping.executeCommandMapping(ms2);
@@ -149,7 +153,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2 = ms1;
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand(&tc, false)).Times(1);
 
@@ -169,7 +173,7 @@ TEST(
     RemoteMapState ms2 = ms1;
     ms2.initKeys(42);
     ms2.initLMouseButton();
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(0);
 
@@ -187,7 +191,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B}, {});
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::C}, {});
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(0);
 
@@ -203,7 +207,7 @@ TEST(HoldCommandMapping, executeCommandMapping_single_command_removed_if_key_bas
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B}, {});
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::C}, {});
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand(&tc, false)).Times(1);
 
@@ -221,7 +225,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B}, {Remote::Key::C});
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::E});
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(0);
 
@@ -239,7 +243,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B}, {Remote::Key::C});
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::E});
-    HoldCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand(&tc, false)).Times(1);
 
@@ -258,7 +262,7 @@ TEST(
     TestCommand tc2(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldCommandMapping commandMapping(&drivers, {&tc1, &tc2}, ms1);
+    HoldCommandMapping commandMapping(&drivers, {&tc1, &tc2}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(2);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(2);
 

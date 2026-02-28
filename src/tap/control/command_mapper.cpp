@@ -23,6 +23,7 @@
 #include "tap/errors/create_errors.hpp"
 
 #include "command_mapping.hpp"
+#include "generic_remote_map_state.hpp"
 #include "remote_map_state.hpp"
 
 using namespace tap::errors;
@@ -38,7 +39,7 @@ CommandMapper::~CommandMapper() = default;
 
 void CommandMapper::pollTriggerBindings()
 {
-    for (const auto &binding : triggerBindings)
+    for (const std::unique_ptr<TriggerBinding> &binding : triggerBindings)
     {
         binding->execute();
     }
@@ -58,35 +59,24 @@ const TriggerBinding *CommandMapper::getBindingAtIndex(std::size_t index) const
     return triggerBindings.at(index).get();
 }
 
-void CommandMapper::handleKeyStateChange(
-    uint16_t key,
-    Remote::SwitchState leftSwitch,
-    Remote::SwitchState rightSwitch,
-    bool mouseL,
-    bool mouseR)
+void CommandMapper::handleKeyStateChange(Remote &remote, uint16_t key)
 {
     // Make a new map state that represents the current state of the remote,
     // to be passed in to each of the CommandMappings.
-    RemoteMapState mapstate;
-    mapstate.initLSwitch(leftSwitch);
-    mapstate.initRSwitch(rightSwitch);
-    mapstate.initKeys(key);
-    if (mouseL)
-    {
-        mapstate.initLMouseButton();
-    }
-    if (mouseR)
-    {
-        mapstate.initRMouseButton();
-    }
+    GenericRemoteMapState mapState;
 
-    for (CommandMapping *cmdMap : commandsToRun)
+    mapState.initKeys(key);
+    mapState.updateState(remote);
+    for (std::unique_ptr<CommandMapping> &cmdMap : commandsToRun)
     {
-        cmdMap->executeCommandMapping(mapstate);
+        cmdMap->executeCommandMapping(mapState);
     }
 }
 
-void CommandMapper::addMap(CommandMapping *mapping) { commandsToRun.push_back(mapping); }
+void CommandMapper::addMap(std::unique_ptr<CommandMapping> mapping)
+{
+    commandsToRun.push_back(std::move(mapping));
+}
 
 const CommandMapping *CommandMapper::getCommandMappingAtIndex(std::size_t index) const
 {
@@ -94,7 +84,7 @@ const CommandMapping *CommandMapper::getCommandMappingAtIndex(std::size_t index)
     {
         return nullptr;
     }
-    return commandsToRun[index];
+    return commandsToRun.at(index).get();
 }
 
 }  // namespace control

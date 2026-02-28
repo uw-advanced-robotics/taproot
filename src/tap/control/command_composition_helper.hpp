@@ -52,9 +52,9 @@ struct CommandCompositionHelper
      * @return ConcurrentCommand* of the input commands.
      */
     template <size_t COMMANDS>  // TODO not scheduled
-    static ConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
+    static WeakConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
     {
-        return new WeakConcurarentCommand<COMMANDS>(commands, "concurrent command: parallel");
+        return new WeakConcurrentCommand<COMMANDS>(commands, "concurrent command: parallel");
     }
 
     /**
