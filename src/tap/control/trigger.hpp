@@ -29,28 +29,102 @@ namespace tap
 {
 namespace control
 {
+/**
+ * Class that links commands to be scheduled when certain conditions change state.
+ * Each trigger binding (e.g., onTrue, onFalse, whileTrue) adds a new trigger binding to
+ * the command mapper, which are then polled every loop of the command scheduler.
+ */
 class Trigger
 {
 public:
     Trigger(Drivers *drivers, std::function<bool()> condition);
 
+    /**
+     * @return The truth value of the boolean condition passed into the trigger.
+     */
     bool get() const { return condition(); };
 
+    /**
+     * @param[in] other The trigger to compare with this trigger.
+     * @return A Trigger whose condition returns true when the condition of this trigger
+     * and of `other` are true.
+     */
     Trigger operator&&(const Trigger &other) const;
 
+    /**
+     * @param[in] other The trigger to compare with this trigger.
+     * @return A Trigger whose condition returns true when the condition of this trigger
+     * or of `other` are true.
+     */
     Trigger operator||(const Trigger &other) const;
 
+    /**
+     * @param[in] other The trigger to compare with this trigger.
+     * @return A Trigger whose condition returns true when the condition of this trigger
+     * has the opposite truth value of the condition of `other`.
+     */
     Trigger operator^(const Trigger &other) const;
 
+    /**
+     * @return A Trigger with the opposite truth value of this trigger.
+     */
     Trigger operator!() const;
 
+    /**
+     * @param[in] command Pointer to the command to be scheduled when the trigger condition
+     * switches from false to true.
+     * @return This trigger.
+     */
     Trigger onTrue(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command to be scheduled when the trigger condition
+     * switches from true to false.
+     * @return This trigger.
+     */
     Trigger onFalse(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command to be scheduled while the trigger condition
+     * is true.
+     * @return This trigger.
+     */
     Trigger whileTrue(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command to be scheduled while the trigger condition
+     * is false.
+     * @return This trigger.
+     */
     Trigger whileFalse(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command that switches between being scheduled and
+     * descheduled when the trigger condition switches from false to true.
+     * @return This trigger.
+     */
     Trigger toggleOnTrue(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command that switches between being scheduled and
+     * descheduled when the trigger condition switches from true to false.
+     * @return This trigger.
+     */
     Trigger toggleOnFalse(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command to be scheduled when the trigger condition
+     * switches from false to true or from true to false.
+     * @return This trigger.
+     */
     Trigger onChange(Command *command);
+
+    /**
+     * @param[in] command Pointer to the command to be scheduled when the trigger condition
+     * is true for at least `timeout` milliseconds.
+     * @param[in] timeout The amount of milliseconds to wait before scheduling `command`.
+     * @return This trigger.
+     */
     Trigger debounce(Command *command, uint32_t timeout);
 
 private:

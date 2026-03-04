@@ -34,10 +34,23 @@ namespace control
 class TriggerBinding;
 
 /**
- * Class that controls mapping triggers or remote state to actions.
+ * Class that controls mapping triggers or remote state to actions. Currently supports
+ * both triggers and command mappings, but will eventually fully migrate to using triggers,
+ * which, unlike command mappings, do not require remote state tracking and do not run into
+ * state transition restrictions.
  *
  * Triggers are automatically registered with the CommandScheduler via TriggerBindings
  * that are created when a condition (whileTrue, onTrue, etc.) is bound to the Trigger.
+ *
+ * For example, the command `coolCommand` will be called while the left switch is in the
+ * up position by calling whileTrue on a trigger. This can be done inline because whileTrue
+ * and the other trigger bindings return Triggers themselves.
+ * ```
+ * Trigger leftSwitchUp(
+ *      drivers(),
+ *      TriggerHelpers::checkSwitchState(drivers(), Remote::Switch::LEFT_SWITCH,
+ * Remote::SwitchState::UP)).whileTrue(&coolCommand);
+ * ```
  *
  * All the remote mappings will be handled here. One passes a RemoteMapState and a set
  * of `Command`s for which the RemoteMapState is mapped to a `CommandMapping`
@@ -60,14 +73,6 @@ class TriggerBinding;
  * drivers->commandMapper.addMap(&leftSwitchUp);
  * ```
  *
- * The corresponding code for a Trigger is
- * ```
- * Trigger leftSwitchUp(
- *      drivers(),
- *      TriggerHelpers::checkSwitchState(drivers(), Remote::Switch::LEFT_SWITCH,
- * Remote::SwitchState::UP)) .whileTrue(&coolCommand);
- * ```
- *
  * @note Only unique RemoteMapStates can be added to the CommandMapper. This ensures
  *      a user will not accidently map two `Command`s to the same RemoteMapState without
  *      knowing they did so. Instead, the user must explicitly add `Command`s to a common
@@ -80,8 +85,16 @@ public:
     mockable ~CommandMapper();
     explicit CommandMapper(Drivers *);
 
+    /**
+     * Execute all trigger bindings added to `triggerBindings`
+     */
     mockable void pollTriggerBindings();
 
+    /**
+     * Adds the TriggerBinding to `triggerBindings`.
+     *
+     * @param[in] binding A pointer to the TriggerBinding to be added.
+     */
     mockable void addTriggerBinding(std::unique_ptr<TriggerBinding> binding);
 
     /**
@@ -95,11 +108,7 @@ public:
      */
     mockable const TriggerBinding *getBindingAtIndex(std::size_t index) const;
 
-    /**************** Command mapping specific *****************/
-
     /**
-     * The heart of the CommandMapper.
-     *
      * Iterates through all the current mappings to see which buttons are pressed
      * in order to determine which commands should be added to or removed from the scheduler.
      * Call when new remote information has been received.

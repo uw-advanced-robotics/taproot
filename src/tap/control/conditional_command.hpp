@@ -28,6 +28,9 @@ namespace tap
 {
 namespace control
 {
+/**
+ * Class for a command that runs until a certain condition becomes false.
+ */
 class ConditionalCommand : public Command
 {
 public:

@@ -30,6 +30,9 @@ namespace tap
 {
 namespace control
 {
+/**
+ * Class for a command that runs until for a specific amount of time, in milliseconds.
+ */
 class TimeoutCommand : public Command
 {
 public:

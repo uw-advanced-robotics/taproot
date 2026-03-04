@@ -28,12 +28,14 @@
 #include "sequential_command.hpp"
 #include "timeout_command.hpp"
 
-// TODO summary: none of the command groups are rescheduled after initial time the command group
-// runs, parallel command group isnt scheduled at all
 namespace tap
 {
 namespace control
 {
+/**
+ * Helper class for creating command groups for scheduling commands in sequence, in parallel,
+ * and based on the state of certain conditions.
+ */
 struct CommandCompositionHelper
 {
     /**
@@ -46,7 +48,6 @@ struct CommandCompositionHelper
         return new SequentialCommand<COMMANDS>(args...);
     }
 
-    // TODO concurrentcommands arent rescheduled correctly on whileTrue
     /**
      * Creates a command group that runs commands in parallel.
      * @return ConcurrentCommand* of the input commands.

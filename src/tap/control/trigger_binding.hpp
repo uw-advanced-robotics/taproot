@@ -30,6 +30,10 @@ namespace tap
 {
 namespace control
 {
+/**
+ * Class that adds and removes commands from the command scheduler based on the state of a
+ * condition.
+ */
 class TriggerBinding
 {
 public:
@@ -60,10 +64,25 @@ public:
     {
     }
 
+    /**
+     * Checks whether the current command needs to be added or removed from the command scheduler
+     * based on the trigger binding type and the state of the condition.
+     */
     void execute();
 
+    /**
+     * @param[in] binding1 The first binding to compare.
+     * @param[in] binding2 The second binding to compare.
+     * Checks if `binding1` and `binding2` are equal based on binding type and the global identifier
+     * of their respective commands.
+     */
     bool friend operator==(const TriggerBinding &binding1, const TriggerBinding &binding2);
 
+    /**
+     * @param[in] binding1 The first binding to compare.
+     * @param[in] binding2 The second binding to compare.
+     * Checks if `binding1` and `binding2` are not equal.
+     */
     bool friend operator!=(const TriggerBinding &binding1, const TriggerBinding &binding2);
 
 private:

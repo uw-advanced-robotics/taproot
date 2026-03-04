@@ -66,9 +66,11 @@ struct WeakReadinessCheck
 };
 
 /**
- * A command that runs multiple commands in parallel.When RACE is false, it continues executing
+ * A command that runs multiple commands in parallel. When RACE is false, it continues executing
  * until all passed in commands have finished and then the concurrent command finishes. When RACE is
- * true, only one passed in command needs to finish for the concurrent command to finish.
+ * true, only one passed in command needs to finish for the concurrent command to finish. If
+ * `deadlineCommand` is not a null pointer, the command group runs until `deadlineCommand` is
+ * finished.
  */
 template <size_t COMMANDS, bool RACE, typename ReadinessCheck>
 class ConcurrentTemplateCommand : public Command

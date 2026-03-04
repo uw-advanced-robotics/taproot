@@ -33,21 +33,27 @@ namespace control
 {
 using namespace tap::communication::serial;
 
+/**
+ * Helper struct that wraps different remote mappings in helper functions.
+ */
 struct TriggerHelpers
 {
-    static std::function<bool()> checkSwitchState(
-        Drivers *drivers,
-        Remote::Switch sw,
-        Remote::SwitchState ss)
-    {
-        return [drivers, sw, ss]() { return drivers->remote.getSwitch(sw) == ss; };
-    }
-
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] button A remote button.
+     * @return A trigger that is true when `button` is pressed on the remote.
+     */
     static Trigger button(Drivers *drivers, Remote::Key button)
     {
         return Trigger(drivers, [drivers, button]() { return drivers->remote.keyPressed(button); });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] remoteSwitch A remote switch (left/right).
+     * @param[in] switchState A remote switch state (down/mid/up).
+     * @return A trigger that is true when `remoteSwitch` is in state `switchState`.
+     */
     static Trigger switchState(
         Drivers *drivers,
         Remote::Switch remoteSwitch,
@@ -58,6 +64,13 @@ struct TriggerHelpers
         });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] channel A channel on the remote.
+     * @param[in] thresh A threshold for the value of `channel` on the remote.
+     * @param[in] abs Whether to take the absolute value of `channel`, defaults to true.
+     * @return A trigger that is true when the value of `channel` is greater than `thresh`.
+     */
     static Trigger channelGreaterThan(
         Drivers *drivers,
         Remote::Channel channel,
@@ -76,26 +89,46 @@ struct TriggerHelpers
         });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @return A trigger that is true when the left mouse button is pressed.
+     */
     static Trigger leftMouseButton(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseL(); });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @return A trigger that is true when the right mouse button is pressed.
+     */
     static Trigger rightMouseButton(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseR(); });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @return A trigger that is true when X is pressed on the mouse.
+     */
     static Trigger mouseX(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseX(); });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @return A trigger that is true when Y is pressed on the mouse.
+     */
     static Trigger mouseY(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseY(); });
     }
 
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @return A trigger that is true when Z is pressed on the mouse.
+     */
     static Trigger mouseZ(Drivers *drivers)
     {
         return Trigger(drivers, [drivers]() { return drivers->remote.getMouseZ(); });
