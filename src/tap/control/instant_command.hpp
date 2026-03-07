@@ -20,49 +20,75 @@
 #ifndef TAPROOT_INSTANT_COMMAND_HPP_
 #define TAPROOT_INSTANT_COMMAND_HPP_
 
-#include <functional>
 #include <array>
-#include <vector>
+#include <cstring>
+#include <functional>
 #include <unordered_set>
+#include <vector>
+
+#include "tap/drivers.hpp"
 
 #include "command.hpp"
-#include "subsystem.hpp"
 #include "command_scheduler.hpp"
-#include "tap/drivers.hpp"
+#include "repeat_command.hpp"
+#include "subsystem.hpp"
 
 namespace tap
 {
 namespace control
 {
-template<size_t SUBSYSTEMS>
+template <size_t SUBSYSTEMS>
 /**
- * A class for a command that runs once and then finishes. Deschedules any commands with conflicting subsystems before
- * it executes, then reschedules those descheduled commands.
+ * A class for a command that runs once and then finishes. Deschedules any commands with conflicting
+ * subsystems before it executes, then reschedules those descheduled commands.
  */
-class InstantCommand : public Command {
+class InstantCommand : public Command
+{
 public:
-    InstantCommand(Drivers *drivers, std::function<void()> actionToRun, std::array<Subsystem*, SUBSYSTEMS> dependencies)
-        : Command(), drivers(drivers), actionToRun(actionToRun), dependencies(dependencies) {
-            for (Subsystem *dep : dependencies) subsystemRequirements |= (1UL << dep->getGlobalIdentifier());
-        }
+    InstantCommand(
+        CommandScheduler *scheduler,
+        std::function<void()> actionToRun,
+        std::array<Subsystem *, SUBSYSTEMS> dependencies)
+        : Command(),
+          scheduler(scheduler),
+          actionToRun(actionToRun),
+          dependencies(dependencies)
+    {
+        for (Subsystem *dep : dependencies) addSubsystemRequirement(dep);
+    }
 
     bool isReady() override { return true; }
 
-    void initialize() override {
-        std::unordered_set<Command*> defaultCommands;
-        for (Subsystem *subsystem : dependencies) {
-            if (subsystem->getDefaultCommand() != nullptr) {
+    void initialize() override
+    {
+        std::unordered_set<Command *> defaultCommands;
+        for (Subsystem *subsystem : dependencies)
+        {
+            if (subsystem->getDefaultCommand() != nullptr)
+            {
                 defaultCommands.insert(subsystem->getDefaultCommand());
             }
         }
-        
-        for (Command *command : drivers->commandScheduler.getAllScheduledCommands()) {
+
+        auto scheduled = scheduler->getAllScheduledCommands();
+        for (Command *command : scheduled)
+        {
             subsystem_scheduler_bitmap_t reqs = command->getRequirementsBitwise();
-            // only add to commands to reschedule if not a default command (automatically rescheduled) and requirements overlap with instant command
-            if (defaultCommands.find(command) == defaultCommands.end() && (reqs & subsystemRequirements) != 0) {
-                commandsToReschedule.push_back(command);
+            // don't deschedule current command or repeat command that takes in current command
+            if (command == this ||
+                (std::strcmp(command->getName(), "repeat command") == 0 &&
+                 static_cast<RepeatCommand *>(command)->getWrappedCommand() == this))
+                continue;
+            // only add to commands to reschedule if not a default command (automatically
+            // rescheduled) and requirements overlap with instant command
+            if ((reqs & getRequirementsBitwise()) != 0)
+            {
+                if (defaultCommands.find(command) == defaultCommands.end())
+                {
+                    commandsToReschedule.push_back(command);
+                }
+                scheduler->removeCommand(command, true);
             }
-            drivers->commandScheduler.removeCommand(command, true);
         }
         actionToRun();
     }
@@ -72,25 +98,25 @@ public:
     void end(bool) override
     {
         // reschedule any descheduled commands
-        for (Command *command : commandsToReschedule) {
-            drivers->commandScheduler.addCommand(command);
+        for (Command *command : commandsToReschedule)
+        {
+            scheduler->addCommand(command);
         }
         commandsToReschedule.clear();
     }
 
     bool isFinished() const override { return true; }
 
-    const char* getName() const override { return "instant command"; }
+    const char *getName() const override { return "instant command"; }
 
 private:
-    Drivers *drivers;
+    CommandScheduler *scheduler;
     std::function<void()> actionToRun;
-    std::array<Subsystem*, SUBSYSTEMS> dependencies;
+    std::array<Subsystem *, SUBSYSTEMS> dependencies;
 
-    std::vector<Command*> commandsToReschedule;
-    subsystem_scheduler_bitmap_t subsystemRequirements = 0;
+    std::vector<Command *> commandsToReschedule;
 };
-}
-}
+}  // namespace control
+}  // namespace tap
 
 #endif

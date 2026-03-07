@@ -26,47 +26,53 @@ namespace tap
 {
 namespace control
 {
-/** 
+/**
  * A class for a command that runs the input command repeatedly by rescheduling it after it ends.
  */
-class RepeatCommand : public Command {
+class RepeatCommand : public Command
+{
 public:
-    RepeatCommand(Command *command): Command(), command(command) {}
+    RepeatCommand(Command* command) : Command(), command(command), ended(false)
+    {
+        commandRequirementsBitwise = command->getRequirementsBitwise();
+    }
 
     bool isReady() override { return command->isReady(); }
 
-    void initialize() override {
-        command->initialize();
-    }
+    void initialize() override { command->initialize(); }
 
-    void execute() override {
-        if (ended) {
+    void execute() override
+    {
+        if (ended)
+        {
+            command->end(false);
             command->initialize();
             ended = false;
         }
         command->execute();
-        if (command->isFinished()) {
-            command->end(false);
+        if (command->isFinished())
+        {
             ended = true;
         }
     }
 
-    void end(bool interrupted) override {
-        if (!ended) {
-            command->end(interrupted);
-            ended = true;
-        }
+    void end(bool interrupted) override
+    {
+        command->end(interrupted);
+        ended = true;
     }
 
     bool isFinished() const override { return false; }
-    
-    const char* getName() const override { "repeat command"; }
+
+    const char* getName() const override { return "repeat command"; }
+
+    const Command* getWrappedCommand() const { return command; }
 
 private:
-    Command *command;
+    Command* command;
     bool ended = false;
 };
-}
-}
+}  // namespace control
+}  // namespace tap
 
 #endif
