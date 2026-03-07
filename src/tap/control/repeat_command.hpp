@@ -26,6 +26,9 @@ namespace tap
 {
 namespace control
 {
+/** 
+ * A class for a command that runs the input command repeatedly by rescheduling it after it ends.
+ */
 class RepeatCommand : public Command {
 public:
     RepeatCommand(Command *command): Command(), command(command) {}

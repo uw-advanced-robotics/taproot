@@ -28,6 +28,7 @@
 #include "command.hpp"
 #include "subsystem.hpp"
 #include "command_scheduler.hpp"
+#include "tap/drivers.hpp"
 
 namespace tap
 {
@@ -60,15 +61,15 @@ public:
             // only add to commands to reschedule if not a default command (automatically rescheduled) and requirements overlap with instant command
             if (defaultCommands.find(command) == defaultCommands.end() && (reqs & subsystemRequirements) != 0) {
                 commandsToReschedule.push_back(command);
-                drivers->commandScheduler.removeCommand(command, true);
             }
+            drivers->commandScheduler.removeCommand(command, true);
         }
         actionToRun();
     }
 
     void execute() override {}
 
-    void end(bool interrupted) override
+    void end(bool) override
     {
         // reschedule any descheduled commands
         for (Command *command : commandsToReschedule) {

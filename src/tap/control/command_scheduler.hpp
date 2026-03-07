@@ -186,7 +186,7 @@ public:
      */
     mockable bool isCommandScheduled(const Command* command) const;
 
-    mockable std::vector<Command*> CommandScheduler::getAllScheduledCommands();
+    mockable std::vector<Command*> getAllScheduledCommands();
 
     /**
      * Adds the given Subsystem to the CommandScheduler.  The subsystem is
