@@ -166,7 +166,7 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                 if (motor != nullptr)
                 {
                     this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                        new (&motorSpecificMenu) MotorSpecificMenu(getViewStack(), drivers, motor));
                 }
             }
             else  // idx between [8, 16)
@@ -176,7 +176,7 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                 if (motor != nullptr)
                 {
                     this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                        new (&motorSpecificMenu) MotorSpecificMenu(getViewStack(), drivers, motor));
                 }
             }
             break;

@@ -69,6 +69,7 @@ private:
     uint8_t can2PrevDisplayedStatus;
 
     void drawMotor(tap::can::CanBus canBus, int normalizedMotorId);
+    MotorSpecificMenu motorSpecificMenu;
 };
 }  // namespace display
 }  // namespace tap
