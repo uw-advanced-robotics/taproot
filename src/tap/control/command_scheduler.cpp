@@ -298,20 +298,6 @@ bool CommandScheduler::isCommandScheduled(const Command *command) const
            (addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << command->getGlobalIdentifier()));
 }
 
-std::vector<Command *> CommandScheduler::getAllScheduledCommands()
-{
-    std::vector<Command *> scheduled;
-    for (int i = 0; i < MAX_COMMAND_COUNT; i++)
-    {
-        if (globalCommandRegistrar[i] != nullptr &&
-            (addedCommandBitmap & (LSB_ONE_HOT_COMMAND_BITMAP << i)))
-        {
-            scheduled.push_back(globalCommandRegistrar[i]);
-        }
-    }
-    return scheduled;
-}
-
 void CommandScheduler::removeCommand(Command *command, bool interrupted)
 {
     if (command == nullptr)

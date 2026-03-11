@@ -21,7 +21,6 @@
 #define TAPROOT_COMMAND_SCHEDULER_HPP_
 
 #include <iterator>
-#include <vector>
 
 #include "tap/util_macros.hpp"
 
@@ -185,8 +184,6 @@ public:
      *      `false` otherwise.
      */
     mockable bool isCommandScheduled(const Command* command) const;
-
-    mockable std::vector<Command*> getAllScheduledCommands();
 
     /**
      * Adds the given Subsystem to the CommandScheduler.  The subsystem is

@@ -46,75 +46,28 @@ class InstantCommand : public Command
 {
 public:
     InstantCommand(
-        CommandScheduler *scheduler,
         std::function<void()> actionToRun,
         std::array<Subsystem *, SUBSYSTEMS> dependencies)
         : Command(),
-          scheduler(scheduler),
-          actionToRun(actionToRun),
-          dependencies(dependencies)
+          actionToRun(actionToRun)
     {
         for (Subsystem *dep : dependencies) addSubsystemRequirement(dep);
     }
 
     bool isReady() override { return true; }
 
-    void initialize() override
-    {
-        std::unordered_set<Command *> defaultCommands;
-        for (Subsystem *subsystem : dependencies)
-        {
-            if (subsystem->getDefaultCommand() != nullptr)
-            {
-                defaultCommands.insert(subsystem->getDefaultCommand());
-            }
-        }
-
-        auto scheduled = scheduler->getAllScheduledCommands();
-        for (Command *command : scheduled)
-        {
-            subsystem_scheduler_bitmap_t reqs = command->getRequirementsBitwise();
-            // don't deschedule current command or repeat command that takes in current command
-            if (command == this ||
-                (std::strcmp(command->getName(), "repeat command") == 0 &&
-                 static_cast<RepeatCommand *>(command)->getWrappedCommand() == this))
-                continue;
-            // only add to commands to reschedule if not a default command (automatically
-            // rescheduled) and requirements overlap with instant command
-            if ((reqs & getRequirementsBitwise()) != 0)
-            {
-                if (defaultCommands.find(command) == defaultCommands.end())
-                {
-                    commandsToReschedule.push_back(command);
-                }
-                scheduler->removeCommand(command, true);
-            }
-        }
-        actionToRun();
-    }
+    void initialize() override { actionToRun(); }
 
     void execute() override {}
 
-    void end(bool) override
-    {
-        // reschedule any descheduled commands
-        for (Command *command : commandsToReschedule)
-        {
-            scheduler->addCommand(command);
-        }
-        commandsToReschedule.clear();
-    }
+    void end(bool) override {}
 
     bool isFinished() const override { return true; }
 
     const char *getName() const override { return "instant command"; }
 
 private:
-    CommandScheduler *scheduler;
     std::function<void()> actionToRun;
-    std::array<Subsystem *, SUBSYSTEMS> dependencies;
-
-    std::vector<Command *> commandsToReschedule;
 };
 }  // namespace control
 }  // namespace tap

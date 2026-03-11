@@ -42,7 +42,7 @@ TEST(RepeatCommand, instant_command_repeats)
 
     bool toggle = false;
     std::function<void()> testAction = [&toggle]() { toggle = !toggle; };
-    InstantCommand<1> ic(&scheduler, testAction, {&ts});
+    InstantCommand<1> ic(testAction, {&ts});
     RepeatCommand rc(&ic);
     scheduler.addCommand(&rc);
 

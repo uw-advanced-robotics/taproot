@@ -40,7 +40,7 @@ TEST(InstantCommand, command_runs_instantly)
 
     bool ran = false;
     std::function<void()> testAction = [&ran]() { ran = true; };
-    InstantCommand<1> ic(&scheduler, testAction, {&ts});
+    InstantCommand<1> ic(testAction, {&ts});
 
     EXPECT_FALSE(ran);
     scheduler.addCommand(&ic);
