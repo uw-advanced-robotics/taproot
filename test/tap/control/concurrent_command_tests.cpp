@@ -254,3 +254,28 @@ TEST(ConcurrentCommands, overlapping_requirements_asserts_DEATH)
     std::array<Command *, 2> commands = {&c1, &c2};
     ASSERT_DEATH({ ConcurrentCommand<2> command(commands, "test command"); }, ".*");
 }
+
+TEST(ConcurrentCommands, command_has_deadline_command)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    TestSubsystem s1(&drivers);
+    TestCommand c1(&s1);
+    TestSubsystem s2(&drivers);
+    TestCommand deadlineCommand(&s2);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(&s2);
+
+    std::array<Command *, 1> commands = {&c1};
+    ConcurrentDeadlineCommand<1> command(commands, "concurrent deadline", &deadlineCommand);
+    scheduler.addCommand(&command);
+
+    scheduler.run();
+    EXPECT_TRUE(scheduler.isCommandScheduled(&command));
+
+    deadlineCommand.setFinished(true);
+    scheduler.run();
+    EXPECT_FALSE(scheduler.isCommandScheduled(&command));
+}
