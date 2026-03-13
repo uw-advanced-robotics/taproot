@@ -167,14 +167,6 @@ public:
      */
     void initRMouseButton();
 
-    void initKeys(uint16_t keys) override;
-
-    void initNegKeys(uint16_t negKeys) override;
-
-    void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet) override;
-
-    void initNegKeys(const std::list<tap::communication::serial::Remote::Key> &negKeySet) override;
-
     /**
      * Checks if `this` is a subset of `other`. `this` is a subset of `other` under the following
      * conditions:

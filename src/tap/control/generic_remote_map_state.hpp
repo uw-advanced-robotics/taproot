@@ -22,9 +22,11 @@
 
 #include <cstdint>
 #include <list>
+#include <numeric>
 
 #include "tap/communication/serial/remote.hpp"
 
+using namespace tap::communication::serial;
 namespace tap
 {
 namespace control
@@ -40,28 +42,61 @@ public:
      * Initializes the keys to the bit mapped set of keys provided.
      * @note `keys` must be mutally exclusive with any set of `negKeys` already provided.
      */
-    virtual void initKeys([[maybe_unused]] uint16_t keys) {}
+    virtual void initKeys(uint16_t keys)
+    {
+        if (keys == 0)
+        {
+            return;
+        }
+        if ((this->negKeys & keys) != 0)
+        {
+            return;
+        }
+        this->keys = keys;
+    }
 
     /**
      * Initializes the neg keys to the bit mapped set of neg keys provided.
      * @note `negKeys` must be mutally exclusive with any set of `keys` already provided.
      */
-    virtual void initNegKeys([[maybe_unused]] uint16_t negKeys) {}
+    virtual void initNegKeys(uint16_t negKeys)
+    {
+        if (negKeys == 0)
+        {
+            return;
+        }
+        if ((this->keys & negKeys) != 0)
+        {
+            return;
+        }
+        this->negKeys = negKeys;
+    }
 
     /**
      * @see `initKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    virtual void initKeys([
-        [maybe_unused]] const std::list<tap::communication::serial::Remote::Key> &keySet)
+    virtual void initKeys(const std::list<tap::communication::serial::Remote::Key> &keySet)
     {
+        uint16_t keys = std::accumulate(
+            keySet.begin(),
+            keySet.end(),
+            static_cast<uint16_t>(0),
+            [](uint16_t acc, Remote::Key key) { return acc | (1 << static_cast<uint16_t>(key)); });
+        initKeys(keys);
     }
 
     /**
      * @see `initNegKeys`. Interprets the list and passes that on as a bit mapped set of keys.
      */
-    virtual void initNegKeys([
-        [maybe_unused]] const std::list<tap::communication::serial::Remote::Key> &negKeySet)
+    virtual void initNegKeys(const std::list<tap::communication::serial::Remote::Key> &negKeySet)
     {
+        // extract a bit form of the key set.
+        uint16_t negKeys = std::accumulate(
+            negKeySet.begin(),
+            negKeySet.end(),
+            static_cast<uint16_t>(0),
+            [](uint16_t acc, Remote::Key key) { return acc | (1 << static_cast<uint16_t>(key)); });
+        initNegKeys(negKeys);
     }
     /**
      * Checks if `this` is a subset of `other`. `this` is a subset of `other` under the following

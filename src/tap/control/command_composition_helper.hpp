@@ -52,7 +52,7 @@ struct CommandCompositionHelper
      * Creates a command group that runs commands in parallel.
      * @return ConcurrentCommand* of the input commands.
      */
-    template <size_t COMMANDS>  // TODO not scheduled
+    template <size_t COMMANDS>
     static WeakConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
     {
         return new WeakConcurrentCommand<COMMANDS>(commands, "concurrent command: parallel");

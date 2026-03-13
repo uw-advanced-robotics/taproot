@@ -19,8 +19,6 @@
 
 #include "remote_map_state.hpp"
 
-#include <numeric>
-
 #include "tap/errors/create_errors.hpp"
 
 using namespace tap::communication::serial;
@@ -116,50 +114,6 @@ void RemoteMapState::updateState(tap::communication::serial::Remote &remote)
 void RemoteMapState::initLSwitch(Remote::SwitchState ss) { lSwitch = ss; }
 
 void RemoteMapState::initRSwitch(Remote::SwitchState ss) { rSwitch = ss; }
-
-void RemoteMapState::initKeys(uint16_t keys)
-{
-    if (keys == 0)
-    {
-        return;
-    }
-    if ((this->negKeys & keys) != 0)
-    {
-        return;
-    }
-    this->keys = keys;
-}
-
-void RemoteMapState::initNegKeys(uint16_t negKeys)
-{
-    if (negKeys == 0)
-    {
-        return;
-    }
-    if ((this->keys & negKeys) != 0)
-    {
-        return;
-    }
-    this->negKeys = negKeys;
-}
-
-void RemoteMapState::initKeys(const std::list<Remote::Key> &keySet)
-{
-    uint16_t keys = std::accumulate(keySet.begin(), keySet.end(), 0, [](int acc, Remote::Key key) {
-        return acc |= 1 << static_cast<uint16_t>(key);
-    });
-    initKeys(keys);
-}
-
-void RemoteMapState::initNegKeys(const std::list<Remote::Key> &negKeySet)
-{
-    // extract a bit form of the key set.
-    uint16_t negKeys =
-        std::accumulate(negKeySet.begin(), negKeySet.end(), 0, [](int acc, Remote::Key key) {
-            return acc |= 1 << static_cast<uint16_t>(key);
-        });
-    initNegKeys(negKeys);
-}
 
 void RemoteMapState::initLMouseButton() { lMouseButton = true; }
 
