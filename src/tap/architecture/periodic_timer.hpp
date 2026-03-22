@@ -83,6 +83,10 @@ public:
                 timeout.expireTime += period;
             } while (timeout.expireTime <= now);
 
+            if (timeout.expireTime >= UINT32_MAX - period) {
+                timeout.expireTime = now + period;
+            }
+
             timeout.isRunning = true;
             timeout.isExecuted = false;
             return true;
