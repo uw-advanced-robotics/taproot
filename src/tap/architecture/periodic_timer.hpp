@@ -74,9 +74,6 @@ public:
      */
     inline bool execute()
     {
-        if (timeout.expireTime >= UINT32_MAX - period) {
-                timeout.expireTime = now + period;
-        }
         if (timeout.execute())
         {
             uint32_t now = T::TimeFunc();
@@ -86,13 +83,16 @@ public:
                 timeout.expireTime += period;
             } while (timeout.expireTime <= now);
 
+            if (timeout.expireTime >= UINT32_MAX - period) {
+                timeout.expireTime = now + period;
+            }
+
             timeout.isRunning = true;
             timeout.isExecuted = false;
             return true;
         }
         return false;
     }
-
     /**
      * @return `true` if the timer is stopped
      */
