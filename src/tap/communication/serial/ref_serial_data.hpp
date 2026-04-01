@@ -333,12 +333,12 @@ public:
         struct RobotBuffStatus
         {
             uint8_t recoveryBuff;  ///< The robot's recovery buff. Each increment is 1%.
-            uint8_t coolingBuff;   ///< The robot's barrel cooling rate buff. Each increment is a 1x
-                                   ///< multiplier.
+            uint16_t coolingBuff;  ///< The robot's barrel cooling rate buff. Each increment is
+                                   ///< a cooling rate of 1/s.
             uint8_t defenseBuff;   ///< The robot's defense buff. Each increment is 1%.
             uint8_t
-                vulnerabilityBuff;  ///< The robot's negative defense buff. Each increment is 1%.
-            uint16_t attackBuff;    ///< The robot's attack buff. Each increment is 1%.
+                vulnerabilityBuff;    ///< The robot's negative defense buff. Each increment is 1%.
+            uint16_t attackBuff;      ///< The robot's attack buff. Each increment is 1%.
         };
 
         /**
@@ -418,15 +418,22 @@ public:
         };
 
         /**
-         * Mark progress of different robots. Values range from 0 to 120.
+         * Mark progress of different robots. Each flag marks whether a given robot has tracking progress >=100 for opponents or >=50 for allies.
          */
-        struct RadarMarkProgress
+        enum class RadarMarkProgressFlags : uint32_t
         {
-            uint8_t hero;
-            uint8_t engineer;
-            uint8_t standard3;
-            uint8_t standard4;
-            uint8_t sentry;
+            OPPOSING_HERO_VULNERABLE = modm::Bit0,
+            OPPOSING_ENGINEER_VULNERABLE = modm::Bit1,
+            OPPOSING_STANDARD3_VULNERABLE = modm::Bit2,
+            OPPOSING_STANDARD4_VULNERABLE = modm::Bit3,
+            OPPOSING_DRONE_VULNERABLE = modm::Bit4,
+            OPPOSING_SENTINEL_VULNERABLE = modm::Bit5,
+            ALLIED_HERO_VULNERABLE = modm::Bit6,
+            ALLIED_ENGINEER_VULNERABLE = modm::Bit7,
+            ALLIED_STANDARD3_VULNERABLE = modm::Bit8,
+            ALLIED_STANDARD4_VULNERABLE = modm::Bit9,
+            ALLIED_DRONE_VULNERABLE = modm::Bit10,
+            ALLIED_SENTINEL_VULNERABLE = modm::Bit11,
         };
 
         struct SentryInfo
@@ -456,7 +463,7 @@ public:
             AirSupportData airSupportData;   ///< Information about the air support
             DartStationInfo dartStation;     ///< Information about the dart launching station.
             GroundRobotPositions positions;  ///< Information about the position of ground robots.
-            RadarMarkProgress
+            RadarMarkProgressFlags
                 radarProgress;  ///< Information about the mark progress for the radar station.
             SentryInfo sentry;  ///< Information about the sentry.
             RadarInfo radar;    ///< Information about the radar station.

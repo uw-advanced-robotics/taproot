@@ -272,9 +272,11 @@ bool RefSerial::decodeToDartInfo(const ReceivedSerialMessage& message)
     }
 
     gameData.dartInfo.launchCountdown = message.data[0];
-    gameData.dartInfo.lastHit = static_cast<Rx::SiteDartHit>(message.data[1] & 0x03);
-    gameData.dartInfo.hits = (message.data[1] >> 2) & 0x07;
-    gameData.dartInfo.selectedTarget = static_cast<Rx::DartTarget>((message.data[1] >> 5) & 0x03);
+    gameData.dartInfo.lastHit =
+        static_cast<Rx::SiteDartHit>(message.data[1] & 0x07);  // bits 0-2 of a u16
+    gameData.dartInfo.hits = (message.data[1] >> 3) & 0x07;    // bits 3-5 of a u16
+    gameData.dartInfo.selectedTarget = static_cast<Rx::DartTarget>(
+        ((message.data[1] >> 6) & 0x03) + (message.data[2] & 0x01));  // bits 6-8 of a u16
     return true;
 }
 
@@ -334,12 +336,12 @@ bool RefSerial::decodeToRobotBuffs(const ReceivedSerialMessage& message)
         return false;
     }
     robotData.robotBuffStatus.recoveryBuff = message.data[0];
-    robotData.robotBuffStatus.coolingBuff = message.data[1];
-    robotData.robotBuffStatus.defenseBuff = message.data[2];
-    robotData.robotBuffStatus.vulnerabilityBuff = message.data[3];
+    convertFromLittleEndian(&robotData.robotBuffStatus.coolingBuff, message.data + 1);
+    robotData.robotBuffStatus.defenseBuff = message.data[3];
+    robotData.robotBuffStatus.vulnerabilityBuff = message.data[4];
 
-    convertFromLittleEndian(&robotData.robotBuffStatus.attackBuff, message.data + 4);
-    robotData.robotEnergyRemaining = static_cast<Rx::RobotEnergyLevel>(message.data[6]);
+    convertFromLittleEndian(&robotData.robotBuffStatus.attackBuff, message.data + 5);
+    robotData.robotEnergyRemaining = static_cast<Rx::RobotEnergyLevel>(message.data[7]);
 
     return true;
 }
@@ -394,11 +396,12 @@ bool RefSerial::decodeToBulletsRemain(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToRFIDStatus(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 4)
+    if (message.header.dataLength != 5)
     {
         return false;
     }
     convertFromLittleEndian(&robotData.rfidStatus.value, message.data);
+    // todo opponent RFID status (1 byte)
     return true;
 }
 
@@ -438,11 +441,7 @@ bool RefSerial::decodeToRadarProgress(const ReceivedSerialMessage& message)
         return false;
     }
 
-    gameData.radarProgress.hero = message.data[1];
-    gameData.radarProgress.engineer = message.data[2];
-    gameData.radarProgress.standard3 = message.data[3];
-    gameData.radarProgress.standard4 = message.data[4];
-    gameData.radarProgress.sentry = message.data[6];
+    convertFromLittleEndian(&gameData.radarProgress.value, message.data);
 
     return true;
 }
