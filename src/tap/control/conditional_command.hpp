@@ -17,27 +17,39 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "press_command_mapping.hpp"
+#ifndef TAPROOT_CONDITIONAL_COMMAND_HPP_
+#define TAPROOT_CONDITIONAL_COMMAND_HPP_
+
+#include <functional>
+
+#include "command.hpp"
 
 namespace tap
 {
 namespace control
 {
-void PressCommandMapping::executeCommandMapping(const GenericRemoteMapState &currState)
+/**
+ * Class for a command that runs until a certain condition becomes false.
+ */
+class ConditionalCommand : public Command
 {
-    if (mappingSubset(currState) &&
-        !(mapState->getNegKeysUsed() && negKeysSubset(*mapState, currState)))
-    {
-        if (!pressed)
-        {
-            pressed = true;
-            addCommands();
-        }
-    }
-    else
-    {
-        pressed = false;
-    }
-}
+public:
+    ConditionalCommand(std::function<bool()> condition) : Command(), condition(condition) {}
+
+    void initialize() override {}
+
+    void execute() override {}
+
+    void end(bool) override {}
+
+    bool isFinished() const override { return !condition(); }
+
+    const char* getName() const override { return "conditional command"; }
+
+private:
+    std::function<bool()> condition;
+};
 }  // namespace control
 }  // namespace tap
+
+#endif

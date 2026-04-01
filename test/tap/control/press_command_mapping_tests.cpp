@@ -41,7 +41,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2;
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
 
     commandMapping.executeCommandMapping(ms2);
@@ -56,7 +56,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2 = ms1;
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(0);
 
@@ -77,7 +77,7 @@ TEST(
     ms2.initKeys(42);
     ms2.initRSwitch(Remote::SwitchState::UP);
     ms2.initLMouseButton();
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -96,7 +96,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B});
     RemoteMapState ms2;
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
 
     commandMapping.executeCommandMapping(ms2);
@@ -111,7 +111,7 @@ TEST(
     TestCommand tc(&ts);
     RemoteMapState ms1({Remote::Key::A, Remote::Key::B});
     RemoteMapState ms2 = ms1;
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -130,7 +130,7 @@ TEST(
     RemoteMapState ms2 = ms1;
     ms2.initLMouseButton();
     ms2.initLSwitch(Remote::SwitchState::DOWN);
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -149,7 +149,7 @@ TEST(
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::D});
     ms2.initLMouseButton();
     ms2.initLSwitch(Remote::SwitchState::DOWN);
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand(&tc)).Times(1);
 
     commandMapping.executeCommandMapping(ms2);
@@ -168,7 +168,7 @@ TEST(
     RemoteMapState ms2({Remote::Key::A, Remote::Key::B, Remote::Key::C, Remote::Key::D});
     ms2.initLMouseButton();
     ms2.initLSwitch(Remote::SwitchState::DOWN);
-    PressCommandMapping commandMapping(&drivers, {&tc}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(0);
 
     commandMapping.executeCommandMapping(ms2);
@@ -185,7 +185,7 @@ TEST(
 
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    PressCommandMapping commandMapping(&drivers, {&tc1, &tc2}, ms1);
+    PressCommandMapping commandMapping(&drivers, {&tc1, &tc2}, &ms1);
     EXPECT_CALL(drivers.commandScheduler, addCommand).Times(2);
     EXPECT_CALL(drivers.commandScheduler, removeCommand).Times(0);
 
