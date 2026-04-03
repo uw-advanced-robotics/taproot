@@ -17,27 +17,45 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "press_command_mapping.hpp"
+#ifndef TAPROOT_TIMEOUT_COMMAND_HPP_
+#define TAPROOT_TIMEOUT_COMMAND_HPP_
+
+#include <functional>
+
+#include <tap/architecture/clock.hpp>
+
+#include "command.hpp"
 
 namespace tap
 {
 namespace control
 {
-void PressCommandMapping::executeCommandMapping(const GenericRemoteMapState &currState)
+/**
+ * Class for a command that runs until for a specific amount of time, in milliseconds.
+ */
+class TimeoutCommand : public Command
 {
-    if (mappingSubset(currState) &&
-        !(mapState->getNegKeysUsed() && negKeysSubset(*mapState, currState)))
+public:
+    TimeoutCommand(uint32_t timeout) : Command(), timeout(timeout) {}
+
+    void initialize() override { startTime = tap::arch::clock::getTimeMilliseconds(); }
+
+    void execute() override {}
+
+    void end(bool) override {}
+
+    bool isFinished() const override
     {
-        if (!pressed)
-        {
-            pressed = true;
-            addCommands();
-        }
+        return tap::arch::clock::getTimeMilliseconds() - startTime > timeout;
     }
-    else
-    {
-        pressed = false;
-    }
-}
+
+    const char* getName() const override { return "timeout command"; }
+
+private:
+    uint32_t timeout;
+    uint32_t startTime;
+};
 }  // namespace control
 }  // namespace tap
+
+#endif
