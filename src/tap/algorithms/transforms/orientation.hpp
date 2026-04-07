@@ -21,7 +21,6 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
-#include "tap/algorithms/math_user_utils.hpp"
 
 namespace tap::algorithms::transforms
 {
@@ -31,23 +30,26 @@ public:
     /**
      * Constructs an identity rotation
      */
-    inline Orientation() : matrix_({1, 0, 0, 0, 1, 0, 0, 0, 1}) {}
+    inline Orientation() : matrix_({1, 0, 0, 0, 1, 0, 0, 0, 1}), rollVal(0), pitchVal(0), yawVal(0)
+    {
+    }
 
     inline Orientation(const float roll, const float pitch, const float yaw)
         : matrix_(fromRollPitchYaw(roll, pitch, yaw))
     {
+        calculateRPY();
     }
 
     /* rvalue reference */
-    inline Orientation(Orientation&& other) : matrix_(std::move(other.matrix_)) {}
+    inline Orientation(Orientation&& other) : matrix_(std::move(other.matrix_)) { calculateRPY(); }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(Orientation& other) : matrix_(CMSISMat(other.matrix_)) {}
+    inline Orientation(Orientation& other) : matrix_(CMSISMat(other.matrix_)) { calculateRPY(); }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) {}
+    inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) { calculateRPY(); }
 
-    inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
+    inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) { calculateRPY(); }
 
     inline Orientation compose(const Orientation& other) const
     {
@@ -60,16 +62,16 @@ public:
      * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
      * this case, roll is taken to be 0.
      */
-    inline float roll() const { return atan2(matrix_.data[7], matrix_.data[8]); }
+    inline float roll() const { return rollVal; }
 
-    inline float pitch() const { return asinf(-matrix_.data[6]); }
+    inline float pitch() const { return pitchVal; }
 
-    inline float yaw() const { return atan2(matrix_.data[3], matrix_.data[0]); }
+    inline float yaw() const { return yawVal; }
 
     const inline CMSISMat<3, 3>& matrix() const { return matrix_; }
 
     /**
-     * Generates a 3x3 rotation matrix from euler angles (in radians)
+     * Generates a 3x3 rotation matrix from roll pitch yaw (in radians)
      */
     static CMSISMat<3, 3> fromRollPitchYaw(const float roll, const float pitch, const float yaw)
     {
@@ -90,6 +92,14 @@ public:
 
 private:
     CMSISMat<3, 3> matrix_;
+    float rollVal, pitchVal, yawVal;
+
+    void calculateRPY()
+    {
+        rollVal = atan2(matrix_.data[7], matrix_.data[8]);
+        pitchVal = asinf(-matrix_.data[6]);
+        yawVal = atan2(matrix_.data[3], matrix_.data[0]);
+    }
 };  // class Orientation
 }  // namespace tap::algorithms::transforms
 
