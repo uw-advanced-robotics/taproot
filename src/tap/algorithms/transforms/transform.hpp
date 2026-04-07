@@ -478,6 +478,34 @@ public:
      *
      * @return Transformation from this transform's base frame to `second`'s follower frame.
      */
+    Transform compose(const Orientation& second) const;
+
+    /**
+     * @brief Returns the composed transformation of the given transformations.
+     *
+     * @return Transformation from this transform's base frame to `second`'s follower frame.
+     */
+    Transform compose(const Vector& second) const;
+
+    /**
+     * @brief Returns the composed transformation of the given transformations.
+     *
+     * @return Transformation from this transform's base frame to `second`'s follower frame.
+     */
+    Transform compose(const DynamicOrientation& second) const;
+
+    /**
+     * @brief Returns the composed transformation of the given transformations.
+     *
+     * @return Transformation from this transform's base frame to `second`'s follower frame.
+     */
+    Transform compose(const DynamicPosition& second) const;
+
+    /**
+     * @brief Returns the composed transformation of the given transformations.
+     *
+     * @return Transformation from this transform's base frame to `second`'s follower frame.
+     */
     Transform compose(const Transform& second) const;
 
     /**

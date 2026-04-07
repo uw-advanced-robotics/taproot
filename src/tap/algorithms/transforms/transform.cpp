@@ -259,6 +259,53 @@ Transform Transform::getInverse() const
     }
 }
 
+Transform Transform::compose(const Orientation& second) const
+{
+    CMSISMat<3, 3> newRot = this->rotation * second.matrix_;
+    return Transform(translation, newRot);
+}
+
+Transform Transform::compose(const Vector& second) const
+{
+    CMSISMat<3, 1> newPos = this->translation + this->rotation * second.coordinates_;
+    return Transform(newPos, rotation);
+}
+
+Transform Transform::compose(const DynamicOrientation& second) const
+{
+    if (this->dynamic)
+    {
+        CMSISMat<3, 3> newRot = this->rotation * second.orientation;
+        CMSISMat<3, 3> newAngVel =
+            this->angVel + this->rotation * second.angularVelocity * this->tRotation;
+        return Transform(translation, newRot, transVel, transAcc, newAngVel);
+    }
+
+    CMSISMat<3, 3> newRot = this->rotation * second.orientation;
+    CMSISMat<3, 3> newAngVel = this->rotation * second.angularVelocity * this->tRotation;
+    return Transform(translation, newRot, {{0, 0, 0}}, {{0, 0, 0}}, newAngVel);
+}
+
+Transform Transform::compose(const DynamicPosition& second) const
+{
+    if (this->dynamic)
+    {
+        CMSISMat<3, 1> newPos = this->translation + this->rotation * second.position;
+        CMSISMat<3, 1> newVel = this->transVel + this->angVel * this->rotation * second.position +
+                                this->rotation * second.velocity;
+        CMSISMat<3, 1> newAcc = this->transAcc +
+                                this->angVel * this->angVel * this->rotation * second.position +
+                                2 * this->angVel * this->rotation * second.velocity +
+                                this->rotation * second.acceleration;
+        return Transform(newPos, this->rotation, newVel, newAcc, this->angVel);
+    }
+
+    CMSISMat<3, 1> newPos = this->translation + this->rotation * second.position;
+    CMSISMat<3, 1> newVel = this->rotation * second.velocity;
+    CMSISMat<3, 1> newAcc = this->rotation * second.acceleration;
+    return Transform(newPos, this->rotation, newVel, newAcc, this->angVel);
+}
+
 Transform Transform::compose(const Transform& second) const
 {
     if (this->dynamic && second.dynamic)
