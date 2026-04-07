@@ -35,16 +35,30 @@ public:
     }
 
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : matrix_(fromRollPitchYaw(roll, pitch, yaw))
+        : matrix_(fromRollPitchYaw(roll, pitch, yaw)),
+          rollVal(roll),
+          pitchVal(pitch),
+          yawVal(yaw)
     {
-        calculateRPY();
     }
 
     /* rvalue reference */
-    inline Orientation(Orientation&& other) : matrix_(std::move(other.matrix_)) { calculateRPY(); }
+    inline Orientation(Orientation&& other)
+        : matrix_(std::move(other.matrix_)),
+          rollVal(other.rollVal),
+          pitchVal(other.pitchVal),
+          yawVal(other.yawVal)
+    {
+    }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(Orientation& other) : matrix_(CMSISMat(other.matrix_)) { calculateRPY(); }
+    inline Orientation(Orientation& other)
+        : matrix_(CMSISMat(other.matrix_)),
+          rollVal(other.rollVal),
+          pitchVal(other.pitchVal),
+          yawVal(other.yawVal)
+    {
+    }
 
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) { calculateRPY(); }
@@ -85,6 +99,17 @@ public:
              -sinf(pitch),
              cosf(pitch) * sinf(roll),
              cosf(pitch) * cosf(roll)});
+    }
+
+    /**
+     * Constructs an `Orientation` from a direction vector. Magnitude is ignored, and roll is always
+     * 0.
+     */
+    static Orientation fromDirectionVector(Vector dir)
+    {
+        float mag = dir.magnitude();
+        Vector planar(dir.x(), dir.y(), 0);
+        return Orientation(0, asinf(planar.magnitude() / mag), atan2f(dir.y(), dir.x()));
     }
 
     friend class Transform;
