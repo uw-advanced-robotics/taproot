@@ -27,6 +27,8 @@ namespace tap::algorithms::transforms
 class AngularVelocity
 {
 public:
+    inline AngularVelocity() : matrix_({0, 0, 0, 0, 0, 0, 0, 0, 0}) {}
+
     inline AngularVelocity(const float rollVel, const float pitchVel, const float yawVel)
         : matrix_(skewMatFromAngVel(rollVel, pitchVel, yawVel))
     {

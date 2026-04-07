@@ -31,6 +31,10 @@ class Position
 {
 public:
     /* Constructors */
+    Position() : coordinates_({0, 0, 0}) {}
+
+    Position(float x, float y) : coordinates_({x, y, 0}) {}
+
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
 
     /* Use rvalue reference */

@@ -30,6 +30,8 @@ namespace tap::algorithms::transforms
 class DynamicPosition
 {
 public:
+    inline DynamicPosition() : position({0, 0, 0}), velocity({0, 0, 0}), acceleration({0, 0, 0}) {}
+
     inline DynamicPosition(
         const float x,
         const float y,

@@ -187,6 +187,11 @@ public:
     /**
      * @brief Constructs an identity transform.
      */
+    Transform();
+
+    /**
+     * @brief Constructs an identity transform.
+     */
     static inline Transform identity() { return Transform(0., 0., 0., 0., 0., 0.); }
 
     /**

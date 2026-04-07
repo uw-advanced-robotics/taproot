@@ -28,6 +28,11 @@ namespace tap::algorithms::transforms
 class Orientation
 {
 public:
+    /**
+     * Constructs an identity rotation
+     */
+    inline Orientation() : matrix_({1, 0, 0, 0, 1, 0, 0, 0, 1}) {}
+
     inline Orientation(const float roll, const float pitch, const float yaw)
         : matrix_(fromRollPitchYaw(roll, pitch, yaw))
     {

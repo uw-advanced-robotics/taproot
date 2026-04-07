@@ -29,6 +29,8 @@ namespace tap::algorithms::transforms
 class DynamicOrientation
 {
 public:
+    inline DynamicOrientation() : orientation(), angularVelocity() {}
+
     inline DynamicOrientation(
         const float roll,
         const float pitch,
@@ -36,7 +38,7 @@ public:
         const float rollVel,
         const float pitchVel,
         const float yawVel)
-        : orientation(Orientation::fromEulerAngles(roll, pitch, yaw)),
+        : orientation(Orientation::fromRollPitchYaw(roll, pitch, yaw)),
           angularVelocity(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
     {
     }

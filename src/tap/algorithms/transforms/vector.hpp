@@ -31,6 +31,8 @@ class Position;
 class Vector
 {
 public:
+    Vector() : coordinates_({0, 0, 0}) {}
+
     Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
 
     Vector(const Vector&& other) : coordinates_(std::move(other.coordinates_)) {}

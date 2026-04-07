@@ -198,6 +198,17 @@ Transform::Transform(
     checkDynamic();
 }
 
+Transform::Transform()
+    : dynamic(false),
+      translation({0, 0, 0}),
+      transVel({0, 0, 0}),
+      transAcc({0, 0, 0}),
+      rotation(),
+      tRotation(),
+      angVel({0, 0, 0, 0, 0, 0, 0, 0, 0})
+{
+}
+
 Position Transform::apply(const Position& position) const
 {
     return Position(tRotation * (position.coordinates_ - translation));
