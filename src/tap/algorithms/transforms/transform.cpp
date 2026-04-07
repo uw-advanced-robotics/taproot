@@ -70,7 +70,7 @@ Transform::Transform(float x, float y, float z, float rx, float ry, float rz)
       translation({x, y, z}),
       transVel({0, 0, 0}),
       transAcc({0, 0, 0}),
-      rotation(Orientation::fromEulerAngles(rx, ry, rz)),
+      rotation(Orientation::fromRollPitchYaw(rx, ry, rz)),
       tRotation(rotation.transpose()),
       angVel({0, 0, 0, 0, 0, 0, 0, 0, 0})
 {
@@ -191,7 +191,7 @@ Transform::Transform(
     : translation({x, y, z}),
       transVel({vx, vy, vz}),
       transAcc({ax, ay, az}),
-      rotation(Orientation::fromEulerAngles(rx, ry, rz)),
+      rotation(Orientation::fromRollPitchYaw(rx, ry, rz)),
       tRotation(rotation.transpose()),
       angVel(AngularVelocity::skewMatFromAngVel(wx, wy, wz))
 {

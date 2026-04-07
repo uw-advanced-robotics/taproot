@@ -29,7 +29,7 @@ class Orientation
 {
 public:
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : matrix_(tap::algorithms::fromEulerAngles(roll, pitch, yaw))
+        : matrix_(fromRollPitchYaw(roll, pitch, yaw))
     {
     }
 
@@ -66,7 +66,7 @@ public:
     /**
      * Generates a 3x3 rotation matrix from euler angles (in radians)
      */
-    static CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw)
+    static CMSISMat<3, 3> fromRollPitchYaw(const float roll, const float pitch, const float yaw)
     {
         return tap::algorithms::CMSISMat<3, 3>(
             {cosf(yaw) * cosf(pitch),

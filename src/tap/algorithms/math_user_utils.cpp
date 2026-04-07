@@ -50,23 +50,6 @@ tap::algorithms::CMSISMat<3, 1> tap::algorithms::cross(
          a.data[0] * b.data[1] - a.data[1] * b.data[0]});
 }
 
-tap::algorithms::CMSISMat<3, 3> tap::algorithms::fromEulerAngles(
-    const float roll,
-    const float pitch,
-    const float yaw)
-{
-    return tap::algorithms::CMSISMat<3, 3>(
-        {cosf(yaw) * cosf(pitch),
-         (cosf(yaw) * sinf(pitch) * sinf(roll)) - (sinf(yaw) * cosf(roll)),
-         (cosf(yaw) * sinf(pitch) * cosf(roll)) + sinf(yaw) * sinf(roll),
-         sinf(yaw) * cosf(pitch),
-         sinf(yaw) * sinf(pitch) * sinf(roll) + cosf(yaw) * cosf(roll),
-         sinf(yaw) * sinf(pitch) * cosf(roll) - cosf(yaw) * sinf(roll),
-         -sinf(pitch),
-         cosf(pitch) * sinf(roll),
-         cosf(pitch) * cosf(roll)});
-}
-
 modm::Vector3f tap::algorithms::eulerAnglesFromQuaternion(modm::Quaternion<float>& q)
 {
     modm::Vector3f eulerAngles;

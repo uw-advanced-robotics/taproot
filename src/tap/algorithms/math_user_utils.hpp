@@ -138,11 +138,6 @@ float fastInvSqrt(float x);
 CMSISMat<3, 1> cross(const CMSISMat<3, 1>& a, const CMSISMat<3, 1>& b);
 
 /**
- * Generates a 3x3 rotation matrix from euler angles (in radians)
- */
-CMSISMat<3, 3> fromEulerAngles(const float roll, const float pitch, const float yaw);
-
-/**
  * Performs a rotation matrix on the given x and y components of a vector.
  *
  * @param x the x component of the vector to be rotated.
