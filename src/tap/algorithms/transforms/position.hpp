@@ -55,19 +55,38 @@ public:
     inline float z() const { return coordinates_.data[2]; }
 
     /* Operators */
-    Position operator-(const Vector& other) const;
+    Position operator-(const Vector& other) const
+    {
+        return Position(this->coordinates_ - other.coordinates());
+    }
 
-    Vector operator-(const Position& other) const;
+    Vector operator-(const Position& other) const
+    {
+        return Vector(this->coordinates_ - other.coordinates());
+    }
 
-    Position operator+(const Vector& vector) const;
+    Position operator+(const Vector& vector) const
+    {
+        return Position(this->coordinates_ + vector.coordinates());
+    }
 
-    Position operator+(const Position& vector) const;
+    Position operator+(const Position& vector) const
+    {
+        return Position(this->coordinates_ + vector.coordinates_);
+    }
 
-    Position operator*(const float scalar) const;
+    Position operator*(const float scalar) const { return Position(this->coordinates_ * scalar); }
 
-    Position& operator=(const Position& other);
+    Position& operator=(const Position& other)
+    {
+        this->coordinates_ = other.coordinates_;
+        return *this;
+    }
 
-    bool operator==(const Position& other) const;
+    bool operator==(const Position& other) const
+    {
+        return this->coordinates_.data == other.coordinates_.data;
+    }
 
     inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
@@ -76,7 +95,7 @@ public:
         return a * (1 - t) + b * t;
     }
 
-    static float distance(const Position& a, const Position& b);
+    static float distance(const Position& a, const Position& b) { return (b - a).magnitude(); }
 
     friend class Transform;
     friend class DynamicPosition;
