@@ -22,6 +22,8 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
+#include "vector.hpp"
+
 namespace tap::algorithms::transforms
 {
 class Orientation
