@@ -36,10 +36,10 @@ public:
      */
     virtual bool isOnline() const = 0;
     /**
-     * Zeros the encoder to its current position. All encoder positions will be based from this
+     * Resets the encoder to its current position. All encoder positions will be based from this
      * position.
      */
-    virtual void resetEncoderValue() = 0;
+    virtual void resetEncoderValue(float pos = 0) = 0;
     /**
      * Gets the current position of the encoder, in a wrapped float on the range [0, M_TWOPI)
      */

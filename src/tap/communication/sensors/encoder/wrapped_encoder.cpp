@@ -43,12 +43,14 @@ WrappedEncoder::WrappedEncoder(
 {
 }
 
-void WrappedEncoder::resetEncoderValue()
+void WrappedEncoder::resetEncoderValue(float pos)
 {
-    encoderHomePosition = encoder + encoderHomePosition;
-    encoder.setUnwrappedValue(0);
-    pastPosition -= position;
-    position.setUnwrappedValue(0);
+    float newEncoderUnwrapped = pos * encoderResolution / (static_cast<float>(M_TWOPI) * gearRatio);
+    encoderHomePosition = encoderHomePosition + encoder - newEncoderUnwrapped;
+    encoder.setUnwrappedValue(newEncoderUnwrapped);
+    float positionDiff = pos - position.getUnwrappedValue();
+    pastPosition.setUnwrappedValue(pastPosition.getUnwrappedValue() + positionDiff);
+    position.setUnwrappedValue(pos);
 }
 
 tap::algorithms::WrappedFloat WrappedEncoder::getPosition() const
