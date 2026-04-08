@@ -32,44 +32,42 @@ public:
     /**
      * Constructs an identity rotation
      */
-    inline Orientation() : matrix_({1, 0, 0, 0, 1, 0, 0, 0, 1}), rollVal(0), pitchVal(0), yawVal(0)
-    {
-    }
+    inline Orientation() : rotation({1, 0, 0, 0, 1, 0, 0, 0, 1}), roll_(0), pitch_(0), yaw_(0) {}
 
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : matrix_(fromRollPitchYaw(roll, pitch, yaw)),
-          rollVal(roll),
-          pitchVal(pitch),
-          yawVal(yaw)
+        : rotation(fromRollPitchYaw(roll, pitch, yaw)),
+          roll_(roll),
+          pitch_(pitch),
+          yaw_(yaw)
     {
     }
 
     /* rvalue reference */
     inline Orientation(Orientation&& other)
-        : matrix_(std::move(other.matrix_)),
-          rollVal(other.rollVal),
-          pitchVal(other.pitchVal),
-          yawVal(other.yawVal)
+        : rotation(std::move(other.rotation)),
+          roll_(other.roll_),
+          pitch_(other.pitch_),
+          yaw_(other.yaw_)
     {
     }
 
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(Orientation& other)
-        : matrix_(CMSISMat(other.matrix_)),
-          rollVal(other.rollVal),
-          pitchVal(other.pitchVal),
-          yawVal(other.yawVal)
+        : rotation(CMSISMat(other.rotation)),
+          roll_(other.roll_),
+          pitch_(other.pitch_),
+          yaw_(other.yaw_)
     {
     }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) { calculateRPY(); }
+    inline Orientation(const CMSISMat<3, 3>& matrix) : rotation(matrix) { calculateRPY(); }
 
-    inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) { calculateRPY(); }
+    inline Orientation(CMSISMat<3, 3>&& matrix) : rotation(std::move(matrix)) { calculateRPY(); }
 
     inline Orientation compose(const Orientation& other) const
     {
-        return Orientation(this->matrix_ * other.matrix_);
+        return Orientation(this->rotation * other.rotation);
     }
 
     /**
@@ -78,13 +76,13 @@ public:
      * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
      * this case, roll is taken to be 0.
      */
-    inline float roll() const { return rollVal; }
+    inline float roll() const { return roll_; }
 
-    inline float pitch() const { return pitchVal; }
+    inline float pitch() const { return pitch_; }
 
-    inline float yaw() const { return yawVal; }
+    inline float yaw() const { return yaw_; }
 
-    const inline CMSISMat<3, 3>& matrix() const { return matrix_; }
+    const inline CMSISMat<3, 3>& matrix() const { return rotation; }
 
     /**
      * Generates a 3x3 rotation matrix from roll pitch yaw (in radians)
@@ -117,15 +115,15 @@ public:
     friend class Transform;
     friend class DynamicOrientation;
 
-private:
-    CMSISMat<3, 3> matrix_;
-    float rollVal, pitchVal, yawVal;
+protected:
+    CMSISMat<3, 3> rotation;
+    float roll_, pitch_, yaw_;
 
     void calculateRPY()
     {
-        rollVal = atan2(matrix_.data[7], matrix_.data[8]);
-        pitchVal = asinf(-matrix_.data[6]);
-        yawVal = atan2(matrix_.data[3], matrix_.data[0]);
+        roll_ = atan2(rotation.data[7], rotation.data[8]);
+        pitch_ = asinf(-rotation.data[6]);
+        yaw_ = atan2(rotation.data[3], rotation.data[0]);
     }
 };  // class Orientation
 }  // namespace tap::algorithms::transforms

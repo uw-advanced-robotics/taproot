@@ -231,7 +231,7 @@ DynamicPosition Transform::apply(const DynamicPosition& p) const
 
 Orientation Transform::apply(const Orientation& orientation) const
 {
-    return Orientation(tRotation * orientation.matrix_);
+    return Orientation(tRotation * orientation.rotation);
 }
 
 DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation) const
@@ -261,7 +261,7 @@ Transform Transform::getInverse() const
 
 Transform Transform::compose(const Orientation& second) const
 {
-    CMSISMat<3, 3> newRot = this->rotation * second.matrix_;
+    CMSISMat<3, 3> newRot = this->rotation * second.rotation;
     return Transform(translation, newRot);
 }
 

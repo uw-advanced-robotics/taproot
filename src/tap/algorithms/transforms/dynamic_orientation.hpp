@@ -26,10 +26,10 @@
 
 namespace tap::algorithms::transforms
 {
-class DynamicOrientation
+class DynamicOrientation : public Orientation
 {
 public:
-    inline DynamicOrientation() : orientation(), angularVelocity() {}
+    inline DynamicOrientation() : Orientation(), angularVelocity() {}
 
     inline DynamicOrientation(
         const float roll,
@@ -38,7 +38,7 @@ public:
         const float rollVel,
         const float pitchVel,
         const float yawVel)
-        : orientation(Orientation::fromRollPitchYaw(roll, pitch, yaw)),
+        : Orientation(roll, pitch, yaw),
           angularVelocity(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
     {
     }
@@ -46,7 +46,7 @@ public:
     inline DynamicOrientation(
         const CMSISMat<3, 3>&& orientation,
         const CMSISMat<3, 3>&& angularVelocity)
-        : orientation(std::move(orientation)),
+        : Orientation(orientation),
           angularVelocity(std::move(angularVelocity))
     {
     }
@@ -55,19 +55,19 @@ public:
     inline DynamicOrientation(
         const CMSISMat<3, 3>& orientation,
         const CMSISMat<3, 3>& angularVelocity)
-        : orientation(orientation),
+        : Orientation(orientation),
           angularVelocity(angularVelocity)
     {
     }
 
     inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
-        : orientation(std::move(orientation.matrix_)),
+        : Orientation(std::move(orientation.rotation)),
           angularVelocity(std::move(angularVelocity.matrix_))
     {
     }
 
     inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
-        : orientation(orientation.matrix_),
+        : Orientation(orientation.rotation),
           angularVelocity(angularVelocity.matrix_)
     {
     }
@@ -75,33 +75,19 @@ public:
     DynamicOrientation compose(const DynamicOrientation& other) const
     {
         return DynamicOrientation(
-            this->orientation * other.orientation,
+            this->rotation * other.rotation,
             this->angularVelocity +
-                this->orientation * other.angularVelocity * this->orientation.transpose());
+                this->rotation * other.angularVelocity * this->rotation.transpose());
     }
 
     DynamicOrientation inverse() const
     {
         return DynamicOrientation(
-            this->orientation.transpose(),
-            -(this->orientation.transpose() * this->angularVelocity * this->orientation));
+            this->rotation.transpose(),
+            -(this->rotation.transpose() * this->angularVelocity * this->rotation));
     }
 
-    inline Orientation getOrientation() const { return Orientation(orientation); }
-
     inline AngularVelocity getAngularVelocity() const { return AngularVelocity(angularVelocity); }
-
-    /**
-     * Returns roll as values between [-pi, +pi].
-     *
-     * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
-     * this case, roll is taken to be 0.
-     */
-    inline float roll() const { return atan2(orientation.data[7], orientation.data[8]); }
-
-    inline float pitch() const { return asinf(-orientation.data[6]); }
-
-    inline float yaw() const { return atan2(orientation.data[3], orientation.data[0]); }
 
     /**
      * @brief Get the roll velocity
@@ -121,8 +107,6 @@ public:
     friend class Transform;
 
 private:
-    CMSISMat<3, 3> orientation;
-
     CMSISMat<3, 3> angularVelocity;
 
 };  // class DynamicOrientation
