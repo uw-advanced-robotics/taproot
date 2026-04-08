@@ -45,11 +45,10 @@ WrappedEncoder::WrappedEncoder(
 
 void WrappedEncoder::resetEncoderValue(float pos)
 {
-    float newEncoderUnwrapped = pos * encoderResolution / (static_cast<float>(M_TWOPI) * gearRatio);
+    float newEncoderUnwrapped = pos / gearRatio / static_cast<float>(M_TWOPI) * encoderResolution;
     encoderHomePosition = encoderHomePosition + encoder - newEncoderUnwrapped;
     encoder.setUnwrappedValue(newEncoderUnwrapped);
-    float positionDiff = pos - position.getUnwrappedValue();
-    pastPosition.setUnwrappedValue(pastPosition.getUnwrappedValue() + positionDiff);
+    pastPosition += tap::algorithms::Angle(pos) - position;
     position.setUnwrappedValue(pos);
 }
 
