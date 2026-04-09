@@ -46,7 +46,7 @@ WrappedEncoder::WrappedEncoder(
 void WrappedEncoder::resetEncoderValue(float pos)
 {
     float newEncoderUnwrapped = pos / gearRatio / static_cast<float>(M_TWOPI) * encoderResolution;
-    encoderHomePosition = encoderHomePosition + encoder - newEncoderUnwrapped;
+    encoderHomePosition += encoder - newEncoderUnwrapped;
     encoder.setUnwrappedValue(newEncoderUnwrapped);
     pastPosition += tap::algorithms::Angle(pos) - position;
     position.setUnwrappedValue(pos);
