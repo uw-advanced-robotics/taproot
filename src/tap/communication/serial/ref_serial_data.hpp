@@ -446,12 +446,14 @@ public:
             ENGINEER_OPPONENT = modm::Bit1,
             STANDARD3_OPPONENT = modm::Bit2,
             STANDARD4_OPPONENT = modm::Bit3,
-            SENTRY_OPPONENT = modm::Bit4,
-            HERO_OWN = modm::Bit5,
-            ENGINEER_OWN = modm::Bit6,
-            STANDARD3_OWN = modm::Bit7,
-            STANDARD4_OWN = modm::Bit8,
-            SENTRY_OWN = modm::Bit9
+            DRONE_OPPONENT = modm::Bit4,
+            SENTRY_OPPONENT = modm::Bit5,
+            HERO_OWN = modm::Bit6,
+            ENGINEER_OWN = modm::Bit7,
+            STANDARD3_OWN = modm::Bit8,
+            STANDARD4_OWN = modm::Bit9,
+            DRONE_OWN = modm::Bit10,
+            SENTRY_OWN = modm::Bit11
         };
         MODM_FLAGS16(RadarMarkProgress);
 
@@ -465,6 +467,9 @@ public:
             bool canInstantRespawn;         ///< True if the sentry can respawn instantly.
             uint16_t instantRespawnCost;    ///< Number of gold coins needed for instant
                                             ///< respawn.
+            bool isOutOfCombat;             ///< True if the sentry is out of combat.
+            uint16_t remainingProjectileAllowanceExchanges;  ///< Remaining exchange count for 17mm
+                                                             ///< projectile allowance.
             uint8_t mode;             ///< Current sentry mode (1: Offense, 2: Defense, 3: Mobile).
             bool canActivePowerRune;  ///< True if the power rune is available.
         };

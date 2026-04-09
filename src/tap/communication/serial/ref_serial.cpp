@@ -430,11 +430,14 @@ bool RefSerial::decodeToSentryInfo(const ReceivedSerialMessage& message)
 
     gameData.sentry.projectileAllowance = static_cast<uint16_t>(sentryInfo & 0x07FF);
     gameData.sentry.remoteProjectileExchanges = static_cast<uint8_t>((sentryInfo >> 11) & 0x0F);
-    gameData.sentry.remoteHealthExchanges = static_cast<uint8_t>((sentryInfo >> 14) & 0x0F);
-    gameData.sentry.hasFreeRespawn = (sentryInfo >> 18) & 0x01;
-    gameData.sentry.canInstantRespawn = (sentryInfo >> 19) & 0x01;
-    gameData.sentry.instantRespawnCost = static_cast<uint16_t>((sentryInfo >> 20) & 0x03FF);
+    gameData.sentry.remoteHealthExchanges = static_cast<uint8_t>((sentryInfo >> 15) & 0x0F);
+    gameData.sentry.hasFreeRespawn = (sentryInfo >> 19) & 0x01;
+    gameData.sentry.canInstantRespawn = (sentryInfo >> 20) & 0x01;
+    gameData.sentry.instantRespawnCost = static_cast<uint16_t>((sentryInfo >> 21) & 0x03FF);
 
+    gameData.sentry.isOutOfCombat = sentryInfo2 & 0x01;
+    gameData.sentry.remainingProjectileAllowanceExchanges =
+        static_cast<uint16_t>((sentryInfo2 >> 1) & 0x07FF);
     gameData.sentry.mode = static_cast<uint8_t>((sentryInfo2 >> 12) & 0x03);
     gameData.sentry.canActivePowerRune = (sentryInfo2 >> 14) & 0x01;
 
