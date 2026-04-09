@@ -46,7 +46,7 @@ public:
 
     MOCK_METHOD(int16_t, getShaftRPM, (), (const override));
 
-    MOCK_METHOD(void, resetEncoderValue, (), (override));
+    MOCK_METHOD(void, resetEncoderValue, (float), (override));
 
     MOCK_METHOD(void, processMessage, (const modm::can::Message& message), (override));
 };

@@ -58,7 +58,7 @@ public:
 
     void alignWith(EncoderInterface* other) override;
 
-    void resetEncoderValue() override;
+    void resetEncoderValue(float pos = 0) override;
 
     DISALLOW_COPY_AND_ASSIGN(WrappedEncoder)
 
