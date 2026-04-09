@@ -199,12 +199,14 @@ public:
 
         enum class RobotEnergyLevel : uint8_t
         {
-            ABOVE_50_PERCENT = 0x32,
-            ABOVE_30_PERCENT = 0b11110,
-            ABOVE_15_PERCENT = 0b11100,
-            ABOVE_5_PERCENT = 0b11000,
-            ABOVE_1_PERCENT = 0b10000,
-            BELOW_1_PERCENT = 0b00000,
+            ABOVE_125_PERCENT = 0b1111111,
+            ABOVE_100_PERCENT = 0b1111110,
+            ABOVE_50_PERCENT = 0b1111100,
+            ABOVE_30_PERCENT = 0b1111000,
+            ABOVE_15_PERCENT = 0b1110000,
+            ABOVE_5_PERCENT = 0b1100000,
+            ABOVE_1_PERCENT = 0b1000000,
+            BELOW_1_PERCENT = 0b0000000,
         };
 
         /// Activation status flags for the RFID module (for RMUC only).
@@ -231,8 +233,8 @@ public:
             OUTPOST_BUFF_OWN = modm::Bit18,
             RESUPPLY_ZONE_OUTSIDE_EXCHANGE = modm::Bit19,
             RESUPPLY_ZONE_INSIDE_EXCHANGE = modm::Bit20,
-            LARGE_RESOURCE_ISLAND_OWN = modm::Bit21,
-            LARGE_RESOURCE_ISLAND_OPPONENT = modm::Bit22,
+            ASSEMBLY_OWN = modm::Bit21,
+            ASSEMBLY_OPPONENT = modm::Bit22,
             CENTRAL_BUFF = modm::Bit23
         };
         MODM_FLAGS32(RFIDActivationStatus);
