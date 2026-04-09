@@ -32,10 +32,18 @@ public:
     /**
      * Constructs an identity rotation
      */
-    inline Orientation() : rotation({1, 0, 0, 0, 1, 0, 0, 0, 1}), roll_(0), pitch_(0), yaw_(0) {}
+    inline Orientation()
+        : rotation({1, 0, 0, 0, 1, 0, 0, 0, 1}),
+          rotationT({1, 0, 0, 0, 1, 0, 0, 0, 1}),
+          roll_(0),
+          pitch_(0),
+          yaw_(0)
+    {
+    }
 
     inline Orientation(const float roll, const float pitch, const float yaw)
         : rotation(fromRollPitchYaw(roll, pitch, yaw)),
+          rotationT(rotation.transpose()),
           roll_(roll),
           pitch_(pitch),
           yaw_(yaw)
@@ -45,6 +53,7 @@ public:
     /* rvalue reference */
     inline Orientation(Orientation&& other)
         : rotation(std::move(other.rotation)),
+          rotationT(std::move(other.rotationT)),
           roll_(other.roll_),
           pitch_(other.pitch_),
           yaw_(other.yaw_)
@@ -54,6 +63,7 @@ public:
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(Orientation& other)
         : rotation(CMSISMat(other.rotation)),
+          rotationT(CMSISMat(other.rotationT)),
           roll_(other.roll_),
           pitch_(other.pitch_),
           yaw_(other.yaw_)
@@ -62,12 +72,31 @@ public:
 
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(const CMSISMat<3, 3>& matrix) : rotation(matrix) { calculateRPY(); }
+    inline Orientation(const CMSISMat<3, 3>& matrix, const CMSISMat<3, 3>& matrixT)
+        : rotation(matrix),
+          rotationT(matrixT)
+    {
+        calculateRPY();
+    }
 
     inline Orientation(CMSISMat<3, 3>&& matrix) : rotation(std::move(matrix)) { calculateRPY(); }
+    inline Orientation(CMSISMat<3, 3>&& matrix, CMSISMat<3, 3>&& matrixT)
+        : rotation(std::move(matrix)),
+          rotationT(std::move(matrixT))
+    {
+        calculateRPY();
+    }
+
+    inline Orientation inverse() const { return Orientation(rotationT, rotation); }
 
     inline Orientation compose(const Orientation& other) const
     {
         return Orientation(this->rotation * other.rotation);
+    }
+
+    inline Vector apply(const Vector& vec) const
+    {
+        return Vector(this->rotation * vec.coordinates());
     }
 
     /**
@@ -116,7 +145,7 @@ public:
     friend class DynamicOrientation;
 
 protected:
-    CMSISMat<3, 3> rotation;
+    CMSISMat<3, 3> rotation, rotationT;
     float roll_, pitch_, yaw_;
 
     void calculateRPY()
