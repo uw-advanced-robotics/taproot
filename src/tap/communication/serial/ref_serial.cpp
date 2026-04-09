@@ -198,25 +198,21 @@ bool RefSerial::decodeToGameResult(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToAllRobotHP(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 32)
+    if (message.header.dataLength != 16)
     {
         return false;
     }
-    convertFromLittleEndian(&robotData.allRobotHp.red.hero1, message.data);
-    convertFromLittleEndian(&robotData.allRobotHp.red.engineer2, message.data + 2);
-    convertFromLittleEndian(&robotData.allRobotHp.red.standard3, message.data + 4);
-    convertFromLittleEndian(&robotData.allRobotHp.red.standard4, message.data + 6);
-    convertFromLittleEndian(&robotData.allRobotHp.red.sentry7, message.data + 10);
-    convertFromLittleEndian(&robotData.allRobotHp.red.outpost, message.data + 12);
-    convertFromLittleEndian(&robotData.allRobotHp.red.base, message.data + 14);
 
-    convertFromLittleEndian(&robotData.allRobotHp.blue.hero1, message.data + 16);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.engineer2, message.data + 18);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.standard3, message.data + 20);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.standard4, message.data + 22);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.sentry7, message.data + 26);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.outpost, message.data + 28);
-    convertFromLittleEndian(&robotData.allRobotHp.blue.base, message.data + 30);
+    RefSerialData::Rx::RobotHpData::RobotHp* own_side_data =
+        isBlueTeam(robotData.robotId) ? &robotData.allRobotHp.blue : &robotData.allRobotHp.red;
+
+    convertFromLittleEndian(&own_side_data->hero1, message.data);
+    convertFromLittleEndian(&own_side_data->engineer2, message.data + 2);
+    convertFromLittleEndian(&own_side_data->standard3, message.data + 4);
+    convertFromLittleEndian(&own_side_data->standard4, message.data + 6);
+    convertFromLittleEndian(&own_side_data->sentry7, message.data + 10);
+    convertFromLittleEndian(&own_side_data->outpost, message.data + 12);
+    convertFromLittleEndian(&own_side_data->base, message.data + 14);
 
     return true;
 }
@@ -235,19 +231,6 @@ bool RefSerial::decodeToSiteEventData(const ReceivedSerialMessage& message)
     gameData.eventData.timeSinceLastDartHit = static_cast<uint16_t>((data >> 11) & 0x1FF);
     gameData.eventData.lastDartHit = static_cast<Rx::SiteDartHit>((data >> 20) & 0x07);
 
-    return true;
-}
-
-bool RefSerial::decodeToProjectileSupplierAction(const ReceivedSerialMessage& message)
-{
-    if (message.header.dataLength != 4)
-    {
-        return false;
-    }
-
-    gameData.supplier.reloadingRobot = static_cast<RobotId>(message.data[1]);
-    gameData.supplier.outletStatus = static_cast<Rx::SupplierOutletStatus>(message.data[2]);
-    gameData.supplier.suppliedProjectiles = message.data[3];
     return true;
 }
 
@@ -306,14 +289,13 @@ bool RefSerial::decodeToRobotStatus(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToPowerAndHeat(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 16)
+    if (message.header.dataLength != 14)
     {
         return false;
     }
     convertFromLittleEndian(&robotData.chassis.powerBuffer, message.data + 8);
-    convertFromLittleEndian(&robotData.turret.heat17ID1, message.data + 10);
-    convertFromLittleEndian(&robotData.turret.heat17ID2, message.data + 12);
-    convertFromLittleEndian(&robotData.turret.heat42, message.data + 14);
+    convertFromLittleEndian(&robotData.turret.heat17, message.data + 10);
+    convertFromLittleEndian(&robotData.turret.heat42, message.data + 12);
     return true;
 }
 
@@ -346,17 +328,6 @@ bool RefSerial::decodeToRobotBuffs(const ReceivedSerialMessage& message)
     return true;
 }
 
-bool RefSerial::decodeToAerialEnergyStatus(const ReceivedSerialMessage& message)
-{
-    if (message.header.dataLength != 2)
-    {
-        return false;
-    }
-    gameData.airSupportData.state = static_cast<Rx::AirSupportState>(message.data[0] & 0x03);
-    gameData.airSupportData.remainingStateTime = message.data[1];
-    return true;
-}
-
 bool RefSerial::decodeToDamageStatus(const ReceivedSerialMessage& message)
 {
     if (message.header.dataLength != 1)
@@ -384,13 +355,14 @@ bool RefSerial::decodeToProjectileLaunch(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToBulletsRemain(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 6)
+    if (message.header.dataLength != 8)
     {
         return false;
     }
     convertFromLittleEndian(&robotData.turret.bulletsRemaining17, message.data);
     convertFromLittleEndian(&robotData.turret.bulletsRemaining42, message.data + 2);
     convertFromLittleEndian(&robotData.remainingCoins, message.data + 4);
+    convertFromLittleEndian(&robotData.turret.fortressBulletsRemaining, message.data + 6);
     return true;
 }
 
@@ -436,29 +408,35 @@ bool RefSerial::decodeToGroundPositions(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToRadarProgress(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 6)
+    if (message.header.dataLength != 2)
     {
         return false;
     }
-
-    convertFromLittleEndian(&(gameData.radarProgress), message.data);
-
+    convertFromLittleEndian(&gameData.radarProgress.value, message.data);
     return true;
 }
 
 bool RefSerial::decodeToSentryInfo(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 4)
+    if (message.header.dataLength != 6)
     {
         return false;
     }
 
-    uint32_t data;
-    convertFromLittleEndian(&data, message.data);
+    uint32_t sentryInfo;
+    uint16_t sentryInfo2;
+    convertFromLittleEndian(&sentryInfo, message.data);
+    convertFromLittleEndian(&sentryInfo2, message.data + 4);
 
-    gameData.sentry.projectileAllowance = static_cast<uint16_t>(data & 0x03FF);
-    gameData.sentry.remoteProjectileExchanges = static_cast<uint8_t>((data >> 11) & 0x0F);
-    gameData.sentry.remoteHealthExchanges = static_cast<uint8_t>((data >> 14) & 0x0F);
+    gameData.sentry.projectileAllowance = static_cast<uint16_t>(sentryInfo & 0x07FF);
+    gameData.sentry.remoteProjectileExchanges = static_cast<uint8_t>((sentryInfo >> 11) & 0x0F);
+    gameData.sentry.remoteHealthExchanges = static_cast<uint8_t>((sentryInfo >> 14) & 0x0F);
+    gameData.sentry.hasFreeRespawn = (sentryInfo >> 18) & 0x01;
+    gameData.sentry.canInstantRespawn = (sentryInfo >> 19) & 0x01;
+    gameData.sentry.instantRespawnCost = static_cast<uint16_t>((sentryInfo >> 20) & 0x03FF);
+
+    gameData.sentry.mode = static_cast<uint8_t>((sentryInfo2 >> 12) & 0x03);
+    gameData.sentry.canActivePowerRune = (sentryInfo2 >> 14) & 0x01;
 
     return true;
 }
