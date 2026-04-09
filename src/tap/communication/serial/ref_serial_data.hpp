@@ -113,11 +113,12 @@ public:
 
         enum class SiteDartHit : uint8_t
         {
-            NONE = 0,               ///< No hit target.
-            OUTPOST = 1,            ///< Outpost hit.
-            BASE_FIXED = 2,         ///< Fixed target hit.
-            BASE_RANDOM_FIXED = 3,  ///< Fixed target hit after random movement.
-            BASE_RANDOM_MOVING = 4  ///< Random moving target hit.
+            NONE = 0,                 ///< No hit target.
+            OUTPOST = 1,              ///< Outpost hit.
+            BASE_FIXED = 2,           ///< Fixed target hit.
+            BASE_RANDOM_FIXED = 3,    ///< Fixed target hit after random movement.
+            BASE_RANDOM_MOVING = 4,   ///< Random moving target hit.
+            BASE_MOVING_TERMINAL = 5  ///< Moving terminal target hit.
         };
 
         enum class SupplierOutletStatus : uint8_t
@@ -155,20 +156,22 @@ public:
 
         enum class SiteData : uint32_t
         {
-            RESUPPLY_OUTSIDE_EXCHANGE_OCCUPIED = modm::Bit0,
-            RESUPPLY_INSIDE_EXCHANGE_OCCUPIED = modm::Bit1,
-            SUPPLIER_OCCUPIED = modm::Bit2,
+            RESUPPLY_ZONE_OCCUPIED = modm::Bit0,
+            RESUPPLY_ZONE_OCCUPIED_RMUL = modm::Bit2,
 
             SMALL_POWER_RUNE_ACTIVATED = modm::Bit3,
-            LARGER_POWER_RUNE_ACTIVIATED = modm::Bit4,
+            SMALL_POWER_RUNE_ACTIVATING = modm::Bit4,
 
-            CENTRAL_ELEVATED_GROUND_OCCUPIED_TEAM = modm::Bit5,
-            CENTRAL_ELEVATED_GROUND_OCCUPIED_OPPONENT = modm::Bit6,
+            LARGE_POWER_RUNE_ACTIVATED = modm::Bit5,
+            LARGE_POWER_RUNE_ACTIVATING = modm::Bit6,
 
-            TRAPEZOID_OCCUPIED_TEAM = modm::Bit7,
+            CENTRAL_ELEVATED_GROUND_OCCUPIED_TEAM = modm::Bit7,
+            CENTRAL_ELEVATED_GROUND_OCCUPIED_OPPONENT = modm::Bit8,
 
-            CENTRAL_BUFF_OCCUPIED_TEAM = modm::Bit21,
-            CENTRAL_BUFF_OCCUPIED_OPPONENT = modm::Bit22
+            TRAPEZOID_OCCUPIED = modm::Bit9,
+
+            CENTRAL_BUFF_OCCUPIED_TEAM = modm::Bit23,
+            CENTRAL_BUFF_OCCUPIED_OPPONENT = modm::Bit24
         };
         MODM_FLAGS32(SiteData);
 
@@ -278,9 +281,9 @@ public:
          */
         struct EventData
         {
-            SiteData_t siteData;           ///< Information about occupied zones.
-            uint8_t timeSinceLastDartHit;  ///< Time since the last dart hit own outpost or base.
-            SiteDartHit lastDartHit;       ///< The target hit by the last dart.
+            SiteData_t siteData;            ///< Information about occupied zones.
+            uint16_t timeSinceLastDartHit;  ///< Time since the last dart hit own outpost or base.
+            SiteDartHit lastDartHit;        ///< The target hit by the last dart.
         };
 
         /**
@@ -337,8 +340,8 @@ public:
                                    ///< a cooling rate of 1/s.
             uint8_t defenseBuff;   ///< The robot's defense buff. Each increment is 1%.
             uint8_t
-                vulnerabilityBuff;    ///< The robot's negative defense buff. Each increment is 1%.
-            uint16_t attackBuff;      ///< The robot's attack buff. Each increment is 1%.
+                vulnerabilityBuff;  ///< The robot's negative defense buff. Each increment is 1%.
+            uint16_t attackBuff;    ///< The robot's attack buff. Each increment is 1%.
         };
 
         /**
@@ -418,7 +421,8 @@ public:
         };
 
         /**
-         * Mark progress of different robots. Each flag marks whether a given robot has tracking progress >=100 for opponents or >=50 for allies.
+         * Mark progress of different robots. Each flag marks whether a given robot has tracking
+         * progress >=100 for opponents or >=50 for allies.
          */
         enum class RadarMarkProgressFlags : uint32_t
         {

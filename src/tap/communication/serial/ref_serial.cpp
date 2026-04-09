@@ -232,8 +232,8 @@ bool RefSerial::decodeToSiteEventData(const ReceivedSerialMessage& message)
     convertFromLittleEndian(&data, message.data);
 
     gameData.eventData.siteData.value = data;
-    gameData.eventData.timeSinceLastDartHit = static_cast<uint8_t>((data >> 9) & 0xFF);
-    gameData.eventData.lastDartHit = static_cast<Rx::SiteDartHit>((data >> 18) & 0x07);
+    gameData.eventData.timeSinceLastDartHit = static_cast<uint16_t>((data >> 11) & 0x1FF);
+    gameData.eventData.lastDartHit = static_cast<Rx::SiteDartHit>((data >> 20) & 0x07);
 
     return true;
 }
@@ -441,7 +441,7 @@ bool RefSerial::decodeToRadarProgress(const ReceivedSerialMessage& message)
         return false;
     }
 
-    convertFromLittleEndian(&gameData.radarProgress.value, message.data);
+    convertFromLittleEndian(&(gameData.radarProgress), message.data);
 
     return true;
 }

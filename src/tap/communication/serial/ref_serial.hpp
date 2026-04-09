@@ -77,8 +77,8 @@ public:
      * parser yet. They are values that are used in message headers to indicate the type of message
      * we have received.
      *
-     * Current Ref Serial Version: 1.7.0
-     * Updated March 2025.
+     * Current Ref Serial Version: 1.3.0
+     * Updated April 2026.
      */
     enum MessageType
     {
@@ -107,7 +107,6 @@ public:
         REF_MESSAGE_TYPE_CUSTOM_DATA = 0x301,
         // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_RECEIVE = 0x302,
         // REF_MESSAGE_TYPE_SMALL_MAP_INTERACTION = 0x303,
-        // REF_MESSAGE_TYPE_VTM_INPUT_DATA = 0x304,
         // REF_MESSAGE_TYPE_RADAR_MINIMAP = 0x305,
         // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_SEND = 0x306,
         // REF_MESSAGE_TYPE_SENTRY_SMALL_MAP = 0x307,
