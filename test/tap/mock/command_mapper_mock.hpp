@@ -48,7 +48,7 @@ public:
     MOCK_METHOD(
         void,
         handleKeyStateChange,
-        (tap::communication::serial::Remote&, uint16_t),
+        (tap::control::GenericRemoteMapState&),
         (override));
 
     MOCK_METHOD(void, addMap, (std::unique_ptr<tap::control::CommandMapping>), (override));
