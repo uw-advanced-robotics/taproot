@@ -313,7 +313,7 @@ bool RefSerial::decodeToRobotPosition(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToRobotBuffs(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 7)
+    if (message.header.dataLength != 8)
     {
         return false;
     }
