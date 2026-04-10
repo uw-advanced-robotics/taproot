@@ -1,7 +1,7 @@
 # Taproot Changelog
 
 ## April 2026
-- Updated to Ref Serial v1.7.
+- Updated to Ref Serial v1.3.
   - Updated `SiteData` flags.
   - Updated `RobotEnergyLevel` parsing.
   - Updated `RFIDActivationStatus`.

@@ -373,7 +373,7 @@ bool RefSerial::decodeToRFIDStatus(const ReceivedSerialMessage& message)
         return false;
     }
     convertFromLittleEndian(&robotData.rfidStatus.value, message.data);
-    // todo opponent RFID status (1 byte)
+
     return true;
 }
 
