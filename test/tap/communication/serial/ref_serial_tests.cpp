@@ -139,7 +139,7 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
 
     refSerial.messageReceiveCallback(msg);
 
-    if (!refSerial.isBlueTeam(refSerial.getGameData().robotId))
+    if (!refSerial.isBlueTeam(refSerial.getRobotData().robotId))
     {
         EXPECT_EQ(1, refSerial.getRobotData().allRobotHp.red.hero1);
         EXPECT_EQ(2, refSerial.getRobotData().allRobotHp.red.engineer2);
