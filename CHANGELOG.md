@@ -1,5 +1,13 @@
 # Taproot Changelog
 
+## April 2026
+- Updated to Ref Serial v1.7.
+  - Updated `SiteData` flags.
+  - Updated `RobotEnergyLevel` parsing.
+  - Updated `RFIDActivationStatus`.
+  - Added Drone tracking/vulnerability statuses to `RadarMarkProgress`.
+  - Updated `SentryInfo` parsing.
+
 ## February 2026
 - Massively refactored the module system. Most projects should still work, might need to explicitly add some more modules that were transitively included.
   - If you are depending solely on the `core` module, you might need to include the `error`, `pwm`, and `profiler` modules.
@@ -37,7 +45,7 @@
     -Takes in a list of natural and forced response coefficients; will compute the next filtered value when .filterData() is called.
     `.reset()` clears the natural and forced response but keeps the coefficients.
     `.getLastFilteredValue()` gets the last filtered value.
-- Updated to Ref Serial v1.7.0.
+-Updated to Ref Serial v1.7.0. 
   - Removed all references to Standard 5.
   - Removed chassis `power`, `voltage`, and `current` fields.
   - Additional RMUC changes.
