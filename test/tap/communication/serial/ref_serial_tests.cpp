@@ -420,7 +420,6 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
         uint64_t unused = 0;
         uint16_t chassis_power_buffer;
         uint16_t shooterId117mmCoolingHeat;
-        uint16_t shooterId217mmCoolingHeat;
         uint16_t shooterId142mmCoolingHeat;
     } modm_packed;
 
@@ -431,15 +430,13 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
 
     testData.chassis_power_buffer = 120;
     testData.shooterId117mmCoolingHeat = 145;
-    testData.shooterId217mmCoolingHeat = 431;
     testData.shooterId142mmCoolingHeat = 900;
     msg = constructMsg(testData, 0x0202);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(120, refSerial.getRobotData().chassis.powerBuffer);
-    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17ID1);
-    EXPECT_EQ(431, refSerial.getRobotData().turret.heat17ID2);
+    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17);
     EXPECT_EQ(900, refSerial.getRobotData().turret.heat42);
 }
 
@@ -570,21 +567,10 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
 
     EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_17, refSerial.getRobotData().turret.bulletType);
     EXPECT_EQ(
-        RefSerial::Rx::MechanismID::TURRET_17MM_1,
+        RefSerial::Rx::MechanismID::TURRET_17MM,
         refSerial.getRobotData().turret.launchMechanismID);
     EXPECT_EQ(45, refSerial.getRobotData().turret.firingFreq);
     EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
-
-    testData.bulletType = 2;
-    testData.shooterId = 2;
-    msg = constructMsg(testData, 0x0207);
-
-    refSerial.messageReceiveCallback(msg);
-
-    EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_42, refSerial.getRobotData().turret.bulletType);
-    EXPECT_EQ(
-        RefSerial::Rx::MechanismID::TURRET_17MM_2,
-        refSerial.getRobotData().turret.launchMechanismID);
 }
 
 TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
