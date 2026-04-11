@@ -22,6 +22,7 @@
 #include "tap/algorithms/math_user_utils.hpp"
 #include "tap/architecture/clock.hpp"
 #include "tap/communication/serial/uart.hpp"
+#include "tap/control/remote_map_state.hpp"
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
@@ -137,7 +138,12 @@ void Remote::parseBuffer()
         RAISE_ERROR(drivers, "invalid remote joystick values");
     }
 
-    drivers->commandMapper.handleKeyStateChange(*this, remote.key);
+    tap::control::RemoteMapState mapState;
+    mapState.initKeys(remote.key);
+    mapState.updateState(*this);
+    drivers->commandMapper.handleKeyStateChange(mapState);
+    drivers->commandMapper.pollTriggerBindings();
+
     remote.updateCounter++;
 }
 
@@ -170,8 +176,6 @@ void Remote::reset()
     remote.key = 0;
     remote.wheel = 0;
     clearRxBuffer();
-
-    drivers->commandMapper.handleKeyStateChange(*this, 0);
 }
 
 uint32_t Remote::getUpdateCounter() const { return remote.updateCounter; }
