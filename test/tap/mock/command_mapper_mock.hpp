@@ -45,11 +45,7 @@ public:
 
     MOCK_METHOD(void, addTriggerBindingRaw, (tap::control::TriggerBinding*), ());
 
-    MOCK_METHOD(
-        void,
-        handleKeyStateChange,
-        (tap::communication::serial::Remote&, uint16_t),
-        (override));
+    MOCK_METHOD(void, handleKeyStateChange, (tap::control::GenericRemoteMapState&), (override));
 
     MOCK_METHOD(void, addMap, (std::unique_ptr<tap::control::CommandMapping>), (override));
 
