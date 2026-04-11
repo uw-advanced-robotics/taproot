@@ -59,14 +59,8 @@ const TriggerBinding *CommandMapper::getBindingAtIndex(std::size_t index) const
     return triggerBindings.at(index).get();
 }
 
-void CommandMapper::handleKeyStateChange(Remote &remote, uint16_t key)
+void CommandMapper::handleKeyStateChange(GenericRemoteMapState &mapState)
 {
-    // Make a new map state that represents the current state of the remote,
-    // to be passed in to each of the CommandMappings.
-    GenericRemoteMapState mapState;
-
-    mapState.initKeys(key);
-    mapState.updateState(remote);
     for (std::unique_ptr<CommandMapping> &cmdMap : commandsToRun)
     {
         cmdMap->executeCommandMapping(mapState);
