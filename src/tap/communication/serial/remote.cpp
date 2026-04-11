@@ -142,6 +142,7 @@ void Remote::parseBuffer()
     mapState.initKeys(remote.key);
     mapState.updateState(*this);
     drivers->commandMapper.handleKeyStateChange(mapState);
+    drivers->commandMapper.pollTriggerBindings();
 
     remote.updateCounter++;
 }
