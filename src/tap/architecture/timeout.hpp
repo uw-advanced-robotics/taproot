@@ -45,6 +45,8 @@ private:
     bool isRunning;
     bool isExecuted;
     uint32_t expireTime;
+    mutable uint32_t prevCheckTime;
+    bool hasExpireWrapped;
 
 public:
     static constexpr auto TimeFunc = T;
@@ -67,7 +69,16 @@ public:
     {
         this->isRunning = true;
         this->isExecuted = false;
-        this->expireTime = TimeFunc() + timeout;
+        this->prevCheckTime = TimeFunc();
+        this->expireTime = this->prevCheckTime + timeout;
+        this->hasExpireWrapped = this->expireTime < this->prevCheckTime;
+    }
+
+    inline void incrementExpireTime(uint32_t inc)
+    {
+        uint32_t prevExpireTime = this->expireTime;
+        this->expireTime += inc;
+        if (this->expireTime < prevExpireTime) this->hasExpireWrapped ^= 1;
     }
 
     /**
@@ -88,14 +99,20 @@ public:
      * @return `true` if the timer has expired (timeout has been reached) and is NOT
      * stopped.
      */
-    inline bool isExpired() const { return this->isRunning && TimeFunc() >= this->expireTime; }
+    inline bool isExpired() const
+    {
+        uint32_t now = TimeFunc();
+        if (now < this->prevCheckTime) this->hasExpireWrapped ^= 1;
+        this->prevCheckTime = now;
+        return this->isRunning && ((now >= this->expireTime) != this->hasExpireWrapped);
+    }
 
     /**
      * @return time left in timer if still running and not yet expired
      */
     inline uint32_t timeRemaining() const
     {
-        if (this->isRunning && TimeFunc() < this->expireTime)
+        if (this->isRunning && !isExpired())
             return this->expireTime - TimeFunc();
         else
             return 0;

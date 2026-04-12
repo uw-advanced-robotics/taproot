@@ -76,17 +76,10 @@ public:
     {
         if (timeout.execute())
         {
-            uint32_t now = T::TimeFunc();
-
             do
             {
-                timeout.expireTime += period;
-            } while (timeout.expireTime <= now);
-
-            if (timeout.expireTime >= UINT32_MAX - period)
-            {
-                timeout.expireTime = now + period;
-            }
+                timeout.incrementExpireTime(period);
+            } while (timeout.isExpired());
 
             timeout.isRunning = true;
             timeout.isExecuted = false;
