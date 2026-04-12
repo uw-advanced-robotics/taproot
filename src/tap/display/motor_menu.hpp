@@ -28,7 +28,6 @@
 #include "motor_specific_menu.hpp"
 #include "vertical_scroll_logic_handler.hpp"
 
-
 namespace tap
 {
 namespace motor
