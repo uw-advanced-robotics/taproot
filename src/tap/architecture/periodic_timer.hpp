@@ -83,7 +83,8 @@ public:
                 timeout.expireTime += period;
             } while (timeout.expireTime <= now);
 
-            if (timeout.expireTime >= UINT32_MAX - period) {
+            if (timeout.expireTime >= UINT32_MAX - period)
+            {
                 timeout.expireTime = now + period;
             }
 
@@ -93,6 +94,7 @@ public:
         }
         return false;
     }
+
     /**
      * @return `true` if the timer is stopped
      */
