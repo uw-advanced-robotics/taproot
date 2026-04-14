@@ -46,7 +46,7 @@ private:
     bool isExecuted;
     uint32_t expireTime;
     mutable uint32_t prevCheckTime;
-    bool hasExpireWrapped;
+    mutable bool hasExpireWrapped;
 
 public:
     static constexpr auto TimeFunc = T;
