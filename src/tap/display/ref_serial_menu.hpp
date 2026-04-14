@@ -81,8 +81,7 @@ private:
 
     void printRobotTypeId(modm::IOStream &stream);
     void printHp(modm::IOStream &stream);
-    void print17mm1Heat(modm::IOStream &stream);
-    void print17mm2Heat(modm::IOStream &stream);
+    void print17mmHeat(modm::IOStream &stream);
     void print42mmHeat(modm::IOStream &stream);
     void printPowerBuf(modm::IOStream &stream);
     void printPower(modm::IOStream &stream);
