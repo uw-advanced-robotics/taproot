@@ -77,6 +77,8 @@ public:
      */
     virtual ImuState getImuState() const { return imuState; }
 
+    virtual bool isOnline() const { return imuState != ImuState::IMU_NOT_CONNECTED; }
+
     mockable inline float getAx() const override { return imuData.accG.x(); }
     mockable inline float getAy() const override { return imuData.accG.y(); }
     mockable inline float getAz() const override { return imuData.accG.z(); }
