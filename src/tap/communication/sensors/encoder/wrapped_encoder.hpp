@@ -90,7 +90,6 @@ protected:
 
     const float gearRatio;
 
-private:
     /**
      * The actual encoder wrapped value received from CAN messages where this motor
      * is considered to have an encoder value of 0. encoderHomePosition is 0 by default.
