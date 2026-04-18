@@ -330,7 +330,7 @@ public:
      */
     inline void updateRotation(const DynamicOrientation& newRotation)
     {
-        this->rotation = newRotation.orientation;
+        this->rotation = newRotation.rotation;
         this->tRotation = this->rotation.transpose();
         this->angVel = newRotation.angularVelocity;
     }
@@ -342,7 +342,7 @@ public:
      */
     inline void updateRotation(DynamicOrientation&& newRotation)
     {
-        this->rotation = std::move(newRotation.orientation);
+        this->rotation = std::move(newRotation.rotation);
         this->tRotation = this->rotation.transpose();
         this->angVel = std::move(newRotation.angularVelocity);
     }

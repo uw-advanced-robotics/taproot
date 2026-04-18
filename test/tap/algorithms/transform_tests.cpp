@@ -79,7 +79,10 @@ inline void expectEq(
     const DynamicOrientation& expected,
     const float epsilon = EPS)
 {
-    expectEq(actual.getOrientation(), expected.getOrientation(), epsilon);
+    expectEq(
+        static_cast<const Orientation&>(actual),
+        static_cast<const Orientation&>(expected),
+        epsilon);
     expectEq(actual.getAngularVelocity(), expected.getAngularVelocity(), epsilon);
 }
 
@@ -529,6 +532,28 @@ std::vector<ApplyDynamicOriTestConfig> applyDynamicOriTestCases = {
 };
 
 INSTANTIATE_TEST_SUITE_P(Transform, ApplyDynamicOriTest, ValuesIn(applyDynamicOriTestCases));
+
+class OrientationQuaternionConversionTest : public TestWithParam<Orientation>
+{
+};
+
+TEST_P(OrientationQuaternionConversionTest, orientation_quaternion_conversion)
+{
+    expectEq(Orientation::fromQuaternion(GetParam().toQuaternion()), GetParam());
+}
+
+std::vector<Orientation> orientationQuaternionConversionTestCases = {
+    Orientation(0.0, 0.0, 0.0),
+    Orientation(1.0, 1.0, 1.0),
+    Orientation(M_PI_2, 0.0, 0.0),
+    Orientation(0.0, M_PI_2, 0.0),
+    Orientation(0.0, 0.0, M_PI_2),
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    Transform,
+    OrientationQuaternionConversionTest,
+    ValuesIn(orientationQuaternionConversionTestCases));
 
 std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
 

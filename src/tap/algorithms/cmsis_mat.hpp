@@ -67,7 +67,7 @@ struct CMSISMat
         matrix.pData = data.data();
     }
 
-    inline float &operator[](int index) { return data[index]; }
+    inline const float &operator[](int index) const { return data[index]; }
 
     /**
      * Deep copy. Costly; use std::move to invoke move assignment whenever possible.

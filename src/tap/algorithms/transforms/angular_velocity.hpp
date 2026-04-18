@@ -60,6 +60,23 @@ public:
      */
     inline float getYawVelocity() const { return -matrix_.data[0 * 3 + 1]; }
 
+    template <Axis A>
+    inline float get() const
+    {
+        if constexpr (A == Axis::ROLL)
+        {
+            return getRollVelocity();
+        }
+        else if constexpr (A == Axis::PITCH)
+        {
+            return getPitchVelocity();
+        }
+        else if constexpr (A == Axis::YAW)
+        {
+            return getPitchVelocity();
+        }
+    }
+
     const inline CMSISMat<3, 3>& matrix() const { return matrix_; }
 
     /**

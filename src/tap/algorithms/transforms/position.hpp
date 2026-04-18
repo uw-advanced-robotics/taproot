@@ -22,6 +22,8 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
+#include "axis.hpp"
+
 namespace tap::algorithms::transforms
 {
 // Forward declaration to avoid circular dependency
@@ -48,11 +50,13 @@ public:
 
     /* Getters */
 
-    inline float x() const { return coordinates_.data[0]; }
+    inline float x() const { return (*this)[Axis::X]; }
 
-    inline float y() const { return coordinates_.data[1]; }
+    inline float y() const { return (*this)[Axis::Y]; }
 
-    inline float z() const { return coordinates_.data[2]; }
+    inline float z() const { return (*this)[Axis::Z]; }
+
+    const float& operator[](Axis a) const { return coordinates_[static_cast<int>(a)]; }
 
     /* Operators */
     Position operator-(const Vector& other) const;
@@ -79,6 +83,7 @@ public:
     static float distance(const Position& a, const Position& b);
 
     friend class Transform;
+    friend class Vector;
     friend class DynamicPosition;
 
 private:

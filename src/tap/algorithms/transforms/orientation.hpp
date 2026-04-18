@@ -22,6 +22,7 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
+#include "axis.hpp"
 #include "vector.hpp"
 
 namespace tap::algorithms::transforms
@@ -35,18 +36,14 @@ public:
     inline Orientation()
         : rotation({1, 0, 0, 0, 1, 0, 0, 0, 1}),
           rotationT({1, 0, 0, 0, 1, 0, 0, 0, 1}),
-          roll_(0),
-          pitch_(0),
-          yaw_(0)
+          rpy{0, 0, 0}
     {
     }
 
     inline Orientation(const float roll, const float pitch, const float yaw)
         : rotation(fromRollPitchYaw(roll, pitch, yaw)),
           rotationT(rotation.transpose()),
-          roll_(roll),
-          pitch_(pitch),
-          yaw_(yaw)
+          rpy{0, 0, 0}
     {
     }
 
@@ -54,9 +51,7 @@ public:
     inline Orientation(Orientation&& other)
         : rotation(std::move(other.rotation)),
           rotationT(std::move(other.rotationT)),
-          roll_(other.roll_),
-          pitch_(other.pitch_),
-          yaw_(other.yaw_)
+          rpy{other.rpy[0], other.rpy[1], other.rpy[2]}
     {
     }
 
@@ -64,9 +59,7 @@ public:
     inline Orientation(Orientation& other)
         : rotation(CMSISMat(other.rotation)),
           rotationT(CMSISMat(other.rotationT)),
-          roll_(other.roll_),
-          pitch_(other.pitch_),
-          yaw_(other.yaw_)
+          rpy{other.rpy[0], other.rpy[1], other.rpy[2]}
     {
     }
 
@@ -87,6 +80,14 @@ public:
         calculateRPY();
     }
 
+    Orientation& operator=(const Orientation& other)
+    {
+        this->rotation = other.rotation;
+        this->rotationT = other.rotationT;
+        this->rpy = other.rpy;
+        return *this;
+    }
+
     inline Orientation inverse() const { return Orientation(rotationT, rotation); }
 
     inline Orientation compose(const Orientation& other) const
@@ -105,13 +106,69 @@ public:
      * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
      * this case, roll is taken to be 0.
      */
-    inline float roll() const { return roll_; }
+    inline float roll() const { return get<Axis::ROLL>(); }
 
-    inline float pitch() const { return pitch_; }
+    inline float pitch() const { return get<Axis::PITCH>(); }
 
-    inline float yaw() const { return yaw_; }
+    inline float yaw() const { return get<Axis::YAW>(); }
+
+    template <Axis A>
+    inline float get() const
+    {
+        return rpy[static_cast<int>(A)];
+    }
 
     const inline CMSISMat<3, 3>& matrix() const { return rotation; }
+
+    modm::Quaternion<float> toQuaternion() const
+    {
+        float t;
+        modm::Quaternion<float> q;
+        if (rotation[2 * 3 + 2] < 0)
+        {
+            if (rotation[0 * 3 + 0] > rotation[1 * 3 + 1])
+            {
+                t = 1 + rotation[0 * 3 + 0] - rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
+                q = modm::Quaternion(
+                    t,
+                    rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
+                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
+                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1]);
+            }
+            else
+            {
+                t = 1 - rotation[0 * 3 + 0] + rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
+                q = modm::Quaternion(
+                    rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
+                    t,
+                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
+                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2]);
+            }
+        }
+        else
+        {
+            if (rotation[0 * 3 + 0] < -rotation[1 * 3 + 1])
+            {
+                t = 1 - rotation[0 * 3 + 0] - rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
+                q = modm::Quaternion(
+                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
+                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
+                    t,
+                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0]);
+            }
+            else
+            {
+                t = 1 + rotation[0 * 3 + 0] + rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
+                q = modm::Quaternion(
+                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1],
+                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2],
+                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0],
+                    t);
+            }
+        }
+        q *= 0.5 / sqrtf(t);
+        return q;
+    }
 
     /**
      * Generates a 3x3 rotation matrix from roll pitch yaw (in radians)
@@ -141,18 +198,54 @@ public:
         return Orientation(0, asinf(planar.magnitude() / mag), atan2f(dir.y(), dir.x()));
     }
 
+    /**
+     * Constructs an `Orientation` from a unit quaternion.
+     */
+    static Orientation fromQuaternion(modm::Quaternion<float> q)
+    {
+        return fromQuaternion(q.w, q.x, q.y, q.z);
+    }
+    /**
+     * Constructs an `Orientation` from a unit quaternion.
+     */
+    static Orientation fromQuaternion(float w, float x, float y, float z)
+    {
+        float xx = x * x;
+        float xy = x * y;
+        float xz = x * z;
+        float xw = x * w;
+
+        float yy = y * y;
+        float yz = y * z;
+        float yw = y * w;
+
+        float zz = z * z;
+        float zw = z * w;
+
+        return Orientation(tap::algorithms::CMSISMat<3, 3>(
+            {1 - 2 * (yy + zz),
+             2 * (xy - zw),
+             2 * (xz + yw),
+             2 * (xy + zw),
+             1 - 2 * (xx + zz),
+             2 * (yz - xw),
+             2 * (xz - yw),
+             2 * (yz + xw),
+             1 - 2 * (xx + yy)}));
+    }
+
     friend class Transform;
     friend class DynamicOrientation;
 
 protected:
     CMSISMat<3, 3> rotation, rotationT;
-    float roll_, pitch_, yaw_;
+    std::array<float, 3> rpy;
 
     void calculateRPY()
     {
-        roll_ = atan2(rotation.data[7], rotation.data[8]);
-        pitch_ = asinf(-rotation.data[6]);
-        yaw_ = atan2(rotation.data[3], rotation.data[0]);
+        rpy[static_cast<int>(Axis::X)] = atan2(rotation.data[7], rotation.data[8]);
+        rpy[static_cast<int>(Axis::Y)] = asinf(-rotation.data[6]);
+        rpy[static_cast<int>(Axis::Z)] = atan2(rotation.data[3], rotation.data[0]);
     }
 };  // class Orientation
 }  // namespace tap::algorithms::transforms
