@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2026 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -77,8 +77,8 @@ public:
      * parser yet. They are values that are used in message headers to indicate the type of message
      * we have received.
      *
-     * Current Ref Serial Version: 1.3.0
-     * Updated April 2026.
+     * Current Ref Serial Version: 1.7.0
+     * Updated March 2025.
      */
     enum MessageType
     {
@@ -107,6 +107,7 @@ public:
         REF_MESSAGE_TYPE_CUSTOM_DATA = 0x301,
         // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_RECEIVE = 0x302,
         // REF_MESSAGE_TYPE_SMALL_MAP_INTERACTION = 0x303,
+        // REF_MESSAGE_TYPE_VTM_INPUT_DATA = 0x304,
         // REF_MESSAGE_TYPE_RADAR_MINIMAP = 0x305,
         // REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_SEND = 0x306,
         // REF_MESSAGE_TYPE_SENTRY_SMALL_MAP = 0x307,
@@ -216,6 +217,10 @@ private:
      */
     bool decodeToSiteEventData(const ReceivedSerialMessage& message);
     /**
+     * Decodes ref serial message containing projectile supplier information.
+     */
+    bool decodeToProjectileSupplierAction(const ReceivedSerialMessage& message);
+    /**
      * Decodes ref serial message containing warning information (if a robot on your team received a
      * yellow or red card).
      */
@@ -243,6 +248,11 @@ private:
      * Decodes ref serial message containing the robot buff status of the robot.
      */
     bool decodeToRobotBuffs(const ReceivedSerialMessage& message);
+    /**
+     * Decodes ref serial message containing the energy status, a countdown timer from 30 seconds to
+     * 0 seconds.
+     */
+    bool decodeToAerialEnergyStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing containing the damaged armor and damage type
      * last taken by the robot.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2026 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -72,7 +72,7 @@ public:
     {
     public:
         RobotToRobotMessageHandler() {}
-        virtual void operator()(const DJISerial::ReceivedSerialMessage& message) = 0;
+        virtual void operator()(const DJISerial::ReceivedSerialMessage &message) = 0;
     };
 
     /**
@@ -113,12 +113,11 @@ public:
 
         enum class SiteDartHit : uint8_t
         {
-            NONE = 0,                 ///< No hit target.
-            OUTPOST = 1,              ///< Outpost hit.
-            BASE_FIXED = 2,           ///< Fixed target hit.
-            BASE_RANDOM_FIXED = 3,    ///< Fixed target hit after random movement.
-            BASE_RANDOM_MOVING = 4,   ///< Random moving target hit.
-            BASE_MOVING_TERMINAL = 5  ///< Moving terminal target hit.
+            NONE = 0,               ///< No hit target.
+            OUTPOST = 1,            ///< Outpost hit.
+            BASE_FIXED = 2,         ///< Fixed target hit.
+            BASE_RANDOM_FIXED = 3,  ///< Fixed target hit after random movement.
+            BASE_RANDOM_MOVING = 4  ///< Random moving target hit.
         };
 
         enum class SupplierOutletStatus : uint8_t
@@ -130,11 +129,9 @@ public:
 
         enum class DartTarget : uint8_t
         {
-            NONE_OR_OUTPOST = 0,      ///< No target or outpost selected.
-            BASE_FIXED = 1,           ///< A fixed target selected.
-            BASE_RANDOM_FIXED = 2,    ///< A random target selected.
-            BASE_RANDOM_MOVING = 3,   ///< A random moving target selected.
-            BASE_MOVING_TERMINAL = 4  ///< A moving terminal target selected.
+            NONE_OR_OUTPOST = 0,  ///< No target or outpost selected.
+            BASE_FIXED = 1,       ///< A fixed target selected.
+            BASE_RANDOM = 2       ///< A random target selected.
         };
 
         enum class ArmorId : uint8_t
@@ -160,32 +157,18 @@ public:
         {
             RESUPPLY_OUTSIDE_EXCHANGE_OCCUPIED = modm::Bit0,
             RESUPPLY_INSIDE_EXCHANGE_OCCUPIED = modm::Bit1,
-            RESUPPLY_OCCUPIED = modm::Bit2,
+            SUPPLIER_OCCUPIED = modm::Bit2,
 
             SMALL_POWER_RUNE_ACTIVATED = modm::Bit3,
-            SMALL_POWER_RUNE_ACTIVATING = modm::Bit4,
+            LARGER_POWER_RUNE_ACTIVIATED = modm::Bit4,
 
-            LARGE_POWER_RUNE_ACTIVATED = modm::Bit5,
-            LARGE_POWER_RUNE_ACTIVATING = modm::Bit6,
+            CENTRAL_ELEVATED_GROUND_OCCUPIED_TEAM = modm::Bit5,
+            CENTRAL_ELEVATED_GROUND_OCCUPIED_OPPONENT = modm::Bit6,
 
-            CENTRAL_ELEVATED_GROUND_OCCUPIED_OWN = modm::Bit7,
-            CENTRAL_ELEVATED_GROUND_OCCUPIED_OPPONENT = modm::Bit8,
+            TRAPEZOID_OCCUPIED_TEAM = modm::Bit7,
 
-            TRAPEZOID_OCCUPIED = modm::Bit9,
-
-            // Bits 11-19: Time since the last dart hit (range 0-420)
-            // Bits 20-22: Dart hit target (range 0-5)
-
-            CENTRAL_BUFF_OCCUPIED_OWN = modm::Bit23,
-            CENTRAL_BUFF_OCCUPIED_OPPONENT = modm::Bit24,
-
-            FORTRESS_BUFF_OCCUPIED_OWN = modm::Bit25,
-            FORTRESS_BUFF_OCCUPIED_OPPONENT = modm::Bit26,
-
-            OUTPOST_BUFF_OCCUPIED_OWN = modm::Bit27,
-            OUTPOST_BUFF_OCCUPIED_OPPONENT = modm::Bit28,
-
-            BASE_BUFF_OCCUPIED = modm::Bit29,
+            CENTRAL_BUFF_OCCUPIED_TEAM = modm::Bit21,
+            CENTRAL_BUFF_OCCUPIED_OPPONENT = modm::Bit22
         };
         MODM_FLAGS32(SiteData);
 
@@ -199,14 +182,12 @@ public:
 
         enum class RobotEnergyLevel : uint8_t
         {
-            ABOVE_125_PERCENT = 0b1111111,
-            ABOVE_100_PERCENT = 0b1111110,
-            ABOVE_50_PERCENT = 0b1111100,
-            ABOVE_30_PERCENT = 0b1111000,
-            ABOVE_15_PERCENT = 0b1110000,
-            ABOVE_5_PERCENT = 0b1100000,
-            ABOVE_1_PERCENT = 0b1000000,
-            BELOW_1_PERCENT = 0b0000000,
+            ABOVE_50_PERCENT = 0x32,
+            ABOVE_30_PERCENT = 0b11110,
+            ABOVE_15_PERCENT = 0b11100,
+            ABOVE_5_PERCENT = 0b11000,
+            ABOVE_1_PERCENT = 0b10000,
+            BELOW_1_PERCENT = 0b00000,
         };
 
         /// Activation status flags for the RFID module (for RMUC only).
@@ -233,8 +214,8 @@ public:
             OUTPOST_BUFF_OWN = modm::Bit18,
             RESUPPLY_ZONE_OUTSIDE_EXCHANGE = modm::Bit19,
             RESUPPLY_ZONE_INSIDE_EXCHANGE = modm::Bit20,
-            ASSEMBLY_OWN = modm::Bit21,
-            ASSEMBLY_OPPONENT = modm::Bit22,
+            LARGE_RESOURCE_ISLAND_OWN = modm::Bit21,
+            LARGE_RESOURCE_ISLAND_OPPONENT = modm::Bit22,
             CENTRAL_BUFF = modm::Bit23
         };
         MODM_FLAGS32(RFIDActivationStatus);
@@ -257,8 +238,9 @@ public:
          */
         enum MechanismID
         {
-            TURRET_17MM = 1,  ///< 17mm barrel
-            TURRET_42MM = 3,  ///< 42mm barrel
+            TURRET_17MM_1 = 1,  ///< 17mm barrel ID 1
+            TURRET_17MM_2 = 2,  ///< 17mm barrel ID 2
+            TURRET_42MM = 3,    ///< 42mm barrel
         };
 
         /**
@@ -296,9 +278,9 @@ public:
          */
         struct EventData
         {
-            SiteData_t siteData;            ///< Information about occupied zones.
-            uint16_t timeSinceLastDartHit;  ///< Time since the last dart hit own outpost or base.
-            SiteDartHit lastDartHit;        ///< The target hit by the last dart.
+            SiteData_t siteData;           ///< Information about occupied zones.
+            uint8_t timeSinceLastDartHit;  ///< Time since the last dart hit own outpost or base.
+            SiteDartHit lastDartHit;       ///< The target hit by the last dart.
         };
 
         /**
@@ -332,7 +314,8 @@ public:
             BulletType bulletType;          ///< 17mm or 42mm last projectile shot.
             MechanismID launchMechanismID;  ///< Either 17mm mechanism 1, 3, or 42 mm mechanism.
             uint8_t firingFreq;             ///< Firing frequency (in Hz).
-            uint16_t heat17;                ///< Current 17mm turret heat.
+            uint16_t heat17ID1;             ///< Current 17mm turret heat, ID1.
+            uint16_t heat17ID2;             ///< Current 17mm turret heat, ID2.
             uint16_t heat42;                ///< Current 42mm turret heat.
             uint16_t heatLimit;             ///< Turret heat limit. Shared with all turrets.
             uint16_t coolingRate;  ///< Turret cooling value per second. Shared with all turrets.
@@ -340,10 +323,8 @@ public:
                                           ///< only (500 max) if in RMUC, or any robot in RMUL.
             uint16_t bulletsRemaining42;  ///< Number of bullets remaining in hero if in RMUL or 0
                                           ///< if in RMUC.
-            uint16_t
-                fortressBulletsRemaining;  ///< Number of bullets provided by Fortress Buff Point.
-            float bulletSpeed;             ///< Last bullet speed (in m/s).
-            float yaw;                     ///< Barrel yaw position (degree).
+            float bulletSpeed;            ///< Last bullet speed (in m/s).
+            float yaw;                    ///< Barrel yaw position (degree).
             uint32_t lastReceivedLaunchingInfoTimestamp;  ///< Last time in milliseconds that the
                                                           ///< real-time launching information
                                                           ///< message was received
@@ -352,8 +333,8 @@ public:
         struct RobotBuffStatus
         {
             uint8_t recoveryBuff;  ///< The robot's recovery buff. Each increment is 1%.
-            uint16_t coolingBuff;  ///< The robot's barrel cooling rate buff. Each increment is
-                                   ///< a cooling rate of 1/s.
+            uint8_t coolingBuff;   ///< The robot's barrel cooling rate buff. Each increment is a 1x
+                                   ///< multiplier.
             uint8_t defenseBuff;   ///< The robot's defense buff. Each increment is 1%.
             uint8_t
                 vulnerabilityBuff;  ///< The robot's negative defense buff. Each increment is 1%.
@@ -437,25 +418,16 @@ public:
         };
 
         /**
-         * Mark progress of different robots. Each flag marks whether a given robot has tracking
-         * progress >=100 for opponents or >=50 for allies.
+         * Mark progress of different robots. Values range from 0 to 120.
          */
-        enum class RadarMarkProgress : uint16_t
+        struct RadarMarkProgress
         {
-            HERO_OPPONENT = modm::Bit0,
-            ENGINEER_OPPONENT = modm::Bit1,
-            STANDARD3_OPPONENT = modm::Bit2,
-            STANDARD4_OPPONENT = modm::Bit3,
-            DRONE_OPPONENT = modm::Bit4,
-            SENTRY_OPPONENT = modm::Bit5,
-            HERO_OWN = modm::Bit6,
-            ENGINEER_OWN = modm::Bit7,
-            STANDARD3_OWN = modm::Bit8,
-            STANDARD4_OWN = modm::Bit9,
-            DRONE_OWN = modm::Bit10,
-            SENTRY_OWN = modm::Bit11
+            uint8_t hero;
+            uint8_t engineer;
+            uint8_t standard3;
+            uint8_t standard4;
+            uint8_t sentry;
         };
-        MODM_FLAGS16(RadarMarkProgress);
 
         struct SentryInfo
         {
@@ -463,15 +435,6 @@ public:
             uint8_t
                 remoteProjectileExchanges;  ///< The number of remote projectile exchanges taken.
             uint8_t remoteHealthExchanges;  ///< The number of remote health exchanges taken.
-            bool hasFreeRespawn;            ///< True if the sentry has a free respawn available.
-            bool canInstantRespawn;         ///< True if the sentry can respawn instantly.
-            uint16_t instantRespawnCost;    ///< Number of gold coins needed for instant
-                                            ///< respawn.
-            bool isOutOfCombat;             ///< True if the sentry is out of combat.
-            uint16_t remainingProjectileAllowanceExchanges;  ///< Remaining exchange count for 17mm
-                                                             ///< projectile allowance.
-            uint8_t mode;             ///< Current sentry mode (1: Offense, 2: Defense, 3: Mobile).
-            bool canActivePowerRune;  ///< True if the power rune is available.
         };
 
         struct RadarInfo
@@ -493,7 +456,7 @@ public:
             AirSupportData airSupportData;   ///< Information about the air support
             DartStationInfo dartStation;     ///< Information about the dart launching station.
             GroundRobotPositions positions;  ///< Information about the position of ground robots.
-            RadarMarkProgress_t
+            RadarMarkProgress
                 radarProgress;  ///< Information about the mark progress for the radar station.
             SentryInfo sentry;  ///< Information about the sentry.
             RadarInfo radar;    ///< Information about the radar station.
@@ -705,7 +668,7 @@ public:
          * @todo @deprecated
          */
         template <typename T>
-        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T*)
+        static constexpr uint32_t getWaitTimeAfterGraphicSendMs(T *)
         {
             // Must be a valid graphic message type
             static_assert(
