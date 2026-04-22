@@ -76,15 +76,14 @@ public:
     {
         return DynamicOrientation(
             this->rotation * other.rotation,
-            this->angularVelocity +
-                this->rotation * other.angularVelocity * this->rotation.transpose());
+            this->angularVelocity + this->rotation * other.angularVelocity * this->rotationT);
     }
 
     DynamicOrientation inverse() const
     {
         return DynamicOrientation(
-            this->rotation.transpose(),
-            -(this->rotation.transpose() * this->angularVelocity * this->rotation));
+            this->rotationT,
+            -(this->rotationT * this->angularVelocity * this->rotation));
     }
 
     inline AngularVelocity getAngularVelocity() const { return AngularVelocity(angularVelocity); }
