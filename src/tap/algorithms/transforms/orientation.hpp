@@ -43,7 +43,7 @@ public:
     inline Orientation(const float roll, const float pitch, const float yaw)
         : rotation(fromRollPitchYaw(roll, pitch, yaw)),
           rotationT(rotation.transpose()),
-          rpy{0, 0, 0}
+          rpy{roll, pitch, yaw}
     {
     }
 
