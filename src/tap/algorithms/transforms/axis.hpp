@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef AXIS_HPP_
-#define AXIS_HPP_
+#ifndef TAPROOT_AXIS_HPP_
+#define TAPROOT_AXIS_HPP_
 
 namespace tap::algorithms::transforms
 {
@@ -32,4 +32,4 @@ enum class Axis
 };
 }  // namespace tap::algorithms::transforms
 
-#endif  // AXIS_HPP_
+#endif  // TAPROOT_AXIS_HPP_
