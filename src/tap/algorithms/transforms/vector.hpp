@@ -57,12 +57,11 @@ public:
     }
 
     inline float x() const { return (*this)[Axis::X]; }
-
     inline float y() const { return (*this)[Axis::Y]; }
-
     inline float z() const { return (*this)[Axis::Z]; }
 
     const float& operator[](Axis a) const { return coordinates_[static_cast<int>(a)]; }
+    const float& operator[](int i) const { return coordinates_[i]; }
 
     inline Vector& operator=(const Vector& other)
     {
