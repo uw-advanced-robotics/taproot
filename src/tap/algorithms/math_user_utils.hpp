@@ -224,6 +224,17 @@ float interpolateLinear2D(
            (q11 * x2x * y2y + q21 * xx1 * y2y + q12 * x2x * yy1 + q22 * xx1 * yy1);
 }
 
+/**
+ * @brief Spherical Linear Interpolation between two quaternions.
+ */
+template <class T>
+modm::Quaternion<T> slerp(modm::Quaternion<T> q0, modm::Quaternion<T> q1, float t)
+{
+    float theta = acosf(q0.w * q1.w + q0.x * q1.x + q0.y * q1.y + q0.z * q1.z);
+
+    return q0 * (sinf((1 - t) * theta) / sinf(theta)) + q1 * (sinf(t * theta) / sinf(theta));
+};
+
 }  // namespace algorithms
 
 }  // namespace tap
