@@ -39,11 +39,6 @@ public:
 
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
 
-    /* Use rvalue reference */
-    Position(Position&& other) : coordinates_(std::move(other.coordinates_)) {}
-
-    Position(const Position& other) : coordinates_(CMSISMat(other.coordinates_)) {}
-
     Position(const CMSISMat<3, 1>& coordinates) : coordinates_(coordinates) {}
 
     Position(CMSISMat<3, 1>&& coordinates) : coordinates_(std::move(coordinates)) {}

@@ -37,10 +37,6 @@ public:
 
     Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
 
-    Vector(Vector&& other) : coordinates_(std::move(other.coordinates_)) {}
-
-    Vector(const Vector& other) : coordinates_(CMSISMat(other.coordinates_)) {}
-
     /**
      * Costly copy constructor
      */

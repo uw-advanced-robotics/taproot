@@ -38,12 +38,6 @@ public:
     }
 
     /* rvalue reference */
-    inline AngularVelocity(AngularVelocity&& other) : pseudoVector(std::move(other.pseudoVector)) {}
-
-    /* Costly; use rvalue reference whenever possible */
-    inline AngularVelocity(const AngularVelocity& other) : pseudoVector(other.pseudoVector) {}
-
-    /* rvalue reference */
     inline AngularVelocity(CMSISMat<3, 1>&& vec) : pseudoVector(std::move(vec)) {}
 
     /* Costly; use rvalue reference whenever possible */

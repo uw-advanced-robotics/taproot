@@ -47,22 +47,6 @@ public:
     {
     }
 
-    /* rvalue reference */
-    inline Orientation(Orientation&& other)
-        : rotation(std::move(other.rotation)),
-          rotationT(std::move(other.rotationT)),
-          rpy{other.rpy[0], other.rpy[1], other.rpy[2]}
-    {
-    }
-
-    /* Costly; use rvalue reference whenever possible */
-    inline Orientation(const Orientation& other)
-        : rotation(CMSISMat(other.rotation)),
-          rotationT(CMSISMat(other.rotationT)),
-          rpy{other.rpy[0], other.rpy[1], other.rpy[2]}
-    {
-    }
-
     /* Costly; use rvalue reference whenever possible */
     inline Orientation(const CMSISMat<3, 3>& matrix) : rotation(matrix) { calculateRPY(); }
     inline Orientation(const CMSISMat<3, 3>& matrix, const CMSISMat<3, 3>& matrixT)
