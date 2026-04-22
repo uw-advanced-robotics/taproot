@@ -566,6 +566,14 @@ TEST(Transform, identity_orientation_to_quaternion)
     EXPECT_EQ(q.z, 0);
 }
 
+TEST(Transform, identity_quaternion_to_orientation)
+{
+    modm::Quaternion<float> q(1, 0, 0, 0);
+    Orientation o = Orientation::fromQuaternion(q);
+
+    expectEq(o, Orientation());
+}
+
 std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
 
 std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)
