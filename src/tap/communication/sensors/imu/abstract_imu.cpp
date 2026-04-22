@@ -100,4 +100,28 @@ void AbstractIMU::computeOffsets()
     }
 }
 
+void AbstractIMU::updateImuMeasurement()
+{
+    sampleCounter++;
+    sumImuData.accG = sumImuData.accG + curImuData.accG;
+    sumImuData.accOffsetRaw = sumImuData.accOffsetRaw + curImuData.accOffsetRaw;
+    sumImuData.accRaw = sumImuData.accRaw + curImuData.accRaw;
+    sumImuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw + curImuData.gyroOffsetRaw;
+    sumImuData.gyroRadPerSec = sumImuData.gyroRadPerSec + curImuData.gyroRadPerSec;
+    sumImuData.gyroRaw = sumImuData.gyroRaw + curImuData.gyroRaw;
+    sumImuData.temperature = sumImuData.temperature + curImuData.temperature;
+
+    if (sampleCounter == numSamples)
+    {
+        imuData.accG = sumImuData.accG / numSamples;
+        imuData.accOffsetRaw = sumImuData.accOffsetRaw / numSamples;
+        imuData.accRaw = sumImuData.accRaw / numSamples;
+        imuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw / numSamples;
+        imuData.gyroRadPerSec = sumImuData.gyroRadPerSec / numSamples;
+        imuData.gyroRaw = sumImuData.gyroRaw / numSamples;
+        imuData.temperature = sumImuData.temperature / numSamples;
+        sampleCounter = 0;
+    }
+}
+
 }  // namespace tap::communication::sensors::imu

@@ -109,6 +109,9 @@ public:
     void setAccelOffset(float x, float y, float z);
     void setGyroOffset(float x, float y, float z);
 
+    void updateImuMeasurement();
+    void setNumSamples(int samples) { numSamples = samples; }
+
 protected:
     void resetOffsets();
     void computeOffsets();
@@ -128,6 +131,11 @@ protected:
     ImuState imuState = ImuState::IMU_NOT_CONNECTED;
     int calibrationSample = 0;
     int offsetSampleCount = 1000;
+
+    uint8_t numSamples = 1;
+    uint8_t sampleCounter;
+    AbstractIMU::ImuData curImuData;
+    AbstractIMU::ImuData sumImuData;
 
     ImuData imuData;
 
