@@ -130,7 +130,7 @@ public:
             {
                 t = 1 + rotation[0 * 3 + 0] - rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1],
+                    rotation[2 * 3 + 1] - rotation[1 * 3 + 2],
                     t,
                     rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
                     rotation[2 * 3 + 0] + rotation[0 * 3 + 2]);
@@ -139,7 +139,7 @@ public:
             {
                 t = 1 - rotation[0 * 3 + 0] + rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2],
+                    rotation[0 * 3 + 2] - rotation[2 * 3 + 0],
                     rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
                     t,
                     rotation[1 * 3 + 2] + rotation[2 * 3 + 1]);
@@ -151,7 +151,7 @@ public:
             {
                 t = 1 - rotation[0 * 3 + 0] - rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0],
+                    rotation[1 * 3 + 0] - rotation[0 * 3 + 1],
                     rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
                     rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
                     t);
@@ -161,9 +161,9 @@ public:
                 t = 1 + rotation[0 * 3 + 0] + rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
                 q = modm::Quaternion(
                     t,
-                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1],
-                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2],
-                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0]);
+                    rotation[2 * 3 + 1] - rotation[1 * 3 + 2],
+                    rotation[0 * 3 + 2] - rotation[2 * 3 + 0],
+                    rotation[1 * 3 + 0] - rotation[0 * 3 + 1]);
             }
         }
         q *= 0.5 / sqrtf(t);
@@ -243,9 +243,33 @@ protected:
 
     void calculateRPY()
     {
-        rpy[static_cast<int>(Axis::X)] = atan2(rotation.data[7], rotation.data[8]);
-        rpy[static_cast<int>(Axis::Y)] = asinf(-rotation.data[6]);
-        rpy[static_cast<int>(Axis::Z)] = atan2(rotation.data[3], rotation.data[0]);
+        float sin_p = -rotation.data[6];
+
+        // Handle Gimbal Lock and float precision errors near 1.0 or -1.0
+        // A threshold of 0.999999f catches anything within ~0.1 degrees of vertical
+        if (sin_p >= 0.999999f)
+        {
+            // Pitch is +pi/2 (Straight down)
+            rpy[static_cast<int>(Axis::Y)] = M_PI_2;
+            rpy[static_cast<int>(Axis::X)] = 0.0f;
+
+            // When roll is 0, m01 = -sin(yaw) and m11 = cos(yaw)
+            rpy[static_cast<int>(Axis::Z)] = atan2(-rotation.data[1], rotation.data[4]);
+        }
+        else if (sin_p <= -0.999999f)
+        {
+            // Pitch is -pi/2
+            rpy[static_cast<int>(Axis::Y)] = -M_PI_2;
+            rpy[static_cast<int>(Axis::X)] = 0.0f;
+            rpy[static_cast<int>(Axis::Z)] = atan2(-rotation.data[1], rotation.data[4]);
+        }
+        else
+        {
+            // Normal case
+            rpy[static_cast<int>(Axis::Y)] = asinf(sin_p);
+            rpy[static_cast<int>(Axis::X)] = atan2(rotation.data[7], rotation.data[8]);
+            rpy[static_cast<int>(Axis::Z)] = atan2(rotation.data[3], rotation.data[0]);
+        }
     }
 };  // class Orientation
 }  // namespace tap::algorithms::transforms
