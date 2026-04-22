@@ -55,6 +55,8 @@ public:
     {
         stop();
         this->expireTime = 0;
+        this->prevCheckTime = 0;
+        this->hasExpireWrapped = false;
     }
 
     explicit Timeout(uint32_t timeout) { restart(timeout); }
