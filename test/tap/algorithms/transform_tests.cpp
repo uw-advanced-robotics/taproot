@@ -555,6 +555,17 @@ INSTANTIATE_TEST_SUITE_P(
     OrientationQuaternionConversionTest,
     ValuesIn(orientationQuaternionConversionTestCases));
 
+TEST(Transform, identity_orientation_to_quaternion)
+{
+    Orientation o;
+    modm::Quaternion<float> q = o.toQuaternion();
+
+    EXPECT_EQ(q.w, 1);
+    EXPECT_EQ(q.x, 0);
+    EXPECT_EQ(q.y, 0);
+    EXPECT_EQ(q.z, 0);
+}
+
 std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
 
 std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)

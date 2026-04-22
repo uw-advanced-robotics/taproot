@@ -76,7 +76,10 @@ public:
     {
     }
 
-    inline DynamicPosition(Position& position, Vector& velocity, Vector& acceleration)
+    inline DynamicPosition(
+        const Position& position,
+        const Vector& velocity,
+        const Vector& acceleration)
         : position(position.coordinates_),
           velocity(velocity.coordinates_),
           acceleration(acceleration.coordinates_)

@@ -121,7 +121,7 @@ Transform::Transform(
       translation(dynamicPosition.position),
       transVel(dynamicPosition.velocity),
       transAcc(dynamicPosition.acceleration),
-      rotation(dynamicOrientation.orientation),
+      rotation(dynamicOrientation.rotation),
       tRotation(rotation.transpose()),
       angVel(dynamicOrientation.angularVelocity)
 {
@@ -133,7 +133,7 @@ Transform::Transform(DynamicPosition&& dynamicPosition, DynamicOrientation&& dyn
       translation(std::move(dynamicPosition.position)),
       transVel(std::move(dynamicPosition.velocity)),
       transAcc(std::move(dynamicPosition.acceleration)),
-      rotation(std::move(dynamicOrientation.orientation)),
+      rotation(std::move(dynamicOrientation.rotation)),
       tRotation(rotation.transpose()),
       angVel(std::move(dynamicOrientation.angularVelocity))
 {
@@ -237,7 +237,7 @@ Orientation Transform::apply(const Orientation& orientation) const
 DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation) const
 {
     return DynamicOrientation(
-        tRotation * dynamicOrientation.orientation,
+        tRotation * dynamicOrientation.rotation,
         tRotation * (dynamicOrientation.angularVelocity - angVel) * rotation);
 }
 
@@ -275,13 +275,13 @@ Transform Transform::compose(const DynamicOrientation& second) const
 {
     if (this->dynamic)
     {
-        CMSISMat<3, 3> newRot = this->rotation * second.orientation;
+        CMSISMat<3, 3> newRot = this->rotation * second.rotation;
         CMSISMat<3, 3> newAngVel =
             this->angVel + this->rotation * second.angularVelocity * this->tRotation;
         return Transform(translation, newRot, transVel, transAcc, newAngVel);
     }
 
-    CMSISMat<3, 3> newRot = this->rotation * second.orientation;
+    CMSISMat<3, 3> newRot = this->rotation * second.rotation;
     CMSISMat<3, 3> newAngVel = this->rotation * second.angularVelocity * this->tRotation;
     return Transform(translation, newRot, {{0, 0, 0}}, {{0, 0, 0}}, newAngVel);
 }

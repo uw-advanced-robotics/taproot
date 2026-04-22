@@ -40,7 +40,7 @@ public:
     Position(float x, float y, float z) : coordinates_({x, y, z}) {}
 
     /* Use rvalue reference */
-    Position(const Position&& other) : coordinates_(std::move(other.coordinates_)) {}
+    Position(Position&& other) : coordinates_(std::move(other.coordinates_)) {}
 
     Position(const Position& other) : coordinates_(CMSISMat(other.coordinates_)) {}
 

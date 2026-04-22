@@ -22,6 +22,8 @@
 
 #include "tap/algorithms/cmsis_mat.hpp"
 
+#include "axis.hpp"
+
 namespace tap::algorithms::transforms
 {
 class AngularVelocity
@@ -38,12 +40,12 @@ public:
     inline AngularVelocity(AngularVelocity&& other) : matrix_(std::move(other.matrix_)) {}
 
     /* Costly; use rvalue reference whenever possible */
-    inline AngularVelocity(AngularVelocity& other) : matrix_(CMSISMat(other.matrix_)) {}
+    inline AngularVelocity(const AngularVelocity& other) : matrix_(CMSISMat(other.matrix_)) {}
+
+    inline AngularVelocity(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
 
     /* Costly; use rvalue reference whenever possible */
     inline AngularVelocity(const CMSISMat<3, 3>& matrix) : matrix_(matrix) {}
-
-    inline AngularVelocity(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) {}
 
     /**
      * @brief Get the roll velocity

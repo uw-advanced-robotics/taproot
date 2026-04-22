@@ -56,7 +56,7 @@ public:
     }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(Orientation& other)
+    inline Orientation(const Orientation& other)
         : rotation(CMSISMat(other.rotation)),
           rotationT(CMSISMat(other.rotationT)),
           rpy{other.rpy[0], other.rpy[1], other.rpy[2]}
@@ -130,19 +130,19 @@ public:
             {
                 t = 1 + rotation[0 * 3 + 0] - rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
                 q = modm::Quaternion(
+                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1],
                     t,
                     rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
-                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
-                    rotation[1 * 3 + 2] - rotation[2 * 3 + 1]);
+                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2]);
             }
             else
             {
                 t = 1 - rotation[0 * 3 + 0] + rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
                 q = modm::Quaternion(
+                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2],
                     rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
                     t,
-                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
-                    rotation[2 * 3 + 0] - rotation[0 * 3 + 2]);
+                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1]);
             }
         }
         else
@@ -151,19 +151,19 @@ public:
             {
                 t = 1 - rotation[0 * 3 + 0] - rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
                 q = modm::Quaternion(
+                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0],
                     rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
                     rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
-                    t,
-                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0]);
+                    t);
             }
             else
             {
                 t = 1 + rotation[0 * 3 + 0] + rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
                 q = modm::Quaternion(
+                    t,
                     rotation[1 * 3 + 2] - rotation[2 * 3 + 1],
                     rotation[2 * 3 + 0] - rotation[0 * 3 + 2],
-                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0],
-                    t);
+                    rotation[0 * 3 + 1] - rotation[1 * 3 + 0]);
             }
         }
         q *= 0.5 / sqrtf(t);
