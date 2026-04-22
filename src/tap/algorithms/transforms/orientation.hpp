@@ -106,17 +106,13 @@ public:
      * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
      * this case, roll is taken to be 0.
      */
-    inline float roll() const { return get<Axis::ROLL>(); }
+    inline float roll() const { return (*this)[Axis::ROLL]; }
 
-    inline float pitch() const { return get<Axis::PITCH>(); }
+    inline float pitch() const { return (*this)[Axis::PITCH]; }
 
-    inline float yaw() const { return get<Axis::YAW>(); }
+    inline float yaw() const { return (*this)[Axis::YAW]; }
 
-    template <Axis A>
-    inline float get() const
-    {
-        return rpy[static_cast<int>(A)];
-    }
+    const float& operator[](Axis a) const { return rpy[static_cast<int>(a)]; }
 
     const inline CMSISMat<3, 3>& matrix() const { return rotation; }
 
