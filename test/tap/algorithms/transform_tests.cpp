@@ -581,6 +581,11 @@ std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)
     return stream << "DynamicPosition";
 }
 
+std::ostream& operator<<(std::ostream& stream, const Orientation&)
+{
+    return stream << "Orientation";
+}
+
 std::ostream& operator<<(std::ostream& stream, const DynamicOrientation&)
 {
     return stream << "DynamicOrientation";
