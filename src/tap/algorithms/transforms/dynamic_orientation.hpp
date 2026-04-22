@@ -26,10 +26,10 @@
 
 namespace tap::algorithms::transforms
 {
-class DynamicOrientation : public Orientation
+class DynamicOrientation
 {
 public:
-    inline DynamicOrientation() : Orientation(), angularVelocity() {}
+    inline DynamicOrientation() : rotation(), angularVelocity() {}
 
     inline DynamicOrientation(
         const float roll,
@@ -38,16 +38,16 @@ public:
         const float rollVel,
         const float pitchVel,
         const float yawVel)
-        : Orientation(roll, pitch, yaw),
-          angularVelocity(AngularVelocity::skewMatFromAngVel(rollVel, pitchVel, yawVel))
+        : rotation(roll, pitch, yaw),
+          angularVelocity(rollVel, pitchVel, yawVel)
     {
     }
 
     inline DynamicOrientation(
         const CMSISMat<3, 3>&& orientation,
         const CMSISMat<3, 3>&& angularVelocity)
-        : Orientation(orientation),
-          angularVelocity(std::move(angularVelocity))
+        : rotation(orientation),
+          angularVelocity(angularVelocity)
     {
     }
 
@@ -55,58 +55,59 @@ public:
     inline DynamicOrientation(
         const CMSISMat<3, 3>& orientation,
         const CMSISMat<3, 3>& angularVelocity)
-        : Orientation(orientation),
+        : rotation(orientation),
           angularVelocity(angularVelocity)
     {
     }
 
     inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
-        : Orientation(std::move(orientation.rotation)),
-          angularVelocity(std::move(angularVelocity.matrix_))
+        : rotation(orientation),
+          angularVelocity(angularVelocity)
     {
     }
 
     inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
-        : Orientation(orientation.rotation),
-          angularVelocity(angularVelocity.matrix_)
+        : rotation(orientation),
+          angularVelocity(angularVelocity)
     {
     }
 
     DynamicOrientation compose(const DynamicOrientation& other) const
     {
         return DynamicOrientation(
-            this->rotation * other.rotation,
-            this->angularVelocity + this->rotation * other.angularVelocity * this->rotationT);
+            this->rotation.rotation * other.rotation.rotation,
+            this->angularVelocity.toSkewMatrix() + this->rotation.rotation *
+                                                       other.angularVelocity.toSkewMatrix() *
+                                                       this->rotation.rotationT);
     }
 
     DynamicOrientation inverse() const
     {
         return DynamicOrientation(
-            this->rotationT,
-            -(this->rotationT * this->angularVelocity * this->rotation));
+            this->rotation.rotationT,
+            -(this->rotation.rotationT * this->angularVelocity.toSkewMatrix() *
+              this->rotation.rotation));
     }
 
-    inline AngularVelocity getAngularVelocity() const { return AngularVelocity(angularVelocity); }
+    inline const Orientation& getRotation() const { return rotation; }
+    inline const AngularVelocity& getAngularVelocity() const
+    {
+        return AngularVelocity(angularVelocity);
+    }
 
-    /**
-     * @brief Get the roll velocity
-     */
-    inline float getRollVelocity() const { return angularVelocity.data[0 * 3 + 2]; }
+    inline float getRoll() const { return rotation.roll(); }
+    inline float getPitch() const { return rotation.pitch(); }
+    inline float getYaw() const { return rotation.yaw(); }
 
-    /**
-     * @brief Get the pitch velocity
-     */
-    inline float getPitchVelocity() const { return -angularVelocity.data[1 * 3 + 2]; }
-
-    /**
-     * @brief Get the yaw velocity
-     */
-    inline float getYawVelocity() const { return -angularVelocity.data[0 * 3 + 1]; }
+    inline float getRollVelocity() const { return angularVelocity.getRollVelocity(); }
+    inline float getPitchVelocity() const { return angularVelocity.getPitchVelocity(); }
+    inline float getYawVelocity() const { return angularVelocity.getYawVelocity(); }
 
     friend class Transform;
 
 private:
-    CMSISMat<3, 3> angularVelocity;
+    const Orientation rotation;
+    const AngularVelocity angularVelocity;
 
 };  // class DynamicOrientation
 }  // namespace tap::algorithms::transforms
