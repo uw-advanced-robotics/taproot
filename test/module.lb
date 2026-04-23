@@ -173,6 +173,7 @@ class TaprootTests(Module):
         if env.has_module(":algorithms"):
             env.copy("tap/algorithms")
         if env.has_module(":architecture"):
+            env.copy("tap/architecture/timeout_tests.cpp")
             env.copy("tap/architecture/endian_wrappers_test.cpp")
         if env.has_module(":architecture:profiler"):
             env.copy("tap/architecture/profiler_tests.cpp")
