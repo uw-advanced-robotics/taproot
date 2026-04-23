@@ -29,6 +29,9 @@ enum class Axis
     ROLL = X,
     PITCH = Y,
     YAW = Z,
+    YZ = X,
+    XZ = Y,
+    XY = Z,
 };
 }  // namespace tap::algorithms::transforms
 
