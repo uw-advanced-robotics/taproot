@@ -79,10 +79,7 @@ inline void expectEq(
     const DynamicOrientation& expected,
     const float epsilon = EPS)
 {
-    expectEq(
-        static_cast<const Orientation&>(actual),
-        static_cast<const Orientation&>(expected),
-        epsilon);
+    expectEq(actual.getRotation(), expected.getRotation(), epsilon);
     expectEq(actual.getAngularVelocity(), expected.getAngularVelocity(), epsilon);
 }
 

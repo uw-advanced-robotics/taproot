@@ -59,12 +59,6 @@ public:
     const float& operator[](Axis a) const { return coordinates_[static_cast<int>(a)]; }
     const float& operator[](int i) const { return coordinates_[i]; }
 
-    inline Vector& operator=(const Vector& other)
-    {
-        this->coordinates_ = other.coordinates_;
-        return *this;
-    }
-
     // inline Vector operator+(const Position& other) const
     // {
     //     return Vector(this->coordinates_ + other.coordinates());
@@ -79,6 +73,8 @@ public:
     {
         return Vector(this->coordinates_ - other.coordinates_);
     }
+
+    inline Vector operator-() const { return Vector(-this->coordinates_); }
 
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
 
@@ -112,6 +108,19 @@ public:
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Vector
+
+inline Vector operator*(const float scale, const Vector& vec)
+{
+    return Vector(vec.coordinates() * scale);
+}
+
+/**
+ * @brief Multiplies a 3x3 matrix by a 3D vector.
+ */
+inline Vector operator*(const CMSISMat<3, 3>& a, const Vector& b)
+{
+    return Vector(a * b.coordinates());
+}
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_VECTOR_HPP_

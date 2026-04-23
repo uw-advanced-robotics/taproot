@@ -43,57 +43,49 @@ public:
     {
     }
 
-    inline DynamicOrientation(
-        const CMSISMat<3, 3>&& orientation,
-        const CMSISMat<3, 3>&& angularVelocity)
+    inline DynamicOrientation(const CMSISMat<3, 3>& orientation, const CMSISMat<3, 1>& angVel)
         : rotation(orientation),
-          angularVelocity(angularVelocity)
+          angularVelocity(angVel)
     {
     }
 
-    /* Costly; use rvalue reference whenever possible */
-    inline DynamicOrientation(
-        const CMSISMat<3, 3>& orientation,
-        const CMSISMat<3, 3>& angularVelocity)
-        : rotation(orientation),
-          angularVelocity(angularVelocity)
+    inline DynamicOrientation(CMSISMat<3, 3>&& orientation, CMSISMat<3, 1>&& angVel)
+        : rotation(std::move(orientation)),
+          angularVelocity(std::move(angVel))
     {
     }
 
-    inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angularVelocity)
+    inline DynamicOrientation(const Orientation& orientation, const AngularVelocity& angVel)
         : rotation(orientation),
-          angularVelocity(angularVelocity)
+          angularVelocity(angVel)
     {
     }
 
-    inline DynamicOrientation(Orientation& orientation, AngularVelocity& angularVelocity)
-        : rotation(orientation),
-          angularVelocity(angularVelocity)
+    inline DynamicOrientation(Orientation&& orientation, AngularVelocity&& angVel)
+        : rotation(std::move(orientation)),
+          angularVelocity(std::move(angVel))
     {
     }
 
     DynamicOrientation compose(const DynamicOrientation& other) const
     {
         return DynamicOrientation(
-            this->rotation.rotation * other.rotation.rotation,
-            this->angularVelocity.toSkewMatrix() + this->rotation.rotation *
+            this->rotation.matrix_ * other.rotation.matrix_,
+            this->angularVelocity.toSkewMatrix() + this->rotation.matrix_ *
                                                        other.angularVelocity.toSkewMatrix() *
-                                                       this->rotation.rotationT);
+                                                       this->rotation.matrixT_);
     }
 
     DynamicOrientation inverse() const
     {
         return DynamicOrientation(
-            this->rotation.rotationT,
-            -(this->rotation.rotationT * this->angularVelocity.toSkewMatrix() *
-              this->rotation.rotation));
+            this->rotation.matrixT_,
+            -(this->rotation.matrixT_ * this->angularVelocity.toSkewMatrix() *
+              this->rotation.matrix_));
     }
 
     inline const Orientation& getRotation() const { return rotation; }
-    inline const AngularVelocity& getAngularVelocity() const
-    {
-        return AngularVelocity(angularVelocity);
-    }
+    inline const AngularVelocity& getAngularVelocity() const { return angularVelocity; }
 
     inline float getRoll() const { return rotation.roll(); }
     inline float getPitch() const { return rotation.pitch(); }
@@ -106,8 +98,8 @@ public:
     friend class Transform;
 
 private:
-    const Orientation rotation;
-    const AngularVelocity angularVelocity;
+    Orientation rotation;
+    AngularVelocity angularVelocity;
 
 };  // class DynamicOrientation
 }  // namespace tap::algorithms::transforms

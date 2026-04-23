@@ -38,6 +38,12 @@ public:
     }
 
     /* rvalue reference */
+    inline AngularVelocity(Vector&& vec) : pseudoVector(std::move(vec)) {}
+
+    /* Costly; use rvalue reference whenever possible */
+    inline AngularVelocity(const Vector& vec) : pseudoVector(vec) {}
+
+    /* rvalue reference */
     inline AngularVelocity(CMSISMat<3, 1>&& vec) : pseudoVector(std::move(vec)) {}
 
     /* Costly; use rvalue reference whenever possible */
@@ -59,6 +65,7 @@ public:
     inline float getPitchVelocity() const { return (*this)[Axis::PITCH]; }
     inline float getYawVelocity() const { return (*this)[Axis::YAW]; }
     const float& operator[](Axis a) const { return pseudoVector[a]; }
+    inline const Vector& toVector() const { return pseudoVector; }
 
     /**
      * Generates a 3x3 skew matrix usable in kinematic calculations.

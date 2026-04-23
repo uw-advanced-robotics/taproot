@@ -48,12 +48,6 @@ Position Position::operator*(const float scalar) const
     return Position(this->coordinates_ * scalar);
 }
 
-Position& Position::operator=(const Position& other)
-{
-    this->coordinates_ = other.coordinates_;
-    return *this;
-}
-
 bool Position::operator==(const Position& other) const
 {
     return this->coordinates_.data == other.coordinates_.data;

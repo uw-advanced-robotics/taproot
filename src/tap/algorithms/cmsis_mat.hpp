@@ -68,7 +68,7 @@ struct CMSISMat
     }
 
     inline const float &operator[](int index) const { return data[index]; }
-    inline float &operator[](int index) const { return data[index]; }
+    inline float &operator[](int index) { return data[index]; }
 
     /**
      * Deep copy. Costly; use std::move to invoke move assignment whenever possible.

@@ -21,6 +21,7 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/wrapped_float.hpp"
 
 #include "axis.hpp"
 #include "vector.hpp"
@@ -34,54 +35,59 @@ public:
      * Constructs an identity rotation
      */
     inline Orientation()
-        : rotation({1, 0, 0, 0, 1, 0, 0, 0, 1}),
-          rotationT({1, 0, 0, 0, 1, 0, 0, 0, 1}),
+        : matrix_({1, 0, 0, 0, 1, 0, 0, 0, 1}),
+          matrixT_({1, 0, 0, 0, 1, 0, 0, 0, 1}),
           rpy{0, 0, 0}
     {
     }
 
     inline Orientation(const float roll, const float pitch, const float yaw)
-        : rotation(fromRollPitchYaw(roll, pitch, yaw)),
-          rotationT(rotation.transpose()),
-          rpy{roll, pitch, yaw}
+        : matrix_(fromRollPitchYaw(roll, pitch, yaw)),
+          matrixT_(matrix_.transpose())
     {
+        calculateRPY();  // Don't use the input rpy since it may not be in the expected ranges
     }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(const CMSISMat<3, 3>& matrix) : rotation(matrix) { calculateRPY(); }
+    inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) { calculateRPY(); }
     inline Orientation(const CMSISMat<3, 3>& matrix, const CMSISMat<3, 3>& matrixT)
-        : rotation(matrix),
-          rotationT(matrixT)
+        : matrix_(matrix),
+          matrixT_(matrixT)
     {
         calculateRPY();
     }
 
-    inline Orientation(CMSISMat<3, 3>&& matrix) : rotation(std::move(matrix)) { calculateRPY(); }
+    inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) { calculateRPY(); }
     inline Orientation(CMSISMat<3, 3>&& matrix, CMSISMat<3, 3>&& matrixT)
-        : rotation(std::move(matrix)),
-          rotationT(std::move(matrixT))
+        : matrix_(std::move(matrix)),
+          matrixT_(std::move(matrixT))
     {
         calculateRPY();
     }
 
-    Orientation& operator=(const Orientation& other)
+    /**
+     * @brief A lightweight proxy to allow zero-overhead transposed multiplication.
+     */
+    struct TransposeProxy
     {
-        this->rotation = other.rotation;
-        this->rotationT = other.rotationT;
-        this->rpy = other.rpy;
-        return *this;
+        const CMSISMat<3, 3>& rotationT;
+    };
+
+    inline Orientation compose(const Orientation& other) const { return *this * other; }
+
+    inline Orientation operator*(const Orientation& other) const
+    {
+        return Orientation(this->matrix_ * other.matrix_);
     }
 
-    inline Orientation inverse() const { return Orientation(rotationT, rotation); }
-
-    inline Orientation compose(const Orientation& other) const
+    inline Orientation operator*(const Orientation::TransposeProxy& other) const
     {
-        return Orientation(this->rotation * other.rotation);
+        return Orientation(this->matrix_ * other.rotationT);
     }
 
     inline Vector apply(const Vector& vec) const
     {
-        return Vector(this->rotation * vec.coordinates());
+        return Vector(this->matrix_ * vec.coordinates());
     }
 
     /**
@@ -98,52 +104,62 @@ public:
 
     const float& operator[](Axis a) const { return rpy[static_cast<int>(a)]; }
 
-    const inline CMSISMat<3, 3>& matrix() const { return rotation; }
+    const inline CMSISMat<3, 3>& matrix() const { return matrix_; }
+
+    const inline CMSISMat<3, 3>& matrixT() const { return matrixT_; }
+
+    /**
+     * @brief Returns a proxy object to use the cached transpose in mathematical operations
+     * without constructing an intermediate Orientation object.
+     * Example: Vector v2 = ori.T() * v1;
+     * Example: Orientation o3 = ori1.T() * ori2;
+     */
+    inline TransposeProxy T() const { return {matrixT_}; }
 
     modm::Quaternion<float> toQuaternion() const
     {
         float t;
         modm::Quaternion<float> q;
-        if (rotation[2 * 3 + 2] < 0)
+        if (matrix_[2 * 3 + 2] < 0)
         {
-            if (rotation[0 * 3 + 0] > rotation[1 * 3 + 1])
+            if (matrix_[0 * 3 + 0] > matrix_[1 * 3 + 1])
             {
-                t = 1 + rotation[0 * 3 + 0] - rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
+                t = 1 + matrix_[0 * 3 + 0] - matrix_[1 * 3 + 1] - matrix_[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[2 * 3 + 1] - rotation[1 * 3 + 2],
+                    matrix_[2 * 3 + 1] - matrix_[1 * 3 + 2],
                     t,
-                    rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
-                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2]);
+                    matrix_[0 * 3 + 1] + matrix_[1 * 3 + 0],
+                    matrix_[2 * 3 + 0] + matrix_[0 * 3 + 2]);
             }
             else
             {
-                t = 1 - rotation[0 * 3 + 0] + rotation[1 * 3 + 1] - rotation[2 * 3 + 2];
+                t = 1 - matrix_[0 * 3 + 0] + matrix_[1 * 3 + 1] - matrix_[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[0 * 3 + 2] - rotation[2 * 3 + 0],
-                    rotation[0 * 3 + 1] + rotation[1 * 3 + 0],
+                    matrix_[0 * 3 + 2] - matrix_[2 * 3 + 0],
+                    matrix_[0 * 3 + 1] + matrix_[1 * 3 + 0],
                     t,
-                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1]);
+                    matrix_[1 * 3 + 2] + matrix_[2 * 3 + 1]);
             }
         }
         else
         {
-            if (rotation[0 * 3 + 0] < -rotation[1 * 3 + 1])
+            if (matrix_[0 * 3 + 0] < -matrix_[1 * 3 + 1])
             {
-                t = 1 - rotation[0 * 3 + 0] - rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
+                t = 1 - matrix_[0 * 3 + 0] - matrix_[1 * 3 + 1] + matrix_[2 * 3 + 2];
                 q = modm::Quaternion(
-                    rotation[1 * 3 + 0] - rotation[0 * 3 + 1],
-                    rotation[2 * 3 + 0] + rotation[0 * 3 + 2],
-                    rotation[1 * 3 + 2] + rotation[2 * 3 + 1],
+                    matrix_[1 * 3 + 0] - matrix_[0 * 3 + 1],
+                    matrix_[2 * 3 + 0] + matrix_[0 * 3 + 2],
+                    matrix_[1 * 3 + 2] + matrix_[2 * 3 + 1],
                     t);
             }
             else
             {
-                t = 1 + rotation[0 * 3 + 0] + rotation[1 * 3 + 1] + rotation[2 * 3 + 2];
+                t = 1 + matrix_[0 * 3 + 0] + matrix_[1 * 3 + 1] + matrix_[2 * 3 + 2];
                 q = modm::Quaternion(
                     t,
-                    rotation[2 * 3 + 1] - rotation[1 * 3 + 2],
-                    rotation[0 * 3 + 2] - rotation[2 * 3 + 0],
-                    rotation[1 * 3 + 0] - rotation[0 * 3 + 1]);
+                    matrix_[2 * 3 + 1] - matrix_[1 * 3 + 2],
+                    matrix_[0 * 3 + 2] - matrix_[2 * 3 + 0],
+                    matrix_[1 * 3 + 0] - matrix_[0 * 3 + 1]);
             }
         }
         q *= 0.5 / sqrtf(t);
@@ -218,12 +234,12 @@ public:
     friend class DynamicOrientation;
 
 protected:
-    CMSISMat<3, 3> rotation, rotationT;
+    CMSISMat<3, 3> matrix_, matrixT_;
     std::array<float, 3> rpy;
 
     void calculateRPY()
     {
-        float sin_p = -rotation.data[6];
+        float sin_p = -matrix_.data[6];
 
         // Handle Gimbal Lock and float precision errors near 1.0 or -1.0
         // A threshold of 0.999999f catches anything within ~0.1 degrees of vertical
@@ -234,24 +250,48 @@ protected:
             rpy[static_cast<int>(Axis::X)] = 0.0f;
 
             // When roll is 0, m01 = -sin(yaw) and m11 = cos(yaw)
-            rpy[static_cast<int>(Axis::Z)] = atan2(-rotation.data[1], rotation.data[4]);
+            rpy[static_cast<int>(Axis::Z)] = atan2(-matrix_.data[1], matrix_.data[4]);
         }
         else if (sin_p <= -0.999999f)
         {
             // Pitch is -pi/2
             rpy[static_cast<int>(Axis::Y)] = -M_PI_2;
             rpy[static_cast<int>(Axis::X)] = 0.0f;
-            rpy[static_cast<int>(Axis::Z)] = atan2(-rotation.data[1], rotation.data[4]);
+            rpy[static_cast<int>(Axis::Z)] = atan2(-matrix_.data[1], matrix_.data[4]);
         }
         else
         {
             // Normal case
             rpy[static_cast<int>(Axis::Y)] = asinf(sin_p);
-            rpy[static_cast<int>(Axis::X)] = atan2(rotation.data[7], rotation.data[8]);
-            rpy[static_cast<int>(Axis::Z)] = atan2(rotation.data[3], rotation.data[0]);
+            rpy[static_cast<int>(Axis::X)] = atan2(matrix_.data[7], matrix_.data[8]);
+            rpy[static_cast<int>(Axis::Z)] = atan2(matrix_.data[3], matrix_.data[0]);
         }
     }
 };  // class Orientation
+
+/**
+ * @brief Multiplies a 3x3 rotation matrix by a 3D vector.
+ */
+inline Vector operator*(const Orientation& a, const Vector& b)
+{
+    return Vector(a.matrix() * b.coordinates());
+}
+
+/**
+ * @brief Multiplies a transposed rotation matrix by a 3D vector.
+ */
+inline Vector operator*(const Orientation::TransposeProxy& a, const Vector& b)
+{
+    return Vector(a.rotationT * b.coordinates());
+}
+
+/**
+ * @brief Composes a transposed orientation with another orientation.
+ */
+inline Orientation operator*(const Orientation::TransposeProxy& a, const Orientation& b)
+{
+    return Orientation(a.rotationT * b.matrix());
+}
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_ORIENTATION_HPP_

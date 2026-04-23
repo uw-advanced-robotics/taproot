@@ -58,13 +58,13 @@ public:
 
     Vector operator-(const Position& other) const;
 
+    inline Position operator-() const { return Position(-this->coordinates_); }
+
     Position operator+(const Vector& vector) const;
 
     Position operator+(const Position& vector) const;
 
     Position operator*(const float scalar) const;
-
-    Position& operator=(const Position& other);
 
     bool operator==(const Position& other) const;
 

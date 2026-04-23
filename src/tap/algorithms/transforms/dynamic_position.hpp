@@ -42,9 +42,9 @@ public:
         const float ax,
         const float ay,
         const float az)
-        : position({x, y, z}),
-          velocity({vx, vy, vz}),
-          acceleration({ax, ay, az})
+        : position(x, y, z),
+          velocity(vx, vy, vz),
+          acceleration(ax, ay, az)
     {
     }
 
@@ -70,9 +70,9 @@ public:
     }
 
     inline DynamicPosition(Position&& position, Vector&& velocity, Vector&& acceleration)
-        : position(std::move(position.coordinates_)),
-          velocity(std::move(velocity.coordinates_)),
-          acceleration(std::move(acceleration.coordinates_))
+        : position(std::move(position)),
+          velocity(std::move(velocity)),
+          acceleration(std::move(acceleration))
     {
     }
 
@@ -80,9 +80,9 @@ public:
         const Position& position,
         const Vector& velocity,
         const Vector& acceleration)
-        : position(position.coordinates_),
-          velocity(velocity.coordinates_),
-          acceleration(acceleration.coordinates_)
+        : position(position),
+          velocity(velocity),
+          acceleration(acceleration)
     {
     }
 
@@ -97,7 +97,7 @@ public:
     DynamicPosition operator-(const DynamicPosition& other) const
     {
         return DynamicPosition(
-            this->position - other.position,
+            Position((this->position - other.position).coordinates()),
             this->velocity - other.velocity,
             this->acceleration - other.acceleration);
     }
@@ -107,38 +107,38 @@ public:
         return DynamicPosition(-this->position, -this->velocity, -this->acceleration);
     }
 
-    inline Position getPosition() const { return Position(position); }
+    inline const Position& getPosition() const { return position; }
 
-    inline Vector getVelocity() const { return Vector(velocity); }
+    inline const Vector& getVelocity() const { return velocity; }
 
-    inline Vector getAcceleration() const { return Vector(acceleration); }
+    inline const Vector& getAcceleration() const { return acceleration; }
 
-    inline float x() const { return position.data[0]; }
+    inline float x() const { return position.x(); }
 
-    inline float y() const { return position.data[1]; }
+    inline float y() const { return position.y(); }
 
-    inline float z() const { return position.data[2]; }
+    inline float z() const { return position.z(); }
 
-    inline float vx() const { return velocity.data[0]; }
+    inline float vx() const { return velocity.x(); }
 
-    inline float vy() const { return velocity.data[1]; }
+    inline float vy() const { return velocity.y(); }
 
-    inline float vz() const { return velocity.data[2]; }
+    inline float vz() const { return velocity.z(); }
 
-    inline float ax() const { return acceleration.data[0]; }
+    inline float ax() const { return acceleration.x(); }
 
-    inline float ay() const { return acceleration.data[1]; }
+    inline float ay() const { return acceleration.y(); }
 
-    inline float az() const { return acceleration.data[2]; }
+    inline float az() const { return acceleration.z(); }
 
     friend class Transform;
 
 private:
-    CMSISMat<3, 1> position;
+    Position position;
 
-    CMSISMat<3, 1> velocity;
+    Vector velocity;
 
-    CMSISMat<3, 1> acceleration;
+    Vector acceleration;
 
 };  // class DynamicPosition
 }  // namespace tap::algorithms::transforms

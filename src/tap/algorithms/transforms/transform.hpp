@@ -96,7 +96,7 @@ public:
         const Orientation& rotation,
         const Vector& velocity,
         const Vector& acceleration,
-        const Vector& angularVelocity);
+        const AngularVelocity& angularVelocity);
 
     /**
      * @param translation Initial translation of this transformation.
@@ -110,7 +110,7 @@ public:
         Orientation&& rotation,
         Vector&& velocity,
         Vector&& acceleration,
-        Vector&& angularVelocity);
+        AngularVelocity&& angularVelocity);
 
     /**
      * @param rotation Initial rotation of this transformation.
@@ -238,7 +238,7 @@ public:
      */
     inline void updateTranslation(const Position& newTranslation)
     {
-        this->translation = newTranslation.coordinates();
+        this->translation = newTranslation;
     }
 
     /**
@@ -248,7 +248,7 @@ public:
      */
     inline void updateTranslation(Position&& newTranslation)
     {
-        this->translation = std::move(newTranslation.coordinates());
+        this->translation = std::move(newTranslation);
     }
 
     /**
@@ -260,7 +260,7 @@ public:
      */
     inline void updateTranslation(float x, float y, float z)
     {
-        this->translation = CMSISMat<3, 1>({x, y, z});
+        this->translation = Position(x, y, z);
     }
 
     /**
@@ -292,11 +292,7 @@ public:
      *
      * @param newRotation updated orientation of follower frame in base frame.
      */
-    inline void updateRotation(const Orientation& newRotation)
-    {
-        this->rotation = newRotation.matrix();
-        this->tRotation = this->rotation.transpose();
-    }
+    inline void updateRotation(const Orientation& newRotation) { this->rotation = newRotation; }
 
     /**
      * @brief Updates the rotation of the current transformation matrix.
@@ -305,8 +301,7 @@ public:
      */
     inline void updateRotation(Orientation&& newRotation)
     {
-        this->rotation = std::move(newRotation.matrix());
-        this->tRotation = this->rotation.transpose();
+        this->rotation = std::move(newRotation);
     }
 
     /**
@@ -319,8 +314,7 @@ public:
      */
     void updateRotation(float roll, float pitch, float yaw)
     {
-        this->rotation = Orientation(roll, pitch, yaw).matrix();
-        this->tRotation = this->rotation.transpose();
+        this->rotation = Orientation(roll, pitch, yaw);
     }
 
     /**
@@ -331,7 +325,6 @@ public:
     inline void updateRotation(const DynamicOrientation& newRotation)
     {
         this->rotation = newRotation.rotation;
-        this->tRotation = this->rotation.transpose();
         this->angVel = newRotation.angularVelocity;
     }
 
@@ -343,7 +336,6 @@ public:
     inline void updateRotation(DynamicOrientation&& newRotation)
     {
         this->rotation = std::move(newRotation.rotation);
-        this->tRotation = this->rotation.transpose();
         this->angVel = std::move(newRotation.angularVelocity);
     }
 
@@ -354,7 +346,7 @@ public:
      */
     inline void updateVelocity(const Vector& newVelocity)
     {
-        this->transVel = newVelocity.coordinates();
+        this->transVel = newVelocity;
         checkDynamic();
     }
 
@@ -365,7 +357,7 @@ public:
      */
     inline void updateVelocity(Vector&& newVelocity)
     {
-        this->transVel = std::move(newVelocity.coordinates());
+        this->transVel = std::move(newVelocity);
         checkDynamic();
     }
 
@@ -378,7 +370,7 @@ public:
      */
     inline void updateVelocity(float vx, float vy, float vz)
     {
-        this->transVel = CMSISMat<3, 1>({vx, vy, vz});
+        this->transVel = Vector(vx, vy, vz);
         checkDynamic();
     }
 
@@ -389,7 +381,7 @@ public:
      */
     inline void updateAcceleration(const Vector& newAcceleration)
     {
-        this->transVel = newAcceleration.coordinates();
+        this->transAcc = newAcceleration;
         checkDynamic();
     }
 
@@ -400,7 +392,7 @@ public:
      */
     inline void updateAcceleration(Vector&& newAcceleration)
     {
-        this->transVel = std::move(newAcceleration.coordinates());
+        this->transAcc = std::move(newAcceleration);
         checkDynamic();
     }
 
@@ -413,7 +405,7 @@ public:
      */
     inline void updateAcceleration(float ax, float ay, float az)
     {
-        this->transAcc = CMSISMat<3, 1>({ax, ay, az});
+        this->transAcc = Vector(ax, ay, az);
         checkDynamic();
     }
 
@@ -424,10 +416,7 @@ public:
      */
     inline void updateAngularVelocity(const Vector& newAngularVelocity)
     {
-        this->angVel = AngularVelocity::skewMatFromAngVel(
-            newAngularVelocity.x(),
-            newAngularVelocity.y(),
-            newAngularVelocity.z());
+        this->angVel = AngularVelocity(newAngularVelocity);
         checkDynamic();
     }
 
@@ -436,25 +425,22 @@ public:
      *
      * @param updateAngularVelocity updated angular velocity of follower in base frame.
      */
-    inline void updateAngularVelocity(Position&& newAngularVelocity)
+    inline void updateAngularVelocity(Vector&& newAngularVelocity)
     {
-        this->angVel = AngularVelocity::skewMatFromAngVel(
-            newAngularVelocity.x(),
-            newAngularVelocity.y(),
-            newAngularVelocity.z());
+        this->angVel = AngularVelocity(std::move(newAngularVelocity));
         checkDynamic();
     }
 
     /**
      * @brief Updates the angular velocity of the current transform.
      *
-     * @param ax new angular velocity x-component.
-     * @param ay new angular velocity y-component.
-     * @param az new angular velocity z-component.
+     * @param vr new angular velocity x-component.
+     * @param vp new angular velocity y-component.
+     * @param vy new angular velocity z-component.
      */
     inline void updateAngularVelocity(float vr, float vp, float vy)
     {
-        this->angVel = AngularVelocity::skewMatFromAngVel(vr, vp, vy);
+        this->angVel = AngularVelocity(vr, vp, vy);
         checkDynamic();
     }
 
@@ -527,23 +513,20 @@ public:
     Transform projectForward(float dt) const;
 
     /* Getters */
-    inline Position getTranslation() const { return Position(translation); };
+    inline const Position& getTranslation() const { return translation; }
 
-    inline Vector getVelocity() const { return Vector(transVel); };
+    inline const Vector& getVelocity() const { return transVel; }
 
-    inline Vector getAcceleration() const { return Vector(transAcc); };
+    inline const Vector& getAcceleration() const { return transAcc; }
 
     inline DynamicPosition getDynamicTranslation() const
     {
         return DynamicPosition(translation, transVel, transAcc);
     };
 
-    inline Orientation getRotation() const { return Orientation(rotation); }
+    inline const Orientation& getRotation() const { return rotation; }
 
-    inline Vector getAngularVel() const
-    {
-        return Vector(getRollVelocity(), getPitchVelocity(), getYawVelocity());
-    }
+    inline const AngularVelocity& getAngularVel() const { return angVel; }
 
     inline DynamicOrientation getDynamicOrientation() const
     {
@@ -553,77 +536,77 @@ public:
     /**
      * @brief Get the roll of this transformation
      */
-    float getRoll() const;
+    inline float getRoll() const { return this->rotation.roll(); }
 
     /**
      * @brief Get the pitch of this transformation
      */
-    float getPitch() const;
+    inline float getPitch() const { return this->rotation.pitch(); }
 
     /**
      * @brief Get the yaw of this transformation
      */
-    float getYaw() const;
+    inline float getYaw() const { return this->rotation.yaw(); }
 
     /**
      * @brief Get the roll velocity of this transformation
      */
-    float getRollVelocity() const;
+    inline float getRollVelocity() const { return this->angVel.getRollVelocity(); }
 
     /**
      * @brief Get the pitch velocity of this transformation
      */
-    float getPitchVelocity() const;
+    inline float getPitchVelocity() const { return this->angVel.getPitchVelocity(); }
 
     /**
      * @brief Get the yaw velocity of this transformation
      */
-    float getYawVelocity() const;
+    inline float getYawVelocity() const { return this->angVel.getYawVelocity(); }
 
     /**
      * @brief Get the x-component of this transform's translation
      */
-    inline float getX() const { return this->translation.data[0]; }
+    inline float getX() const { return this->translation.x(); }
 
     /**
      * @brief Get the y-component of this transform's translation
      */
-    inline float getY() const { return this->translation.data[1]; }
+    inline float getY() const { return this->translation.y(); }
 
     /**
      * @brief Get the z-component of this transform's translation
      */
-    inline float getZ() const { return this->translation.data[2]; }
+    inline float getZ() const { return this->translation.z(); }
 
     /**
      * @brief Get the x-component of this transform's linear velocity
      */
-    inline float getXVel() const { return this->transVel.data[0]; }
+    inline float getXVel() const { return this->transVel.x(); }
 
     /**
      * @brief Get the y-component of this transform's linear velocity
      */
-    inline float getYVel() const { return this->transVel.data[1]; }
+    inline float getYVel() const { return this->transVel.y(); }
 
     /**
      * @brief Get the z-component of this transform's linear velocity
      */
-    inline float getZVel() const { return this->transVel.data[2]; }
+    inline float getZVel() const { return this->transVel.z(); }
 
     /**
      * @brief Get the x-component of this transform's linear acceleration
      */
-    inline float getXAcc() const { return this->transAcc.data[0]; }
+    inline float getXAcc() const { return this->transAcc.x(); }
 
     /**
      * @brief Get the y-component of this transform's linear acceleration
      */
-    inline float getYAcc() const { return this->transAcc.data[1]; }
+    inline float getYAcc() const { return this->transAcc.y(); }
 
     /**
      * @brief Get the z-component of this transform's linear acceleration
      */
-    inline float getZAcc() const { return this->transAcc.data[2]; }
+    inline float getZAcc() const { return this->transAcc.z(); }
 
     /**
      * @brief Whether there are any non-zero derivatives.
@@ -633,38 +616,11 @@ public:
 private:
     bool dynamic{true};
 
-    /**
-     * Translation vector.
-     */
-    CMSISMat<3, 1> translation;
-
-    /**
-     * Translational velocity vector.
-     */
-    CMSISMat<3, 1> transVel;
-
-    /**
-     * Translational acceleration vector.
-     */
-    CMSISMat<3, 1> transAcc;
-
-    /**
-     * Rotation matrix.
-     */
-    CMSISMat<3, 3> rotation;
-
-    /**
-     * Transpose of rotation matrix. Computed and stored at beginning
-     * for use in other computations.
-     *
-     * The transpose of a rotation is its inverse.
-     */
-    CMSISMat<3, 3> tRotation;
-
-    /**
-     * Angular velocity skew matrix.
-     */
-    CMSISMat<3, 3> angVel;
+    Position translation;
+    Vector transVel;
+    Vector transAcc;
+    Orientation rotation;
+    AngularVelocity angVel;
 
     inline void checkDynamic()
     {
