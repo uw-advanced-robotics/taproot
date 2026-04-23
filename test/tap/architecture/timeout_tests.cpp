@@ -31,7 +31,7 @@ using namespace tap::arch;
 // (e.g., tap::arch::clock::getTimeMicroseconds) for testing purposes.
 class TimeoutTest : public Test
 {
-    protected:
+protected:
     using TestTimeout = tap::arch::Timeout<tap::arch::clock::getTimeMilliseconds>;
     TimeoutTest() {}
 
