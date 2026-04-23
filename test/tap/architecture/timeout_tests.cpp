@@ -31,7 +31,8 @@ using namespace tap::arch;
 // (e.g., tap::arch::clock::getTimeMicroseconds) for testing purposes.
 class TimeoutTest : public Test
 {
-protected:
+    protected:
+    using TestTimeout = tap::arch::Timeout<tap::arch::clock::getTimeMilliseconds>;
     TimeoutTest() {}
 
     void SetUp() override
@@ -46,7 +47,7 @@ protected:
 TEST_F(TimeoutTest, normal_expiration_no_wrap)
 {
     clock.time = 100;
-    Timeout timeout(50);  // 50 tick timeout
+    TestTimeout timeout(50);  // 50 tick timeout
 
     EXPECT_FALSE(timeout.isExpired());
     EXPECT_EQ(50, timeout.timeRemaining());
@@ -66,7 +67,7 @@ TEST_F(TimeoutTest, expiration_across_32bit_boundary)
     clock.time = UINT32_MAX - 10;
 
     // 20 tick timeout. Expire time should mathematically be 9.
-    Timeout timeout(20);
+    TestTimeout timeout(20);
 
     EXPECT_FALSE(timeout.isExpired());
 
@@ -88,7 +89,7 @@ TEST_F(TimeoutTest, expiration_across_32bit_boundary)
 TEST_F(TimeoutTest, long_delay_past_signed_integer_limit)
 {
     clock.time = 100;
-    Timeout timeout(10);  // 10 tick timeout
+    TestTimeout timeout(10);  // 10 tick timeout
 
     EXPECT_FALSE(timeout.isExpired());
 
@@ -103,7 +104,7 @@ TEST_F(TimeoutTest, long_delay_past_signed_integer_limit)
 TEST_F(TimeoutTest, time_remaining_across_boundary)
 {
     clock.time = UINT32_MAX - 50;
-    Timeout timeout(100);
+    TestTimeout timeout(100);
 
     // Current time is before wrap, expire time is 49 (after wrap)
     EXPECT_FALSE(timeout.isExpired());
@@ -123,11 +124,11 @@ TEST_F(TimeoutTest, time_remaining_across_boundary)
 TEST_F(TimeoutTest, increment_expire_time_across_boundary)
 {
     clock.time = UINT32_MAX - 50;
-    Timeout timeout(20);  // Initial expire time: UINT32_MAX - 30
+    TestTimeout timeout(20);  // Initial expire time: UINT32_MAX - 30
 
     EXPECT_FALSE(timeout.isExpired());
 
-    // Increment pushes the expire time across the uint32_t boundary to 20
+    // Increment pushes the expire time across the uint32_t boundary to 19
     timeout.incrementExpireTime(50);
 
     clock.time = UINT32_MAX - 10;
@@ -135,7 +136,7 @@ TEST_F(TimeoutTest, increment_expire_time_across_boundary)
 
     clock.time = 10;  // Wrapped, but not yet expired
     EXPECT_FALSE(timeout.isExpired());
-    EXPECT_EQ(10, timeout.timeRemaining());
+    EXPECT_EQ(9, timeout.timeRemaining());
 
     clock.time = 20;  // Reached the new incremented expiration
     EXPECT_TRUE(timeout.isExpired());
@@ -144,7 +145,7 @@ TEST_F(TimeoutTest, increment_expire_time_across_boundary)
 TEST_F(TimeoutTest, restart_resets_wrap_state_correctly)
 {
     clock.time = UINT32_MAX - 5;
-    Timeout timeout(10);  // Wraps, expire is 4
+    TestTimeout timeout(10);  // Wraps, expire is 4
 
     EXPECT_FALSE(timeout.isExpired());
 
