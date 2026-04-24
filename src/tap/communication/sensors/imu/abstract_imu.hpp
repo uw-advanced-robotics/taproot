@@ -111,6 +111,8 @@ public:
 
     void updateImuMeasurement();
     void setNumSamples(int samples) { numSamples = samples; }
+    bool isSampleReady() { return newSampleReady; }
+    void setSampleReady(bool ready) { newSampleReady = ready; }
 
 protected:
     void resetOffsets();
@@ -133,9 +135,10 @@ protected:
     int offsetSampleCount = 1000;
 
     uint8_t numSamples = 1;
-    uint8_t sampleCounter;
+    uint8_t sampleCounter = 0;
     AbstractIMU::ImuData curImuData;
     AbstractIMU::ImuData sumImuData;
+    bool newSampleReady = false;
 
     ImuData imuData;
 
