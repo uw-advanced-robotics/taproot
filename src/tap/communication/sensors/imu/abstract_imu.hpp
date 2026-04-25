@@ -112,11 +112,15 @@ public:
     void setGyroOffset(float x, float y, float z);
 
     void updateImuMeasurement();
-    
-    void setNumSamples(int samples) {
-        if (samples > MAX_NUM_SAMPLES) {
+
+    void setNumSamples(int samples)
+    {
+        if (samples > MAX_NUM_SAMPLES)
+        {
             numSamples = MAX_NUM_SAMPLES;
-        } else {
+        }
+        else
+        {
             numSamples = samples;
         }
     }

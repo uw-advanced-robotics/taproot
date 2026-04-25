@@ -44,14 +44,13 @@ void AbstractIMU::setMountingTransform(const Transform& transform)
 
 void AbstractIMU::periodicIMUUpdate()
 {
+    updateImuMeasurement();
     if (imuState == ImuState::IMU_CALIBRATING)
     {
         computeOffsets();
     }
     else
     {
-        updateImuMeasurement();
-
         mahonyAlgorithm.updateIMU(
             imuData.gyroRadPerSec.x(),
             imuData.gyroRadPerSec.y(),
