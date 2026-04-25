@@ -110,9 +110,14 @@ public:
     void setGyroOffset(float x, float y, float z);
 
     void updateImuMeasurement();
-    void setNumSamples(int samples) { numSamples = samples; }
-    bool isSampleReady() { return newSampleReady; }
-    void setSampleReady(bool ready) { newSampleReady = ready; }
+    
+    void setNumSamples(int samples) {
+        if (samples > MAX_NUM_SAMPLES) {
+            numSamples = MAX_NUM_SAMPLES;
+        } else {
+            numSamples = samples;
+        }
+    }
 
 protected:
     void resetOffsets();
@@ -134,11 +139,11 @@ protected:
     int calibrationSample = 0;
     int offsetSampleCount = 1000;
 
+    static constexpr uint8_t MAX_NUM_SAMPLES = 100;
     uint8_t numSamples = 1;
     uint8_t sampleCounter = 0;
     AbstractIMU::ImuData curImuData;
     AbstractIMU::ImuData sumImuData;
-    bool newSampleReady = false;
 
     ImuData imuData;
 

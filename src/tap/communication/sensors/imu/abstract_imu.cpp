@@ -50,6 +50,8 @@ void AbstractIMU::periodicIMUUpdate()
     }
     else
     {
+        updateImuMeasurement();
+
         mahonyAlgorithm.updateIMU(
             imuData.gyroRadPerSec.x(),
             imuData.gyroRadPerSec.y(),
@@ -121,7 +123,6 @@ void AbstractIMU::updateImuMeasurement()
         imuData.gyroRaw = sumImuData.gyroRaw / numSamples;
         imuData.temperature = sumImuData.temperature / numSamples;
         sampleCounter = 0;
-        newSampleReady = true;
         sumImuData = {};
     }
 }
