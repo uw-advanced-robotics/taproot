@@ -103,26 +103,17 @@ void AbstractIMU::computeOffsets()
 
 void AbstractIMU::updateImuMeasurement()
 {
-    sampleCounter++;
-    sumImuData.accG = sumImuData.accG + curImuData.accG;
-    sumImuData.accOffsetRaw = sumImuData.accOffsetRaw + curImuData.accOffsetRaw;
-    sumImuData.accRaw = sumImuData.accRaw + curImuData.accRaw;
-    sumImuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw + curImuData.gyroOffsetRaw;
-    sumImuData.gyroRadPerSec = sumImuData.gyroRadPerSec + curImuData.gyroRadPerSec;
-    sumImuData.gyroRaw = sumImuData.gyroRaw + curImuData.gyroRaw;
-    sumImuData.temperature = sumImuData.temperature + curImuData.temperature;
-
-    if (sampleCounter == numSamples)
+    if (sampleCounter > 0)
     {
-        imuData.accG = sumImuData.accG / numSamples;
-        imuData.accOffsetRaw = sumImuData.accOffsetRaw / numSamples;
-        imuData.accRaw = sumImuData.accRaw / numSamples;
-        imuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw / numSamples;
-        imuData.gyroRadPerSec = sumImuData.gyroRadPerSec / numSamples;
-        imuData.gyroRaw = sumImuData.gyroRaw / numSamples;
-        imuData.temperature = sumImuData.temperature / numSamples;
-        sampleCounter = 0;
+        imuData.accG = sumImuData.accG / sampleCounter;
+        imuData.accOffsetRaw = sumImuData.accOffsetRaw / sampleCounter;
+        imuData.accRaw = sumImuData.accRaw / sampleCounter;
+        imuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw / sampleCounter;
+        imuData.gyroRadPerSec = sumImuData.gyroRadPerSec / sampleCounter;
+        imuData.gyroRaw = sumImuData.gyroRaw / sampleCounter;
+        imuData.temperature = sumImuData.temperature / sampleCounter;
         sumImuData = {};
+        sampleCounter = 0;
     }
 }
 

@@ -113,18 +113,6 @@ public:
 
     void updateImuMeasurement();
 
-    void setNumSamples(int samples)
-    {
-        if (samples > MAX_NUM_SAMPLES)
-        {
-            numSamples = MAX_NUM_SAMPLES;
-        }
-        else
-        {
-            numSamples = samples;
-        }
-    }
-
 protected:
     void resetOffsets();
     void computeOffsets();
@@ -146,7 +134,6 @@ protected:
     int offsetSampleCount = 1000;
 
     static constexpr uint8_t MAX_NUM_SAMPLES = 100;
-    uint8_t numSamples = 1;
     uint8_t sampleCounter = 0;
     AbstractIMU::ImuData curImuData;
     AbstractIMU::ImuData sumImuData;
