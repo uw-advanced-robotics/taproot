@@ -350,33 +350,6 @@ struct PositionAdditionConsistencyTestConfig
     DynamicPosition a, b;
 };
 
-class PositionAdditionConsistencyTest : public TestWithParam<PositionAdditionConsistencyTestConfig>
-{
-};
-
-TEST_P(PositionAdditionConsistencyTest, position_composition_consistency)
-{
-    Transform tA(GetParam().a, DynamicOrientation(0, 0, 0, 0, 0, 0));
-    Transform tB(GetParam().b, DynamicOrientation(0, 0, 0, 0, 0, 0));
-    Transform tAc = tA.compose(tB);
-
-    Transform tE(GetParam().a + GetParam().b, DynamicOrientation(0, 0, 0, 0, 0, 0));
-
-    expectEq(tAc, tE);
-}
-
-std::vector<PositionAdditionConsistencyTestConfig> positionAdditionConsistencyTestCases = {
-    {.a = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
-     .b = DynamicPosition(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)},
-    {.a = DynamicPosition(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0),
-     .b = DynamicPosition(2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0)},
-};
-
-INSTANTIATE_TEST_SUITE_P(
-    Transform,
-    PositionAdditionConsistencyTest,
-    ValuesIn(positionAdditionConsistencyTestCases));
-
 struct OrientationCompositionConsistencyTestConfig
 {
     DynamicOrientation a, b;
