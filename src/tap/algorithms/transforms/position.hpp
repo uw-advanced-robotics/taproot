@@ -43,6 +43,12 @@ public:
 
     Position(CMSISMat<3, 1>&& coordinates) : coordinates_(std::move(coordinates)) {}
 
+    /**
+     * @brief Convert to `Vector` representation. Analagous to subtracting the global origin
+     * position.
+     */
+    inline Vector toVector() const;
+
     /* Getters */
 
     inline float x() const { return (*this)[Axis::X]; }
@@ -62,9 +68,9 @@ public:
 
     Position operator+(const Vector& vector) const;
 
-    Position operator+(const Position& vector) const;
-
     Position operator*(const float scalar) const;
+
+    Position operator/(const float scalar) const;
 
     bool operator==(const Position& other) const;
 
@@ -72,7 +78,7 @@ public:
 
     static inline Position interpolate(const Position& a, const Position& b, const float t)
     {
-        return a * (1 - t) + b * t;
+        return a + (b - a) * t;
     }
 
     static float distance(const Position& a, const Position& b);

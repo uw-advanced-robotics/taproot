@@ -23,6 +23,8 @@
 
 namespace tap::algorithms::transforms
 {
+Vector Position::toVector() const { return Vector(this->coordinates_); }
+
 Position Position::operator-(const Vector& other) const
 {
     return Position(this->coordinates_ - other.coordinates());
@@ -38,14 +40,14 @@ Position Position::operator+(const Vector& vector) const
     return Position(this->coordinates_ + vector.coordinates());
 }
 
-Position Position::operator+(const Position& vector) const
-{
-    return Position(this->coordinates_ + vector.coordinates_);
-}
-
 Position Position::operator*(const float scalar) const
 {
     return Position(this->coordinates_ * scalar);
+}
+
+Position Position::operator/(const float scalar) const
+{
+    return Position(this->coordinates_ / scalar);
 }
 
 bool Position::operator==(const Position& other) const

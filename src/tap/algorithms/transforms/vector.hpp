@@ -52,17 +52,18 @@ public:
         return v;
     }
 
+    /**
+     * @brief Convert to `Position` representation. Analagous to adding to the global origin
+     * position.
+     */
+    inline Position toPosition() const;
+
     inline float x() const { return (*this)[Axis::X]; }
     inline float y() const { return (*this)[Axis::Y]; }
     inline float z() const { return (*this)[Axis::Z]; }
 
     const float& operator[](Axis a) const { return coordinates_[static_cast<int>(a)]; }
     const float& operator[](int i) const { return coordinates_[i]; }
-
-    // inline Vector operator+(const Position& other) const
-    // {
-    //     return Vector(this->coordinates_ + other.coordinates());
-    // }
 
     inline Vector operator+(const Vector& other) const
     {
@@ -92,6 +93,7 @@ public:
         return Vector(tap::algorithms::cross(a.coordinates(), b.coordinates()));
     }
 
+    /// @brief Convenience alias for the static variant
     inline Vector cross(const Vector& other) const { return cross(*this, other); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
