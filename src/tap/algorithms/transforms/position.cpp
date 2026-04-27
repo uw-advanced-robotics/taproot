@@ -57,4 +57,9 @@ bool Position::operator==(const Position& other) const
 
 float Position::distance(const Position& a, const Position& b) { return (b - a).magnitude(); }
 
+Position Position::interpolate(const Position& a, const Position& b, const float t)
+{
+    return a + (b - a) * t;
+}
+
 }  // namespace tap::algorithms::transforms
