@@ -92,36 +92,26 @@ public:
     }
 
     inline const Position& getPosition() const { return position; }
-
     inline const Vector& getVelocity() const { return velocity; }
-
     inline const Vector& getAcceleration() const { return acceleration; }
 
     inline float x() const { return position.x(); }
-
     inline float y() const { return position.y(); }
-
     inline float z() const { return position.z(); }
 
     inline float vx() const { return velocity.x(); }
-
     inline float vy() const { return velocity.y(); }
-
     inline float vz() const { return velocity.z(); }
 
     inline float ax() const { return acceleration.x(); }
-
     inline float ay() const { return acceleration.y(); }
-
     inline float az() const { return acceleration.z(); }
 
     friend class Transform;
 
 private:
     Position position;
-
     Vector velocity;
-
     Vector acceleration;
 
 };  // class DynamicPosition
