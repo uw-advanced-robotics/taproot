@@ -49,7 +49,12 @@ public:
     }
 
     /* Costly; use rvalue reference whenever possible */
-    inline Orientation(const CMSISMat<3, 3>& matrix) : matrix_(matrix) { calculateRPY(); }
+    inline Orientation(const CMSISMat<3, 3>& matrix)
+        : matrix_(matrix),
+          matrixT_(matrix_.transpose())
+    {
+        calculateRPY();
+    }
     inline Orientation(const CMSISMat<3, 3>& matrix, const CMSISMat<3, 3>& matrixT)
         : matrix_(matrix),
           matrixT_(matrixT)
@@ -57,7 +62,12 @@ public:
         calculateRPY();
     }
 
-    inline Orientation(CMSISMat<3, 3>&& matrix) : matrix_(std::move(matrix)) { calculateRPY(); }
+    inline Orientation(CMSISMat<3, 3>&& matrix)
+        : matrix_(std::move(matrix)),
+          matrixT_(matrix_.transpose())
+    {
+        calculateRPY();
+    }
     inline Orientation(CMSISMat<3, 3>&& matrix, CMSISMat<3, 3>&& matrixT)
         : matrix_(std::move(matrix)),
           matrixT_(std::move(matrixT))
