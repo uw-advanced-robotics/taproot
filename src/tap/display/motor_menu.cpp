@@ -26,8 +26,6 @@
 #include "tap/motor/dji_motor.hpp"
 #include "tap/motor/dji_motor_tx_handler.hpp"
 
-#include "motor_specific_menu.hpp"
-
 using namespace tap::motor;
 using namespace tap::can;
 
@@ -41,7 +39,8 @@ MotorMenu::MotorMenu(
     int entriesToDisplay)
     : modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >(stack, MOTOR_MENU_ID),
       drivers(drivers),
-      verticalScroll(drivers, DjiMotorTxHandler::DJI_MOTORS_PER_CAN * 2, entriesToDisplay)
+      verticalScroll(drivers, DjiMotorTxHandler::DJI_MOTORS_PER_CAN * 2, entriesToDisplay),
+      motorSpecificMenu(getViewStack(), drivers, nullptr)
 {
 }
 
@@ -166,7 +165,7 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                 if (motor != nullptr)
                 {
                     this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                        new (&motorSpecificMenu) MotorSpecificMenu(getViewStack(), drivers, motor));
                 }
             }
             else  // idx between [8, 16)
@@ -176,7 +175,7 @@ void MotorMenu::shortButtonPress(modm::MenuButtons::Button button)
                 if (motor != nullptr)
                 {
                     this->getViewStack()->push(
-                        new MotorSpecificMenu(getViewStack(), drivers, motor));
+                        new (&motorSpecificMenu) MotorSpecificMenu(getViewStack(), drivers, motor));
                 }
             }
             break;
