@@ -21,9 +21,11 @@
 #define TAPROOT_ORIENTATION_HPP_
 
 #include "tap/algorithms/cmsis_mat.hpp"
+#include "tap/algorithms/math_user_utils.hpp"
 #include "tap/algorithms/wrapped_float.hpp"
 
 #include "axis.hpp"
+#include "euler_extractor.hpp"
 #include "vector.hpp"
 
 namespace tap::algorithms::transforms
@@ -194,6 +196,51 @@ public:
     }
 
     /**
+     * @brief Generalized angle sequence generator.
+     * @example roll pitch yaw would be `fromAngles<ROLL, PITCH, YAW>`
+     */
+    template <Axis A, Axis B, Axis C>
+    static CMSISMat<3, 3> fromEulerSequence(const float a, const float b, const float c)
+    {
+        auto matA = singleAxisRot<A>(a);
+        auto matB = singleAxisRot<B>(b);
+        auto matC = singleAxisRot<C>(c);
+
+        // compiler should unroll and optimize 1s and 0s here
+        auto res = matC * matB * matA;
+
+        return tap::algorithms::CMSISMat<3, 3>(res.element);
+    }
+
+    /**
+     * @brief Generalized angle sequence generator.
+     */
+    template <Axis A, Axis B>
+    static CMSISMat<3, 3> fromEulerSequence(const float a, const float b)
+    {
+        auto matA = singleAxisRot<A>(a);
+        auto matB = singleAxisRot<B>(b);
+
+        // compiler should unroll and optimize 1s and 0s here
+        auto res = matB * matA;
+
+        return tap::algorithms::CMSISMat<3, 3>(res.element);
+    }
+
+    /**
+     * @brief Extracts Euler angles from the rotation matrix for a given axis sequence.
+     * @return std::array<float, 3> containing {angleA, angleB, angleC}
+     */
+    template <Axis A, Axis B, Axis C>
+    std::array<float, 3> toEulerSequence() const
+    {
+        // consecutive axes cannot be the same (e.g., XXY is invalid)
+        static_assert(A != B && B != C, "Consecutive axes cannot be the same.");
+
+        return EulerExtractor<A, B, C>::extract(matrix_.data.data());
+    }
+
+    /**
      * Constructs an `Orientation` from a direction vector. Magnitude is ignored, and roll is always
      * 0.
      */
@@ -275,6 +322,29 @@ private:
             rpy[static_cast<int>(Axis::Y)] = asinf(sin_p);
             rpy[static_cast<int>(Axis::X)] = atan2(matrix_.data[7], matrix_.data[8]);
             rpy[static_cast<int>(Axis::Z)] = atan2(matrix_.data[3], matrix_.data[0]);
+        }
+    }
+
+    /**
+     * @brief Generates a standard single-axis rotation matrix using modm::Matrix.
+     */
+    template <Axis ax>
+    static inline modm::Matrix<float, 3, 3> singleAxisRot(const float angle)
+    {
+        const float c = cosf(angle);
+        const float s = sinf(angle);
+
+        if constexpr (ax == Axis::X)
+        {
+            return modm::Matrix<float, 3, 3>({1, 0, 0, 0, c, -s, 0, s, c});
+        }
+        else if constexpr (ax == Axis::Y)
+        {
+            return modm::Matrix<float, 3, 3>({c, 0, s, 0, 1, 0, -s, 0, c});
+        }
+        else if constexpr (ax == Axis::Z)
+        {
+            return modm::Matrix<float, 3, 3>({c, -s, 0, s, c, 0, 0, 0, 1});
         }
     }
 };  // class Orientation

@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2022-2023 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ *
+ * This file is part of Taproot.
+ *
+ * Taproot is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Taproot is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef TAPROOT_EULER_EXTRACTOR_HPP_
+#define TAPROOT_EULER_EXTRACTOR_HPP_
+
+#include <array>
+#include <cmath>
+
+#include "modm/math/geometry/angle.hpp"
+
+#include "axis.hpp"
+
+namespace tap::algorithms::transforms
+{
+template <Axis...>
+struct always_false : std::false_type
+{
+};
+
+// Fallback for unimplemented sequences
+template <Axis A, Axis B, Axis C>
+struct EulerExtractor
+{
+    // this always_false templatization is needed to delay assert evaluation until template
+    // parameters are known, at which point it will only fail if a specialization isn't found.
+    static_assert(
+        always_false<A, B, C>::value,
+        "Euler sequence extraction not yet implemented for these axes! "
+        "You must manually derive and add the extraction equations.");
+
+    static std::array<float, 3> extract(const float*) { return {}; }
+};
+
+// ---------------------------------------------------------
+// Sequence: Z -> Y -> X (Standard Tait-Bryan / Yaw-Pitch-Roll)
+// ---------------------------------------------------------
+template <>
+struct EulerExtractor<Axis::Z, Axis::Y, Axis::X>
+{
+    static std::array<float, 3> extract(const float* rotation)
+    {
+        float angleA, angleB, angleC;
+        float sin_p = -rotation[6];  // m20
+
+        if (sin_p >= 0.999999f)
+        {  // Gimbal Lock (+90 deg)
+            angleA = std::atan2(-rotation[1], rotation[4]);
+            angleB = M_PI_2;
+            angleC = 0.0f;
+        }
+        else if (sin_p <= -0.999999f)
+        {  // Gimbal Lock (-90 deg)
+            angleA = std::atan2(-rotation[1], rotation[4]);
+            angleB = -M_PI_2;
+            angleC = 0.0f;
+        }
+        else
+        {                                                   // Normal case
+            angleA = std::atan2(rotation[3], rotation[0]);  // atan2(m10, m00)
+            angleB = std::asin(sin_p);
+            angleC = std::atan2(rotation[7], rotation[8]);  // atan2(m21, m22)
+        }
+        return {angleA, angleB, angleC};
+    }
+};
+
+// ---------------------------------------------------------
+// Sequence: X -> Y -> Z
+// ---------------------------------------------------------
+template <>
+struct EulerExtractor<Axis::X, Axis::Y, Axis::Z>
+{
+    static std::array<float, 3> extract(const float* rotation)
+    {
+        float angleA, angleB, angleC;
+        float sin_p = rotation[2];  // m02
+
+        if (sin_p >= 0.999999f)
+        {  // Gimbal Lock (+90 deg)
+            angleA = 0.0f;
+            angleB = M_PI_2;
+            angleC = std::atan2(rotation[3], rotation[4]);
+        }
+        else if (sin_p <= -0.999999f)
+        {  // Gimbal Lock (-90 deg)
+            angleA = 0.0f;
+            angleB = -M_PI_2;
+            angleC = std::atan2(-rotation[3], rotation[4]);
+        }
+        else
+        {                                                    // Normal case
+            angleA = std::atan2(-rotation[5], rotation[8]);  // atan2(-m12, m22)
+            angleB = std::asin(sin_p);
+            angleC = std::atan2(-rotation[1], rotation[0]);  // atan2(-m01, m00)
+        }
+        return {angleA, angleB, angleC};
+    }
+};
+}  // namespace tap::algorithms::transforms
+#endif  // TAPROOT_EULER_EXTRACTOR_HPP_
