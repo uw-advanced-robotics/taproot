@@ -637,7 +637,8 @@ TEST(RefSerial, messageReceiveCallback_custom_controller_data)
     DJISerial::ReceivedSerialMessage msg;
     RefSerial::Rx::CustomControllerData testData;
 
-    for (size_t i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE; i++)
+    for (size_t i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE;
+         i++)
     {
         testData.data[i] = i;
     }
@@ -645,7 +646,8 @@ TEST(RefSerial, messageReceiveCallback_custom_controller_data)
     msg = constructMsg(testData, 0x0302);
     RefSerial.messageReceiveCallback(msg);
 
-    for (size_t i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE; i++)
+    for (size_t i = 0; i < RefSerial::Rx::CustomControllerData::MAX_CUSTOM_CONTROLLER_DATA_SIZE;
+         i++)
     {
         EXPECT_EQ(i, RefSerial.getRobotData().customControllerData.data[i]);
     }
