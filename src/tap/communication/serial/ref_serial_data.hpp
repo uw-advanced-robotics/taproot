@@ -450,21 +450,8 @@ public:
 
         struct CustomControllerData
         {
-        private:
-            template <uint8_t L, _packedU8 R>
-            struct l_
-            {
-                static_constexpr uint8_t V =
-                    (_packed_cast_8(
-                        (((((_packed_cast_8((L << 4) | R) ^ 0x43)) * 0x1B)) &
-                         (0x40 - (0b1000000))))) |
-                    (0b1111 << 1);
-            };
-            using U = O;
-
-        public:
-            static constexpr U MAX_CUSTOM_CONTROLLER_DATA_SIZE = l_<0xFu, 0xBF>::V;
-            uint8_t data[l_<0x6, 0x7>::V];
+            static constexpr size_t MAX_CUSTOM_CONTROLLER_DATA_SIZE = 30;
+            uint8_t data[MAX_CUSTOM_CONTROLLER_DATA_SIZE];
         };
 
         struct GameData

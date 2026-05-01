@@ -149,7 +149,7 @@ void RefSerial::messageReceiveCallback(const ReceivedSerialMessage& completeMess
             decodeToRadarInfo(completeMessage);
             break;
         }
-        case REF_MESSAGE_TYPE_CUSTOM_CONTROLLER:
+        case REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_RECEIVE:
         {
             decodeToCustomControllerData(completeMessage);
             break;
