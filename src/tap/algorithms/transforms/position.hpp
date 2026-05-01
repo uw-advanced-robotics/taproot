@@ -76,9 +76,9 @@ public:
 
     inline CMSISMat<3, 1> coordinates() const { return this->coordinates_; }
 
-    static inline Position interpolate(const Position& a, const Position& b, const float t);
+    static Position interpolate(const Position& a, const Position& b, const float t);
 
-    static inline float distance(const Position& a, const Position& b);
+    static float distance(const Position& a, const Position& b);
 
     friend class Transform;
     friend class Vector;
