@@ -199,9 +199,9 @@ public:
      */
     static Orientation fromDirectionVector(Vector dir)
     {
-        float mag = dir.magnitude();
-        Vector planar(dir.x(), dir.y(), 0);
-        return Orientation(0, asinf(planar.magnitude() / mag), atan2f(dir.y(), dir.x()));
+        float pitch, yaw;
+        vectorToSphericalCoords(dir, nullptr, &pitch, &yaw);
+        return Orientation(0, pitch, yaw);
     }
 
     /**
