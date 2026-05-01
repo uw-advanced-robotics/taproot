@@ -20,8 +20,10 @@
 #ifndef TAPROOT_POWER_LIMITER_HPP_
 #define TAPROOT_POWER_LIMITER_HPP_
 
-#include "tap/communication/gpio/analog.hpp"
+#include <stdint.h>
+
 #include "tap/communication/sensors/current/current_sensor_interface.hpp"
+#include "tap/communication/sensors/voltage/voltage_sensor_interface.hpp"
 
 namespace tap
 {
@@ -76,6 +78,7 @@ public:
     PowerLimiter(
         const tap::Drivers *drivers,
         tap::communication::sensors::current::CurrentSensorInterface *currentSensor,
+        tap::communication::sensors::voltage::VoltageSensorInterface *voltageSensor,
         float startingEnergyBuffer,
         float energyBufferLimitThreshold,
         float energyBufferCritThreshold);
@@ -98,6 +101,7 @@ public:
 private:
     const tap::Drivers *drivers;
     tap::communication::sensors::current::CurrentSensorInterface *currentSensor;
+    tap::communication::sensors::voltage::VoltageSensorInterface *voltageSensor;
     const float startingEnergyBuffer;
     const float energyBufferLimitThreshold;
     const float energyBufferCritThreshold;

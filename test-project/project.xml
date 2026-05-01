@@ -28,21 +28,95 @@
     <option name="taproot:board:pwm_pins">C1,C2,C3,C4,C5,C6,C7,Buzzer,ImuHeater</option>
     --> <!-- End For RoboMaster Development Board Type C -->
 
+    <!-- To include additional modm options: --> <!--
+    <option name="taproot:modm-project.xml:modm_hal_options">
+      modm:platform:rtt:buffer.rx 256
+      modm:platform:rtt:buffer.tx 1024
+    </option>
+    -->
+
+    <!-- To include additional modm modules: --> <!--
+    <option name="taproot:modm-project.xml:modm_hal_modules">
+      modm:platform:rtt
+    </option>
+    -->
   </options>
   <modules>
-    <module>taproot:core</module>
-    <module>taproot:docs</module>
-    <module>taproot:testing:tests</module>
-    <module>taproot:communication:sensors:buzzer</module>
-    <module>taproot:communication:sensors:distance</module>
-    <module>taproot:communication:gpio:leds</module>
-    <module>taproot:communication:gpio:digital</module>
-    <module>taproot:communication:tcp-server</module>
-    <module>taproot:ext:littlefs</module>
+    <module>taproot:algorithms</module>
+    <module>taproot:algorithms:odometry</module>
+    <module>taproot:architecture</module>
+    <module>taproot:architecture:profiler</module>
 
+    <module>taproot:board</module>
+    <module>taproot:build</module>
+
+    <module>taproot:ci-scripts</module>
+
+    <module>taproot:communication</module>
+    <module>taproot:communication:can</module>
+    
+    <module>taproot:communication:gpio</module>
+    <module>taproot:communication:gpio:analog</module>
+    <module>taproot:communication:gpio:digital</module>
+    <module>taproot:communication:gpio:leds</module>
+    <module>taproot:communication:gpio:pwm</module>
+
+    <module>taproot:communication:sensors</module>
+    <module>taproot:communication:sensors:buzzer</module>
+    <module>taproot:communication:sensors:current</module>
+    <module>taproot:communication:sensors:current:analog</module>
+    <module>taproot:communication:sensors:distance</module>
+    <module>taproot:communication:sensors:distance:analog</module>
+    <module>taproot:communication:sensors:encoder</module>
+    <module>taproot:communication:sensors:encoder:can_encoder</module>
+    <module>taproot:communication:sensors:imu</module>
+    <module>taproot:communication:sensors:imu:display</module>
+    <module>taproot:communication:sensors:imu:terminal_serial</module>
+    <module>taproot:communication:sensors:imu_heater</module>
+    <module>taproot:communication:sensors:limit-switch</module>
+    <module>taproot:communication:sensors:voltage</module>
+
+    <module>taproot:communication:serial</module>
+    <module>taproot:communication:serial:ref_serial</module>
+    <module>taproot:communication:serial:remote</module>
+    <module>taproot:communication:serial:terminal_serial</module>
+
+    <module>taproot:communication:tcp-server</module>
+
+    <module>taproot:control</module>
+    <module>taproot:control:terminal_serial</module>
+    <module>taproot:core</module>
+
+    <module>taproot:display</module>
+    <module>taproot:display:control</module>
+    <module>taproot:display:motor</module>
+    <module>taproot:display:ref_serial</module>
+    <module>taproot:display:sh1106</module>
+    <module>taproot:display:sh1107</module>
+
+    <module>taproot:docs</module>
+    <module>taproot:drivers</module>
+
+    <module>taproot:errors</module>
+    <module>taproot:ext</module>
+    <module>taproot:ext:eigen</module>
+    <module>taproot:ext:littlefs</module>
+    
+    <module>taproot:modm-project.xml</module>
+    <module>taproot:motor</module>
+    <module>taproot:motor:pwm</module>
+    <module>taproot:motor:motorsim</module>
+    <module>taproot:motor:terminal_serial</module>
+    
+    <module>taproot:storage</module>
+    <module>taproot:storage:littlefs-internal</module>
+    
+    <module>taproot:testing</module>
+    <module>taproot:testing:mock</module>
+    <module>taproot:testing:tests</module>
+    
     <!-- For RoboMaster Development Board Type A -->
     <module>taproot:communication:sensors:imu:mpu6500</module>
-    <module>taproot:display</module>
     <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--

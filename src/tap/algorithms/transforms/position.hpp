@@ -55,6 +55,8 @@ public:
 
     Vector operator-(const Position& other) const;
 
+    Position operator+(const Vector& vector) const;
+
     Position operator+(const Position& vector) const;
 
     Position operator*(const float scalar) const;
@@ -71,6 +73,9 @@ public:
     }
 
     static float distance(const Position& a, const Position& b);
+
+    friend class Transform;
+    friend class DynamicPosition;
 
 private:
     CMSISMat<3, 1> coordinates_;

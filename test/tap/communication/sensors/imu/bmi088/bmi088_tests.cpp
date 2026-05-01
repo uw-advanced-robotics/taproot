@@ -19,21 +19,12 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/architecture/clock.hpp"
 #include "tap/communication/sensors/imu/bmi088/bmi088.hpp"
 #include "tap/communication/sensors/imu/bmi088/bmi088_hal.hpp"
 #include "tap/drivers.hpp"
 
 using namespace tap::communication::sensors::imu::bmi088;
-
-TEST(Bmi088, periodicIMUUpdate_initialize_not_called_errors)
-{
-    tap::Drivers drivers;
-    Bmi088 bmi088(&drivers);
-
-    EXPECT_CALL(drivers.errorController, addToErrorList);
-
-    bmi088.periodicIMUUpdate();
-}
 
 static void initializeBmi088(Bmi088 &bmi088)
 {
@@ -69,6 +60,7 @@ TEST(Bmi088, periodicIMUUpdate_initialize_called_no_errors)
 
     initializeBmi088(bmi088);
 
+    bmi088.read();
     bmi088.periodicIMUUpdate();
 
     EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CALIBRATED, bmi088.getImuState());
@@ -77,6 +69,7 @@ TEST(Bmi088, periodicIMUUpdate_initialize_called_no_errors)
 TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
 {
     tap::Drivers drivers;
+    tap::arch::clock::ClockStub clock;
     Bmi088 bmi088(&drivers);
 
     initializeBmi088(bmi088);
@@ -98,79 +91,15 @@ TEST(Bmi088, periodicIMUUpdate_gyro_acc_temp_data_parsed_properly)
     Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
     Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
 
+    clock.time = 200;
+    bmi088.read();
     bmi088.periodicIMUUpdate();
 
     static constexpr float ALPHA = 1E-3;
     EXPECT_NEAR(accData.x * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAx(), ALPHA);
     EXPECT_NEAR(accData.y * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAy(), ALPHA);
     EXPECT_NEAR(accData.z * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAz(), ALPHA);
-    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
-    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
-    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
-}
-
-TEST(Bmi088, requestRecalibration__does_nothing_when_imu_disconnected)
-{
-    tap::Drivers drivers;
-    Bmi088 bmi088(&drivers);
-
-    bmi088.requestRecalibration();
-
-    EXPECT_EQ(Bmi088::ImuState::IMU_NOT_CONNECTED, bmi088.getImuState());
-}
-
-TEST(Bmi088, requestRecalibration__calibration_adds_offset_to_acc_gyro_data)
-{
-    tap::Drivers drivers;
-    Bmi088 bmi088(&drivers);
-
-    initializeBmi088(bmi088);
-
-    bmi088.requestRecalibration();
-
-    struct
-    {
-        int16_t x = 12;
-        int16_t y = 15;
-        int16_t z = 20 + tap::algorithms::ACCELERATION_GRAVITY / Bmi088::ACC_G_PER_ACC_COUNT;
-    } modm_packed accData;
-
-    struct
-    {
-        int16_t x = -14;
-        int16_t y = 3;
-        int16_t z = 8;
-    } modm_packed gyroData;
-
-    for (int i = 0; i < 3000; i++)
-    {
-        Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
-        Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
-        bmi088.periodicIMUUpdate();
-    }
-
-    accData.x = 0;
-    accData.y = 0;
-    accData.z = tap::algorithms::ACCELERATION_GRAVITY / Bmi088::ACC_G_PER_ACC_COUNT;
-    gyroData.x = 0;
-    gyroData.y = 0;
-    gyroData.z = 0;
-
-    Bmi088Hal::expectAccMultiRead(reinterpret_cast<uint8_t *>(&accData), sizeof(accData));
-    Bmi088Hal::expectGyroMultiRead(reinterpret_cast<uint8_t *>(&gyroData), sizeof(gyroData));
-    bmi088.periodicIMUUpdate();
-
-    static constexpr float ALPHA = 1E-3;
-    EXPECT_NEAR(-12 * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAx(), ALPHA);
-    EXPECT_NEAR(-15 * Bmi088::ACC_G_PER_ACC_COUNT, bmi088.getAy(), ALPHA);
-    EXPECT_NEAR(
-        (-20 + tap::algorithms::ACCELERATION_GRAVITY / Bmi088::ACC_G_PER_ACC_COUNT) *
-            Bmi088::ACC_G_PER_ACC_COUNT,
-        bmi088.getAz(),
-        ALPHA);
-    EXPECT_NEAR(14 * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
-    EXPECT_NEAR(-3 * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
-    EXPECT_NEAR(-8 * Bmi088::GYRO_DS_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
-
-    EXPECT_EQ(Bmi088::ImuState::IMU_CALIBRATED, bmi088.getImuState());
+    EXPECT_NEAR(gyroData.x * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGx(), ALPHA);
+    EXPECT_NEAR(gyroData.y * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGy(), ALPHA);
+    EXPECT_NEAR(gyroData.z * Bmi088::GYRO_RAD_PER_S_PER_GYRO_COUNT, bmi088.getGz(), ALPHA);
 }

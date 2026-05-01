@@ -23,6 +23,7 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/dji_motor_mock.hpp"
 #include "tap/motor/dji_motor_tx_handler.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace testing;
 using namespace tap;
@@ -42,7 +43,15 @@ protected:
                 NORMALIZED_ID_TO_DJI_MOTOR(i),
                 can::CanBus::CAN_BUS1,
                 false,
-                ""));
+                "",
+                0,
+                0,
+                i >= DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 2));
+
+            if (i >= DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 2)
+            {
+                ON_CALL(*motors[i], isInCurrentControl).WillByDefault(Return(true));
+            }
         }
 
         for (size_t i = 0; i < DjiMotorTxHandler::DJI_MOTORS_PER_CAN; i++)
@@ -52,7 +61,16 @@ protected:
                 NORMALIZED_ID_TO_DJI_MOTOR(i),
                 can::CanBus::CAN_BUS2,
                 false,
-                ""));
+                "",
+                0,
+                0,
+                i >= DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 2));
+
+            if (i >= DjiMotorTxHandler::DJI_MOTORS_PER_CAN - 2)
+            {
+                ON_CALL(*motors[DjiMotorTxHandler::DJI_MOTORS_PER_CAN + i], isInCurrentControl)
+                    .WillByDefault(Return(true));
+            }
         }
     }
 
@@ -127,7 +145,7 @@ TEST_F(DjiMotorTxHandlerTest, addMotorToManager_multiple_unique_motor_ids)
 
 TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_motor_not_added_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     DjiMotor m1(&drivers, motor::MOTOR1, can::CanBus::CAN_BUS1, false, "hi");
     DjiMotor m2(&drivers, motor::MOTOR2, can::CanBus::CAN_BUS1, false, "hi");
@@ -139,7 +157,7 @@ TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_motor_not_added_errors)
 
 TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_invalid_motor_id_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     ON_CALL(*motors[0], getMotorIdentifier).WillByDefault(Return(motor::MOTOR1 - 1));
     ON_CALL(*motors[1], getMotorIdentifier).WillByDefault(Return(motor::MOTOR8 + 1));
@@ -164,9 +182,9 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_single_motor_added_single_mes
     djiMotorTxHandler.encodeAndSendCanData();
 }
 
-TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_all_motors_added_4_messages_sent)
+TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_all_motors_added_6_messages_sent)
 {
-    EXPECT_CALL(drivers.can, sendMessage).Times(4);
+    EXPECT_CALL(drivers.can, sendMessage).Times(6);
 
     addAllMotors();
 
@@ -177,7 +195,7 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_error_if_sendMessage_fails)
 {
     ON_CALL(drivers.can, sendMessage).WillByDefault(Return(false));
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     addAllMotors();
 
@@ -207,18 +225,30 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_valid_encoding)
         0,
         false);
     convertToLittleEndian<int16_t>(2, can1MessageHigh.data);
+    modm::can::Message can1Message6020Current(
+        DjiMotorTxHandler::CAN_DJI_6020_CURRENT_IDENTIFIER,
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
+        0,
+        false);
+    convertToLittleEndian<int16_t>(3, can1Message6020Current.data);
     modm::can::Message can2MessageLow(
         DjiMotorTxHandler::CAN_DJI_LOW_IDENTIFIER,
         DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
         0,
         false);
-    convertToLittleEndian<int16_t>(3, can2MessageLow.data);
+    convertToLittleEndian<int16_t>(4, can2MessageLow.data);
     modm::can::Message can2MessageHigh(
         DjiMotorTxHandler::CAN_DJI_HIGH_IDENTIFIER,
         DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
         0,
         false);
-    convertToLittleEndian<int16_t>(4, can2MessageHigh.data);
+    convertToLittleEndian<int16_t>(5, can2MessageHigh.data);
+    modm::can::Message can2Message6020Current(
+        DjiMotorTxHandler::CAN_DJI_6020_CURRENT_IDENTIFIER,
+        DjiMotorTxHandler::CAN_DJI_MESSAGE_SEND_LENGTH,
+        0,
+        false);
+    convertToLittleEndian<int16_t>(6, can2Message6020Current.data);
 
     ON_CALL(*motors[0], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
         convertToLittleEndian(1, txMessage->data);
@@ -226,23 +256,32 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_valid_encoding)
     ON_CALL(*motors[4], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
         convertToLittleEndian(2, txMessage->data);
     });
-    ON_CALL(*motors[8], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+    ON_CALL(*motors[6], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
         convertToLittleEndian(3, txMessage->data);
     });
-    ON_CALL(*motors[12], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+    ON_CALL(*motors[8], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
         convertToLittleEndian(4, txMessage->data);
+    });
+    ON_CALL(*motors[12], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(5, txMessage->data);
+    });
+    ON_CALL(*motors[14], serializeCanSendData).WillByDefault([](modm::can::Message *txMessage) {
+        convertToLittleEndian(6, txMessage->data);
     });
 
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS1, can1MessageLow));
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS1, can1MessageHigh));
+    EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS1, can1Message6020Current));
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS2, can2MessageLow));
     EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS2, can2MessageHigh));
+    EXPECT_CALL(drivers.can, sendMessage(can::CanBus::CAN_BUS2, can2Message6020Current));
 
-    // sending info about single motor on can1/2 low/high
     djiMotorTxHandler.addMotorToManager(motors[0]);
     djiMotorTxHandler.addMotorToManager(motors[4]);
+    djiMotorTxHandler.addMotorToManager(motors[6]);
     djiMotorTxHandler.addMotorToManager(motors[8]);
     djiMotorTxHandler.addMotorToManager(motors[12]);
+    djiMotorTxHandler.addMotorToManager(motors[14]);
 
     djiMotorTxHandler.encodeAndSendCanData();
 }

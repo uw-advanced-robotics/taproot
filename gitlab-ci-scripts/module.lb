@@ -1,0 +1,96 @@
+# Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+import sys
+import itertools
+import operator
+import hashlib
+sys.path.append(repopath("gitlab-ci-scripts"))
+import collect_modules
+
+def subslices(seq):
+    "Return all contiguous non-empty subslices of a sequence."
+    # subslices('ABCD') → A AB ABC ABCD B BC BCD C CD D
+    slices = itertools.starmap(slice, itertools.combinations(range(len(seq) + 1), 2))
+    return map(operator.getitem, itertools.repeat(seq), slices)
+
+def hash_name(name: str):
+    return hashlib.sha256(name.encode()).hexdigest()
+
+def init(module):
+    module.name = ":ci-scripts"
+    module.description = "Taproot CI scripts"
+
+def prepare(module, options):
+    module.depends(
+        ":build",
+        ":modm-project.xml")
+
+    return True
+
+def build(env):
+    env.outbasepath = "taproot/ci-scripts"
+
+    info = collect_modules.collect_generation_information()
+
+    configs = []
+
+    for device, config in sorted(info.items(), key=lambda e: e[0]):
+        for module, options in sorted(config.items(), key=lambda e: e[0]):
+            modules = module
+            name = f"Device: {device}, Module: {module}"
+
+            base_config = {
+                "name": name,
+                "hash": hash_name(name),
+                "device": device,
+                "modules": modules,
+                "options": "",
+                "run_coverage": False
+            }
+
+            if module == "all":
+                modules = ",".join(sorted(list(config.keys() - {"all"})))
+                base_config["modules"] = modules
+                base_config["run_coverage"] = True
+
+            if len(options) == 0:
+                
+                configs.append(
+                    {
+                        **base_config
+                    }
+                )
+            else:
+                for opt_set in [[], *subslices(list(options))]:
+                    option_vals = {o: o in opt_set for o in options}
+                    option_vals = ",".join(f'{o}={v}' for o, v in option_vals.items())
+                    name = f"Device: {device}, Module: {module}, Options: {option_vals}"
+                    configs.append(
+                        {
+                            **base_config,
+                            "name": name,
+                            "hash": hash_name(name),
+                            "options": option_vals,
+                        }
+                    )
+
+
+    env.substitutions = {
+        "configs": configs
+    }
+    env.template("build.yml.in", "build.yml")

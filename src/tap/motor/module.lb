@@ -1,0 +1,89 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":motor:terminal_serial"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:serial:terminal_serial")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/motor"
+
+        env.copy("dji_motor_terminal_serial_handler.hpp")
+        env.copy("dji_motor_terminal_serial_handler.cpp")
+
+class Pwm(Module):
+    def init(self, module):
+        module.name = ":motor:pwm"
+    
+    def prepare(self, module, options):
+        module.depends(":communication:gpio:pwm")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/motor"
+
+        env.copy("servo.cpp")
+        env.copy("servo.hpp")
+
+def init(module):
+    module.name = ":motor"
+    module.description = "Motor control"
+
+def prepare(module, options):
+    module.depends(
+        ":drivers",
+        ":algorithms",
+        ":communication:sensors:encoder",
+        ":communication:can")
+
+    module.add_option(
+        BooleanOption(
+            name="use_multi_encoder",
+            default=False,
+            description="Enables MultiEncoder usage for (Double)DjiMotor with an external encoder."))
+
+    module.add_submodule(TerminalSerial())
+    module.add_submodule(Pwm())
+
+    return True
+
+def build(env):
+    env.outbasepath = "taproot/src/tap/motor"
+
+    env.copy("dji_motor_encoder.cpp")
+    env.copy("dji_motor_encoder.hpp")
+    env.copy("dji_motor_ids.hpp")
+    env.copy("dji_motor_tx_handler.cpp")
+    env.copy("dji_motor_tx_handler.hpp")
+    env.copy("m3508_constants.hpp")
+    env.copy("motor_constants.hpp")
+    env.copy("motor_interface.hpp")
+
+    env.substitutions = {
+        "use_multi_encoder": env[":motor:use_multi_encoder"]
+    }
+    
+    env.template("dji_motor.hpp.in", "dji_motor.hpp")
+    env.template("dji_motor.cpp.in", "dji_motor.cpp")
+    env.template("double_dji_motor.hpp.in", "double_dji_motor.hpp")
+    env.template("double_dji_motor.cpp.in", "double_dji_motor.cpp")

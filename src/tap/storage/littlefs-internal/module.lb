@@ -20,7 +20,6 @@ def init(module):
     module.description = "LittleFS port on STM32F427II"
 
 def prepare(module, options):
-    module.depends(":core")
     module.depends(":ext:littlefs")
     return True
 

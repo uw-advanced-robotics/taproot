@@ -23,7 +23,7 @@ def init(module):
         "it will only be built when running on the hosted platform."
 
 def prepare(module, options):
-    module.depends(":core")
+    module.depends(":motor")
 
     return True
 

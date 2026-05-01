@@ -22,6 +22,7 @@ sys.path.append(repopath("lbuild-scripts"))
 
 from hosted_platforms import ALL_HOSTED_TARGET_NAMES
 from add_immutable_warning import add_immutable_warning
+from subprojects import build_subproject
 
 def init(repo):
     repo.name = "taproot"
@@ -52,25 +53,20 @@ def prepare(repo, options):
     repo.add_modules_recursive("./docs", modulefile="*.lb")
     repo.add_modules_recursive("./build-tools", modulefile="*.lb")
     repo.add_modules_recursive("./ext", modulefile="*.lb")
+    repo.add_modules_recursive("./gitlab-ci-scripts", modulefile="*.lb")
 
 def build(env):
     env.outbasepath = "taproot"
     env.copy("README.generation.md", "README.md")
 
+    env.outbasepath = "taproot/src/tap"
+    env.copy("src/tap/util_macros.hpp", "util_macros.hpp")
+    env.copy("src/tap/errors/create_errors.hpp", "errors/create_errors.hpp")
+
     add_immutable_warning(f"taproot")
 
     if env[":rebuild_modm"]:
-        print("building modm")
-        try:
-            subprocess.run(["lbuild", "build"], check=True, cwd="taproot")
-        except subprocess.CalledProcessError as e:
-            print(e)
-            exit(1)
+        build_subproject("modm", "taproot", "taproot/modm")
 
-        print("building sim-modm")
-        try:
-            for target in ALL_HOSTED_TARGET_NAMES:
-                subprocess.run(["lbuild", "build"], check=True, cwd=f"taproot/sim-modm/{target}")
-        except subprocess.CalledProcessError as e:
-            print(e)
-            exit(1)
+        for target in ALL_HOSTED_TARGET_NAMES:
+            build_subproject(f"sim-modm {target}", f"taproot/sim-modm/{target}")

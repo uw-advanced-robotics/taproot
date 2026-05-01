@@ -27,6 +27,7 @@
 #include "tap/mock/command_mock.hpp"
 #include "tap/mock/remote_mock.hpp"
 #include "tap/mock/subsystem_mock.hpp"
+#include "tap/test_macros.hpp"
 
 using std::set;
 using tap::Drivers;
@@ -61,7 +62,7 @@ TEST(CommandScheduler, constructor_multiple_master_schedulers_throws_error)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     CommandScheduler scheduler1(&drivers, true);
     CommandScheduler scheduler2(&drivers, true);
@@ -118,7 +119,7 @@ TEST(CommandScheduler, registerSubsystem_single_subsystem_added_multiple_times_o
 
     EXPECT_CALL(sub, refresh);
     EXPECT_CALL(sub, getDefaultCommand).WillOnce(Return(nullptr));
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(&sub);
     scheduler.registerSubsystem(&sub);
@@ -130,7 +131,7 @@ TEST(CommandScheduler, registerSubsystem_doesnt_register_nullptr_subsystem)
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(nullptr);
     EXPECT_FALSE(scheduler.isSubsystemRegistered(nullptr));
@@ -202,23 +203,8 @@ TEST(CommandScheduler, addCommand_null_added_command_raises_error)
     CommandScheduler scheduler(&drivers, true);
 
     // Expect an error when the command is null.
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     scheduler.addCommand(nullptr);
-}
-
-TEST(CommandScheduler, addCommand_with_hardware_tests_running_raises_error)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock sub(&drivers);
-    NiceMock<CommandMock> cmd;
-
-    EXPECT_CALL(drivers.errorController, addToErrorList);
-    EXPECT_CALL(sub, setHardwareTestsIncomplete);
-
-    scheduler.registerSubsystem(&sub);
-    scheduler.startHardwareTests();
-    scheduler.addCommand(&cmd);
 }
 
 TEST(CommandScheduler, addCommand_with_no_subsystem_registered_raises_error)
@@ -231,7 +217,7 @@ TEST(CommandScheduler, addCommand_with_no_subsystem_registered_raises_error)
     set<Subsystem *> subRequirements{&s};
 
     // Expect an error with no subsystem in the command scheduler.
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     EXPECT_CALL(c, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirements)));
 
@@ -251,7 +237,7 @@ TEST(CommandScheduler, addCommand_with_not_all_subsystems_registered_raises_erro
     EXPECT_CALL(c, getRequirementsBitwise)
         .Times(3)
         .WillRepeatedly(Return(calcRequirementsBitwise(subsystemRequirements)));
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(3);
+    EXPECT_ERROR_TIMES(3);
 
     // No subsystems added, will fail.
     scheduler.addCommand(&c);
@@ -474,7 +460,7 @@ TEST(
     EXPECT_CALL(c3, getRequirementsBitwise)
         .WillOnce(Return(calcRequirementsBitwise(subRequirementsC3)));
     EXPECT_CALL(c3, initialize);
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
@@ -610,149 +596,184 @@ TEST(CommandScheduler, addCommand_add_multiple_commands_with_overlapping_sub_req
     scheduler.run();
 }
 
-TEST(CommandScheduler, startHardwareTests_doesnot_segfault_with_nullptr_commands)
+TEST(CommandScheduler, runHardwareTest_does_not_segfault_with_nullptr_command)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
 
     SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.startHardwareTests();
-}
-
-TEST(CommandScheduler, startHardwareTests_removes_all_commands_in_scheduler)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1};
-    set<Subsystem *> subRequirementsC2{&s2};
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c2, initialize);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(c2, end);
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.addCommand(&c1);
-    scheduler.addCommand(&c2);
-    scheduler.startHardwareTests();
-
-    EXPECT_FALSE(scheduler.isCommandScheduled(&c1));
-    EXPECT_FALSE(scheduler.isCommandScheduled(&c2));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
-}
-
-TEST(
-    CommandScheduler,
-    startHardwareTests_single_command_registered_to_multiple_subsystems_only_ended_once)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1, &s2};
-    NiceMock<CommandMock> c1;
-
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c1, end);
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.addCommand(&c1);
-    scheduler.startHardwareTests();
-
-    EXPECT_FALSE(scheduler.isCommandScheduled(&c1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
-}
-
-TEST(
-    CommandScheduler,
-    stopHardwareTests_calls_setHardwareTestsComplete_on_all_subsystems_and_allows_adding_commands)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    set<Subsystem *> subRequirementsC1{&s1};
-    set<Subsystem *> subRequirementsC2{&s2};
-    NiceMock<CommandMock> c1;
-    NiceMock<CommandMock> c2;
-
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-    EXPECT_CALL(s1, setHardwareTestsComplete);
-    EXPECT_CALL(s2, setHardwareTestsComplete);
-    EXPECT_CALL(c1, getRequirementsBitwise)
-        .Times(2)
-        .WillRepeatedly(Return(calcRequirementsBitwise(subRequirementsC1)));
-    EXPECT_CALL(c2, getRequirementsBitwise)
-        .WillOnce(Return(calcRequirementsBitwise(subRequirementsC2)));
-    EXPECT_CALL(c1, initialize);
-    EXPECT_CALL(c2, initialize);
-
-    scheduler.registerSubsystem(&s1);
-    scheduler.registerSubsystem(&s2);
-    scheduler.startHardwareTests();
-    scheduler.stopHardwareTests();
-    scheduler.addCommand(&c1);
-    scheduler.addCommand(&c2);
-
-    EXPECT_TRUE(scheduler.isCommandScheduled(&c1));
-    EXPECT_TRUE(scheduler.isCommandScheduled(&c2));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s1));
-    EXPECT_TRUE(scheduler.isSubsystemRegistered(&s2));
-}
-
-TEST(CommandScheduler, run_with_hardware_tests_enabled_calls_runHardwareTests_and_refresh)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    SubsystemMock s1(&drivers);
-    SubsystemMock s2(&drivers);
-    SubsystemMock s3(&drivers);
-
-    EXPECT_CALL(s1, setHardwareTestsIncomplete);
-    EXPECT_CALL(s1, isHardwareTestComplete).WillOnce(Return(false));
-    EXPECT_CALL(s1, runHardwareTests);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(nullptr));
     EXPECT_CALL(s1, refresh);
-    EXPECT_CALL(s2, setHardwareTestsIncomplete);
-    EXPECT_CALL(s2, isHardwareTestComplete).WillOnce(Return(false));
-    EXPECT_CALL(s2, runHardwareTests);
+    EXPECT_CALL(s1, getDefaultCommand).WillOnce(Return(nullptr));
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.runHardwareTest(&s1);
+    scheduler.run();
+    EXPECT_FALSE(scheduler.hasPassedTest(&s1));
+}
+
+TEST(CommandScheduler, runHardwareTest_runs_test_command)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Called once in the run loop.
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(c1, end(false)).Times(1);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.runHardwareTest(&s1);
+    EXPECT_TRUE(scheduler.isRunningTest(&s1));
+    EXPECT_EQ(scheduler.countRunningHardwareTests(), 1);
+    scheduler.run();
+    EXPECT_TRUE(scheduler.hasPassedTest(&s1));
+}
+
+TEST(CommandScheduler, runHardwareTest_then_stop_initializes_then_ends_test_command)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Not called in the run loop.
+    EXPECT_CALL(c1, execute).Times(0);
+    EXPECT_CALL(c1, end(true)).Times(1);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.runHardwareTest(&s1);
+    scheduler.stopHardwareTest(&s1);
+    scheduler.run();
+    EXPECT_FALSE(scheduler.hasPassedTest(&s1));
+}
+
+TEST(CommandScheduler, runAllHardwareTests_runs_all_valid_test_commands)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Called once in the run loop.
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).Times(2).WillRepeatedly(Return(true));
+    EXPECT_CALL(c1, end(false)).Times(1);
+
+    SubsystemMock s2(&drivers);
+    EXPECT_CALL(s2, getTestCommand).WillRepeatedly(Return(nullptr));
     EXPECT_CALL(s2, refresh);
-    // Won't call runHardwareTests for this subsystem since the test is complete.
-    EXPECT_CALL(s3, setHardwareTestsIncomplete);
-    EXPECT_CALL(s3, isHardwareTestComplete).WillOnce(Return(true));
-    EXPECT_CALL(s3, refresh);
+    EXPECT_CALL(s2, getDefaultCommand).WillRepeatedly(Return(nullptr));
 
     scheduler.registerSubsystem(&s1);
     scheduler.registerSubsystem(&s2);
-    scheduler.registerSubsystem(&s3);
-    scheduler.startHardwareTests();
+    scheduler.runAllHardwareTests();
     scheduler.run();
+    EXPECT_TRUE(scheduler.hasPassedTest(&s1));
+    EXPECT_FALSE(scheduler.hasPassedTest(&s2));
+}
+
+TEST(CommandScheduler, stopAllHardwareTests_stops_all_valid_test_commands)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    set<Subsystem *> c1Requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(c1Requirements)));
+    EXPECT_CALL(c1, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c1));
+    EXPECT_CALL(s1, refresh);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    // Not called in the run loop.
+    EXPECT_CALL(c1, execute).Times(0);
+    EXPECT_CALL(c1, end(true)).Times(1);
+
+    SubsystemMock s2(&drivers);
+    EXPECT_CALL(s2, getTestCommand).WillRepeatedly(Return(nullptr));
+    EXPECT_CALL(s2, refresh);
+    EXPECT_CALL(s2, getDefaultCommand).WillRepeatedly(Return(nullptr));
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.registerSubsystem(&s2);
+    scheduler.runAllHardwareTests();
+    scheduler.stopAllHardwareTests();
+    scheduler.run();
+    EXPECT_FALSE(scheduler.hasPassedTest(&s1));
+}
+
+TEST(CommandScheduler, runHardwareTest_cancels_scheduled_command_and_then_runs_test_command)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+
+    SubsystemMock s1(&drivers);
+    EXPECT_CALL(s1, refresh).Times(3);
+
+    set<Subsystem *> requirements = {&s1};
+    NiceMock<CommandMock> c1;
+    EXPECT_CALL(c1, getRequirementsBitwise)
+        .WillRepeatedly(Return(calcRequirementsBitwise(requirements)));
+    EXPECT_CALL(c1, initialize).Times(2);
+    EXPECT_CALL(s1, getDefaultCommand).WillRepeatedly(Return(&c1));
+
+    NiceMock<CommandMock> c2;
+    EXPECT_CALL(c2, getRequirementsBitwise)
+        .Times(2)  // Called when adding and removing the command
+        .WillRepeatedly(Return(calcRequirementsBitwise(requirements)));
+    EXPECT_CALL(c2, initialize);
+    EXPECT_CALL(s1, getTestCommand).WillRepeatedly(Return(&c2));
+
+    // Called once in the second run().
+    EXPECT_CALL(c1, execute).Times(1);
+    EXPECT_CALL(c1, isFinished).WillOnce(Return(false));
+    EXPECT_CALL(c1, end(true)).Times(1);
+
+    // Called once in the third run().
+    EXPECT_CALL(c2, execute).Times(1);
+    EXPECT_CALL(c2, isFinished).Times(3).WillRepeatedly(Return(true));
+    EXPECT_CALL(c2, end(false)).Times(1);
+
+    scheduler.registerSubsystem(&s1);
+    scheduler.run();                 // Adds the default command
+    scheduler.run();                 // Runs the default command
+    scheduler.runHardwareTest(&s1);  // Add the test command and cancel the default command
+    scheduler.run();  // Run the test command, finish it, and schedule the default command
+    EXPECT_TRUE(scheduler.hasPassedTest(&s1));
+    EXPECT_TRUE(scheduler.isCommandScheduled(&c1));
 }
 
 TEST(CommandScheduler, run_with_single_registered_subsystem_calls_refresh)
@@ -1278,7 +1299,7 @@ TEST(CommandScheduler, removeCommand_nullptr_command_doesnt_crash)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
     scheduler.removeCommand(nullptr, false);
 }
 

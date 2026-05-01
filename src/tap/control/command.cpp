@@ -19,8 +19,12 @@
 
 #include "command.hpp"
 
+#include <tap/control/trigger_binding.hpp>
+
 #include "command_scheduler.hpp"
+#include "conditional_command.hpp"
 #include "subsystem.hpp"
+#include "timeout_command.hpp"
 
 namespace tap
 {
@@ -39,7 +43,8 @@ void Command::addSubsystemRequirement(Subsystem* requirement)
     commandRequirementsBitwise |= (1UL << requirement->getGlobalIdentifier());
 }
 
-bool Command::isReady() { return true; }
+void Command::addCommand(Command*) {}
 
+bool Command::isReady() { return true; }
 }  // namespace control
 }  // namespace tap

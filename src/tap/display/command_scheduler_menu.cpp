@@ -32,10 +32,11 @@ namespace display
 {
 CommandSchedulerMenu::CommandSchedulerMenu(
     modm::ViewStack<DummyAllocator<modm::IAbstractView> > *stack,
-    Drivers *drivers)
+    Drivers *drivers,
+    int entriesToDisplay)
     : modm::AbstractMenu<DummyAllocator<modm::IAbstractView> >(stack, 1),
       drivers(drivers),
-      vertScrollHandler(drivers, 0, MAX_ENTRIES_DISPLAYED),
+      vertScrollHandler(drivers, 0, entriesToDisplay),
       firstDrawTime(true)
 {
 }
