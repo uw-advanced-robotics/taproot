@@ -21,6 +21,8 @@
 
 #include <cstdint>
 
+#include "tap/algorithms/transforms/vector.hpp"
+
 float tap::algorithms::fastInvSqrt(float x)
 {
     static_assert(sizeof(float) == 4, "fast inverse sqrt requires 32-bit float");
@@ -70,4 +72,33 @@ modm::Vector3f tap::algorithms::eulerAnglesFromQuaternion(modm::Quaternion<float
     eulerAngles.z = std::atan2(siny_cosp, cosy_cosp);
 
     return eulerAngles;
+}
+
+void tap::algorithms::vectorToSphericalCoords(
+    tap::algorithms::transforms::Vector vec,
+    float* mag,
+    float* pitch,
+    float* yaw)
+{
+    float m = vec.magnitude();
+    tap::algorithms::transforms::Vector planar(vec.x(), vec.y(), 0);
+    if (mag) *mag = m;
+    if (pitch) *pitch = asinf(planar.magnitude() / m);
+    if (yaw) *yaw = atan2f(vec.y(), vec.x());
+}
+
+modm::Quaternion<float> tap::algorithms::quaternionFromRPY(float r, float p, float y)
+{
+    float cr = cosf(r / 2);
+    float sr = sinf(r / 2);
+    float cp = cosf(p / 2);
+    float sp = sinf(p / 2);
+    float cy = cosf(y / 2);
+    float sy = sinf(y / 2);
+
+    return modm::Quaternion<float>(
+        cr * cp * cy + sr * sp * sy,
+        sr * cp * cy - cr * sp * sy,
+        cr * sp * cy + sr * cp * sy,
+        cr * cp * sy - sr * sp * cy);
 }

@@ -36,6 +36,11 @@ namespace tap
 {
 namespace algorithms
 {
+namespace transforms
+{
+class Vector;
+}
+
 /// Acceleration due to gravity, in m/s^2.
 static constexpr float ACCELERATION_GRAVITY = 9.80665f;
 
@@ -234,6 +239,14 @@ modm::Quaternion<T> slerp(modm::Quaternion<T> q0, modm::Quaternion<T> q1, float 
 
     return q0 * (sinf((1 - t) * theta) / sinf(theta)) + q1 * (sinf(t * theta) / sinf(theta));
 };
+
+void vectorToSphericalCoords(
+    tap::algorithms::transforms::Vector vec,
+    float* mag,
+    float* pitch,
+    float* yaw);
+
+modm::Quaternion<float> quaternionFromRPY(float r, float p, float y);
 
 }  // namespace algorithms
 
