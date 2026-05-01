@@ -243,7 +243,7 @@ public:
     friend class Transform;
     friend class DynamicOrientation;
 
-protected:
+private:
     CMSISMat<3, 3> matrix_, matrixT_;
     std::array<float, 3> rpy;
 
