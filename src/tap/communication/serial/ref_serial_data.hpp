@@ -28,11 +28,6 @@
 
 #include "dji_serial.hpp"
 
-#define static_constexpr static constexpr
-#define _packedU8 uint8_t
-#define O _packedU8
-#define _packed_cast_8 static_cast<_packedU8>
-
 namespace tap::communication::serial
 {
 /**
