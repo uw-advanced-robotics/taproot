@@ -55,7 +55,7 @@ public:
     CommandMapping(
         Drivers *drivers,
         const std::vector<Command *> cmds,
-        const GenericRemoteMapState *grms);
+        const GenericRemoteMapState &grms);
 
     DISALLOW_COPY_AND_ASSIGN(CommandMapping)
 
@@ -100,7 +100,7 @@ public:
         return state1.getNegKeys() == (state1.getNegKeys() & state2.getKeys());
     }
 
-    const GenericRemoteMapState &getAssociatedRemoteMapState() const { return *mapState; }
+    const GenericRemoteMapState &getAssociatedRemoteMapState() const { return mapState; }
 
     const std::vector<Command *> &getAssociatedCommands() const { return mappedCommands; }
 
@@ -108,7 +108,7 @@ protected:
     /**
      * The RemoteMapState specified when constructing the CommandMapping.
      */
-    const GenericRemoteMapState *mapState;
+    const GenericRemoteMapState &mapState;
 
     /**
      * A map of commands to add to and remove from the scheduler.
