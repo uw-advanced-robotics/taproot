@@ -24,13 +24,13 @@ namespace tap::mock
 HoldRepeatCommandMappingMock::HoldRepeatCommandMappingMock(
     Drivers *drivers,
     const std::vector<control::Command *> cmds,
-    const control::RemoteMapState *rms,
+    const control::GenericRemoteMapState &grms,
     bool endCommandsWhenNotHeld,
     int maxTimesToSchedule)
     : control::HoldRepeatCommandMapping(
           drivers,
           cmds,
-          rms,
+          grms,
           endCommandsWhenNotHeld,
           maxTimesToSchedule)
 {

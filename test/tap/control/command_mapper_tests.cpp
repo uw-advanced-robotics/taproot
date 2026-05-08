@@ -143,9 +143,9 @@ TEST(CommandMapper, getSize_returns_number_of_valid_maps_added)
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID);
     RemoteMapState ms3(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP);
-    auto hcm1 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc1}, &ms1);
-    auto hcm2 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc2}, &ms2);
-    auto hcm3 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc3}, &ms3);
+    auto hcm1 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc1}, ms1);
+    auto hcm2 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc2}, ms2);
+    auto hcm3 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc3}, ms3);
 
     EXPECT_EQ(0, cm.getCommandMappingSize());
     cm.addMap(std::move(hcm1));
@@ -162,7 +162,7 @@ TEST(CommandMapper, getAtIndex_nullptr_returned_if_greater_than_mapper_size)
     TestCommand tc(&ts);
     CommandMapper cm(&drivers);
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    auto hcm = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc}, &ms);
+    auto hcm = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc}, ms);
 
     cm.addMap(std::move(hcm));
     EXPECT_NE(nullptr, cm.getCommandMappingAtIndex(0));
@@ -181,9 +181,9 @@ TEST(CommandMapper, getAtIndex_returns_correct_CommandMapping_if_index_valid)
     RemoteMapState ms1(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
     RemoteMapState ms2(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::MID);
     RemoteMapState ms3(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::UP);
-    auto hcm1 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc1}, &ms1);
-    auto hcm2 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc2}, &ms2);
-    auto hcm3 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc3}, &ms3);
+    auto hcm1 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc1}, ms1);
+    auto hcm2 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc2}, ms2);
+    auto hcm3 = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc3}, ms3);
     cm.addMap(std::move(hcm1));
     cm.addMap(std::move(hcm2));
     cm.addMap(std::move(hcm3));
@@ -207,9 +207,9 @@ TEST(CommandMapper, addHoldMapping_successfully_adds_mapping_normal_case)
     CommandMapper cm(&drivers);
 
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldCommandMapping expected(&drivers, {&tc}, &ms);
+    HoldCommandMapping expected(&drivers, {&tc}, ms);
 
-    auto hm = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc}, &ms);
+    auto hm = std::make_unique<HoldCommandMapping>(&drivers, std::vector<Command*>{&tc}, ms);
     cm.addMap(std::move(hm));
 
     const auto* actual = dynamic_cast<const HoldCommandMapping*>(cm.getCommandMappingAtIndex(0));
@@ -226,10 +226,10 @@ TEST(CommandMapper, addHoldRepeatMapping_successfully_adds_mapping_normal_case)
     CommandMapper cm(&drivers);
 
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    HoldRepeatCommandMapping expected(&drivers, {&tc}, &ms, true);
+    HoldRepeatCommandMapping expected(&drivers, {&tc}, ms, true);
 
     auto hm =
-        std::make_unique<HoldRepeatCommandMapping>(&drivers, std::vector<Command*>{&tc}, &ms, true);
+        std::make_unique<HoldRepeatCommandMapping>(&drivers, std::vector<Command*>{&tc}, ms, true);
     cm.addMap(std::move(hm));
 
     const auto* actual =
@@ -247,9 +247,9 @@ TEST(CommandMapper, addToggleMapping_successfully_adds_mapping_normal_case)
     CommandMapper cm(&drivers);
 
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
-    ToggleCommandMapping expected(&drivers, {&tc}, &ms);
+    ToggleCommandMapping expected(&drivers, {&tc}, ms);
 
-    auto tm = std::make_unique<ToggleCommandMapping>(&drivers, std::vector<Command*>{&tc}, &ms);
+    auto tm = std::make_unique<ToggleCommandMapping>(&drivers, std::vector<Command*>{&tc}, ms);
     cm.addMap(std::move(tm));
 
     const auto* actual = dynamic_cast<const ToggleCommandMapping*>(cm.getCommandMappingAtIndex(0));
@@ -267,9 +267,9 @@ TEST(CommandMapper, addPressMapping_successfully_adds_mapping_normal_case)
 
     RemoteMapState ms(Remote::Switch::LEFT_SWITCH, Remote::SwitchState::DOWN);
 
-    PressCommandMapping expected(&drivers, {&tc}, &ms);
+    PressCommandMapping expected(&drivers, {&tc}, ms);
 
-    auto pm = std::make_unique<PressCommandMapping>(&drivers, std::vector<Command*>{&tc}, &ms);
+    auto pm = std::make_unique<PressCommandMapping>(&drivers, std::vector<Command*>{&tc}, ms);
     cm.addMap(std::move(pm));
 
     const auto* actual = dynamic_cast<const PressCommandMapping*>(cm.getCommandMappingAtIndex(0));

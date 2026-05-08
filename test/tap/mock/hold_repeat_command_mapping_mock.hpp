@@ -33,7 +33,7 @@ public:
     HoldRepeatCommandMappingMock(
         Drivers *drivers,
         const std::vector<control::Command *> cmds,
-        const control::RemoteMapState *rms,
+        const control::GenericRemoteMapState &grms,
         bool endCommandsWhenNotHeld,
         int maxTimesToSchedule = -1);
     virtual ~HoldRepeatCommandMappingMock();
