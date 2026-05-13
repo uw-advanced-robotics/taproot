@@ -98,6 +98,8 @@ public:
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
+    inline float magnitudeSq() const { return dot(*this, *this); }
+
     inline float magnitude() const { return sqrt(dot(*this, *this)); }
 
     inline Vector normalize() const { return (*this) / this->magnitude(); }
