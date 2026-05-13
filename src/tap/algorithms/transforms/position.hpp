@@ -47,7 +47,7 @@ public:
      * @brief Convert to `Vector` representation. Analagous to subtracting the global origin
      * position.
      */
-    inline Vector toVector() const;
+    Vector toVector() const;
 
     /* Getters */
 

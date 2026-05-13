@@ -56,7 +56,7 @@ public:
      * @brief Convert to `Position` representation. Analagous to adding to the global origin
      * position.
      */
-    inline Position toPosition() const;
+    Position toPosition() const;
 
     inline float x() const { return (*this)[Axis::X]; }
     inline float y() const { return (*this)[Axis::Y]; }
