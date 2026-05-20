@@ -44,6 +44,7 @@ void AbstractIMU::setMountingTransform(const Transform& transform)
 
 void AbstractIMU::periodicIMUUpdate()
 {
+    updateImuMeasurement();
     if (imuState == ImuState::IMU_CALIBRATING)
     {
         computeOffsets();
@@ -97,6 +98,22 @@ void AbstractIMU::computeOffsets()
         imuData.accOffsetRaw = imuData.accOffsetRaw / offsetSampleCount;
         imuState = ImuState::IMU_CALIBRATED;
         mahonyAlgorithm.reset();
+    }
+}
+
+void AbstractIMU::updateImuMeasurement()
+{
+    if (sampleCounter > 0)
+    {
+        imuData.accG = sumImuData.accG / sampleCounter;
+        imuData.accOffsetRaw = sumImuData.accOffsetRaw / sampleCounter;
+        imuData.accRaw = sumImuData.accRaw / sampleCounter;
+        imuData.gyroOffsetRaw = sumImuData.gyroOffsetRaw / sampleCounter;
+        imuData.gyroRadPerSec = sumImuData.gyroRadPerSec / sampleCounter;
+        imuData.gyroRaw = sumImuData.gyroRaw / sampleCounter;
+        imuData.temperature = sumImuData.temperature / sampleCounter;
+        sumImuData = {};
+        sampleCounter = 0;
     }
 }
 
