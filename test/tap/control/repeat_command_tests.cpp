@@ -73,7 +73,7 @@ TEST(RepeatCommand, noninstant_command_repeats)
     EXPECT_TRUE(tc.isFinished());
 }
 
-TEST(FiniteRepeatCommand, finite_repeat_command_test)
+TEST(RepeatCommand, finite_repeat_command_test)
 {
     Drivers drivers;
     CommandScheduler scheduler(&drivers, true);
@@ -81,18 +81,21 @@ TEST(FiniteRepeatCommand, finite_repeat_command_test)
     scheduler.registerSubsystem(&ts);
 
     TestCommand tc(&ts);
-    FiniteRepeatCommand rc(&tc, 2);
+    FiniteRepeatCommand frc(&tc, 2);
+    scheduler.addCommand(&frc);
 
-    scheduler.addCommand(&rc);
+    EXPECT_FALSE(frc.isFinished());
 
-    EXPECT_FALSE(rc.isFinished());
-    scheduler.run();
-    EXPECT_EQ(rc.getCurrentRepeatCount(), 2);
     tc.setFinished(true);
     scheduler.run();
-    EXPECT_EQ(rc.getCurrentRepeatCount(), 1);
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 0);
+
     tc.setFinished(true);
     scheduler.run();
-    EXPECT_EQ(rc.getCurrentRepeatCount(), 0);
-    EXPECT_TRUE(rc.isFinished());
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 1);
+
+    tc.setFinished(true);
+    scheduler.run();
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 2);
+    EXPECT_TRUE(frc.isFinished());
 }
