@@ -19,6 +19,7 @@
 
 #include <gtest/gtest.h>
 
+#include "tap/control/finite_repeat_command.hpp"
 #include "tap/control/instant_command.hpp"
 #include "tap/control/repeat_command.hpp"
 #include "tap/drivers.hpp"
@@ -70,4 +71,31 @@ TEST(RepeatCommand, noninstant_command_repeats)
     tc.setFinished(true);
     scheduler.run();
     EXPECT_TRUE(tc.isFinished());
+}
+
+TEST(RepeatCommand, finite_repeat_command_test)
+{
+    Drivers drivers;
+    CommandScheduler scheduler(&drivers, true);
+    TestSubsystem ts(&drivers);
+    scheduler.registerSubsystem(&ts);
+
+    TestCommand tc(&ts);
+    FiniteRepeatCommand frc(&tc, 2);
+    scheduler.addCommand(&frc);
+
+    EXPECT_FALSE(frc.isFinished());
+
+    tc.setFinished(true);
+    scheduler.run();
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 0);
+
+    tc.setFinished(true);
+    scheduler.run();
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 1);
+
+    tc.setFinished(true);
+    scheduler.run();
+    EXPECT_EQ(frc.getCurrentRepeatCount(), 2);
+    EXPECT_TRUE(frc.isFinished());
 }
