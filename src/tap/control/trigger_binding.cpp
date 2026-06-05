@@ -73,7 +73,7 @@ void TriggerBinding::execute()
                     drivers->commandScheduler.addCommand(command);
                 }
             }
-            else if (!curTrigState && prevTrigState)
+            else if (curTrigState && !prevTrigState)
             {
                 drivers->commandScheduler.removeCommand(command, false);
             }
