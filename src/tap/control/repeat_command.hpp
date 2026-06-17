@@ -46,7 +46,8 @@ public:
         if (ended)
         {
             command->end(false);
-            if (command->isReady()) {
+            if (command->isReady())
+            {
                 command->initialize();
                 ended = false;
             }
