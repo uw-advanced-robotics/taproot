@@ -45,12 +45,10 @@ public:
     {
         if (ended)
         {
+            if (!command->isReady()) return;
             command->end(false);
-            if (command->isReady())
-            {
-                command->initialize();
-                ended = false;
-            }
+            command->initialize();
+            ended = false;
         }
         command->execute();
         if (command->isFinished())
