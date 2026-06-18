@@ -21,6 +21,7 @@
 #define TAPROOT_COMMAND_COMPOSITION_HELPER_HPP_
 
 #include <array>
+#include <utility>
 
 #include "command.hpp"
 #include "concurrent_command.hpp"
@@ -53,7 +54,8 @@ struct CommandCompositionHelper
      * @return ConcurrentCommand* of the input commands.
      */
     template <size_t COMMANDS>
-    static WeakConcurrentCommand<COMMANDS>* parallel(std::array<Command*, COMMANDS> commands)
+    static WeakConcurrentCommand<COMMANDS>* parallel(
+        std::array<std::pair<Command*, bool>, COMMANDS> commands)
     {
         return new WeakConcurrentCommand<COMMANDS>(commands, "concurrent command: parallel");
     }
@@ -62,11 +64,16 @@ struct CommandCompositionHelper
      * Adds a condition to run the input command only while the input condition is true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    static ConcurrentRaceCommand<2>* onlyWhile(Command* command, std::function<bool()> condition)
+    static ConcurrentRaceCommand<2>* onlyWhile(
+        Command* command,
+        std::function<bool()> condition,
+        bool isRepeat = false)
     {
         std::function<bool()> negated = [condition]() { return !condition(); };
         return new ConcurrentRaceCommand<2>(
-            std::array<Command*, 2>{command, new ConditionalCommand(negated)},
+            std::array<std::pair<Command*, bool>, 2>{
+                std::make_pair(command, isRepeat),
+                std::make_pair(new ConditionalCommand(negated), false)},
             "conditional race: onlyWhile");
     }
 
@@ -74,10 +81,15 @@ struct CommandCompositionHelper
      * Adds a condition to run the input command until the input condition becomes true.
      * @return ConcurrentRaceCommand* of the input command and a ConditionalCommand.
      */
-    static ConcurrentRaceCommand<2>* until(Command* command, std::function<bool()> condition)
+    static ConcurrentRaceCommand<2>* until(
+        Command* command,
+        std::function<bool()> condition,
+        bool isRepeat = false)
     {
         return new ConcurrentRaceCommand<2>(
-            std::array<Command*, 2>{command, new ConditionalCommand(condition)},
+            std::array<std::pair<Command*, bool>, 2>{
+                std::make_pair(command, isRepeat),
+                std::make_pair(new ConditionalCommand(condition), false)},
             "conditional race: until");
     }
 
@@ -85,10 +97,15 @@ struct CommandCompositionHelper
      * Adds a timeout to run the input command for a specific amount of time.
      * @return ConcurrentRaceCommand* of the input command and a TimeoutCommand.
      */
-    static ConcurrentRaceCommand<2>* withTimeout(Command* command, uint32_t timeout)
+    static ConcurrentRaceCommand<2>* withTimeout(
+        Command* command,
+        uint32_t timeout,
+        bool isRepeat = false)
     {
         return new ConcurrentRaceCommand<2>(
-            std::array<Command*, 2>{command, new TimeoutCommand(timeout)},
+            std::array<std::pair<Command*, bool>, 2>{
+                std::make_pair(command, isRepeat),
+                std::make_pair(new TimeoutCommand(timeout), false)},
             "concurrent race: withTimeout");
     }
 
@@ -97,10 +114,13 @@ struct CommandCompositionHelper
      * finished.
      * @return ConcurrentDeadlineCommand of input command deadlined with the input command.
      */
-    static ConcurrentDeadlineCommand<1>* deadlineWith(Command* command, Command* deadlineCommand)
+    static ConcurrentDeadlineCommand<1>* deadlineWith(
+        Command* command,
+        Command* deadlineCommand,
+        bool isRepeat = false)
     {
         return new ConcurrentDeadlineCommand<1>(
-            std::array<Command*, 1>{command},
+            std::array<std::pair<Command*, bool>, 1>{std::make_pair(command, isRepeat)},
             "concurrent deadline",
             deadlineCommand);
     }
