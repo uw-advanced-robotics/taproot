@@ -82,10 +82,15 @@ public:
      */
     struct TransposeProxy
     {
-        const CMSISMat<3, 3>& rotationT;
+        const CMSISMat<3, 3>& matrixT;
     };
 
     inline Orientation compose(const Orientation& other) const { return *this * other; }
+
+    inline Orientation operator*(const CMSISMat<3, 3>& other) const
+    {
+        return Orientation(this->matrix_ * other);
+    }
 
     inline Orientation operator*(const Orientation& other) const
     {
@@ -94,10 +99,23 @@ public:
 
     inline Orientation operator*(const Orientation::TransposeProxy& other) const
     {
-        return Orientation(this->matrix_ * other.rotationT);
+        return Orientation(this->matrix_ * other.matrixT);
     }
 
-    inline Vector apply(const Vector& vec) const
+    /**
+     * @brief Brings a vector from the base frame to the follower frame. Applies the inverse of this
+     * rotation to the vector.
+     */
+    inline Vector applyForward(const Vector& vec) const
+    {
+        return Vector(this->matrixT_ * vec.coordinates());
+    }
+
+    /**
+     * @brief Brings a vector from the follower frame to the base frame. Applies this rotation to
+     * the vector.
+     */
+    inline Vector applyReverse(const Vector& vec) const
     {
         return Vector(this->matrix_ * vec.coordinates());
     }
@@ -336,18 +354,26 @@ private:
 
         if constexpr (ax == Axis::X)
         {
-            return modm::Matrix<float, 3, 3>({1, 0, 0, 0, c, -s, 0, s, c});
+            const float m[] = {1, 0, 0, 0, c, -s, 0, s, c};
+            return modm::Matrix<float, 3, 3>(m);
         }
         else if constexpr (ax == Axis::Y)
         {
-            return modm::Matrix<float, 3, 3>({c, 0, s, 0, 1, 0, -s, 0, c});
+            const float m[] = {c, 0, s, 0, 1, 0, -s, 0, c};
+            return modm::Matrix<float, 3, 3>(m);
         }
         else if constexpr (ax == Axis::Z)
         {
-            return modm::Matrix<float, 3, 3>({c, -s, 0, s, c, 0, 0, 0, 1});
+            const float m[] = {c, -s, 0, s, c, 0, 0, 0, 1};
+            return modm::Matrix<float, 3, 3>(m);
         }
     }
 };  // class Orientation
+
+inline Orientation operator*(const CMSISMat<3, 3>& a, const Orientation& b)
+{
+    return Orientation(a * b.matrix());
+}
 
 /**
  * @brief Multiplies a 3x3 rotation matrix by a 3D vector.
@@ -362,7 +388,7 @@ inline Vector operator*(const Orientation& a, const Vector& b)
  */
 inline Vector operator*(const Orientation::TransposeProxy& a, const Vector& b)
 {
-    return Vector(a.rotationT * b.coordinates());
+    return Vector(a.matrixT * b.coordinates());
 }
 
 /**
@@ -370,7 +396,7 @@ inline Vector operator*(const Orientation::TransposeProxy& a, const Vector& b)
  */
 inline Orientation operator*(const Orientation::TransposeProxy& a, const Orientation& b)
 {
-    return Orientation(a.rotationT * b.matrix());
+    return Orientation(a.matrixT * b.matrix());
 }
 }  // namespace tap::algorithms::transforms
 

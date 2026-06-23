@@ -544,6 +544,209 @@ TEST(Transform, identity_quaternion_to_orientation)
     expectEq(o, Orientation());
 }
 
+TEST(Transform, rotation_apply_inverse)
+{
+    // Verify that applying forward then reverse returns to the original state
+    Position start(1.0, 2.0, 3.0);
+    Transform t(1.0, 2.0, 3.0, 0.5, 0.1, 0.2);  // Arbitrary rotation
+
+    Position forward = t.applyForward(start);
+    Position reverse = t.applyReverse(forward);
+
+    expectEq(start, reverse);
+}
+
+TEST(Transform, gimbal_lock_near_vertical_pitch)
+{
+    // Test orientation near gimbal lock (pitch = pi/2)
+    float near_vertical = M_PI_2 - 0.0001f;
+    Orientation o(0.0, near_vertical, 0.0);
+
+    // Ensure we can still convert and recover
+    Orientation recovered = Orientation::fromQuaternion(o.toQuaternion());
+    expectEq(o, recovered, 1e-4f);
+}
+
+TEST(Transform, dynamic_apply_reverse_inverse_check)
+{
+    // Ensure applyReverse is the true inverse of applyForward for dynamic objects
+    DynamicPosition p(1.0, 1.0, 1.0, 0.1, 0.1, 0.1, 0.01, 0.01, 0.01);
+    Transform t(1.0, 2.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.1, 0.1, 0.01, 0.01, 0.01);
+
+    DynamicPosition forward = t.applyForward(p);
+    DynamicPosition reverse = t.applyReverse(forward);
+
+    expectEq(p, reverse, 1e-3f);
+}
+
+TEST(Transform, dynamic_orientation_inverse_check)
+{
+    DynamicOrientation do_orig(0.1, 0.2, 0.3, 0.05, 0.05, 0.05);
+    Transform t(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.01, 0.01, 0.01);
+
+    DynamicOrientation forward = t.applyForward(do_orig);
+    DynamicOrientation reverse = t.applyReverse(forward);
+
+    expectEq(do_orig, reverse, 1e-3f);
+}
+
+TEST(Transform, projection_with_zero_velocity)
+{
+    // If velocity and acceleration are zero, projection should return same transform
+    Transform t(1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    Transform projected = t.projectForward(10.0f);
+
+    expectStaticEq(t, projected);
+}
+
+TEST(Transform, compose_with_identity)
+{
+    // Composing any transform with identity should result in the original
+    Transform t(1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 1.0, 2.0, 3.0, 0.1, 0.2, 0.3, 0.01, 0.02, 0.03);
+    Transform identity = Transform::identity();
+
+    expectEq(t.compose(identity), t);
+    expectEq(identity.compose(t), t);
+}
+
+TEST(Orientation, generalized_euler_sequence_roundtrip)
+{
+    float roll = 0.1f, pitch = 0.2f, yaw = 0.3f;
+
+    // Create matrix from sequence
+    auto mat = Orientation::fromEulerSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>(roll, pitch, yaw);
+    Orientation ori(mat);
+
+    // Check if the extracted angles match the input (within precision limits)
+    auto extracted = ori.toEulerSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>();
+
+    EXPECT_NEAR(extracted[0], roll, 1e-4f);
+    EXPECT_NEAR(extracted[1], pitch, 1e-4f);
+    EXPECT_NEAR(extracted[2], yaw, 1e-4f);
+}
+
+TEST(Transform, transpose_proxy_consistency)
+{
+    Orientation ori(0.1f, 0.2f, 0.3f);
+    Vector vec(1.0f, 2.0f, 3.0f);
+
+    // Manual transpose calculation
+    Vector manual = Vector(ori.matrixT() * vec.coordinates());
+
+    // Proxy calculation
+    Vector proxy = ori.T() * vec;
+
+    expectEq(manual, proxy);
+}
+
+TEST(PositionVectorInteractions, position_subtraction_yields_vector)
+{
+    Position p1(1.0f, 2.0f, 3.0f);
+    Position p2(4.0f, 6.0f, 8.0f);
+
+    Vector diff = p2 - p1;
+
+    EXPECT_NEAR(diff.x(), 3.0f, 1e-5f);
+    EXPECT_NEAR(diff.y(), 4.0f, 1e-5f);
+    EXPECT_NEAR(diff.z(), 5.0f, 1e-5f);
+}
+
+TEST(PositionVectorInteractions, position_plus_vector_yields_position)
+{
+    Position p1(1.0f, 2.0f, 3.0f);
+    Vector v1(1.0f, 1.0f, 1.0f);
+
+    Position p2 = p1 + v1;
+
+    expectEq(p2, Position(2.0f, 3.0f, 4.0f));
+}
+
+TEST(Position, interpolation_boundaries)
+{
+    Position a(0.0f, 0.0f, 0.0f);
+    Position b(10.0f, 10.0f, 10.0f);
+
+    expectEq(Position::interpolate(a, b, 0.0f), a);
+    expectEq(Position::interpolate(a, b, 1.0f), b);
+    expectEq(Position::interpolate(a, b, 0.5f), Position(5.0f, 5.0f, 5.0f));
+}
+
+TEST(Orientation, quaternion_edge_cases)
+{
+    // Test the "else" branch of the w calculation
+    // q = [0, 0, 0, 1] (180 degree rotation)
+    Orientation o = Orientation::fromQuaternion(0, 0, 0, 1);
+    modm::Quaternion<float> q = o.toQuaternion();
+
+    // Validate the result
+    EXPECT_NEAR(q.z, 1.0f, 1e-4f);
+}
+
+TEST(AngularVelocity, skew_matrix_structure)
+{
+    AngularVelocity av(1.0f, 2.0f, 3.0f);
+    auto mat = av.toSkewMatrix();
+
+    // Skew matrix should be:
+    // [ 0, -wz,  wy]
+    // [ wz,  0, -wx]
+    // [-wy,  wx,  0]
+    EXPECT_NEAR(mat[0], 0.0f, 1e-5f);
+    EXPECT_NEAR(mat[1], -3.0f, 1e-5f);
+    EXPECT_NEAR(mat[2], 2.0f, 1e-5f);
+    EXPECT_NEAR(mat[3], 3.0f, 1e-5f);
+    EXPECT_NEAR(mat[7], 1.0f, 1e-5f);
+}
+
+TEST(Transform, dynamic_inverse_consistency)
+{
+    // Create a complex dynamic transform
+    Transform t(1.0, 2.0, 3.0, 0.5, 0.4, 0.3, 0.1, 0.1, 0.1, 0.5, 0.5, 0.5, 0.01, 0.01, 0.01);
+
+    // Inverting and re-inverting should yield original
+    Transform inv = t.getInverse();
+    Transform double_inv = inv.getInverse();
+
+    expectEq(t, double_inv, 1e-3f);
+}
+
+TEST(Vector, projection_orthogonality)
+{
+    Vector a(1.0f, 0.0f, 0.0f);
+    Vector onto(0.0f, 1.0f, 0.0f);
+
+    // Projecting onto an orthogonal vector should result in a zero vector
+    Vector proj = a.project(onto);
+
+    EXPECT_NEAR(proj.magnitudeSq(), 0.0f, 1e-5f);
+}
+
+TEST(Vector, normalization_magnitude)
+{
+    Vector v(3.0f, 4.0f, 0.0f);  // Magnitude 5
+    Vector unit = v.normalize();
+
+    EXPECT_NEAR(unit.magnitude(), 1.0f, 1e-5f);
+}
+
+TEST(Position, distance_calculation)
+{
+    Position p1(0.0f, 0.0f, 0.0f);
+    Position p2(3.0f, 4.0f, 0.0f);
+
+    EXPECT_NEAR(Position::distance(p1, p2), 5.0f, 1e-5f);
+}
+
+TEST(Position, equality_operator)
+{
+    Position p1(1.0f, 2.0f, 3.0f);
+    Position p2(1.0f, 2.0f, 3.0f);
+    Position p3(1.0f, 2.0f, 4.0f);
+
+    EXPECT_TRUE(p1 == p2);
+    EXPECT_FALSE(p1 == p3);
+}
+
 std::ostream& operator<<(std::ostream& stream, const Transform&) { return stream << "Transform"; }
 
 std::ostream& operator<<(std::ostream& stream, const DynamicPosition&)

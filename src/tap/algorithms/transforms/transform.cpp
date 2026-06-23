@@ -184,37 +184,71 @@ Transform::Transform() : dynamic(false), translation(), transVel(), transAcc(), 
 {
 }
 
-Position Transform::apply(const Position& position) const
+Position Transform::applyForward(const Position& position) const
 {
     return Position((rotation.matrixT_ * (position - translation)).coordinates_);
 }
 
-Vector Transform::apply(const Vector& vector) const { return rotation.matrixT_ * vector; }
+Position Transform::applyReverse(const Position& position) const
+{
+    return Position((rotation.matrix_ * position.coordinates_) + translation.coordinates_);
+}
 
-DynamicPosition Transform::apply(const DynamicPosition& p) const
+Vector Transform::applyForward(const Vector& vector) const { return rotation.T() * vector; }
+
+Vector Transform::applyReverse(const Vector& vector) const { return rotation * vector; }
+
+DynamicPosition Transform::applyForward(const DynamicPosition& p) const
 {
     CMSISMat<3, 3> angVelSkewMat = angVel.toSkewMatrix();
-    Vector pf = rotation.matrixT_ * (p.position - translation);
+    Position pf = applyForward(p.position);
     Vector vf =
         rotation.matrixT_ * (p.velocity - transVel + angVelSkewMat * (translation - p.position));
     Vector af = rotation.matrixT_ * (p.acceleration - transAcc +
                                      angVelSkewMat * (2 * (transVel - p.velocity) +
                                                       angVelSkewMat * (p.position - translation)));
-    return DynamicPosition(Position(pf.coordinates_), vf, af);
+    return DynamicPosition(pf, vf, af);
 }
 
-Orientation Transform::apply(const Orientation& orientation) const
+DynamicPosition Transform::applyReverse(const DynamicPosition& p) const
+{
+    CMSISMat<3, 3> angVelSkewMat = angVel.toSkewMatrix();
+    Position pf = applyReverse(p.position);
+    Vector vf = rotation * p.velocity + transVel +
+                angVelSkewMat * rotation * p.position.toVector();
+    Vector af =
+        rotation * p.acceleration + transAcc +
+        angVelSkewMat * (2.0f * (rotation * p.velocity) +
+                         angVelSkewMat * rotation * p.position.toVector());
+
+    return DynamicPosition(pf, vf, af);
+}
+
+Orientation Transform::applyForward(const Orientation& orientation) const
 {
     return rotation.T() * orientation;
 }
 
-DynamicOrientation Transform::apply(const DynamicOrientation& dynamicOrientation) const
+Orientation Transform::applyReverse(const Orientation& orientation) const
+{
+    return rotation * orientation;
+}
+
+DynamicOrientation Transform::applyForward(const DynamicOrientation& dynamicOrientation) const
 {
     return DynamicOrientation(
-        rotation.matrixT_ * dynamicOrientation.rotation.matrix_,
+        applyForward(dynamicOrientation.rotation).matrix_,
         rotation.matrixT_ *
             (dynamicOrientation.angularVelocity.toSkewMatrix() - angVel.toSkewMatrix()) *
             rotation.matrix_);
+}
+
+DynamicOrientation Transform::applyReverse(const DynamicOrientation& dynamicOrientation) const
+{
+    return DynamicOrientation(
+        applyReverse(dynamicOrientation.rotation).matrix_,
+        rotation.matrix_ * dynamicOrientation.angularVelocity.toSkewMatrix() * rotation.matrixT_ +
+            angVel.toSkewMatrix());
 }
 
 Transform Transform::getInverse() const

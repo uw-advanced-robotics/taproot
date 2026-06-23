@@ -195,12 +195,35 @@ public:
     static inline Transform identity() { return Transform(0., 0., 0., 0., 0., 0.); }
 
     /**
+     * @brief Apply this transform to a position (forwards direction).
+     *
+     * @param[in] position Position in base frame.
+     * @return Position in follower frame.
+     */
+    Position applyForward(const Position& position) const;
+
+    /**
      * @brief Apply this transform to a position.
      *
      * @param[in] position Position in base frame.
      * @return Position in follower frame.
      */
-    Position apply(const Position& position) const;
+    inline Position apply(const Position& position) const { return applyForward(position); }
+
+    /**
+     * @brief Rotates a vector in the base frame to a vector in the follower frame (forwards
+     * direction).
+     *
+     * Intended to be used for things like velocities and accelerations which represent the
+     * difference between two positions in space, since both positions get translated the same way,
+     * causing the translation to cancel out.
+     *
+     * @note Only accurate for static transforms!
+     *
+     * @param vector Vector as read by base frame.
+     * @return Vector in follower frame's basis.
+     */
+    Vector applyForward(const Vector& vector) const;
 
     /**
      * @brief Rotates a vector in the base frame to a vector in the follower frame.
@@ -214,22 +237,82 @@ public:
      * @param vector Vector as read by base frame.
      * @return Vector in follower frame's basis.
      */
-    Vector apply(const Vector& vector) const;
+    inline Vector apply(const Vector& vector) const { return applyForward(vector); }
+
+    /**
+     * @brief Brings a dynamic position in the base frame to one in the follower frame (forwards
+     * direction).
+     */
+    DynamicPosition applyForward(const DynamicPosition& dynamicPosition) const;
 
     /**
      * @brief Brings a dynamic position in the base frame to one in the follower frame.
      */
-    DynamicPosition apply(const DynamicPosition& dynamicPosition) const;
+    inline DynamicPosition apply(const DynamicPosition& dynamicPosition) const
+    {
+        return applyForward(dynamicPosition);
+    }
+
+    /**
+     * @brief Brings an orientation in the base frame to one in the follower frame (forwards
+     * direction).
+     */
+    Orientation applyForward(const Orientation& orientation) const;
 
     /**
      * @brief Brings an orientation in the base frame to one in the follower frame.
      */
-    Orientation apply(const Orientation& orientation) const;
+    inline Orientation apply(const Orientation& orientation) const
+    {
+        return applyForward(orientation);
+    }
+
+    /**
+     * @brief Brings a dynamic orientation in the base frame to one in the follower frame (forwards
+     * direction).
+     */
+    DynamicOrientation applyForward(const DynamicOrientation& dynamicOrientation) const;
 
     /**
      * @brief Brings a dynamic orientation in the base frame to one in the follower frame.
      */
-    DynamicOrientation apply(const DynamicOrientation& dynamicOrientation) const;
+    inline DynamicOrientation apply(const DynamicOrientation& dynamicOrientation) const
+    {
+        return applyForward(dynamicOrientation);
+    }
+
+    /**
+     * @brief Apply this transform in reverse (from follower frame to base frame).
+     *
+     * @param[in] position Position in follower frame.
+     * @return Position in base frame.
+     */
+    Position applyReverse(const Position& position) const;
+
+    /**
+     * @brief Rotate a vector from follower frame to base frame.
+     *
+     * @note Only accurate for static transforms!
+     *
+     * @param vector Vector in follower frame's basis.
+     * @return Vector in base frame.
+     */
+    Vector applyReverse(const Vector& vector) const;
+
+    /**
+     * @brief Brings a dynamic position in the follower frame back to the base frame.
+     */
+    DynamicPosition applyReverse(const DynamicPosition& dynamicPosition) const;
+
+    /**
+     * @brief Brings an orientation in the follower frame back to the base frame.
+     */
+    Orientation applyReverse(const Orientation& orientation) const;
+
+    /**
+     * @brief Brings a dynamic orientation in the follower frame back to the base frame.
+     */
+    DynamicOrientation applyReverse(const DynamicOrientation& dynamicOrientation) const;
 
     /**
      * @brief Updates the translation of the current transformation matrix.
