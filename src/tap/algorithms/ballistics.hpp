@@ -96,10 +96,7 @@ struct SecondOrderKinematicState : public AbstractKinematicState
         return velocity + dt * acceleration;
     };
 
-    inline modm::Vector3f projectAccelerationForward(float dt) const override
-    {
-        return acceleration;
-    };
+    inline modm::Vector3f projectAccelerationForward(float) const override { return acceleration; };
 };
 
 /**
