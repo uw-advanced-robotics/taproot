@@ -37,12 +37,9 @@ struct AbstractKinematicState
 {
     virtual modm::Vector3f projectForward(float dt) const = 0;
 
-    virtual modm::Vector3f projectVelocityForward(float dt) const
-    {
-        return modm::Vector3f(0, 0, 0);
-    };
+    virtual modm::Vector3f projectVelocityForward(float) const { return modm::Vector3f(0, 0, 0); };
 
-    virtual modm::Vector3f projectAccelerationForward(float dt) const
+    virtual modm::Vector3f projectAccelerationForward(float) const
     {
         return modm::Vector3f(0, 0, 0);
     };
