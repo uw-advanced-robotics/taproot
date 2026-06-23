@@ -37,6 +37,16 @@ struct AbstractKinematicState
 {
     virtual modm::Vector3f projectForward(float dt) const = 0;
 
+    virtual modm::Vector3f projectVelocityForward(float dt) const
+    {
+        return modm::Vector3f(0, 0, 0);
+    };
+
+    virtual modm::Vector3f projectAccelerationForward(float dt) const
+    {
+        return modm::Vector3f(0, 0, 0);
+    };
+
     /**
      * @param[in] dt: The amount of time to project forward.
      * @param[in] s: The position of the object.
@@ -80,6 +90,16 @@ struct SecondOrderKinematicState : public AbstractKinematicState
             quadraticKinematicProjection(dt, position.y, velocity.y, acceleration.y),
             quadraticKinematicProjection(dt, position.z, velocity.z, acceleration.z));
     }
+
+    inline modm::Vector3f projectVelocityForward(float dt) const override
+    {
+        return velocity + dt * acceleration;
+    };
+
+    inline modm::Vector3f projectAccelerationForward(float dt) const override
+    {
+        return acceleration;
+    };
 };
 
 /**
