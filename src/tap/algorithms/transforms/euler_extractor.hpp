@@ -48,9 +48,6 @@ struct EulerExtractor
     static std::array<float, 3> extract(const float*) { return {}; }
 };
 
-// ---------------------------------------------------------
-// Sequence: Z -> Y -> X (Standard Tait-Bryan / Yaw-Pitch-Roll)
-// ---------------------------------------------------------
 template <>
 struct EulerExtractor<Axis::Z, Axis::Y, Axis::X>
 {
@@ -81,9 +78,6 @@ struct EulerExtractor<Axis::Z, Axis::Y, Axis::X>
     }
 };
 
-// ---------------------------------------------------------
-// Sequence: X -> Y -> Z
-// ---------------------------------------------------------
 template <>
 struct EulerExtractor<Axis::X, Axis::Y, Axis::Z>
 {
