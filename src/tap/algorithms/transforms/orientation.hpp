@@ -25,7 +25,7 @@
 #include "tap/algorithms/wrapped_float.hpp"
 
 #include "axis.hpp"
-#include "euler_extractor.hpp"
+#include "intrinsic_euler_extractor.hpp"
 #include "vector.hpp"
 
 namespace tap::algorithms::transforms
@@ -214,48 +214,102 @@ public:
     }
 
     /**
-     * @brief Generalized angle sequence generator.
-     * @example roll pitch yaw would be `fromAngles<ROLL, PITCH, YAW>`
+     * @brief Constructs an `Orientation` from a sequence of intrinsic rotations about the specified
+     * axes.
+     * @note "Intrinsic" means that successive rotations are performed in the newly rotated frame.
+     * @example typical roll pitch yaw would be `fromIntrinsicSequence<YAW, PITCH, ROLL>`
      */
     template <Axis A, Axis B, Axis C>
-    static CMSISMat<3, 3> fromEulerSequence(const float a, const float b, const float c)
+    static Orientation fromIntrinsicSequence(const float a, const float b, const float c)
     {
-        auto matA = singleAxisRot<A>(a);
-        auto matB = singleAxisRot<B>(b);
-        auto matC = singleAxisRot<C>(c);
+        modm::Matrix3f matA = singleAxisRot<A>(a);
+        modm::Matrix3f matB = singleAxisRot<B>(b);
+        modm::Matrix3f matC = singleAxisRot<C>(c);
 
         // compiler should unroll and optimize 1s and 0s here
-        auto res = matC * matB * matA;
+        modm::Matrix3f res = matA * matB * matC;
 
-        return tap::algorithms::CMSISMat<3, 3>(res.element);
+        return Orientation(tap::algorithms::CMSISMat<3, 3>(res.element));
     }
 
     /**
-     * @brief Generalized angle sequence generator.
+     * @brief Constructs an `Orientation` from a sequence of intrinsic rotations about the specified
+     * axes.
+     * @note "Intrinsic" means that successive rotations are performed in the newly rotated frame.
      */
     template <Axis A, Axis B>
-    static CMSISMat<3, 3> fromEulerSequence(const float a, const float b)
+    static Orientation fromIntrinsicSequence(const float a, const float b)
     {
-        auto matA = singleAxisRot<A>(a);
-        auto matB = singleAxisRot<B>(b);
+        modm::Matrix3f matA = singleAxisRot<A>(a);
+        modm::Matrix3f matB = singleAxisRot<B>(b);
 
         // compiler should unroll and optimize 1s and 0s here
-        auto res = matB * matA;
+        modm::Matrix3f res = matA * matB;
 
-        return tap::algorithms::CMSISMat<3, 3>(res.element);
+        return Orientation(tap::algorithms::CMSISMat<3, 3>(res.element));
     }
 
     /**
-     * @brief Extracts Euler angles from the rotation matrix for a given axis sequence.
+     * @brief Constructs an `Orientation` from a sequence of extrinsic rotations about the specified
+     * axes.
+     * @note "Extrinsic" means that all rotations are performed in the base frame.
+     * @example typical roll pitch yaw would be `fromExtrinsicSequence<ROLL, PITCH, YAW>`
+     */
+    template <Axis A, Axis B, Axis C>
+    static Orientation fromExtrinsicSequence(const float a, const float b, const float c)
+    {
+        modm::Matrix3f matA = singleAxisRot<A>(a);
+        modm::Matrix3f matB = singleAxisRot<B>(b);
+        modm::Matrix3f matC = singleAxisRot<C>(c);
+
+        // compiler should unroll and optimize 1s and 0s here
+        modm::Matrix3f res = matC * matB * matA;
+
+        return Orientation(tap::algorithms::CMSISMat<3, 3>(res.element));
+    }
+
+    /**
+     * @brief Constructs an `Orientation` from a sequence of extrinsic rotations about the specified
+     * axes.
+     * @note "Extrinsic" means that all rotations are performed in the base frame.
+     */
+    template <Axis A, Axis B>
+    static Orientation fromExtrinsicSequence(const float a, const float b)
+    {
+        modm::Matrix3f matA = singleAxisRot<A>(a);
+        modm::Matrix3f matB = singleAxisRot<B>(b);
+
+        // compiler should unroll and optimize 1s and 0s here
+        modm::Matrix3f res = matB * matA;
+
+        return Orientation(tap::algorithms::CMSISMat<3, 3>(res.element));
+    }
+
+    /**
+     * @brief Extracts intrinsic Euler angles from the rotation matrix for a given axis sequence.
+     * @note "Intrinsic" means that successive rotations are performed in the newly rotated frame
      * @return std::array<float, 3> containing {angleA, angleB, angleC}
      */
     template <Axis A, Axis B, Axis C>
-    std::array<float, 3> toEulerSequence() const
+    std::array<float, 3> toIntrinsicSequence() const
     {
-        // consecutive axes cannot be the same (e.g., XXY is invalid)
         static_assert(A != B && B != C, "Consecutive axes cannot be the same.");
 
-        return EulerExtractor<A, B, C>::extract(matrix_.data.data());
+        return IntrinsicEulerExtractor<A, B, C>::extract(matrix_.data.data());
+    }
+
+    /**
+     * @brief Extracts extrinsic Euler angles from the rotation matrix for a given axis sequence.
+     * @note "Extrinsic" means that all rotations are performed in the base frame.
+     * @return std::array<float, 3> containing {angleA, angleB, angleC}
+     */
+    template <Axis A, Axis B, Axis C>
+    std::array<float, 3> toExtrinsicSequence() const
+    {
+        static_assert(A != B && B != C, "Consecutive axes cannot be the same.");
+
+        auto extracted = IntrinsicEulerExtractor<C, B, A>::extract(matrix_.data.data());
+        return {extracted[2], extracted[1], extracted[0]};
     }
 
     /**
@@ -344,7 +398,7 @@ private:
     }
 
     /**
-     * @brief Generates a standard single-axis rotation matrix using modm::Matrix.
+     * @brief Generates a single-axis rotation matrix using modm::Matrix.
      */
     template <Axis ax>
     static inline modm::Matrix<float, 3, 3> singleAxisRot(const float angle)

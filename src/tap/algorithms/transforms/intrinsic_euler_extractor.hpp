@@ -36,7 +36,7 @@ struct always_false : std::false_type
 
 // Fallback for unimplemented sequences
 template <Axis A, Axis B, Axis C>
-struct EulerExtractor
+struct IntrinsicEulerExtractor
 {
     // this always_false templatization is needed to delay assert evaluation until template
     // parameters are known, at which point it will only fail if a specialization isn't found.
@@ -49,7 +49,7 @@ struct EulerExtractor
 };
 
 template <>
-struct EulerExtractor<Axis::Z, Axis::Y, Axis::X>
+struct IntrinsicEulerExtractor<Axis::Z, Axis::Y, Axis::X>
 {
     static std::array<float, 3> extract(const float* rotation)
     {
@@ -79,7 +79,7 @@ struct EulerExtractor<Axis::Z, Axis::Y, Axis::X>
 };
 
 template <>
-struct EulerExtractor<Axis::X, Axis::Y, Axis::Z>
+struct IntrinsicEulerExtractor<Axis::X, Axis::Y, Axis::Z>
 {
     static std::array<float, 3> extract(const float* rotation)
     {

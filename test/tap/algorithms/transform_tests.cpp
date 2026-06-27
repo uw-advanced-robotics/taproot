@@ -609,20 +609,44 @@ TEST(Transform, compose_with_identity)
     expectEq(identity.compose(t), t);
 }
 
-TEST(Orientation, generalized_euler_sequence_roundtrip)
+TEST(Orientation, rpy_generalization_consistency)
 {
     float roll = 0.1f, pitch = 0.2f, yaw = 0.3f;
 
-    // Create matrix from sequence
-    auto mat = Orientation::fromEulerSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>(roll, pitch, yaw);
-    Orientation ori(mat);
+    Orientation a =
+        Orientation::fromExtrinsicSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>(roll, pitch, yaw);
 
-    // Check if the extracted angles match the input (within precision limits)
-    auto extracted = ori.toEulerSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>();
+    Orientation b(Orientation::fromRollPitchYaw(roll, pitch, yaw));
+
+    expectEq(a, b);
+}
+
+TEST(Orientation, generalized_rpy_sequence_roundtrip)
+{
+    float roll = 0.1f, pitch = 0.2f, yaw = 0.3f;
+
+    Orientation ori =
+        Orientation::fromIntrinsicSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>(roll, pitch, yaw);
+
+    auto extracted = ori.toIntrinsicSequence<Axis::ROLL, Axis::PITCH, Axis::YAW>();
 
     EXPECT_NEAR(extracted[0], roll, 1e-4f);
     EXPECT_NEAR(extracted[1], pitch, 1e-4f);
     EXPECT_NEAR(extracted[2], yaw, 1e-4f);
+}
+
+TEST(Orientation, generalized_ypr_sequence_roundtrip)
+{
+    float roll = 0.1f, pitch = 0.2f, yaw = 0.3f;
+
+    Orientation ori =
+        Orientation::fromIntrinsicSequence<Axis::YAW, Axis::PITCH, Axis::ROLL>(yaw, pitch, roll);
+
+    auto extracted = ori.toIntrinsicSequence<Axis::YAW, Axis::PITCH, Axis::ROLL>();
+
+    EXPECT_NEAR(extracted[0], yaw, 1e-4f);
+    EXPECT_NEAR(extracted[1], pitch, 1e-4f);
+    EXPECT_NEAR(extracted[2], roll, 1e-4f);
 }
 
 TEST(Transform, transpose_proxy_consistency)
