@@ -91,6 +91,21 @@ public:
         return DynamicPosition(-this->position, -this->velocity, -this->acceleration);
     }
 
+    DynamicPosition projectForward(float dt) const
+    {
+        if (compareFloatClose(velocity.magnitudeSq(), 0, 1e-4) &&
+            compareFloatClose(acceleration.magnitudeSq(), 0, 1e-4))
+        {
+            return DynamicPosition(this->position, this->velocity, this->acceleration);
+        }
+
+        CMSISMat<3, 1> newPos = this->position.coordinates_ + dt * this->velocity.coordinates_ +
+                                0.5f * dt * dt * this->acceleration.coordinates_;
+        CMSISMat<3, 1> newVel = this->velocity.coordinates_ + dt * this->acceleration.coordinates_;
+
+        return DynamicPosition(newPos, newVel, this->acceleration);
+    }
+
     inline const Position& getPosition() const { return position; }
     inline const Vector& getVelocity() const { return velocity; }
     inline const Vector& getAcceleration() const { return acceleration; }

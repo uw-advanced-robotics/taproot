@@ -84,6 +84,27 @@ public:
               this->rotation.matrix_));
     }
 
+    DynamicOrientation projectForward(float dt) const
+    {
+        if (compareFloatClose(angularVelocity[Axis::X], 0, 1e-5) &&
+            compareFloatClose(angularVelocity[Axis::Y], 0, 1e-5) &&
+            compareFloatClose(angularVelocity[Axis::Z], 0, 1e-5))
+        {
+            return DynamicOrientation(this->rotation, this->angularVelocity);
+        }
+
+        float angVelMag = this->angularVelocity.toVector().magnitude();
+
+        float theta = dt * angVelMag;
+        CMSISMat<3, 3> angVelNormalized = this->angularVelocity.toSkewMatrix() / angVelMag;
+        CMSISMat<3, 3> velDt = CMSISMat<3, 3>();
+        velDt.constructIdentityMatrix();
+        velDt = velDt + sin(theta) * angVelNormalized +
+                (1 - cos(theta)) * angVelNormalized * angVelNormalized;
+        CMSISMat<3, 3> newRot = velDt * this->rotation.matrix_;
+        return DynamicOrientation(newRot, this->angularVelocity);
+    }
+
     inline const Orientation& getRotation() const { return rotation; }
     inline const AngularVelocity& getAngularVelocity() const { return angularVelocity; }
 

@@ -391,7 +391,7 @@ Transform Transform::composeStatic(const Transform& second) const
 
 Transform Transform::projectForward(float dt) const
 {
-    if (!dynamic)
+    if (!dynamic || compareFloatClose(dt, 0, 1e-5))
     {
         return Transform(
             this->translation,
@@ -401,25 +401,9 @@ Transform Transform::projectForward(float dt) const
             this->angVel);
     }
 
-    CMSISMat<3, 1> newPos = this->translation.coordinates_ + dt * this->transVel.coordinates_ +
-                            0.5f * dt * dt * this->transAcc.coordinates_;
-    CMSISMat<3, 1> newVel = this->transVel.coordinates_ + dt * this->transAcc.coordinates_;
-
-    float angVelMag = this->angVel.toVector().magnitude();
-
-    if (compareFloatClose(angVelMag, 0, 1e-3))
-    {
-        return Transform(newPos, this->rotation, newVel, this->transAcc, this->angVel);
-    }
-
-    float theta = dt * angVelMag;
-    CMSISMat<3, 3> angVelNormalized = this->angVel.toSkewMatrix() / angVelMag;
-    CMSISMat<3, 3> velDt = CMSISMat<3, 3>();
-    velDt.constructIdentityMatrix();
-    velDt = velDt + sin(theta) * angVelNormalized +
-            (1 - cos(theta)) * angVelNormalized * angVelNormalized;
-    CMSISMat<3, 3> newRot = velDt * this->rotation.matrix_;
-    return Transform(newPos, newRot, newVel, this->transAcc, this->angVel);
+    return Transform(
+        getDynamicTranslation().projectForward(dt),
+        getDynamicOrientation().projectForward(dt));
 }
 
 }  // namespace tap::algorithms::transforms
