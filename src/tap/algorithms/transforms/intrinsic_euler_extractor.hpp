@@ -110,5 +110,43 @@ struct IntrinsicEulerExtractor<Axis::X, Axis::Y, Axis::Z>
         return {angleA, angleB, angleC};
     }
 };
+
+template <>
+struct IntrinsicEulerExtractor<Axis::X, Axis::Y, Axis::X>
+{
+    static std::array<float, 3> extract(const float* rotation)
+    {
+        float angleA, angleB, angleC;
+        float cos_b = rotation[0];  // m00
+
+        // sin^2(beta) = m01^2 + m02^2
+        float sin_b = std::sqrt(rotation[1] * rotation[1] + rotation[2] * rotation[2]);
+
+        // gimbal lock
+        if (sin_b < 1e-6f)
+        {
+            if (cos_b > 0.0f)
+            {
+                angleA = 0.0f;
+                angleB = 0.0f;
+                angleC = std::atan2(rotation[7], rotation[4]);  // atan2(m21, m11)
+            }
+            else
+            {
+                angleA = 0.0f;
+                angleB = M_PI;
+                angleC = std::atan2(-rotation[7], rotation[4]);  // atan2(-m21, m11)
+            }
+        }
+        else
+        {
+            angleA = std::atan2(rotation[3], -rotation[6]);  // atan2(m10, -m20)
+            angleB = std::atan2(sin_b, cos_b);               // atan2(sin_b, cos_b)
+            angleC = std::atan2(rotation[1], rotation[2]);   // atan2(m01, m02)
+        }
+
+        return {angleA, angleB, angleC};
+    }
+};
 }  // namespace tap::algorithms::transforms
 #endif  // TAPROOT_INTRINSIC_EULER_EXTRACTOR_HPP_
