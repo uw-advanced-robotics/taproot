@@ -17,8 +17,8 @@
  * along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef TAPROOT_EULER_EXTRACTOR_HPP_
-#define TAPROOT_EULER_EXTRACTOR_HPP_
+#ifndef TAPROOT_INTRINSIC_EULER_EXTRACTOR_HPP_
+#define TAPROOT_INTRINSIC_EULER_EXTRACTOR_HPP_
 
 #include <array>
 #include <cmath>
@@ -45,6 +45,9 @@ struct IntrinsicEulerExtractor
         "Euler sequence extraction not yet implemented for these axes! "
         "You must manually derive and add the extraction equations.");
 
+    /**
+     * @param rotation pointer to row-major rotation matrix array
+     */
     static std::array<float, 3> extract(const float*) { return {}; }
 };
 
@@ -108,4 +111,4 @@ struct IntrinsicEulerExtractor<Axis::X, Axis::Y, Axis::Z>
     }
 };
 }  // namespace tap::algorithms::transforms
-#endif  // TAPROOT_EULER_EXTRACTOR_HPP_
+#endif  // TAPROOT_INTRINSIC_EULER_EXTRACTOR_HPP_
