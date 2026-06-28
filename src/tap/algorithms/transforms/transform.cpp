@@ -214,12 +214,10 @@ DynamicPosition Transform::applyReverse(const DynamicPosition& p) const
 {
     CMSISMat<3, 3> angVelSkewMat = angVel.toSkewMatrix();
     Position pf = applyReverse(p.position);
-    Vector vf = rotation * p.velocity + transVel +
-                angVelSkewMat * rotation * p.position.toVector();
-    Vector af =
-        rotation * p.acceleration + transAcc +
-        angVelSkewMat * (2.0f * (rotation * p.velocity) +
-                         angVelSkewMat * rotation * p.position.toVector());
+    Vector vf = rotation * p.velocity + transVel + angVelSkewMat * rotation * p.position.toVector();
+    Vector af = rotation * p.acceleration + transAcc +
+                angVelSkewMat * (2.0f * (rotation * p.velocity) +
+                                 angVelSkewMat * rotation * p.position.toVector());
 
     return DynamicPosition(pf, vf, af);
 }
