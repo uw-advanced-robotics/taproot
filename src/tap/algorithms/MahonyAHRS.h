@@ -22,8 +22,6 @@
 
 #include <cmath>
 
-#include "tap/algorithms/transforms/orientation.hpp"
-
 #include "modm/math/geometry/angle.hpp"
 
 //--------------------------------------------------------------------------------------------
@@ -37,7 +35,7 @@ private:
     float q0, q1, q2, q3;  // quaternion of sensor frame relative to auxiliary frame
     float integralFBx, integralFBy, integralFBz;  // integral error terms scaled by Ki
     float invSampleFreq;
-    tap::algorithms::transforms::Orientation orientation;
+    float roll, pitch, yaw;
     static float invSqrt(float x);
     void computeAngles();
 
@@ -61,7 +59,9 @@ public:
         integralFBx = 0.0f;
         integralFBy = 0.0f;
         integralFBz = 0.0f;
-        orientation = tap::algorithms::transforms::Orientation();
+        roll = 0.0f;
+        pitch = 0.0f;
+        yaw = 0.0f;
     }
     void update(
         float gx,
@@ -74,10 +74,9 @@ public:
         float my,
         float mz);
     void updateIMU(float gx, float gy, float gz, float ax, float ay, float az);
-    float getRoll() const { return orientation.roll(); }
-    float getPitch() const { return orientation.pitch(); }
-    float getYaw() const { return orientation.yaw(); }
-    const tap::algorithms::transforms::Orientation& getOrientation() const { return orientation; }
+    float getRoll() const { return roll; }
+    float getPitch() const { return pitch; }
+    float getYaw() const { return fmod(yaw + M_TWOPI, M_TWOPI); }
 };
 
 #endif  // MAHONY_AHRS_H_

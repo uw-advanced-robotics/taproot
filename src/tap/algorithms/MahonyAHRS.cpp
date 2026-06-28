@@ -55,7 +55,9 @@ Mahony::Mahony()
     integralFBy = 0.0f;
     integralFBz = 0.0f;
     invSampleFreq = 1.0f / DEFAULT_SAMPLE_FREQ;
-    orientation = tap::algorithms::transforms::Orientation();
+    roll = 0.0f;
+    pitch = 0.0f;
+    yaw = 0.0f;
 }
 
 void Mahony::update(
@@ -260,10 +262,9 @@ void Mahony::updateIMU(float gx, float gy, float gz, float ax, float ay, float a
 
 void Mahony::computeAngles()
 {
-    // roll = atan2f(q0 * q1 + q2 * q3, 0.5f - q1 * q1 - q2 * q2);
-    // pitch = asinf(-2.0f * (q1 * q3 - q0 * q2));
-    // yaw = atan2f(q1 * q2 + q0 * q3, 0.5f - q2 * q2 - q3 * q3);
-    orientation = tap::algorithms::transforms::Orientation::fromQuaternion(q0, q1, q2, q3);
+    roll = atan2f(q0 * q1 + q2 * q3, 0.5f - q1 * q1 - q2 * q2);
+    pitch = asinf(-2.0f * (q1 * q3 - q0 * q2));
+    yaw = atan2f(q1 * q2 + q0 * q3, 0.5f - q2 * q2 - q3 * q3);
 }
 
 template <typename From, typename To>
