@@ -293,13 +293,14 @@ bool RefSerial::decodeToRobotStatus(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToPowerAndHeat(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength != 14)
+    if (message.header.dataLength < 14)
     {
         return false;
     }
     convertFromLittleEndian(&robotData.chassis.powerBuffer, message.data + 8);
     convertFromLittleEndian(&robotData.turret.heat17, message.data + 10);
     convertFromLittleEndian(&robotData.turret.heat42, message.data + 12);
+    robotData.chassis.powerHeatDataReceivedTimestamp = clock::getTimeMilliseconds();
     return true;
 }
 

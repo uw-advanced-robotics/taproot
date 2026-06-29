@@ -77,8 +77,8 @@ public:
      * parser yet. They are values that are used in message headers to indicate the type of message
      * we have received.
      *
-     * Current Ref Serial Version: RoboMaster 2026 1.1.0
-     * Updated January 2026.
+     * Current Ref Serial Version: RoboMaster 2026 1.3.1
+     * Updated May 2026.
      */
     enum MessageType
     {
