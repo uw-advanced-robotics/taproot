@@ -23,6 +23,7 @@
 #include "tap/drivers.hpp"
 #include "tap/mock/dji_motor_mock.hpp"
 #include "tap/motor/dji_motor_tx_handler.hpp"
+#include "tap/test_macros.hpp"
 
 using namespace testing;
 using namespace tap;
@@ -144,7 +145,7 @@ TEST_F(DjiMotorTxHandlerTest, addMotorToManager_multiple_unique_motor_ids)
 
 TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_motor_not_added_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     DjiMotor m1(&drivers, motor::MOTOR1, can::CanBus::CAN_BUS1, false, "hi");
     DjiMotor m2(&drivers, motor::MOTOR2, can::CanBus::CAN_BUS1, false, "hi");
@@ -156,7 +157,7 @@ TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_motor_not_added_errors)
 
 TEST_F(DjiMotorTxHandlerTest, removeFromMotorManager_invalid_motor_id_errors)
 {
-    EXPECT_CALL(drivers.errorController, addToErrorList).Times(2);
+    EXPECT_ERROR_TIMES(2);
 
     ON_CALL(*motors[0], getMotorIdentifier).WillByDefault(Return(motor::MOTOR1 - 1));
     ON_CALL(*motors[1], getMotorIdentifier).WillByDefault(Return(motor::MOTOR8 + 1));
@@ -194,7 +195,7 @@ TEST_F(DjiMotorTxHandlerTest, encodeAndSendCanData_error_if_sendMessage_fails)
 {
     ON_CALL(drivers.can, sendMessage).WillByDefault(Return(false));
 
-    EXPECT_CALL(drivers.errorController, addToErrorList);
+    EXPECT_ERROR();
 
     addAllMotors();
 

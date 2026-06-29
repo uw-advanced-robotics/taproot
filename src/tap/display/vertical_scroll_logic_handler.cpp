@@ -19,6 +19,8 @@
 
 #include "vertical_scroll_logic_handler.hpp"
 
+#include <cmath>
+
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 

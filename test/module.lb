@@ -20,39 +20,141 @@ MOCK_DIRECTORY = "tap/mock"
 import sys
 import os
 import platform
-sys.path.append(repopath("src"))
-import drivers
+
+MODULES_TO_MOCK = {
+    ":algorithms:odometry": {
+        "odometry_2d_interface_mock.hpp",
+    },
+    ":communication:can": {
+        "can_mock.cpp",
+        "can_mock.hpp",
+        "can_rx_handler_mock.cpp",
+        "can_rx_handler_mock.hpp",
+        "can_rx_listener_mock.cpp",
+        "can_rx_listener_mock.hpp",
+    },
+    ":communication:gpio:analog": {
+        "analog_mock.cpp",
+        "analog_mock.hpp",
+    },
+    ":communication:gpio:digital": {
+        "digital_mock.cpp",
+        "digital_mock.hpp",
+    },
+    ":communication:gpio:leds": {
+        "leds_mock.cpp",
+        "leds_mock.hpp",
+    },
+    ":communication:gpio:pwm": {
+        "pwm_mock.cpp",
+        "pwm_mock.hpp",
+    },
+    ":communication:sensors:encoder": {
+        "encoder_interface_mock.cpp",
+        "encoder_interface_mock.hpp",
+    },
+    ":communication:sensors:imu": {
+        "abstract_imu_mock.cpp",
+        "abstract_imu_mock.hpp",
+        "imu_interface_mock.cpp",
+        "imu_interface_mock.hpp",
+    },
+    ":communication:sensors:imu:mpu6500": {
+        "mpu6500_mock.cpp",
+        "mpu6500_mock.hpp",
+    },
+    ":communication:sensors:imu:bmi088": {
+        "bmi088_mock.cpp",
+        "bmi088_mock.hpp",
+    },
+    ":communication:serial": {
+        "uart_mock.cpp",
+        "uart_mock.hpp",
+    },
+    ":communication:serial:ref_serial": {
+        "ref_serial_mock.cpp",
+        "ref_serial_mock.hpp",
+        "ref_serial_transmitter_mock.cpp",
+        "ref_serial_transmitter_mock.hpp",
+        "robot_to_robot_message_handler_mock.cpp",
+        "robot_to_robot_message_handler_mock.hpp",
+    },
+    ":communication:serial:remote": {
+        "remote_mock.cpp",
+        "remote_mock.hpp",
+    },
+    ":communication:serial:terminal_serial": {
+        "terminal_serial_callback_interface_mock.cpp",
+        "terminal_serial_callback_interface_mock.hpp",
+        "terminal_serial_mock.cpp",
+        "terminal_serial_mock.hpp",
+    },
+    ":control": {
+        "command_governor_interface_mock.cpp",
+        "command_governor_interface_mock.hpp",
+        "command_mapper_mock.cpp",
+        "command_mapper_mock.hpp",
+        "command_mock.cpp",
+        "command_mock.hpp",
+        "command_scheduler_mock.cpp",
+        "command_scheduler_mock.hpp",
+        "hold_repeat_command_mapping_mock.cpp",
+        "hold_repeat_command_mapping_mock.hpp",
+        "integrable_setpoint_subsystem_mock.cpp",
+        "integrable_setpoint_subsystem_mock.hpp",
+        "hold_repeat_command_mapping_mock.cpp",
+        "move_integral_command_mock.cpp",
+        "move_integral_command_mock.hpp",
+        "setpoint_subsystem_mock.cpp",
+        "setpoint_subsystem_mock.hpp",
+        "subsystem_mock.cpp",
+        "subsystem_mock.hpp",
+        "unjam_integral_command_mock.cpp",
+        "unjam_integral_command_mock.hpp",
+    },
+    ":errors": {
+        "error_controller_mock.cpp",
+        "error_controller_mock.hpp",
+    },
+    ":motor": {
+        "motor_interface_mock.cpp",
+        "motor_interface_mock.hpp",
+        "dji_motor_encoder_mock.cpp",
+        "dji_motor_encoder_mock.hpp",
+        "dji_motor_mock.cpp",
+        "dji_motor_mock.hpp",
+        "dji_motor_tx_handler_mock.cpp",
+        "dji_motor_tx_handler_mock.hpp",
+    },
+    ":motor:terminal_serial": {
+        "dji_motor_terminal_serial_handler_mock.cpp",
+        "dji_motor_terminal_serial_handler_mock.hpp",
+    },
+    ":communication:sensors:imu:terminal_serial": {
+        "imu_terminal_serial_handler_mock.cpp",
+        "imu_terminal_serial_handler_mock.hpp",
+    },
+    ":control:terminal_serial": {
+        "scheduler_terminal_handler_mock.cpp",
+        "scheduler_terminal_handler_mock.hpp",
+    },
+}
+
 
 class Mock(Module):
     def init(self, module):
         module.name = ":testing:mock"
 
     def prepare(self, module, options):
-        module.depends(":core")
         return True
 
     def build(self, env):
-        mock_driver_headers_to_include = drivers.get_mock_headers_sorted(env)
-
-        # Ignore all mock driver files that are not being generated
-        mock_driver_files_to_ignore = []
-        for driver in drivers.DRIVERS_AND_MODULE_DEPENDENCIES:
-            if driver["mock-header"] not in mock_driver_headers_to_include:
-                # Add header and source files to the ignore list
-                mock_driver_files_to_ignore.append(driver["mock-header"])
-                mock_driver_files_to_ignore.append(os.path.splitext(driver["mock-header"])[0] + ".cpp")
-
         env.outbasepath = "taproot/test"
 
-        mock_includes = []
-        # Copy all files from the mock directory except for driver mocks that should
-        # be ignored
-        files_to_copy = os.listdir(repopath(f"test/{MOCK_DIRECTORY}"))
-        for file in files_to_copy:
-            mock_file = f"{MOCK_DIRECTORY}/{file}"
-            if mock_file not in mock_driver_files_to_ignore:
-                env.copy(mock_file)
-                mock_includes.append(mock_file)
+        for module, mocks in MODULES_TO_MOCK.items():
+            if env.has_module(module):
+                for mock in mocks:
+                    env.copy(f"{MOCK_DIRECTORY}/{mock}")
 
         env.copy("tap/stub")
 
@@ -61,49 +163,62 @@ class TaprootTests(Module):
         module.name = ":testing:tests"
 
     def prepare(self, module, options):
-        module.depends(
-            ":testing:mock",
-            ":core")
+        module.depends(":testing:mock")
         return True
 
     def build(self, env):
         env.outbasepath = "taproot/test"
         if env.has_module(":display"):
             env.copy("tap/display")
-        if env.has_module(":core"):
+        if env.has_module(":algorithms"):
             env.copy("tap/algorithms")
-            env.copy("tap/architecture")
-            env.copy("tap/motor")
+        if env.has_module(":architecture"):
+            env.copy("tap/architecture/timeout_tests.cpp")
+            env.copy("tap/architecture/endian_wrappers_test.cpp")
+        if env.has_module(":architecture:profiler"):
+            env.copy("tap/architecture/profiler_tests.cpp")
+        if env.has_module(":motor"):
+            env.copy("tap/motor", ignore=env.ignore_files("dji_motor_terminal_serial_handler_tests.cpp", "motorsim"))
+        if env.has_module(":motor:motorsim"):
+            env.copy("tap/motor/motorsim")
+        if env.has_module(":motor:terminal_serial"):
+            env.copy("tap/motor/dji_motor_terminal_serial_handler_tests.cpp")
+        if env.has_module(":communication:serial"):
             env.copy("tap/communication/serial/dji_serial_tests.cpp")
+        if env.has_module(":communication:serial:remote"):
             env.copy("tap/communication/serial/remote_tests.cpp")
         if env.has_module(":communication:can"):
             env.copy("tap/communication/can")
         if env.has_module("taproot:communication:sensors:encoder"):
             env.copy("tap/communication/sensors/encoder/multi_encoder_tests.cpp")
             env.copy("tap/communication/sensors/encoder/wrapped_encoder_tests.cpp")
-        if env.has_module(":communication:tcp-server"):
-            if platform.system() == "Linux":
-                env.copy("tap/communication/tcp-server")
-            else:
-                env.copy("tap/communication/tcp-server/json_generation_tests.cpp")
+            env.copy("tap/communication/sensors/encoder/fallback_encoder_tests.cpp")
+            env.copy("tap/communication/sensors/encoder/aligning_encoder_tests.cpp")
         if env.has_module(":communication:serial:ref_serial"):
             env.copy("tap/communication/serial/ref_serial_tests.cpp")
             env.copy("tap/communication/serial/ref_serial_transmitter_tests.cpp")
         if env.has_module(":communication:serial:terminal_serial"):
             env.copy("tap/communication/serial/terminal_serial_tests.cpp")
+        if env.has_module(":communication:tcp-server"):
+            if platform.system() == "Linux":
+                env.copy("tap/communication/tcp-server")
+            else:
+                env.copy("tap/communication/tcp-server/json_generation_tests.cpp")
         if env.has_module(":errors"):
             env.copy("tap/errors")
-        env.copy("tap/control")
+        if env.has_module(":control"):
+            env.copy("tap/control", ignore=env.ignore_files("scheduler_terminal_handler_tests.cpp"))
+        if env.has_module(":control:terminal_serial"):
+            env.copy("tap/control/scheduler_terminal_handler_tests.cpp")
         if env.has_module("taproot:communication:sensors:encoder:can_encoder"):
             env.copy("tap/communication/sensors/encoder/can_encoder_tests.cpp")
-        if env.has_module("taproot:communication:sensors:mpu6500"):
-            env.copy("tap/communication/sensors/mpu6500")
         if env.has_module(":communication:sensors:imu:bmi088"):
             env.copy("tap/communication/sensors/imu/bmi088")
-        if env.has_module(":communication:sensors:imu:"):
+        if env.has_module(":communication:sensors:imu:terminal_serial"):
             env.copy("tap/communication/sensors/imu/imu_terminal_serial_handler_tests.cpp")
         if env.has_module(":communication:sensors:imu_heater"):
             env.copy("tap/communication/sensors/imu_heater")
+        env.copy("tap/test_macros.hpp")
 
 def init(module):
     module.name = ":testing"

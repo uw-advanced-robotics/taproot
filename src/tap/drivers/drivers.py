@@ -35,7 +35,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/architecture/profiler.hpp",
         "mock-header": "tap/architecture/profiler.hpp",
         "constructor": "this",
-        "module-dependencies": [":communication:gpio:analog"],
+        "module-dependencies": [":architecture:profiler"],
     },
     {
         "object-name": "gpio::Analog",
@@ -43,7 +43,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/communication/gpio/analog.hpp",
         "mock-header": "tap/mock/analog_mock.hpp",
         "constructor": "",
-        "module-dependencies": "",
+        "module-dependencies": [":communication:gpio:analog"],
     },
     {
         "object-name": "can::Can",
@@ -123,7 +123,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/communication/serial/terminal_serial.hpp",
         "mock-header": "tap/mock/terminal_serial_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":communication:serial:terminal_serial"],
     },
     {
         "object-name": "control::CommandMapper",
@@ -131,7 +131,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/control/command_mapper.hpp",
         "mock-header": "tap/mock/command_mapper_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":control"],
     },
     {
         "object-name": "control::SchedulerTerminalHandler",
@@ -139,7 +139,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/control/scheduler_terminal_handler.hpp",
         "mock-header": "tap/mock/scheduler_terminal_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":control:terminal_serial"],
     },
     {
         "object-name": "errors::ErrorController",
@@ -147,7 +147,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/errors/error_controller.hpp",
         "mock-header": "tap/mock/error_controller_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":errors"],
     },
     {
         "object-name": "motor::DjiMotorTerminalSerialHandler",
@@ -155,7 +155,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/motor/dji_motor_terminal_serial_handler.hpp",
         "mock-header": "tap/mock/dji_motor_terminal_serial_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": [":communication:serial:terminal_serial"],
+        "module-dependencies": [":motor:terminal_serial"],
     },
     {
         "object-name": "motor::DjiMotorTxHandler",
@@ -163,7 +163,7 @@ DRIVERS_AND_MODULE_DEPENDENCIES = [
         "src-file": "tap/motor/dji_motor_tx_handler.hpp",
         "mock-header": "tap/mock/dji_motor_tx_handler_mock.hpp",
         "constructor": "this",
-        "module-dependencies": "",
+        "module-dependencies": [":motor"],
     },
     {
         "object-name": "communication::sensors::imu::bmi088::Bmi088",

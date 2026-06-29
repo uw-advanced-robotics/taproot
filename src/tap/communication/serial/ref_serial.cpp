@@ -149,12 +149,18 @@ void RefSerial::messageReceiveCallback(const ReceivedSerialMessage& completeMess
             decodeToRadarInfo(completeMessage);
             break;
         }
+        case REF_MESSAGE_TYPE_CUSTOM_CONTROLLER_DATA_RECEIVE:
+        {
+            decodeToCustomControllerData(completeMessage);
+            break;
+        }
 
         case REF_MESSAGE_TYPE_CUSTOM_DATA:
         {
             handleRobotToRobotCommunication(completeMessage);
             break;
         }
+
         // TODO: Other Custom Data stuff
         default:
             break;
@@ -447,6 +453,18 @@ bool RefSerial::decodeToRadarInfo(const ReceivedSerialMessage& message)
 
     gameData.radar.availableDoubleVulnerablilityEffects = message.data[0] & 0x03;
     gameData.radar.activeDoubleVulnerabilityEffect = (message.data[0] >> 2) & 0x01;
+
+    return true;
+}
+
+bool RefSerial::decodeToCustomControllerData(const ReceivedSerialMessage& message)
+{
+    if (message.header.dataLength > 30)
+    {
+        return false;
+    }
+
+    memcpy(robotData.customControllerData.data, message.data, message.header.dataLength);
 
     return true;
 }

@@ -1,0 +1,159 @@
+# Copyright (c) 2025 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+default:
+  image: aruw/mcb-2020-gitlab-ci:2021-06-02.1
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+  NUM_JOBS: 4
+  ADDITIONAL_CI_BUILD_ARGS: -j${NUM_JOBS} additional-ccflags=-Werror
+
+stages:
+  - Generate Project
+  - Build all Targets
+  - Sim all Targets
+  - Test all Targets
+
+.run_lbuild:
+  stage: "Generate Project"
+  script:
+    - cd test-project
+    - xml=$(python3 ../gitlab-ci-scripts/project_xml_generation.py $DEVICE $MODULES $OPTIONS)
+    - lbuild -c $xml build
+    - cd ..
+  artifacts:
+    paths:
+      - test-project
+
+.mcb_build:
+  stage: "Build all Targets"
+  script:
+    - cd test-project
+    - scons build $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/hardware/scons-release/
+      fallback_keys:
+        - tap-build-$CONFIG_HASH-develop
+      when: 'always'
+
+.sim_build:
+  stage: "Sim all Targets"
+  script:
+    - cd test-project
+    - scons build-sim profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  cache:
+    - key: tap-build-sim-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/sim/scons-fast/
+      fallback_keys:
+        - tap-build-sim-$CONFIG_HASH-develop
+      when: 'always'
+
+.tests_build:
+  stage: "Test all Targets"
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - cd test-project
+    - scons run-tests profile=fast $ADDITIONAL_CI_BUILD_ARGS
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
+    expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$CONFIG_HASH-develop
+      when: 'always'
+
+.tests_build_coverage:
+  stage: "Test all Targets"
+  variables:
+    GIT_SUBMODULE_STRATEGY: normal
+  script:
+    - cd test-project
+    - scons run-tests-gcov profile=fast $ADDITIONAL_CI_BUILD_ARGS
+    - valgrind --leak-check=full --error-exitcode=1 --show-leak-kinds=all build/tests/scons-fast/test-project-tests.elf --gtest_filter=-*DEATH*
+    - cd .. && gcovr -g --xml > cobertura.xml
+    - 'sed -i "s;filename=\"taproot/;filename=\";g" cobertura.xml'
+    - python3 ./taproot-scripts/shift_cobertura_line_numbers.py --shift-lines -4 --package-names 'taproot.(src|test).*' --out-file cobertura.xml
+  coverage: '/\s+Total:\|(\d+.\d+\%).+\|.+\|.+/'
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-tests"
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: cobertura.xml
+    expire_in: 2 weeks
+  cache:
+    - key: tap-build-tests-$CONFIG_HASH-$CI_COMMIT_REF_SLUG
+      paths:
+        - test-project/build/tests/scons-fast/
+      fallback_keys:
+        - tap-build-tests-$CONFIG_HASH-develop
+      when: 'always'
+
+{% for config in configs %}
+"Generate Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  extends:
+    - .run_lbuild
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+    DEVICE: {{ config["device"] }}
+    MODULES: {{ config["modules"] }}
+    OPTIONS: {{ config["options"] }}
+
+"Build Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
+  extends:
+    - .mcb_build
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+
+"Sim Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
+  extends:
+    - .sim_build
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+
+"Test Project. {{ config["name"] }}":
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
+  needs: ["Generate Project. {{ config["name"] }}"]
+  dependencies: ["Generate Project. {{ config["name"] }}"]
+  extends:
+%% if config["run_coverage"]
+    - .tests_build_coverage
+%% else
+    - .tests_build
+%% endif
+  variables:
+    CONFIG_HASH: {{ config["hash"] }}
+{% endfor %}

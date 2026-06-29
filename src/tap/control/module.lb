@@ -1,0 +1,63 @@
+# Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+#
+# This file is part of Taproot.
+#
+# Taproot is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Taproot is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Taproot.  If not, see <https://www.gnu.org/licenses/>.
+
+TERMINAL_SERIAL_FILES = ["scheduler_terminal_handler.cpp", "scheduler_terminal_handler.hpp"]
+
+class TerminalSerial(Module):
+    def init(self, module):
+        module.name = ":control:terminal_serial"
+    
+    def prepare(self, module, options):
+        module.depends("taproot:communication:serial:terminal_serial")
+        
+        return True
+
+    def build(self, env):
+        env.outbasepath = "taproot/src/tap/control"
+
+        for file in TERMINAL_SERIAL_FILES:
+                    env.copy(file)
+
+def init(module):
+    module.name = ":control"
+    module.description = "Robot control systems"
+
+def prepare(module, options):
+    # General Depends
+    module.depends(":drivers")
+
+    # Remote Map State -> To be replaced with triggers
+    module.depends(":communication:serial:remote")
+
+    # Needed for command scheduler time overrun check
+    module.depends(":architecture")
+
+    # Needed for chassis power limiter
+    module.depends(":communication:sensors:current")
+    module.depends(":communication:sensors:voltage")
+    module.depends(":communication:serial:ref_serial")
+
+    module.add_submodule(TerminalSerial())
+    
+    return True
+
+def build(env):
+    env.outbasepath = "taproot/src/tap/control"
+
+    env.copy(".", ignore=env.ignore_files(*TERMINAL_SERIAL_FILES))
+
+

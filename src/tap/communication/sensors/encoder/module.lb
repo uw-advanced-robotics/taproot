@@ -20,6 +20,7 @@ def init(module):
     module.description = "Encoder related interfaces/drivers"
 
 def prepare(module, options):
+    module.depends(":algorithms", ":architecture")
     return True
 
 def build(env):
@@ -28,3 +29,5 @@ def build(env):
     env.copy("multi_encoder.hpp")
     env.copy("wrapped_encoder.cpp")
     env.copy("wrapped_encoder.hpp")
+    env.copy("aligning_encoder.hpp")
+    env.copy("fallback_encoder.hpp")
