@@ -321,11 +321,12 @@ public:
         struct ChassisData
         {
             uint16_t powerBuffer;  ///< Chassis power buffer (in J).
-            uint32_t powerHeatDataReceivedTimestamp;  ///< Most recent time at which data with
-                                                       ///< message id `REF_MESSAGE_TYPE_POWER_AND_HEAT`
-                                                       ///< has been received.
-            RobotPosition position;  ///< x, y coordinate of the chassis (in m).
-            uint16_t powerConsumptionLimit;  ///< The current chassis power limit (in W).
+            uint32_t
+                powerHeatDataReceivedTimestamp;  ///< Most recent time at which data with
+                                                 ///< message id `REF_MESSAGE_TYPE_POWER_AND_HEAT`
+                                                 ///< has been received.
+            RobotPosition position;              ///< x, y coordinate of the chassis (in m).
+            uint16_t powerConsumptionLimit;      ///< The current chassis power limit (in W).
         };
 
         struct TurretData
