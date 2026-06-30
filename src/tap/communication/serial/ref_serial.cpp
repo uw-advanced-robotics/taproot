@@ -293,7 +293,7 @@ bool RefSerial::decodeToRobotStatus(const ReceivedSerialMessage& message)
 
 bool RefSerial::decodeToPowerAndHeat(const ReceivedSerialMessage& message)
 {
-    if (message.header.dataLength < 14)
+    if (message.header.dataLength != 14)
     {
         return false;
     }
