@@ -342,10 +342,10 @@ public:
                                           ///< only (500 max) if in RMUC, or any robot in RMUL.
             uint16_t bulletsRemaining42;  ///< Number of bullets remaining in hero if in RMUL or 0
                                           ///< if in RMUC.
-            uint16_t projectileAllowanceFortress;  ///< Reserved 17mm projectile allowance
-                                                   ///< provided by Fortress Buff Point.
-            float bulletSpeed;             ///< Last bullet speed (in m/s).
-            float yaw;                     ///< Barrel yaw position (degree).
+            uint16_t projectileAllowanceFortress;         ///< Reserved 17mm projectile allowance
+                                                          ///< provided by Fortress Buff Point.
+            float bulletSpeed;                            ///< Last bullet speed (in m/s).
+            float yaw;                                    ///< Barrel yaw position (degree).
             uint32_t lastReceivedLaunchingInfoTimestamp;  ///< Last time in milliseconds that the
                                                           ///< real-time launching information
                                                           ///< message was received
