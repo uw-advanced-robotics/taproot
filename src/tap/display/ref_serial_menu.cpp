@@ -34,8 +34,7 @@ RefSerialMenu::RefSerialMenu(
       printRefSerialDataFncPtrs{
           &RefSerialMenu::printRobotTypeId,
           &RefSerialMenu::printHp,
-          &RefSerialMenu::print17mm1Heat,
-          &RefSerialMenu::print17mm2Heat,
+          &RefSerialMenu::print17mmHeat,
           &RefSerialMenu::print42mmHeat,
           &RefSerialMenu::printPowerBuf,
           &RefSerialMenu::printPower,
@@ -91,17 +90,10 @@ void RefSerialMenu::printHp(modm::IOStream& stream)
     stream << "HP: " << robotData.currentHp << "/" << robotData.maxHp << modm::endl;
 }
 
-void RefSerialMenu::print17mm1Heat(modm::IOStream& stream)
+void RefSerialMenu::print17mmHeat(modm::IOStream& stream)
 {
     const auto& robotData = drivers->refSerial.getRobotData();
-    stream << "17mm1Heat: " << robotData.turret.heat17ID1 << " / " << robotData.turret.heatLimit
-           << modm::endl;
-}
-
-void RefSerialMenu::print17mm2Heat(modm::IOStream& stream)
-{
-    const auto& robotData = drivers->refSerial.getRobotData();
-    stream << "17mm2Heat: " << robotData.turret.heat17ID2 << " / " << robotData.turret.heatLimit
+    stream << "17mmHeat: " << robotData.turret.heat17 << " / " << robotData.turret.heatLimit
            << modm::endl;
 }
 

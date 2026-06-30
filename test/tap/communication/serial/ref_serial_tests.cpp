@@ -110,46 +110,31 @@ TEST(RefSerial, messageReceiveCallback__competition_result)
 
 TEST(RefSerial, messageReceiveCallback__robot_hp)
 {
-    struct GameRobotHP
+    struct OwnSideRobotHP
     {
-        uint16_t red1RobotHP;
-        uint16_t red2RobotHP;
-        uint16_t red3RobotHP;
-        uint16_t red4RobotHP;
+        uint16_t hero1;
+        uint16_t engineer2;
+        uint16_t standard3;
+        uint16_t standard4;
         uint16_t unused = 0;
-        uint16_t red7RobotHP;
-        uint16_t redOutpostHP;
-        uint16_t redBaseHP;
-        uint16_t blue1RobotHP;
-        uint16_t blue2RobotHP;
-        uint16_t blue3RobotHP;
-        uint16_t blue4RobotHP;
-        uint16_t _unused = 0;
-        uint16_t blue7RobotHP;
-        uint16_t blueOutpostHP;
-        uint16_t blueBaseHP;
+        uint16_t sentry7;
+        uint16_t outpost;
+        uint16_t base;
     } modm_packed;
 
     Drivers drivers;
     RefSerial refSerial(&drivers);
     DJISerial::ReceivedSerialMessage msg;
 
-    GameRobotHP testData;
+    OwnSideRobotHP testData;
 
-    testData.red1RobotHP = 1;
-    testData.red2RobotHP = 2;
-    testData.red3RobotHP = 3;
-    testData.red4RobotHP = 4;
-    testData.red7RobotHP = 6;
-    testData.redOutpostHP = 7;
-    testData.redBaseHP = 8;
-    testData.blue1RobotHP = 9;
-    testData.blue2RobotHP = 10;
-    testData.blue3RobotHP = 11;
-    testData.blue4RobotHP = 12;
-    testData.blue7RobotHP = 14;
-    testData.blueOutpostHP = 15;
-    testData.blueBaseHP = 16;
+    testData.hero1 = 1;
+    testData.engineer2 = 2;
+    testData.standard3 = 3;
+    testData.standard4 = 4;
+    testData.sentry7 = 6;
+    testData.outpost = 7;
+    testData.base = 8;
     msg = constructMsg(testData, 3);
 
     refSerial.messageReceiveCallback(msg);
@@ -161,13 +146,6 @@ TEST(RefSerial, messageReceiveCallback__robot_hp)
     EXPECT_EQ(6, refSerial.getRobotData().allRobotHp.red.sentry7);
     EXPECT_EQ(7, refSerial.getRobotData().allRobotHp.red.outpost);
     EXPECT_EQ(8, refSerial.getRobotData().allRobotHp.red.base);
-    EXPECT_EQ(9, refSerial.getRobotData().allRobotHp.blue.hero1);
-    EXPECT_EQ(10, refSerial.getRobotData().allRobotHp.blue.engineer2);
-    EXPECT_EQ(11, refSerial.getRobotData().allRobotHp.blue.standard3);
-    EXPECT_EQ(12, refSerial.getRobotData().allRobotHp.blue.standard4);
-    EXPECT_EQ(14, refSerial.getRobotData().allRobotHp.blue.sentry7);
-    EXPECT_EQ(15, refSerial.getRobotData().allRobotHp.blue.outpost);
-    EXPECT_EQ(16, refSerial.getRobotData().allRobotHp.blue.base);
 }
 
 struct RefWarning
@@ -417,11 +395,12 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
 {
     struct PowerHeatData
     {
-        uint64_t unused = 0;
+        uint16_t reserved1 = 0;
+        uint16_t reserved2 = 0;
+        float reserved3 = 0.0f;
         uint16_t chassis_power_buffer;
-        uint16_t shooterId117mmCoolingHeat;
-        uint16_t shooterId217mmCoolingHeat;
-        uint16_t shooterId142mmCoolingHeat;
+        uint16_t shooter17mmCoolingHeat;
+        uint16_t shooter42mmCoolingHeat;
     } modm_packed;
 
     Drivers drivers;
@@ -430,16 +409,14 @@ TEST(RefSerial, messageReceiveCallback__power_and_heat)
     PowerHeatData testData;
 
     testData.chassis_power_buffer = 120;
-    testData.shooterId117mmCoolingHeat = 145;
-    testData.shooterId217mmCoolingHeat = 431;
-    testData.shooterId142mmCoolingHeat = 900;
+    testData.shooter17mmCoolingHeat = 145;
+    testData.shooter42mmCoolingHeat = 900;
     msg = constructMsg(testData, 0x0202);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(120, refSerial.getRobotData().chassis.powerBuffer);
-    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17ID1);
-    EXPECT_EQ(431, refSerial.getRobotData().turret.heat17ID2);
+    EXPECT_EQ(145, refSerial.getRobotData().turret.heat17);
     EXPECT_EQ(900, refSerial.getRobotData().turret.heat42);
 }
 
@@ -570,20 +547,20 @@ TEST(RefSerial, messageReceiveCallback__launching_information)
 
     EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_17, refSerial.getRobotData().turret.bulletType);
     EXPECT_EQ(
-        RefSerial::Rx::MechanismID::TURRET_17MM_1,
+        RefSerial::Rx::MechanismID::TURRET_17MM,
         refSerial.getRobotData().turret.launchMechanismID);
     EXPECT_EQ(45, refSerial.getRobotData().turret.firingFreq);
     EXPECT_NEAR(3452.12f, refSerial.getRobotData().turret.bulletSpeed, 1E-3);
 
     testData.bulletType = 2;
-    testData.shooterId = 2;
+    testData.shooterId = 3;
     msg = constructMsg(testData, 0x0207);
 
     refSerial.messageReceiveCallback(msg);
 
     EXPECT_EQ(RefSerial::Rx::BulletType::AMMO_42, refSerial.getRobotData().turret.bulletType);
     EXPECT_EQ(
-        RefSerial::Rx::MechanismID::TURRET_17MM_2,
+        RefSerial::Rx::MechanismID::TURRET_42MM,
         refSerial.getRobotData().turret.launchMechanismID);
 }
 
@@ -593,7 +570,8 @@ TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
     {
         uint16_t bulletRemainingNum17mm;
         uint16_t bulletRemainingNum42mm;
-        uint16_t coinRemainingNum;
+        uint16_t remainingCoins;
+        uint16_t projectileAllowanceFortress;
     } modm_packed;
 
     Drivers drivers;
@@ -603,7 +581,8 @@ TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
 
     testData.bulletRemainingNum17mm = 123;
     testData.bulletRemainingNum42mm = 1890;
-    testData.coinRemainingNum = 12892;
+    testData.remainingCoins = 12892;
+    testData.projectileAllowanceFortress = 430;
     msg = constructMsg(testData, 0x0208);
 
     refSerial.messageReceiveCallback(msg);
@@ -611,23 +590,33 @@ TEST(RefSerial, messageReceiveCallback__remaining_projectiles)
     EXPECT_EQ(123, refSerial.getRobotData().turret.bulletsRemaining17);
     EXPECT_EQ(1890, refSerial.getRobotData().turret.bulletsRemaining42);
     EXPECT_EQ(12892, refSerial.getRobotData().remainingCoins);
+    EXPECT_EQ(430, refSerial.getRobotData().turret.projectileAllowanceFortress);
 }
 
 TEST(RefSerial, messageReceiveCallback__RFID_status)
 {
+    struct RfidStatus
+    {
+        uint32_t value;
+        uint8_t reserved = 0;
+    } modm_packed;
+
     Drivers drivers;
     RefSerial refSerial(&drivers);
     DJISerial::ReceivedSerialMessage msg;
+    RfidStatus testData;
 
-    msg = constructMsg(static_cast<uint32_t>(0b00000101), 0x0209);
+    testData.value = 0b00000101;
+    msg = constructMsg(testData, 0x0209);
     refSerial.messageReceiveCallback(msg);
 
-    EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
+    EXPECT_EQ(testData.value, refSerial.getRobotData().rfidStatus.value);
 
-    msg = constructMsg(static_cast<uint32_t>(0b11111010), 0x0209);
+    testData.value = 0b11111010;
+    msg = constructMsg(testData, 0x0209);
     refSerial.messageReceiveCallback(msg);
 
-    EXPECT_EQ(msg.data[0], refSerial.getRobotData().rfidStatus.value);
+    EXPECT_EQ(testData.value, refSerial.getRobotData().rfidStatus.value);
 }
 
 TEST(RefSerial, messageReceiveCallback_custom_controller_data)
