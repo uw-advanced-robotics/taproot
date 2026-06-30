@@ -367,7 +367,7 @@ bool RefSerial::decodeToBulletsRemain(const ReceivedSerialMessage& message)
     convertFromLittleEndian(&robotData.turret.bulletsRemaining17, message.data);
     convertFromLittleEndian(&robotData.turret.bulletsRemaining42, message.data + 2);
     convertFromLittleEndian(&robotData.remainingCoins, message.data + 4);
-    convertFromLittleEndian(&robotData.turret.fortressBulletsRemaining, message.data + 6);
+    convertFromLittleEndian(&robotData.turret.projectileAllowanceFortress, message.data + 6);
     return true;
 }
 
