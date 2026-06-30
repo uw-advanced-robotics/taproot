@@ -77,8 +77,8 @@ public:
      * parser yet. They are values that are used in message headers to indicate the type of message
      * we have received.
      *
-     * Current Ref Serial Version: 1.7.0
-     * Updated March 2025.
+     * Current Ref Serial Version: RoboMaster 2026 1.3.1
+     * Updated May 2026.
      */
     enum MessageType
     {
@@ -217,10 +217,6 @@ private:
      */
     bool decodeToSiteEventData(const ReceivedSerialMessage& message);
     /**
-     * Decodes ref serial message containing projectile supplier information.
-     */
-    bool decodeToProjectileSupplierAction(const ReceivedSerialMessage& message);
-    /**
      * Decodes ref serial message containing warning information (if a robot on your team received a
      * yellow or red card).
      */
@@ -248,11 +244,6 @@ private:
      * Decodes ref serial message containing the robot buff status of the robot.
      */
     bool decodeToRobotBuffs(const ReceivedSerialMessage& message);
-    /**
-     * Decodes ref serial message containing the energy status, a countdown timer from 30 seconds to
-     * 0 seconds.
-     */
-    bool decodeToAerialEnergyStatus(const ReceivedSerialMessage& message);
     /**
      * Decodes ref serial message containing containing the damaged armor and damage type
      * last taken by the robot.
