@@ -121,6 +121,20 @@ public:
     }
 
     /**
+     * @brief Interpolate between two `Orientation`s using Spherical Linear
+     * Interpolation.
+     *
+     * @note This involves conversions two and from quaternion space, so it isn't the most
+     * performant.
+     *
+     * @param t interpolation factor, between
+     */
+    static Orientation interpolate(const Orientation& a, const Orientation& b, float t)
+    {
+        return fromQuaternion(slerp(a.toQuaternion(), b.toQuaternion(), t));
+    }
+
+    /**
      * Returns roll as values between [-pi, +pi].
      *
      * If pitch is completely vertical (-pi / 2 or pi / 2) then roll and yaw are gimbal-locked. In
