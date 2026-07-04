@@ -595,6 +595,18 @@ public:
      */
     Transform projectForward(float dt) const;
 
+    /**
+     * @brief Linearly interpolate between this `Transform` and another.
+     *
+     * @param t interpolation factor, between
+     */
+    static Transform interpolate(const Transform& a, const Transform& b, float t)
+    {
+        return tap::algorithms::transforms::Transform(
+            Position::interpolate(a.translation, b.translation, t),
+            Orientation::interpolate(a.rotation, b.rotation, t));
+    }
+
     /* Getters */
     inline const Position& getTranslation() const { return translation; }
 

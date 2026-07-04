@@ -235,8 +235,25 @@ float interpolateLinear2D(
 template <class T>
 modm::Quaternion<T> slerp(modm::Quaternion<T> q0, modm::Quaternion<T> q1, float t)
 {
-    float theta = acosf(q0.w * q1.w + q0.x * q1.x + q0.y * q1.y + q0.z * q1.z);
+    float cosTheta = q0.w * q1.w + q0.x * q1.x + q0.y * q1.y + q0.z * q1.z;
 
+    // If the dot product is negative, SLERP will take the long way around.
+    // We invert one quaternion to take the shorter path instead.
+    if (cosTheta < 0.0f)
+    {
+        q1 = modm::Quaternion<T>(-q1.w, -q1.x, -q1.y, -q1.z);
+        cosTheta = -cosTheta;
+    }
+
+    // If the quaternions are extremely close, close to parallel, or identical,
+    // fallback to linear interpolation (LERP) to prevent sin(0) / sin(0) -> NaN.
+    if (cosTheta > 1 - 1e-4)
+    {
+        return q0 * (1.0f - t) + q1 * t;
+    }
+
+    // slerp
+    float theta = acosf(cosTheta);
     return q0 * (sinf((1 - t) * theta) / sinf(theta)) + q1 * (sinf(t * theta) / sinf(theta));
 };
 
