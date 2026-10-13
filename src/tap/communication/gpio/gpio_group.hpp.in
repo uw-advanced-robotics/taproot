@@ -44,7 +44,7 @@ public:
     };
 
     /**
-     * Initializes the pins in output mode and settting the pins to their default.
+     * Initializes the pins in output mode and setting the pins to their default.
      */
     mockable void init();
 
