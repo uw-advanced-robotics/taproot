@@ -109,7 +109,7 @@ private:
     float energyBuffer;
     float consumedPower;
     uint32_t prevTime;
-    uint32_t prevRobotDataReceivedTimestamp;
+    uint32_t prevPowerHeatDataReceivedTimestamp;
 
     /**
      * Computes the chassis power and the energy remaining in the energy buffer.

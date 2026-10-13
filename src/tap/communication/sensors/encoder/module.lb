@@ -29,3 +29,5 @@ def build(env):
     env.copy("multi_encoder.hpp")
     env.copy("wrapped_encoder.cpp")
     env.copy("wrapped_encoder.hpp")
+    env.copy("aligning_encoder.hpp")
+    env.copy("fallback_encoder.hpp")

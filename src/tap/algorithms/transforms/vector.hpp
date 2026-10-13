@@ -23,6 +23,8 @@
 #include "tap/algorithms/cmsis_mat.hpp"
 #include "tap/algorithms/math_user_utils.hpp"
 
+#include "axis.hpp"
+
 namespace tap::algorithms::transforms
 {
 // forward declare position to avoid circular dependency
@@ -31,11 +33,9 @@ class Position;
 class Vector
 {
 public:
+    Vector() : coordinates_({0, 0, 0}) {}
+
     Vector(float x, float y, float z) : coordinates_({x, y, z}) {}
-
-    Vector(const Vector&& other) : coordinates_(std::move(other.coordinates_)) {}
-
-    Vector(const Vector& other) : coordinates_(CMSISMat(other.coordinates_)) {}
 
     /**
      * Costly copy constructor
@@ -44,22 +44,26 @@ public:
 
     Vector(CMSISMat<3, 1>&& coordinates) : coordinates_(std::move(coordinates)) {}
 
-    inline float x() const { return coordinates_.data[0]; }
-
-    inline float y() const { return coordinates_.data[1]; }
-
-    inline float z() const { return coordinates_.data[2]; }
-
-    inline Vector& operator=(const Vector& other)
+    template <Axis A, bool NEG = false>
+    inline static Vector axis()
     {
-        this->coordinates_ = other.coordinates_;
-        return *this;
+        Vector v;
+        v[A] = NEG ? -1 : 1;
+        return v;
     }
 
-    inline Vector operator+(const Position& other) const
-    {
-        return Vector(this->coordinates_ + other.coordinates());
-    }
+    /**
+     * @brief Convert to `Position` representation. Analagous to adding to the global origin
+     * position.
+     */
+    Position toPosition() const;
+
+    inline float x() const { return (*this)[Axis::X]; }
+    inline float y() const { return (*this)[Axis::Y]; }
+    inline float z() const { return (*this)[Axis::Z]; }
+
+    const float& operator[](Axis a) const { return coordinates_[static_cast<int>(a)]; }
+    const float& operator[](int i) const { return coordinates_[i]; }
 
     inline Vector operator+(const Vector& other) const
     {
@@ -71,7 +75,11 @@ public:
         return Vector(this->coordinates_ - other.coordinates_);
     }
 
+    inline Vector operator-() const { return Vector(-this->coordinates_); }
+
     inline Vector operator*(const float scale) const { return Vector(this->coordinates_ * scale); }
+
+    inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     inline static float dot(const Vector& a, const Vector& b)
     {
@@ -85,17 +93,18 @@ public:
         return Vector(tap::algorithms::cross(a.coordinates(), b.coordinates()));
     }
 
+    /// @brief Convenience alias for the static variant
     inline Vector cross(const Vector& other) const { return cross(*this, other); }
-
-    inline Vector operator/(const float scale) const { return Vector(this->coordinates_ / scale); }
 
     const inline CMSISMat<3, 1>& coordinates() const { return coordinates_; }
 
+    inline float magnitudeSq() const { return dot(*this, *this); }
+
     inline float magnitude() const { return sqrt(dot(*this, *this)); }
 
-    inline Vector normalize() const { return (*this) * 1.0f / this->magnitude(); };
+    inline Vector normalize() const { return (*this) / this->magnitude(); }
 
-    inline static Vector normalize(const Vector& a) { return a * 1.0f / a.magnitude(); };
+    Vector project(const Vector& onto) { return onto.normalize() * this->dot(onto); }
 
     friend class Transform;
     friend class DynamicPosition;
@@ -103,6 +112,19 @@ public:
 private:
     CMSISMat<3, 1> coordinates_;
 };  // class Vector
+
+inline Vector operator*(const float scale, const Vector& vec)
+{
+    return Vector(vec.coordinates() * scale);
+}
+
+/**
+ * @brief Multiplies a 3x3 matrix by a 3D vector.
+ */
+inline Vector operator*(const CMSISMat<3, 3>& a, const Vector& b)
+{
+    return Vector(a * b.coordinates());
+}
 }  // namespace tap::algorithms::transforms
 
 #endif  // TAPROOT_VECTOR_HPP_

@@ -69,7 +69,7 @@ protected:
         EXPECT_CALL(drivers.uart, write(_, _, sizeof(T))).WillOnce(Return(true));
 
         // When
-        refSerialTransmitter.sendGraphic(&msg);
+        refSerialTransmitter.sendGraphic(&msg, true, true, false);
     }
 
     Drivers drivers;
@@ -384,7 +384,7 @@ TEST_F(RefSerialTransmitterTest, sendGraphic__characterMessage)
         });
 
     // When
-    refSerialTransmitter.sendGraphic(&msg);
+    refSerialTransmitter.sendGraphic(&msg, true, true, false);
 }
 
 TEST_F(RefSerialTransmitterTest, sendRobotToRobotMessage__msgLen_too_short_fails_to_send)

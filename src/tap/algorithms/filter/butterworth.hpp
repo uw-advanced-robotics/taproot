@@ -357,7 +357,7 @@ constexpr Coefficients<getNumCoefficients(ORDER, Type), T> butterworth(
                 std::complex<double> p = poles[j];
 
                 std::complex<double> discriminant =
-                    B * B - (static_cast<std::complex<double>>(4.0) * -p * W0sq);
+                    B * B - (static_cast<std::complex<double>>(4.0) * p * p * W0sq);
                 std::complex<double> root = complexSqrt(discriminant);
 
                 bandpass_stop_poles[2 * j] =
