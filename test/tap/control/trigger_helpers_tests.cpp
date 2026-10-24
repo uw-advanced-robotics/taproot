@@ -26,13 +26,13 @@ using namespace tap::control;
 using tap::Drivers;
 using namespace testing;
 
-TEST(TriggerHelpers, mouseXGreaterThan_true_only_above_thresh)
+TEST(TriggerHelpers, mouseX_greater_than_true_only_above_thresh)
 {
     Drivers drivers;
     int16_t x = 0;
     ON_CALL(drivers.remote, getMouseX).WillByDefault(ReturnPointee(&x));
 
-    Trigger trigger = TriggerHelpers::mouseXGreaterThan(&drivers, 50);
+    Trigger trigger = TriggerHelpers::mouseX(&drivers, 50);
 
     EXPECT_FALSE(trigger.get());
 
@@ -46,13 +46,13 @@ TEST(TriggerHelpers, mouseXGreaterThan_true_only_above_thresh)
     EXPECT_FALSE(trigger.get());
 }
 
-TEST(TriggerHelpers, mouseXGreaterThan_abs_true_in_either_direction)
+TEST(TriggerHelpers, mouseX_greater_than_abs_true_in_either_direction)
 {
     Drivers drivers;
     int16_t x = 0;
     ON_CALL(drivers.remote, getMouseX).WillByDefault(ReturnPointee(&x));
 
-    Trigger trigger = TriggerHelpers::mouseXGreaterThan(&drivers, 50, true);
+    Trigger trigger = TriggerHelpers::mouseX(&drivers, 50, true, true);
 
     EXPECT_FALSE(trigger.get());
 
@@ -66,13 +66,13 @@ TEST(TriggerHelpers, mouseXGreaterThan_abs_true_in_either_direction)
     EXPECT_TRUE(trigger.get());
 }
 
-TEST(TriggerHelpers, mouseXLessThan_negative_thresh_true_only_moving_left)
+TEST(TriggerHelpers, mouseX_less_than_negative_thresh_true_only_moving_left)
 {
     Drivers drivers;
     int16_t x = 0;
     ON_CALL(drivers.remote, getMouseX).WillByDefault(ReturnPointee(&x));
 
-    Trigger trigger = TriggerHelpers::mouseXLessThan(&drivers, -5);
+    Trigger trigger = TriggerHelpers::mouseX(&drivers, -5, false);
 
     EXPECT_FALSE(trigger.get());
 
@@ -86,13 +86,13 @@ TEST(TriggerHelpers, mouseXLessThan_negative_thresh_true_only_moving_left)
     EXPECT_TRUE(trigger.get());
 }
 
-TEST(TriggerHelpers, mouseXLessThan_abs_true_when_slow)
+TEST(TriggerHelpers, mouseX_less_than_abs_true_when_slow)
 {
     Drivers drivers;
     int16_t x = 0;
     ON_CALL(drivers.remote, getMouseX).WillByDefault(ReturnPointee(&x));
 
-    Trigger trigger = TriggerHelpers::mouseXLessThan(&drivers, 5, true);
+    Trigger trigger = TriggerHelpers::mouseX(&drivers, 5, false, true);
 
     EXPECT_TRUE(trigger.get());
 
@@ -106,14 +106,14 @@ TEST(TriggerHelpers, mouseXLessThan_abs_true_when_slow)
     EXPECT_FALSE(trigger.get());
 }
 
-TEST(TriggerHelpers, mouseY_triggers_read_mouse_y)
+TEST(TriggerHelpers, mouseY_reads_mouse_y)
 {
     Drivers drivers;
     int16_t y = 0;
     ON_CALL(drivers.remote, getMouseY).WillByDefault(ReturnPointee(&y));
 
-    Trigger greater = TriggerHelpers::mouseYGreaterThan(&drivers, 5);
-    Trigger less = TriggerHelpers::mouseYLessThan(&drivers, -5);
+    Trigger greater = TriggerHelpers::mouseY(&drivers, 5);
+    Trigger less = TriggerHelpers::mouseY(&drivers, -5, false);
 
     EXPECT_FALSE(greater.get());
     EXPECT_FALSE(less.get());
@@ -127,14 +127,14 @@ TEST(TriggerHelpers, mouseY_triggers_read_mouse_y)
     EXPECT_TRUE(less.get());
 }
 
-TEST(TriggerHelpers, mouseZ_triggers_read_scroll_direction)
+TEST(TriggerHelpers, mouseZ_reads_scroll_direction)
 {
     Drivers drivers;
     int16_t z = 0;
     ON_CALL(drivers.remote, getMouseZ).WillByDefault(ReturnPointee(&z));
 
-    Trigger scrollUp = TriggerHelpers::mouseZGreaterThan(&drivers, 0);
-    Trigger scrollDown = TriggerHelpers::mouseZLessThan(&drivers, 0);
+    Trigger scrollUp = TriggerHelpers::mouseZ(&drivers, 0);
+    Trigger scrollDown = TriggerHelpers::mouseZ(&drivers, 0, false);
 
     EXPECT_FALSE(scrollUp.get());
     EXPECT_FALSE(scrollDown.get());

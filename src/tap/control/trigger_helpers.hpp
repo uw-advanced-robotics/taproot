@@ -109,91 +109,70 @@ struct TriggerHelpers
     }
 
     /**
-     * Mouse x is the horizontal velocity of the mouse (positive is right), not a button.
+     * Mouse x is the horizontal velocity of the mouse (positive is right), not a button. To check
+     * for movement to the left, use a negative `thresh` with `greaterThan = false`, e.g.
+     * `mouseX(drivers, -5, false)` is true when the mouse moves left faster than 5.
      *
      * @param[in] drivers A pointer to the drivers singleton.
      * @param[in] thresh A threshold for the mouse x velocity.
+     * @param[in] greaterThan Whether the trigger checks that the mouse x velocity is greater than
+     * (true) or less than (false) `thresh`, defaults to true.
      * @param[in] abs Whether to take the absolute value of the mouse x velocity, defaults to
      * false.
-     * @return A trigger that is true when the mouse x velocity is greater than `thresh`.
+     * @return A trigger that is true when the mouse x velocity is greater than `thresh` (or less
+     * than `thresh` if `greaterThan` is false).
      */
-    static Trigger mouseXGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    static Trigger mouseX(
+        Drivers *drivers,
+        int16_t thresh,
+        bool greaterThan = true,
+        bool abs = false)
     {
-        return mouseCompare(drivers, &Remote::getMouseX, thresh, abs, true);
+        return mouseCompare(drivers, &Remote::getMouseX, thresh, greaterThan, abs);
     }
 
     /**
-     * Mouse x is the horizontal velocity of the mouse (positive is right), not a button. Use
-     * a negative `thresh` to check for movement to the left, e.g. `thresh = -5` is true when
-     * the mouse moves left faster than 5.
-     *
-     * @param[in] drivers A pointer to the drivers singleton.
-     * @param[in] thresh A threshold for the mouse x velocity.
-     * @param[in] abs Whether to take the absolute value of the mouse x velocity, defaults to
-     * false. When true, the trigger is true when the mouse x speed is below `thresh`.
-     * @return A trigger that is true when the mouse x velocity is less than `thresh`.
-     */
-    static Trigger mouseXLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
-    {
-        return mouseCompare(drivers, &Remote::getMouseX, thresh, abs, false);
-    }
-
-    /**
-     * Mouse y is the vertical velocity of the mouse, not a button.
+     * Mouse y is the vertical velocity of the mouse, not a button. To check for movement in the
+     * negative y direction, use a negative `thresh` with `greaterThan = false`.
      *
      * @param[in] drivers A pointer to the drivers singleton.
      * @param[in] thresh A threshold for the mouse y velocity.
+     * @param[in] greaterThan Whether the trigger checks that the mouse y velocity is greater than
+     * (true) or less than (false) `thresh`, defaults to true.
      * @param[in] abs Whether to take the absolute value of the mouse y velocity, defaults to
      * false.
-     * @return A trigger that is true when the mouse y velocity is greater than `thresh`.
+     * @return A trigger that is true when the mouse y velocity is greater than `thresh` (or less
+     * than `thresh` if `greaterThan` is false).
      */
-    static Trigger mouseYGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    static Trigger mouseY(
+        Drivers *drivers,
+        int16_t thresh,
+        bool greaterThan = true,
+        bool abs = false)
     {
-        return mouseCompare(drivers, &Remote::getMouseY, thresh, abs, true);
+        return mouseCompare(drivers, &Remote::getMouseY, thresh, greaterThan, abs);
     }
 
     /**
-     * Mouse y is the vertical velocity of the mouse, not a button. Use a negative `thresh` to
-     * check for movement in the negative y direction.
-     *
-     * @param[in] drivers A pointer to the drivers singleton.
-     * @param[in] thresh A threshold for the mouse y velocity.
-     * @param[in] abs Whether to take the absolute value of the mouse y velocity, defaults to
-     * false. When true, the trigger is true when the mouse y speed is below `thresh`.
-     * @return A trigger that is true when the mouse y velocity is less than `thresh`.
-     */
-    static Trigger mouseYLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
-    {
-        return mouseCompare(drivers, &Remote::getMouseY, thresh, abs, false);
-    }
-
-    /**
-     * Mouse z is the scroll wheel velocity, not a button.
+     * Mouse z is the scroll wheel velocity, not a button. To check for scrolling in the negative
+     * direction, use a negative `thresh` with `greaterThan = false`.
      *
      * @param[in] drivers A pointer to the drivers singleton.
      * @param[in] thresh A threshold for the mouse z (scroll wheel) velocity.
+     * @param[in] greaterThan Whether the trigger checks that the mouse z velocity is greater than
+     * (true) or less than (false) `thresh`, defaults to true.
      * @param[in] abs Whether to take the absolute value of the mouse z velocity, defaults to
      * false.
-     * @return A trigger that is true when the mouse z velocity is greater than `thresh`.
+     * @return A trigger that is true when the mouse z velocity is greater than `thresh` (or less
+     * than `thresh` if `greaterThan` is false).
      */
-    static Trigger mouseZGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    static Trigger mouseZ(
+        Drivers *drivers,
+        int16_t thresh,
+        bool greaterThan = true,
+        bool abs = false)
     {
-        return mouseCompare(drivers, &Remote::getMouseZ, thresh, abs, true);
-    }
-
-    /**
-     * Mouse z is the scroll wheel velocity, not a button. Use a negative `thresh` to check for
-     * scrolling in the negative direction.
-     *
-     * @param[in] drivers A pointer to the drivers singleton.
-     * @param[in] thresh A threshold for the mouse z (scroll wheel) velocity.
-     * @param[in] abs Whether to take the absolute value of the mouse z velocity, defaults to
-     * false. When true, the trigger is true when the mouse z speed is below `thresh`.
-     * @return A trigger that is true when the mouse z velocity is less than `thresh`.
-     */
-    static Trigger mouseZLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
-    {
-        return mouseCompare(drivers, &Remote::getMouseZ, thresh, abs, false);
+        return mouseCompare(drivers, &Remote::getMouseZ, thresh, greaterThan, abs);
     }
 
 private:
@@ -203,25 +182,25 @@ private:
      * @param[in] drivers A pointer to the drivers singleton.
      * @param[in] getter The `Remote` function that reads the mouse axis to compare.
      * @param[in] thresh A threshold for the value of the mouse axis.
-     * @param[in] abs Whether to take the absolute value of the mouse axis.
-     * @param[in] greater Whether to check that the value is greater than (true) or less than
+     * @param[in] greaterThan Whether to check that the value is greater than (true) or less than
      * (false) `thresh`.
+     * @param[in] abs Whether to take the absolute value of the mouse axis.
      * @return A trigger that compares the mouse axis against `thresh`.
      */
     static Trigger mouseCompare(
         Drivers *drivers,
         MouseAxisGetter getter,
         int16_t thresh,
-        bool abs,
-        bool greater)
+        bool greaterThan,
+        bool abs)
     {
-        return Trigger(drivers, [drivers, getter, thresh, abs, greater]() {
+        return Trigger(drivers, [drivers, getter, thresh, greaterThan, abs]() {
             int value = (drivers->remote.*getter)();
             if (abs)
             {
                 value = std::abs(value);
             }
-            return greater ? value > thresh : value < thresh;
+            return greaterThan ? value > thresh : value < thresh;
         });
     }
 };
