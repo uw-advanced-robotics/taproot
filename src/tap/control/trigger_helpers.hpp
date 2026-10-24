@@ -20,6 +20,7 @@
 #ifndef TAPROOT_TRIGGER_HELPERS_HPP_
 #define TAPROOT_TRIGGER_HELPERS_HPP_
 
+#include <cstdlib>
 #include <functional>
 
 #include "tap/communication/serial/remote.hpp"
@@ -108,30 +109,120 @@ struct TriggerHelpers
     }
 
     /**
+     * Mouse x is the horizontal velocity of the mouse (positive is right), not a button.
+     *
      * @param[in] drivers A pointer to the drivers singleton.
-     * @return A trigger that is true when X is pressed on the mouse.
+     * @param[in] thresh A threshold for the mouse x velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse x velocity, defaults to
+     * false.
+     * @return A trigger that is true when the mouse x velocity is greater than `thresh`.
      */
-    static Trigger mouseX(Drivers *drivers)
+    static Trigger mouseXGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
     {
-        return Trigger(drivers, [drivers]() { return drivers->remote.getMouseX(); });
+        return mouseCompare(drivers, &Remote::getMouseX, thresh, abs, true);
     }
 
     /**
+     * Mouse x is the horizontal velocity of the mouse (positive is right), not a button. Use
+     * a negative `thresh` to check for movement to the left, e.g. `thresh = -5` is true when
+     * the mouse moves left faster than 5.
+     *
      * @param[in] drivers A pointer to the drivers singleton.
-     * @return A trigger that is true when Y is pressed on the mouse.
+     * @param[in] thresh A threshold for the mouse x velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse x velocity, defaults to
+     * false. When true, the trigger is true when the mouse x speed is below `thresh`.
+     * @return A trigger that is true when the mouse x velocity is less than `thresh`.
      */
-    static Trigger mouseY(Drivers *drivers)
+    static Trigger mouseXLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
     {
-        return Trigger(drivers, [drivers]() { return drivers->remote.getMouseY(); });
+        return mouseCompare(drivers, &Remote::getMouseX, thresh, abs, false);
     }
 
     /**
+     * Mouse y is the vertical velocity of the mouse, not a button.
+     *
      * @param[in] drivers A pointer to the drivers singleton.
-     * @return A trigger that is true when Z is pressed on the mouse.
+     * @param[in] thresh A threshold for the mouse y velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse y velocity, defaults to
+     * false.
+     * @return A trigger that is true when the mouse y velocity is greater than `thresh`.
      */
-    static Trigger mouseZ(Drivers *drivers)
+    static Trigger mouseYGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
     {
-        return Trigger(drivers, [drivers]() { return drivers->remote.getMouseZ(); });
+        return mouseCompare(drivers, &Remote::getMouseY, thresh, abs, true);
+    }
+
+    /**
+     * Mouse y is the vertical velocity of the mouse, not a button. Use a negative `thresh` to
+     * check for movement in the negative y direction.
+     *
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] thresh A threshold for the mouse y velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse y velocity, defaults to
+     * false. When true, the trigger is true when the mouse y speed is below `thresh`.
+     * @return A trigger that is true when the mouse y velocity is less than `thresh`.
+     */
+    static Trigger mouseYLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    {
+        return mouseCompare(drivers, &Remote::getMouseY, thresh, abs, false);
+    }
+
+    /**
+     * Mouse z is the scroll wheel velocity, not a button.
+     *
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] thresh A threshold for the mouse z (scroll wheel) velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse z velocity, defaults to
+     * false.
+     * @return A trigger that is true when the mouse z velocity is greater than `thresh`.
+     */
+    static Trigger mouseZGreaterThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    {
+        return mouseCompare(drivers, &Remote::getMouseZ, thresh, abs, true);
+    }
+
+    /**
+     * Mouse z is the scroll wheel velocity, not a button. Use a negative `thresh` to check for
+     * scrolling in the negative direction.
+     *
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] thresh A threshold for the mouse z (scroll wheel) velocity.
+     * @param[in] abs Whether to take the absolute value of the mouse z velocity, defaults to
+     * false. When true, the trigger is true when the mouse z speed is below `thresh`.
+     * @return A trigger that is true when the mouse z velocity is less than `thresh`.
+     */
+    static Trigger mouseZLessThan(Drivers *drivers, int16_t thresh, bool abs = false)
+    {
+        return mouseCompare(drivers, &Remote::getMouseZ, thresh, abs, false);
+    }
+
+private:
+    using MouseAxisGetter = int16_t (Remote::*)() const;
+
+    /**
+     * @param[in] drivers A pointer to the drivers singleton.
+     * @param[in] getter The `Remote` function that reads the mouse axis to compare.
+     * @param[in] thresh A threshold for the value of the mouse axis.
+     * @param[in] abs Whether to take the absolute value of the mouse axis.
+     * @param[in] greater Whether to check that the value is greater than (true) or less than
+     * (false) `thresh`.
+     * @return A trigger that compares the mouse axis against `thresh`.
+     */
+    static Trigger mouseCompare(
+        Drivers *drivers,
+        MouseAxisGetter getter,
+        int16_t thresh,
+        bool abs,
+        bool greater)
+    {
+        return Trigger(drivers, [drivers, getter, thresh, abs, greater]() {
+            int value = (drivers->remote.*getter)();
+            if (abs)
+            {
+                value = std::abs(value);
+            }
+            return greater ? value > thresh : value < thresh;
+        });
     }
 };
 }  // namespace control
