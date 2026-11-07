@@ -7,25 +7,24 @@
   <options>
     <option name="taproot:docs:source_paths">src</option>
     <option name="taproot:rebuild_modm">True</option>
+    <option name="taproot:hard_aliases">Usart6:RefSerial</option>
 
     <!-- For RoboMaster Development Board Type A -->
     <option name="taproot:dev_board">rm-dev-board-a</option>
-    <option name="taproot:communication:serial:terminal_serial:uart_port">Uart3</option>
-    <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
-    <option name="taproot:board:digital_in_pins">A,B,C,D,Button</option>
+    <option name="taproot:hard_aliases">Usart6:RefSerial,Uart7:TerminalSerial</option>
+    <option name="taproot:board:digital_in_pins">A,B,C,D</option>
     <option name="taproot:board:digital_out_pins">E,F,G,H,Laser</option>
-    <option name="taproot:board:analog_in_pins">S,T,U,V,OledJoystick</option>
-    <option name="taproot:board:pwm_pins">W,X,Y,Z,Buzzer,ImuHeater</option>
+    <option name="taproot:board:analog_in_pins">S,T,U,V</option>
+    <option name="taproot:board:pwm_pins">W,X,Y,Z</option>
     <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--
     <option name="taproot:dev_board">rm-dev-board-c</option>
-    <option name="taproot:communication:serial:terminal_serial:uart_port">Uart1</option>
-    <option name="taproot:communication:serial:ref_serial:uart_port">Uart6</option>
-    <option name="taproot:board:digital_in_pins">PF1,PF0,B12,Button</option>
-    <option name="taproot:board:digital_out_pins">B13,B14,B15,Laser</option>
+    <option name="taproot:hard_aliases">Usart6:RefSerial</option>
+    <option name="taproot:board:digital_in_pins"></option>
+    <option name="taproot:board:digital_out_pins">Laser</option>
     <option name="taproot:board:analog_in_pins"></option>
-    <option name="taproot:board:pwm_pins">C1,C2,C3,C4,C5,C6,C7,Buzzer,ImuHeater</option>
+    <option name="taproot:board:pwm_pins">C1,C2,C3,C4,C5,C6,C7</option>
     --> <!-- End For RoboMaster Development Board Type C -->
 
     <!-- To include additional modm options: --> <!--
@@ -71,7 +70,6 @@
     <module>taproot:communication:sensors:encoder:can_encoder</module>
     <module>taproot:communication:sensors:imu</module>
     <module>taproot:communication:sensors:imu:display</module>
-    <module>taproot:communication:sensors:imu:terminal_serial</module>
     <module>taproot:communication:sensors:imu_heater</module>
     <module>taproot:communication:sensors:limit-switch</module>
     <module>taproot:communication:sensors:voltage</module>
@@ -79,12 +77,10 @@
     <module>taproot:communication:serial</module>
     <module>taproot:communication:serial:ref_serial</module>
     <module>taproot:communication:serial:remote</module>
-    <module>taproot:communication:serial:terminal_serial</module>
 
     <module>taproot:communication:tcp-server</module>
 
     <module>taproot:control</module>
-    <module>taproot:control:terminal_serial</module>
     <module>taproot:core</module>
 
     <module>taproot:display</module>
@@ -98,6 +94,7 @@
     <module>taproot:drivers</module>
 
     <module>taproot:errors</module>
+
     <module>taproot:ext</module>
     <module>taproot:ext:eigen</module>
     <module>taproot:ext:littlefs</module>
@@ -106,7 +103,6 @@
     <module>taproot:motor</module>
     <module>taproot:motor:pwm</module>
     <module>taproot:motor:motorsim</module>
-    <module>taproot:motor:terminal_serial</module>
     
     <module>taproot:storage</module>
     <module>taproot:storage:littlefs-internal</module>
@@ -116,7 +112,13 @@
     <module>taproot:testing:tests</module>
     
     <!-- For RoboMaster Development Board Type A -->
+    <module>taproot:communication:gpio:power_outs</module>
     <module>taproot:communication:sensors:imu:mpu6500</module>
+    <module>taproot:communication:sensors:imu:terminal_serial</module>
+    <module>taproot:communication:serial:terminal_serial</module>
+    <module>taproot:control:terminal_serial</module>
+    <module>taproot:errors:terminal_serial</module>
+    <module>taproot:motor:terminal_serial</module>
     <!-- End For RoboMaster Development Board Type A -->
 
     <!-- For RoboMaster Development Board Type C --> <!--

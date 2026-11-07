@@ -44,12 +44,7 @@ void Mpu6500::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 
     // Configure NSS pin
     Board::ImuNss::GpioOutput();
-
-    // connect GPIO pins to the alternate SPI function
-    Board::ImuSpiMaster::connect<Board::ImuMiso::Miso, Board::ImuMosi::Mosi, Board::ImuSck::Sck>();
-
-    // initialize SPI with clock speed
-    Board::ImuSpiMaster::initialize<Board::SystemClock, 703125_Hz>();
+    Board::initializeImuSpi<703125_Hz>();
 
     // See page 42 of the mpu6500 register map for initialization process:
     // https://3cfeqx1hf82y3xcoull08ihx-wpengine.netdna-ssl.com/wp-content/uploads/2015/02/MPU-6500-Register-Map2.pdf
@@ -119,8 +114,8 @@ bool Mpu6500::read()
         tx = MPU6500_ACCEL_XOUT_H | MPU6500_READ_BIT;
         rx = 0;
         txBuff[0] = tx;
-        PT_CALL(Board::ImuSpiMaster::transfer(&tx, &rx, 1));
-        PT_CALL(Board::ImuSpiMaster::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
+        PT_CALL(Board::ImuSpi::transfer(&tx, &rx, 1));
+        PT_CALL(Board::ImuSpi::transfer(txBuff, rxBuff, ACC_GYRO_TEMPERATURE_BUFF_RX_SIZE));
         mpuNssHigh();
 
         float accRawX = LITTLE_ENDIAN_INT16_TO_FLOAT(rxBuff);
@@ -161,9 +156,9 @@ void Mpu6500::spiWriteRegister(uint8_t reg, uint8_t data)
     mpuNssLow();
     uint8_t tx = reg & ~MPU6500_READ_BIT;
     uint8_t rx = 0;  // Unused
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    Board::ImuSpi::transferBlocking(&tx, &rx, 1);
     tx = data;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    Board::ImuSpi::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
 #endif
 }
@@ -177,8 +172,8 @@ uint8_t Mpu6500::spiReadRegister(uint8_t reg)
     mpuNssLow();
     uint8_t tx = reg | MPU6500_READ_BIT;
     uint8_t rx = 0;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
+    Board::ImuSpi::transferBlocking(&tx, &rx, 1);
+    Board::ImuSpi::transferBlocking(&tx, &rx, 1);
     mpuNssHigh();
     return rx;
 #endif
@@ -195,8 +190,8 @@ void Mpu6500::spiReadRegisters(uint8_t regAddr, uint8_t *pData, uint8_t len)
     uint8_t tx = regAddr | MPU6500_READ_BIT;
     uint8_t rx = 0;
     txBuff[0] = tx;
-    Board::ImuSpiMaster::transferBlocking(&tx, &rx, 1);
-    Board::ImuSpiMaster::transferBlocking(txBuff, pData, len);
+    Board::ImuSpi::transferBlocking(&tx, &rx, 1);
+    Board::ImuSpi::transferBlocking(txBuff, pData, len);
     mpuNssHigh();
 #endif
 }

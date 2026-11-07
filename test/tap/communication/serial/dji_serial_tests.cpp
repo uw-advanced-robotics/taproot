@@ -31,6 +31,8 @@ using namespace testing;
 using namespace tap;
 using namespace tap::algorithms;
 
+static constexpr Uart::UartPort UART_PORT = static_cast<Uart::UartPort>(0);
+
 class DJISerialTester : public DJISerial
 {
 public:
@@ -50,7 +52,7 @@ public:
 TEST(DJISerial, updateSerial_parseMessage_single_byte_at_a_time_crcenforcement)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, UART_PORT, true);
 
     EXPECT_ERROR_TIMES(0);
 
@@ -68,7 +70,7 @@ TEST(DJISerial, updateSerial_parseMessage_single_byte_at_a_time_crcenforcement)
     }
     convertToLittleEndian(calculateCRC16(rawMessage, 17), rawMessage + 17);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             if (length == 0)
             {
@@ -106,7 +108,7 @@ TEST(DJISerial, updateSerial_parseMessage_single_byte_at_a_time_crcenforcement)
 TEST(DJISerial, updateSerial_parseMessage_crc8_one_off)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, UART_PORT, true);
 
 #if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
@@ -128,7 +130,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc8_one_off)
     }
     convertToLittleEndian(calculateCRC16(rawMessage, 17), rawMessage + 17);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             if (length == 0)
             {
@@ -153,7 +155,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc8_one_off)
 TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, UART_PORT, true);
 #if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([&](const tap::errors::SystemError &error) {
@@ -174,7 +176,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
     }
     convertToLittleEndian<uint16_t>(calculateCRC16(rawMessage, 17) - 1, rawMessage + 17);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             if (length == 0)
             {
@@ -199,7 +201,7 @@ TEST(DJISerial, updateSerial_parseMessage_crc16_one_off)
 TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, UART_PORT, true);
 
     EXPECT_ERROR_TIMES(0);
 
@@ -213,7 +215,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
     convertToLittleEndian(static_cast<uint16_t>(2), rawMessage + 5);
     convertToLittleEndian(calculateCRC16(rawMessage, 7), rawMessage + 7);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             if (length == 0)
             {
@@ -238,7 +240,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_0)
 TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, false);
+    DJISerialTester serial(&drivers, UART_PORT, false);
 #if __has_include("tap/errors/error_controller.hpp")
     EXPECT_CALL(drivers.errorController, addToErrorList)
         .WillOnce([&](const tap::errors::SystemError &error) {
@@ -261,7 +263,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
     }
     convertToLittleEndian(calculateCRC16(rawMessage, 17), rawMessage + 17);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             if (length == 0)
             {
@@ -286,7 +288,7 @@ TEST(DJISerial, updateSerial_parseMessage_msg_length_too_big)
 TEST(DJISerial, updateSerial_parseMessage_all_bytes_received_at_once_crcenforcement)
 {
     Drivers drivers;
-    DJISerialTester serial(&drivers, Uart::Uart1, true);
+    DJISerialTester serial(&drivers, UART_PORT, true);
 
     EXPECT_ERROR_TIMES(0);
 
@@ -304,7 +306,7 @@ TEST(DJISerial, updateSerial_parseMessage_all_bytes_received_at_once_crcenforcem
     }
     convertToLittleEndian(calculateCRC16(rawMessage, 17), rawMessage + 17);
 
-    ON_CALL(drivers.uart, read(Uart::Uart1, _, _))
+    ON_CALL(drivers.uart, read(UART_PORT, _, _))
         .WillByDefault([&](Uart::UartPort, uint8_t *data, std::size_t length) {
             int bytesRead = 0;
             for (std::size_t i = 0; i < length; i++)

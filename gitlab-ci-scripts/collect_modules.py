@@ -19,11 +19,11 @@ import subprocess
 import os
 import re
 from typing import Iterable, Dict, Tuple
-from project_xml_generation import generate_project_xml
+from project_xml_generation import generate_project_xml, BOARDS
 
 
 REQUIRED_MODULES = {"taproot:build", "taproot:modm-project.xml", "taproot:testing", "taproot:testing:mock", "taproot:testing:tests"}
-IGNORED_MODULES = {"taproot:ci-scripts"}
+IGNORED_MODULES = {"taproot:ci-scripts", "taproot:docs"}
 ENFORCED_OPTIONS = {"rebuild_modm": True}
 
 def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
@@ -31,10 +31,7 @@ def collect_generation_information() -> Dict[str, Dict[str, Iterable[str]]]:
     
     lbuild_discover = lambda args=[]: subprocess.run(['lbuild', *args, 'discover'], env={**dict(os.environ), **{"PYTHONIOENCODING": "utf-8"}}, capture_output=True, cwd=os.getcwd())
 
-    xml = generate_project_xml("rm-dev-board-a", {}, [])
-    device_discover = lbuild_discover(["-c", xml])
-    os.remove(xml)
-    devices = re.findall(b'Option\(dev_board\) = .* in \\[(.*)\\]', device_discover.stdout)[0].decode("utf-8").split(", ")
+    devices = BOARDS
     print(f"Found {len(devices)} devices: {devices}")
 
     jobs = 0

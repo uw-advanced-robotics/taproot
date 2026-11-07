@@ -53,8 +53,7 @@ void Bmi088::initialize(float sampleFrequency, float mahonyKp, float mahonyKi)
 
     DELAY_MS(100);
 
-    ImuSpiMaster::connect<ImuMiso::Miso, ImuMosi::Mosi, ImuSck::Sck>();
-    ImuSpiMaster::initialize<SystemClock, 10_MHz>();
+    Board::initializeImuSpi<10_MHz>();
 
     DELAY_MS(1);
 #endif

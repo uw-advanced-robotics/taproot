@@ -20,8 +20,28 @@ import sys
 import itertools
 import hashlib
 from typing import Iterable, Dict, Any
+from collections import defaultdict
+
+sys.path.append("../lbuild-scripts")
+import board_info_parser
 
 PROJECT_XML_TEMPLATE_PATH = "ci-project-template.xml"
+
+BOARDS = board_info_parser.get_available_devices()
+
+BOARD_OPTIONS = defaultdict(dict, {
+    "rm-dev-board-a": {
+        "taproot:hard_aliases": "usart6:RefSerial,uart7:TerminalSerial",
+        "taproot:board:digital_out_pins": "Laser"
+    },
+    "rm-dev-board-c": {
+        "taproot:hard_aliases": "usart6:RefSerial",
+        "taproot:board:digital_out_pins": "Laser"
+    },
+    "nucleo-f446re": {
+        "taproot:hard_aliases": "usart1:Remote,usart3:RefSerial",
+    }
+})
 
 def hash_dict(dict: Dict[str, Any]):
     hasher = hashlib.sha256()
@@ -46,7 +66,8 @@ def generate_project_xml(board: str, options: Dict[str, Any], modules: Iterable[
         file = file.replace("$BOARD$", board)
         file = file.replace("$OPTIONS$", 
             "\n\t".join(
-                f"<option name=\"{o}\">{v}</option>" for o, v in options.items()
+                [f"<option name=\"{o}\">{v}</option>" for o, v in options.items()] +
+                [f"<option name=\"{o}\">{v}</option>" for o, v in BOARD_OPTIONS[board].items()]
             )
         )
         file = file.replace("$MODULES$", 

@@ -1,61 +1,154 @@
 <board>
-    <can-pins>
-        <gpio alias="Can1Rx" name="GpioD0"></gpio>
-        <gpio alias="Can1Tx" name="GpioD1"></gpio>
-        <gpio alias="Can2Rx" name="GpioB12"></gpio>
-        <gpio alias="Can2Tx" name="GpioB13"></gpio>
-    </can-pins>
-    <gpio-pins>
-        <gpio alias="A" name="GpioI0"></gpio>
-        <gpio alias="B" name="GpioH12"></gpio>
-        <gpio alias="C" name="GpioH11"></gpio>
-        <gpio alias="D" name="GpioH10"></gpio>
-        <gpio alias="E" name="GpioD15"></gpio>
-        <gpio alias="F" name="GpioD14"></gpio>
-        <gpio alias="G" name="GpioD13"></gpio>
-        <gpio alias="H" name="GpioD12"></gpio>
-        <gpio alias="S" name="GpioA0">
-            <adc name="Adc1" in="In0"></adc>
-        </gpio>
-        <gpio alias="T" name="GpioA1">
-            <adc name="Adc1" in="In1"></adc>
-        </gpio>
-        <gpio alias="U" name="GpioA2">
-            <adc name="Adc1" in="In2"></adc>
-        </gpio>
-        <gpio alias="V" name="GpioA3">
-            <adc name="Adc1" in="In3"></adc>
-        </gpio>
-        <gpio alias="W" name="GpioI5">
-            <timer name="Timer8" channel="Ch1"></timer>
-        </gpio>
-        <gpio alias="X" name="GpioI6">
-            <timer name="Timer8" channel="Ch2"></timer>
-        </gpio>
-        <gpio alias="Y" name="GpioI7">
-            <timer name="Timer8" channel="Ch3"></timer>
-        </gpio>
-        <gpio alias="Z" name="GpioI2">
-            <timer name="Timer8" channel="Ch4"></timer>
-        </gpio>
-        <gpio alias="OledJoystick" name="GpioA6">
-            <adc name="Adc1" in="In6"></adc>
-        </gpio>
-        <gpio alias="Buzzer" name="GpioH6">
-            <timer name="Timer12" channel="Ch1"></timer>
-        </gpio>
-        <gpio alias="Laser" name="GpioG13"></gpio>
-        <gpio alias="ImuHeater" name="GpioB5">
-            <timer name="Timer3" channel="Ch2"></timer>
-        </gpio>
-        <gpio alias="Button" name="GpioB2"></gpio>
-    </gpio-pins>
-    <uart-ports>
-        <uart sync="true" name="1" rx="GpioB7"></uart>
-        <uart sync="true" name="2" tx="GpioD5" rx="GpioD6"></uart>
-        <uart sync="true" name="3" tx="GpioD8" rx="GpioD9"></uart>
-        <uart sync="true" name="6" tx="GpioG14" rx="GpioG9"></uart>
-        <uart sync="false" name="7" tx="GpioE8" rx="GpioE7"></uart>
-        <uart sync="false" name="8" tx="GpioE1" rx="GpioE0"></uart>
-    </uart-ports>
+    <controller chip="stm32f427iih6">
+        <clock frequency="180" crystal="12">
+            <prescalars ahb="1" apb1="4" apb2="2" />
+            <pll m="6" n="180" p="2" />
+        </clock> 
+    </controller>
+    
+    <can name="1" rx="GpioD0" tx="GpioD1" />
+    <can name="2" rx="GpioB12" tx="GpioB13" />
+
+    <usart name="1" alias="Remote" rx="GpioB7" />
+    <usart name="2" tx="GpioD5" rx="GpioD6" />
+    <usart name="3" tx="GpioD8" rx="GpioD9" />
+    <usart name="6" tx="GpioG14" rx="GpioG9" />
+    <uart name="7" tx="GpioE8" rx="GpioE7" />
+    <uart name="8" tx="GpioE1" rx="GpioE0" />
+
+    <i2c name="2" sda="GpioF0" scl="GpioF1" />
+
+    <!-- SPI to the display spi port on the board -->
+    <spi name="1" alias="Display" sck="GpioB3" poci="GpioB4" pico="GpioA7">
+        <out alias="Reset" name="GpioB10" />
+        <out alias="Command" name="GpioB9" />
+        <analog alias="Joystick" name="GpioA6" adc="Adc1" in="In6" />
+    </spi>
+    <spi name="4" sck="GpioE12" poci="GpioE5" pico="GpioE6" />
+    <!-- SPI for the Mpu6500 IMU on the board -->
+    <spi name="5" alias="Imu" sck="GpioF7" poci="GpioF8" pico="GpioF9">
+        <out alias="Nss" name="GpioF6" />
+        <pwm alias="Heater" name="GpioB5" timer="Timer3" channel="Ch2" />
+    </spi>
+
+    <!-- initialize 9 green Leds and 1 red LED -->
+    <gpio-group name="Led">
+        <out alias="A" name="GpioG8" inverted="True" />
+        <out alias="B" name="GpioG7" inverted="True" />
+        <out alias="C" name="GpioG6" inverted="True" />
+        <out alias="D" name="GpioG5" inverted="True" />
+        <out alias="E" name="GpioG4" inverted="True" />
+        <out alias="F" name="GpioG3" inverted="True" />
+        <out alias="G" name="GpioG2" inverted="True" />
+        <out alias="H" name="GpioG1" inverted="True" />
+        <out alias="Green" name="GpioF14" inverted="True" />
+        <out alias="Red" name="GpioE11" inverted="True" />
+    </gpio-group>
+
+    <!-- initialize 4 24V outputs -->
+    <gpio-group name="PowerOut" default="High">
+        <out alias="Port1" name="GpioH2" />
+        <out alias="Port2" name="GpioH3" />
+        <out alias="Port3" name="GpioH4" />
+        <out alias="Port4" name="GpioH5" />
+    </gpio-group>
+
+    <gpio alias="A" name="GpioI0">
+        <timer name="Timer5" channel="Ch4" />
+    </gpio>
+    <gpio alias="B" name="GpioH12">
+        <timer name="Timer5" channel="Ch3" />
+    </gpio>
+    <gpio alias="C" name="GpioH11">
+        <timer name="Timer5" channel="Ch2" />
+    </gpio>
+    <gpio alias="D" name="GpioH10">
+        <timer name="Timer5" channel="Ch1" />
+    </gpio>
+    <gpio alias="E" name="GpioD15">
+        <timer name="Timer4" channel="Ch4" />
+    </gpio>
+    <gpio alias="F" name="GpioD14">
+        <timer name="Timer4" channel="Ch3" />
+    </gpio>
+    <gpio alias="G" name="GpioD13">
+        <timer name="Timer4" channel="Ch2" />
+    </gpio>
+    <gpio alias="H" name="GpioD12">
+        <timer name="Timer4" channel="Ch1" />
+    </gpio>
+    <gpio alias="S" name="GpioA0">
+        <adc name="Adc1" in="In0" />
+        <timer name="Timer2" channel="Ch1" />
+    </gpio>
+    <gpio alias="T" name="GpioA1">
+        <adc name="Adc1" in="In1" />
+        <timer name="Timer2" channel="Ch2" />
+    </gpio>
+    <gpio alias="U" name="GpioA2">
+        <adc name="Adc1" in="In2" />
+        <timer name="Timer9" channel="Ch1" />
+    </gpio>
+    <gpio alias="V" name="GpioA3">
+        <adc name="Adc1" in="In3" />
+        <timer name="Timer9" channel="Ch2" />
+    </gpio>
+    <gpio alias="W" name="GpioI5">
+        <timer name="Timer8" channel="Ch1" />
+    </gpio>
+    <gpio alias="X" name="GpioI6">
+        <timer name="Timer8" channel="Ch2" />
+    </gpio>
+    <gpio alias="Y" name="GpioI7">
+        <timer name="Timer8" channel="Ch3" />
+    </gpio>
+    <gpio alias="Z" name="GpioI2">
+        <timer name="Timer8" channel="Ch4" />
+    </gpio>
+    <pwm alias="Buzzer" name="GpioH6" timer="Timer12" channel="Ch1" />
+    <gpio alias="Laser" name="GpioG13" />
+    <in alias="Button" name="GpioB2" />
+
+    <gpio alias="I1" name="GpioF0" />
+    <gpio alias="I2" name="GpioF1" />
+    <gpio alias="J1" name="GpioE4" />
+    <gpio alias="J2" name="GpioE5">
+        <timer name="Timer9" channel="Ch1" />
+    </gpio>
+    <gpio alias="K1" name="GpioE12" />
+    <gpio alias="K2" name="GpioE6">
+        <timer name="Timer9" channel="Ch2" />
+    </gpio>
+    <gpio alias="L1" name="GpioB0">
+        <adc name="Adc1" in="In8" />
+    </gpio>
+    <gpio alias="L2" name="GpioC2">
+        <adc name="Adc1" in="In12" />
+    </gpio>
+    <gpio alias="M1" name="GpioB1">
+        <adc name="Adc1" in="In9" />
+    </gpio>
+    <gpio alias="M2" name="GpioC3">
+        <adc name="Adc1" in="In13" />
+    </gpio>
+    <gpio alias="N1" name="GpioC0">
+        <adc name="Adc1" in="In10" />
+    </gpio>
+    <gpio alias="N2" name="GpioC4">
+        <adc name="Adc1" in="In14" />
+    </gpio>
+    <gpio alias="O1" name="GpioC1">
+        <adc name="Adc1" in="In11" />
+    </gpio>
+    <gpio alias="O2" name="GpioC5">
+        <adc name="Adc1" in="In15" />
+    </gpio>
+    <gpio alias="P1" name="GpioA4">
+        <adc name="Adc1" in="In4" />
+    </gpio>
+    <gpio alias="P2" name="GpioA5">
+        <adc name="Adc1" in="In5" />
+    </gpio>
+    <gpio alias="Q1" name="GpioI9" />
+    <gpio alias="Q2" name="GpioF10" />
 </board>

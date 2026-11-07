@@ -24,8 +24,6 @@
 
 #include "modm/io/iodevice.hpp"
 
-#include "uart_terminal_device_constants.hpp"
-
 namespace tap
 {
 class Drivers;
@@ -34,9 +32,9 @@ class Drivers;
 namespace tap::communication::serial
 {
 /**
- * A wrapper around UART3 used by the terminal handler. Allows for stream-based operations
- * to be performed on data being sent/received by the UART line by using an instance
- * of this class with a `modm::IOStream`.
+ * A wrapper around Uart::UartPort::TerminalSerial used by the terminal handler.
+ * Allows for stream-based operations to be performed on data being sent/received
+ * by the UART line by using an instance of this class with a `modm::IOStream`.
  */
 class UartTerminalDevice : public ::modm::IODevice
 {
@@ -71,8 +69,6 @@ private:
     static constexpr uint32_t UART_BAUDE_RATE = 115200;
 
     Drivers *drivers;
-
-    static constexpr Uart::UartPort TERMINAL_UART_PORT = bound_ports::TERMINAL_SERIAL_UART_PORT;
 };  // class UartTerminalDevice
 }  // namespace tap::communication::serial
 
