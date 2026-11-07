@@ -26,13 +26,11 @@
 #include "tap/drivers.hpp"
 #include "tap/errors/create_errors.hpp"
 
-#include "remote_serial_constants.hpp"
-
 namespace tap::communication::serial
 {
 void Remote::initialize()
 {
-    drivers->uart.init<bound_ports::REMOTE_SERIAL_UART_PORT, 100000, Uart::Parity::Even>();
+    drivers->uart.init<Uart::UartPort::Remote, 100000, Uart::Parity::Even>();
 }
 
 void Remote::read()
@@ -45,8 +43,7 @@ void Remote::read()
     }
     uint8_t data;  // Next byte to be read
     // Read next byte if available and more needed for the current packet
-    while (drivers->uart.read(bound_ports::REMOTE_SERIAL_UART_PORT, &data) &&
-           currentBufferIndex < REMOTE_BUF_LEN)
+    while (drivers->uart.read(Uart::UartPort::Remote, &data) && currentBufferIndex < REMOTE_BUF_LEN)
     {
         rxBuffer[currentBufferIndex] = data;
         currentBufferIndex++;
@@ -157,7 +154,7 @@ void Remote::clearRxBuffer()
         rxBuffer[i] = 0;
     }
     // Clear Usart1 rxBuffer
-    drivers->uart.discardReceiveBuffer(bound_ports::REMOTE_SERIAL_UART_PORT);
+    drivers->uart.discardReceiveBuffer(Uart::UartPort::Remote);
 }
 
 void Remote::reset()

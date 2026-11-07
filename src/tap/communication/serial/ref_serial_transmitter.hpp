@@ -21,7 +21,6 @@
 #define TAPROOT_REF_SERIAL_TRANSMITTER_HPP_
 
 #include "tap/architecture/timeout.hpp"
-#include "tap/communication/serial/ref_serial_constants.hpp"
 #include "tap/util_macros.hpp"
 
 #include "modm/processing/resumable.hpp"

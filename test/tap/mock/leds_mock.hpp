@@ -35,7 +35,7 @@ public:
     virtual ~LedsMock();
 
     MOCK_METHOD(void, init, (), (override));
-    MOCK_METHOD(void, set, (LedPin pin, bool isSet), (override));
+    MOCK_METHOD(void, set, (LedPin pin, bool set), (override));
 };  // class LedsMock
 }  // namespace mock
 }  // namespace tap

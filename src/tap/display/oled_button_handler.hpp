@@ -20,10 +20,10 @@
 #ifndef TAPROOT_OLED_BUTTON_HANDLER_HPP_
 #define TAPROOT_OLED_BUTTON_HANDLER_HPP_
 
+#include "tap/communication/gpio/analog.hpp"
+
 #include "modm/math/filter/debounce.hpp"
 #include "modm/ui/menu/view_stack.hpp"
-
-#include "tap/communication/gpio/analog.hpp"
 
 namespace tap
 {
@@ -60,8 +60,9 @@ public:
     };
 
     // Constructor for setting custom ADC button values
-    OledButtonHandler(tap::Drivers *drivers,
-        const tap::gpio::Analog::Pin pin {% if has_joystick %}= tap::gpio::Analog::Pin::OledJoystick{% endif %},
+    OledButtonHandler(
+        tap::Drivers *drivers,
+        const tap::gpio::Analog::Pin pin,
         const AnalogConfig analogConfig = DEFAULT_ADC_CONFIG);
 
     /**

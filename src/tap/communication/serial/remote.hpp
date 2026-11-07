@@ -106,7 +106,7 @@ public:
     };
 
     /**
-     * Enables and initializes `bound_ports::REMOTE_SERIAL_UART_PORT`.
+     * Enables and initializes `Uart::UartPort::Remote`.
      */
     mockable void initialize();
 

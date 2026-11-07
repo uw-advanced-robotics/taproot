@@ -20,7 +20,6 @@
 #include "error_controller.hpp"
 
 #include "tap/algorithms/strtok.hpp"
-#include "tap/communication/gpio/leds.hpp"
 #include "tap/drivers.hpp"
 
 #include "modm/container/linked_list.hpp"
@@ -46,11 +45,6 @@ void ErrorController::addToErrorList(const SystemError& error)
         errorList.removeFront();  // remove the oldest element in the error list
     }
     errorList.append(error);
-}
-
-void ErrorController::init()
-{
-    drivers->terminalSerial.addHeader("error", &drivers->errorController);
 }
 
 bool ErrorController::removeSystemErrorAtIndex(error_index_t index)
@@ -88,90 +82,6 @@ void ErrorController::removeAllSystemErrors()
     {
         errorList.removeBack();
     }
-}
-
-bool ErrorController::terminalSerialCallback(
-    char* inputLine,
-    modm::IOStream& outputStream,
-    bool streamingEnabled)
-{
-    if (streamingEnabled)
-    {
-        outputStream << "Error Controller: streaming is not supported" << modm::endl;
-        return false;
-    }
-    char* arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
-    if (arg == nullptr || strcmp(arg, "-H") == 0)
-    {
-        outputStream << USAGE;
-        return arg != nullptr;
-    }
-    else if (strcmp(arg, "printall") == 0)
-    {
-        outputStream << "printing errors" << modm::endl;
-        displayAllErrors(outputStream);
-    }
-    else if (strcmp(arg, "removeall") == 0)
-    {
-        clearAllTerminalErrors(outputStream);
-    }
-    else if (strcmp(arg, "remove") == 0)
-    {
-        arg = strtokR(inputLine, communication::serial::TerminalSerial::DELIMITERS, &inputLine);
-        if (arg == nullptr)
-        {
-            outputStream << "Error Controller: must specify an index" << modm::endl;
-            return false;
-        }
-        char* indexEnd;
-        int index = strtol(arg, &indexEnd, 10);
-        if (indexEnd != arg + strlen(arg))
-        {
-            outputStream << "Error Controller: invalid index: " << arg << modm::endl;
-            return false;
-        }
-        removeTerminalError(index, outputStream);
-    }
-    else
-    {
-        outputStream << "Command not found, try again, type \"error -H\" for more." << modm::endl;
-        return false;
-    }
-    return true;
-}
-
-void ErrorController::displayAllErrors(modm::IOStream& outputStream)
-{
-    int index = 0;
-    if (errorList.getSize() == 0)
-    {
-        outputStream << "No errors found" << modm::endl;
-    }
-    else
-    {
-        for (SystemError sysErr : errorList)
-        {
-            outputStream << index++ << ") " << sysErr.getDescription() << " ["
-                         << sysErr.getFilename() << ':' << sysErr.getLineNumber() << ']'
-                         << modm::endl;
-        }
-    }
-}
-
-// Syntax: Error RemoveTerminalError [Index]
-void ErrorController::removeTerminalError(int index, modm::IOStream& outputStream)
-{
-    outputStream << "Removing terminal error at index..." << index << modm::endl;
-    if (!removeSystemErrorAtIndex(index))
-    {
-        outputStream << "Invalid index" << modm::endl;
-    }
-}
-
-void ErrorController::clearAllTerminalErrors(modm::IOStream& outputStream)
-{
-    outputStream << "Removing all terminal errors..." << modm::endl;
-    removeAllSystemErrors();
 }
 
 }  // namespace tap::errors

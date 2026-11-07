@@ -36,9 +36,7 @@ namespace tap::communication::serial
 /**
  * Class that wraps modm's Uart implementation.
  *
- * Currently only wraps the uart ports that we are generating modm
- * code for. If additional `UartPort`'s are added, they must be added
- * to this wrapper class here.
+ * Only wraps the uart ports specified in the board.xml file.
  */
 class Uart
 {
@@ -46,7 +44,7 @@ public:
     enum UartPort
     {
 %% for port in uart_ports
-        Uart{{ port }},
+        {{ port.display_name() }},{% if port.alias != port.name() %} // {{ port.name() }}{% endif %}
 %% endfor
     };
 
@@ -77,24 +75,14 @@ public:
     void init()
     {
 #ifndef PLATFORM_HOSTED
-%% macro init_port(port, rxPin, txPin)
-            modm::platform::{{ full_port_name[port] }}::connect<{% if txPin != None %}{{ txPin }}::Tx{% if rxPin != None %}, {% endif %}{% endif %}{% if rxPin != None %}{{ rxPin }}::Rx{% endif %}>();
-            modm::platform::{{ full_port_name[port] }}::initialize<Board::SystemClock, baudrate>(parity);
+%% macro init_port(port)
+            modm::platform::{{ port.name() }}::connect<{% if port.tx != None %}{{ port.tx }}::Tx{% if port.rx != None %}, {% endif %}{% endif %}{% if port.rx != None %}{{ port.rx }}::Rx{% endif %}>();
+            modm::platform::{{ port.name() }}::initialize<Board::SystemClock, baudrate>(parity);
 %% endmacro
-%% if uart_ports|length > 0
-        if constexpr (port == UartPort::Uart{{ uart_ports[0] }})
+%% for port in uart_ports
+        {% if not loop.first %}else {% endif %}if constexpr (port == UartPort::{{ port.display_name() }})
         {
-    %% set port = uart_ports[0]
-    %% set rxPin = port_to_rx_pin[port]
-    %% set txPin = port_to_tx_pin[port]
-{{ init_port(port, rxPin, txPin) }}        }
-%% endif
-%% for port in uart_ports[1:]
-        else if constexpr (port == UartPort::Uart{{ port }})
-        {
-    %% set rxPin = port_to_rx_pin[port]
-    %% set txPin = port_to_tx_pin[port]
-{{ init_port(port, rxPin, txPin) }}        }
+{{ init_port(port) }}        }
 %% endfor
 #endif
     }
