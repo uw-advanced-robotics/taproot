@@ -404,4 +404,27 @@ Transform Transform::projectForward(float dt) const
         getDynamicOrientation().projectForward(dt));
 }
 
+bool Transform::staticTransformsClose(const Transform& first, const Transform& second)
+{
+    const Vector translationDifference = first.getTranslation() - second.getTranslation();
+    if (translationDifference.magnitudeSq() > TRANSFORM_EPSILON * TRANSFORM_EPSILON)
+    {
+        return false;
+    }
+
+    const auto& firstRotation = first.getRotation().matrix();
+    const auto& secondRotation = second.getRotation().matrix();
+    for (size_t i = 0; i < firstRotation.data.size(); ++i)
+    {
+        if (!tap::algorithms::compareFloatClose(
+                firstRotation[i],
+                secondRotation[i],
+                TRANSFORM_EPSILON))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 }  // namespace tap::algorithms::transforms
