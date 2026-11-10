@@ -607,6 +607,10 @@ public:
             Orientation::interpolate(a.rotation, b.rotation, t));
     }
 
+    static bool staticTransformsClose(
+        const tap::algorithms::transforms::Transform& first,
+        const tap::algorithms::transforms::Transform& second);
+
     /* Getters */
     inline const Position& getTranslation() const { return translation; }
 
@@ -709,6 +713,7 @@ public:
     inline bool isDynamic() const { return dynamic; }
 
 private:
+    static constexpr float TRANSFORM_EPSILON = 1e-5f;
     bool dynamic{true};
 
     Position translation;
