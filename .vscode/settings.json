@@ -103,4 +103,6 @@
             100
         ]
     },
+    "cmake.sourceDirectory": "/Users/irislitiu/work-aruw/taproot/ext/eigen-project/eigen",
+    "C_Cpp.default.compilerPath": "/usr/bin/clang++",
 }

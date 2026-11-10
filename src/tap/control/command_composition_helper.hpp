@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021 Advanced Robotics at the University of Washington <robomstr@uw.edu>
+ * Copyright (c) 2026-2027 Advanced Robotics at the University of Washington <robomstr@uw.edu>
  *
  * This file is part of Taproot.
  *
@@ -27,6 +27,9 @@
 #include "conditional_command.hpp"
 #include "sequential_command.hpp"
 #include "timeout_command.hpp"
+#include "instant_command.hpp"
+#include "runnable_command.hpp"
+#include "switchable_command.hpp"
 
 namespace tap
 {
@@ -103,6 +106,20 @@ struct CommandCompositionHelper
             std::array<Command*, 1>{command},
             "concurrent deadline",
             deadlineCommand);
+    }
+
+    template<size_t SUBSYSTEMS>
+    InstantCommand<SUBSYSTEMS>* runOnce(std::function<void> runnable, std::array<Subsystem *, SUBSYSTEMS> dependencies) {
+        return new InstantCommand(runnable, dependencies);
+    }
+
+    template<size_t SUBSYSTEMS>
+    Command* run(std::function<void> runnable, std::array<Subsystem *, SUBSYSTEMS> dependencies) {
+        return new RunnableCommand(runnable, dependencies);
+    }
+
+    Command* either(Command* onTrue, Command* onFalse, std::function<bool()> selector) {
+        return new SwitchableCommand(onTrue, onFalse, selector);
     }
 };
 }  // namespace control

@@ -24,6 +24,7 @@
 #include <memory>
 
 #include "tap/util_macros.hpp"
+#include "command_composition_helper.hpp"
 
 #include "command_scheduler_types.hpp"
 
@@ -131,6 +132,16 @@ public:
     virtual bool isFinished() const = 0;
 
     virtual void addCommand(Command* command);
+
+    template <size_t COMMANDS>
+    SequentialCommand<COMMANDS>* andThen(std::array<Command*, COMMANDS - 1> commands);
+
+    template <size_t COMMANDS>
+    WeakConcurrentCommand<COMMANDS>* alongWith(Command* command);
+
+    Command* until(Trigger endCondition);
+
+    Command* withTimeout(uint32_t time);
 
 private:
     /**
