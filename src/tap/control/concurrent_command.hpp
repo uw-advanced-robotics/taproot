@@ -21,6 +21,9 @@
 #define TAPROOT_CONCURRENT_COMMAND_HPP_
 
 #include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "modm/architecture/interface/assert.hpp"
 
@@ -37,8 +40,8 @@ namespace control
  */
 struct StrictReadinessCheck
 {
-    template <size_t N>
-    static bool isReady(std::array<Command*, N>& commands)
+    template <typename Commands>
+    static bool isReady(Commands& commands)
     {
         for (Command* command : commands)
         {
@@ -58,8 +61,8 @@ struct StrictReadinessCheck
  */
 struct WeakReadinessCheck
 {
-    template <size_t N>
-    static bool isReady(std::array<Command*, N>&)
+    template <typename Commands>
+    static bool isReady(Commands&)
     {
         return true;
     }
@@ -76,40 +79,55 @@ template <size_t COMMANDS, bool RACE, typename ReadinessCheck>
 class ConcurrentTemplateCommand : public Command
 {
 public:
+    template <size_t N>
     ConcurrentTemplateCommand(
-        std::array<Command*, COMMANDS> commands,
+        std::array<Command*, N> commandsIn,
         const char* name,
         Command* deadlineCommand = nullptr)
         : Command(),
-          commands(commands),
+          commands(),
           deadlineCommand(deadlineCommand),
           name(name),
           finishedCommands(0),
           allCommands(0)
     {
-        for (Command* command : commands)
+        static_assert(
+            COMMANDS == 0 || N == COMMANDS,
+            "ConcurrentCommand Error: The number of commands passed does not match the template "
+            "size!");
+        if constexpr (COMMANDS == 0)
         {
-            modm_assert(
-                command != nullptr,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Null pointer command passed into concurrent command.");
-            auto requirements = command->getRequirementsBitwise();
-            modm_assert(
-                (this->commandRequirementsBitwise & requirements) == 0,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Multiple commands to concurrent command have overlapping requirements.");
-            this->commandRequirementsBitwise |= requirements;
-            this->allCommands |= (1ull << command->getGlobalIdentifier());
+            commands.assign(commandsIn.begin(), commandsIn.end());
         }
-        if (deadlineCommand)
+        else if constexpr (N == COMMANDS)
         {
-            auto requirements = deadlineCommand->getRequirementsBitwise();
-            modm_assert(
-                (this->commandRequirementsBitwise & requirements) == 0,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Deadline command has overlapping requirements.");
-            this->commandRequirementsBitwise |= requirements;
-            this->allCommands |= (1ull << deadlineCommand->getGlobalIdentifier());
+            commands = commandsIn;
+        }
+        registerCommands();
+    }
+
+    /**
+     * Runtime-sized group. The `COMMANDS == 0` specializations accept this constructor;
+     * composition helpers use it when the number of commands is not a compile-time constant.
+     */
+    ConcurrentTemplateCommand(
+        std::vector<Command*> commandsIn,
+        const char* name,
+        Command* deadlineCommand = nullptr)
+        : Command(),
+          commands(),
+          deadlineCommand(deadlineCommand),
+          name(name),
+          finishedCommands(0),
+          allCommands(0)
+    {
+        static_assert(
+            COMMANDS == 0,
+            "ConcurrentCommand Error: the vector constructor requires COMMANDS == 0.");
+        if constexpr (COMMANDS == 0)
+        {
+            commands = std::move(commandsIn);
+            registerCommands();
         }
     }
 
@@ -188,7 +206,39 @@ public:
     }
 
 private:
-    std::array<Command*, COMMANDS> commands;
+    void registerCommands()
+    {
+        for (Command* command : commands)
+        {
+            modm_assert(
+                command != nullptr,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Null pointer command passed into concurrent command.");
+            auto requirements = command->getRequirementsBitwise();
+            modm_assert(
+                (this->commandRequirementsBitwise & requirements) == 0,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Multiple commands to concurrent command have overlapping requirements.");
+            this->commandRequirementsBitwise |= requirements;
+            this->allCommands |= (1ull << command->getGlobalIdentifier());
+        }
+        if (deadlineCommand)
+        {
+            auto requirements = deadlineCommand->getRequirementsBitwise();
+            modm_assert(
+                (this->commandRequirementsBitwise & requirements) == 0,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Deadline command has overlapping requirements.");
+            this->commandRequirementsBitwise |= requirements;
+            this->allCommands |= (1ull << deadlineCommand->getGlobalIdentifier());
+        }
+    }
+
+    // COMMANDS == 0 is the runtime-sized group used by Command composition helpers.
+    using CommandStorage =
+        std::conditional_t<COMMANDS == 0, std::vector<Command*>, std::array<Command*, COMMANDS>>;
+
+    CommandStorage commands;
     Command* deadlineCommand;
     const char* name;
     command_scheduler_bitmap_t finishedCommands;

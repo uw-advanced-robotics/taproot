@@ -19,8 +19,11 @@
 
 #include "subsystem.hpp"
 
+#include <utility>
+
 #include "tap/drivers.hpp"
 
+#include "command.hpp"
 #include "command_scheduler.hpp"
 
 namespace tap
@@ -60,6 +63,22 @@ void Subsystem::setTestCommand(Command* command)
 }
 
 const char* Subsystem::getName() const { return "Subsystem"; }
+
+Command* Subsystem::runOnce(
+    std::function<void()> runnable,
+    std::initializer_list<Subsystem*> otherDeps)
+{
+    Command* command = Command::runOnce(std::move(runnable), otherDeps);
+    command->addSubsystemRequirement(this);
+    return command;
+}
+
+Command* Subsystem::run(std::function<void()> runnable, std::initializer_list<Subsystem*> otherDeps)
+{
+    Command* command = Command::run(std::move(runnable), otherDeps);
+    command->addSubsystemRequirement(this);
+    return command;
+}
 
 #if defined(PLATFORM_HOSTED) && defined(ENV_UNIT_TESTS)
 Subsystem::Subsystem()

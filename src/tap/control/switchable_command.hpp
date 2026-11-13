@@ -33,7 +33,7 @@ namespace tap
 namespace control
 {
 /**
- * A class for a command that switches switch command is scheduled based on a boolean condition.
+ * A class for a command that switches which command is scheduled based on a boolean condition.
  * @param onTrue A nonterminating command to be scheduled when boolean condition is true
  * @param onFalse A nonterminating command to be scheduled when boolean condition is false
  * @param selector Whether to schedule onTrue or onFalse commands
@@ -41,46 +41,57 @@ namespace control
 class SwitchableCommand : public Command
 {
 public:
-    SwitchableCommand(
-        Command* onTrue,
-        Command* onFalse,
-        std::function<bool()> selector)
+    SwitchableCommand(Command* onTrue, Command* onFalse, std::function<bool()> selector)
         : Command(),
-        onTrue(onTrue),
-        onFalse(onFalse),
-        selector(selector),
-        lastCommandIsTrue(selector()) {}
-
-    bool isReady() override { selector() ? onTrue->isReady() : onFalse->isReady(); }
-
-    void initialize() override {
-        selector() ? onTrue->initialize() : onFalse->initialize();
-    }
-
-    void execute() override {
-        if (selector()) {
-            if (!lastCommandIsTrue) {
-                onTrue->initialize();
-            }
-            onTrue->execute();
-        } else {
-            if (lastCommandIsTrue) {
-                onFalse->initialize();
-            }
-            onFalse->execute();
+          onTrue(onTrue),
+          onFalse(onFalse),
+          selector(selector),
+          lastCommandIsTrue(false)
+    {
+        if (this->selector)
+        {
+            lastCommandIsTrue = this->selector();
+        }
+        if (onTrue != nullptr)
+        {
+            this->commandRequirementsBitwise |= onTrue->getRequirementsBitwise();
+        }
+        if (onFalse != nullptr)
+        {
+            this->commandRequirementsBitwise |= onFalse->getRequirementsBitwise();
         }
     }
 
-    void end(bool interrupted) override {
-        onTrue->end(interrupted);
-        onFalse->end(interrupted);
+    bool isReady() override { return selector() ? onTrue->isReady() : onFalse->isReady(); }
+
+    void initialize() override
+    {
+        lastCommandIsTrue = selector();
+        selected()->initialize();
     }
+
+    void execute() override
+    {
+        bool selectTrue = selector();
+        // if selection condition flips, end current command and schedule other command
+        if (selectTrue != lastCommandIsTrue)
+        {
+            selected()->end(true);
+            lastCommandIsTrue = selectTrue;
+            selected()->initialize();
+        }
+        selected()->execute();
+    }
+
+    void end(bool interrupted) override { selected()->end(interrupted); }
 
     bool isFinished() const override { return false; }
 
-    const char *getName() const override { return "switchable command"; }
+    const char* getName() const override { return "switchable command"; }
 
 private:
+    Command* selected() const { return lastCommandIsTrue ? onTrue : onFalse; }
+
     Command* onTrue;
     Command* onFalse;
     std::function<bool()> selector;
