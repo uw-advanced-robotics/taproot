@@ -150,12 +150,6 @@ public:
     Command* alongWith(Command* parallel);
 
     /**
-     * @param[in] parallel commands to run at the same time as this one.
-     * @return a command that runs this command in parallel with each command until all finish.
-     */
-    Command* alongWith(std::initializer_list<Command*> parallel);
-
-    /**
      * @param[in] condition finish condition, polled while this command runs.
      * @return a command that runs this command until the condition returns true.
      */

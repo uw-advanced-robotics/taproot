@@ -94,15 +94,6 @@ Command* Command::alongWith(Command* parallel)
         "concurrent command: parallel");
 }
 
-Command* Command::alongWith(std::initializer_list<Command*> parallel)
-{
-    std::vector<Command*> commands;
-    commands.reserve(parallel.size() + 1);
-    commands.push_back(this);
-    commands.insert(commands.end(), parallel.begin(), parallel.end());
-    return new WeakConcurrentCommand<0>(std::move(commands), "concurrent command: parallel");
-}
-
 Command* Command::until(std::function<bool()> condition)
 {
     return new RaceWithOwnedCommand(
@@ -137,7 +128,13 @@ Command* Command::deadlineWith(Command* deadline)
 
 Command* Command::sequence(std::initializer_list<Command*> next) { return andThen(next); }
 
-Command* Command::parallel(std::initializer_list<Command*> parallel) { return alongWith(parallel); }
+Command* Command::parallel(std::initializer_list<Command*> parallel) {
+    std::vector<Command*> commands;
+    commands.reserve(parallel.size() + 1);
+    commands.push_back(this);
+    commands.insert(commands.end(), parallel.begin(), parallel.end());
+    return new WeakConcurrentCommand<0>(std::move(commands), "concurrent command: parallel");
+}
 
 Command* Command::runOnce(
     std::function<void()> action,

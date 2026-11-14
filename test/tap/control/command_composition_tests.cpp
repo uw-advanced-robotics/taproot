@@ -128,33 +128,6 @@ TEST(CommandComposition, alongWith_runs_commands_until_all_finish)
     EXPECT_FALSE(scheduler.isCommandScheduled(command.get()));
 }
 
-TEST(CommandComposition, alongWith_accepts_multiple_commands)
-{
-    Drivers drivers;
-    CommandScheduler scheduler(&drivers, true);
-    TestSubsystem firstSubsystem(&drivers);
-    TestSubsystem secondSubsystem(&drivers);
-    TestSubsystem thirdSubsystem(&drivers);
-    scheduler.registerSubsystem(&firstSubsystem);
-    scheduler.registerSubsystem(&secondSubsystem);
-    scheduler.registerSubsystem(&thirdSubsystem);
-
-    RecordingCommand first(&firstSubsystem);
-    RecordingCommand second(&secondSubsystem);
-    RecordingCommand third(&thirdSubsystem);
-    first.finished = true;
-    second.finished = true;
-    third.finished = true;
-    std::unique_ptr<Command> command(first.alongWith({&second, &third}));
-
-    scheduler.addCommand(command.get());
-    scheduler.run();
-    EXPECT_EQ(first.executeCount, 1);
-    EXPECT_EQ(second.executeCount, 1);
-    EXPECT_EQ(third.executeCount, 1);
-    EXPECT_FALSE(scheduler.isCommandScheduled(command.get()));
-}
-
 TEST(CommandComposition, until_ends_when_condition_becomes_true)
 {
     Drivers drivers;
