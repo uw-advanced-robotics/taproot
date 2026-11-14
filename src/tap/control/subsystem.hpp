@@ -141,7 +141,8 @@ public:
         std::initializer_list<Subsystem*> otherDeps = {});
 
     /**
-     * @param[in] runnable function to be run every scheduler iteration until the command is interrupted.
+     * @param[in] runnable function to be run every scheduler iteration until the command is
+     * interrupted.
      * @param[in] otherDeps subsystems required in addition to this one.
      * @return a command that requires this subsystem.
      */

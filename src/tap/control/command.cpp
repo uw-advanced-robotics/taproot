@@ -137,10 +137,7 @@ Command* Command::deadlineWith(Command* deadline)
 
 Command* Command::sequence(std::initializer_list<Command*> next) { return andThen(next); }
 
-Command* Command::parallel(std::initializer_list<Command*> parallel)
-{
-    return alongWith(parallel);
-}
+Command* Command::parallel(std::initializer_list<Command*> parallel) { return alongWith(parallel); }
 
 Command* Command::runOnce(
     std::function<void()> action,

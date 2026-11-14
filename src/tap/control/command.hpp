@@ -211,7 +211,8 @@ public:
         std::initializer_list<Subsystem*> requirements = {});
 
     /**
-     * @param[in] selector chooses onTrue command when it returns true and onFalse command otherwise.
+     * @param[in] selector chooses onTrue command when it returns true and onFalse command
+     * otherwise.
      * @return a command that runs exactly one of the two commands.
      */
     static Command* either(Command* onTrue, Command* onFalse, std::function<bool()> selector);

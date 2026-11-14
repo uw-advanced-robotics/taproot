@@ -35,7 +35,8 @@ namespace control
 {
 template <size_t SUBSYSTEMS>
 /**
- * A class for a command that runs a given action every loop of the command scheduler until interrupted.
+ * A class for a command that runs a given action every loop of the command scheduler until
+ * interrupted.
  */
 class RunnableCommand : public Command
 {
@@ -51,7 +52,7 @@ public:
 
     bool isReady() override { return true; }
 
-    void initialize() override { }
+    void initialize() override {}
 
     void execute() override { actionToRun(); }
 
