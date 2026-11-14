@@ -21,6 +21,9 @@
 #define TAPROOT_CONCURRENT_COMMAND_HPP_
 
 #include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "modm/architecture/interface/assert.hpp"
 
@@ -32,14 +35,76 @@ namespace tap
 namespace control
 {
 /**
- * Requires all commands to be ready.
- * For concurrent commands scheduled directly by the command scheduler.
+ * A command that runs multiple commands in parallel. When RACE is false, it continues executing
+ * until all passed in commands have finished and then the concurrent command finishes. When RACE is
+ * true, only one passed in command needs to finish for the concurrent command to finish. If
+ * `deadlineCommand` is not a null pointer, the command group runs until `deadlineCommand` is
+ * finished.
  */
-struct StrictReadinessCheck
+template <size_t COMMANDS, bool RACE>
+class ConcurrentTemplateCommand : public Command
 {
+public:
     template <size_t N>
-    static bool isReady(std::array<Command*, N>& commands)
+    ConcurrentTemplateCommand(
+        std::array<Command*, N> commandsIn,
+        const char* name,
+        Command* deadlineCommand = nullptr)
+        : Command(),
+          commands(),
+          deadlineCommand(deadlineCommand),
+          name(name),
+          finishedCommands(0),
+          allCommands(0)
     {
+        static_assert(
+            COMMANDS == 0 || N == COMMANDS,
+            "ConcurrentCommand Error: The number of commands passed does not match the template "
+            "size!");
+        if constexpr (COMMANDS == 0)
+        {
+            commands.assign(commandsIn.begin(), commandsIn.end());
+        }
+        else if constexpr (N == COMMANDS)
+        {
+            commands = commandsIn;
+        }
+        registerCommands();
+    }
+
+    /**
+     * Runtime-sized group. The `COMMANDS == 0` specializations accept this constructor;
+     * composition helpers use it when the number of commands is not a compile-time constant.
+     */
+    ConcurrentTemplateCommand(
+        std::vector<Command*> commandsIn,
+        const char* name,
+        Command* deadlineCommand = nullptr)
+        : Command(),
+          commands(),
+          deadlineCommand(deadlineCommand),
+          name(name),
+          finishedCommands(0),
+          allCommands(0)
+    {
+        static_assert(
+            COMMANDS == 0,
+            "ConcurrentCommand Error: the vector constructor requires COMMANDS == 0.");
+        if constexpr (COMMANDS == 0)
+        {
+            commands = std::move(commandsIn);
+            registerCommands();
+        }
+    }
+
+    const char* getName() const override { return this->name; }
+
+    bool isReady() override
+    {
+        if (deadlineCommand && !deadlineCommand->isReady())
+        {
+            return false;
+        }
         for (Command* command : commands)
         {
             if (!command->isReady())
@@ -48,77 +113,6 @@ struct StrictReadinessCheck
             }
         }
         return true;
-    }
-};
-
-/**
- * For scheduling concurrent commands that are owned by Trigger actions (e.g., Trigger::whileTrue)
- * in order for the command readiness to not block Trigger activation. Child commands are
- * responsible for enforcing their own readiness.
- */
-struct WeakReadinessCheck
-{
-    template <size_t N>
-    static bool isReady(std::array<Command*, N>&)
-    {
-        return true;
-    }
-};
-
-/**
- * A command that runs multiple commands in parallel. When RACE is false, it continues executing
- * until all passed in commands have finished and then the concurrent command finishes. When RACE is
- * true, only one passed in command needs to finish for the concurrent command to finish. If
- * `deadlineCommand` is not a null pointer, the command group runs until `deadlineCommand` is
- * finished.
- */
-template <size_t COMMANDS, bool RACE, typename ReadinessCheck>
-class ConcurrentTemplateCommand : public Command
-{
-public:
-    ConcurrentTemplateCommand(
-        std::array<Command*, COMMANDS> commands,
-        const char* name,
-        Command* deadlineCommand = nullptr)
-        : Command(),
-          commands(commands),
-          deadlineCommand(deadlineCommand),
-          name(name),
-          finishedCommands(0),
-          allCommands(0)
-    {
-        for (Command* command : commands)
-        {
-            modm_assert(
-                command != nullptr,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Null pointer command passed into concurrent command.");
-            auto requirements = command->getRequirementsBitwise();
-            modm_assert(
-                (this->commandRequirementsBitwise & requirements) == 0,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Multiple commands to concurrent command have overlapping requirements.");
-            this->commandRequirementsBitwise |= requirements;
-            this->allCommands |= (1ull << command->getGlobalIdentifier());
-        }
-        if (deadlineCommand)
-        {
-            auto requirements = deadlineCommand->getRequirementsBitwise();
-            modm_assert(
-                (this->commandRequirementsBitwise & requirements) == 0,
-                "ConcurrentCommand::ConcurrentCommand",
-                "Deadline command has overlapping requirements.");
-            this->commandRequirementsBitwise |= requirements;
-            this->allCommands |= (1ull << deadlineCommand->getGlobalIdentifier());
-        }
-    }
-
-    const char* getName() const override { return this->name; }
-
-    bool isReady() override
-    {
-        if (deadlineCommand && !deadlineCommand->isReady()) return false;
-        return ReadinessCheck::isReady(commands);
     }
 
     void initialize() override
@@ -188,7 +182,39 @@ public:
     }
 
 private:
-    std::array<Command*, COMMANDS> commands;
+    void registerCommands()
+    {
+        for (Command* command : commands)
+        {
+            modm_assert(
+                command != nullptr,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Null pointer command passed into concurrent command.");
+            auto requirements = command->getRequirementsBitwise();
+            modm_assert(
+                (this->commandRequirementsBitwise & requirements) == 0,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Multiple commands to concurrent command have overlapping requirements.");
+            this->commandRequirementsBitwise |= requirements;
+            this->allCommands |= (1ull << command->getGlobalIdentifier());
+        }
+        if (deadlineCommand)
+        {
+            auto requirements = deadlineCommand->getRequirementsBitwise();
+            modm_assert(
+                (this->commandRequirementsBitwise & requirements) == 0,
+                "ConcurrentCommand::ConcurrentCommand",
+                "Deadline command has overlapping requirements.");
+            this->commandRequirementsBitwise |= requirements;
+            this->allCommands |= (1ull << deadlineCommand->getGlobalIdentifier());
+        }
+    }
+
+    // COMMANDS == 0 is the runtime-sized group used by Command composition helpers.
+    using CommandStorage =
+        std::conditional_t<COMMANDS == 0, std::vector<Command*>, std::array<Command*, COMMANDS>>;
+
+    CommandStorage commands;
     Command* deadlineCommand;
     const char* name;
     command_scheduler_bitmap_t finishedCommands;
@@ -199,26 +225,20 @@ private:
  * Runs commands in parallel until all are finished, only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false, StrictReadinessCheck>;
-
-/**
- * Runs commands in parallel until all are finished.
- */
-template <size_t COMMANDS>
-using WeakConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false, WeakReadinessCheck>;
+using ConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false>;
 
 /**
  * Runs commands in parallel until one is finished, only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentRaceCommand = ConcurrentTemplateCommand<COMMANDS, true, StrictReadinessCheck>;
+using ConcurrentRaceCommand = ConcurrentTemplateCommand<COMMANDS, true>;
 
 /**
  * Runs commands in parallel untill a specific deadline command is finished,
  * only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentDeadlineCommand = ConcurrentTemplateCommand<COMMANDS, false, StrictReadinessCheck>;
+using ConcurrentDeadlineCommand = ConcurrentTemplateCommand<COMMANDS, false>;
 
 }  // namespace control
 
