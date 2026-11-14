@@ -21,6 +21,9 @@
 #define TAPROOT_SEQUENTIAL_COMMAND_HPP_
 
 #include <array>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "modm/architecture/interface/assert.hpp"
 
@@ -32,40 +35,63 @@ namespace tap
 namespace control
 {
 /**
- * A generic extendable class for implementing a command. Each
- * command is attached to a subsystem. To create a new command,
- * extend the Command class and instantiate the virtual functions
- * in this class. See example_command.hpp for example of this.
+ * Runs the given commands one after another. The sequence finishes when every command has
+ * finished. Each command is initialized when it starts, not when the sequence is scheduled.
+ *
+ * `COMMANDS == 0` stores commands in a `std::vector` so the length can be chosen at runtime.
+ * Any other size stores them in a `std::array`.
  */
-template <size_t COMMANDS>
+template <size_t COMMANDS = 0>
 class SequentialCommand : public Command
 {
 public:
     template <typename... Args>
     SequentialCommand(Args*... args)
         : Command(),
-          commands{static_cast<Command*>(args)...},
-          currentCommand(0)
+          commands(),
+          currentCommand(0),
+          commandInitialized(false)
     {
         static_assert(
-            sizeof...(Args) == COMMANDS,
+            COMMANDS == 0 || sizeof...(Args) == COMMANDS,
             "SequentialCommand Error: The number of commands passed does not match the template "
             "size!");
-
-        for (Command* command : commands)
+        if constexpr (COMMANDS == 0)
         {
-            modm_assert(
-                command != nullptr,
-                "SequentialCommand::SequentialCommand",
-                "Null pointer command passed into sequential command.");
-            this->commandRequirementsBitwise |= (command->getRequirementsBitwise());
+            commands.assign({static_cast<Command*>(args)...});
+        }
+        else if constexpr (sizeof...(Args) == COMMANDS)
+        {
+            commands = std::array<Command*, COMMANDS>{static_cast<Command*>(args)...};
+        }
+        registerRequirements();
+    }
+
+    /**
+     * Runtime-sized sequence. Only `SequentialCommand<0>` accepts this constructor; composition
+     * helpers use it when the number of commands is not a compile-time constant.
+     */
+    SequentialCommand(std::vector<Command*> commandsIn)
+        : Command(),
+          commands(),
+          currentCommand(0),
+          commandInitialized(false)
+    {
+        static_assert(
+            COMMANDS == 0,
+            "SequentialCommand Error: the vector constructor requires SequentialCommand<0>.");
+        if constexpr (COMMANDS == 0)
+        {
+            commands = std::move(commandsIn);
+            registerRequirements();
         }
     }
 
     const char* getName() const override
     {
-        return this->currentCommand == COMMANDS ? ""
-                                                : this->commands[this->currentCommand]->getName();
+        return this->currentCommand == commands.size()
+                   ? ""
+                   : this->commands[this->currentCommand]->getName();
     }
 
     bool isReady() override { return this->commands[0]->isReady(); }
@@ -78,7 +104,7 @@ public:
 
     void execute() override
     {
-        if (this->currentCommand >= COMMANDS) return;
+        if (this->currentCommand >= commands.size()) return;
         if (!this->commandInitialized)
         {
             if (this->commands[this->currentCommand]->isReady())
@@ -103,16 +129,35 @@ public:
 
     void end(bool interrupted) override
     {
-        if (this->commandInitialized && this->currentCommand != COMMANDS)
+        if (this->commandInitialized && this->currentCommand != commands.size())
         {
             this->commands[this->currentCommand]->end(interrupted);
         }
     }
 
-    bool isFinished() const override { return this->currentCommand == COMMANDS; }
+    bool isFinished() const override { return this->currentCommand == commands.size(); }
 
 private:
-    std::array<Command*, COMMANDS> commands;
+    void registerRequirements()
+    {
+        modm_assert(
+            !commands.empty(),
+            "SequentialCommand::SequentialCommand",
+            "No commands passed into sequential command.");
+        for (Command* command : commands)
+        {
+            modm_assert(
+                command != nullptr,
+                "SequentialCommand::SequentialCommand",
+                "Null pointer command passed into sequential command.");
+            this->commandRequirementsBitwise |= command->getRequirementsBitwise();
+        }
+    }
+
+    using CommandStorage =
+        std::conditional_t<COMMANDS == 0, std::vector<Command*>, std::array<Command*, COMMANDS>>;
+
+    CommandStorage commands;
     size_t currentCommand;
     bool commandInitialized;
 };  // class SequentialCommand

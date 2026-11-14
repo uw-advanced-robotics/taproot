@@ -20,8 +20,9 @@
 #ifndef TAPROOT_COMMAND_HPP_
 #define TAPROOT_COMMAND_HPP_
 
+#include <cstdint>
 #include <functional>
-#include <memory>
+#include <initializer_list>
 
 #include "tap/util_macros.hpp"
 
@@ -43,7 +44,7 @@ class Command
 {
 public:
     Command();
-    ~Command();
+    virtual ~Command();
     Command(const Command&) = delete;
     Command(Command&&) = delete;
     Command& operator=(const Command&) = delete;
@@ -131,6 +132,86 @@ public:
     virtual bool isFinished() const = 0;
 
     virtual void addCommand(Command* command);
+
+    /**
+     * @return a command that runs this command, then the next command in sequence.
+     */
+    Command* andThen(Command* next);
+
+    /**
+     * @param[in] next commands to run after this one, in order.
+     * @return a command that runs this command, then each next command sequentially.
+     */
+    Command* andThen(std::initializer_list<Command*> next);
+
+    /**
+     * @return a command that runs this command in parallel with another command until both finish.
+     *         Ready only when every command is ready.
+     */
+    Command* alongWith(Command* parallel);
+
+    /**
+     * @param[in] condition finish condition, polled while this command runs.
+     * @return a command that runs this command until the condition returns true.
+     */
+    Command* until(std::function<bool()> condition);
+
+    /**
+     * @param[in] condition condition that must stay true for this command to keep running.
+     * @return a command that runs this command while the condition remains true.
+     */
+    Command* onlyWhile(std::function<bool()> condition);
+
+    /**
+     * @param[in] timeout time limit in milliseconds.
+     * @return a command that runs this command until it finishes or the timeout elapses.
+     */
+    Command* withTimeout(uint32_t timeout);
+
+    /**
+     * @param[in] deadline command whose end also ends this composition.
+     * @return a command that runs this command in parallel with another command that
+     * ends execution of both commands when it finishes.
+     */
+    Command* deadlineWith(Command* deadline);
+
+    /**
+     * @param[in] next commands to run after this one, in order.
+     * @return a command that runs this command, then each next command sequentially.
+     */
+    Command* sequence(std::initializer_list<Command*> next);
+
+    /**
+     * @param[in] parallel commands to run at the same time as this one.
+     * @return a command that runs this command and all input commands simultaneously. Ready only
+     *         when every command is ready.
+     */
+    Command* parallel(std::initializer_list<Command*> parallel);
+
+    /**
+     * @param[in] action function run once, then the command finishes.
+     * @param[in] requirements subsystems the command requires.
+     * @return the command to be run once.
+     */
+    static Command* runOnce(
+        std::function<void()> action,
+        std::initializer_list<Subsystem*> requirements = {});
+
+    /**
+     * @param[in] action function run every scheduler iteration until the command is interrupted.
+     * @param[in] requirements subsystems the command requires.
+     * @return the command to be run until its isFinished is true or is interrupted.
+     */
+    static Command* run(
+        std::function<void()> action,
+        std::initializer_list<Subsystem*> requirements = {});
+
+    /**
+     * @param[in] selector chooses onTrue command when it returns true and onFalse command
+     * otherwise.
+     * @return a command that runs exactly one of the two commands.
+     */
+    static Command* either(Command* onTrue, Command* onFalse, std::function<bool()> selector);
 
 private:
     /**
