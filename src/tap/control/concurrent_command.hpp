@@ -35,47 +35,13 @@ namespace tap
 namespace control
 {
 /**
- * Requires all commands to be ready.
- * For concurrent commands scheduled directly by the command scheduler.
- */
-struct StrictReadinessCheck
-{
-    template <typename Commands>
-    static bool isReady(Commands& commands)
-    {
-        for (Command* command : commands)
-        {
-            if (!command->isReady())
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-};
-
-/**
- * For scheduling concurrent commands that are owned by Trigger actions (e.g., Trigger::whileTrue)
- * in order for the command readiness to not block Trigger activation. Child commands are
- * responsible for enforcing their own readiness.
- */
-struct WeakReadinessCheck
-{
-    template <typename Commands>
-    static bool isReady(Commands&)
-    {
-        return true;
-    }
-};
-
-/**
  * A command that runs multiple commands in parallel. When RACE is false, it continues executing
  * until all passed in commands have finished and then the concurrent command finishes. When RACE is
  * true, only one passed in command needs to finish for the concurrent command to finish. If
  * `deadlineCommand` is not a null pointer, the command group runs until `deadlineCommand` is
  * finished.
  */
-template <size_t COMMANDS, bool RACE, typename ReadinessCheck>
+template <size_t COMMANDS, bool RACE>
 class ConcurrentTemplateCommand : public Command
 {
 public:
@@ -135,8 +101,18 @@ public:
 
     bool isReady() override
     {
-        if (deadlineCommand && !deadlineCommand->isReady()) return false;
-        return ReadinessCheck::isReady(commands);
+        if (deadlineCommand && !deadlineCommand->isReady())
+        {
+            return false;
+        }
+        for (Command* command : commands)
+        {
+            if (!command->isReady())
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     void initialize() override
@@ -249,26 +225,20 @@ private:
  * Runs commands in parallel until all are finished, only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false, StrictReadinessCheck>;
-
-/**
- * Runs commands in parallel until all are finished.
- */
-template <size_t COMMANDS>
-using WeakConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false, WeakReadinessCheck>;
+using ConcurrentCommand = ConcurrentTemplateCommand<COMMANDS, false>;
 
 /**
  * Runs commands in parallel until one is finished, only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentRaceCommand = ConcurrentTemplateCommand<COMMANDS, true, StrictReadinessCheck>;
+using ConcurrentRaceCommand = ConcurrentTemplateCommand<COMMANDS, true>;
 
 /**
  * Runs commands in parallel untill a specific deadline command is finished,
  * only schedules if all commands are ready.
  */
 template <size_t COMMANDS>
-using ConcurrentDeadlineCommand = ConcurrentTemplateCommand<COMMANDS, false, StrictReadinessCheck>;
+using ConcurrentDeadlineCommand = ConcurrentTemplateCommand<COMMANDS, false>;
 
 }  // namespace control
 

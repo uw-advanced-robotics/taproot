@@ -89,7 +89,7 @@ Command* Command::andThen(std::initializer_list<Command*> next)
 
 Command* Command::alongWith(Command* parallel)
 {
-    return new WeakConcurrentCommand<2>(
+    return new ConcurrentCommand<2>(
         std::array<Command*, 2>{this, parallel},
         "concurrent command: parallel");
 }
@@ -128,12 +128,13 @@ Command* Command::deadlineWith(Command* deadline)
 
 Command* Command::sequence(std::initializer_list<Command*> next) { return andThen(next); }
 
-Command* Command::parallel(std::initializer_list<Command*> parallel) {
+Command* Command::parallel(std::initializer_list<Command*> parallel)
+{
     std::vector<Command*> commands;
     commands.reserve(parallel.size() + 1);
     commands.push_back(this);
     commands.insert(commands.end(), parallel.begin(), parallel.end());
-    return new WeakConcurrentCommand<0>(std::move(commands), "concurrent command: parallel");
+    return new ConcurrentCommand<0>(std::move(commands), "concurrent command: parallel");
 }
 
 Command* Command::runOnce(

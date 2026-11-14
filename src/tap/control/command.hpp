@@ -146,6 +146,7 @@ public:
 
     /**
      * @return a command that runs this command in parallel with another command until both finish.
+     *         Ready only when every command is ready.
      */
     Command* alongWith(Command* parallel);
 
@@ -182,7 +183,8 @@ public:
 
     /**
      * @param[in] parallel commands to run at the same time as this one.
-     * @return a command that runs this command and all input commands simultaneously.
+     * @return a command that runs this command and all input commands simultaneously. Ready only
+     *         when every command is ready.
      */
     Command* parallel(std::initializer_list<Command*> parallel);
 

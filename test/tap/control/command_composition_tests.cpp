@@ -248,14 +248,20 @@ TEST(CommandComposition, sequence_and_parallel_run_the_given_commands)
     second.executeCount = 0;
     std::unique_ptr<Command> parallel(first.parallel({&second}));
     EXPECT_TRUE(parallel->isReady());
-    second.ready = false;
-    EXPECT_TRUE(parallel->isReady());
 
     scheduler.addCommand(parallel.get());
     scheduler.run();
     EXPECT_EQ(first.executeCount, 1);
     EXPECT_EQ(second.executeCount, 1);
     EXPECT_FALSE(scheduler.isCommandScheduled(parallel.get()));
+
+    second.ready = false;
+    std::unique_ptr<Command> blocked(first.parallel({&second}));
+    EXPECT_FALSE(blocked->isReady());
+    scheduler.addCommand(blocked.get());
+    EXPECT_FALSE(scheduler.isCommandScheduled(blocked.get()));
+    EXPECT_EQ(first.executeCount, 1);
+    EXPECT_EQ(second.executeCount, 1);
 }
 
 TEST(CommandComposition, until_is_not_ready_when_the_command_is_not_ready)
