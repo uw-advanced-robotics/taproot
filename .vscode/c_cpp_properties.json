@@ -7,16 +7,9 @@
                 "test-project/taproot/test",
                 "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
-            "defines": [
-                "${default}",
-                "ENV_UNIT_TESTS",
-                "PLATFORM_HOSTED",
-                "RUN_WITH_PROFILING"
-            ],
+            "defines": ["${default}", "ENV_UNIT_TESTS", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "intelliSenseMode": "gcc-x64",
-            "browse": {
-                "limitSymbolsToIncludedHeaders": true
-            },
+            "browse": { "limitSymbolsToIncludedHeaders": true },
             "compilerPath": "g++"
         },
         {
@@ -25,15 +18,9 @@
                 "${default}",
                 "test-project/taproot/sim-modm/hosted-linux/modm/src"
             ],
-            "defines": [
-                "${default}",
-                "PLATFORM_HOSTED",
-                "RUN_WITH_PROFILING"
-            ],
+            "defines": ["${default}", "PLATFORM_HOSTED", "RUN_WITH_PROFILING"],
             "intelliSenseMode": "gcc-x64",
-            "browse": {
-                "limitSymbolsToIncludedHeaders": true
-            },
+            "browse": { "limitSymbolsToIncludedHeaders": true },
             "compilerPath": "g++"
         },
         {
@@ -42,13 +29,11 @@
                 "${default}",
                 "test-project/taproot/modm/src",
                 "test-project/taproot/modm/ext/cmsis/core",
-                "test-project/taproot/modm/ext/cmsis/device"
+                "test-project/taproot/modm/ext/cmsis/device",
             ],
             "intelliSenseMode": "gcc-arm",
-            "browse": {
-                "limitSymbolsToIncludedHeaders": true
-            },
-            "compilerPath": "/usr/bin/clang++"
+            "browse": { "limitSymbolsToIncludedHeaders": true },
+            "compilerPath": "arm-none-eabi-g++"
         }
     ],
     "version": 4
