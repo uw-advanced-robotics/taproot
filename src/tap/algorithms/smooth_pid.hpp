@@ -63,13 +63,17 @@ public:
      * Runs the PID controller. Should be called frequently for best results.
      *
      * @param[in] error The error (in user-defined units) between some target and measured value.
-     * @param[in] errorDerivative The derivative of the error passed in above (in user-defined units
-     * / time).
+     * @param[in] errorDerivative The rate of change of the measured value (in user-defined units
+     * / time), i.e. -d(error)/dt for a constant target. The D term is -kd * errorDerivative.
      * @param[in] dt The difference in time between the time this function is being called and the
      * last time this function was called.
      */
     virtual float runController(float error, float errorDerivative, float dt);
 
+    /**
+     * Runs the PID controller, computing the derivative term from the change in error since the
+     * last call.
+     */
     float runControllerDerivateError(float error, float dt);
 
     float getOutput();
