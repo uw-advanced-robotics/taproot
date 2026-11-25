@@ -78,9 +78,10 @@ float SmoothPid::runControllerDerivateError(float error, float dt)
     {
         dt = 1.0f;
     }
-    float errorDerivative = (error - prevError) / dt;
+    // runController expects the measurement's rate, which is -d(error)/dt.
+    const float measurementDerivative = -(error - prevError) / dt;
     prevError = error;
-    return runController(error, errorDerivative, dt);
+    return runController(error, measurementDerivative, dt);
 }
 
 float SmoothPid::getOutput() { return output; }
