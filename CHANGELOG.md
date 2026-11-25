@@ -1,5 +1,8 @@
 # Taproot Changelog
 
+## November 2026
+- **Breaking:** Fixed the sign of the D term in `SmoothPid::runControllerDerivateError`. It previously applied `+kd * d(measurement)/dt`, which adds to motion instead of damping it. Loops that use it with a nonzero `kd` need retuning.
+
 ## February 2026
 - Massively refactored the module system. Most projects should still work, might need to explicitly add some more modules that were transitively included.
   - If you are depending solely on the `core` module, you might need to include the `error`, `pwm`, and `profiler` modules.
